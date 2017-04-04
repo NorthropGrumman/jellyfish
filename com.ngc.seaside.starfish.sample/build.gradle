@@ -6,8 +6,9 @@ repositories {
 }
 
 dependencies {
-
     testCompile 'junit:junit:[4,)'
 }
 
 mainClassName = 'com.ngc.seaside.starfish.sample.Sample'
+archivesBaseName = 'com.ngc.seaside.starfish.sample'
+version = '1.0-SNAPSHOT'
