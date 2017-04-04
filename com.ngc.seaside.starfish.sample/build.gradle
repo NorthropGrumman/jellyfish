@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Use JUnit test framework
+    testCompile 'junit:junit:4.12'
+}
+
+// Define the main class for the application
+mainClassName = 'com.ngc.seaside.starfish.sample.Sample'
+
