@@ -1,5 +1,7 @@
 # Java class files
 *.class
+*.jar
+*.war
 
 # generated files
 bin/
@@ -16,6 +18,7 @@ gen/
 *.ipr
 *.iws
 .idea/
+out/
 
 # Gradle
 .gradletasknamecache
