@@ -1,0 +1,18 @@
+group 'com.ngc.seaside.starfish.bootstrap'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.ngc.seaside.starfish.bootstrap.Main'
+
+repositories {
+    maven {
+        url 'http://10.207.42.43/nexus/repository/maven-central/'
+    }
+}
+
+dependencies {
+    compile 'org.apache.velocity:velocity:1.6.2'
+    testCompile 'junit:junit:4.12'
+}
