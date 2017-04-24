@@ -1,10 +1,8 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,8 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.IOUtils;
-
 public class TemplateProcessor
 {
    /**
@@ -26,23 +22,17 @@ public class TemplateProcessor
     */
    public static void validateTemplate(Path templateFolder)
    {
-      if (Math.abs(1) == 1)
-         return;
       if (!Files.exists(templateFolder.resolve("template.properties"))) {
-         System.err.println("Invalid template: template.properties not found");
-         System.exit(1);
+         throw new ExitException("Invalid template: template.properties not found");
       }
       if (!Files.isRegularFile(templateFolder.resolve("template.properties"))) {
-         System.err.println("Invalid template: template.properties must be a file");
-         System.exit(1);
+         throw new ExitException("Invalid template: template.properties must be a file");
       }
       if (!Files.exists(templateFolder.resolve("template"))) {
-         System.err.println("Invalid template: template folder not found");
-         System.exit(1);
+         throw new ExitException("Invalid template: template folder not found");
       }
       if (!Files.isDirectory(templateFolder.resolve("template"))) {
-         System.err.println("Invalid template: template must be a folder");
-         System.exit(1);
+         throw new ExitException("Invalid template: template must be a folder");
       }
    }
 
@@ -77,7 +67,7 @@ public class TemplateProcessor
     *
     * @implNote the unzipped contents are put into the users temp folder.
     *
-    * @param template template zip file
+    * @param templateZip template zip file
     * @return folder of unzipped contents
     * @throws IOException if an exception occurred while unzipping or storing the files
     */
@@ -105,8 +95,7 @@ public class TemplateProcessor
          }
       }
       catch (IOException e) {
-         System.err.println("An error occurred processing the template zip file.");
-         System.exit(1);
+         throw new ExitException("An error occurred processing the template zip file: " + e.getMessage());
       }
       finally {
          zipFile.close();

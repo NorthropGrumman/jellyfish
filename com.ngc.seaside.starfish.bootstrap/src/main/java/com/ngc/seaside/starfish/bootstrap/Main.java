@@ -27,6 +27,11 @@ public class Main
          }
 
          Files.walkFileTree(templateFolder.resolve("template"), new TemplateGenerator(parametersAndValues, templateFolder.resolve("template"), cl.getOutputFolder(), cl.isClean()));
+
+         try {
+            TemplateGenerator.deleteRecursive(templateFolder, false);
+         } catch(IOException e) {
+         }
       }
       catch (ExitException e) {
          if (e.failed() && !e.getMessage().isEmpty()) {

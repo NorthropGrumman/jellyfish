@@ -1,5 +1,6 @@
 package com.ngc.seaside.starfish.bootstrap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -143,7 +144,10 @@ public class TemplateGeneratorTests
       }
    }
 
-
+   @After
+   public void cleanUp() throws IOException {
+      TemplateGenerator.deleteRecursive(outputFolder, false);
+   }
 
    private static boolean checkFile(Path file, String... undesirableStrings) throws IOException {
       for (String line : Files.readAllLines(file)) {
