@@ -1,11 +1,24 @@
 package com.ngc.seaside.starfish.bootstrap;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-public class TemplateProcessor {
+import org.apache.commons.io.IOUtils;
+
+public class TemplateProcessor
+{
    /**
     * Determines if the unzipped contents of the template are valid. Reports errors and exits the system if any occurred.
     *
@@ -68,9 +81,79 @@ public class TemplateProcessor {
     * @return folder of unzipped contents
     * @throws IOException if an exception occurred while unzipping or storing the files
     */
-   public static Path unzip(Path template) throws IOException
+   public static Path unzip(Path templateZip) throws IOException
    {
-      Path folder = Files.createTempDirectory(null);
-      return folder;
+      ZipFile zipFile = new ZipFile(templateZip.toString());
+      Path unzippedFolderPath = Files.createTempDirectory(null);
+
+      try {
+         Enumeration<? extends ZipEntry> entries = zipFile.entries();
+         while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            File entryDestination = new File(unzippedFolderPath.toString(), entry.getName());
+            if (entry.isDirectory()) {
+               entryDestination.mkdirs();
+            }
+            else {
+               entryDestination.getParentFile().mkdirs();
+               InputStream in = zipFile.getInputStream(entry);
+               OutputStream out = new FileOutputStream(entryDestination);
+               IOUtils.copy(in, out);
+               IOUtils.closeQuietly(in);
+               out.close();
+            }
+         }
+      }
+      catch (IOException e) {
+         System.err.println("An error occurred processing the template zip file.");
+         System.exit(1);
+      }
+      finally {
+         zipFile.close();
+      }
+
+      recursiveDeleteOnShutdownHook(unzippedFolderPath);
+      return unzippedFolderPath;
+   }
+
+   /**
+    * This method will delete a directory and all contents when the JVM shuts down.
+    * 
+    * @param path the path to the desired directory to be deleted
+    */
+   public static void recursiveDeleteOnShutdownHook(final Path path)
+   {
+      Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            try {
+               Files.walkFileTree(path, new SimpleFileVisitor<Path>()
+               {
+                  @Override
+                  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+                  {
+                     Files.delete(file);
+                     return FileVisitResult.CONTINUE;
+                  }
+
+                  @Override
+                  public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException
+                  {
+                     if (e == null) {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                     }
+                     // directory iteration failed
+                     throw e;
+                  }
+               });
+            }
+            catch (IOException e) {
+               throw new RuntimeException("Failed to delete " + path, e);
+            }
+         }
+      }));
    }
 }
