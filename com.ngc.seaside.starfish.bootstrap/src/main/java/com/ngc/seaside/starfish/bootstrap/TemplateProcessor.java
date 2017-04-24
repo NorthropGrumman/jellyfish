@@ -3,11 +3,8 @@ package com.ngc.seaside.starfish.bootstrap;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.zip.ZipEntry;
@@ -101,48 +98,8 @@ public class TemplateProcessor
          zipFile.close();
       }
 
-      recursiveDeleteOnShutdownHook(unzippedFolderPath);
+      TemplateGenerator.deleteRecursive(unzippedFolderPath, false);
       return unzippedFolderPath;
    }
 
-   /**
-    * This method will delete a directory and all contents when the JVM shuts down.
-    * 
-    * @param path the path to the desired directory to be deleted
-    */
-   public static void recursiveDeleteOnShutdownHook(final Path path)
-   {
-      Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            try {
-               Files.walkFileTree(path, new SimpleFileVisitor<Path>()
-               {
-                  @Override
-                  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                  {
-                     Files.delete(file);
-                     return FileVisitResult.CONTINUE;
-                  }
-
-                  @Override
-                  public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException
-                  {
-                     if (e == null) {
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                     }
-                     // directory iteration failed
-                     throw e;
-                  }
-               });
-            }
-            catch (IOException e) {
-               throw new RuntimeException("Failed to delete " + path, e);
-            }
-         }
-      }));
-   }
 }
