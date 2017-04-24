@@ -98,7 +98,6 @@ public class TemplateProcessor
          zipFile.close();
       }
 
-      TemplateGenerator.deleteRecursive(unzippedFolderPath, false);
       return unzippedFolderPath;
    }
 
