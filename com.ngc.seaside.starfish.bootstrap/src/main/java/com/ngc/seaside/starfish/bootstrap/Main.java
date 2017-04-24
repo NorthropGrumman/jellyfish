@@ -12,19 +12,34 @@ public class Main
 
    public static void main(String[] args) throws IOException
    {
-      CommandLine cl = CommandLine.parseArgs(args);
-      Path templateFolder = TemplateProcessor.unzip(cl.getTemplateFile());
-      TemplateProcessor.validateTemplate(templateFolder);
+      try {
+         CommandLine cl = CommandLine.parseArgs(args);
 
-      LinkedHashMap<String, String> parametersAndDefaults = TemplateProcessor.parseTemplateProperties(templateFolder.resolve("template.properties"));
-      Map<String, String> parametersAndValues = new HashMap<>();
-      for (Map.Entry<String, String> entry : parametersAndDefaults.entrySet()) {
-         String parameter = entry.getKey();
-         String value = CommandLine.queryUser(parameter, entry.getValue(), null);
-         parametersAndValues.put(parameter, value);
+         Path templateFolder = TemplateProcessor.unzip(cl.getTemplateFile());
+         TemplateProcessor.validateTemplate(templateFolder);
+
+         LinkedHashMap<String, String> parametersAndDefaults = TemplateProcessor.parseTemplateProperties(templateFolder.resolve("template.properties"));
+         Map<String, String> parametersAndValues = new HashMap<>();
+         for (Map.Entry<String, String> entry : parametersAndDefaults.entrySet()) {
+            String parameter = entry.getKey();
+            String value = CommandLine.queryUser(parameter, entry.getValue(), null);
+            parametersAndValues.put(parameter, value);
+         }
+
+         Files.walkFileTree(templateFolder.resolve("template"), new TemplateGenerator(parametersAndValues, templateFolder.resolve("template"), cl.getOutputFolder(), cl.isClean()));
+      }
+      catch (ExitException e) {
+         if (e.failed() && !e.getMessage().isEmpty()) {
+            System.err.println(e.getMessage());
+         }
+         System.exit(e.getCode());
+      }
+      catch (Exception e) {
+         System.err.println("An unexpected error occured: ");
+         e.printStackTrace(System.err);
+         System.exit(1);
       }
 
-      Files.walkFileTree(templateFolder.resolve("template"), new TemplateGenerator(parametersAndValues, templateFolder.resolve("template"), cl.getOutputFolder(), cl.isClean()));
    }
 
 }

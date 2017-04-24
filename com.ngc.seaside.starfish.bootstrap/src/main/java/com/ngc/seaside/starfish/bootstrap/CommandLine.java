@@ -15,6 +15,7 @@ public class CommandLine
    private Path templateFile;
    private Path outputFolder;
    private boolean clean;
+   private static Scanner sc;
 
    public CommandLine()
    {
@@ -36,25 +37,24 @@ public class CommandLine
       return clean;
    }
 
-   public static CommandLine parseArgs(String[] args)
+   public static CommandLine parseArgs(String... args)
    {
       CommandLine cl = new CommandLine();
       List<String> list = new ArrayList<>(Arrays.asList(args));
 
       if (list.indexOf("-h") >= 0 || list.indexOf("--help") >= 0) {
          printHelp();
-         System.exit(0);
+         throw new ExitException();
       }
 
       int outputFolderIndex = list.indexOf("-o");
       if (outputFolderIndex >= 0) {
          if (outputFolderIndex + 1 < list.size()) {
             cl.outputFolder = Paths.get(list.get(outputFolderIndex + 1));
-            list.subList(outputFolderIndex, outputFolderIndex + 2);
+            list.subList(outputFolderIndex, outputFolderIndex + 2).clear();
          }
          else {
-            System.err.println("Expected a folder after the option -o");
-            System.exit(1);
+            throw new ExitException("Expected a folder after the option -o");
          }
       }
       else {
@@ -73,22 +73,18 @@ public class CommandLine
       if (list.size() != 1) {
          for (String arg : list) {
             if (arg.startsWith("-")) {
-               System.err.println("Unknown argument " + arg);
-               System.exit(1);
+               throw new ExitException("Unknown argument " + arg);
             }
          }
-         System.err.println("Too many arguments. Try running with --help");
-         System.exit(1);
+         throw new ExitException("Too many arguments. Try running with --help");
       }
 
       cl.templateFile = Paths.get(list.get(0));
       if (!Files.exists(cl.templateFile)) {
-         System.err.println("File " + list.get(0) + " does not exist");
-         System.exit(1);
+         throw new ExitException("File " + list.get(0) + " does not exist");
       }
       if (!Files.isRegularFile(cl.templateFile)) {
-         System.err.println("Expected a template file, not a directory: " + cl.templateFile.toAbsolutePath());
-         System.exit(1);
+         throw new ExitException("Expected a template file, not a directory: " + cl.templateFile.toAbsolutePath());
       }
       return cl;
    }
@@ -116,16 +112,20 @@ public class CommandLine
     */
    public static String queryUser(String parameter, String defaultValue, Predicate<String> validator)
    {
+      if (sc == null) {
+         sc = new Scanner(System.in);
+      }
       if (validator == null) {
          validator = __ -> true;
       }
       final String defaultString = defaultValue == null ? "" : " (" + defaultValue + ")";
       while (true) {
          System.out.print("Enter value for " + parameter + defaultString + ": ");
-         final String line;
-         Scanner sc = new Scanner(System.in);
+         String line;
          line = sc.nextLine();
-
+         if (line.isEmpty() && defaultValue != null) {
+            return defaultValue;
+         }
          if (validator.test(line)) {
             return line;
          }

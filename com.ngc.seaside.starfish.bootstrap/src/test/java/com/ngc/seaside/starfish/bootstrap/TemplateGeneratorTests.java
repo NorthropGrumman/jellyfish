@@ -1,6 +1,5 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +29,8 @@ public class TemplateGeneratorTests
    {
       templateFolder = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template");
       outputFolder = Files.createTempDirectory(null);
+      templateFolder.toFile().deleteOnExit();
+      outputFolder.toFile().deleteOnExit();
       parametersAndValues = new HashMap<>();
       parametersAndValues.put("groupId", GROUP_ID);
       parametersAndValues.put("artifactId", ARTIFACT_ID);
@@ -142,11 +143,7 @@ public class TemplateGeneratorTests
       }
    }
 
-   @After
-   public void cleanUp() throws IOException
-   {
-      TemplateGenerator.deleteRecursive(outputFolder, false);
-   }
+
 
    private static boolean checkFile(Path file, String... undesirableStrings) throws IOException {
       for (String line : Files.readAllLines(file)) {
