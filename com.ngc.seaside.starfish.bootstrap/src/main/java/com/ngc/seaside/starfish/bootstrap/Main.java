@@ -24,7 +24,7 @@ public class Main
          parametersAndValues.put(parameter, value);
       }
 
-      Files.walkFileTree(templateFolder.resolve("template"), new TemplateGenerator(parametersAndValues, cl.getOutputFolder(), cl.isClean()));
+      Files.walkFileTree(templateFolder.resolve("template"), new TemplateGenerator(parametersAndValues, templateFolder.resolve("template"), cl.getOutputFolder(), cl.isClean()));
    }
 
 }

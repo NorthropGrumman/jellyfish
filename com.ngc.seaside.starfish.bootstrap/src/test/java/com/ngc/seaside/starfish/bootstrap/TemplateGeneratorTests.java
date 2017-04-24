@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public class TemplateGeneratorTests
    @Before
    public void setup() throws URISyntaxException, IOException
    {
-      templateFolder = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI());
+      templateFolder = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template");
       outputFolder = Files.createTempDirectory(null);
       parametersAndValues = new HashMap<>();
       parametersAndValues.put("groupId", GROUP_ID);
@@ -37,12 +39,14 @@ public class TemplateGeneratorTests
    @Test
    public void testGenerator() throws IOException
    {
-      TemplateGenerator gen = new TemplateGenerator(parametersAndValues, outputFolder, false);
+      TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, false);
       Files.walkFileTree(templateFolder, gen);
-      Path temp;
 
       Path base = outputFolder.resolve(GROUP_ID);
       Assert.assertTrue(Files.isDirectory(base));
+
+      Path gradle = base.resolve("build.gradle");
+      Assert.assertTrue(Files.isRegularFile(gradle));
 
       Path mainJavaFolder = base.resolve(Paths.get("src", "main", "java"));
       Assert.assertTrue(Files.isDirectory(mainJavaFolder));
@@ -67,34 +71,91 @@ public class TemplateGeneratorTests
 
       Path testSampleFile = testArtifactFolder.resolve("SampleTest.java");
       Assert.assertTrue(Files.isRegularFile(testSampleFile));
+
+      for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
+         String key = entry.getKey();
+         Assert.assertTrue(checkFile(gradle, "$" + key, "${" + key + "}"));
+         Assert.assertTrue(checkFile(sampleFile, "$" + key, "${" + key + "}"));
+         Assert.assertTrue(checkFile(testSampleFile, "$" + key, "${" + key + "}"));
+      }
+   }
+
+   @Test
+   public void testGeneratorWithClean() throws IOException {
+      TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, true);
+      Files.walkFileTree(templateFolder, gen);
+
+      Files.createDirectories(outputFolder.resolve(GROUP_ID));
+      Files.createFile(outputFolder.resolve(Paths.get(GROUP_ID, "test.txt")));
+
+      final String ARTIFACT_ID2 = "sample2";
+
+      parametersAndValues.put("artifactId", ARTIFACT_ID2);
+
+      gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, true);
+      Files.walkFileTree(templateFolder, gen);
+
+      Path base = outputFolder.resolve(GROUP_ID);
+      Assert.assertTrue(Files.isDirectory(base));
+
+      Path gradle = base.resolve("build.gradle");
+      Assert.assertTrue(Files.isRegularFile(gradle));
+
+      Path falseFile = base.resolve("test.txt");
+      Assert.assertFalse(Files.exists(falseFile));
+
+      Path mainJavaFolder = base.resolve(Paths.get("src", "main", "java"));
+      Assert.assertTrue(Files.isDirectory(mainJavaFolder));
+
+      Path groupFolder = mainJavaFolder.resolve(GROUP_ID.replace(".", FileSystems.getDefault().getSeparator()));
+      Assert.assertTrue(Files.isDirectory(groupFolder));
+
+      Path falseArtifactFolder = groupFolder.resolve(ARTIFACT_ID);
+      Assert.assertFalse(Files.exists(falseArtifactFolder));
+
+      Path artifactFolder = groupFolder.resolve(ARTIFACT_ID2);
+      Assert.assertTrue(Files.isDirectory(artifactFolder));
+
+      Path sampleFile = artifactFolder.resolve("Sample.java");
+      Assert.assertTrue(Files.isRegularFile(sampleFile));
+
+      Path testJavaFolder = base.resolve(Paths.get("src", "test", "java"));
+      Assert.assertTrue(Files.isDirectory(mainJavaFolder));
+
+      Path testGroupFolder = testJavaFolder.resolve(GROUP_ID.replace(".", FileSystems.getDefault().getSeparator()));
+      Assert.assertTrue(Files.isDirectory(testGroupFolder));
+
+      Path falseTestArtifactFolder = testGroupFolder.resolve(ARTIFACT_ID);
+      Assert.assertFalse(Files.exists(falseTestArtifactFolder));
+
+      Path testArtifactFolder = testGroupFolder.resolve(ARTIFACT_ID2);
+      Assert.assertTrue(Files.isDirectory(testArtifactFolder));
+
+      Path testSampleFile = testArtifactFolder.resolve("SampleTest.java");
+      Assert.assertTrue(Files.isRegularFile(testSampleFile));
+
+      for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
+         String key = entry.getKey();
+         Assert.assertTrue(checkFile(gradle, "$" + key, "${" + key + "}"));
+         Assert.assertTrue(checkFile(sampleFile, "$" + key, "${" + key + "}"));
+         Assert.assertTrue(checkFile(testSampleFile, "$" + key, "${" + key + "}"));
+      }
    }
 
    @After
    public void cleanUp() throws IOException
    {
-      try {
-         Files.walkFileTree(outputFolder, new SimpleFileVisitor<Path>()
-         {
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-            {
-               Files.delete(file);
-               return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
-            {
-               Files.delete(dir);
-               return FileVisitResult.CONTINUE;
-            }
-
-         });
-      }
-      catch (IOException e) {
-         System.err.println("Failed to clean up temporary test folder");
-      }
+      TemplateGenerator.deleteRecursive(outputFolder, false);
    }
 
+   private static boolean checkFile(Path file, String... undesirableStrings) throws IOException {
+      for (String line : Files.readAllLines(file)) {
+         for (String undesirableString : undesirableStrings) {
+            if (line.contains(undesirableString)) {
+               return false;
+            }
+         }
+      }
+      return true;
+   }
 }
