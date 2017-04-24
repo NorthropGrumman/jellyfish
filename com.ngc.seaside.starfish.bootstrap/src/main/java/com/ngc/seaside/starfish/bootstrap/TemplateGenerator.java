@@ -13,11 +13,15 @@ import java.util.Map;
 public class TemplateGenerator implements FileVisitor<Path>
 {
 
-   private VelocityEngine engine = new VelocityEngine();
-   private Map<String, String> parametersAndValues;
+   private final VelocityEngine engine = new VelocityEngine();
+   private final Map<String, String> parametersAndValues;
+   private final Path outputFolder;
+   private final boolean clean;
 
-   public TemplateGenerator(Map<String, String> parametersAndValues, boolean clean)
+   public TemplateGenerator(Map<String, String> parametersAndValues, Path outputFolder, boolean clean)
    {
+      this.outputFolder = outputFolder;
+      this.clean = clean;
       this.parametersAndValues = new HashMap<>(parametersAndValues);
       for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
          engine.setProperty(entry.getKey(), entry.getValue());
