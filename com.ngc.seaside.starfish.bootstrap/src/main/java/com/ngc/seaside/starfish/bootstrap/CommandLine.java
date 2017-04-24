@@ -76,7 +76,7 @@ public class CommandLine
                throw new ExitException("Unknown argument " + arg);
             }
          }
-         throw new ExitException("Too many arguments. Try running with --help");
+         throw new ExitException("Invalid number of arguments. Try running with --help");
       }
 
       cl.templateFile = Paths.get(list.get(0));
