@@ -20,17 +20,17 @@ public class TemplateProcessor
     */
    public static void validateTemplate(Path templateFolder)
    {
-      if (!Files.exists(templateFolder.resolve("template.properties"))) {
-         throw new ExitException("Invalid template: template.properties not found");
+      if (!Files.exists(templateFolder.resolve(Main.TEMPLATE_PROPERTIES))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_PROPERTIES + " not found");
       }
-      if (!Files.isRegularFile(templateFolder.resolve("template.properties"))) {
-         throw new ExitException("Invalid template: template.properties must be a file");
+      if (!Files.isRegularFile(templateFolder.resolve(Main.TEMPLATE_PROPERTIES))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_PROPERTIES + " must be a file");
       }
-      if (!Files.exists(templateFolder.resolve("template"))) {
-         throw new ExitException("Invalid template: template folder not found");
+      if (!Files.exists(templateFolder.resolve(Main.TEMPLATE_FOLDER))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_FOLDER + " folder not found");
       }
-      if (!Files.isDirectory(templateFolder.resolve("template"))) {
-         throw new ExitException("Invalid template: template must be a folder");
+      if (!Files.isDirectory(templateFolder.resolve(Main.TEMPLATE_FOLDER))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_FOLDER + " must be a folder");
       }
    }
 

@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class Main
 {
-   private static final String TEMPLATE_FOLDER = "template";
-   private static final String TEMPLATE_PROPERTIES = "template.properties";
+   public static final String TEMPLATE_FOLDER = "template";
+   public static final String TEMPLATE_PROPERTIES = "template.properties";
 
    /**
     * Run with --help for a description of the script.
