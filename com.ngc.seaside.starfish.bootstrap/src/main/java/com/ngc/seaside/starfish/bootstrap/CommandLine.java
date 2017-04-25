@@ -116,7 +116,7 @@ public class CommandLine
 
    private static void printHelp()
    {
-      System.out.println("usage: java -jar [-h] [-o output-file] [--clean] template-file");
+      System.out.println("usage: java -jar bootstrap.jar [-h] [-o output-file] [--clean] template-file");
       System.out.println();
       System.out.println("positional arguments:");
       System.out.println("  template-file  template zip file");
