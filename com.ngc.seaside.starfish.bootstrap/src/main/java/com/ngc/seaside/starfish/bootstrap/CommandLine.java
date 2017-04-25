@@ -6,6 +6,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
 
+/**
+ * Class for parsing command line arguments for this program and querying the user
+ */
 public class CommandLine
 {
 
@@ -14,26 +17,51 @@ public class CommandLine
    private boolean clean;
    private static Scanner sc;
 
-   public CommandLine()
+   /**
+    * Use {@link #parseArgs(String...)} for creating an instance
+    */
+   private CommandLine()
    {
 
    }
 
+   /**
+    * Returns the folder of the unzipped template file.
+    * 
+    * @return the folder of the unzipped template file
+    */
    public Path getTemplateFile()
    {
       return templateFile;
    }
 
+   /**
+    * Returns the output folder for generating the instance of the template.
+    * 
+    * @return the output folder for generating the instance of the template
+    */
    public Path getOutputFolder()
    {
       return outputFolder;
    }
 
+   /**
+    * Returns whether or not to delete folders before creating them again.
+    * 
+    * @return Whether or not to delete folders before creating them again
+    */
    public boolean isClean()
    {
       return clean;
    }
 
+   /**
+    * Parses the arguments and returns a command line instance. Run with --help for help.
+    * 
+    * @param args command line arguments
+    * @return an instance of CommandLine
+    * @throws ExitException if something occurred that would normally require the command line to exit
+    */
    public static CommandLine parseArgs(String... args)
    {
       CommandLine cl = new CommandLine();
@@ -88,7 +116,7 @@ public class CommandLine
 
    private static void printHelp()
    {
-      System.out.println("usage: java -jar [-h] [-o output-file] [--clean] template-file");
+      System.out.println("usage: java -jar bootstrap.jar [-h] [-o output-file] [--clean] template-file");
       System.out.println();
       System.out.println("positional arguments:");
       System.out.println("  template-file  template zip file");

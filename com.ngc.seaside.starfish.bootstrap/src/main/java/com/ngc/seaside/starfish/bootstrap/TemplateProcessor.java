@@ -13,23 +13,24 @@ import java.util.zip.ZipFile;
 public class TemplateProcessor
 {
    /**
-    * Determines if the unzipped contents of the template are valid. Reports errors and exits the system if any occurred.
+    * Determines if the unzipped contents of the template are valid.
     *
     * @param templateFolder path to unzipped template folder
+    * @throws ExitException if the template has an invalid structure/format
     */
    public static void validateTemplate(Path templateFolder)
    {
-      if (!Files.exists(templateFolder.resolve("template.properties"))) {
-         throw new ExitException("Invalid template: template.properties not found");
+      if (!Files.exists(templateFolder.resolve(Main.TEMPLATE_PROPERTIES))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_PROPERTIES + " not found");
       }
-      if (!Files.isRegularFile(templateFolder.resolve("template.properties"))) {
-         throw new ExitException("Invalid template: template.properties must be a file");
+      if (!Files.isRegularFile(templateFolder.resolve(Main.TEMPLATE_PROPERTIES))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_PROPERTIES + " must be a file");
       }
-      if (!Files.exists(templateFolder.resolve("template"))) {
-         throw new ExitException("Invalid template: template folder not found");
+      if (!Files.exists(templateFolder.resolve(Main.TEMPLATE_FOLDER))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_FOLDER + " folder not found");
       }
-      if (!Files.isDirectory(templateFolder.resolve("template"))) {
-         throw new ExitException("Invalid template: template must be a folder");
+      if (!Files.isDirectory(templateFolder.resolve(Main.TEMPLATE_FOLDER))) {
+         throw new ExitException("Invalid template: " + Main.TEMPLATE_FOLDER + " must be a folder");
       }
    }
 
@@ -39,7 +40,8 @@ public class TemplateProcessor
     *
     * @param propertiesFile path to properties file
     * @return map of parameters and their default values
-    * @throws IOException if an exception occured while reading or parsing the properties file
+    * @throws IOException if an exception occurred while reading or parsing the properties file
+    * @throws ExitException if an error was found when parsing the properties file
     */
    public static LinkedHashMap<String, String> parseTemplateProperties(Path propertiesFile) throws IOException
    {
@@ -52,7 +54,7 @@ public class TemplateProcessor
          }
          String[] values = line.split("=", 2);
          if (values.length != 2) {
-            throw new IllegalArgumentException("Invalid syntax in properties file: " + line);
+            throw new ExitException("Invalid syntax in properties file: " + line);
          }
          properties.put(values[0].trim(), values[1].trim());
       }

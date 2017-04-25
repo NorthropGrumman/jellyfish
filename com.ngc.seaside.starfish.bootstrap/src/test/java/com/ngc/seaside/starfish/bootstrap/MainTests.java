@@ -2,10 +2,7 @@ package com.ngc.seaside.starfish.bootstrap;
 
 import org.junit.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -42,6 +39,7 @@ public class MainTests
       final String input = GROUP_ID + "\n" + ARTIFACT_ID + "\n" + VERSION + "\n";
       InputStream in = new ByteArrayInputStream(input.getBytes());
       System.setIn(in);
+      System.setOut(new PrintStream(new ByteArrayOutputStream()));
       Field f = CommandLine.class.getDeclaredField("sc");
       f.setAccessible(true);
       f.set(null, null);
@@ -50,8 +48,6 @@ public class MainTests
    @Test
    public void mainTest() throws IOException
    {
-
-      // System.setOut(new PrintStream(new ByteArrayOutputStream()));
       Map<String, String> parametersAndValues = new HashMap<>();
       parametersAndValues.put("groupId", GROUP_ID);
       parametersAndValues.put("artifactId", ARTIFACT_ID);
