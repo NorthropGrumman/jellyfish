@@ -11,6 +11,11 @@ public class Main
    private static final String TEMPLATE_FOLDER = "template";
    private static final String TEMPLATE_PROPERTIES = "template.properties";
 
+   /**
+    * Run with --help for a description of the script.
+    * 
+    * @param args command line arguments
+    */
    public static void main(String[] args)
    {
       int errorCode = 0;
