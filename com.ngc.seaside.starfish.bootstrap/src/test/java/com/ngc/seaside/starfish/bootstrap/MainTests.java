@@ -51,7 +51,6 @@ public class MainTests
    public void mainTest() throws IOException
    {
 
-      // System.setOut(new PrintStream(new ByteArrayOutputStream()));
       Map<String, String> parametersAndValues = new HashMap<>();
       parametersAndValues.put("groupId", GROUP_ID);
       parametersAndValues.put("artifactId", ARTIFACT_ID);

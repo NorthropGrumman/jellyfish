@@ -53,7 +53,6 @@ public class Main
             }
          }
       }
-      System.err.println("*************************************");
       System.exit(errorCode);
    }
 
