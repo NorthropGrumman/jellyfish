@@ -83,7 +83,8 @@ public class TemplateGeneratorTests
    }
 
    @Test
-   public void testGeneratorWithClean() throws IOException {
+   public void testGeneratorWithClean() throws IOException
+   {
       TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, true);
       Files.walkFileTree(templateFolder, gen);
 
@@ -145,11 +146,13 @@ public class TemplateGeneratorTests
    }
 
    @After
-   public void cleanUp() throws IOException {
+   public void cleanUp() throws IOException
+   {
       TemplateGenerator.deleteRecursive(outputFolder, false);
    }
 
-   private static boolean checkFile(Path file, String... undesirableStrings) throws IOException {
+   public static boolean checkFile(Path file, String... undesirableStrings) throws IOException
+   {
       for (String line : Files.readAllLines(file)) {
          for (String undesirableString : undesirableStrings) {
             if (line.contains(undesirableString)) {

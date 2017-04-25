@@ -3,10 +3,7 @@ package com.ngc.seaside.starfish.bootstrap;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class CommandLine
@@ -122,7 +119,12 @@ public class CommandLine
       while (true) {
          System.out.print("Enter value for " + parameter + defaultString + ": ");
          String line;
-         line = sc.nextLine();
+         try {
+            line = sc.nextLine();
+         }
+         catch (NoSuchElementException e) {
+            throw new ExitException("Unable to get value for parameter " + parameter);
+         }
          if (line.isEmpty() && defaultValue != null) {
             return defaultValue;
          }

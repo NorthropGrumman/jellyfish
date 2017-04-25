@@ -45,7 +45,8 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
       if (clean) {
          try {
             deleteRecursive(outputFolder, true);
-         } catch(IOException e) {
+         }
+         catch (IOException e) {
             throw new IllegalStateException("Unable to clean");
          }
       }
