@@ -9,7 +9,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,10 +18,8 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 {
    private final VelocityEngine engine = new VelocityEngine();
    private final VelocityContext context = new VelocityContext();
-   private final Map<String, String> parametersAndValues;
    private final Path outputFolder;
-   private Path inputFolder;
-   private final boolean clean;
+   private final Path inputFolder;
 
    /**
     *
@@ -35,8 +32,6 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    {
       this.outputFolder = outputFolder;
       this.inputFolder = inputFolder;
-      this.clean = clean;
-      this.parametersAndValues = new HashMap<>(parametersAndValues);
       engine.setProperty("runtime.references.strict", true);
       for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
@@ -65,11 +60,21 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
       return group.toString().replace(".", FileSystems.getDefault().getSeparator());
    }
 
-   private Path getOutputPath(Path input) throws IOException
+   /**
+    * Converts any velocity-like formatting in the input's filename and returns the output locations of the input file.
+    * 
+    * @param input path to input file or folder
+    * @return output path of file or folder
+    */
+   private Path getOutputPath(Path input)
    {
       Path output = outputFolder.resolve(inputFolder.relativize(input)).toAbsolutePath();
       StringWriter w = new StringWriter();
-      engine.evaluate(context, w, "", output.toAbsolutePath().toString().replace("\\$", "\\\\$"));
+      try {
+         engine.evaluate(context, w, "", output.toAbsolutePath().toString().replace("\\$", "\\\\$"));
+      } catch(IOException e) {
+         // ignored since StringWriter won't throw an IOException
+      }
       return Paths.get(w.toString()).toAbsolutePath();
    }
 
@@ -81,6 +86,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
          Files.createDirectories(outputFolder);
       }
       catch (FileAlreadyExistsException e) {
+         // ignored since the file just needs to exist
       }
       return FileVisitResult.CONTINUE;
    }

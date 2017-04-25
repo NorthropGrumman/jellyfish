@@ -23,10 +23,14 @@ public class Main
       try {
          CommandLine cl = CommandLine.parseArgs(args);
 
+         // Unzip template folder and validate for correct format
          templateFolder = TemplateProcessor.unzip(cl.getTemplateFile());
          TemplateProcessor.validateTemplate(templateFolder);
 
+         // Parse template.properties file for each parameter and its default value
          LinkedHashMap<String, String> parametersAndDefaults = TemplateProcessor.parseTemplateProperties(templateFolder.resolve(TEMPLATE_PROPERTIES));
+
+         // For each parameter query the user for its value
          Map<String, String> parametersAndValues = new HashMap<>();
          for (Map.Entry<String, String> entry : parametersAndDefaults.entrySet()) {
             String parameter = entry.getKey();
@@ -34,6 +38,7 @@ public class Main
             parametersAndValues.put(parameter, value);
          }
 
+         // Walk through the unzipped template directory in order to generate the instance of the template
          Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER), new TemplateGenerator(parametersAndValues, templateFolder.resolve(TEMPLATE_FOLDER), cl.getOutputFolder(), cl.isClean()));
 
       }
