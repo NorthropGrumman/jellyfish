@@ -1,8 +1,10 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
@@ -10,6 +12,11 @@ import java.util.LinkedHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
+
+/**
+ * Class for processing and validating templates.
+ */
 public class TemplateProcessor
 {
    /**
@@ -99,8 +106,6 @@ public class TemplateProcessor
       finally {
          zipFile.close();
       }
-
       return unzippedFolderPath;
    }
-
 }

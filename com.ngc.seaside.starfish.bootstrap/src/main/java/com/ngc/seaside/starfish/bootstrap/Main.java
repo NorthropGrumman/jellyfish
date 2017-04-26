@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Main class for driving the Bootstrap program
+ */
 public class Main
 {
    public static final String TEMPLATE_FOLDER = "template";
@@ -65,5 +68,4 @@ public class Main
       }
       System.exit(errorCode);
    }
-
 }

@@ -1,18 +1,24 @@
 package com.ngc.seaside.starfish.bootstrap;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+/**
+ * Tests for the CommandLine class.
+ */
 public class CommandLineTests
 {
-
    private static PrintStream SYSTEM_OUT;
    private static InputStream SYSTEM_IN;
 
@@ -52,7 +58,6 @@ public class CommandLineTests
       Assert.assertFalse(cl.isClean());
       Assert.assertEquals(p, cl.getTemplateFile());
       Assert.assertEquals(o, cl.getOutputFolder());
-
    }
 
    @Test
@@ -78,7 +83,6 @@ public class CommandLineTests
       Assert.assertEquals(STR3, CommandLine.queryUser("Test3", "default3", null));
       Assert.assertEquals("default4", CommandLine.queryUser("Test4", "default4", null));
       Assert.assertEquals(STR6, CommandLine.queryUser("Test5", "default5", i -> Character.isUpperCase(i.charAt(0))));
-
    }
 
    @AfterClass

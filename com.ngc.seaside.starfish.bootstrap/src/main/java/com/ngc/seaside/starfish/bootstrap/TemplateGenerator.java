@@ -1,15 +1,21 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 /**
  * Class for generating an instance of a template
@@ -22,7 +28,10 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    private final Path inputFolder;
 
    /**
-    *
+    * Constructor that designates the input and output folders, uses velocity to generate context
+    * using the provided parameters, and gives the option to cleanup the output folder in case it
+    * was previously generated.
+    * 
     * @param parametersAndValues Map of parameter-values used
     * @param inputFolder folder of the unzipped template
     * @param outputFolder folder for outputting the generated template instance
@@ -48,7 +57,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    }
 
    /**
-    * Converts a object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g., com/ngc/example on Unix).
+    * Converts an object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g., com/ngc/example on Unix).
     * 
     * @implNote this method is used by the Velocity Engine when $Template.asFile($group) is found in order to represent something like a groupId as a file path
     * 
@@ -72,12 +81,22 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
       StringWriter w = new StringWriter();
       try {
          engine.evaluate(context, w, "", output.toAbsolutePath().toString().replace("\\$", "\\\\$"));
-      } catch(IOException e) {
+      }
+      catch (IOException e) {
          // ignored since StringWriter won't throw an IOException
       }
       return Paths.get(w.toString()).toAbsolutePath();
    }
 
+   /**
+    * {@inheritDoc}
+    * 
+    * Creates the output folder
+    * 
+    * @param path the output path
+    * @param basicFileAttributes not used
+    * @return the results of the file visit
+    */
    @Override
    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException
    {
@@ -91,6 +110,15 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
       return FileVisitResult.CONTINUE;
    }
 
+   /**
+    * {@inheritDoc}
+    * 
+    * Replaces the tokens in a given file based on a customized context using velocity engine.
+    * 
+    * @param path the output path
+    * @param basicFileAttributes not used
+    * @return the results of the file visit
+    */
    @Override
    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException
    {

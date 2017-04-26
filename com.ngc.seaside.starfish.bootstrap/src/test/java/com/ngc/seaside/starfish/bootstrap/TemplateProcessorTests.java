@@ -21,6 +21,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests for the TemplateProcessor class.
+ */
 public class TemplateProcessorTests
 {
    private Path zipFolder;
@@ -116,7 +119,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: template.properties not found", e.getMessage());
+         assertEquals("Invalid template: " + Main.TEMPLATE_PROPERTIES + " not found", e.getMessage());
       }
 
       /*
@@ -130,7 +133,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: template.properties must be a file", e.getMessage());
+         assertEquals("Invalid template: " + Main.TEMPLATE_PROPERTIES + " must be a file", e.getMessage());
       }
 
       /*
@@ -144,7 +147,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: template folder not found", e.getMessage());
+         assertEquals("Invalid template: " + Main.TEMPLATE_FOLDER + " folder not found", e.getMessage());
       }
 
       /*
@@ -158,7 +161,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: template must be a folder", e.getMessage());
+         assertEquals("Invalid template: " + Main.TEMPLATE_FOLDER + " must be a folder", e.getMessage());
       }
    }
 

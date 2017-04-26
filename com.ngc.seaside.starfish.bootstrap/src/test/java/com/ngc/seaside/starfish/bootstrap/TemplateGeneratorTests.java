@@ -1,10 +1,5 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
@@ -14,9 +9,16 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Tests for the TemplateGenerator class.
+ */
 public class TemplateGeneratorTests
 {
-
    private Path templateFolder;
    private Path outputFolder;
    private Map<String, String> parametersAndValues;

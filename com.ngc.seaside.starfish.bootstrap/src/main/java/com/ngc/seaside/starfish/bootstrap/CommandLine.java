@@ -3,7 +3,11 @@ package com.ngc.seaside.starfish.bootstrap;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.function.Predicate;
 
 /**
@@ -11,7 +15,6 @@ import java.util.function.Predicate;
  */
 public class CommandLine
 {
-
    private Path templateFile;
    private Path outputFolder;
    private boolean clean;
@@ -67,11 +70,13 @@ public class CommandLine
       CommandLine cl = new CommandLine();
       List<String> list = new ArrayList<>(Arrays.asList(args));
 
+      // Help option processing
       if (list.indexOf("-h") >= 0 || list.indexOf("--help") >= 0) {
          printHelp();
          throw new ExitException();
       }
 
+      // Output folder option processing
       int outputFolderIndex = list.indexOf("-o");
       if (outputFolderIndex >= 0) {
          if (outputFolderIndex + 1 < list.size()) {
@@ -86,6 +91,7 @@ public class CommandLine
          cl.outputFolder = Paths.get(".").toAbsolutePath().normalize();
       }
 
+      // Clean option processing
       int cleanIndex = list.indexOf("--clean");
       if (cleanIndex >= 0) {
          cl.clean = true;
@@ -95,6 +101,7 @@ public class CommandLine
          cl.clean = false;
       }
 
+      // Handle invalid size argument list
       if (list.size() != 1) {
          for (String arg : list) {
             if (arg.startsWith("-")) {
@@ -104,6 +111,7 @@ public class CommandLine
          throw new ExitException("Invalid number of arguments. Try running with --help");
       }
 
+      // Template file processing
       cl.templateFile = Paths.get(list.get(0));
       if (!Files.exists(cl.templateFile)) {
          throw new ExitException("File " + list.get(0) + " does not exist");
@@ -114,6 +122,9 @@ public class CommandLine
       return cl;
    }
 
+   /**
+    * Prints the usage description and options to the command line.
+    */
    private static void printHelp()
    {
       System.out.println("usage: java -jar bootstrap.jar [-h] [-o output-file] [--clean] template-file");

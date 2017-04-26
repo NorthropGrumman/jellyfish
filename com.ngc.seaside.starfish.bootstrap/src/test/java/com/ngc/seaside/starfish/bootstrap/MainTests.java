@@ -1,8 +1,10 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.junit.*;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -12,6 +14,16 @@ import java.security.Permission;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ * Test for the Main class
+ */
 public class MainTests
 {
    private static final String GROUP_ID = "com.ngc.seaside.starfish";
@@ -96,7 +108,6 @@ public class MainTests
          Assert.assertTrue(TemplateGeneratorTests.checkFile(sampleFile, "$" + key, "${" + key + "}"));
          Assert.assertTrue(TemplateGeneratorTests.checkFile(testSampleFile, "$" + key, "${" + key + "}"));
       }
-
    }
 
    @After
@@ -138,7 +149,5 @@ public class MainTests
             baseSecurityManager.checkPermission(permission);
          }
       }
-
    }
-
 }
