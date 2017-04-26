@@ -21,6 +21,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
+
 /**
  * Tests for the TemplateProcessor class.
  */
@@ -119,7 +121,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: " + Main.TEMPLATE_PROPERTIES + " not found", e.getMessage());
+         assertTrue(e.failed());
       }
 
       /*
@@ -133,7 +135,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: " + Main.TEMPLATE_PROPERTIES + " must be a file", e.getMessage());
+         assertTrue(e.failed());
       }
 
       /*
@@ -147,7 +149,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: " + Main.TEMPLATE_FOLDER + " folder not found", e.getMessage());
+         assertTrue(e.failed());
       }
 
       /*
@@ -161,7 +163,7 @@ public class TemplateProcessorTests
          TemplateProcessor.validateTemplate(templatePath);
       }
       catch (ExitException e) {
-         assertEquals("Invalid template: " + Main.TEMPLATE_FOLDER + " must be a folder", e.getMessage());
+         assertTrue(e.failed());
       }
    }
 
