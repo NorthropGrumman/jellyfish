@@ -1,21 +1,15 @@
 package com.ngc.seaside.starfish.bootstrap;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 
 /**
  * Class for generating an instance of a template
@@ -64,7 +58,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
     * @param group object to convert to file path
     * @return a file path of the represented object
     */
-   public static String asFile(Object group)
+   public static String asPath(Object group)
    {
       return group.toString().replace(".", FileSystems.getDefault().getSeparator());
    }
