@@ -4,8 +4,9 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'com.ngc.seaside.starfish.bootstrap.Main'
+sourceCompatibility = 1.8
 
+mainClassName = 'com.ngc.seaside.starfish.bootstrap.Main'
 
 repositories {
     maven {
@@ -19,13 +20,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-mainClassName = 'com.ngc.seaside.starfish.bootstrap.Main'
-
-jar {
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+applicationDistribution.from("example") {
+    into 'resources/config/example'
 }
