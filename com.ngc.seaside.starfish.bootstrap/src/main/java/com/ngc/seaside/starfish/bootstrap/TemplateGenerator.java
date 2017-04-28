@@ -25,7 +25,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
     * Constructor that designates the input and output folders, uses velocity to generate context
     * using the provided parameters, and gives the option to cleanup the output folder in case it
     * was previously generated.
-    * 
+    *
     * @param parametersAndValues Map of parameter-values used
     * @param inputFolder folder of the unzipped template
     * @param outputFolder folder for outputting the generated template instance
@@ -52,9 +52,9 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 
    /**
     * Converts an object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g., com/ngc/example on Unix).
-    * 
-    * @implNote this method is used by the Velocity Engine when $Template.asFile($group) is found in order to represent something like a groupId as a file path
-    * 
+    *
+    * @apiNote this method is used by the Velocity Engine when $Template.asPath($groupId) is found in order to represent something like a groupId as a file path
+    *
     * @param group object to convert to file path
     * @return a file path of the represented object
     */
@@ -65,7 +65,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 
    /**
     * Converts any velocity-like formatting in the input's filename and returns the output locations of the input file.
-    * 
+    *
     * @param input path to input file or folder
     * @return output path of file or folder
     */
@@ -84,12 +84,13 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * Creates the output folder
-    * 
+    *
     * @param path the output path
     * @param basicFileAttributes not used
     * @return the results of the file visit
+    * @throws IOException if an I/O error occurs
     */
    @Override
    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException
@@ -106,12 +107,13 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * Replaces the tokens in a given file based on a customized context using velocity engine.
-    * 
+    *
     * @param path the output path
     * @param basicFileAttributes not used
     * @return the results of the file visit
+    * @throws IOException if an I/O error occurs
     */
    @Override
    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException
@@ -125,9 +127,10 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
 
    /**
     * Recursively deletes the contents of the given folder.
-    * 
+    *
     * @param folder folder to delete
     * @param onlySubcontents if true does not delete the folder
+    * @throws IOException if an error occurred while deleting
     */
    static void deleteRecursive(Path folder, boolean onlySubcontents) throws IOException
    {

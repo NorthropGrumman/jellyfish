@@ -6,7 +6,7 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = 'com.ngc.seaside.starfish.bootstrap.Main'
+mainClassName = "${group}.Main"
 
 repositories {
     maven {
@@ -20,6 +20,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-applicationDistribution.from("example") {
+// Copies TemplateExample.zip to distribution zip
+applicationDistribution.from('example') {
     into 'resources/config/example'
 }
