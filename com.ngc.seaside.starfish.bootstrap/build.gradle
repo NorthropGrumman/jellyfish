@@ -10,7 +10,7 @@ mainClassName = "${group}.Main"
 
 repositories {
     maven {
-        url 'http://10.207.42.43/nexus/repository/maven-central/'
+        url 'http://10.207.42.43/nexus/repository/maven-public/'
     }
 }
 
@@ -21,6 +21,6 @@ dependencies {
 }
 
 // Copies TemplateExample.zip to distribution zip
-applicationDistribution.from('example') {
-    into 'resources/config/example'
+applicationDistribution.from('src/main/resources/templates') {
+    into 'resources/config'
 }
