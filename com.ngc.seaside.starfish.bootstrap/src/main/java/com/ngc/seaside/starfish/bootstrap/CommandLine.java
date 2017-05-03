@@ -113,7 +113,7 @@ public class CommandLine {
 
    /**
     * Finds the path to the template file.  The first argument is treated as an absolute path.  If the file does not
-    * exists, the template is resolved by looking for ${appHome}/resources/config/${templateName}/Template${templateName}.zip.
+    * exist, the template is resolved by looking for ${appHome}/resources/config/${templateName}/Template${templateName}.zip.
     *  If neither the absolute path or the appHome relative path points to an existing file an {@code ExitException} is
     * generated.
     *
