@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -59,6 +60,29 @@ public class CommandLineTests
       Assert.assertEquals(p, cl.getTemplateFile());
       Assert.assertEquals(o, cl.getOutputFolder());
    }
+   
+   @Test
+   public void testDoesDefaultToResourcesConfigForTemplates() throws Throwable
+   {
+      System.setOut(new PrintStream(new ByteArrayOutputStream()));
+
+      Path tempDir = Files.createTempDirectory(null);
+      Path templateDir = tempDir.resolve(Paths.get("resources", "config", "test"));
+      Path templateFile = templateDir.resolve("TemplateTest.zip");
+      Files.createDirectories(templateDir);
+      Files.createFile(templateFile);
+      Path o = Files.createTempDirectory(null);
+
+      tempDir.toFile().deleteOnExit();
+      o.toFile().deleteOnExit();
+
+      System.setProperty(CommandLine.APP_HOME_SYS_PROPERTY, tempDir.toFile().getAbsolutePath());
+
+      CommandLine cl = CommandLine.parseArgs("test", "-o", o.toAbsolutePath().toString());
+      Assert.assertEquals("did not search default resources for template file!",
+                          templateFile,
+                          cl.getTemplateFile());
+   }
 
    @Test
    public void testQuery() throws Exception
@@ -90,6 +114,7 @@ public class CommandLineTests
    {
       System.setOut(SYSTEM_OUT);
       System.setIn(SYSTEM_IN);
+      System.clearProperty(CommandLine.APP_HOME_SYS_PROPERTY);
    }
 
 }

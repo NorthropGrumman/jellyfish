@@ -31,7 +31,8 @@ public class Main
          TemplateProcessor.validateTemplate(templateFolder);
 
          // Parse template.properties file for each parameter and its default value
-         LinkedHashMap<String, String> parametersAndDefaults = TemplateProcessor.parseTemplateProperties(templateFolder.resolve(TEMPLATE_PROPERTIES));
+         LinkedHashMap<String, String> parametersAndDefaults =
+                  TemplateProcessor.parseTemplateProperties(templateFolder.resolve(TEMPLATE_PROPERTIES));
 
          // For each parameter query the user for its value
          Map<String, String> parametersAndValues = new HashMap<>();
@@ -42,7 +43,11 @@ public class Main
          }
 
          // Walk through the unzipped template directory in order to generate the instance of the template
-         Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER), new TemplateGenerator(parametersAndValues, templateFolder.resolve(TEMPLATE_FOLDER), cl.getOutputFolder(), cl.isClean()));
+         Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER),
+                            new TemplateGenerator(parametersAndValues,
+                                                  templateFolder.resolve(TEMPLATE_FOLDER),
+                                                  cl.getOutputFolder(),
+                                                  cl.isClean()));
 
       }
       catch (ExitException e) {
@@ -52,7 +57,7 @@ public class Main
          errorCode = e.getCode();
       }
       catch (Exception e) {
-         System.err.println("An unexpected error occured: ");
+         System.err.println("An unexpected error occurred: ");
          e.printStackTrace(System.err);
          errorCode = 1;
       }
