@@ -1,4 +1,4 @@
-# Java class files
+# Java files
 *.class
 *.jar
 *.war
@@ -7,13 +7,13 @@
 bin/
 gen/
 
-# Eclipse project files
+# Eclipse files
 .classpath
 .project
 .settings/
 .recommenders/
 
-# Intellij project files
+# Intellij files
 *.iml
 *.ipr
 *.iws
@@ -22,9 +22,8 @@ out/
 
 # Gradle
 .gradletasknamecache
-gradlew
-gradlew.bat
 .gradle/
-gradle/
 build/
 bin/
+# Avoid ignoring Gradle wrapper jar file
+!gradle-wrapper.jar
