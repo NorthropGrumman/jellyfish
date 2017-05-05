@@ -20,6 +20,7 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    private final VelocityContext context = new VelocityContext();
    private final Path outputFolder;
    private final Path inputFolder;
+   private final boolean clean;
 
    /**
     * Constructor that designates the input and output folders, uses velocity to generate context
@@ -35,19 +36,12 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    {
       this.outputFolder = outputFolder;
       this.inputFolder = inputFolder;
+      this.clean = clean;
       engine.setProperty("runtime.references.strict", true);
       for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
       context.put("Template", TemplateGenerator.class);
-      if (clean) {
-         try {
-            deleteRecursive(outputFolder, true);
-         }
-         catch (IOException e) {
-            throw new IllegalStateException("Unable to clean");
-         }
-      }
    }
 
    /**
@@ -96,6 +90,14 @@ public class TemplateGenerator extends SimpleFileVisitor<Path>
    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException
    {
       Path outputFolder = getOutputPath(path);
+      if (clean && !path.equals(inputFolder)) {
+         try {
+            deleteRecursive(outputFolder, true);
+         }
+         catch (IOException e) {
+            // Ignore cleaning exceptions
+         }
+      }
       try {
          Files.createDirectories(outputFolder);
       }

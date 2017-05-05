@@ -88,6 +88,7 @@ public class TemplateGeneratorTests
    public void testGeneratorWithClean() throws IOException
    {
       TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, true);
+      Files.createFile(outputFolder.resolve("should_not_be_deleted"));
       Files.walkFileTree(templateFolder, gen);
 
       Files.createDirectories(outputFolder.resolve(GROUP_ID));
@@ -145,6 +146,8 @@ public class TemplateGeneratorTests
          Assert.assertTrue(checkFile(sampleFile, "$" + key, "${" + key + "}"));
          Assert.assertTrue(checkFile(testSampleFile, "$" + key, "${" + key + "}"));
       }
+
+      Assert.assertTrue(Files.exists(outputFolder.resolve("should_not_be_deleted")));
    }
 
    @After
