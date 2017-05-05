@@ -1,27 +1,18 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the TemplateProcessor class.
@@ -35,7 +26,7 @@ public class TemplateProcessorTests
    @Before
    public void setup() throws URISyntaxException
    {
-      zipFolder = Paths.get(getClass().getClassLoader().getResource("testZip.zip").toURI());
+      zipFolder = Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI());
       templatePath = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI());
       fileCount = 0;
    }
@@ -52,12 +43,17 @@ public class TemplateProcessorTests
       // Setup expected
       Set<String> expectedFiles = new HashSet<>();
       expectedFiles.add(".gitignore");
+      expectedFiles.add("settings.gradle");
       expectedFiles.add("build.gradle");
       expectedFiles.add("Sample.java");
       expectedFiles.add("SampleTest.java");
       expectedFiles.add("template.properties");
+      expectedFiles.add("gradlew");
+      expectedFiles.add("gradlew.bat");
+      expectedFiles.add("gradle-wrapper.jar");
+      expectedFiles.add("gradle-wrapper.properties");
 
-      int expectedFileCount = 5;
+      int expectedFileCount = expectedFiles.size();
 
       // Method to test
       try {
@@ -70,7 +66,7 @@ public class TemplateProcessorTests
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
             {
-               assertTrue(expectedFiles.contains(file.getFileName().toString()));
+               assertTrue("Unexpected File: " + file, expectedFiles.contains(file.getFileName().toString()));
                fileCount++;
                return FileVisitResult.CONTINUE;
             }

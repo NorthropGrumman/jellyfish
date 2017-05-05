@@ -1,10 +1,8 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import org.junit.*;
+
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -13,13 +11,6 @@ import java.nio.file.Paths;
 import java.security.Permission;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Test for the Main class
@@ -46,7 +37,7 @@ public class MainTests
    @Before
    public void setup() throws Exception
    {
-      templateFile = Paths.get(getClass().getClassLoader().getResource("testZip.zip").toURI()).toAbsolutePath();
+      templateFile = Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI()).toAbsolutePath();
       outputFolder = Files.createTempDirectory(null).toAbsolutePath();
       final String input = GROUP_ID + "\n" + ARTIFACT_ID + "\n" + VERSION + "\n";
       InputStream in = new ByteArrayInputStream(input.getBytes());
@@ -72,7 +63,7 @@ public class MainTests
          Assert.assertEquals("exitVM.0", e.getMessage());
       }
 
-      Path base = outputFolder.resolve(GROUP_ID);
+      Path base = outputFolder.resolve(ARTIFACT_ID);
       Assert.assertTrue(Files.isDirectory(base));
 
       Path gradle = base.resolve("build.gradle");
