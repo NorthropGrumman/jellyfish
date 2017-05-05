@@ -1,6 +1,7 @@
 package com.ngc.seaside.starfish.bootstrap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -151,14 +152,21 @@ public class CommandLine {
     * Prints the usage description and options to the command line.
     */
    private static void printHelp() {
-      System.out.println("usage: java -jar bootstrap.jar [-h] [-o output-file] [--clean] template-file");
+      final String script;
+      if (SystemUtils.IS_OS_WINDOWS) {
+         script = CommandLine.class.getPackage().getName() + ".bat";
+      } else {
+         script = CommandLine.class.getPackage().getName();
+      }
+
+      System.out.println("usage: " + script + " [-h] [-o output-dir] [--clean] template-file");
       System.out.println();
       System.out.println("positional arguments:");
       System.out.println("  template-file  template zip file");
       System.out.println();
       System.out.println("optional arguments:");
       System.out.println("  -h, --help      show this help message and exit");
-      System.out.println("  -o output-file  output directory for template generation");
+      System.out.println("  -o output-dir   output directory for template generation");
       System.out.println("  --clean         remove files from previous template generation");
    }
 
