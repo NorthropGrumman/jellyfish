@@ -4,18 +4,18 @@ SystemDescriptor-DSL for CEAC-295 Story
 ## Load the project in Eclipse Neon
 1. Open Eclipse
 1. Switch the workspace
-..* File -> Switch Workspace -> Other...
-..* Select **Browse...** and select or Make a New Folder for the Eclipse project files to reside.
-..* **Important:** Do not select the cloned **jellyfish-systemdescriptor-dsl** directory
-..* I used a directory called **eclipse-project** sitting at the same level as the above directory.
+  * File -> Switch Workspace -> Other...
+  * Select **Browse...** and select or Make a New Folder for the Eclipse project files to reside.
+  * **Important:** Do not select the cloned **jellyfish-systemdescriptor-dsl** directory
+  * I used a directory called **eclipse-project** sitting at the same level as the above directory.
 1. Import the existing project
-..1. **File** -> **Import...**
-..1. Expand **General**
-..1. Select **Existing Projects into Workspace**
-..1. Select **Search for nested projects** under *Options*
-..1. Select **Next**
-..1. Select **Browse...** and navigate to the **jellyfish-systemdescriptor-dsl** directory
-..1. Select **Finish**
+  1. **File** -> **Import...**
+  1. Expand **General**
+  1. Select **Existing Projects into Workspace**
+  1. Select **Search for nested projects** under *Options*
+  1. Select **Next**
+  1. Select **Browse...** and navigate to the **jellyfish-systemdescriptor-dsl** directory
+  1. Select **Finish**
 
 ## Build the project
 1. Expand com.ngc.seaside.systemdescriptor.parent project
