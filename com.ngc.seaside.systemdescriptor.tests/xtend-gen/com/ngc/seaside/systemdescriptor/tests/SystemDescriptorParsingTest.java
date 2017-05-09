@@ -10,6 +10,7 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,14 +23,29 @@ public class SystemDescriptorParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
   
+  @Inject
+  private ValidationTestHelper validationTester;
+  
   @Test
   public void loadModel() {
     try {
       StringConcatenation _builder = new StringConcatenation();
-      _builder.append("Hello Xtext!");
+      _builder.append("metadata {");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("\"name\" : \"test\",");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("\"description\" : \"A test metadata object\",");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("\"alias\" : [\"metadata\", \"test\"]");
+      _builder.newLine();
+      _builder.append("}");
       _builder.newLine();
       final Model result = this.parseHelper.parse(_builder);
       Assert.assertNotNull(result);
+      this.validationTester.assertNoIssues(result);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

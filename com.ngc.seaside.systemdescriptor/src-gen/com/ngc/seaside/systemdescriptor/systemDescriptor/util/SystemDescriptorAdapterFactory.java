@@ -3,7 +3,14 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor.util;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.*;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -81,9 +88,39 @@ public class SystemDescriptorAdapterFactory extends AdapterFactoryImpl
         return createModelAdapter();
       }
       @Override
-      public Adapter caseGreeting(Greeting object)
+      public Adapter caseMetadata(Metadata object)
       {
-        return createGreetingAdapter();
+        return createMetadataAdapter();
+      }
+      @Override
+      public Adapter caseObject(com.ngc.seaside.systemdescriptor.systemDescriptor.Object object)
+      {
+        return createObjectAdapter();
+      }
+      @Override
+      public Adapter caseArray(Array object)
+      {
+        return createArrayAdapter();
+      }
+      @Override
+      public Adapter caseEmptyObject(EmptyObject object)
+      {
+        return createEmptyObjectAdapter();
+      }
+      @Override
+      public Adapter caseEmptyArray(EmptyArray object)
+      {
+        return createEmptyArrayAdapter();
+      }
+      @Override
+      public Adapter caseObjectValue(ObjectValue object)
+      {
+        return createObjectValueAdapter();
+      }
+      @Override
+      public Adapter caseTerminalObject(TerminalObject object)
+      {
+        return createTerminalObjectAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -123,16 +160,106 @@ public class SystemDescriptorAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting <em>Greeting</em>}'.
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata <em>Metadata</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
    * @generated
    */
-  public Adapter createGreetingAdapter()
+  public Adapter createMetadataAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Object <em>Object</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Object
+   * @generated
+   */
+  public Adapter createObjectAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Array <em>Array</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Array
+   * @generated
+   */
+  public Adapter createArrayAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject <em>Empty Object</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject
+   * @generated
+   */
+  public Adapter createEmptyObjectAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray <em>Empty Array</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray
+   * @generated
+   */
+  public Adapter createEmptyArrayAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue <em>Object Value</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue
+   * @generated
+   */
+  public Adapter createObjectValueAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject <em>Terminal Object</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject
+   * @generated
+   */
+  public Adapter createTerminalObjectAdapter()
   {
     return null;
   }

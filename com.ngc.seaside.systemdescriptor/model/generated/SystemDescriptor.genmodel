@@ -9,8 +9,30 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/greetings"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//Greeting">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Greeting/name"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Metadata">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Metadata/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Metadata/json"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Object">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Object/firstObject"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Object/objects"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Array">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Array/firstItem"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Array/items"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//EmptyObject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EmptyObject/isEmpty"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//EmptyArray">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EmptyArray/isEmpty"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//ObjectValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ObjectValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//TerminalObject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//TerminalObject/element"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//TerminalObject/content"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

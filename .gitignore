@@ -28,10 +28,14 @@ gradle-app.setting
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored) 
 !gradle-wrapper.jar 
 
+# Project specific excludes
 build
 *.jar
 bin
- 
+plugins
+features
+src-gen
+
 #VS 
 *.sln 
 *.VC.db 

@@ -11,6 +11,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -18,13 +19,21 @@ class SystemDescriptorParsingTest{
 
 	@Inject
 	ParseHelper<Model> parseHelper
+	
+	@Inject
+    ValidationTestHelper validationTester
 
 	@Test 
 	def void loadModel() {
 		val result = parseHelper.parse('''
-			Hello Xtext!
+			metadata {
+				"name" : "test",
+				"description" : "A test metadata object",
+				"alias" : ["metadata", "test"]
+			}
 		''')
 		Assert.assertNotNull(result)
+		validationTester.assertNoIssues(result);
 	}
 
 }

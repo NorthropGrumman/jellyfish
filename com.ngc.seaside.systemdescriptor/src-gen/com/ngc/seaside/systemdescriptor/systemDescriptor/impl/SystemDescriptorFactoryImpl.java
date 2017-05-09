@@ -3,7 +3,15 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor.impl;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.*;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -66,7 +74,13 @@ public class SystemDescriptorFactoryImpl extends EFactoryImpl implements SystemD
     switch (eClass.getClassifierID())
     {
       case SystemDescriptorPackage.MODEL: return createModel();
-      case SystemDescriptorPackage.GREETING: return createGreeting();
+      case SystemDescriptorPackage.METADATA: return createMetadata();
+      case SystemDescriptorPackage.OBJECT: return createObject();
+      case SystemDescriptorPackage.ARRAY: return createArray();
+      case SystemDescriptorPackage.EMPTY_OBJECT: return createEmptyObject();
+      case SystemDescriptorPackage.EMPTY_ARRAY: return createEmptyArray();
+      case SystemDescriptorPackage.OBJECT_VALUE: return createObjectValue();
+      case SystemDescriptorPackage.TERMINAL_OBJECT: return createTerminalObject();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -88,10 +102,76 @@ public class SystemDescriptorFactoryImpl extends EFactoryImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
-  public Greeting createGreeting()
+  public Metadata createMetadata()
   {
-    GreetingImpl greeting = new GreetingImpl();
-    return greeting;
+    MetadataImpl metadata = new MetadataImpl();
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public com.ngc.seaside.systemdescriptor.systemDescriptor.Object createObject()
+  {
+    ObjectImpl object = new ObjectImpl();
+    return object;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Array createArray()
+  {
+    ArrayImpl array = new ArrayImpl();
+    return array;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EmptyObject createEmptyObject()
+  {
+    EmptyObjectImpl emptyObject = new EmptyObjectImpl();
+    return emptyObject;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EmptyArray createEmptyArray()
+  {
+    EmptyArrayImpl emptyArray = new EmptyArrayImpl();
+    return emptyArray;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ObjectValue createObjectValue()
+  {
+    ObjectValueImpl objectValue = new ObjectValueImpl();
+    return objectValue;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TerminalObject createTerminalObject()
+  {
+    TerminalObjectImpl terminalObject = new TerminalObjectImpl();
+    return terminalObject;
   }
 
   /**

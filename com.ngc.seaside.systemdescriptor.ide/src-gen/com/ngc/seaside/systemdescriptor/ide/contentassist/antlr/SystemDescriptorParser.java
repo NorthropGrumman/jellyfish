@@ -35,9 +35,25 @@ public class SystemDescriptorParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getGreetingAccess().getGroup(), "rule__Greeting__Group__0");
+					put(grammarAccess.getObjectValueAccess().getAlternatives(), "rule__ObjectValue__Alternatives");
+					put(grammarAccess.getMetadataAccess().getGroup(), "rule__Metadata__Group__0");
+					put(grammarAccess.getObjectAccess().getGroup(), "rule__Object__Group__0");
+					put(grammarAccess.getObjectAccess().getGroup_2(), "rule__Object__Group_2__0");
+					put(grammarAccess.getArrayAccess().getGroup(), "rule__Array__Group__0");
+					put(grammarAccess.getArrayAccess().getGroup_2(), "rule__Array__Group_2__0");
+					put(grammarAccess.getTerminalObjectAccess().getGroup(), "rule__TerminalObject__Group__0");
 					put(grammarAccess.getModelAccess().getGreetingsAssignment(), "rule__Model__GreetingsAssignment");
-					put(grammarAccess.getGreetingAccess().getNameAssignment_1(), "rule__Greeting__NameAssignment_1");
+					put(grammarAccess.getMetadataAccess().getTypeAssignment_0(), "rule__Metadata__TypeAssignment_0");
+					put(grammarAccess.getMetadataAccess().getJsonAssignment_1(), "rule__Metadata__JsonAssignment_1");
+					put(grammarAccess.getObjectAccess().getFirstObjectAssignment_1(), "rule__Object__FirstObjectAssignment_1");
+					put(grammarAccess.getObjectAccess().getObjectsAssignment_2_1(), "rule__Object__ObjectsAssignment_2_1");
+					put(grammarAccess.getArrayAccess().getFirstItemAssignment_1(), "rule__Array__FirstItemAssignment_1");
+					put(grammarAccess.getArrayAccess().getItemsAssignment_2_1(), "rule__Array__ItemsAssignment_2_1");
+					put(grammarAccess.getEmptyObjectAccess().getIsEmptyAssignment(), "rule__EmptyObject__IsEmptyAssignment");
+					put(grammarAccess.getEmptyArrayAccess().getIsEmptyAssignment(), "rule__EmptyArray__IsEmptyAssignment");
+					put(grammarAccess.getObjectValueAccess().getValueAssignment_0(), "rule__ObjectValue__ValueAssignment_0");
+					put(grammarAccess.getTerminalObjectAccess().getElementAssignment_0(), "rule__TerminalObject__ElementAssignment_0");
+					put(grammarAccess.getTerminalObjectAccess().getContentAssignment_2(), "rule__TerminalObject__ContentAssignment_2");
 				}
 			};
 		}

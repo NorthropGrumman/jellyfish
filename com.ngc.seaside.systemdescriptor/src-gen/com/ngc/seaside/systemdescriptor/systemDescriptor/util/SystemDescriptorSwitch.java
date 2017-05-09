@@ -3,7 +3,14 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor.util;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.*;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -80,10 +87,56 @@ public class SystemDescriptorSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SystemDescriptorPackage.GREETING:
+      case SystemDescriptorPackage.METADATA:
       {
-        Greeting greeting = (Greeting)theEObject;
-        T result = caseGreeting(greeting);
+        Metadata metadata = (Metadata)theEObject;
+        T result = caseMetadata(metadata);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.OBJECT:
+      {
+        com.ngc.seaside.systemdescriptor.systemDescriptor.Object object = (com.ngc.seaside.systemdescriptor.systemDescriptor.Object)theEObject;
+        T result = caseObject(object);
+        if (result == null) result = caseObjectValue(object);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.ARRAY:
+      {
+        Array array = (Array)theEObject;
+        T result = caseArray(array);
+        if (result == null) result = caseObjectValue(array);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.EMPTY_OBJECT:
+      {
+        EmptyObject emptyObject = (EmptyObject)theEObject;
+        T result = caseEmptyObject(emptyObject);
+        if (result == null) result = caseObjectValue(emptyObject);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.EMPTY_ARRAY:
+      {
+        EmptyArray emptyArray = (EmptyArray)theEObject;
+        T result = caseEmptyArray(emptyArray);
+        if (result == null) result = caseObjectValue(emptyArray);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.OBJECT_VALUE:
+      {
+        ObjectValue objectValue = (ObjectValue)theEObject;
+        T result = caseObjectValue(objectValue);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.TERMINAL_OBJECT:
+      {
+        TerminalObject terminalObject = (TerminalObject)theEObject;
+        T result = caseTerminalObject(terminalObject);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -108,17 +161,113 @@ public class SystemDescriptorSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Greeting</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Metadata</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Greeting</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Metadata</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseGreeting(Greeting object)
+  public T caseMetadata(Metadata object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Object</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Object</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseObject(com.ngc.seaside.systemdescriptor.systemDescriptor.Object object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Array</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Array</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseArray(Array object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Empty Object</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Empty Object</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEmptyObject(EmptyObject object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Empty Array</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Empty Array</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEmptyArray(EmptyArray object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Object Value</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Object Value</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseObjectValue(ObjectValue object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Terminal Object</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Terminal Object</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTerminalObject(TerminalObject object)
   {
     return null;
   }

@@ -33,13 +33,67 @@ public interface SystemDescriptorFactory extends EFactory
   Model createModel();
 
   /**
-   * Returns a new object of class '<em>Greeting</em>'.
+   * Returns a new object of class '<em>Metadata</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Greeting</em>'.
+   * @return a new object of class '<em>Metadata</em>'.
    * @generated
    */
-  Greeting createGreeting();
+  Metadata createMetadata();
+
+  /**
+   * Returns a new object of class '<em>Object</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Object</em>'.
+   * @generated
+   */
+  Object createObject();
+
+  /**
+   * Returns a new object of class '<em>Array</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Array</em>'.
+   * @generated
+   */
+  Array createArray();
+
+  /**
+   * Returns a new object of class '<em>Empty Object</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Empty Object</em>'.
+   * @generated
+   */
+  EmptyObject createEmptyObject();
+
+  /**
+   * Returns a new object of class '<em>Empty Array</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Empty Array</em>'.
+   * @generated
+   */
+  EmptyArray createEmptyArray();
+
+  /**
+   * Returns a new object of class '<em>Object Value</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Object Value</em>'.
+   * @generated
+   */
+  ObjectValue createObjectValue();
+
+  /**
+   * Returns a new object of class '<em>Terminal Object</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Terminal Object</em>'.
+   * @generated
+   */
+  TerminalObject createTerminalObject();
 
   /**
    * Returns the package supported by this factory.

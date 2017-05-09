@@ -86,32 +86,272 @@ public interface SystemDescriptorPackage extends EPackage
   int MODEL_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.GreetingImpl <em>Greeting</em>}' class.
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl <em>Metadata</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.GreetingImpl
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getGreeting()
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getMetadata()
    * @generated
    */
-  int GREETING = 1;
+  int METADATA = 1;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * The feature id for the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GREETING__NAME = 0;
+  int METADATA__TYPE = 0;
 
   /**
-   * The number of structural features of the '<em>Greeting</em>' class.
+   * The feature id for the '<em><b>Json</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GREETING_FEATURE_COUNT = 1;
+  int METADATA__JSON = 1;
+
+  /**
+   * The number of structural features of the '<em>Metadata</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int METADATA_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectValueImpl <em>Object Value</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectValueImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObjectValue()
+   * @generated
+   */
+  int OBJECT_VALUE = 6;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT_VALUE__VALUE = 0;
+
+  /**
+   * The number of structural features of the '<em>Object Value</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT_VALUE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectImpl <em>Object</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObject()
+   * @generated
+   */
+  int OBJECT = 2;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT__VALUE = OBJECT_VALUE__VALUE;
+
+  /**
+   * The feature id for the '<em><b>First Object</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT__FIRST_OBJECT = OBJECT_VALUE_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Objects</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT__OBJECTS = OBJECT_VALUE_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Object</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBJECT_FEATURE_COUNT = OBJECT_VALUE_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ArrayImpl <em>Array</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ArrayImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getArray()
+   * @generated
+   */
+  int ARRAY = 3;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARRAY__VALUE = OBJECT_VALUE__VALUE;
+
+  /**
+   * The feature id for the '<em><b>First Item</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARRAY__FIRST_ITEM = OBJECT_VALUE_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Items</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARRAY__ITEMS = OBJECT_VALUE_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Array</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARRAY_FEATURE_COUNT = OBJECT_VALUE_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyObjectImpl <em>Empty Object</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyObjectImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyObject()
+   * @generated
+   */
+  int EMPTY_OBJECT = 4;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_OBJECT__VALUE = OBJECT_VALUE__VALUE;
+
+  /**
+   * The feature id for the '<em><b>Is Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_OBJECT__IS_EMPTY = OBJECT_VALUE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Empty Object</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_OBJECT_FEATURE_COUNT = OBJECT_VALUE_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyArrayImpl <em>Empty Array</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyArrayImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyArray()
+   * @generated
+   */
+  int EMPTY_ARRAY = 5;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_ARRAY__VALUE = OBJECT_VALUE__VALUE;
+
+  /**
+   * The feature id for the '<em><b>Is Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_ARRAY__IS_EMPTY = OBJECT_VALUE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Empty Array</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EMPTY_ARRAY_FEATURE_COUNT = OBJECT_VALUE_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.TerminalObjectImpl <em>Terminal Object</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.TerminalObjectImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getTerminalObject()
+   * @generated
+   */
+  int TERMINAL_OBJECT = 7;
+
+  /**
+   * The feature id for the '<em><b>Element</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TERMINAL_OBJECT__ELEMENT = 0;
+
+  /**
+   * The feature id for the '<em><b>Content</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TERMINAL_OBJECT__CONTENT = 1;
+
+  /**
+   * The number of structural features of the '<em>Terminal Object</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TERMINAL_OBJECT_FEATURE_COUNT = 2;
 
 
   /**
@@ -136,25 +376,195 @@ public interface SystemDescriptorPackage extends EPackage
   EReference getModel_Greetings();
 
   /**
-   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting <em>Greeting</em>}'.
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata <em>Metadata</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Greeting</em>'.
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting
+   * @return the meta object for class '<em>Metadata</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
    * @generated
    */
-  EClass getGreeting();
+  EClass getMetadata();
 
   /**
-   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting#getName <em>Name</em>}'.
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata#getType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting#getName()
-   * @see #getGreeting()
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata#getType()
+   * @see #getMetadata()
    * @generated
    */
-  EAttribute getGreeting_Name();
+  EAttribute getMetadata_Type();
+
+  /**
+   * Returns the meta object for the containment reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata#getJson <em>Json</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Json</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata#getJson()
+   * @see #getMetadata()
+   * @generated
+   */
+  EReference getMetadata_Json();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Object <em>Object</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Object</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Object
+   * @generated
+   */
+  EClass getObject();
+
+  /**
+   * Returns the meta object for the containment reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Object#getFirstObject <em>First Object</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>First Object</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Object#getFirstObject()
+   * @see #getObject()
+   * @generated
+   */
+  EReference getObject_FirstObject();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Object#getObjects <em>Objects</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Objects</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Object#getObjects()
+   * @see #getObject()
+   * @generated
+   */
+  EReference getObject_Objects();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Array <em>Array</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Array</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Array
+   * @generated
+   */
+  EClass getArray();
+
+  /**
+   * Returns the meta object for the containment reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Array#getFirstItem <em>First Item</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>First Item</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Array#getFirstItem()
+   * @see #getArray()
+   * @generated
+   */
+  EReference getArray_FirstItem();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Array#getItems <em>Items</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Items</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Array#getItems()
+   * @see #getArray()
+   * @generated
+   */
+  EReference getArray_Items();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject <em>Empty Object</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Empty Object</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject
+   * @generated
+   */
+  EClass getEmptyObject();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject#isIsEmpty <em>Is Empty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Is Empty</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject#isIsEmpty()
+   * @see #getEmptyObject()
+   * @generated
+   */
+  EAttribute getEmptyObject_IsEmpty();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray <em>Empty Array</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Empty Array</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray
+   * @generated
+   */
+  EClass getEmptyArray();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray#isIsEmpty <em>Is Empty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Is Empty</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray#isIsEmpty()
+   * @see #getEmptyArray()
+   * @generated
+   */
+  EAttribute getEmptyArray_IsEmpty();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue <em>Object Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Object Value</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue
+   * @generated
+   */
+  EClass getObjectValue();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue#getValue()
+   * @see #getObjectValue()
+   * @generated
+   */
+  EAttribute getObjectValue_Value();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject <em>Terminal Object</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Terminal Object</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject
+   * @generated
+   */
+  EClass getTerminalObject();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject#getElement <em>Element</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Element</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject#getElement()
+   * @see #getTerminalObject()
+   * @generated
+   */
+  EAttribute getTerminalObject_Element();
+
+  /**
+   * Returns the meta object for the containment reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject#getContent <em>Content</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Content</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject#getContent()
+   * @see #getTerminalObject()
+   * @generated
+   */
+  EReference getTerminalObject_Content();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -198,22 +608,162 @@ public interface SystemDescriptorPackage extends EPackage
     EReference MODEL__GREETINGS = eINSTANCE.getModel_Greetings();
 
     /**
-     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.GreetingImpl <em>Greeting</em>}' class.
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl <em>Metadata</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.GreetingImpl
-     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getGreeting()
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getMetadata()
      * @generated
      */
-    EClass GREETING = eINSTANCE.getGreeting();
+    EClass METADATA = eINSTANCE.getMetadata();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute GREETING__NAME = eINSTANCE.getGreeting_Name();
+    EAttribute METADATA__TYPE = eINSTANCE.getMetadata_Type();
+
+    /**
+     * The meta object literal for the '<em><b>Json</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference METADATA__JSON = eINSTANCE.getMetadata_Json();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectImpl <em>Object</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObject()
+     * @generated
+     */
+    EClass OBJECT = eINSTANCE.getObject();
+
+    /**
+     * The meta object literal for the '<em><b>First Object</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBJECT__FIRST_OBJECT = eINSTANCE.getObject_FirstObject();
+
+    /**
+     * The meta object literal for the '<em><b>Objects</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBJECT__OBJECTS = eINSTANCE.getObject_Objects();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ArrayImpl <em>Array</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ArrayImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getArray()
+     * @generated
+     */
+    EClass ARRAY = eINSTANCE.getArray();
+
+    /**
+     * The meta object literal for the '<em><b>First Item</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ARRAY__FIRST_ITEM = eINSTANCE.getArray_FirstItem();
+
+    /**
+     * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ARRAY__ITEMS = eINSTANCE.getArray_Items();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyObjectImpl <em>Empty Object</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyObjectImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyObject()
+     * @generated
+     */
+    EClass EMPTY_OBJECT = eINSTANCE.getEmptyObject();
+
+    /**
+     * The meta object literal for the '<em><b>Is Empty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute EMPTY_OBJECT__IS_EMPTY = eINSTANCE.getEmptyObject_IsEmpty();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyArrayImpl <em>Empty Array</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.EmptyArrayImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyArray()
+     * @generated
+     */
+    EClass EMPTY_ARRAY = eINSTANCE.getEmptyArray();
+
+    /**
+     * The meta object literal for the '<em><b>Is Empty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute EMPTY_ARRAY__IS_EMPTY = eINSTANCE.getEmptyArray_IsEmpty();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectValueImpl <em>Object Value</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ObjectValueImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObjectValue()
+     * @generated
+     */
+    EClass OBJECT_VALUE = eINSTANCE.getObjectValue();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBJECT_VALUE__VALUE = eINSTANCE.getObjectValue_Value();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.TerminalObjectImpl <em>Terminal Object</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.TerminalObjectImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getTerminalObject()
+     * @generated
+     */
+    EClass TERMINAL_OBJECT = eINSTANCE.getTerminalObject();
+
+    /**
+     * The meta object literal for the '<em><b>Element</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TERMINAL_OBJECT__ELEMENT = eINSTANCE.getTerminalObject_Element();
+
+    /**
+     * The meta object literal for the '<em><b>Content</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TERMINAL_OBJECT__CONTENT = eINSTANCE.getTerminalObject_Content();
 
   }
 

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.ngc.seaside.systemdescriptor.feature_1.0.0.201705091021.jar" id="com.ngc.seaside.systemdescriptor.feature" version="1.0.0.201705091021"/>
+   <feature url="features/com.ngc.seaside.systemdescriptor.feature_1.0.0.201705091135.jar" id="com.ngc.seaside.systemdescriptor.feature" version="1.0.0.201705091135" nl="en_US"/>
 </site>

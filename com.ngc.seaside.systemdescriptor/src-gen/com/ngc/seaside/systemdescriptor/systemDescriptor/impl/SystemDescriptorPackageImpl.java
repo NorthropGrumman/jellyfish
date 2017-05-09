@@ -3,10 +3,15 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor.impl;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.TerminalObject;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -35,7 +40,49 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass greetingEClass = null;
+  private EClass metadataEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass objectEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass arrayEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass emptyObjectEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass emptyArrayEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass objectValueEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass terminalObjectEClass = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -125,9 +172,9 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getGreeting()
+  public EClass getMetadata()
   {
-    return greetingEClass;
+    return metadataEClass;
   }
 
   /**
@@ -135,9 +182,169 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getGreeting_Name()
+  public EAttribute getMetadata_Type()
   {
-    return (EAttribute)greetingEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)metadataEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMetadata_Json()
+  {
+    return (EReference)metadataEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getObject()
+  {
+    return objectEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getObject_FirstObject()
+  {
+    return (EReference)objectEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getObject_Objects()
+  {
+    return (EReference)objectEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getArray()
+  {
+    return arrayEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getArray_FirstItem()
+  {
+    return (EReference)arrayEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getArray_Items()
+  {
+    return (EReference)arrayEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getEmptyObject()
+  {
+    return emptyObjectEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getEmptyObject_IsEmpty()
+  {
+    return (EAttribute)emptyObjectEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getEmptyArray()
+  {
+    return emptyArrayEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getEmptyArray_IsEmpty()
+  {
+    return (EAttribute)emptyArrayEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getObjectValue()
+  {
+    return objectValueEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getObjectValue_Value()
+  {
+    return (EAttribute)objectValueEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTerminalObject()
+  {
+    return terminalObjectEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTerminalObject_Element()
+  {
+    return (EAttribute)terminalObjectEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTerminalObject_Content()
+  {
+    return (EReference)terminalObjectEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -173,8 +380,30 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
     modelEClass = createEClass(MODEL);
     createEReference(modelEClass, MODEL__GREETINGS);
 
-    greetingEClass = createEClass(GREETING);
-    createEAttribute(greetingEClass, GREETING__NAME);
+    metadataEClass = createEClass(METADATA);
+    createEAttribute(metadataEClass, METADATA__TYPE);
+    createEReference(metadataEClass, METADATA__JSON);
+
+    objectEClass = createEClass(OBJECT);
+    createEReference(objectEClass, OBJECT__FIRST_OBJECT);
+    createEReference(objectEClass, OBJECT__OBJECTS);
+
+    arrayEClass = createEClass(ARRAY);
+    createEReference(arrayEClass, ARRAY__FIRST_ITEM);
+    createEReference(arrayEClass, ARRAY__ITEMS);
+
+    emptyObjectEClass = createEClass(EMPTY_OBJECT);
+    createEAttribute(emptyObjectEClass, EMPTY_OBJECT__IS_EMPTY);
+
+    emptyArrayEClass = createEClass(EMPTY_ARRAY);
+    createEAttribute(emptyArrayEClass, EMPTY_ARRAY__IS_EMPTY);
+
+    objectValueEClass = createEClass(OBJECT_VALUE);
+    createEAttribute(objectValueEClass, OBJECT_VALUE__VALUE);
+
+    terminalObjectEClass = createEClass(TERMINAL_OBJECT);
+    createEAttribute(terminalObjectEClass, TERMINAL_OBJECT__ELEMENT);
+    createEReference(terminalObjectEClass, TERMINAL_OBJECT__CONTENT);
   }
 
   /**
@@ -206,13 +435,39 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    objectEClass.getESuperTypes().add(this.getObjectValue());
+    arrayEClass.getESuperTypes().add(this.getObjectValue());
+    emptyObjectEClass.getESuperTypes().add(this.getObjectValue());
+    emptyArrayEClass.getESuperTypes().add(this.getObjectValue());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getModel_Greetings(), this.getGreeting(), null, "greetings", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getModel_Greetings(), this.getMetadata(), null, "greetings", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(greetingEClass, Greeting.class, "Greeting", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getGreeting_Name(), ecorePackage.getEString(), "name", null, 0, 1, Greeting.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(metadataEClass, Metadata.class, "Metadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMetadata_Type(), ecorePackage.getEString(), "type", null, 0, 1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMetadata_Json(), this.getObject(), null, "json", null, 0, 1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(objectEClass, com.ngc.seaside.systemdescriptor.systemDescriptor.Object.class, "Object", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getObject_FirstObject(), this.getTerminalObject(), null, "firstObject", null, 0, 1, com.ngc.seaside.systemdescriptor.systemDescriptor.Object.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObject_Objects(), this.getTerminalObject(), null, "objects", null, 0, -1, com.ngc.seaside.systemdescriptor.systemDescriptor.Object.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(arrayEClass, Array.class, "Array", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getArray_FirstItem(), this.getObjectValue(), null, "firstItem", null, 0, 1, Array.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getArray_Items(), this.getObjectValue(), null, "items", null, 0, -1, Array.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(emptyObjectEClass, EmptyObject.class, "EmptyObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getEmptyObject_IsEmpty(), ecorePackage.getEBoolean(), "isEmpty", null, 0, 1, EmptyObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(emptyArrayEClass, EmptyArray.class, "EmptyArray", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getEmptyArray_IsEmpty(), ecorePackage.getEBoolean(), "isEmpty", null, 0, 1, EmptyArray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(objectValueEClass, ObjectValue.class, "ObjectValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getObjectValue_Value(), ecorePackage.getEString(), "value", null, 0, 1, ObjectValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(terminalObjectEClass, TerminalObject.class, "TerminalObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTerminalObject_Element(), ecorePackage.getEString(), "element", null, 0, 1, TerminalObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTerminalObject_Content(), this.getObjectValue(), null, "content", null, 0, 1, TerminalObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Create resource
     createResource(eNS_URI);

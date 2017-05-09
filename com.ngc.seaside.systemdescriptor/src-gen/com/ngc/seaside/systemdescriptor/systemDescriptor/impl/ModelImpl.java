@@ -3,7 +3,7 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor.impl;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Greeting;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -44,7 +44,7 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @generated
    * @ordered
    */
-  protected EList<Greeting> greetings;
+  protected EList<Metadata> greetings;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,11 +72,11 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Greeting> getGreetings()
+  public EList<Metadata> getGreetings()
   {
     if (greetings == null)
     {
-      greetings = new EObjectContainmentEList<Greeting>(Greeting.class, this, SystemDescriptorPackage.MODEL__GREETINGS);
+      greetings = new EObjectContainmentEList<Metadata>(Metadata.class, this, SystemDescriptorPackage.MODEL__GREETINGS);
     }
     return greetings;
   }
@@ -126,7 +126,7 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
     {
       case SystemDescriptorPackage.MODEL__GREETINGS:
         getGreetings().clear();
-        getGreetings().addAll((Collection<? extends Greeting>)newValue);
+        getGreetings().addAll((Collection<? extends Metadata>)newValue);
         return;
     }
     super.eSet(featureID, newValue);

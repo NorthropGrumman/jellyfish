@@ -3,7 +3,31 @@ grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
 Model:
-	greetings+=Greeting*;
+	greetings+=Metadata*;
 	
-Greeting:
-	'Hello' name=ID '!';
+	
+Metadata:
+  type='metadata' json=Object?
+;	
+	
+/**
+ * JSON
+ */
+Object:
+	'{'
+	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
+
+Array:
+	'[' firstItem=ObjectValue (',' items+=ObjectValue)* ']';
+
+EmptyObject:
+	isEmpty?='{}';
+
+EmptyArray:
+	isEmpty?='[]';
+
+ObjectValue:
+	value=STRING | Object | Array | EmptyObject | EmptyArray;
+
+TerminalObject:
+    element=STRING ':' (content=ObjectValue);
