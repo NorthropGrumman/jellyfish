@@ -3,15 +3,13 @@
  */
 package com.ngc.seaside.systemdescriptor;
 
-import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetupGenerated;
-
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */
 @SuppressWarnings("all")
-public class SystemDescriptorStandaloneSetup extends SystemDescriptorStandaloneSetupGenerated {
+public class SystemDescriptorStandaloneSetup /* implements SystemDescriptorStandaloneSetupGenerated  */{
   public static void doSetup() {
-    SystemDescriptorStandaloneSetup _systemDescriptorStandaloneSetup = new SystemDescriptorStandaloneSetup();
-    _systemDescriptorStandaloneSetup.createInjectorAndDoEMFRegistration();
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method createInjectorAndDoEMFRegistration() is undefined for the type SystemDescriptorStandaloneSetup");
   }
 }

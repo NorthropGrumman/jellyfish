@@ -1,9 +1,0 @@
-grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext.common.Terminals
-
-generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
-
-Model:
-	greetings+=Greeting*;
-	
-Greeting:
-	'Hello' name=ID '!';
