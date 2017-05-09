@@ -3,6 +3,8 @@
  */
 package com.ngc.seaside.systemdescriptor.scoping;
 
+import com.ngc.seaside.systemdescriptor.scoping.AbstractSystemDescriptorScopeProvider;
+
 /**
  * This class contains custom scoping description.
  * 
@@ -10,5 +12,5 @@ package com.ngc.seaside.systemdescriptor.scoping;
  * on how and when to use it.
  */
 @SuppressWarnings("all")
-public class SystemDescriptorScopeProvider /* implements AbstractSystemDescriptorScopeProvider  */{
+public class SystemDescriptorScopeProvider extends AbstractSystemDescriptorScopeProvider {
 }
