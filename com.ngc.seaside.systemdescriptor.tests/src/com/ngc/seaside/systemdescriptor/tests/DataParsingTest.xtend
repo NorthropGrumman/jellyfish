@@ -14,78 +14,84 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class DataParsingTest {
-	
+
 	@Inject
 	ParseHelper<Descriptor> parseHelper
-	
+
 	@Inject
-    ValidationTestHelper validationTester
-	
-	@Test 
+	ValidationTestHelper validationTester
+
+	@Test
 	def void testDoesParseEmptyData() {
 		val source = '''
-		  package my.foo.test
-		  
-		  data Time {
-		  }
+			package clocks.datatypes
+			
+			data Time {
+			}
 		''';
-		
+
 		val result = parseHelper.parse(source)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result);
+
+		assertEquals(
+			"package name not correct",
+			"clocks.datatypes",
+			result.package.name
+		)
 	}
-	
-	@Test 
+
+	@Test
 	def void testDoesParseData() {
 		val source = '''
-		  package my.foo.test
-		  
-		  data Time {
-		  	int hour
-		  	int minute
-		  	int second
-		  }
+			package clocks.datatypes
+			
+			data Time {
+				int hour
+				int minute
+				int second
+			}
 		''';
-		
+
 		val result = parseHelper.parse(source)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result);
 	}
-	
-	@Test 
+
+	@Test
 	def void testDoesParseDataWithMetadataValidation() {
 		val source = '''
-		  package my.foo.test
-		  
-		  data Time {
-		  	metadata {
-		  	    "name": "Time",
-		  	    "description": "Represents a local time (does not account for timezones)."
-		  	}
-		  	
-		  	int hour {
-		  		"validation": {
-		  			"min": "0",
-		  			"max": "23"
-		  		}
-		  	}
-		  	
-		  	int minute {
-		  		"validation": {
-		  			"min": "0",
-		  			"max": "59"
-		  		}
-		  	}
-		  		
-		  	int second {
-		  		"validation": {
-		  			"min": "0",
-		  			"max": "59"
-		  		}
-		  	}
-		  }
+			package clocks.datatypes
+			
+			data Time {
+				metadata {
+				    "name": "Time",
+				    "description": "Represents a local time (does not account for timezones)."
+				}
+				
+				int hour {
+					"validation": {
+						"min": "0",
+						"max": "23"
+					}
+				}
+				
+				int minute {
+					"validation": {
+						"min": "0",
+						"max": "59"
+					}
+				}
+					
+				int second {
+					"validation": {
+						"min": "0",
+						"max": "59"
+					}
+				}
+			}
 		''';
-		
+
 		val result = parseHelper.parse(source)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result);

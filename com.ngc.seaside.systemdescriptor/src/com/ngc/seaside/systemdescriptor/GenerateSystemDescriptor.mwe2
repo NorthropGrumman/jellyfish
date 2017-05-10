@@ -13,7 +13,8 @@ Workflow {
 				baseName = "com.ngc.seaside.systemdescriptor"
 				rootPath = rootPath
 				runtimeTest = {
-					enabled = true
+					// Disable stub generation of test setup code because we have made custom modifications.
+					enabled = false
 				}
 				
 				eclipsePlugin = {
