@@ -37,17 +37,34 @@ Package
 	;
 
 // ------------------------------
+// ---- Data related objects ----
+// ------------------------------
+
+DataType
+	: 'int' | 'float'
+	;
+	
+DataFieldDeclaration
+	: type=DataType
+	  name=UnqualifiedName
+	  fieldMetadata=JsonObject?
+	;
+
+// ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
 
 Data
 	: 'data' name=UnqualifiedName '{'
+		metadata=Metadata?
+		fields+=DataFieldDeclaration*
 	  '}'
 	;
 
 Model
 	: 'model' name=UnqualifiedName '{'
-	   '}'
+		metadata=Metadata?
+	  '}'
 	;
 
 Element
@@ -63,14 +80,14 @@ Element
 
 
 Metadata:
-  type='metadata' json=Object?
+  type='metadata' json=JsonObject?
 ;	
 	
 	
 // ----------------------
 // ---- JSON support ----
 // ----------------------
-Object:
+JsonObject:
 	'{'
 	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
 
@@ -84,7 +101,7 @@ EmptyArray:
 	isEmpty?='[]';
 
 ObjectValue:
-	value=STRING | Object | Array | EmptyObject | EmptyArray;
+	value=STRING | JsonObject | Array | EmptyObject | EmptyArray;
 
 TerminalObject:
     element=STRING ':' (content=ObjectValue);

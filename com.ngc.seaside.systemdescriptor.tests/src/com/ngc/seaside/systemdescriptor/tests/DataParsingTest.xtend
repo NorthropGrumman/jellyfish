@@ -22,11 +22,67 @@ class DataParsingTest {
     ValidationTestHelper validationTester
 	
 	@Test 
+	def void testDoesParseEmptyData() {
+		val source = '''
+		  package my.foo.test
+		  
+		  data Time {
+		  }
+		''';
+		
+		val result = parseHelper.parse(source)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result);
+	}
+	
+	@Test 
 	def void testDoesParseData() {
 		val source = '''
 		  package my.foo.test
 		  
-		  data HelloWorld {
+		  data Time {
+		  	int hour
+		  	int minute
+		  	int second
+		  }
+		''';
+		
+		val result = parseHelper.parse(source)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result);
+	}
+	
+	@Test 
+	def void testDoesParseDataWithMetadataValidation() {
+		val source = '''
+		  package my.foo.test
+		  
+		  data Time {
+		  	metadata {
+		  	    "name": "Time",
+		  	    "description": "Represents a local time (does not account for timezones)."
+		  	}
+		  	
+		  	int hour {
+		  		"validation": {
+		  			"min": "0",
+		  			"max": "23"
+		  		}
+		  	}
+		  	
+		  	int minute {
+		  		"validation": {
+		  			"min": "0",
+		  			"max": "59"
+		  		}
+		  	}
+		  		
+		  	int second {
+		  		"validation": {
+		  			"min": "0",
+		  			"max": "59"
+		  		}
+		  	}
 		  }
 		''';
 		
