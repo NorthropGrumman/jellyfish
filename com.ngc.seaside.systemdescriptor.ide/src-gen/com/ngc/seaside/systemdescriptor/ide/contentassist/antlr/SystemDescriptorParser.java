@@ -35,14 +35,28 @@ public class SystemDescriptorParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
+					put(grammarAccess.getElementAccess().getAlternatives(), "rule__Element__Alternatives");
 					put(grammarAccess.getObjectValueAccess().getAlternatives(), "rule__ObjectValue__Alternatives");
+					put(grammarAccess.getDescriptorAccess().getGroup(), "rule__Descriptor__Group__0");
+					put(grammarAccess.getQualifiedNameAccess().getGroup(), "rule__QualifiedName__Group__0");
+					put(grammarAccess.getQualifiedNameAccess().getGroup_1(), "rule__QualifiedName__Group_1__0");
+					put(grammarAccess.getQualifiedNameWithWildcardAccess().getGroup(), "rule__QualifiedNameWithWildcard__Group__0");
+					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
+					put(grammarAccess.getPackageAccess().getGroup(), "rule__Package__Group__0");
+					put(grammarAccess.getDataAccess().getGroup(), "rule__Data__Group__0");
+					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getMetadataAccess().getGroup(), "rule__Metadata__Group__0");
 					put(grammarAccess.getObjectAccess().getGroup(), "rule__Object__Group__0");
 					put(grammarAccess.getObjectAccess().getGroup_2(), "rule__Object__Group_2__0");
 					put(grammarAccess.getArrayAccess().getGroup(), "rule__Array__Group__0");
 					put(grammarAccess.getArrayAccess().getGroup_2(), "rule__Array__Group_2__0");
 					put(grammarAccess.getTerminalObjectAccess().getGroup(), "rule__TerminalObject__Group__0");
-					put(grammarAccess.getModelAccess().getGreetingsAssignment(), "rule__Model__GreetingsAssignment");
+					put(grammarAccess.getDescriptorAccess().getPackageAssignment_0(), "rule__Descriptor__PackageAssignment_0");
+					put(grammarAccess.getDescriptorAccess().getElementsAssignment_1(), "rule__Descriptor__ElementsAssignment_1");
+					put(grammarAccess.getImportAccess().getImportedNamespaceAssignment_1(), "rule__Import__ImportedNamespaceAssignment_1");
+					put(grammarAccess.getPackageAccess().getNameAssignment_1(), "rule__Package__NameAssignment_1");
+					put(grammarAccess.getDataAccess().getNameAssignment_1(), "rule__Data__NameAssignment_1");
+					put(grammarAccess.getModelAccess().getNameAssignment_1(), "rule__Model__NameAssignment_1");
 					put(grammarAccess.getMetadataAccess().getTypeAssignment_0(), "rule__Metadata__TypeAssignment_0");
 					put(grammarAccess.getMetadataAccess().getJsonAssignment_1(), "rule__Metadata__JsonAssignment_1");
 					put(grammarAccess.getObjectAccess().getFirstObjectAssignment_1(), "rule__Object__FirstObjectAssignment_1");
@@ -64,7 +78,7 @@ public class SystemDescriptorParser extends AbstractContentAssistParser {
 	protected Collection<FollowElement> getFollowElements(AbstractInternalContentAssistParser parser) {
 		try {
 			InternalSystemDescriptorParser typedParser = (InternalSystemDescriptorParser) parser;
-			typedParser.entryRuleModel();
+			typedParser.entryRuleDescriptor();
 			return typedParser.getFollowElements();
 		} catch(RecognitionException ex) {
 			throw new RuntimeException(ex);

@@ -6,8 +6,11 @@ package com.ngc.seaside.systemdescriptor.serializer;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.services.SystemDescriptorGrammarAccess;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
@@ -41,11 +44,20 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 			case SystemDescriptorPackage.ARRAY:
 				sequence_Array(context, (Array) semanticObject); 
 				return; 
+			case SystemDescriptorPackage.DATA:
+				sequence_Data(context, (Data) semanticObject); 
+				return; 
+			case SystemDescriptorPackage.DESCRIPTOR:
+				sequence_Descriptor(context, (Descriptor) semanticObject); 
+				return; 
 			case SystemDescriptorPackage.EMPTY_ARRAY:
 				sequence_EmptyArray(context, (EmptyArray) semanticObject); 
 				return; 
 			case SystemDescriptorPackage.EMPTY_OBJECT:
 				sequence_EmptyObject(context, (EmptyObject) semanticObject); 
+				return; 
+			case SystemDescriptorPackage.IMPORT:
+				sequence_Import(context, (Import) semanticObject); 
 				return; 
 			case SystemDescriptorPackage.METADATA:
 				sequence_Metadata(context, (Metadata) semanticObject); 
@@ -58,6 +70,9 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 				return; 
 			case SystemDescriptorPackage.OBJECT_VALUE:
 				sequence_ObjectValue(context, (ObjectValue) semanticObject); 
+				return; 
+			case SystemDescriptorPackage.PACKAGE:
+				sequence_Package(context, (com.ngc.seaside.systemdescriptor.systemDescriptor.Package) semanticObject); 
 				return; 
 			case SystemDescriptorPackage.TERMINAL_OBJECT:
 				sequence_TerminalObject(context, (TerminalObject) semanticObject); 
@@ -76,6 +91,37 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 	 *     (firstItem=ObjectValue items+=ObjectValue*)
 	 */
 	protected void sequence_Array(ISerializationContext context, Array semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Data returns Data
+	 *     Element returns Data
+	 *
+	 * Constraint:
+	 *     name=UnqualifiedName
+	 */
+	protected void sequence_Data(ISerializationContext context, Data semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, SystemDescriptorPackage.Literals.ELEMENT__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SystemDescriptorPackage.Literals.ELEMENT__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getDataAccess().getNameUnqualifiedNameParserRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Descriptor returns Descriptor
+	 *
+	 * Constraint:
+	 *     (package=Package elements+=Element+)
+	 */
+	protected void sequence_Descriptor(ISerializationContext context, Descriptor semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -120,6 +166,24 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 	
 	/**
 	 * Contexts:
+	 *     Import returns Import
+	 *
+	 * Constraint:
+	 *     importedNamespace=[Element|QualifiedName]
+	 */
+	protected void sequence_Import(ISerializationContext context, Import semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, SystemDescriptorPackage.Literals.IMPORT__IMPORTED_NAMESPACE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SystemDescriptorPackage.Literals.IMPORT__IMPORTED_NAMESPACE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getImportAccess().getImportedNamespaceElementQualifiedNameParserRuleCall_1_0_1(), semanticObject.getImportedNamespace());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Metadata returns Metadata
 	 *
 	 * Constraint:
@@ -133,12 +197,19 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 	/**
 	 * Contexts:
 	 *     Model returns Model
+	 *     Element returns Model
 	 *
 	 * Constraint:
-	 *     greetings+=Metadata+
+	 *     name=UnqualifiedName
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, SystemDescriptorPackage.Literals.ELEMENT__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SystemDescriptorPackage.Literals.ELEMENT__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getModelAccess().getNameUnqualifiedNameParserRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	
@@ -170,6 +241,24 @@ public class SystemDescriptorSemanticSequencer extends AbstractDelegatingSemanti
 	 */
 	protected void sequence_Object(ISerializationContext context, com.ngc.seaside.systemdescriptor.systemDescriptor.Object semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Package returns Package
+	 *
+	 * Constraint:
+	 *     name=QualifiedName
+	 */
+	protected void sequence_Package(ISerializationContext context, com.ngc.seaside.systemdescriptor.systemDescriptor.Package semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, SystemDescriptorPackage.Literals.PACKAGE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SystemDescriptorPackage.Literals.PACKAGE__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPackageAccess().getNameQualifiedNameParserRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	

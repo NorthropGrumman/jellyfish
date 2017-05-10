@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import java.util.List;
 import org.eclipse.xtext.Alternatives;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.Group;
@@ -22,20 +23,236 @@ import org.eclipse.xtext.service.GrammarProvider;
 @Singleton
 public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder {
 	
-	public class ModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Model");
-		private final Assignment cGreetingsAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cGreetingsMetadataParserRuleCall_0 = (RuleCall)cGreetingsAssignment.eContents().get(0);
+	public class DescriptorElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Descriptor");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cPackageAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cPackagePackageParserRuleCall_0_0 = (RuleCall)cPackageAssignment_0.eContents().get(0);
+		private final Assignment cElementsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cElementsElementParserRuleCall_1_0 = (RuleCall)cElementsAssignment_1.eContents().get(0);
 		
-		//Model:
-		//	greetings+=Metadata*;
+		//Descriptor:
+		//	package=Package
+		//	//imports+=Import*;
+		//	elements+=Element+;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//greetings+=Metadata*
-		public Assignment getGreetingsAssignment() { return cGreetingsAssignment; }
+		//package=Package //imports+=Import*;
+		//elements+=Element+
+		public Group getGroup() { return cGroup; }
 		
-		//Metadata
-		public RuleCall getGreetingsMetadataParserRuleCall_0() { return cGreetingsMetadataParserRuleCall_0; }
+		//package=Package
+		public Assignment getPackageAssignment_0() { return cPackageAssignment_0; }
+		
+		//Package
+		public RuleCall getPackagePackageParserRuleCall_0_0() { return cPackagePackageParserRuleCall_0_0; }
+		
+		////imports+=Import*;
+		//elements+=Element+
+		public Assignment getElementsAssignment_1() { return cElementsAssignment_1; }
+		
+		//Element
+		public RuleCall getElementsElementParserRuleCall_1_0() { return cElementsElementParserRuleCall_1_0; }
+	}
+	public class QualifiedNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.QualifiedName");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final RuleCall cIDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		
+		//// -------------------------------	
+		//// ---- Identifiers and names ----
+		//// -------------------------------
+		//QualifiedName:
+		//	ID ('.' ID)*;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID ('.' ID)*
+		public Group getGroup() { return cGroup; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//('.' ID)*
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
+	}
+	public class QualifiedNameWithWildcardElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.QualifiedNameWithWildcard");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cQualifiedNameParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Keyword cFullStopAsteriskKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		
+		//QualifiedNameWithWildcard:
+		//	QualifiedName '.*'?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//QualifiedName '.*'?
+		public Group getGroup() { return cGroup; }
+		
+		//QualifiedName
+		public RuleCall getQualifiedNameParserRuleCall_0() { return cQualifiedNameParserRuleCall_0; }
+		
+		//'.*'?
+		public Keyword getFullStopAsteriskKeyword_1() { return cFullStopAsteriskKeyword_1; }
+	}
+	public class UnqualifiedNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.UnqualifiedName");
+		private final RuleCall cIDTerminalRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//UnqualifiedName:
+		//	ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall() { return cIDTerminalRuleCall; }
+	}
+	public class ImportElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Import");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cImportKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cImportedNamespaceAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final CrossReference cImportedNamespaceElementCrossReference_1_0 = (CrossReference)cImportedNamespaceAssignment_1.eContents().get(0);
+		private final RuleCall cImportedNamespaceElementQualifiedNameParserRuleCall_1_0_1 = (RuleCall)cImportedNamespaceElementCrossReference_1_0.eContents().get(1);
+		
+		//// ---------------------------
+		//// ---- Package structure ----
+		//// ---------------------------
+		//Import:
+		//	'import' importedNamespace=[Element|QualifiedName];
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'import' importedNamespace=[Element|QualifiedName]
+		public Group getGroup() { return cGroup; }
+		
+		//'import'
+		public Keyword getImportKeyword_0() { return cImportKeyword_0; }
+		
+		//importedNamespace=[Element|QualifiedName]
+		public Assignment getImportedNamespaceAssignment_1() { return cImportedNamespaceAssignment_1; }
+		
+		//[Element|QualifiedName]
+		public CrossReference getImportedNamespaceElementCrossReference_1_0() { return cImportedNamespaceElementCrossReference_1_0; }
+		
+		//QualifiedName
+		public RuleCall getImportedNamespaceElementQualifiedNameParserRuleCall_1_0_1() { return cImportedNamespaceElementQualifiedNameParserRuleCall_1_0_1; }
+	}
+	public class PackageElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Package");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cPackageKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameQualifiedNameParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		
+		//Package:
+		//	'package' name=QualifiedName;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'package' name=QualifiedName
+		public Group getGroup() { return cGroup; }
+		
+		//'package'
+		public Keyword getPackageKeyword_0() { return cPackageKeyword_0; }
+		
+		//name=QualifiedName
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		
+		//QualifiedName
+		public RuleCall getNameQualifiedNameParserRuleCall_1_0() { return cNameQualifiedNameParserRuleCall_1_0; }
+	}
+	public class DataElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Data");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cDataKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameUnqualifiedNameParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		
+		//// ------------------------------
+		//// ---- Basic model elements ----
+		//// ------------------------------
+		//Data:
+		//	'data' name=UnqualifiedName '{'
+		//	'}';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'data' name=UnqualifiedName '{' '}'
+		public Group getGroup() { return cGroup; }
+		
+		//'data'
+		public Keyword getDataKeyword_0() { return cDataKeyword_0; }
+		
+		//name=UnqualifiedName
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		
+		//UnqualifiedName
+		public RuleCall getNameUnqualifiedNameParserRuleCall_1_0() { return cNameUnqualifiedNameParserRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
+	}
+	public class ModelElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Model");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cModelKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameUnqualifiedNameParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		
+		//Model:
+		//	'model' name=UnqualifiedName '{'
+		//	'}';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'model' name=UnqualifiedName '{' '}'
+		public Group getGroup() { return cGroup; }
+		
+		//'model'
+		public Keyword getModelKeyword_0() { return cModelKeyword_0; }
+		
+		//name=UnqualifiedName
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		
+		//UnqualifiedName
+		public RuleCall getNameUnqualifiedNameParserRuleCall_1_0() { return cNameUnqualifiedNameParserRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
+	}
+	public class ElementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Element");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cDataParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cModelParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//Element:
+		//	Data
+		//	| Model;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//Data | Model
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//Data
+		public RuleCall getDataParserRuleCall_0() { return cDataParserRuleCall_0; }
+		
+		//Model
+		public RuleCall getModelParserRuleCall_1() { return cModelParserRuleCall_1; }
 	}
 	public class MetadataElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "com.ngc.seaside.systemdescriptor.SystemDescriptor.Metadata");
@@ -76,9 +293,10 @@ public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder 
 		private final RuleCall cObjectsTerminalObjectParserRuleCall_2_1_0 = (RuleCall)cObjectsAssignment_2_1.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		/// **
-		// * JSON
-		// * / Object:
+		//// ----------------------
+		//// ---- JSON support ----
+		//// ----------------------
+		//Object:
 		//	'{'
 		//	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
 		@Override public ParserRule getRule() { return rule; }
@@ -251,7 +469,15 @@ public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder 
 	}
 	
 	
+	private final DescriptorElements pDescriptor;
+	private final QualifiedNameElements pQualifiedName;
+	private final QualifiedNameWithWildcardElements pQualifiedNameWithWildcard;
+	private final UnqualifiedNameElements pUnqualifiedName;
+	private final ImportElements pImport;
+	private final PackageElements pPackage;
+	private final DataElements pData;
 	private final ModelElements pModel;
+	private final ElementElements pElement;
 	private final MetadataElements pMetadata;
 	private final ObjectElements pObject;
 	private final ArrayElements pArray;
@@ -269,7 +495,15 @@ public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder 
 			TerminalsGrammarAccess gaTerminals) {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaTerminals = gaTerminals;
+		this.pDescriptor = new DescriptorElements();
+		this.pQualifiedName = new QualifiedNameElements();
+		this.pQualifiedNameWithWildcard = new QualifiedNameWithWildcardElements();
+		this.pUnqualifiedName = new UnqualifiedNameElements();
+		this.pImport = new ImportElements();
+		this.pPackage = new PackageElements();
+		this.pData = new DataElements();
 		this.pModel = new ModelElements();
+		this.pElement = new ElementElements();
 		this.pMetadata = new MetadataElements();
 		this.pObject = new ObjectElements();
 		this.pArray = new ArrayElements();
@@ -306,14 +540,108 @@ public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder 
 	}
 
 	
+	//Descriptor:
+	//	package=Package
+	//	//imports+=Import*;
+	//	elements+=Element+;
+	public DescriptorElements getDescriptorAccess() {
+		return pDescriptor;
+	}
+	
+	public ParserRule getDescriptorRule() {
+		return getDescriptorAccess().getRule();
+	}
+	
+	//// -------------------------------	
+	//// ---- Identifiers and names ----
+	//// -------------------------------
+	//QualifiedName:
+	//	ID ('.' ID)*;
+	public QualifiedNameElements getQualifiedNameAccess() {
+		return pQualifiedName;
+	}
+	
+	public ParserRule getQualifiedNameRule() {
+		return getQualifiedNameAccess().getRule();
+	}
+	
+	//QualifiedNameWithWildcard:
+	//	QualifiedName '.*'?;
+	public QualifiedNameWithWildcardElements getQualifiedNameWithWildcardAccess() {
+		return pQualifiedNameWithWildcard;
+	}
+	
+	public ParserRule getQualifiedNameWithWildcardRule() {
+		return getQualifiedNameWithWildcardAccess().getRule();
+	}
+	
+	//UnqualifiedName:
+	//	ID;
+	public UnqualifiedNameElements getUnqualifiedNameAccess() {
+		return pUnqualifiedName;
+	}
+	
+	public ParserRule getUnqualifiedNameRule() {
+		return getUnqualifiedNameAccess().getRule();
+	}
+	
+	//// ---------------------------
+	//// ---- Package structure ----
+	//// ---------------------------
+	//Import:
+	//	'import' importedNamespace=[Element|QualifiedName];
+	public ImportElements getImportAccess() {
+		return pImport;
+	}
+	
+	public ParserRule getImportRule() {
+		return getImportAccess().getRule();
+	}
+	
+	//Package:
+	//	'package' name=QualifiedName;
+	public PackageElements getPackageAccess() {
+		return pPackage;
+	}
+	
+	public ParserRule getPackageRule() {
+		return getPackageAccess().getRule();
+	}
+	
+	//// ------------------------------
+	//// ---- Basic model elements ----
+	//// ------------------------------
+	//Data:
+	//	'data' name=UnqualifiedName '{'
+	//	'}';
+	public DataElements getDataAccess() {
+		return pData;
+	}
+	
+	public ParserRule getDataRule() {
+		return getDataAccess().getRule();
+	}
+	
 	//Model:
-	//	greetings+=Metadata*;
+	//	'model' name=UnqualifiedName '{'
+	//	'}';
 	public ModelElements getModelAccess() {
 		return pModel;
 	}
 	
 	public ParserRule getModelRule() {
 		return getModelAccess().getRule();
+	}
+	
+	//Element:
+	//	Data
+	//	| Model;
+	public ElementElements getElementAccess() {
+		return pElement;
+	}
+	
+	public ParserRule getElementRule() {
+		return getElementAccess().getRule();
 	}
 	
 	//Metadata:
@@ -326,9 +654,10 @@ public class SystemDescriptorGrammarAccess extends AbstractGrammarElementFinder 
 		return getMetadataAccess().getRule();
 	}
 	
-	/// **
-	// * JSON
-	// * / Object:
+	//// ----------------------
+	//// ---- JSON support ----
+	//// ----------------------
+	//Object:
 	//	'{'
 	//	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
 	public ObjectElements getObjectAccess() {

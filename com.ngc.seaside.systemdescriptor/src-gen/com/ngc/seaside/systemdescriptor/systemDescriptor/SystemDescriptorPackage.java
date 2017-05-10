@@ -58,6 +58,155 @@ public interface SystemDescriptorPackage extends EPackage
   SystemDescriptorPackage eINSTANCE = com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl.init();
 
   /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DescriptorImpl <em>Descriptor</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DescriptorImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getDescriptor()
+   * @generated
+   */
+  int DESCRIPTOR = 0;
+
+  /**
+   * The feature id for the '<em><b>Package</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DESCRIPTOR__PACKAGE = 0;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DESCRIPTOR__ELEMENTS = 1;
+
+  /**
+   * The number of structural features of the '<em>Descriptor</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DESCRIPTOR_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl <em>Import</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getImport()
+   * @generated
+   */
+  int IMPORT = 1;
+
+  /**
+   * The feature id for the '<em><b>Imported Namespace</b></em>' reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IMPORT__IMPORTED_NAMESPACE = 0;
+
+  /**
+   * The number of structural features of the '<em>Import</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IMPORT_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.PackageImpl <em>Package</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.PackageImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getPackage()
+   * @generated
+   */
+  int PACKAGE = 2;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PACKAGE__NAME = 0;
+
+  /**
+   * The number of structural features of the '<em>Package</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PACKAGE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ElementImpl <em>Element</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ElementImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getElement()
+   * @generated
+   */
+  int ELEMENT = 5;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ELEMENT__NAME = 0;
+
+  /**
+   * The number of structural features of the '<em>Element</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ELEMENT_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DataImpl <em>Data</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DataImpl
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getData()
+   * @generated
+   */
+  int DATA = 3;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATA__NAME = ELEMENT__NAME;
+
+  /**
+   * The number of structural features of the '<em>Data</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATA_FEATURE_COUNT = ELEMENT_FEATURE_COUNT + 0;
+
+  /**
    * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ModelImpl <em>Model</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -65,16 +214,16 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getModel()
    * @generated
    */
-  int MODEL = 0;
+  int MODEL = 4;
 
   /**
-   * The feature id for the '<em><b>Greetings</b></em>' containment reference list.
+   * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL__GREETINGS = 0;
+  int MODEL__NAME = ELEMENT__NAME;
 
   /**
    * The number of structural features of the '<em>Model</em>' class.
@@ -83,7 +232,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_FEATURE_COUNT = 1;
+  int MODEL_FEATURE_COUNT = ELEMENT_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl <em>Metadata</em>}' class.
@@ -93,7 +242,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 1;
+  int METADATA = 6;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -130,7 +279,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObjectValue()
    * @generated
    */
-  int OBJECT_VALUE = 6;
+  int OBJECT_VALUE = 11;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -158,7 +307,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getObject()
    * @generated
    */
-  int OBJECT = 2;
+  int OBJECT = 7;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -204,7 +353,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getArray()
    * @generated
    */
-  int ARRAY = 3;
+  int ARRAY = 8;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -250,7 +399,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyObject()
    * @generated
    */
-  int EMPTY_OBJECT = 4;
+  int EMPTY_OBJECT = 9;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -287,7 +436,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getEmptyArray()
    * @generated
    */
-  int EMPTY_ARRAY = 5;
+  int EMPTY_ARRAY = 10;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -324,7 +473,7 @@ public interface SystemDescriptorPackage extends EPackage
    * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getTerminalObject()
    * @generated
    */
-  int TERMINAL_OBJECT = 7;
+  int TERMINAL_OBJECT = 12;
 
   /**
    * The feature id for the '<em><b>Element</b></em>' attribute.
@@ -355,6 +504,90 @@ public interface SystemDescriptorPackage extends EPackage
 
 
   /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor <em>Descriptor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Descriptor</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor
+   * @generated
+   */
+  EClass getDescriptor();
+
+  /**
+   * Returns the meta object for the containment reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor#getPackage <em>Package</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Package</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor#getPackage()
+   * @see #getDescriptor()
+   * @generated
+   */
+  EReference getDescriptor_Package();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor#getElements <em>Elements</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Elements</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor#getElements()
+   * @see #getDescriptor()
+   * @generated
+   */
+  EReference getDescriptor_Elements();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Import <em>Import</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Import</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Import
+   * @generated
+   */
+  EClass getImport();
+
+  /**
+   * Returns the meta object for the reference '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Import#getImportedNamespace <em>Imported Namespace</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference '<em>Imported Namespace</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Import#getImportedNamespace()
+   * @see #getImport()
+   * @generated
+   */
+  EReference getImport_ImportedNamespace();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Package <em>Package</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Package</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+   * @generated
+   */
+  EClass getPackage();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Package#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Package#getName()
+   * @see #getPackage()
+   * @generated
+   */
+  EAttribute getPackage_Name();
+
+  /**
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Data <em>Data</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Data</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Data
+   * @generated
+   */
+  EClass getData();
+
+  /**
    * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Model <em>Model</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -365,15 +598,25 @@ public interface SystemDescriptorPackage extends EPackage
   EClass getModel();
 
   /**
-   * Returns the meta object for the containment reference list '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Model#getGreetings <em>Greetings</em>}'.
+   * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Element <em>Element</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Greetings</em>'.
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Model#getGreetings()
-   * @see #getModel()
+   * @return the meta object for class '<em>Element</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Element
    * @generated
    */
-  EReference getModel_Greetings();
+  EClass getElement();
+
+  /**
+   * Returns the meta object for the attribute '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Element#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Element#getName()
+   * @see #getElement()
+   * @generated
+   */
+  EAttribute getElement_Name();
 
   /**
    * Returns the meta object for class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata <em>Metadata</em>}'.
@@ -590,6 +833,78 @@ public interface SystemDescriptorPackage extends EPackage
   interface Literals
   {
     /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DescriptorImpl <em>Descriptor</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DescriptorImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getDescriptor()
+     * @generated
+     */
+    EClass DESCRIPTOR = eINSTANCE.getDescriptor();
+
+    /**
+     * The meta object literal for the '<em><b>Package</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DESCRIPTOR__PACKAGE = eINSTANCE.getDescriptor_Package();
+
+    /**
+     * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DESCRIPTOR__ELEMENTS = eINSTANCE.getDescriptor_Elements();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl <em>Import</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getImport()
+     * @generated
+     */
+    EClass IMPORT = eINSTANCE.getImport();
+
+    /**
+     * The meta object literal for the '<em><b>Imported Namespace</b></em>' reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IMPORT__IMPORTED_NAMESPACE = eINSTANCE.getImport_ImportedNamespace();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.PackageImpl <em>Package</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.PackageImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getPackage()
+     * @generated
+     */
+    EClass PACKAGE = eINSTANCE.getPackage();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PACKAGE__NAME = eINSTANCE.getPackage_Name();
+
+    /**
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DataImpl <em>Data</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.DataImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getData()
+     * @generated
+     */
+    EClass DATA = eINSTANCE.getData();
+
+    /**
      * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ModelImpl <em>Model</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -600,12 +915,22 @@ public interface SystemDescriptorPackage extends EPackage
     EClass MODEL = eINSTANCE.getModel();
 
     /**
-     * The meta object literal for the '<em><b>Greetings</b></em>' containment reference list feature.
+     * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ElementImpl <em>Element</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ElementImpl
+     * @see com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorPackageImpl#getElement()
+     * @generated
+     */
+    EClass ELEMENT = eINSTANCE.getElement();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference MODEL__GREETINGS = eINSTANCE.getModel_Greetings();
+    EAttribute ELEMENT__NAME = eINSTANCE.getElement_Name();
 
     /**
      * The meta object literal for the '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.impl.MetadataImpl <em>Metadata</em>}' class.

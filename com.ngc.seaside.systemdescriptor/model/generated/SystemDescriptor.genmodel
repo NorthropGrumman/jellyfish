@@ -6,8 +6,20 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="SystemDescriptor" basePackage="com.ngc.seaside.systemdescriptor"
       disposableProviderFactory="true" fileExtensions="sd" ecorePackage="SystemDescriptor.ecore#/">
-    <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/greetings"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Descriptor">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/package"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Import">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Import/importedNamespace"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Data"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Model"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Element">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Element/name"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Metadata">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Metadata/type"/>

@@ -44,5 +44,7 @@ src-gen
 *.vcxproj.filters 
 .vs 
 
- 
+# xtend and xtext
+xtend-gen
+
 /com/ 

@@ -3,42 +3,17 @@
  */
 package com.ngc.seaside.systemdescriptor.systemDescriptor;
 
-import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Model</b></em>'.
  * <!-- end-user-doc -->
  *
- * <p>
- * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Model#getGreetings <em>Greetings</em>}</li>
- * </ul>
  *
  * @see com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage#getModel()
  * @model
  * @generated
  */
-public interface Model extends EObject
+public interface Model extends Element
 {
-  /**
-   * Returns the value of the '<em><b>Greetings</b></em>' containment reference list.
-   * The list contents are of type {@link com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Greetings</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Greetings</em>' containment reference list.
-   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage#getModel_Greetings()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Metadata> getGreetings();
-
 } // Model

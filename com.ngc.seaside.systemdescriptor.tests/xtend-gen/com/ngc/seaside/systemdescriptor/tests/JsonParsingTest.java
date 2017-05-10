@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 @RunWith(XtextRunner.class)
 @InjectWith(SystemDescriptorInjectorProvider.class)
 @SuppressWarnings("all")
-public class SystemDescriptorParsingTest {
+public class JsonParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
   

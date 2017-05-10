@@ -4,8 +4,12 @@
 package com.ngc.seaside.systemdescriptor.systemDescriptor.util;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
@@ -83,9 +87,34 @@ public class SystemDescriptorAdapterFactory extends AdapterFactoryImpl
     new SystemDescriptorSwitch<Adapter>()
     {
       @Override
+      public Adapter caseDescriptor(Descriptor object)
+      {
+        return createDescriptorAdapter();
+      }
+      @Override
+      public Adapter caseImport(Import object)
+      {
+        return createImportAdapter();
+      }
+      @Override
+      public Adapter casePackage(com.ngc.seaside.systemdescriptor.systemDescriptor.Package object)
+      {
+        return createPackageAdapter();
+      }
+      @Override
+      public Adapter caseData(Data object)
+      {
+        return createDataAdapter();
+      }
+      @Override
       public Adapter caseModel(Model object)
       {
         return createModelAdapter();
+      }
+      @Override
+      public Adapter caseElement(Element object)
+      {
+        return createElementAdapter();
       }
       @Override
       public Adapter caseMetadata(Metadata object)
@@ -145,6 +174,66 @@ public class SystemDescriptorAdapterFactory extends AdapterFactoryImpl
 
 
   /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor <em>Descriptor</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor
+   * @generated
+   */
+  public Adapter createDescriptorAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Import <em>Import</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Import
+   * @generated
+   */
+  public Adapter createImportAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Package <em>Package</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+   * @generated
+   */
+  public Adapter createPackageAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Data <em>Data</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Data
+   * @generated
+   */
+  public Adapter createDataAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Model <em>Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -155,6 +244,21 @@ public class SystemDescriptorAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createModelAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link com.ngc.seaside.systemdescriptor.systemDescriptor.Element <em>Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see com.ngc.seaside.systemdescriptor.systemDescriptor.Element
+   * @generated
+   */
+  public Adapter createElementAdapter()
   {
     return null;
   }

@@ -2,17 +2,74 @@ grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext
 
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
-Model:
-	greetings+=Metadata*;
+Descriptor
+	: package=Package
+	  //imports+=Import*;
+	  elements+=Element+
+	;
+
+// -------------------------------	
+// ---- Identifiers and names ----
+// -------------------------------
+
+QualifiedName
+	: ID ('.' ID)*
+	;
+
+QualifiedNameWithWildcard
+	: QualifiedName '.*'?
+	;
 	
-	
+UnqualifiedName
+	: ID
+	;
+
+// ---------------------------
+// ---- Package structure ----
+// ---------------------------
+
+Import
+	: 'import' importedNamespace=[Element|QualifiedName]
+	;
+
+Package
+	: 'package' name=QualifiedName
+	;
+
+// ------------------------------
+// ---- Basic model elements ----
+// ------------------------------
+
+Data
+	: 'data' name=UnqualifiedName '{'
+	  '}'
+	;
+
+Model
+	: 'model' name=UnqualifiedName '{'
+	   '}'
+	;
+
+Element
+	: Data
+	| Model
+	;
+
+
+
+
+
+
+
+
 Metadata:
   type='metadata' json=Object?
 ;	
 	
-/**
- * JSON
- */
+	
+// ----------------------
+// ---- JSON support ----
+// ----------------------
 Object:
 	'{'
 	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';

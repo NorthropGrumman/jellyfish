@@ -21,9 +21,9 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'metadata'", "'{'", "','", "'}'", "'['", "']'", "'{}'", "'[]'", "':'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'.'", "'package'", "'data'", "'{'", "'}'", "'model'", "','", "'['", "']'", "'{}'", "'[]'", "':'"
     };
-    public static final int RULE_STRING=4;
+    public static final int RULE_STRING=5;
     public static final int RULE_SL_COMMENT=8;
     public static final int T__19=19;
     public static final int T__15=15;
@@ -35,11 +35,14 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
     public static final int T__13=13;
     public static final int T__14=14;
     public static final int EOF=-1;
-    public static final int RULE_ID=5;
+    public static final int RULE_ID=4;
     public static final int RULE_WS=9;
     public static final int RULE_ANY_OTHER=10;
     public static final int RULE_INT=6;
+    public static final int T__22=22;
     public static final int RULE_ML_COMMENT=7;
+    public static final int T__20=20;
+    public static final int T__21=21;
 
     // delegates
     // delegators
@@ -69,7 +72,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
         @Override
         protected String getFirstRuleName() {
-        	return "Model";
+        	return "Descriptor";
        	}
 
        	@Override
@@ -80,8 +83,601 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
 
+    // $ANTLR start "entryRuleDescriptor"
+    // InternalSystemDescriptor.g:64:1: entryRuleDescriptor returns [EObject current=null] : iv_ruleDescriptor= ruleDescriptor EOF ;
+    public final EObject entryRuleDescriptor() throws RecognitionException {
+        EObject current = null;
+
+        EObject iv_ruleDescriptor = null;
+
+
+        try {
+            // InternalSystemDescriptor.g:64:51: (iv_ruleDescriptor= ruleDescriptor EOF )
+            // InternalSystemDescriptor.g:65:2: iv_ruleDescriptor= ruleDescriptor EOF
+            {
+             newCompositeNode(grammarAccess.getDescriptorRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleDescriptor=ruleDescriptor();
+
+            state._fsp--;
+
+             current =iv_ruleDescriptor; 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleDescriptor"
+
+
+    // $ANTLR start "ruleDescriptor"
+    // InternalSystemDescriptor.g:71:1: ruleDescriptor returns [EObject current=null] : ( ( (lv_package_0_0= rulePackage ) ) ( (lv_elements_1_0= ruleElement ) )+ ) ;
+    public final EObject ruleDescriptor() throws RecognitionException {
+        EObject current = null;
+
+        EObject lv_package_0_0 = null;
+
+        EObject lv_elements_1_0 = null;
+
+
+
+        	enterRule();
+
+        try {
+            // InternalSystemDescriptor.g:77:2: ( ( ( (lv_package_0_0= rulePackage ) ) ( (lv_elements_1_0= ruleElement ) )+ ) )
+            // InternalSystemDescriptor.g:78:2: ( ( (lv_package_0_0= rulePackage ) ) ( (lv_elements_1_0= ruleElement ) )+ )
+            {
+            // InternalSystemDescriptor.g:78:2: ( ( (lv_package_0_0= rulePackage ) ) ( (lv_elements_1_0= ruleElement ) )+ )
+            // InternalSystemDescriptor.g:79:3: ( (lv_package_0_0= rulePackage ) ) ( (lv_elements_1_0= ruleElement ) )+
+            {
+            // InternalSystemDescriptor.g:79:3: ( (lv_package_0_0= rulePackage ) )
+            // InternalSystemDescriptor.g:80:4: (lv_package_0_0= rulePackage )
+            {
+            // InternalSystemDescriptor.g:80:4: (lv_package_0_0= rulePackage )
+            // InternalSystemDescriptor.g:81:5: lv_package_0_0= rulePackage
+            {
+
+            					newCompositeNode(grammarAccess.getDescriptorAccess().getPackagePackageParserRuleCall_0_0());
+            				
+            pushFollow(FOLLOW_3);
+            lv_package_0_0=rulePackage();
+
+            state._fsp--;
+
+
+            					if (current==null) {
+            						current = createModelElementForParent(grammarAccess.getDescriptorRule());
+            					}
+            					set(
+            						current,
+            						"package",
+            						lv_package_0_0,
+            						"com.ngc.seaside.systemdescriptor.SystemDescriptor.Package");
+            					afterParserOrEnumRuleCall();
+            				
+
+            }
+
+
+            }
+
+            // InternalSystemDescriptor.g:98:3: ( (lv_elements_1_0= ruleElement ) )+
+            int cnt1=0;
+            loop1:
+            do {
+                int alt1=2;
+                int LA1_0 = input.LA(1);
+
+                if ( (LA1_0==13||LA1_0==16) ) {
+                    alt1=1;
+                }
+
+
+                switch (alt1) {
+            	case 1 :
+            	    // InternalSystemDescriptor.g:99:4: (lv_elements_1_0= ruleElement )
+            	    {
+            	    // InternalSystemDescriptor.g:99:4: (lv_elements_1_0= ruleElement )
+            	    // InternalSystemDescriptor.g:100:5: lv_elements_1_0= ruleElement
+            	    {
+
+            	    					newCompositeNode(grammarAccess.getDescriptorAccess().getElementsElementParserRuleCall_1_0());
+            	    				
+            	    pushFollow(FOLLOW_4);
+            	    lv_elements_1_0=ruleElement();
+
+            	    state._fsp--;
+
+
+            	    					if (current==null) {
+            	    						current = createModelElementForParent(grammarAccess.getDescriptorRule());
+            	    					}
+            	    					add(
+            	    						current,
+            	    						"elements",
+            	    						lv_elements_1_0,
+            	    						"com.ngc.seaside.systemdescriptor.SystemDescriptor.Element");
+            	    					afterParserOrEnumRuleCall();
+            	    				
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    if ( cnt1 >= 1 ) break loop1;
+                        EarlyExitException eee =
+                            new EarlyExitException(1, input);
+                        throw eee;
+                }
+                cnt1++;
+            } while (true);
+
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleDescriptor"
+
+
+    // $ANTLR start "entryRuleQualifiedName"
+    // InternalSystemDescriptor.g:121:1: entryRuleQualifiedName returns [String current=null] : iv_ruleQualifiedName= ruleQualifiedName EOF ;
+    public final String entryRuleQualifiedName() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedName = null;
+
+
+        try {
+            // InternalSystemDescriptor.g:121:53: (iv_ruleQualifiedName= ruleQualifiedName EOF )
+            // InternalSystemDescriptor.g:122:2: iv_ruleQualifiedName= ruleQualifiedName EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedNameRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleQualifiedName=ruleQualifiedName();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedName.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedName"
+
+
+    // $ANTLR start "ruleQualifiedName"
+    // InternalSystemDescriptor.g:128:1: ruleQualifiedName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    public final AntlrDatatypeRuleToken ruleQualifiedName() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_ID_0=null;
+        Token kw=null;
+        Token this_ID_2=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalSystemDescriptor.g:134:2: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalSystemDescriptor.g:135:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            {
+            // InternalSystemDescriptor.g:135:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalSystemDescriptor.g:136:3: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            {
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_5); 
+
+            			current.merge(this_ID_0);
+            		
+
+            			newLeafNode(this_ID_0, grammarAccess.getQualifiedNameAccess().getIDTerminalRuleCall_0());
+            		
+            // InternalSystemDescriptor.g:143:3: (kw= '.' this_ID_2= RULE_ID )*
+            loop2:
+            do {
+                int alt2=2;
+                int LA2_0 = input.LA(1);
+
+                if ( (LA2_0==11) ) {
+                    alt2=1;
+                }
+
+
+                switch (alt2) {
+            	case 1 :
+            	    // InternalSystemDescriptor.g:144:4: kw= '.' this_ID_2= RULE_ID
+            	    {
+            	    kw=(Token)match(input,11,FOLLOW_6); 
+
+            	    				current.merge(kw);
+            	    				newLeafNode(kw, grammarAccess.getQualifiedNameAccess().getFullStopKeyword_1_0());
+            	    			
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_5); 
+
+            	    				current.merge(this_ID_2);
+            	    			
+
+            	    				newLeafNode(this_ID_2, grammarAccess.getQualifiedNameAccess().getIDTerminalRuleCall_1_1());
+            	    			
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop2;
+                }
+            } while (true);
+
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedName"
+
+
+    // $ANTLR start "entryRuleUnqualifiedName"
+    // InternalSystemDescriptor.g:161:1: entryRuleUnqualifiedName returns [String current=null] : iv_ruleUnqualifiedName= ruleUnqualifiedName EOF ;
+    public final String entryRuleUnqualifiedName() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleUnqualifiedName = null;
+
+
+        try {
+            // InternalSystemDescriptor.g:161:55: (iv_ruleUnqualifiedName= ruleUnqualifiedName EOF )
+            // InternalSystemDescriptor.g:162:2: iv_ruleUnqualifiedName= ruleUnqualifiedName EOF
+            {
+             newCompositeNode(grammarAccess.getUnqualifiedNameRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleUnqualifiedName=ruleUnqualifiedName();
+
+            state._fsp--;
+
+             current =iv_ruleUnqualifiedName.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleUnqualifiedName"
+
+
+    // $ANTLR start "ruleUnqualifiedName"
+    // InternalSystemDescriptor.g:168:1: ruleUnqualifiedName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_ID_0= RULE_ID ;
+    public final AntlrDatatypeRuleToken ruleUnqualifiedName() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_ID_0=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalSystemDescriptor.g:174:2: (this_ID_0= RULE_ID )
+            // InternalSystemDescriptor.g:175:2: this_ID_0= RULE_ID
+            {
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_2); 
+
+            		current.merge(this_ID_0);
+            	
+
+            		newLeafNode(this_ID_0, grammarAccess.getUnqualifiedNameAccess().getIDTerminalRuleCall());
+            	
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleUnqualifiedName"
+
+
+    // $ANTLR start "entryRulePackage"
+    // InternalSystemDescriptor.g:185:1: entryRulePackage returns [EObject current=null] : iv_rulePackage= rulePackage EOF ;
+    public final EObject entryRulePackage() throws RecognitionException {
+        EObject current = null;
+
+        EObject iv_rulePackage = null;
+
+
+        try {
+            // InternalSystemDescriptor.g:185:48: (iv_rulePackage= rulePackage EOF )
+            // InternalSystemDescriptor.g:186:2: iv_rulePackage= rulePackage EOF
+            {
+             newCompositeNode(grammarAccess.getPackageRule()); 
+            pushFollow(FOLLOW_1);
+            iv_rulePackage=rulePackage();
+
+            state._fsp--;
+
+             current =iv_rulePackage; 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRulePackage"
+
+
+    // $ANTLR start "rulePackage"
+    // InternalSystemDescriptor.g:192:1: rulePackage returns [EObject current=null] : (otherlv_0= 'package' ( (lv_name_1_0= ruleQualifiedName ) ) ) ;
+    public final EObject rulePackage() throws RecognitionException {
+        EObject current = null;
+
+        Token otherlv_0=null;
+        AntlrDatatypeRuleToken lv_name_1_0 = null;
+
+
+
+        	enterRule();
+
+        try {
+            // InternalSystemDescriptor.g:198:2: ( (otherlv_0= 'package' ( (lv_name_1_0= ruleQualifiedName ) ) ) )
+            // InternalSystemDescriptor.g:199:2: (otherlv_0= 'package' ( (lv_name_1_0= ruleQualifiedName ) ) )
+            {
+            // InternalSystemDescriptor.g:199:2: (otherlv_0= 'package' ( (lv_name_1_0= ruleQualifiedName ) ) )
+            // InternalSystemDescriptor.g:200:3: otherlv_0= 'package' ( (lv_name_1_0= ruleQualifiedName ) )
+            {
+            otherlv_0=(Token)match(input,12,FOLLOW_6); 
+
+            			newLeafNode(otherlv_0, grammarAccess.getPackageAccess().getPackageKeyword_0());
+            		
+            // InternalSystemDescriptor.g:204:3: ( (lv_name_1_0= ruleQualifiedName ) )
+            // InternalSystemDescriptor.g:205:4: (lv_name_1_0= ruleQualifiedName )
+            {
+            // InternalSystemDescriptor.g:205:4: (lv_name_1_0= ruleQualifiedName )
+            // InternalSystemDescriptor.g:206:5: lv_name_1_0= ruleQualifiedName
+            {
+
+            					newCompositeNode(grammarAccess.getPackageAccess().getNameQualifiedNameParserRuleCall_1_0());
+            				
+            pushFollow(FOLLOW_2);
+            lv_name_1_0=ruleQualifiedName();
+
+            state._fsp--;
+
+
+            					if (current==null) {
+            						current = createModelElementForParent(grammarAccess.getPackageRule());
+            					}
+            					set(
+            						current,
+            						"name",
+            						lv_name_1_0,
+            						"com.ngc.seaside.systemdescriptor.SystemDescriptor.QualifiedName");
+            					afterParserOrEnumRuleCall();
+            				
+
+            }
+
+
+            }
+
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "rulePackage"
+
+
+    // $ANTLR start "entryRuleData"
+    // InternalSystemDescriptor.g:227:1: entryRuleData returns [EObject current=null] : iv_ruleData= ruleData EOF ;
+    public final EObject entryRuleData() throws RecognitionException {
+        EObject current = null;
+
+        EObject iv_ruleData = null;
+
+
+        try {
+            // InternalSystemDescriptor.g:227:45: (iv_ruleData= ruleData EOF )
+            // InternalSystemDescriptor.g:228:2: iv_ruleData= ruleData EOF
+            {
+             newCompositeNode(grammarAccess.getDataRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleData=ruleData();
+
+            state._fsp--;
+
+             current =iv_ruleData; 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleData"
+
+
+    // $ANTLR start "ruleData"
+    // InternalSystemDescriptor.g:234:1: ruleData returns [EObject current=null] : (otherlv_0= 'data' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' ) ;
+    public final EObject ruleData() throws RecognitionException {
+        EObject current = null;
+
+        Token otherlv_0=null;
+        Token otherlv_2=null;
+        Token otherlv_3=null;
+        AntlrDatatypeRuleToken lv_name_1_0 = null;
+
+
+
+        	enterRule();
+
+        try {
+            // InternalSystemDescriptor.g:240:2: ( (otherlv_0= 'data' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' ) )
+            // InternalSystemDescriptor.g:241:2: (otherlv_0= 'data' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' )
+            {
+            // InternalSystemDescriptor.g:241:2: (otherlv_0= 'data' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' )
+            // InternalSystemDescriptor.g:242:3: otherlv_0= 'data' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}'
+            {
+            otherlv_0=(Token)match(input,13,FOLLOW_6); 
+
+            			newLeafNode(otherlv_0, grammarAccess.getDataAccess().getDataKeyword_0());
+            		
+            // InternalSystemDescriptor.g:246:3: ( (lv_name_1_0= ruleUnqualifiedName ) )
+            // InternalSystemDescriptor.g:247:4: (lv_name_1_0= ruleUnqualifiedName )
+            {
+            // InternalSystemDescriptor.g:247:4: (lv_name_1_0= ruleUnqualifiedName )
+            // InternalSystemDescriptor.g:248:5: lv_name_1_0= ruleUnqualifiedName
+            {
+
+            					newCompositeNode(grammarAccess.getDataAccess().getNameUnqualifiedNameParserRuleCall_1_0());
+            				
+            pushFollow(FOLLOW_7);
+            lv_name_1_0=ruleUnqualifiedName();
+
+            state._fsp--;
+
+
+            					if (current==null) {
+            						current = createModelElementForParent(grammarAccess.getDataRule());
+            					}
+            					set(
+            						current,
+            						"name",
+            						lv_name_1_0,
+            						"com.ngc.seaside.systemdescriptor.SystemDescriptor.UnqualifiedName");
+            					afterParserOrEnumRuleCall();
+            				
+
+            }
+
+
+            }
+
+            otherlv_2=(Token)match(input,14,FOLLOW_8); 
+
+            			newLeafNode(otherlv_2, grammarAccess.getDataAccess().getLeftCurlyBracketKeyword_2());
+            		
+            otherlv_3=(Token)match(input,15,FOLLOW_2); 
+
+            			newLeafNode(otherlv_3, grammarAccess.getDataAccess().getRightCurlyBracketKeyword_3());
+            		
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleData"
+
+
     // $ANTLR start "entryRuleModel"
-    // InternalSystemDescriptor.g:64:1: entryRuleModel returns [EObject current=null] : iv_ruleModel= ruleModel EOF ;
+    // InternalSystemDescriptor.g:277:1: entryRuleModel returns [EObject current=null] : iv_ruleModel= ruleModel EOF ;
     public final EObject entryRuleModel() throws RecognitionException {
         EObject current = null;
 
@@ -89,8 +685,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:64:46: (iv_ruleModel= ruleModel EOF )
-            // InternalSystemDescriptor.g:65:2: iv_ruleModel= ruleModel EOF
+            // InternalSystemDescriptor.g:277:46: (iv_ruleModel= ruleModel EOF )
+            // InternalSystemDescriptor.g:278:2: iv_ruleModel= ruleModel EOF
             {
              newCompositeNode(grammarAccess.getModelRule()); 
             pushFollow(FOLLOW_1);
@@ -117,68 +713,71 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleModel"
-    // InternalSystemDescriptor.g:71:1: ruleModel returns [EObject current=null] : ( (lv_greetings_0_0= ruleMetadata ) )* ;
+    // InternalSystemDescriptor.g:284:1: ruleModel returns [EObject current=null] : (otherlv_0= 'model' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' ) ;
     public final EObject ruleModel() throws RecognitionException {
         EObject current = null;
 
-        EObject lv_greetings_0_0 = null;
+        Token otherlv_0=null;
+        Token otherlv_2=null;
+        Token otherlv_3=null;
+        AntlrDatatypeRuleToken lv_name_1_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:77:2: ( ( (lv_greetings_0_0= ruleMetadata ) )* )
-            // InternalSystemDescriptor.g:78:2: ( (lv_greetings_0_0= ruleMetadata ) )*
+            // InternalSystemDescriptor.g:290:2: ( (otherlv_0= 'model' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' ) )
+            // InternalSystemDescriptor.g:291:2: (otherlv_0= 'model' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' )
             {
-            // InternalSystemDescriptor.g:78:2: ( (lv_greetings_0_0= ruleMetadata ) )*
-            loop1:
-            do {
-                int alt1=2;
-                int LA1_0 = input.LA(1);
+            // InternalSystemDescriptor.g:291:2: (otherlv_0= 'model' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}' )
+            // InternalSystemDescriptor.g:292:3: otherlv_0= 'model' ( (lv_name_1_0= ruleUnqualifiedName ) ) otherlv_2= '{' otherlv_3= '}'
+            {
+            otherlv_0=(Token)match(input,16,FOLLOW_6); 
 
-                if ( (LA1_0==11) ) {
-                    alt1=1;
-                }
+            			newLeafNode(otherlv_0, grammarAccess.getModelAccess().getModelKeyword_0());
+            		
+            // InternalSystemDescriptor.g:296:3: ( (lv_name_1_0= ruleUnqualifiedName ) )
+            // InternalSystemDescriptor.g:297:4: (lv_name_1_0= ruleUnqualifiedName )
+            {
+            // InternalSystemDescriptor.g:297:4: (lv_name_1_0= ruleUnqualifiedName )
+            // InternalSystemDescriptor.g:298:5: lv_name_1_0= ruleUnqualifiedName
+            {
 
+            					newCompositeNode(grammarAccess.getModelAccess().getNameUnqualifiedNameParserRuleCall_1_0());
+            				
+            pushFollow(FOLLOW_7);
+            lv_name_1_0=ruleUnqualifiedName();
 
-                switch (alt1) {
-            	case 1 :
-            	    // InternalSystemDescriptor.g:79:3: (lv_greetings_0_0= ruleMetadata )
-            	    {
-            	    // InternalSystemDescriptor.g:79:3: (lv_greetings_0_0= ruleMetadata )
-            	    // InternalSystemDescriptor.g:80:4: lv_greetings_0_0= ruleMetadata
-            	    {
-
-            	    				newCompositeNode(grammarAccess.getModelAccess().getGreetingsMetadataParserRuleCall_0());
-            	    			
-            	    pushFollow(FOLLOW_3);
-            	    lv_greetings_0_0=ruleMetadata();
-
-            	    state._fsp--;
+            state._fsp--;
 
 
-            	    				if (current==null) {
-            	    					current = createModelElementForParent(grammarAccess.getModelRule());
-            	    				}
-            	    				add(
-            	    					current,
-            	    					"greetings",
-            	    					lv_greetings_0_0,
-            	    					"com.ngc.seaside.systemdescriptor.SystemDescriptor.Metadata");
-            	    				afterParserOrEnumRuleCall();
-            	    			
+            					if (current==null) {
+            						current = createModelElementForParent(grammarAccess.getModelRule());
+            					}
+            					set(
+            						current,
+            						"name",
+            						lv_name_1_0,
+            						"com.ngc.seaside.systemdescriptor.SystemDescriptor.UnqualifiedName");
+            					afterParserOrEnumRuleCall();
+            				
 
-            	    }
+            }
 
 
-            	    }
-            	    break;
+            }
 
-            	default :
-            	    break loop1;
-                }
-            } while (true);
+            otherlv_2=(Token)match(input,14,FOLLOW_8); 
+
+            			newLeafNode(otherlv_2, grammarAccess.getModelAccess().getLeftCurlyBracketKeyword_2());
+            		
+            otherlv_3=(Token)match(input,15,FOLLOW_2); 
+
+            			newLeafNode(otherlv_3, grammarAccess.getModelAccess().getRightCurlyBracketKeyword_3());
+            		
+
+            }
 
 
             }
@@ -199,25 +798,25 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
     // $ANTLR end "ruleModel"
 
 
-    // $ANTLR start "entryRuleMetadata"
-    // InternalSystemDescriptor.g:100:1: entryRuleMetadata returns [EObject current=null] : iv_ruleMetadata= ruleMetadata EOF ;
-    public final EObject entryRuleMetadata() throws RecognitionException {
+    // $ANTLR start "entryRuleElement"
+    // InternalSystemDescriptor.g:327:1: entryRuleElement returns [EObject current=null] : iv_ruleElement= ruleElement EOF ;
+    public final EObject entryRuleElement() throws RecognitionException {
         EObject current = null;
 
-        EObject iv_ruleMetadata = null;
+        EObject iv_ruleElement = null;
 
 
         try {
-            // InternalSystemDescriptor.g:100:49: (iv_ruleMetadata= ruleMetadata EOF )
-            // InternalSystemDescriptor.g:101:2: iv_ruleMetadata= ruleMetadata EOF
+            // InternalSystemDescriptor.g:327:48: (iv_ruleElement= ruleElement EOF )
+            // InternalSystemDescriptor.g:328:2: iv_ruleElement= ruleElement EOF
             {
-             newCompositeNode(grammarAccess.getMetadataRule()); 
+             newCompositeNode(grammarAccess.getElementRule()); 
             pushFollow(FOLLOW_1);
-            iv_ruleMetadata=ruleMetadata();
+            iv_ruleElement=ruleElement();
 
             state._fsp--;
 
-             current =iv_ruleMetadata; 
+             current =iv_ruleElement; 
             match(input,EOF,FOLLOW_2); 
 
             }
@@ -232,92 +831,79 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         }
         return current;
     }
-    // $ANTLR end "entryRuleMetadata"
+    // $ANTLR end "entryRuleElement"
 
 
-    // $ANTLR start "ruleMetadata"
-    // InternalSystemDescriptor.g:107:1: ruleMetadata returns [EObject current=null] : ( ( (lv_type_0_0= 'metadata' ) ) ( (lv_json_1_0= ruleObject ) )? ) ;
-    public final EObject ruleMetadata() throws RecognitionException {
+    // $ANTLR start "ruleElement"
+    // InternalSystemDescriptor.g:334:1: ruleElement returns [EObject current=null] : (this_Data_0= ruleData | this_Model_1= ruleModel ) ;
+    public final EObject ruleElement() throws RecognitionException {
         EObject current = null;
 
-        Token lv_type_0_0=null;
-        EObject lv_json_1_0 = null;
+        EObject this_Data_0 = null;
+
+        EObject this_Model_1 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:113:2: ( ( ( (lv_type_0_0= 'metadata' ) ) ( (lv_json_1_0= ruleObject ) )? ) )
-            // InternalSystemDescriptor.g:114:2: ( ( (lv_type_0_0= 'metadata' ) ) ( (lv_json_1_0= ruleObject ) )? )
+            // InternalSystemDescriptor.g:340:2: ( (this_Data_0= ruleData | this_Model_1= ruleModel ) )
+            // InternalSystemDescriptor.g:341:2: (this_Data_0= ruleData | this_Model_1= ruleModel )
             {
-            // InternalSystemDescriptor.g:114:2: ( ( (lv_type_0_0= 'metadata' ) ) ( (lv_json_1_0= ruleObject ) )? )
-            // InternalSystemDescriptor.g:115:3: ( (lv_type_0_0= 'metadata' ) ) ( (lv_json_1_0= ruleObject ) )?
-            {
-            // InternalSystemDescriptor.g:115:3: ( (lv_type_0_0= 'metadata' ) )
-            // InternalSystemDescriptor.g:116:4: (lv_type_0_0= 'metadata' )
-            {
-            // InternalSystemDescriptor.g:116:4: (lv_type_0_0= 'metadata' )
-            // InternalSystemDescriptor.g:117:5: lv_type_0_0= 'metadata'
-            {
-            lv_type_0_0=(Token)match(input,11,FOLLOW_4); 
+            // InternalSystemDescriptor.g:341:2: (this_Data_0= ruleData | this_Model_1= ruleModel )
+            int alt3=2;
+            int LA3_0 = input.LA(1);
 
-            					newLeafNode(lv_type_0_0, grammarAccess.getMetadataAccess().getTypeMetadataKeyword_0_0());
-            				
-
-            					if (current==null) {
-            						current = createModelElement(grammarAccess.getMetadataRule());
-            					}
-            					setWithLastConsumed(current, "type", lv_type_0_0, "metadata");
-            				
-
+            if ( (LA3_0==13) ) {
+                alt3=1;
             }
-
-
+            else if ( (LA3_0==16) ) {
+                alt3=2;
             }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 3, 0, input);
 
-            // InternalSystemDescriptor.g:129:3: ( (lv_json_1_0= ruleObject ) )?
-            int alt2=2;
-            int LA2_0 = input.LA(1);
-
-            if ( (LA2_0==12) ) {
-                alt2=1;
+                throw nvae;
             }
-            switch (alt2) {
+            switch (alt3) {
                 case 1 :
-                    // InternalSystemDescriptor.g:130:4: (lv_json_1_0= ruleObject )
-                    {
-                    // InternalSystemDescriptor.g:130:4: (lv_json_1_0= ruleObject )
-                    // InternalSystemDescriptor.g:131:5: lv_json_1_0= ruleObject
+                    // InternalSystemDescriptor.g:342:3: this_Data_0= ruleData
                     {
 
-                    					newCompositeNode(grammarAccess.getMetadataAccess().getJsonObjectParserRuleCall_1_0());
-                    				
+                    			newCompositeNode(grammarAccess.getElementAccess().getDataParserRuleCall_0());
+                    		
                     pushFollow(FOLLOW_2);
-                    lv_json_1_0=ruleObject();
+                    this_Data_0=ruleData();
 
                     state._fsp--;
 
 
-                    					if (current==null) {
-                    						current = createModelElementForParent(grammarAccess.getMetadataRule());
-                    					}
-                    					set(
-                    						current,
-                    						"json",
-                    						lv_json_1_0,
-                    						"com.ngc.seaside.systemdescriptor.SystemDescriptor.Object");
-                    					afterParserOrEnumRuleCall();
-                    				
-
-                    }
-
+                    			current = this_Data_0;
+                    			afterParserOrEnumRuleCall();
+                    		
 
                     }
                     break;
+                case 2 :
+                    // InternalSystemDescriptor.g:351:3: this_Model_1= ruleModel
+                    {
 
-            }
+                    			newCompositeNode(grammarAccess.getElementAccess().getModelParserRuleCall_1());
+                    		
+                    pushFollow(FOLLOW_2);
+                    this_Model_1=ruleModel();
 
+                    state._fsp--;
+
+
+                    			current = this_Model_1;
+                    			afterParserOrEnumRuleCall();
+                    		
+
+                    }
+                    break;
 
             }
 
@@ -337,11 +923,11 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         }
         return current;
     }
-    // $ANTLR end "ruleMetadata"
+    // $ANTLR end "ruleElement"
 
 
     // $ANTLR start "entryRuleObject"
-    // InternalSystemDescriptor.g:152:1: entryRuleObject returns [EObject current=null] : iv_ruleObject= ruleObject EOF ;
+    // InternalSystemDescriptor.g:363:1: entryRuleObject returns [EObject current=null] : iv_ruleObject= ruleObject EOF ;
     public final EObject entryRuleObject() throws RecognitionException {
         EObject current = null;
 
@@ -349,8 +935,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:152:47: (iv_ruleObject= ruleObject EOF )
-            // InternalSystemDescriptor.g:153:2: iv_ruleObject= ruleObject EOF
+            // InternalSystemDescriptor.g:363:47: (iv_ruleObject= ruleObject EOF )
+            // InternalSystemDescriptor.g:364:2: iv_ruleObject= ruleObject EOF
             {
              newCompositeNode(grammarAccess.getObjectRule()); 
             pushFollow(FOLLOW_1);
@@ -377,7 +963,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleObject"
-    // InternalSystemDescriptor.g:159:1: ruleObject returns [EObject current=null] : (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' ) ;
+    // InternalSystemDescriptor.g:370:1: ruleObject returns [EObject current=null] : (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' ) ;
     public final EObject ruleObject() throws RecognitionException {
         EObject current = null;
 
@@ -393,26 +979,26 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:165:2: ( (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' ) )
-            // InternalSystemDescriptor.g:166:2: (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' )
+            // InternalSystemDescriptor.g:376:2: ( (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' ) )
+            // InternalSystemDescriptor.g:377:2: (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' )
             {
-            // InternalSystemDescriptor.g:166:2: (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' )
-            // InternalSystemDescriptor.g:167:3: otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}'
+            // InternalSystemDescriptor.g:377:2: (otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}' )
+            // InternalSystemDescriptor.g:378:3: otherlv_0= '{' ( (lv_firstObject_1_0= ruleTerminalObject ) ) (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )* otherlv_4= '}'
             {
-            otherlv_0=(Token)match(input,12,FOLLOW_5); 
+            otherlv_0=(Token)match(input,14,FOLLOW_9); 
 
             			newLeafNode(otherlv_0, grammarAccess.getObjectAccess().getLeftCurlyBracketKeyword_0());
             		
-            // InternalSystemDescriptor.g:171:3: ( (lv_firstObject_1_0= ruleTerminalObject ) )
-            // InternalSystemDescriptor.g:172:4: (lv_firstObject_1_0= ruleTerminalObject )
+            // InternalSystemDescriptor.g:382:3: ( (lv_firstObject_1_0= ruleTerminalObject ) )
+            // InternalSystemDescriptor.g:383:4: (lv_firstObject_1_0= ruleTerminalObject )
             {
-            // InternalSystemDescriptor.g:172:4: (lv_firstObject_1_0= ruleTerminalObject )
-            // InternalSystemDescriptor.g:173:5: lv_firstObject_1_0= ruleTerminalObject
+            // InternalSystemDescriptor.g:383:4: (lv_firstObject_1_0= ruleTerminalObject )
+            // InternalSystemDescriptor.g:384:5: lv_firstObject_1_0= ruleTerminalObject
             {
 
             					newCompositeNode(grammarAccess.getObjectAccess().getFirstObjectTerminalObjectParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_6);
+            pushFollow(FOLLOW_10);
             lv_firstObject_1_0=ruleTerminalObject();
 
             state._fsp--;
@@ -434,35 +1020,35 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
             }
 
-            // InternalSystemDescriptor.g:190:3: (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )*
-            loop3:
+            // InternalSystemDescriptor.g:401:3: (otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) ) )*
+            loop4:
             do {
-                int alt3=2;
-                int LA3_0 = input.LA(1);
+                int alt4=2;
+                int LA4_0 = input.LA(1);
 
-                if ( (LA3_0==13) ) {
-                    alt3=1;
+                if ( (LA4_0==17) ) {
+                    alt4=1;
                 }
 
 
-                switch (alt3) {
+                switch (alt4) {
             	case 1 :
-            	    // InternalSystemDescriptor.g:191:4: otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) )
+            	    // InternalSystemDescriptor.g:402:4: otherlv_2= ',' ( (lv_objects_3_0= ruleTerminalObject ) )
             	    {
-            	    otherlv_2=(Token)match(input,13,FOLLOW_5); 
+            	    otherlv_2=(Token)match(input,17,FOLLOW_9); 
 
             	    				newLeafNode(otherlv_2, grammarAccess.getObjectAccess().getCommaKeyword_2_0());
             	    			
-            	    // InternalSystemDescriptor.g:195:4: ( (lv_objects_3_0= ruleTerminalObject ) )
-            	    // InternalSystemDescriptor.g:196:5: (lv_objects_3_0= ruleTerminalObject )
+            	    // InternalSystemDescriptor.g:406:4: ( (lv_objects_3_0= ruleTerminalObject ) )
+            	    // InternalSystemDescriptor.g:407:5: (lv_objects_3_0= ruleTerminalObject )
             	    {
-            	    // InternalSystemDescriptor.g:196:5: (lv_objects_3_0= ruleTerminalObject )
-            	    // InternalSystemDescriptor.g:197:6: lv_objects_3_0= ruleTerminalObject
+            	    // InternalSystemDescriptor.g:407:5: (lv_objects_3_0= ruleTerminalObject )
+            	    // InternalSystemDescriptor.g:408:6: lv_objects_3_0= ruleTerminalObject
             	    {
 
             	    						newCompositeNode(grammarAccess.getObjectAccess().getObjectsTerminalObjectParserRuleCall_2_1_0());
             	    					
-            	    pushFollow(FOLLOW_6);
+            	    pushFollow(FOLLOW_10);
             	    lv_objects_3_0=ruleTerminalObject();
 
             	    state._fsp--;
@@ -489,11 +1075,11 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
             	    break;
 
             	default :
-            	    break loop3;
+            	    break loop4;
                 }
             } while (true);
 
-            otherlv_4=(Token)match(input,14,FOLLOW_2); 
+            otherlv_4=(Token)match(input,15,FOLLOW_2); 
 
             			newLeafNode(otherlv_4, grammarAccess.getObjectAccess().getRightCurlyBracketKeyword_3());
             		
@@ -520,7 +1106,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "entryRuleArray"
-    // InternalSystemDescriptor.g:223:1: entryRuleArray returns [EObject current=null] : iv_ruleArray= ruleArray EOF ;
+    // InternalSystemDescriptor.g:434:1: entryRuleArray returns [EObject current=null] : iv_ruleArray= ruleArray EOF ;
     public final EObject entryRuleArray() throws RecognitionException {
         EObject current = null;
 
@@ -528,8 +1114,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:223:46: (iv_ruleArray= ruleArray EOF )
-            // InternalSystemDescriptor.g:224:2: iv_ruleArray= ruleArray EOF
+            // InternalSystemDescriptor.g:434:46: (iv_ruleArray= ruleArray EOF )
+            // InternalSystemDescriptor.g:435:2: iv_ruleArray= ruleArray EOF
             {
              newCompositeNode(grammarAccess.getArrayRule()); 
             pushFollow(FOLLOW_1);
@@ -556,7 +1142,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleArray"
-    // InternalSystemDescriptor.g:230:1: ruleArray returns [EObject current=null] : (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' ) ;
+    // InternalSystemDescriptor.g:441:1: ruleArray returns [EObject current=null] : (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' ) ;
     public final EObject ruleArray() throws RecognitionException {
         EObject current = null;
 
@@ -572,26 +1158,26 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:236:2: ( (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' ) )
-            // InternalSystemDescriptor.g:237:2: (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' )
+            // InternalSystemDescriptor.g:447:2: ( (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' ) )
+            // InternalSystemDescriptor.g:448:2: (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' )
             {
-            // InternalSystemDescriptor.g:237:2: (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' )
-            // InternalSystemDescriptor.g:238:3: otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']'
+            // InternalSystemDescriptor.g:448:2: (otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']' )
+            // InternalSystemDescriptor.g:449:3: otherlv_0= '[' ( (lv_firstItem_1_0= ruleObjectValue ) ) (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )* otherlv_4= ']'
             {
-            otherlv_0=(Token)match(input,15,FOLLOW_7); 
+            otherlv_0=(Token)match(input,18,FOLLOW_11); 
 
             			newLeafNode(otherlv_0, grammarAccess.getArrayAccess().getLeftSquareBracketKeyword_0());
             		
-            // InternalSystemDescriptor.g:242:3: ( (lv_firstItem_1_0= ruleObjectValue ) )
-            // InternalSystemDescriptor.g:243:4: (lv_firstItem_1_0= ruleObjectValue )
+            // InternalSystemDescriptor.g:453:3: ( (lv_firstItem_1_0= ruleObjectValue ) )
+            // InternalSystemDescriptor.g:454:4: (lv_firstItem_1_0= ruleObjectValue )
             {
-            // InternalSystemDescriptor.g:243:4: (lv_firstItem_1_0= ruleObjectValue )
-            // InternalSystemDescriptor.g:244:5: lv_firstItem_1_0= ruleObjectValue
+            // InternalSystemDescriptor.g:454:4: (lv_firstItem_1_0= ruleObjectValue )
+            // InternalSystemDescriptor.g:455:5: lv_firstItem_1_0= ruleObjectValue
             {
 
             					newCompositeNode(grammarAccess.getArrayAccess().getFirstItemObjectValueParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_8);
+            pushFollow(FOLLOW_12);
             lv_firstItem_1_0=ruleObjectValue();
 
             state._fsp--;
@@ -613,35 +1199,35 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
             }
 
-            // InternalSystemDescriptor.g:261:3: (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )*
-            loop4:
+            // InternalSystemDescriptor.g:472:3: (otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) ) )*
+            loop5:
             do {
-                int alt4=2;
-                int LA4_0 = input.LA(1);
+                int alt5=2;
+                int LA5_0 = input.LA(1);
 
-                if ( (LA4_0==13) ) {
-                    alt4=1;
+                if ( (LA5_0==17) ) {
+                    alt5=1;
                 }
 
 
-                switch (alt4) {
+                switch (alt5) {
             	case 1 :
-            	    // InternalSystemDescriptor.g:262:4: otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) )
+            	    // InternalSystemDescriptor.g:473:4: otherlv_2= ',' ( (lv_items_3_0= ruleObjectValue ) )
             	    {
-            	    otherlv_2=(Token)match(input,13,FOLLOW_7); 
+            	    otherlv_2=(Token)match(input,17,FOLLOW_11); 
 
             	    				newLeafNode(otherlv_2, grammarAccess.getArrayAccess().getCommaKeyword_2_0());
             	    			
-            	    // InternalSystemDescriptor.g:266:4: ( (lv_items_3_0= ruleObjectValue ) )
-            	    // InternalSystemDescriptor.g:267:5: (lv_items_3_0= ruleObjectValue )
+            	    // InternalSystemDescriptor.g:477:4: ( (lv_items_3_0= ruleObjectValue ) )
+            	    // InternalSystemDescriptor.g:478:5: (lv_items_3_0= ruleObjectValue )
             	    {
-            	    // InternalSystemDescriptor.g:267:5: (lv_items_3_0= ruleObjectValue )
-            	    // InternalSystemDescriptor.g:268:6: lv_items_3_0= ruleObjectValue
+            	    // InternalSystemDescriptor.g:478:5: (lv_items_3_0= ruleObjectValue )
+            	    // InternalSystemDescriptor.g:479:6: lv_items_3_0= ruleObjectValue
             	    {
 
             	    						newCompositeNode(grammarAccess.getArrayAccess().getItemsObjectValueParserRuleCall_2_1_0());
             	    					
-            	    pushFollow(FOLLOW_8);
+            	    pushFollow(FOLLOW_12);
             	    lv_items_3_0=ruleObjectValue();
 
             	    state._fsp--;
@@ -668,11 +1254,11 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
             	    break;
 
             	default :
-            	    break loop4;
+            	    break loop5;
                 }
             } while (true);
 
-            otherlv_4=(Token)match(input,16,FOLLOW_2); 
+            otherlv_4=(Token)match(input,19,FOLLOW_2); 
 
             			newLeafNode(otherlv_4, grammarAccess.getArrayAccess().getRightSquareBracketKeyword_3());
             		
@@ -699,7 +1285,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "entryRuleEmptyObject"
-    // InternalSystemDescriptor.g:294:1: entryRuleEmptyObject returns [EObject current=null] : iv_ruleEmptyObject= ruleEmptyObject EOF ;
+    // InternalSystemDescriptor.g:505:1: entryRuleEmptyObject returns [EObject current=null] : iv_ruleEmptyObject= ruleEmptyObject EOF ;
     public final EObject entryRuleEmptyObject() throws RecognitionException {
         EObject current = null;
 
@@ -707,8 +1293,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:294:52: (iv_ruleEmptyObject= ruleEmptyObject EOF )
-            // InternalSystemDescriptor.g:295:2: iv_ruleEmptyObject= ruleEmptyObject EOF
+            // InternalSystemDescriptor.g:505:52: (iv_ruleEmptyObject= ruleEmptyObject EOF )
+            // InternalSystemDescriptor.g:506:2: iv_ruleEmptyObject= ruleEmptyObject EOF
             {
              newCompositeNode(grammarAccess.getEmptyObjectRule()); 
             pushFollow(FOLLOW_1);
@@ -735,7 +1321,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleEmptyObject"
-    // InternalSystemDescriptor.g:301:1: ruleEmptyObject returns [EObject current=null] : ( (lv_isEmpty_0_0= '{}' ) ) ;
+    // InternalSystemDescriptor.g:512:1: ruleEmptyObject returns [EObject current=null] : ( (lv_isEmpty_0_0= '{}' ) ) ;
     public final EObject ruleEmptyObject() throws RecognitionException {
         EObject current = null;
 
@@ -745,16 +1331,16 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:307:2: ( ( (lv_isEmpty_0_0= '{}' ) ) )
-            // InternalSystemDescriptor.g:308:2: ( (lv_isEmpty_0_0= '{}' ) )
+            // InternalSystemDescriptor.g:518:2: ( ( (lv_isEmpty_0_0= '{}' ) ) )
+            // InternalSystemDescriptor.g:519:2: ( (lv_isEmpty_0_0= '{}' ) )
             {
-            // InternalSystemDescriptor.g:308:2: ( (lv_isEmpty_0_0= '{}' ) )
-            // InternalSystemDescriptor.g:309:3: (lv_isEmpty_0_0= '{}' )
+            // InternalSystemDescriptor.g:519:2: ( (lv_isEmpty_0_0= '{}' ) )
+            // InternalSystemDescriptor.g:520:3: (lv_isEmpty_0_0= '{}' )
             {
-            // InternalSystemDescriptor.g:309:3: (lv_isEmpty_0_0= '{}' )
-            // InternalSystemDescriptor.g:310:4: lv_isEmpty_0_0= '{}'
+            // InternalSystemDescriptor.g:520:3: (lv_isEmpty_0_0= '{}' )
+            // InternalSystemDescriptor.g:521:4: lv_isEmpty_0_0= '{}'
             {
-            lv_isEmpty_0_0=(Token)match(input,17,FOLLOW_2); 
+            lv_isEmpty_0_0=(Token)match(input,20,FOLLOW_2); 
 
             				newLeafNode(lv_isEmpty_0_0, grammarAccess.getEmptyObjectAccess().getIsEmptyLeftCurlyBracketRightCurlyBracketKeyword_0());
             			
@@ -790,7 +1376,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "entryRuleEmptyArray"
-    // InternalSystemDescriptor.g:325:1: entryRuleEmptyArray returns [EObject current=null] : iv_ruleEmptyArray= ruleEmptyArray EOF ;
+    // InternalSystemDescriptor.g:536:1: entryRuleEmptyArray returns [EObject current=null] : iv_ruleEmptyArray= ruleEmptyArray EOF ;
     public final EObject entryRuleEmptyArray() throws RecognitionException {
         EObject current = null;
 
@@ -798,8 +1384,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:325:51: (iv_ruleEmptyArray= ruleEmptyArray EOF )
-            // InternalSystemDescriptor.g:326:2: iv_ruleEmptyArray= ruleEmptyArray EOF
+            // InternalSystemDescriptor.g:536:51: (iv_ruleEmptyArray= ruleEmptyArray EOF )
+            // InternalSystemDescriptor.g:537:2: iv_ruleEmptyArray= ruleEmptyArray EOF
             {
              newCompositeNode(grammarAccess.getEmptyArrayRule()); 
             pushFollow(FOLLOW_1);
@@ -826,7 +1412,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleEmptyArray"
-    // InternalSystemDescriptor.g:332:1: ruleEmptyArray returns [EObject current=null] : ( (lv_isEmpty_0_0= '[]' ) ) ;
+    // InternalSystemDescriptor.g:543:1: ruleEmptyArray returns [EObject current=null] : ( (lv_isEmpty_0_0= '[]' ) ) ;
     public final EObject ruleEmptyArray() throws RecognitionException {
         EObject current = null;
 
@@ -836,16 +1422,16 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:338:2: ( ( (lv_isEmpty_0_0= '[]' ) ) )
-            // InternalSystemDescriptor.g:339:2: ( (lv_isEmpty_0_0= '[]' ) )
+            // InternalSystemDescriptor.g:549:2: ( ( (lv_isEmpty_0_0= '[]' ) ) )
+            // InternalSystemDescriptor.g:550:2: ( (lv_isEmpty_0_0= '[]' ) )
             {
-            // InternalSystemDescriptor.g:339:2: ( (lv_isEmpty_0_0= '[]' ) )
-            // InternalSystemDescriptor.g:340:3: (lv_isEmpty_0_0= '[]' )
+            // InternalSystemDescriptor.g:550:2: ( (lv_isEmpty_0_0= '[]' ) )
+            // InternalSystemDescriptor.g:551:3: (lv_isEmpty_0_0= '[]' )
             {
-            // InternalSystemDescriptor.g:340:3: (lv_isEmpty_0_0= '[]' )
-            // InternalSystemDescriptor.g:341:4: lv_isEmpty_0_0= '[]'
+            // InternalSystemDescriptor.g:551:3: (lv_isEmpty_0_0= '[]' )
+            // InternalSystemDescriptor.g:552:4: lv_isEmpty_0_0= '[]'
             {
-            lv_isEmpty_0_0=(Token)match(input,18,FOLLOW_2); 
+            lv_isEmpty_0_0=(Token)match(input,21,FOLLOW_2); 
 
             				newLeafNode(lv_isEmpty_0_0, grammarAccess.getEmptyArrayAccess().getIsEmptyLeftSquareBracketRightSquareBracketKeyword_0());
             			
@@ -881,7 +1467,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "entryRuleObjectValue"
-    // InternalSystemDescriptor.g:356:1: entryRuleObjectValue returns [EObject current=null] : iv_ruleObjectValue= ruleObjectValue EOF ;
+    // InternalSystemDescriptor.g:567:1: entryRuleObjectValue returns [EObject current=null] : iv_ruleObjectValue= ruleObjectValue EOF ;
     public final EObject entryRuleObjectValue() throws RecognitionException {
         EObject current = null;
 
@@ -889,8 +1475,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:356:52: (iv_ruleObjectValue= ruleObjectValue EOF )
-            // InternalSystemDescriptor.g:357:2: iv_ruleObjectValue= ruleObjectValue EOF
+            // InternalSystemDescriptor.g:567:52: (iv_ruleObjectValue= ruleObjectValue EOF )
+            // InternalSystemDescriptor.g:568:2: iv_ruleObjectValue= ruleObjectValue EOF
             {
              newCompositeNode(grammarAccess.getObjectValueRule()); 
             pushFollow(FOLLOW_1);
@@ -917,7 +1503,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleObjectValue"
-    // InternalSystemDescriptor.g:363:1: ruleObjectValue returns [EObject current=null] : ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray ) ;
+    // InternalSystemDescriptor.g:574:1: ruleObjectValue returns [EObject current=null] : ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray ) ;
     public final EObject ruleObjectValue() throws RecognitionException {
         EObject current = null;
 
@@ -935,53 +1521,53 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:369:2: ( ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray ) )
-            // InternalSystemDescriptor.g:370:2: ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray )
+            // InternalSystemDescriptor.g:580:2: ( ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray ) )
+            // InternalSystemDescriptor.g:581:2: ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray )
             {
-            // InternalSystemDescriptor.g:370:2: ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray )
-            int alt5=5;
+            // InternalSystemDescriptor.g:581:2: ( ( (lv_value_0_0= RULE_STRING ) ) | this_Object_1= ruleObject | this_Array_2= ruleArray | this_EmptyObject_3= ruleEmptyObject | this_EmptyArray_4= ruleEmptyArray )
+            int alt6=5;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt5=1;
+                alt6=1;
                 }
                 break;
-            case 12:
+            case 14:
                 {
-                alt5=2;
-                }
-                break;
-            case 15:
-                {
-                alt5=3;
-                }
-                break;
-            case 17:
-                {
-                alt5=4;
+                alt6=2;
                 }
                 break;
             case 18:
                 {
-                alt5=5;
+                alt6=3;
+                }
+                break;
+            case 20:
+                {
+                alt6=4;
+                }
+                break;
+            case 21:
+                {
+                alt6=5;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 5, 0, input);
+                    new NoViableAltException("", 6, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt5) {
+            switch (alt6) {
                 case 1 :
-                    // InternalSystemDescriptor.g:371:3: ( (lv_value_0_0= RULE_STRING ) )
+                    // InternalSystemDescriptor.g:582:3: ( (lv_value_0_0= RULE_STRING ) )
                     {
-                    // InternalSystemDescriptor.g:371:3: ( (lv_value_0_0= RULE_STRING ) )
-                    // InternalSystemDescriptor.g:372:4: (lv_value_0_0= RULE_STRING )
+                    // InternalSystemDescriptor.g:582:3: ( (lv_value_0_0= RULE_STRING ) )
+                    // InternalSystemDescriptor.g:583:4: (lv_value_0_0= RULE_STRING )
                     {
-                    // InternalSystemDescriptor.g:372:4: (lv_value_0_0= RULE_STRING )
-                    // InternalSystemDescriptor.g:373:5: lv_value_0_0= RULE_STRING
+                    // InternalSystemDescriptor.g:583:4: (lv_value_0_0= RULE_STRING )
+                    // InternalSystemDescriptor.g:584:5: lv_value_0_0= RULE_STRING
                     {
                     lv_value_0_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -1007,7 +1593,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
                     }
                     break;
                 case 2 :
-                    // InternalSystemDescriptor.g:390:3: this_Object_1= ruleObject
+                    // InternalSystemDescriptor.g:601:3: this_Object_1= ruleObject
                     {
 
                     			newCompositeNode(grammarAccess.getObjectValueAccess().getObjectParserRuleCall_1());
@@ -1025,7 +1611,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
                     }
                     break;
                 case 3 :
-                    // InternalSystemDescriptor.g:399:3: this_Array_2= ruleArray
+                    // InternalSystemDescriptor.g:610:3: this_Array_2= ruleArray
                     {
 
                     			newCompositeNode(grammarAccess.getObjectValueAccess().getArrayParserRuleCall_2());
@@ -1043,7 +1629,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
                     }
                     break;
                 case 4 :
-                    // InternalSystemDescriptor.g:408:3: this_EmptyObject_3= ruleEmptyObject
+                    // InternalSystemDescriptor.g:619:3: this_EmptyObject_3= ruleEmptyObject
                     {
 
                     			newCompositeNode(grammarAccess.getObjectValueAccess().getEmptyObjectParserRuleCall_3());
@@ -1061,7 +1647,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
                     }
                     break;
                 case 5 :
-                    // InternalSystemDescriptor.g:417:3: this_EmptyArray_4= ruleEmptyArray
+                    // InternalSystemDescriptor.g:628:3: this_EmptyArray_4= ruleEmptyArray
                     {
 
                     			newCompositeNode(grammarAccess.getObjectValueAccess().getEmptyArrayParserRuleCall_4());
@@ -1101,7 +1687,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "entryRuleTerminalObject"
-    // InternalSystemDescriptor.g:429:1: entryRuleTerminalObject returns [EObject current=null] : iv_ruleTerminalObject= ruleTerminalObject EOF ;
+    // InternalSystemDescriptor.g:640:1: entryRuleTerminalObject returns [EObject current=null] : iv_ruleTerminalObject= ruleTerminalObject EOF ;
     public final EObject entryRuleTerminalObject() throws RecognitionException {
         EObject current = null;
 
@@ -1109,8 +1695,8 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
         try {
-            // InternalSystemDescriptor.g:429:55: (iv_ruleTerminalObject= ruleTerminalObject EOF )
-            // InternalSystemDescriptor.g:430:2: iv_ruleTerminalObject= ruleTerminalObject EOF
+            // InternalSystemDescriptor.g:640:55: (iv_ruleTerminalObject= ruleTerminalObject EOF )
+            // InternalSystemDescriptor.g:641:2: iv_ruleTerminalObject= ruleTerminalObject EOF
             {
              newCompositeNode(grammarAccess.getTerminalObjectRule()); 
             pushFollow(FOLLOW_1);
@@ -1137,7 +1723,7 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
 
     // $ANTLR start "ruleTerminalObject"
-    // InternalSystemDescriptor.g:436:1: ruleTerminalObject returns [EObject current=null] : ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) ) ;
+    // InternalSystemDescriptor.g:647:1: ruleTerminalObject returns [EObject current=null] : ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) ) ;
     public final EObject ruleTerminalObject() throws RecognitionException {
         EObject current = null;
 
@@ -1150,19 +1736,19 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
         	enterRule();
 
         try {
-            // InternalSystemDescriptor.g:442:2: ( ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) ) )
-            // InternalSystemDescriptor.g:443:2: ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) )
+            // InternalSystemDescriptor.g:653:2: ( ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) ) )
+            // InternalSystemDescriptor.g:654:2: ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) )
             {
-            // InternalSystemDescriptor.g:443:2: ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) )
-            // InternalSystemDescriptor.g:444:3: ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) )
+            // InternalSystemDescriptor.g:654:2: ( ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) ) )
+            // InternalSystemDescriptor.g:655:3: ( (lv_element_0_0= RULE_STRING ) ) otherlv_1= ':' ( (lv_content_2_0= ruleObjectValue ) )
             {
-            // InternalSystemDescriptor.g:444:3: ( (lv_element_0_0= RULE_STRING ) )
-            // InternalSystemDescriptor.g:445:4: (lv_element_0_0= RULE_STRING )
+            // InternalSystemDescriptor.g:655:3: ( (lv_element_0_0= RULE_STRING ) )
+            // InternalSystemDescriptor.g:656:4: (lv_element_0_0= RULE_STRING )
             {
-            // InternalSystemDescriptor.g:445:4: (lv_element_0_0= RULE_STRING )
-            // InternalSystemDescriptor.g:446:5: lv_element_0_0= RULE_STRING
+            // InternalSystemDescriptor.g:656:4: (lv_element_0_0= RULE_STRING )
+            // InternalSystemDescriptor.g:657:5: lv_element_0_0= RULE_STRING
             {
-            lv_element_0_0=(Token)match(input,RULE_STRING,FOLLOW_9); 
+            lv_element_0_0=(Token)match(input,RULE_STRING,FOLLOW_13); 
 
             					newLeafNode(lv_element_0_0, grammarAccess.getTerminalObjectAccess().getElementSTRINGTerminalRuleCall_0_0());
             				
@@ -1182,15 +1768,15 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
             }
 
-            otherlv_1=(Token)match(input,19,FOLLOW_7); 
+            otherlv_1=(Token)match(input,22,FOLLOW_11); 
 
             			newLeafNode(otherlv_1, grammarAccess.getTerminalObjectAccess().getColonKeyword_1());
             		
-            // InternalSystemDescriptor.g:466:3: ( (lv_content_2_0= ruleObjectValue ) )
-            // InternalSystemDescriptor.g:467:4: (lv_content_2_0= ruleObjectValue )
+            // InternalSystemDescriptor.g:677:3: ( (lv_content_2_0= ruleObjectValue ) )
+            // InternalSystemDescriptor.g:678:4: (lv_content_2_0= ruleObjectValue )
             {
-            // InternalSystemDescriptor.g:467:4: (lv_content_2_0= ruleObjectValue )
-            // InternalSystemDescriptor.g:468:5: lv_content_2_0= ruleObjectValue
+            // InternalSystemDescriptor.g:678:4: (lv_content_2_0= ruleObjectValue )
+            // InternalSystemDescriptor.g:679:5: lv_content_2_0= ruleObjectValue
             {
 
             					newCompositeNode(grammarAccess.getTerminalObjectAccess().getContentObjectValueParserRuleCall_2_0());
@@ -1245,12 +1831,16 @@ public class InternalSystemDescriptorParser extends AbstractInternalAntlrParser 
 
     public static final BitSet FOLLOW_1 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_2 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0000000000000802L});
-    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000001002L});
-    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000006000L});
-    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000069010L});
-    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000012000L});
-    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0000000000012000L});
+    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000012002L});
+    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000000802L});
+    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000028000L});
+    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000344020L});
+    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x00000000000A0000L});
+    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000400000L});
 
 }

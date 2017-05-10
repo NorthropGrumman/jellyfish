@@ -27,7 +27,7 @@ public class SystemDescriptorParser extends AbstractAntlrParser {
 
 	@Override 
 	protected String getDefaultRuleName() {
-		return "Model";
+		return "Descriptor";
 	}
 
 	public SystemDescriptorGrammarAccess getGrammarAccess() {

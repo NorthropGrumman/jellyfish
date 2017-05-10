@@ -24,6 +24,42 @@ public interface SystemDescriptorFactory extends EFactory
   SystemDescriptorFactory eINSTANCE = com.ngc.seaside.systemdescriptor.systemDescriptor.impl.SystemDescriptorFactoryImpl.init();
 
   /**
+   * Returns a new object of class '<em>Descriptor</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Descriptor</em>'.
+   * @generated
+   */
+  Descriptor createDescriptor();
+
+  /**
+   * Returns a new object of class '<em>Import</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Import</em>'.
+   * @generated
+   */
+  Import createImport();
+
+  /**
+   * Returns a new object of class '<em>Package</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Package</em>'.
+   * @generated
+   */
+  Package createPackage();
+
+  /**
+   * Returns a new object of class '<em>Data</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Data</em>'.
+   * @generated
+   */
+  Data createData();
+
+  /**
    * Returns a new object of class '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -31,6 +67,15 @@ public interface SystemDescriptorFactory extends EFactory
    * @generated
    */
   Model createModel();
+
+  /**
+   * Returns a new object of class '<em>Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Element</em>'.
+   * @generated
+   */
+  Element createElement();
 
   /**
    * Returns a new object of class '<em>Metadata</em>'.

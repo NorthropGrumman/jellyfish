@@ -4,8 +4,12 @@
 package com.ngc.seaside.systemdescriptor.systemDescriptor.util;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
@@ -80,10 +84,47 @@ public class SystemDescriptorSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
+      case SystemDescriptorPackage.DESCRIPTOR:
+      {
+        Descriptor descriptor = (Descriptor)theEObject;
+        T result = caseDescriptor(descriptor);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.IMPORT:
+      {
+        Import import_ = (Import)theEObject;
+        T result = caseImport(import_);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.PACKAGE:
+      {
+        com.ngc.seaside.systemdescriptor.systemDescriptor.Package package_ = (com.ngc.seaside.systemdescriptor.systemDescriptor.Package)theEObject;
+        T result = casePackage(package_);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.DATA:
+      {
+        Data data = (Data)theEObject;
+        T result = caseData(data);
+        if (result == null) result = caseElement(data);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case SystemDescriptorPackage.MODEL:
       {
         Model model = (Model)theEObject;
         T result = caseModel(model);
+        if (result == null) result = caseElement(model);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SystemDescriptorPackage.ELEMENT:
+      {
+        Element element = (Element)theEObject;
+        T result = caseElement(element);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -145,6 +186,70 @@ public class SystemDescriptorSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Descriptor</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Descriptor</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDescriptor(Descriptor object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Import</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Import</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseImport(Import object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Package</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Package</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T casePackage(com.ngc.seaside.systemdescriptor.systemDescriptor.Package object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Data</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Data</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseData(Data object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -156,6 +261,22 @@ public class SystemDescriptorSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseModel(Model object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseElement(Element object)
   {
     return null;
   }

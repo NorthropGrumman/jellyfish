@@ -4,8 +4,12 @@
 package com.ngc.seaside.systemdescriptor.systemDescriptor.impl;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
@@ -73,7 +77,12 @@ public class SystemDescriptorFactoryImpl extends EFactoryImpl implements SystemD
   {
     switch (eClass.getClassifierID())
     {
+      case SystemDescriptorPackage.DESCRIPTOR: return createDescriptor();
+      case SystemDescriptorPackage.IMPORT: return createImport();
+      case SystemDescriptorPackage.PACKAGE: return createPackage();
+      case SystemDescriptorPackage.DATA: return createData();
       case SystemDescriptorPackage.MODEL: return createModel();
+      case SystemDescriptorPackage.ELEMENT: return createElement();
       case SystemDescriptorPackage.METADATA: return createMetadata();
       case SystemDescriptorPackage.OBJECT: return createObject();
       case SystemDescriptorPackage.ARRAY: return createArray();
@@ -91,10 +100,65 @@ public class SystemDescriptorFactoryImpl extends EFactoryImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
+  public Descriptor createDescriptor()
+  {
+    DescriptorImpl descriptor = new DescriptorImpl();
+    return descriptor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Import createImport()
+  {
+    ImportImpl import_ = new ImportImpl();
+    return import_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public com.ngc.seaside.systemdescriptor.systemDescriptor.Package createPackage()
+  {
+    PackageImpl package_ = new PackageImpl();
+    return package_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Data createData()
+  {
+    DataImpl data = new DataImpl();
+    return data;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Model createModel()
   {
     ModelImpl model = new ModelImpl();
     return model;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Element createElement()
+  {
+    ElementImpl element = new ElementImpl();
+    return element;
   }
 
   /**

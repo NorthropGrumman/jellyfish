@@ -4,8 +4,11 @@
 package com.ngc.seaside.systemdescriptor.systemDescriptor.impl;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyArray;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EmptyObject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ObjectValue;
@@ -33,7 +36,42 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass descriptorEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass importEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass packageEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass dataEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass modelEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass elementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -152,6 +190,86 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getDescriptor()
+  {
+    return descriptorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDescriptor_Package()
+  {
+    return (EReference)descriptorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDescriptor_Elements()
+  {
+    return (EReference)descriptorEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getImport()
+  {
+    return importEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getImport_ImportedNamespace()
+  {
+    return (EReference)importEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getPackage()
+  {
+    return packageEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getPackage_Name()
+  {
+    return (EAttribute)packageEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getData()
+  {
+    return dataEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getModel()
   {
     return modelEClass;
@@ -162,9 +280,19 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModel_Greetings()
+  public EClass getElement()
   {
-    return (EReference)modelEClass.getEStructuralFeatures().get(0);
+    return elementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getElement_Name()
+  {
+    return (EAttribute)elementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -377,8 +505,22 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
     isCreated = true;
 
     // Create classes and their features
+    descriptorEClass = createEClass(DESCRIPTOR);
+    createEReference(descriptorEClass, DESCRIPTOR__PACKAGE);
+    createEReference(descriptorEClass, DESCRIPTOR__ELEMENTS);
+
+    importEClass = createEClass(IMPORT);
+    createEReference(importEClass, IMPORT__IMPORTED_NAMESPACE);
+
+    packageEClass = createEClass(PACKAGE);
+    createEAttribute(packageEClass, PACKAGE__NAME);
+
+    dataEClass = createEClass(DATA);
+
     modelEClass = createEClass(MODEL);
-    createEReference(modelEClass, MODEL__GREETINGS);
+
+    elementEClass = createEClass(ELEMENT);
+    createEAttribute(elementEClass, ELEMENT__NAME);
 
     metadataEClass = createEClass(METADATA);
     createEAttribute(metadataEClass, METADATA__TYPE);
@@ -435,14 +577,30 @@ public class SystemDescriptorPackageImpl extends EPackageImpl implements SystemD
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    dataEClass.getESuperTypes().add(this.getElement());
+    modelEClass.getESuperTypes().add(this.getElement());
     objectEClass.getESuperTypes().add(this.getObjectValue());
     arrayEClass.getESuperTypes().add(this.getObjectValue());
     emptyObjectEClass.getESuperTypes().add(this.getObjectValue());
     emptyArrayEClass.getESuperTypes().add(this.getObjectValue());
 
     // Initialize classes and features; add operations and parameters
+    initEClass(descriptorEClass, com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor.class, "Descriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDescriptor_Package(), this.getPackage(), null, "package", null, 0, 1, com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDescriptor_Elements(), this.getElement(), null, "elements", null, 0, -1, com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getImport_ImportedNamespace(), this.getElement(), null, "importedNamespace", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(packageEClass, com.ngc.seaside.systemdescriptor.systemDescriptor.Package.class, "Package", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPackage_Name(), ecorePackage.getEString(), "name", null, 0, 1, com.ngc.seaside.systemdescriptor.systemDescriptor.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(dataEClass, Data.class, "Data", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getModel_Greetings(), this.getMetadata(), null, "greetings", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(elementEClass, Element.class, "Element", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getElement_Name(), ecorePackage.getEString(), "name", null, 0, 1, Element.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(metadataEClass, Metadata.class, "Metadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMetadata_Type(), ecorePackage.getEString(), "type", null, 0, 1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
