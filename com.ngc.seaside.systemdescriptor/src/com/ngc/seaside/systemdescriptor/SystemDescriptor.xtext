@@ -2,10 +2,10 @@ grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext
 
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
-Descriptor
-	: package=Package
+Package
+	: 'package' name=QualifiedName
 	  imports+=Import*
-	  elements+=Element+
+	  element=Element
 	;
 
 // -------------------------------	
@@ -29,14 +29,8 @@ UnqualifiedName
 // ---------------------------
 
 Import
-	: 'import' importedNamespace=[Element|QualifiedName]
-	;
+	: 'import' importedNamespace=[Element|QualifiedName]	;
 
-/** */
-
-Package
-	: 'package' name=QualifiedName
-	;
 
 // ------------------------------
 // ---- Data related objects ----

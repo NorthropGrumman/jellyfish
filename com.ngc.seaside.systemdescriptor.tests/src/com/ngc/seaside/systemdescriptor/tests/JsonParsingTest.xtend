@@ -11,14 +11,14 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class JsonParsingTest {
 
 	@Inject
-	ParseHelper<Descriptor> parseHelper
+	ParseHelper<Package> parseHelper
 	
 	@Inject
     ValidationTestHelper validationTester

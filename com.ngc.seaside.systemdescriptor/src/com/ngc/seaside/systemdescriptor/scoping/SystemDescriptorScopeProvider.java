@@ -23,6 +23,7 @@ public class SystemDescriptorScopeProvider extends AbstractSystemDescriptorScope
 	@Override
 	public IScope getScope(EObject context, EReference reference) {
 		// Use our customized imported namespace aware scope provider.
-		return provider.getScope(context, reference);
+		//return provider.getScope(context, reference);
+		return super.getScope(context, reference);
 	}
 }

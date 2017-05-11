@@ -10,16 +10,13 @@
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/INT"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/FLOAT"/>
     </genEnums>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//Descriptor">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/package"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/imports"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/elements"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Package/imports"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Package/element"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Import">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Import/importedNamespace"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//DataFieldDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/type"/>

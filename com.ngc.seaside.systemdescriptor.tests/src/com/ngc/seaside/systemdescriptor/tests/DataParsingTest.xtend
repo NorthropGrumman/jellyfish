@@ -2,7 +2,7 @@ package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Descriptor
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -18,7 +18,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType
 class DataParsingTest {
 
 	@Inject
-	ParseHelper<Descriptor> parseHelper
+	ParseHelper<Package> parseHelper
 
 	@Inject
 	ValidationTestHelper validationTester
@@ -39,10 +39,10 @@ class DataParsingTest {
 		assertEquals(
 			"package name not correct",
 			"clocks.datatypes",
-			result.package.name
+			result.name
 		)
 
-		var data = result.elements.get(0)
+		var data = result.element
 		assertTrue(
 			"did not parse data!",
 			data instanceof Data
@@ -65,7 +65,7 @@ class DataParsingTest {
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
-		var data = result.elements.get(0) as Data
+		var data = result.element as Data
 		assertEquals(
 			"wrong number of fields!",
 			3,
@@ -106,7 +106,7 @@ class DataParsingTest {
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 		
-		var metadata = result.elements.get(0).metadata
+		var metadata = result.element.metadata
 		assertEquals(
 			"metadata did not parse!",
 			"name",
@@ -157,14 +157,14 @@ class DataParsingTest {
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 		
-		var data = result.elements.get(0) as Data
+		var data = result.element as Data
 		var field = data.fields.get(0)
 		var metadata = field.metadata
 		var validation = metadata.firstObject
 		
 		assertEquals(
 			"validation did not parse!",
-			"name",
+			"validation",
 			validation.element
 		)
 		
