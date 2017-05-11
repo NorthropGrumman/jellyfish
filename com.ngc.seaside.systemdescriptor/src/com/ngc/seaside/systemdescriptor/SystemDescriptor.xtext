@@ -2,6 +2,10 @@ grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext
 
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
+/*
+ * Package is the root type and it contains imports and at most one declaration of
+ * an element.
+ */
 Package
 	: 'package' name=QualifiedName
 	  imports+=Import*
@@ -12,14 +16,24 @@ Package
 // ---- Identifiers and names ----
 // -------------------------------
 
+/*
+ * A qualified name is a '.' delimited set of IDs.
+ */
 QualifiedName
 	: ID ('.' ID)*
 	;
 
+/*
+ * A qualified name with a wildcard is normal Java like import with
+ * some.name.*
+ */
 QualifiedNameWithWildcard
 	: QualifiedName '.*'?
 	;
-	
+
+/*
+ * An unqualified name is just an identifier without any '.' delimiters.
+ */	
 UnqualifiedName
 	: ID
 	;
