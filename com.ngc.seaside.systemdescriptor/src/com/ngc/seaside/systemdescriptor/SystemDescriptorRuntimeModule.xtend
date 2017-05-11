@@ -10,13 +10,13 @@ import com.ngc.seaside.systemdescriptor.scoping.PackageBasedImportedNamespaceAwa
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class SystemDescriptorRuntimeModule extends AbstractSystemDescriptorRuntimeModule {
-	
-	override configure(Binder binder) {
-		super.configure(binder)
+
+	override public void configure(Binder binder) {
+		super.configure(binder);
 		configureScope(binder);
 	}
-	
-	def configureScope(Binder binder) {
-		binder.bind(PackageBasedImportedNamespaceAwareLocalScopeProvider)
+
+	def protected void configureScope(Binder binder) {
+		binder.bind(PackageBasedImportedNamespaceAwareLocalScopeProvider);
 	}
 }

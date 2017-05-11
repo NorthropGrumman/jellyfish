@@ -11,7 +11,9 @@ Workflow {
 		configuration = {
 			project = StandardProjectConfig {
 				baseName = "com.ngc.seaside.systemdescriptor"
+				
 				rootPath = rootPath
+				
 				runtimeTest = {
 					// Disable stub generation of test setup code because we have made custom modifications.
 					enabled = false
@@ -43,11 +45,17 @@ Workflow {
 			
 			validator = {
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
-				// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				// We have a custom validator, so do not generate the default.
+				generateXtendStub = false
 			}
 			
 			scopeProvider = scoping.ImportNamespacesScopingFragment2 {
 				// Don't generate the scope provider because we have a custom one.
+				generateXtendStub = false
+			}
+			
+			generator = {
+				// Don't generate the generator stub since we have our own.
 				generateXtendStub = false
 			}
 		}
