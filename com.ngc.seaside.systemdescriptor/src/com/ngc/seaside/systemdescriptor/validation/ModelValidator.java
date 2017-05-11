@@ -9,8 +9,16 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+/**
+ * Validates a {@code Model} is correct.
+ */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
+	/**
+	 * Validates that an output declaration is correct.  Requires the
+	 * containing model not contain another output field with the same name
+	 * and requires the model have no input field with the same name.
+	 */
 	@Check
 	public void checkForDuplicateOutputFields(OutputDeclaration declaration) {
 		// Ensure that the element does not already have a declared output data
@@ -43,6 +51,11 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		}
 	}
 	
+	/**
+	 * Validates that an input declaration is correct.  Requires the
+	 * containing model not contain another input field with the same name
+	 * and requires the model have no output field with the same name.
+	 */
 	@Check
 	public void checkForDuplicateInputFields(InputDeclaration declaration) {
 		// Ensure that the element does not already have a declared input data
