@@ -15,6 +15,8 @@ import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.junit.Before
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.diagnostics.Diagnostic
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -85,6 +87,27 @@ class ModelParsingTest {
 		val result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
+	}
+	
+	
+	@Test
+	def void testDoesNotParseWithMissingImports() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Foo
+			
+			model Timer {
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.IMPORT,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
 	}
 
 }
