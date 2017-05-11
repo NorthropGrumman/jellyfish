@@ -1,33 +1,20 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import java.util.Collections;
-import java.util.Iterator;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.validation.Check;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-public class DuplicateNameValidator extends AbstractSystemDescriptorValidator {
+public class DuplicateElementValidator extends AbstractSystemDescriptorValidator {
 
 	@Inject
 	private IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
-
-//	@Check
-//	public void checkForDuplicateData(Data data) {
-//		Package p = (Package) data.eContainer();
-//		// getCon
-//		// if(p.get)
-//	}
 
 	@Check
 	public void checkForDuplicateDataDeclarations(Data data) {

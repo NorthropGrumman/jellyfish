@@ -140,7 +140,49 @@ class ModelParsingTest {
 		val result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
+		
+		val model = result.element as Model
+		val output = model.output
+		val declaration = output.declarations.get(0)
+		
+		assertEquals(
+			"output name not correct!",
+			"currentTime",
+			declaration.name
+		)
+		assertEquals(
+			"output type not correct!",
+			"Time",
+			declaration.type.name
+		)
 	}
+
+	@Test
+	def void testDoesNotParseModelWithDuplicateOutputs() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model Timer {
+				
+				output {
+					Time currentTime
+					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
+			null
+		)
+	}
+
+// does not parse model with missing data type
 
 	@Test
 	def void testDoesNotParseWithMissingImports() {
