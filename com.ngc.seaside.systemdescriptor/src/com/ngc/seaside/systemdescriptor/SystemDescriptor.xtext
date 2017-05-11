@@ -60,7 +60,10 @@ Import
  * Defines the different data types that are built in.
  */
 enum DataType
-	: INT='int' | FLOAT='float'
+	: INT='int'
+	| FLOAT='float'
+	| STRING="string"
+	| BOOLEAN="boolean"
 	;
 	
 /*
