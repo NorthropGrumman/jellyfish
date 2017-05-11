@@ -43,7 +43,8 @@ UnqualifiedName
 // ---------------------------
 
 Import
-	: 'import' importedNamespace=[Element|QualifiedName]	;
+	: 'import' importedNamespace=[Element|QualifiedName]
+	;
 
 
 // ------------------------------

@@ -44,7 +44,7 @@ Workflow {
 			}
 			
 			validator = {
-				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				//composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 				// We have a custom validator, so do not generate the default.
 				generateXtendStub = false
 			}

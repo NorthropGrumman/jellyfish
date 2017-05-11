@@ -12,6 +12,11 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.eclipse.xtext.diagnostics.Diagnostic
+import org.eclipse.emf.common.util.URI
+import org.eclipse.xtext.junit4.util.ResourceHelper
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -19,6 +24,9 @@ class DataParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
+
+	@Inject
+	ResourceHelper resourceHelper
 
 	@Inject
 	ValidationTestHelper validationTester
@@ -71,7 +79,7 @@ class DataParsingTest {
 			3,
 			data.fields.size
 		)
-		
+
 		var field = data.fields.get(0)
 		assertEquals(
 			"data type not correct!",
@@ -105,7 +113,7 @@ class DataParsingTest {
 		val result = parseHelper.parse(source)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
-		
+
 		var metadata = result.element.metadata
 		assertEquals(
 			"metadata did not parse!",
@@ -118,7 +126,7 @@ class DataParsingTest {
 			metadata.json.firstObject.content.value
 		)
 	}
-	
+
 	@Test
 	def void testDoesParseDataWithValidation() {
 		val source = '''
@@ -156,19 +164,70 @@ class DataParsingTest {
 		val result = parseHelper.parse(source)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
-		
+
 		var data = result.element as Data
 		var field = data.fields.get(0)
 		var metadata = field.metadata
 		var validation = metadata.firstObject
-		
+
 		assertEquals(
 			"validation did not parse!",
 			"validation",
 			validation.element
 		)
-		
-		// TODO TH: the JSON is not correct the type ObjectValue only has a string field, it is not recursive.
-		// consider https://gist.github.com/nightscape/629651
+
+	// TODO TH: the JSON is not correct the type ObjectValue only has a string field, it is not recursive.
+	// consider https://gist.github.com/nightscape/629651
+	}
+
+	@Test
+	def void testDoesNotParseMultipleDataElements() {
+		val source = '''
+			package clocks.datatypes
+			
+			data Time {
+			}
+			
+			data LocalTime {
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PACKAGE,
+			Diagnostic.SYNTAX_DIAGNOSTIC
+		)
+	}
+
+	@Test
+	@Ignore("Does not check for duplicate data declarations in the same package yet")
+	def void testDoesRequireUnqiueNames() {
+		val dataResource = resourceHelper.resource(
+			'''
+				package clocks.datatypes
+							
+				data Time {
+				}
+			''',
+			URI.createURI("datatypes.sd")
+		)
+		validationTester.assertNoIssues(dataResource)
+
+		val source = '''
+			package clocks.datatypes
+			
+			data Time {
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.DATA,
+			null
+		)
 	}
 }
