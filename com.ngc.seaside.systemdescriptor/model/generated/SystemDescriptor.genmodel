@@ -23,16 +23,24 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/metadata"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//OutputDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//OutputDeclaration/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//OutputDeclaration/name"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Output">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Output/declarations"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//Model"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/output"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Element">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Element/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Element/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Metadata">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Metadata/type"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Metadata/json"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//JsonObject">

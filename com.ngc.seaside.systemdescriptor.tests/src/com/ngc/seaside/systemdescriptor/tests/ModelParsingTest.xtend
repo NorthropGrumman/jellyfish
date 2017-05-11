@@ -17,6 +17,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -30,7 +31,7 @@ class ModelParsingTest {
 
 	@Inject
 	ValidationTestHelper validationTester
-	
+
 	Resource dataResource
 
 	@Before
@@ -74,6 +75,38 @@ class ModelParsingTest {
 	}
 
 	@Test
+	def void testDoesParseModelWithMetadata() {
+		val source = '''
+			package clocks.models
+			
+			model Timer {
+				metadata {
+					"name": "Timer",
+					"description": "Outputs the current time.",
+					"stereotypes": ["service"]
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val metadata = result.element.metadata;
+		val name = metadata.json.firstObject;
+		assertEquals(
+			"metadata not correct!",
+			"name",
+			name.element
+		)
+		assertEquals(
+			"metadata not correct!",
+			"Timer",
+			name.content.value
+		)
+	}
+
+	@Test
 	def void testDoesParseModelWithImportedData() {
 		val source = '''
 			package clocks.models
@@ -88,8 +121,27 @@ class ModelParsingTest {
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 	}
-	
-	
+
+	@Test
+	def void testDoesParseModelWithOutputs() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model Timer {
+				
+				output {
+					Time currentTime
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+	}
+
 	@Test
 	def void testDoesNotParseWithMissingImports() {
 		val source = '''
@@ -110,4 +162,33 @@ class ModelParsingTest {
 		)
 	}
 
+	@Test
+	@Ignore("Does not check for duplicate model declarations in the same package yet")
+	def void testDoesRequireUnqiueNames() {
+		val modelResource = resourceHelper.resource(
+			'''
+				package clocks.models
+							
+				model Timer {
+				}
+			''',
+			URI.createURI("models.sd")
+		)
+		validationTester.assertNoIssues(modelResource)
+
+		val source = '''
+			package clocks.models
+			
+			model Timer {
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.MODEL,
+			null
+		)
+	}
 }

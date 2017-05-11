@@ -4,7 +4,8 @@ generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDes
 
 /*
  * Package is the root type and it contains imports and at most one declaration of
- * an element.
+ * an element.  Should align to the decomposition of the system. The structure here
+ * should reflect the file structure similar to that of Java.
  */
 Package
 	: 'package' name=QualifiedName
@@ -42,6 +43,10 @@ UnqualifiedName
 // ---- Package structure ----
 // ---------------------------
 
+/*
+ * Imports allow modelers to reference data or models in other packages.
+ * Note that wildcard ('*') imports are not yet supported.
+ */
 Import
 	: 'import' importedNamespace=[Element|QualifiedName]
 	;
@@ -51,20 +56,45 @@ Import
 // ---- Data related objects ----
 // ------------------------------
 
+/*
+ * Defines the different data types that are built in.
+ */
 enum DataType
 	: INT='int' | FLOAT='float'
 	;
 	
+/*
+ * A data field declaration consists of a type and unqualified name.
+ * It may also contain optional metadata.
+ */
 DataFieldDeclaration
 	: type=DataType
 	  name=UnqualifiedName
 	  metadata=JsonObject?
 	;
 
+// -------------------------------
+// ---- Model related objects ----
+// -------------------------------
+
+OutputDeclaration
+	: type=[Data|UnqualifiedName] name=UnqualifiedName
+	;
+
+Output
+	: 'output' '{'
+		declarations+=OutputDeclaration+
+	  '}'
+	;
+
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
 
+/*
+ * Declares an object of data type; a type of object that contains attributes
+ * of metadata and optional members.
+ */
 Data
 	: 'data' name=UnqualifiedName '{'
 		metadata=Metadata?
@@ -72,32 +102,44 @@ Data
 	  '}'
 	;
 
+/*
+ * Declares an object of model type; a type of object that contains attributes
+ * of metadata and optional requires, input, output, and scenario attributes.
+ */
 Model
 	: 'model' name=UnqualifiedName '{'
 		metadata=Metadata?
+		output=Output?
 	  '}'
 	;
 
+/*
+ * An element represents the common root type of modeling elements.  Elements
+ * may either be data or a model.
+ */
 Element
 	: Data
 	| Model
 	;
 
-
-
-
-
-
-
-
-Metadata:
-  type='metadata' json=JsonObject?
-;	
-	
+/*
+ * Optional attribute of model, data, input, and data. The metadata should 
+ * use the JSON syntax. The modeler can use this field in any way necessary
+ * to convey the intent of the object.  For instance: the model may require
+ * metdata that provides a name, description and a classifier (stereotype)
+ * in order to give the reader context.  Possible stereotypes include but
+ * are not limited to:
+ * - service (a service in the MSA architecture)
+ * - virtual (a non-realized component used to convey structure)
+ */
+Metadata
+	: 'metadata' json=JsonObject?
+	;	
 	
 // ----------------------
 // ---- JSON support ----
 // ----------------------
+
 JsonObject:
 	'{'
 	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
