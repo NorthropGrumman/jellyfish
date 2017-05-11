@@ -32,3 +32,27 @@ SystemDescriptor-DSL for CEAC-295 Story
 1. Expand src/com.ngc.seaside.systemdescriptor.tests 
 1. Right click **SystemDescriptorParsingTest.xtend**
 1. Select **Run As** -> **Junit Test**
+
+## Creating the JellyFish SystemDescriptor DSL Plugin for Eclipse
+It is possible to create a plugin of the JellyFish SystemDescriptor DSL grammar for use in Eclipse to be able
+to use the Eclipse editing capabilities.  The steps below are required because of an Eclipse bug which is documented
+at https://bugs.eclipse.org/bugs/show_bug.cgi?id=278673.  Also, refer to http://infobart.com/category-not-showing-up-in-eclipse-update-site/ for a workaround that is defined in
+the steps below.
+1. Open the **com.ngc.seaside.systemdescriptor.updatesite** project
+1. Delete the **features** and **plugins** folders as well as the **artifacts.jar** and **content.jar** files.
+1. Open the site.xml file.  This should display an **Update Site Map** window panel.  If the xml file is opened in the text editor, select the **Site Map** tab.
+   1. If you see **JellyFish.sd.category** (or any other item) in the list box of the panel, then delete it.
+   1. Click on the **New Category** button and enter **JellyFish.sd.category** for the ID.  Enter **XText DSL** for the Name.
+   1. Select the category just added and select the **Add Feature...** button
+      1. From the Feature Selection dialog, select the **com.ngc.seaside.systemdescriptor.feature** project and select the **OK** button
+   1. Select the **Build All** button to create the appropriate Plugin jars.
+   
+## Installing the plugins into an Eclipse installation
+1. In the **Help** menu, select **Install New Software**
+1. Click on the **Add...** button
+1. Click the **Local..." button and traverse the file system tree to the location of the plugin
+  **NOTE** At some point, the plugin to select will be on a webserver and this README will be updated
+           Currently, the location will be in the **jellyfish-systemdescriptor-dsl** git clone directory
+   1. The plugin to select is the **com.ngc.seaside.systemdescriptor.updatesite** project
+1. Click on the **Ok** button to close the Add Repository dialog (you don't have to enter a Name)
+1. In the list box panel, you should see **XText DSL**.  Select the check box and click the **Next >** button to install the plugin.

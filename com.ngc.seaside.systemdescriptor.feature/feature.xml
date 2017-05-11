@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.ngc.seaside.systemdescriptor.feature"
-      label="Feature"
+      label="JellyFish SystemDescriptor DSL"
       version="1.0.0.qualifier"
-      provider-name="NGC">
+      provider-name="Northrop Grumman Corporation">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.systemdescriptor.seaside.ngc.com/description">
+      This is the JellyFish System Descriptor Domain Specific Language Eclipse plugin.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.systemdescriptor.seaside.ngc.com/copyright">
+	  Northrop Grumman Proprietary
+	  ____________________________
+	
+	   Copyright (C) 2016, Northrop Grumman Systems Corporation
+	   All Rights Reserved.
+	
+	  NOTICE:  All information contained herein is, and remains the property of
+	  Northrop Grumman Systems Corporation. The intellectual and technical concepts
+	  contained herein are proprietary to Northrop Grumman Systems Corporation and
+	  may be covered by U.S. and Foreign Patents or patents in process, and are
+	  protected by trade secret or copyright law. Dissemination of this information
+	  or reproduction of this material is strictly forbidden unless prior written
+	  permission is obtained from Northrop Grumman.
+
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.systemdescriptor.seaside.ngc.com/license">
+	  Northrop Grumman Proprietary
+	  ____________________________
+	
+	   Copyright (C) 2016, Northrop Grumman Systems Corporation
+	   All Rights Reserved.
+	
+	  NOTICE:  All information contained herein is, and remains the property of
+	  Northrop Grumman Systems Corporation. The intellectual and technical concepts
+	  contained herein are proprietary to Northrop Grumman Systems Corporation and
+	  may be covered by U.S. and Foreign Patents or patents in process, and are
+	  protected by trade secret or copyright law. Dissemination of this information
+	  or reproduction of this material is strictly forbidden unless prior written
+	  permission is obtained from Northrop Grumman.
    </license>
 
    <plugin
@@ -40,6 +65,13 @@
 
    <plugin
          id="org.apache.commons.logging"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -95,6 +127,13 @@
          unpack="false"/>
 
    <plugin
+         id="org.antlr.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.xtend.lib"
          download-size="0"
          install-size="0"
@@ -102,7 +141,28 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.xtext.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
          id="org.eclipse.xtext.builder"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.xtext.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
