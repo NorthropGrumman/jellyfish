@@ -4,7 +4,7 @@
 package com.ngc.seaside.systemdescriptor
 
 import com.google.inject.Binder
-import com.ngc.seaside.systemdescriptor.scoping.ModelingElementImportedNamespaceAwareLocalScopeProvider
+import com.ngc.seaside.systemdescriptor.scoping.PackageBasedImportedNamespaceAwareLocalScopeProvider
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -17,6 +17,6 @@ class SystemDescriptorRuntimeModule extends AbstractSystemDescriptorRuntimeModul
 	}
 	
 	def configureScope(Binder binder) {
-		binder.bind(ModelingElementImportedNamespaceAwareLocalScopeProvider)
+		binder.bind(PackageBasedImportedNamespaceAwareLocalScopeProvider)
 	}
 }

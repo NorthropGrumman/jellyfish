@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 public class SystemDescriptorScopeProvider extends AbstractSystemDescriptorScopeProvider {
 
 	@Inject
-	private ModelingElementImportedNamespaceAwareLocalScopeProvider provider;
+	private PackageBasedImportedNamespaceAwareLocalScopeProvider provider;
 	
 	@Override
 	public IScope getScope(EObject context, EReference reference) {

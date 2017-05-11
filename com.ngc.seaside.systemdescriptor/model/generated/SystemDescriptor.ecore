@@ -5,6 +5,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Descriptor">
     <eStructuralFeatures xsi:type="ecore:EReference" name="package" eType="#//Package"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
+        eType="#//Import" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
         eType="#//Element" containment="true"/>
   </eClassifiers>
@@ -14,10 +16,14 @@
   <eClassifiers xsi:type="ecore:EClass" name="Package">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="DataType">
+    <eLiterals name="INT" literal="int"/>
+    <eLiterals name="FLOAT" value="1" literal="float"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DataFieldDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//DataType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="fieldMetadata" eType="#//JsonObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Data" eSuperTypes="#//Element">

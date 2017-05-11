@@ -6,8 +6,13 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="SystemDescriptor" basePackage="com.ngc.seaside.systemdescriptor"
       disposableProviderFactory="true" fileExtensions="sd" ecorePackage="SystemDescriptor.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//DataType">
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/INT"/>
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/FLOAT"/>
+    </genEnums>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Descriptor">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/package"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/imports"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Descriptor/elements"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Import">
@@ -19,7 +24,7 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//DataFieldDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/fieldMetadata"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>

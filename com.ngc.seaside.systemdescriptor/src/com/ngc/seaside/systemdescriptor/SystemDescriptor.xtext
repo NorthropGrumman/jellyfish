@@ -4,7 +4,7 @@ generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDes
 
 Descriptor
 	: package=Package
-	  //imports+=Import*;
+	  imports+=Import*
 	  elements+=Element+
 	;
 
@@ -32,6 +32,8 @@ Import
 	: 'import' importedNamespace=[Element|QualifiedName]
 	;
 
+/** */
+
 Package
 	: 'package' name=QualifiedName
 	;
@@ -40,14 +42,14 @@ Package
 // ---- Data related objects ----
 // ------------------------------
 
-DataType
-	: 'int' | 'float'
+enum DataType
+	: INT='int' | FLOAT='float'
 	;
 	
 DataFieldDeclaration
 	: type=DataType
 	  name=UnqualifiedName
-	  fieldMetadata=JsonObject?
+	  metadata=JsonObject?
 	;
 
 // ------------------------------
