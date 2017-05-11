@@ -182,7 +182,137 @@ class ModelParsingTest {
 		)
 	}
 
-// does not parse model with missing data type
+	@Test
+	def void testDoesNotParseModelWithMissingOutputDataType() {
+		val source = '''
+			package clocks.models
+			
+			model Timer {
+				
+				output {
+					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+	}
+
+	@Test
+	def void testDoesParseModelWithInput() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				input {
+					Time currentTime
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+		
+		val model = result.element as Model
+		val input = model.input
+		val declaration = input.declarations.get(0)
+		
+		assertEquals(
+			"input name not correct!",
+			"currentTime",
+			declaration.name
+		)
+		assertEquals(
+			"input type not correct!",
+			"Time",
+			declaration.type.name
+		)
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithDuplicateInputs() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				input {
+					Time currentTime
+					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.INPUT_DECLARATION,
+			null
+		)
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithMissingInputDataType() {
+		val source = '''
+			package clocks.models
+			
+			model ClockDisplay {
+				
+				input {
+					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.INPUT_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+	}
+
+	@Test
+	def void testDoesNotParseModelWithDuplicateInputAndOutput() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
+			null
+		)
+	}
 
 	@Test
 	def void testDoesNotParseWithMissingImports() {

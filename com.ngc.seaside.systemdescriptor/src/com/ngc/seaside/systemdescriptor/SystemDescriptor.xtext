@@ -77,16 +77,38 @@ DataFieldDeclaration
 // ---- Model related objects ----
 // -------------------------------
 
+/*
+ * Declares a output via a referenced type and an unqualified name.
+ */
 OutputDeclaration
 	: type=[Data|UnqualifiedName] name=UnqualifiedName
 	;
 
+/*
+ * Declares an input via a referenced type and an unqualified name.
+ */
+InputDeclaration
+	: type=[Data|UnqualifiedName] name=UnqualifiedName
+	;
+
+/*
+ * Optional attribute of model, defines outputs produced by the model.
+ */
 Output
 	: 'output' '{'
 		declarations+=OutputDeclaration+
 	  '}'
 	;
 
+/*
+ * Optional attribute of a model, defines necessary input.
+ */
+Input 
+	: 'input' '{'
+		declarations+=InputDeclaration+
+	  '}'
+	; 
+ 
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
@@ -109,6 +131,7 @@ Data
 Model
 	: 'model' name=UnqualifiedName '{'
 		metadata=Metadata?
+		input=Input?
 		output=Output?
 	  '}'
 	;
