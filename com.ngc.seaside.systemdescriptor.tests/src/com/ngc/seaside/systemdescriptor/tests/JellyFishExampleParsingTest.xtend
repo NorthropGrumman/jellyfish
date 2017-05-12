@@ -59,6 +59,11 @@ class JellyFishExampleParsingTest {
 			  }
 			}
 		'''
+		val dataResource = resourceHelper.resource(
+			dataSource,
+			URI.createURI("datatypes.sd")
+		)
+		validationTester.assertNoIssues(dataResource)
 
 		val timerSource = '''
 			package clocks.models
@@ -77,6 +82,11 @@ class JellyFishExampleParsingTest {
 			  }
 			}
 		'''
+		val timerResource = resourceHelper.resource(
+			timerSource,
+			dataResource.resourceSet
+		)
+		validationTester.assertNoIssues(timerResource)
 
 		val clockDisplaySource = '''
 			package clocks.models
@@ -94,13 +104,6 @@ class JellyFishExampleParsingTest {
 			 }
 			}
 		'''
-
-		val dataResource = resourceHelper.resource(
-			dataSource,
-			URI.createURI("datatypes.sd")
-		)
-		validationTester.assertNoIssues(dataResource)
-
 		val clockDisplayResource = resourceHelper.resource(
 			clockDisplaySource,
 			dataResource.resourceSet
@@ -125,7 +128,64 @@ class JellyFishExampleParsingTest {
 		)
 		validationTester.assertNoIssues(speakerResource)
 
-		val result = parseHelper.parse(timerSource, dataResource.resourceSet)
+		val alarmSource = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.Speaker
+			
+			model Alarm {
+			  metadata {
+				"description": "Generates alerts based on times set for alarms.",
+				"stereotypes": ["service"]
+				 }
+				  
+				 requires {
+				 	Speaker speaker
+				 }
+				 
+				 input {
+				   Time currentTime
+				   Time alarmTimes
+				 }
+			}
+		'''
+		val alarmResource = resourceHelper.resource(
+			alarmSource,
+			dataResource.resourceSet
+		)
+		validationTester.assertNoIssues(alarmResource)
+
+		val alarmClockSource = 
+		'''
+		package clocks
+		
+		import clocks.datatypes.Time
+		import clocks.models.Timer
+		import clocks.models.ClockDisplay
+		import clocks.models.Alarm
+		import clocks.models.Speaker
+		
+		model AlarmClock {
+		  metadata {
+		    "description": "The top level alarm clock system.  It requires the alarmTimes from some other component.",
+		    "stereotypes": ["virtual", "system"]
+		  }
+		  
+		  input {
+		    Time alarmTimes
+		  }
+		  
+		  parts {
+		    Timer timer
+		    ClockDisplay display
+		    Alarm alarm
+		    Speaker speaker
+		  }
+		}
+		'''
+
+		val result = parseHelper.parse(alarmClockSource, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 	}
