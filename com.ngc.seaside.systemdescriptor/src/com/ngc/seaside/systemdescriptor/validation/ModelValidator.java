@@ -9,6 +9,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
@@ -114,6 +116,38 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
 		}
 	}
+	
+	@Check
+	public void checkForDuplicateRequirements(RequireDeclaration declaration) {
+		// Ensure that the model does not already have a requirement with the same
+		// name.
+		Requires requires = (Requires) declaration.eContainer();
+		Model model = (Model) requires.eContainer();
+
+		if (getNumberOfRequirementsNamed(model, declaration.getName()) > 1) {
+			String msg = String.format(
+					"A requirement named '%s' is already defined for the model '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
+
+			// Ensure there is no input field with the same name.
+		} else if (getNumberOfInputFieldsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"An input named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
+
+			// Ensure there is no output field with the same name.
+		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"An output named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
+		}
+	}
 
 	private static int getNumberOfInputFieldsNamed(
 			Model model,
@@ -148,6 +182,18 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 				: (int) parts.getDeclarations()
 						.stream()
 						.filter(d -> d.getName().equals(partName))
+						.count();
+	}
+	
+	private static int getNumberOfRequirementsNamed(
+			Model model,
+			String requirementName) {
+		Requires requires = model.getRequires();
+		return requires == null
+				? 0
+				: (int) requires.getDeclarations()
+						.stream()
+						.filter(d -> d.getName().equals(requirementName))
 						.count();
 	}
 }

@@ -128,6 +128,24 @@ Parts
 	  '}'
 	;
  
+/*
+ * Declares a requirement on another model via a referenced model type
+ * and an unqualified name.
+ */
+RequireDeclaration
+	: type=[Model|UnqualifiedName] name=UnqualifiedName
+	;
+ 
+/*
+ * Optional attribute of a model, places condition on the model to necessitate
+ * access to / existence of another model. 
+ */
+Requires
+	: 'requires' '{'
+		declarations+=RequireDeclaration+
+	  '}'
+	;
+ 
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
@@ -150,6 +168,7 @@ Data
 Model
 	: 'model' name=UnqualifiedName '{'
 		metadata=Metadata?
+		requires=Requires?
 		input=Input?
 		output=Output?
 		parts=Parts?
