@@ -18,10 +18,48 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
  */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
+	// The grammar allows the various blocks to be declared in the following
+	// order:
+	//
+	// 1) requires
+	// 2) input
+	// 3) output
+	// 4) parts
+	//
+	// Therefore, we check for duplicate declarations in the manner shown
+	// below. The requires block has the fewest checks and the parts block
+	// has the most. This is because we consider a requirement declared in
+	// the requires block to have a "higher precedence" than a part with the
+	// same name in the parts block because requires is listed first. Thus,
+	// the part declaration is the duplicate (not the requires declaration).
+
+	/**
+	 * Validates that a require declaration is correct. Requires the containing
+	 * model not contain another requirement with the same name.
+	 * 
+	 * @param declaration
+	 */
+	@Check
+	public void checkForDuplicateRequirements(RequireDeclaration declaration) {
+		// Ensure that the model does not already have a requirement with the
+		// same
+		// name.
+		Requires requires = (Requires) declaration.eContainer();
+		Model model = (Model) requires.eContainer();
+
+		if (getNumberOfRequirementsNamed(model, declaration.getName()) > 1) {
+			String msg = String.format(
+					"A requirement named '%s' is already defined for the model '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
+		}
+	}
+
 	/**
 	 * Validates that an input declaration is correct. Requires the containing
 	 * model not contain another input field with the same name and requires the
-	 * model have no output field with the same name.
+	 * model have no requirement with the same name.
 	 */
 	@Check
 	public void checkForDuplicateInputFields(InputDeclaration declaration) {
@@ -36,11 +74,11 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
 
-			// Ensure that the model does not already have a declared output
-			// field with the same name.
-		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
+			// Ensure that the model does not already have a declared
+			// requirement with the same name.
+		} else if (getNumberOfRequirementsNamed(model, declaration.getName()) > 0) {
 			String msg = String.format(
-					"An output named '%s' is already defined for the element '%s'.",
+					"A requirement named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
@@ -49,8 +87,9 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 
 	/**
 	 * Validates that an output declaration is correct. Requires the containing
-	 * model not contain another output field with the same name and requires
-	 * the model have no input field with the same name.
+	 * model not contain another output field with the same name, requires the
+	 * model have no requirement with the same name, and requires the model have
+	 * no input field with the same name.
 	 */
 	@Check
 	public void checkForDuplicateOutputFields(OutputDeclaration declaration) {
@@ -62,6 +101,15 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 1) {
 			String msg = String.format(
 					"An output named '%s' is already defined for the model '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
+
+			// Ensure that the model does not already have a declared
+			// requirement with the same name.
+		} else if (getNumberOfRequirementsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"A requirement named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
@@ -79,9 +127,10 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 
 	/**
 	 * Validates that the part declaration is correct. Requires the containing
-	 * model not to contain another part declaration with the same name, not to
-	 * contain another input field with the same name, and not to contain
-	 * another output field with the same name.
+	 * model not to contain another part declaration with the same name,
+	 * requires the model have no requirement with the same name, requires the
+	 * mode not to have another input field with the same name, and requires the
+	 * model not to have another output field with the same name.
 	 * 
 	 * @param declaration
 	 */
@@ -99,7 +148,17 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
 
-			// Ensure there is no input field with the same name.
+			// Ensure that the model does not already have a declared
+			// requirement with the same name.
+		} else if (getNumberOfRequirementsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"A requirement named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+
+			// Ensure that the model does not already have a declared input
+			// data field with the same name.
 		} else if (getNumberOfInputFieldsNamed(model, declaration.getName()) > 0) {
 			String msg = String.format(
 					"An input named '%s' is already defined for the element '%s'.",
@@ -114,38 +173,6 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
-		}
-	}
-	
-	@Check
-	public void checkForDuplicateRequirements(RequireDeclaration declaration) {
-		// Ensure that the model does not already have a requirement with the same
-		// name.
-		Requires requires = (Requires) declaration.eContainer();
-		Model model = (Model) requires.eContainer();
-
-		if (getNumberOfRequirementsNamed(model, declaration.getName()) > 1) {
-			String msg = String.format(
-					"A requirement named '%s' is already defined for the model '%s'.",
-					declaration.getName(),
-					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
-
-			// Ensure there is no input field with the same name.
-		} else if (getNumberOfInputFieldsNamed(model, declaration.getName()) > 0) {
-			String msg = String.format(
-					"An input named '%s' is already defined for the element '%s'.",
-					declaration.getName(),
-					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
-
-			// Ensure there is no output field with the same name.
-		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
-			String msg = String.format(
-					"An output named '%s' is already defined for the element '%s'.",
-					declaration.getName(),
-					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
 		}
 	}
 
@@ -184,7 +211,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 						.filter(d -> d.getName().equals(partName))
 						.count();
 	}
-	
+
 	private static int getNumberOfRequirementsNamed(
 			Model model,
 			String requirementName) {
