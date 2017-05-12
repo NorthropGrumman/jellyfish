@@ -1,4 +1,4 @@
-# JellyFish
+# JellyFish Command Line Interface (CLI)
 
 ## Summary
 This repository consist of the JellyFish implementation bundles that allow you to query and generate artifacts from the JellyFish System Descriptor Domain Specific Language (DSL). Therefore, all the contents of this repository will probably depend on the [jellyfish-systemdescriptor-dsl](https://github.ms.northgrum.com/CEACIDE/jellyfish-systemdescriptor-dsl) repository.
