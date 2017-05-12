@@ -34,6 +34,8 @@ class ModelParsingTest {
 
 	Resource dataResource
 
+	Resource modelResource
+
 	@Before
 	def void setup() {
 		dataResource = resourceHelper.resource(
@@ -46,6 +48,17 @@ class ModelParsingTest {
 			URI.createURI("datatypes.sd")
 		)
 		validationTester.assertNoIssues(dataResource)
+
+		modelResource = resourceHelper.resource(
+			'''
+				package clocks.models.more
+							
+				model Extra {
+				}
+			''',
+			dataResource.resourceSet
+		)
+		validationTester.assertNoIssues(modelResource)
 	}
 
 	@Test
@@ -205,6 +218,30 @@ class ModelParsingTest {
 	}
 
 	@Test
+	def void testDoesNotParseModelWithOutputTypeOfModel() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.more.Extra
+			
+			model Timer {
+				
+				output {
+					Extra extra
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+	}
+
+	@Test
 	def void testDoesParseModelWithInput() {
 		val source = '''
 			package clocks.models
@@ -273,6 +310,30 @@ class ModelParsingTest {
 				
 				input {
 					Time currentTime
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.INPUT_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+	}
+
+	@Test
+	def void testDoesNotParseModelWithInputTypeOfModel() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.more.Extra
+			
+			model Timer {
+				
+				input {
+					Extra extra
 				}
 			}
 		'''

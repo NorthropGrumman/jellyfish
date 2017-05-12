@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
@@ -22,7 +23,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	 */
 	@Check
 	public void checkForDuplicateInputFields(InputDeclaration declaration) {
-		// Ensure that the element does not already have a declared input data
+		// Ensure that the model does not already have a declared input data
 		// field with the same name.
 		Input input = (Input) declaration.eContainer();
 		Model model = (Model) input.eContainer();
@@ -33,7 +34,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
 
-			// Ensure that the element does not already have a declared output
+			// Ensure that the model does not already have a declared output
 			// field with the same name.
 		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
 			String msg = String.format(
@@ -43,7 +44,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
 		}
 	}
-	
+
 	/**
 	 * Validates that an output declaration is correct. Requires the containing
 	 * model not contain another output field with the same name and requires
@@ -51,7 +52,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	 */
 	@Check
 	public void checkForDuplicateOutputFields(OutputDeclaration declaration) {
-		// Ensure that the element does not already have a declared output data
+		// Ensure that the model does not already have a declared output data
 		// field with the same name.
 		Output output = (Output) declaration.eContainer();
 		Model model = (Model) output.eContainer();
@@ -63,10 +64,9 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
 
-			// Ensure that the element does not already have a declared input
+			// Ensure that the model does not already have a declared input
 			// data field with the same name.
 		} else if (getNumberOfInputFieldsNamed(model, declaration.getName()) > 0) {
-
 			String msg = String.format(
 					"An input named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
@@ -75,9 +75,44 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		}
 	}
 
+	/**
+	 * Validates that the part declaration is correct. Requires the containing
+	 * model not to contain another part declaration with the same name, not to
+	 * contain another input field with the same name, and not to contain
+	 * another output field with the same name.
+	 * 
+	 * @param declaration
+	 */
 	@Check
 	public void checkForDuplicateParts(PartDeclaration declaration) {
+		// Ensure that the model does not already have a part with the same
+		// name.
+		Parts parts = (Parts) declaration.eContainer();
+		Model model = (Model) parts.eContainer();
 
+		if (getNumberOfPartsNamed(model, declaration.getName()) > 1) {
+			String msg = String.format(
+					"A part named '%s' is already defined for the model '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+
+			// Ensure there is no input field with the same name.
+		} else if (getNumberOfInputFieldsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"An input named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+
+			// Ensure there is no output field with the same name.
+		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"An output named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+		}
 	}
 
 	private static int getNumberOfInputFieldsNamed(
@@ -91,7 +126,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 						.filter(d -> d.getName().equals(fieldName))
 						.count();
 	}
-	
+
 	private static int getNumberOfOutputFieldsNamed(
 			Model model,
 			String fieldName) {
@@ -101,6 +136,18 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 				: (int) output.getDeclarations()
 						.stream()
 						.filter(d -> d.getName().equals(fieldName))
+						.count();
+	}
+
+	private static int getNumberOfPartsNamed(
+			Model model,
+			String partName) {
+		Parts parts = model.getParts();
+		return parts == null
+				? 0
+				: (int) parts.getDeclarations()
+						.stream()
+						.filter(d -> d.getName().equals(partName))
 						.count();
 	}
 }

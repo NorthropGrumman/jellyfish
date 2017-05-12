@@ -124,7 +124,7 @@ PartDeclaration
  */
 Parts
 	: 'parts' '{'
-		parts+=PartDeclaration+
+		declarations+=PartDeclaration+
 	  '}'
 	;
  

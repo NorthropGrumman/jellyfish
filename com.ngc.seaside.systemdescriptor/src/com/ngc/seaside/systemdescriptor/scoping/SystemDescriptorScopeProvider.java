@@ -17,7 +17,7 @@ import com.google.inject.Inject;
  * on how and when to use it.
  */
 public class SystemDescriptorScopeProvider extends AbstractSystemDescriptorScopeProvider {
-	
+
 	@Inject
 	private SdImportedNamespaceAwareLocalScopeProvider scopeProviderDelegate;
 

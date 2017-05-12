@@ -4,14 +4,14 @@
 package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -19,11 +19,11 @@ class JsonParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
-	
-	@Inject
-    ValidationTestHelper validationTester
 
-	@Test 
+	@Inject
+	ValidationTestHelper validationTester
+
+	@Test
 	def void testDoesParseMetadataAsJson() {
 		val result = parseHelper.parse('''
 			package blah

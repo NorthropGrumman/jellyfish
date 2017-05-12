@@ -1,9 +1,12 @@
 package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -14,9 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -33,6 +33,8 @@ class PartsParsingTest {
 
 	Resource subPartResource
 
+	Resource dataResource
+
 	@Before
 	def void setup() {
 		subPartResource = resourceHelper.resource(
@@ -45,6 +47,17 @@ class PartsParsingTest {
 			URI.createURI("subpart.sd")
 		)
 		validationTester.assertNoIssues(subPartResource)
+
+		dataResource = resourceHelper.resource(
+			'''
+				package clocks.datatypes
+							
+				data Time {
+				}
+			''',
+			subPartResource.resourceSet
+		)
+		validationTester.assertNoIssues(dataResource)
 	}
 
 	@Test
@@ -72,8 +85,8 @@ class PartsParsingTest {
 			"did not parse parts",
 			parts
 		)
-		
-		val part = model.parts.parts.get(0)
+
+		val part = model.parts.declarations.get(0)
 		assertEquals(
 			"part name not correct",
 			"gear",
@@ -85,9 +98,32 @@ class PartsParsingTest {
 			part.type.name
 		)
 	}
-	
+
 	@Test
-	@Ignore("not passing yet")
+	def void testDoesNotParseModelWithPartOfTypeData() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model BigClock {
+				
+				parts {
+					Time time
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PART_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+	}
+
+	@Test
 	def void testDoesNotParseModelWithDuplicateParts() {
 		val source = '''
 			package clocks.models
@@ -102,10 +138,9 @@ class PartsParsingTest {
 				}
 			}
 		'''
-		
+
 		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
 		assertNotNull(invalidResult)
-		validationTester.assertNoIssues(invalidResult)
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.PART_DECLARATION,
@@ -113,4 +148,61 @@ class PartsParsingTest {
 		)
 	}
 
+	@Test
+	def void testDoesNotParseModelWithDuplicatePartAndInput() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.sub.Gear
+			import clocks.datatypes.Time
+			
+			model BigClock {
+				
+				input {
+					Time gear
+				}
+				
+				parts {
+					Gear gear
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PART_DECLARATION,
+			null
+		)
+	}
+
+	@Test
+	def void testDoesNotParseModelWithDuplicatePartAndOutput() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.sub.Gear
+			import clocks.datatypes.Time
+			
+			model BigClock {
+				
+				output {
+					Time gear
+				}
+				
+				parts {
+					Gear gear
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PART_DECLARATION,
+			null
+		)
+	}
 }
