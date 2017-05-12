@@ -1,4 +1,7 @@
-grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext.common.Terminals
+grammar com.ngc.seaside.systemdescriptor.SystemDescriptor
+with org.eclipse.xtext.common.Terminals
+hidden (WS, ML_COMMENT, SL_COMMENT, SL_EXTENDED_COMMENT)
+
 
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
@@ -11,6 +14,13 @@ Package
 	: 'package' name=QualifiedName
 	  imports+=Import*
 	  element=Element
+	;
+
+/*
+ * A comment may also begin with '--'.  It is ignored.
+ */
+terminal SL_EXTENDED_COMMENT
+	: '--' !('\n'|'\r')* ('\r'? '\n')?
 	;
 
 // -------------------------------	
