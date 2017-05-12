@@ -9,6 +9,8 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//DataType">
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/INT"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/FLOAT"/>
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/STRING"/>
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/BOOLEAN"/>
     </genEnums>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
@@ -37,12 +39,20 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//Input">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Input/declarations"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//PartDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//PartDeclaration/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//PartDeclaration/name"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Parts">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Parts/parts"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/input"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/output"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/parts"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Element">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Element/name"/>

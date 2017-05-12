@@ -1,23 +1,23 @@
 package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.eclipse.xtext.junit4.util.ResourceHelper
-import org.junit.Before
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.diagnostics.Diagnostic
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -140,11 +140,11 @@ class ModelParsingTest {
 		val result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
-		
+
 		val model = result.element as Model
 		val output = model.output
 		val declaration = output.declarations.get(0)
-		
+
 		assertEquals(
 			"output name not correct!",
 			"currentTime",
@@ -222,11 +222,11 @@ class ModelParsingTest {
 		val result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
-		
+
 		val model = result.element as Model
 		val input = model.input
 		val declaration = input.declarations.get(0)
-		
+
 		assertEquals(
 			"input name not correct!",
 			"currentTime",
@@ -238,7 +238,7 @@ class ModelParsingTest {
 			declaration.type.name
 		)
 	}
-	
+
 	@Test
 	def void testDoesNotParseModelWithDuplicateInputs() {
 		val source = '''
@@ -263,7 +263,7 @@ class ModelParsingTest {
 			null
 		)
 	}
-	
+
 	@Test
 	def void testDoesNotParseModelWithMissingInputDataType() {
 		val source = '''
@@ -312,114 +312,6 @@ class ModelParsingTest {
 			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
 			null
 		)
-	}
-
-	@Test
-	def void testDoesParseCompleteJellyFishWhitepaperExample() {
-		val dataSource = 
-		'''
-		package clocks.datatypes
-		
-		data Time {
-		  metadata {
-		    "name": "Time",
-		    "description": "Represents a local time (does not account for timezones)."
-		  }
-		  
-		  int hour {
-		    "validation": {
-		      "min": "0",
-		      "max": "23"
-		    }
-		  }
-		  
-		  int minute {
-		    "validation": {
-		      "min": "0",
-		      "max": "60"
-		    }
-		  }
-		  
-		  int second {
-		    "validation": {
-		      "min": "0",
-		      "max": "60"
-		    }
-		  }
-		}
-		'''
-		
-		val timerSource = 
-		'''
-		package clocks.models
-		
-		import clocks.datatypes.Time
-		
-		model Timer {
-		  metadata {
-		    "name": "Timer",
-		    "description": "Outputs the current time.",
-		    "stereotypes": ["service"]
-		  }
-		
-		  output {
-		    Time currentTime
-		  }
-		}
-		'''
-		
-		val clockDisplaySource = 
-		'''
-		package clocks.models
-		
-		import clocks.datatypes.Time
-		
-		model ClockDisplay {
-		 metadata {
-		    "description": "Displays the current time.",
-		    "stereotypes": ["service"]
-		 }
-		 
-		 input {
-		     Time currentTime
-		 }
-		}
-		'''
-		
-		dataResource = resourceHelper.resource(
-			dataSource,
-			URI.createURI("datatypes.sd")
-		)
-		validationTester.assertNoIssues(dataResource)
-
-		val clockDisplayResource = resourceHelper.resource(
-			clockDisplaySource,
-			dataResource.resourceSet
-		)
-		validationTester.assertNoIssues(clockDisplayResource)
-		
-		val speakerSource = 
-		'''
-		package clocks.models
-		
-		import clocks.datatypes.Time
-		
-		model Speaker {
-		  metadata {
-		    "description": "Makes annoying buzzing sounds.",
-		    "stereotypes": ["device"]
-		  }
-		}
-		'''
-		val speakerResource = resourceHelper.resource(
-			speakerSource,
-			dataResource.resourceSet
-		)
-		validationTester.assertNoIssues(speakerResource)
-		
-		val result = parseHelper.parse(timerSource, dataResource.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
 	}
 
 	@Test

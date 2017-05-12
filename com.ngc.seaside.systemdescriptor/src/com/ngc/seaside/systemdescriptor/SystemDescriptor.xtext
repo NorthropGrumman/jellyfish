@@ -81,14 +81,14 @@ DataFieldDeclaration
 // -------------------------------
 
 /*
- * Declares a output via a referenced type and an unqualified name.
+ * Declares a output via a referenced data type and an unqualified name.
  */
 OutputDeclaration
 	: type=[Data|UnqualifiedName] name=UnqualifiedName
 	;
 
 /*
- * Declares an input via a referenced type and an unqualified name.
+ * Declares an input via a referenced data type and an unqualified name.
  */
 InputDeclaration
 	: type=[Data|UnqualifiedName] name=UnqualifiedName
@@ -111,6 +111,22 @@ Input
 		declarations+=InputDeclaration+
 	  '}'
 	; 
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+PartDeclaration
+	: type=[Model|UnqualifiedName] name=UnqualifiedName
+	;
+ 
+/*
+ * Optional attribute of a model, defines sub-model objects.
+ */
+Parts
+	: 'parts' '{'
+		parts+=PartDeclaration+
+	  '}'
+	;
  
 // ------------------------------
 // ---- Basic model elements ----
@@ -136,6 +152,7 @@ Model
 		metadata=Metadata?
 		input=Input?
 		output=Output?
+		parts=Parts?
 	  '}'
 	;
 
