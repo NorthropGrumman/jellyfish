@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
@@ -168,6 +169,41 @@ class ModelParsingTest {
 			"Time",
 			declaration.type.name
 		)
+		assertEquals(
+			"cardinality is not the default value!",
+			Cardinality.DEFAULT,
+			declaration.cardinality
+		)
+	}
+
+	@Test
+	def void testDoesParseModelWithOutputsWithCardinality() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model Timer {
+				
+				output {
+					many Time currentTime
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val output = model.output
+		val declaration = output.declarations.get(0)
+
+		assertEquals(
+			"cardinality for output is not correct!",
+			Cardinality.MANY,
+			declaration.cardinality
+		)
 	}
 
 	@Test
@@ -273,6 +309,41 @@ class ModelParsingTest {
 			"input type not correct!",
 			"Time",
 			declaration.type.name
+		)
+		assertEquals(
+			"cardinality is not the default value!",
+			Cardinality.DEFAULT,
+			declaration.cardinality
+		)
+	}
+
+	@Test
+	def void testDoesParseModelWithInputsWithCardinality() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model Timer {
+				
+				input {
+					many Time currentTime
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val input = model.input
+		val declaration = input.declarations.get(0)
+
+		assertEquals(
+			"cardinality for input is not correct!",
+			Cardinality.MANY,
+			declaration.cardinality
 		)
 	}
 

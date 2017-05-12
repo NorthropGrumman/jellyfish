@@ -146,7 +146,7 @@ class JellyFishExampleParsingTest {
 				 
 				 input {
 				   Time currentTime
-				   Time alarmTimes
+				   many Time alarmTimes
 				 }
 			}
 		'''
@@ -173,7 +173,7 @@ class JellyFishExampleParsingTest {
 		  }
 		  
 		  input {
-		    Time alarmTimes
+		    many Time alarmTimes
 		  }
 		  
 		  parts {

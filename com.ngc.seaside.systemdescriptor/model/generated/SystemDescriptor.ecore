@@ -24,11 +24,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Cardinality">
+    <eLiterals name="DEFAULT" literal="default"/>
+    <eLiterals name="MANY" value="1" literal="many"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutputDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InputDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

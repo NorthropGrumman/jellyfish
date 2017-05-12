@@ -12,6 +12,10 @@
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/STRING"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//DataType/BOOLEAN"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//Cardinality">
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/DEFAULT"/>
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/MANY"/>
+    </genEnums>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Package/imports"/>
@@ -26,10 +30,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//OutputDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//OutputDeclaration/cardinality"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//OutputDeclaration/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//OutputDeclaration/name"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//InputDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//InputDeclaration/cardinality"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//InputDeclaration/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//InputDeclaration/name"/>
     </genClasses>

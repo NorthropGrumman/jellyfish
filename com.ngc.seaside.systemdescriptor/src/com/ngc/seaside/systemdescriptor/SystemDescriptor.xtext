@@ -81,17 +81,32 @@ DataFieldDeclaration
 // -------------------------------
 
 /*
+ * Defines different cardinality values.
+ * 
+ * Note the first value of a enum is the default value that the parsed 
+ * model will have.  Since cardinality is optional for inputs and 
+ * outputs we have to make sure we have a default value listed first
+ * that means not set.
+ */
+enum Cardinality
+    : DEFAULT='default'
+	| MANY='many'
+	;
+
+/*
  * Declares a output via a referenced data type and an unqualified name.
+ * An output declaration may also specify an optional cardinality.
  */
 OutputDeclaration
-	: type=[Data|UnqualifiedName] name=UnqualifiedName
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
 	;
 
 /*
  * Declares an input via a referenced data type and an unqualified name.
+ * An output declaration may also specify an optional cardinality.
  */
 InputDeclaration
-	: type=[Data|UnqualifiedName] name=UnqualifiedName
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
 	;
 
 /*
