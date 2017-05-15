@@ -6,7 +6,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
