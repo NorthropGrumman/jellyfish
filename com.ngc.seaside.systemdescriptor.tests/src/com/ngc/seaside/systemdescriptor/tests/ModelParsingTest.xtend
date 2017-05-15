@@ -19,6 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -107,16 +108,16 @@ class ModelParsingTest {
 		validationTester.assertNoIssues(result)
 
 		val metadata = result.element.metadata;
-		val name = metadata.json.firstObject;
+		val firstmember = metadata.json.members.get(0)
 		assertEquals(
 			"metadata not correct!",
 			"name",
-			name.element
+			firstmember.key
 		)
 		assertEquals(
 			"metadata not correct!",
 			"Timer",
-			name.content.value
+			(firstmember.value as StringValue).value
 		)
 	}
 
