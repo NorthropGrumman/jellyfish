@@ -69,9 +69,20 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//GivenDeclaration">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenDeclaration/fragments"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//WhenSubject">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenSubject/input"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//WhenFragment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/triggeringCondition"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenFragment/subject"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//WhenDeclaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenDeclaration/fragments"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Scenario">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Scenario/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Scenario/given"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Scenario/when"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>

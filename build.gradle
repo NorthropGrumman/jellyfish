@@ -1,6 +1,9 @@
 buildscript {
 	repositories {
-		jcenter()
+		mavenLocal()
+        maven {
+            url 'http://10.207.42.43/nexus/repository/maven-public/'
+        }
 	}
 	dependencies {
 		classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
@@ -10,7 +13,10 @@ buildscript {
 subprojects {
 	ext.xtextVersion = '2.10.0'
 	repositories {
-		jcenter()
+		mavenLocal()
+        maven {
+            url 'http://10.207.42.43/nexus/repository/maven-public/'
+        }
 	}
 	
 	apply plugin: 'java'

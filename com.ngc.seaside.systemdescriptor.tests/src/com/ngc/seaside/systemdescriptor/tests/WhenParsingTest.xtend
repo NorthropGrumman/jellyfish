@@ -20,8 +20,8 @@ import static org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class GivenParsingTest {
-
+class WhenParsingTest {
+	
 	@Inject
 	ParseHelper<Package> parseHelper
 
@@ -34,7 +34,7 @@ class GivenParsingTest {
 	Resource dataResource
 
 	Resource modelResource
-
+	
 	@Before
 	def void setup() {
 		dataResource = resourceHelper.resource(
@@ -61,7 +61,7 @@ class GivenParsingTest {
 	}
 
 	@Test
-	def void testDoesParseScenarioWithGiven() {
+	def void testDoesParseScenarioWithWhen() {
 		val source = '''
 			package clocks.models
 			 
@@ -75,8 +75,7 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	when validating alarmTime
+			  	when receiving alarmTime
 			  }
 			}
 		'''
@@ -87,8 +86,8 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
-		val fragment = given.fragments.get(0)
+		val when = scenario.when
+		val fragment = when.fragments.get(0)
 		assertEquals(
 			"subject not correct!",
 			"alarmTime",
@@ -96,13 +95,13 @@ class GivenParsingTest {
 		)
 		assertEquals(
 			"precondition not correct!",
-			"hasBeenReceived",
-			fragment.precondition
+			"receiving",
+			fragment.triggeringCondition
 		)
 	}
 
 	@Test
-	def void testDoesParseScenarioWithMultipleGiven() {
+	def void testDoesNotParseScenarioWithWhenMissingInput() {
 		val source = '''
 			package clocks.models
 			 
@@ -116,44 +115,7 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	and alarmTime hasBeenValidated
-			  	when validating alarmTime
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
-
-		val model = result.element as Model
-		val scenario = model.scenarios.get(0)
-		val given = scenario.given
-		assertEquals(
-			"did not parse all given fragments!",
-			2,
-			given.fragments.size
-		)
-	}
-
-	@Test
-	def void testDoesNotParseScenarioWithGivenMissingInput() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			import clocks.models.Speaker
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	given missingInput hasBeenReceived
-			  	when validating alarmTime
+			  	when receiving missingInput 
 			  }
 			}
 		'''
@@ -162,7 +124,7 @@ class GivenParsingTest {
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
-			SystemDescriptorPackage.Literals.GIVEN_SUBJECT,
+			SystemDescriptorPackage.Literals.WHEN_SUBJECT,
 			Diagnostic.LINKING_DIAGNOSTIC
 		)
 	}

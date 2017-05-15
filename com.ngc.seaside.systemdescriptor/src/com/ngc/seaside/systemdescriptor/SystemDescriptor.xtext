@@ -179,8 +179,8 @@ Precondition
 	: ID
 	;
 
-TiggeringCondition
-	: 'foo'
+TriggeringCondition
+	: ID
 	;
 
 Postcondition
@@ -200,6 +200,20 @@ GivenDeclaration
 	  ('and' fragments+=GivenFragment)*
 	;
 
+WhenSubject
+	: input=[InputDeclaration]
+	;
+
+WhenFragment
+	: triggeringCondition=TriggeringCondition subject=WhenSubject
+	;
+
+WhenDeclaration
+	: 'when' fragments+=WhenFragment
+	  ('and' fragments+=WhenFragment)*
+	;
+
+
 /*
  * Attribute of a model defining a set of circumstances describing behavior the
  * model exhibits given a set of conditions. This should follow the BDD
@@ -208,6 +222,7 @@ GivenDeclaration
 Scenario
 	: 'scenario' name=UnqualifiedName '{'
 		given=GivenDeclaration?
+		when=WhenDeclaration
 	  '}'
 	;
  
