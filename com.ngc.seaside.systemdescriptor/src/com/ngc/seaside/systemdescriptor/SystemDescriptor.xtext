@@ -177,44 +177,108 @@ Requires
 // ---- Scenario releated objects ----
 // -----------------------------------
 
+/*
+ * Declares a precondition that is associated with a given declaration.
+ * The precondition can be any value but there must be some keyword
+ * "handler" registered to interpret it.  Preconditions are usually
+ * expressed as past tense verbs.
+ */
 Precondition
 	: ID
 	;
 
+/*
+ * Declares a condition that triggers a scenario and it part of a
+ * when declaration.  The condition can be any value but there must
+ * be some keyword "handler" registered to interpret it.  Triggering
+ * conditions are usually expressed as current tense verbs. 
+ */
 TriggeringCondition
 	: ID
 	;
 
+/*
+ * Declares a postcondition that is associated with a then declaration.
+ * The postcondition can be any value but there must be some keyword
+ * "handler" registered to interpret it.  Postconditions are usually
+ * expressed as future tense verbs.
+ */
 Postcondition
-	: 'bar'
+	: ID
 	;
 
+/*
+ * The subject of a precondition expressed in a given declaration.
+ * This is its own rule so we can later define additional types of
+ * subjects, not just input fields.
+ */
 GivenSubject
 	: input=[InputDeclaration]
 	;
 
+/*
+ * Represents both a precondition and its subject.
+ */
 GivenFragment
 	: subject=GivenSubject precondition=Precondition
 	;
 
+/*
+ * Introduces a post condition that must be satisfied prior to the scenario being executable.
+ */
 GivenDeclaration
 	: 'given' fragments+=GivenFragment
 	  ('and' fragments+=GivenFragment)*
 	;
 
+/*
+ * The subject of a triggering condition expressed in a when declaration.
+ * This is its own rule so we can later define additional types of
+ * subjects.
+ */
 WhenSubject
-	: input=[InputDeclaration]
+	: ID
 	;
 
+/*
+ * Represents both a triggering condition and its subject.
+ */
 WhenFragment
-	: triggeringCondition=TriggeringCondition subject=WhenSubject
+	: triggeringCondition=TriggeringCondition subject=WhenSubject?
 	;
 
+/*
+ * Introduces a condition or trigger to be tested that determines the scenario has began.
+ */
 WhenDeclaration
 	: 'when' fragments+=WhenFragment
 	  ('and' fragments+=WhenFragment)*
 	;
 
+/*
+ * The subject of a postcondition expressed in a then declaration.
+ * This is its own rule so we can later define additional types of
+ * subjects.
+ */
+ThenSubject
+	: ID
+	;
+
+/*
+ * Represents both a postcondition and its subject.
+ */
+ThenFragment
+	: postcondition=Postcondition subject=ThenSubject?
+	;
+
+/*
+ * Introduces a statement or post condition to be asserted after a scenario has been
+ * triggered and has executed.
+ */
+ThenDeclaration
+	: 'then' fragments+=ThenFragment
+	  ('and' fragments+=ThenFragment)*
+	;
 
 /*
  * Attribute of a model defining a set of circumstances describing behavior the
@@ -223,8 +287,11 @@ WhenDeclaration
  */
 Scenario
 	: 'scenario' name=UnqualifiedName '{'
-		given=GivenDeclaration?
-		when=WhenDeclaration
+		(
+			given=GivenDeclaration?
+		 	when=WhenDeclaration
+		 	then=ThenDeclaration
+		 )?
 	  '}'
 	;
  

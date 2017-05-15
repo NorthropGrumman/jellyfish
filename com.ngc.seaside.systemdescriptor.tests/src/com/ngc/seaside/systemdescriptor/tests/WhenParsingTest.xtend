@@ -3,10 +3,8 @@ package com.ngc.seaside.systemdescriptor.tests
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -21,7 +19,7 @@ import static org.junit.Assert.*
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class WhenParsingTest {
-	
+
 	@Inject
 	ParseHelper<Package> parseHelper
 
@@ -34,7 +32,7 @@ class WhenParsingTest {
 	Resource dataResource
 
 	Resource modelResource
-	
+
 	@Before
 	def void setup() {
 		dataResource = resourceHelper.resource(
@@ -76,6 +74,7 @@ class WhenParsingTest {
 			  
 			  scenario triggerAlert {
 			  	when receiving alarmTime
+			  	then doSomething
 			  }
 			}
 		'''
@@ -91,7 +90,7 @@ class WhenParsingTest {
 		assertEquals(
 			"subject not correct!",
 			"alarmTime",
-			fragment.subject.input.name
+			fragment.subject
 		)
 		assertEquals(
 			"precondition not correct!",
@@ -99,9 +98,9 @@ class WhenParsingTest {
 			fragment.triggeringCondition
 		)
 	}
-
+	
 	@Test
-	def void testDoesNotParseScenarioWithWhenMissingInput() {
+	def void testDoesParseScenarioWithMultipleWhens() {
 		val source = '''
 			package clocks.models
 			 
@@ -115,17 +114,24 @@ class WhenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	when receiving missingInput 
+			  	when receiving alarmTime
+			  	and talkingWith yoda
+			  	then doSomething
 			  }
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.WHEN_SUBJECT,
-			Diagnostic.LINKING_DIAGNOSTIC
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val scenario = model.scenarios.get(0)
+		val when = scenario.when
+		assertEquals(
+			"did not parse all when fragments!",
+			2,
+			when.fragments.size
 		)
 	}
 }

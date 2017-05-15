@@ -3,10 +3,8 @@ package com.ngc.seaside.systemdescriptor.tests
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -20,7 +18,7 @@ import static org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class GivenParsingTest {
+class ThenParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
@@ -61,7 +59,7 @@ class GivenParsingTest {
 	}
 
 	@Test
-	def void testDoesParseScenarioWithGiven() {
+	def void testDoesParseScenarioWithThen() {
 		val source = '''
 			package clocks.models
 			 
@@ -75,8 +73,7 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	when validating alarmTime
+			  	when receiving alarmTime
 			  	then doSomething
 			  }
 			}
@@ -88,22 +85,17 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
-		val fragment = given.fragments.get(0)
+		val then = scenario.then
+		val fragment = then.fragments.get(0)
 		assertEquals(
-			"subject not correct!",
-			"alarmTime",
-			fragment.subject.input.name
-		)
-		assertEquals(
-			"precondition not correct!",
-			"hasBeenReceived",
-			fragment.precondition
+			"poscondition not correct!",
+			"doSomething",
+			fragment.postcondition
 		)
 	}
 
 	@Test
-	def void testDoesParseScenarioWithMultipleGiven() {
+	def void testDoesParseScenarioWithMultipleThens() {
 		val source = '''
 			package clocks.models
 			 
@@ -117,10 +109,9 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	and alarmTime hasBeenValidated
-			  	when validating alarmTime
+			  	when receiving alarmTime
 			  	then doSomething
+			  	and doSomethingElse
 			  }
 			}
 		'''
@@ -131,41 +122,11 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
+		val then = scenario.then
 		assertEquals(
-			"did not parse all given fragments!",
+			"did not parse all then fragments!",
 			2,
-			given.fragments.size
-		)
-	}
-
-	@Test
-	def void testDoesNotParseScenarioWithGivenMissingInput() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			import clocks.models.Speaker
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	given missingInput hasBeenReceived
-			  	when validating alarmTime
-			  }
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.GIVEN_SUBJECT,
-			Diagnostic.LINKING_DIAGNOSTIC
+			then.fragments.size
 		)
 	}
 }
