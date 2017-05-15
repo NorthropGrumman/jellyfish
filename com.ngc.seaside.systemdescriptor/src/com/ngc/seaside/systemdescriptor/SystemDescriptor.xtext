@@ -171,6 +171,20 @@ Requires
 	  '}'
 	;
  
+// -----------------------------------
+// ---- Scenario releated objects ----
+// -----------------------------------
+
+/*
+ * Attribute of a model defining a set of circumstances describing behavior the
+ * model exhibits given a set of conditions. This should follow the BDD
+ * specification syntax and use the keywords such as given, when and then.
+ */
+Scenario
+	: 'scenario' name=UnqualifiedName '{'
+	  '}'
+	;
+ 
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
@@ -196,6 +210,7 @@ Model
 		requires=Requires?
 		input=Input?
 		output=Output?
+		scenarios+=Scenario*
 		parts=Parts?
 	  '}'
 	;
