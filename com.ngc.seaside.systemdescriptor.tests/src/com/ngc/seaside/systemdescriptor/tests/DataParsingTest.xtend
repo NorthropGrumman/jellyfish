@@ -17,6 +17,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -115,15 +118,16 @@ class DataParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var metadata = result.element.metadata
+		val firstmember = metadata.json.members.get(0)
 		assertEquals(
 			"metadata did not parse!",
 			"name",
-			metadata.json.firstObject.element
+			firstmember.key
 		)
 		assertEquals(
 			"metadata did not parse!",
 			"Time",
-			metadata.json.firstObject.content.value
+			(firstmember.value as StringValue).value
 		)
 	}
 
@@ -140,22 +144,22 @@ class DataParsingTest {
 				
 				int hour {
 					"validation": {
-						"min": "0",
-						"max": "23"
+						"min": 0,
+						"max": 23
 					}
 				}
 				
 				int minute {
 					"validation": {
-						"min": "0",
-						"max": "59"
+						"min": 0,
+						"max": 59
 					}
 				}
 					
 				int second {
 					"validation": {
-						"min": "0",
-						"max": "59"
+						"min": 0,
+						"max": 59
 					}
 				}
 			}
@@ -168,13 +172,42 @@ class DataParsingTest {
 		var data = result.element as Data
 		var field = data.fields.get(0)
 		var metadata = field.metadata
-		var validation = metadata.firstObject
+		var validation = metadata.members.get(0)
 
 		assertEquals(
 			"validation did not parse!",
 			"validation",
-			validation.element
+			validation.key
 		)
+		
+		var metadatavalidation = validation.value as JsonValue
+		var minkeyvalue = metadatavalidation.value.members.get(0)
+		var maxkeyvalue = metadatavalidation.value.members.get(1)
+		
+		assertEquals(
+			"validation min did not parse!",
+			"min",
+			minkeyvalue.key
+		)
+		
+		assertEquals(
+			"validation min did not parse!",
+			0,
+			(minkeyvalue.value as IntValue).value
+		)
+		
+		assertEquals(
+			"validation max did not parse!",
+			"max",
+			maxkeyvalue.key
+		)
+		
+		assertEquals(
+			"validation max did not parse!",
+			23,
+			(maxkeyvalue.value as IntValue).value
+		)
+		
 
 	// TODO TH: the JSON is not correct the type ObjectValue only has a string field, it is not recursive.
 	// consider https://gist.github.com/nightscape/629651

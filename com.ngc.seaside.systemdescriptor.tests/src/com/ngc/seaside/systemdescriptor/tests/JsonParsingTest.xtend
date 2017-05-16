@@ -13,6 +13,10 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
+
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class JsonParsingTest {
@@ -32,12 +36,39 @@ class JsonParsingTest {
 				metadata {
 				  "name" : "test",
 				  "description" : "A test metadata object",
-				  "alias" : ["metadata", "test"]
+				  "arraydata" : ["metadata", "test"],
+				  "boolvalue" : true
 				}  
 			}
 		''')
 		Assert.assertNotNull(result)
 		validationTester.assertNoIssues(result);
+		
+		// get the array data
+		var metadata = result.element.metadata
+		val arraymember = metadata.json.members.get(2)
+		assertEquals(
+			"metadata did not parse!",
+			"arraydata",
+			arraymember.key
+		)
+		
+		var arrayvalue = (arraymember.value as ArrayValue).value
+		assertEquals(
+			"metadata did not parse!",
+			2,
+			arrayvalue.values.size()
+		)	
+		assertEquals(
+			"metadata did not parse!",
+			"metadata",
+			(arrayvalue.values.get(0) as StringValue).value
+		)	
+		assertEquals(
+			"metadata did not parse!",
+			"test",
+			(arrayvalue.values.get(1) as StringValue).value
+		)			
 	}
 
 }

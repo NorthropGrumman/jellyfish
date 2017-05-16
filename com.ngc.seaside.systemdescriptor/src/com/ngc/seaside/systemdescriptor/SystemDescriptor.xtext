@@ -2,6 +2,8 @@ grammar com.ngc.seaside.systemdescriptor.SystemDescriptor with org.eclipse.xtext
 
 generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
 
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
 /*
  * Package is the root type and it contains imports and at most one declaration of
  * an element.  Should align to the decomposition of the system. The structure here
@@ -210,7 +212,7 @@ Element
  * - virtual (a non-realized component used to convey structure)
  */
 Metadata
-	: 'metadata' json=JsonObject?
+	: 'metadata' json=JsonObject
 	;	
 	
 // ----------------------
@@ -218,20 +220,43 @@ Metadata
 // ----------------------
 
 JsonObject:
-	'{'
-	firstObject=TerminalObject (',' objects+=TerminalObject)* '}';
+	'{' {JsonObject}
+	    ((members+=Member)
+	    (',' members+=Member)*)?
+    '}';
+
+    
+Member:
+	key=STRING ':' value=Value;
+
+StringValue: value=STRING;
+BooleanValue: value=Boolean;
+JsonValue: value=JsonObject;
+ArrayValue: value=Array;
+NullValue: value=Null;
+IntValue: value=INTEGER;
+DblValue: value=DOUBLE;
+
+Value:
+	StringValue | BooleanValue | JsonValue | ArrayValue | NullValue | IntValue | DblValue;
+
+//Value:
+//	JsonObject | STRING | Array | Boolean | Null | NUMBER;
 
 Array:
-	'[' firstItem=ObjectValue (',' items+=ObjectValue)* ']';
+	'[' {Array} 
+	    ((values+=Value)  
+	    (',' values+=Value)*)? 
+	']';
+	
+Boolean:
+	'true' | 'false';
+	
+Null:
+	'null';
+	
+terminal INTEGER returns ecore::EInt:
+	'-'? INT;
 
-EmptyObject:
-	isEmpty?='{}';
-
-EmptyArray:
-	isEmpty?='[]';
-
-ObjectValue:
-	value=STRING | JsonObject | Array | EmptyObject | EmptyArray;
-
-TerminalObject:
-    element=STRING ':' (content=ObjectValue);
+terminal DOUBLE returns ecore::EDouble:
+	'-'? INT? '.' INT (('E'|'e') '-'? INT)?;
