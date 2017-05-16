@@ -21,6 +21,9 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -67,6 +70,10 @@ class LinkParsingTest {
 					input {
 						Time myTime
 					}
+					
+					output {
+						Time fooTime
+					}
 				}
 			''',
 			dataResource.resourceSet
@@ -76,7 +83,7 @@ class LinkParsingTest {
 	
 	@Test
 	def void testDoesParseModelWithLinkFromInputToPartInput() {
-		val source = '''
+		var source = '''
 			package clocks.models
 			
 			import clocks.datatypes.Time
@@ -101,17 +108,263 @@ class LinkParsingTest {
 			}
 		'''
 
-		val result = parseHelper.parse(source, dataResource.resourceSet)
-		val model = result.element as Model
-		val part = model.parts.declarations.get(0)
+		var result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
 		
-		var i = result.imports.get(1)
-		var partModel = i.importedNamespace as Model
+		var model = result.element as Model;
+		var link = model.links.declarations.get(0)
+		var linkSource = link.source as FieldReference
+		var linkTarget = link.target as LinkableExpression
+		assertEquals(
+			"linkSource not correct!",
+			"currentTime",
+			linkSource.fieldDeclaration.name
+		)
+		assertEquals(
+			"linkTarget not correct!",
+			"alarm",
+			(linkTarget.ref as FieldReference).fieldDeclaration.name
+		)
+		assertEquals(
+			"linkTarget not correct!",
+			"myTime",
+			linkTarget.tail.name
+		)
 		
-//		System.out.println(nameProvider.getFullyQualifiedName(model.input.declarations.get(0)).toString)
-//		System.out.println(nameProvider.getFullyQualifiedName(part).toString)
-//		System.out.println(nameProvider.getFullyQualifiedName(partModel.input.declarations.get(0)).toString)
+		// Test the reverse.
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				parts {
+					Alarm alarm
+				}
+				
+				links {
+					link alarm.myTime to currentTime
+				}
+			}
+		'''
 		
+		result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+	}
+	
+	@Test
+	def void testDoesParseModelWithLinkFromInputToRequirementInput() {
+		var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				requires {
+					Alarm alarm
+				}
+				
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				links {
+					link currentTime to alarm.myTime
+				}
+			}
+		'''
+
+		var result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+		
+		var model = result.element as Model;
+		var link = model.links.declarations.get(0)
+		var linkSource = link.source as FieldReference
+		var linkTarget = link.target as LinkableExpression
+		assertEquals(
+			"linkSource not correct!",
+			"currentTime",
+			linkSource.fieldDeclaration.name
+		)
+		assertEquals(
+			"linkTarget not correct!",
+			"alarm",
+			(linkTarget.ref as FieldReference).fieldDeclaration.name
+		)
+		assertEquals(
+			"linkTarget not correct!",
+			"myTime",
+			linkTarget.tail.name
+		)
+		
+		// Test the reverse.
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				requires {
+					Alarm alarm
+				}
+				
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				links {
+					link alarm.myTime to currentTime
+				}
+			}
+		'''
+		
+		result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+	}
+	
+	@Test
+	def void testDoesParseModelWithLinkFromOutputToPartOutput() {
+		var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				parts {
+					Alarm alarm
+				}
+				
+				links {
+					link alarmTime to alarm.fooTime
+				}
+			}
+		'''
+
+		var result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+		
+		// Test the reverse.
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				parts {
+					Alarm alarm
+				}
+				
+				links {
+					link alarm.fooTime to alarmTime
+				}
+			}
+		'''
+		
+		result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+	}
+	
+	@Test
+	def void testDoesParseModelWithLinkFromOutputToRequirementOutput() {
+		var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				requires {
+					Alarm alarm
+				}
+				
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				links {
+					link alarmTime to alarm.fooTime
+				}
+			}
+		'''
+
+		var result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+		
+		// Test the reverse.
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			import clocks.models.part.Alarm
+			
+			model AlarmClock {
+				requires {
+					Alarm alarm
+				}
+				
+				input {
+					Time currentTime
+				}
+				
+				output {
+					Time alarmTime
+				}
+				
+				links {
+					link alarm.fooTime to alarmTime
+				}
+			}
+		'''
+		
+		result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 	}

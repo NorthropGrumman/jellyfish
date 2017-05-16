@@ -52,6 +52,23 @@ UnqualifiedName
 	;
 
 // ---------------------------
+// ---- Common base types ----
+// ---------------------------
+
+/*
+ * FieldDeclaration is the base type of all type of declarations in a model.
+ * This includes inputs, outputs, parts, and requirements.
+ * 
+ * This element is used in references.
+ */
+FieldDeclaration
+	: InputDeclaration
+	| OutputDeclaration
+	| PartDeclaration
+	| RequireDeclaration
+	;
+
+// ---------------------------
 // ---- Package structure ----
 // ---------------------------
 
@@ -278,44 +295,40 @@ Scenario
 		 )?
 	  '}'
 	;
-
-// ---------------------------
-// ---- Common base types ----
-// ---------------------------
-
-
-FieldDeclaration
-	: InputDeclaration
-	| OutputDeclaration
-	| PartDeclaration
-	;
-
-ExpressionElement
-	: path=UnqualifiedName
-	;
-
-LinkableExpression returns FieldReference
-	: LinkableReference ({LinkableExpression.ref=current} '.' tail=[FieldDeclaration|UnqualifiedName])*
-	;
-
-LinkableReference returns FieldReference
-	: {LinkableReference} fieldDeclaration=[FieldDeclaration|UnqualifiedName]
-	;	
-
-//LinkableExpression
-//	: localField=[FieldDeclaration|UnqualifiedName]
-//	  ('.' expressionElements+=ExpressionElement)*
-//	;	
-
-//LinkableExpression
-//	: fieldDeclarations+=[FieldDeclaration|UnqualifiedName]
-//	  ('.' fieldDeclarations+=[FieldDeclaration|UnqualifiedName])*
-//	;	
 	
 // -----------------------------
 // ---- Link model elements ----
 // -----------------------------
 
+/*
+ * A linkable expression is an expression that is used in the link block.  
+ * 
+ * This syntax instructs XText to generate a base type named LinkableReference and
+ * both LinkableExpression and FieldReference extend this base type.  The magic
+ * LinkableExpression.ref=current statement results in a type of recursive tree 
+ * structure that results in tree like structure.  The tail attribute is the 
+ * final field in the expression and it must be a field.  
+ * 
+ * See
+ * https://christiandietrich.wordpress.com/2013/05/18/xtext-and-dot-expressions/
+ * for more information.
+ */
+LinkableExpression returns LinkableReference
+	: FieldReference ({LinkableExpression.ref=current} '.' tail=[FieldDeclaration|UnqualifiedName])*
+	;
+
+/*
+ * A field reference references a field declared in a model (which may be an
+ * input, output, part, or requirement).
+ */
+FieldReference returns LinkableReference
+	: {FieldReference} fieldDeclaration=[FieldDeclaration|UnqualifiedName]
+	;	
+
+/*
+ * Provides a linkage between two objects, indicating that two objects interact or
+ * exchange information in some manner (ex. "link speaker to alarm.speaker").
+ */
 LinkDeclaration
 	: 'link' source=LinkableExpression 'to' target=LinkableExpression
 	;

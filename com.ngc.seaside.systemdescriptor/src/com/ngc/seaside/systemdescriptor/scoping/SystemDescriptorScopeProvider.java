@@ -3,6 +3,9 @@
  */
 package com.ngc.seaside.systemdescriptor.scoping;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.scoping.IScope;
@@ -10,17 +13,22 @@ import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 
 import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ExpressionElement;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * This class contains custom scoping description.
- * 
- * See
- * https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
- * on how and when to use it.
+ * The scope provider for the System Descriptor language. This provider will
+ * delegate the handling of imports to
+ * {@link SdImportedNamespaceAwareLocalScopeProvider}. Otherwise it implements
+ * rules using the reflective based syntax described in
+ * {@link AbstractDeclarativeScopeProvider}.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
@@ -29,56 +37,81 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
 	@Override
 	public IScope getScope(EObject context, EReference reference) {
+		// Is the object related to the importing a namespace?
 		if (scopeProviderDelegate.isNamespaceRelevant(context)) {
+			// If so, use the import namespace aware local scope provider.
 			return scopeProviderDelegate.getScope(context, reference);
 		} else {
+			// Otherwise, delegate to the base class which will call our
+			// custom methods.
 			return super.getScope(context, reference);
 		}
 	}
 
+	/**
+	 * Provides scope for a link expression of the form
+	 * {@code link someInput to somePart.someMoreInput}.
+	 * 
+	 * @param context
+	 * @param reference
+	 * @return
+	 */
 	public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
-		//System.out.println("Called " + context.getTail().getName());
-		LinkableReference r = (LinkableReference) context.getRef();
-		System.out.println("Called " + r.getFieldDeclaration());
-		
-		return delegateGetScope(context, reference);
+		// Get the field reference thus far. If we are parsing the expression
+		// link someInput to somePart.someMoreInput
+		// than ref will equal the part "somePart".
+		FieldReference ref = (FieldReference) context.getRef();
+		// Get the field declaration the reference is pointing to.
+		FieldDeclaration fieldDeclaration = ref.getFieldDeclaration();
+
+		IScope scope;
+
+		// We need to determine the type of the field declaration. Right now we
+		// only support nested expressions for models. More requires and parts
+		// can declare other models as fields. Input and output must declare
+		// data as fields. Since we can't yet reference the contents of data,
+		// we don't have to worry aobut referencing input or output.
+		if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REQUIRE_DECLARATION)) {
+			RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
+			// Include all field declarations of the referenced model in the
+			// scope.
+			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+		} else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.PART_DECLARATION)) {
+			// Include all field declarations of the referenced model in the
+			// scope.
+			PartDeclaration casted = (PartDeclaration) fieldDeclaration;
+			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+		} else {
+			// Otherwise, do the default behavior.
+			scope = delegateGetScope(context, reference);
+		}
+
+		return scope;
 	}
-	
-//	public IScope scope_ExpressionElement(
-//			ExpressionElement context,
-//			EReference reference) {
-//		System.out.println("got alled");
-//		return delegateGetScope(context, reference);
-//	}
-//	
-//	public IScope scope_LinkableExpression_localField(
-//			LinkableExpression context,
-//			EReference reference) {
-//		System.out.println("got alled 2");
-//		return delegateGetScope(context, reference);
-//	}
-			
-	
-//	public IScope scope_LinkableExpression_fieldDeclarations(
-//			LinkableExpression context,
-//			EReference reference) {
-//
-//		if (!context.eIsProxy()) {
-//			System.out.println("context is not eproxy!");
-//			
-//			//if(context.getFieldDeclarations().isE)
-//			for (FieldDeclaration f : context.getFieldDeclarations()) {
-//				if (!f.eIsProxy()) {
-//					System.out.println("will try");
-//				}
-//			}
-//			if (context.getFieldDeclarations().isEmpty()) {
-//				System.out.println("fields are empty!");
-//			}
-//		} else {
-//			System.out.println("context is eproxy!");
-//		}
-//		//Scopes.scopeFor(elements)
-//		return delegateGetScope(context, reference);
-//	}
+
+	/**
+	 * Gets all field declarations that can be referenced that are contained by
+	 * the given model.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
+		// TODO TH: we can limit the items in scope by examining the type of the
+		// item on the left hand side of the expression.
+		Collection<FieldDeclaration> fields = new ArrayList<>();
+		if (model.getInput() != null) {
+			fields.addAll(model.getInput().getDeclarations());
+		}
+		if (model.getOutput() != null) {
+			fields.addAll(model.getOutput().getDeclarations());
+		}
+		if (model.getRequires() != null) {
+			fields.addAll(model.getRequires().getDeclarations());
+		}
+		if (model.getParts() != null) {
+			fields.addAll(model.getParts().getDeclarations());
+		}
+		return fields;
+	}
 }

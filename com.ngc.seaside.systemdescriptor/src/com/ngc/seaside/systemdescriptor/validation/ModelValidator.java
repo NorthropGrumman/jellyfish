@@ -55,7 +55,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A requirement named '%s' is already defined for the model '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
 
