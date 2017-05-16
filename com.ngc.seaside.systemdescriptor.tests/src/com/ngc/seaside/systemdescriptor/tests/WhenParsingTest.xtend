@@ -88,14 +88,14 @@ class WhenParsingTest {
 		val when = scenario.when
 		val fragment = when.fragments.get(0)
 		assertEquals(
-			"subject not correct!",
-			"alarmTime",
-			fragment.subject
+			"keyword not correct!",
+			"receiving",
+			fragment.keyword
 		)
 		assertEquals(
-			"precondition not correct!",
-			"receiving",
-			fragment.triggeringCondition
+			"parameters not correct!",
+			"alarmTime",
+			fragment.parameters.get(0)
 		)
 	}
 	

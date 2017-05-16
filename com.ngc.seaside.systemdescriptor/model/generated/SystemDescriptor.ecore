@@ -75,16 +75,18 @@
         eType="#//GivenFragment" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WhenFragment">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggeringCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="subject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyword" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameters" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WhenDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fragments" upperBound="-1"
         eType="#//WhenFragment" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ThenFragment">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="postcondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="subject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyword" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameters" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ThenDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fragments" upperBound="-1"
@@ -98,6 +100,29 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="then" eType="#//ThenDeclaration"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkableInput" eSuperTypes="#//Linkable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//InputDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkableOutput">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//OutputDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkablePart">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//PartDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkableRequirement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//RequireDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Linkable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//Linkable"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Linkable"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Links">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
+        eType="#//LinkDeclaration" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Data" eSuperTypes="#//Element">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
@@ -113,6 +138,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="scenarios" upperBound="-1"
         eType="#//Scenario" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parts" eType="#//Parts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="links" eType="#//Links"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Element">

@@ -74,7 +74,7 @@ class ThenParsingTest {
 			  
 			  scenario triggerAlert {
 			  	when receiving alarmTime
-			  	then doSomething
+			  	then doSomething withThis
 			  }
 			}
 		'''
@@ -88,9 +88,14 @@ class ThenParsingTest {
 		val then = scenario.then
 		val fragment = then.fragments.get(0)
 		assertEquals(
-			"poscondition not correct!",
+			"keyword not correct!",
 			"doSomething",
-			fragment.postcondition
+			fragment.keyword
+		)
+		assertEquals(
+			"keyword parameters not correct!",
+			"withThis",
+			fragment.parameters.get(0)
 		)
 	}
 

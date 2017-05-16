@@ -70,15 +70,15 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenDeclaration/fragments"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//WhenFragment">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/triggeringCondition"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/subject"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/keyword"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/parameters"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//WhenDeclaration">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenDeclaration/fragments"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//ThenFragment">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/postcondition"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/subject"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/keyword"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/parameters"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//ThenDeclaration">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ThenDeclaration/fragments"/>
@@ -89,6 +89,26 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Scenario/when"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Scenario/then"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//LinkableInput">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkableInput/element"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//LinkableOutput">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkableOutput/element"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//LinkablePart">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkablePart/element"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//LinkableRequirement">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkableRequirement/element"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Linkable"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//LinkDeclaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkDeclaration/source"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkDeclaration/target"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Links">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Links/declarations"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
     </genClasses>
@@ -98,6 +118,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/output"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/scenarios"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/parts"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/links"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Element">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Element/name"/>
