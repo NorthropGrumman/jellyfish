@@ -10,7 +10,8 @@ import org.eclipse.xtext.validation.ComposedChecks;
 @ComposedChecks(validators = {
 		DuplicateElementValidator.class,
 		ModelValidator.class,
-		ScenarioValidator.class}
+		ScenarioValidator.class,
+		LinkValidator.class}
 )
 public class SystemDescriptorValidator extends AbstractSystemDescriptorValidator {
 
