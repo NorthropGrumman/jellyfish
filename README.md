@@ -1,5 +1,16 @@
 # jellyfish-systemdescriptor-dsl
-SystemDescriptor-DSL for CEAC-295 Story
+This project defines the DSL uses to describe a System Descriptor.  This is an Eclipse Xtext project with generates
+* the parser and code for creating an AST (abstract syntax tree)
+* validation rules of the DSL
+* plugin mechanisms for extending the DSL
+* content assists and Eclipse plugins for using Eclipse as a System Descriptor editor
+
+See http://10.207.42.42:8080/display/SEAS/JellyFish+DSL+Keywords for a description of the keywords used by the DSL and http://10.207.42.42:8080/display/SEAS/JellyFish+-+a+MBE+Solution+for+Microservice+Architectures for an overview of the System Descriptor concept.
+
+# Building
+
+## Building outside of Eclipse
+The DSL uses gradle to build.  Run the command ``gradle clean build`` from the root directory of the repo to build with gradle directly outside of Eclipse.
 
 ## Load the project in Eclipse Neon
 1. Open Eclipse

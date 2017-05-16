@@ -11,10 +11,12 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * Validates a {@code Model} is correct.
+ * Validates a {@code Model} is correct. This validator mostly handles checking
+ * for duplicate declarations of fields within a model.
  */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
@@ -24,7 +26,8 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	// 1) requires
 	// 2) input
 	// 3) output
-	// 4) parts
+	// 4) scenarios
+	// 5) parts
 	//
 	// Therefore, we check for duplicate declarations in the manner shown
 	// below. The requires block has the fewest checks and the parts block
@@ -126,11 +129,61 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	}
 
 	/**
+	 * Validates that a scenario is correct. Requires the containing model not
+	 * contain another scenario with the same name, requires the model not
+	 * contain an output field with the same name, requires the model have no
+	 * requirement with the same name, and requires the model have no input
+	 * field with the same name.
+	 */
+	@Check
+	public void checkForDuplicateScenarios(Scenario scenario) {
+		// Ensure that the model does not already have a scenario with the same
+		// name.
+		Model model = (Model) scenario.eContainer();
+
+		if (getNumberOfScenariosNamed(model, scenario.getName()) > 1) {
+			String msg = String.format(
+					"A scenario named '%s' is already defined for the model '%s'.",
+					scenario.getName(),
+					model.getName());
+			error(msg, scenario, SystemDescriptorPackage.Literals.SCENARIO__NAME);
+
+			// Ensure that the model does not already have a declared
+			// requirement with the same name.
+		} else if (getNumberOfRequirementsNamed(model, scenario.getName()) > 0) {
+			String msg = String.format(
+					"A requirement named '%s' is already defined for the element '%s'.",
+					scenario.getName(),
+					model.getName());
+			error(msg, scenario, SystemDescriptorPackage.Literals.SCENARIO__NAME);
+
+			// Ensure that the model does not already have a declared input
+			// data field with the same name.
+		} else if (getNumberOfInputFieldsNamed(model, scenario.getName()) > 0) {
+			String msg = String.format(
+					"An input named '%s' is already defined for the element '%s'.",
+					scenario.getName(),
+					model.getName());
+			error(msg, scenario, SystemDescriptorPackage.Literals.SCENARIO__NAME);
+
+			// Ensure that the model does not already have a declared output
+			// data field with the same name.
+		} else if (getNumberOfOutputFieldsNamed(model, scenario.getName()) > 0) {
+			String msg = String.format(
+					"An output named '%s' is already defined for the element '%s'.",
+					scenario.getName(),
+					model.getName());
+			error(msg, scenario, SystemDescriptorPackage.Literals.SCENARIO__NAME);
+		}
+	}
+
+	/**
 	 * Validates that the part declaration is correct. Requires the containing
 	 * model not to contain another part declaration with the same name,
 	 * requires the model have no requirement with the same name, requires the
-	 * mode not to have another input field with the same name, and requires the
-	 * model not to have another output field with the same name.
+	 * mode not to have another input field with the same name, requires the
+	 * model not to have another output field with the same name, and requires
+	 * the model not to have a scenario with the same name.
 	 * 
 	 * @param declaration
 	 */
@@ -170,6 +223,14 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
 			String msg = String.format(
 					"An output named '%s' is already defined for the element '%s'.",
+					declaration.getName(),
+					model.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+
+			// Ensure there is no scenario with the same name.
+		} else if (getNumberOfScenariosNamed(model, declaration.getName()) > 0) {
+			String msg = String.format(
+					"A scenario named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
@@ -222,5 +283,14 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 						.stream()
 						.filter(d -> d.getName().equals(requirementName))
 						.count();
+	}
+
+	private static int getNumberOfScenariosNamed(
+			Model model,
+			String scenarioName) {
+		return (int) model.getScenarios()
+				.stream()
+				.filter(d -> d.getName().equals(scenarioName))
+				.count();
 	}
 }
