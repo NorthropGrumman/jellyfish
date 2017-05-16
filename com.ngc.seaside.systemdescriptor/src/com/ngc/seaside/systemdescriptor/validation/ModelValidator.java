@@ -75,7 +75,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"An input named '%s' is already defined for the model '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure that the model does not already have a declared
 			// requirement with the same name.
@@ -84,7 +84,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A requirement named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.INPUT_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"An output named '%s' is already defined for the model '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure that the model does not already have a declared
 			// requirement with the same name.
@@ -115,7 +115,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A requirement named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure that the model does not already have a declared input
 			// data field with the same name.
@@ -124,7 +124,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"An input named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
 
@@ -199,7 +199,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A part named '%s' is already defined for the model '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure that the model does not already have a declared
 			// requirement with the same name.
@@ -208,7 +208,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A requirement named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure that the model does not already have a declared input
 			// data field with the same name.
@@ -217,7 +217,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"An input named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure there is no output field with the same name.
 		} else if (getNumberOfOutputFieldsNamed(model, declaration.getName()) > 0) {
@@ -225,7 +225,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"An output named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 
 			// Ensure there is no scenario with the same name.
 		} else if (getNumberOfScenariosNamed(model, declaration.getName()) > 0) {
@@ -233,7 +233,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					"A scenario named '%s' is already defined for the element '%s'.",
 					declaration.getName(),
 					model.getName());
-			error(msg, declaration, SystemDescriptorPackage.Literals.PART_DECLARATION__NAME);
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
 

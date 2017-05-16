@@ -28,27 +28,24 @@
     <eLiterals name="DEFAULT" literal="default"/>
     <eLiterals name="MANY" value="1" literal="many"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="OutputDeclaration">
+  <eClassifiers xsi:type="ecore:EClass" name="OutputDeclaration" eSuperTypes="#//FieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InputDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Output">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//OutputDeclaration" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InputDeclaration" eSuperTypes="#//FieldDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//InputDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration">
+  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration" eSuperTypes="#//FieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Model"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parts">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
@@ -101,23 +98,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="then" eType="#//ThenDeclaration"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LinkableInput" eSuperTypes="#//Linkable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//InputDeclaration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FieldDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LinkableOutput">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//OutputDeclaration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LinkablePart">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//PartDeclaration"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LinkableRequirement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//RequireDeclaration"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Linkable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FieldReference"/>
   <eClassifiers xsi:type="ecore:EClass" name="LinkDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//Linkable"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//FieldReference"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Linkable"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//FieldReference"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Links">
@@ -187,5 +178,13 @@
   <eClassifiers xsi:type="ecore:EClass" name="Array">
     <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
         eType="#//Value" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkableExpression" eSuperTypes="#//FieldReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//FieldReference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tail" eType="#//FieldDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkableReference" eSuperTypes="#//FieldReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fieldDeclaration" eType="#//FieldDeclaration"/>
   </eClassifiers>
 </ecore:EPackage>

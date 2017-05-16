@@ -114,20 +114,20 @@ OutputDeclaration
 	;
 
 /*
- * Declares an input via a referenced data type and an unqualified name.
- * An output declaration may also specify an optional cardinality.
- */
-InputDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
-	;
-
-/*
  * Optional attribute of model, defines outputs produced by the model.
  */
 Output
 	: 'output' '{'
 		declarations+=OutputDeclaration+
 	  '}'
+	;
+
+/*
+ * Declares an input via a referenced data type and an unqualified name.
+ * An output declaration may also specify an optional cardinality.
+ */
+InputDeclaration
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
 	;
 
 /*
@@ -278,33 +278,46 @@ Scenario
 		 )?
 	  '}'
 	;
+
+// ---------------------------
+// ---- Common base types ----
+// ---------------------------
+
+
+FieldDeclaration
+	: InputDeclaration
+	| OutputDeclaration
+	| PartDeclaration
+	;
+
+ExpressionElement
+	: path=UnqualifiedName
+	;
+
+LinkableExpression returns FieldReference
+	: LinkableReference ({LinkableExpression.ref=current} '.' tail=[FieldDeclaration|UnqualifiedName])*
+	;
+
+LinkableReference returns FieldReference
+	: {LinkableReference} fieldDeclaration=[FieldDeclaration|UnqualifiedName]
+	;	
+
+//LinkableExpression
+//	: localField=[FieldDeclaration|UnqualifiedName]
+//	  ('.' expressionElements+=ExpressionElement)*
+//	;	
+
+//LinkableExpression
+//	: fieldDeclarations+=[FieldDeclaration|UnqualifiedName]
+//	  ('.' fieldDeclarations+=[FieldDeclaration|UnqualifiedName])*
+//	;	
 	
 // -----------------------------
 // ---- Link model elements ----
 // -----------------------------
 
-LinkableInput
-	: element=[InputDeclaration|QualifiedName]
-	;
-
-LinkableOutput
-	: element=[OutputDeclaration|QualifiedName]
-	;
-	
-LinkablePart
-	: element=[PartDeclaration|QualifiedName]
-	;
-
-LinkableRequirement
-	: element=[RequireDeclaration|QualifiedName]
-	;
-
-Linkable
-	: LinkableInput
-	;
-
 LinkDeclaration
-	: 'link' source=Linkable 'to' target=Linkable
+	: 'link' source=LinkableExpression 'to' target=LinkableExpression
 	;
 
 /*

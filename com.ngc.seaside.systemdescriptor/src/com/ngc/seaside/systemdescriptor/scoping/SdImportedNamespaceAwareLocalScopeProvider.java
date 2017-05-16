@@ -39,4 +39,8 @@ public class SdImportedNamespaceAwareLocalScopeProvider extends ImportedNamespac
 		return namespace;
 	}
 
+	public boolean isNamespaceRelevant(EObject object) {
+		return object.eClass().getEStructuralFeature("importedNamespace") != null
+				&& SystemDescriptorPackage.Literals.IMPORT.equals(object.eClass());
+	}
 }

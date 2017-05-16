@@ -6,8 +6,14 @@ package com.ngc.seaside.systemdescriptor.scoping;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
+import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 
 import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ExpressionElement;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 
 /**
  * This class contains custom scoping description.
@@ -16,13 +22,63 @@ import com.google.inject.Inject;
  * https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
  * on how and when to use it.
  */
-public class SystemDescriptorScopeProvider extends AbstractSystemDescriptorScopeProvider {
+public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
 	@Inject
 	private SdImportedNamespaceAwareLocalScopeProvider scopeProviderDelegate;
 
 	@Override
 	public IScope getScope(EObject context, EReference reference) {
-		return scopeProviderDelegate.getScope(context, reference);
+		if (scopeProviderDelegate.isNamespaceRelevant(context)) {
+			return scopeProviderDelegate.getScope(context, reference);
+		} else {
+			return super.getScope(context, reference);
+		}
 	}
+
+	public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
+		//System.out.println("Called " + context.getTail().getName());
+		LinkableReference r = (LinkableReference) context.getRef();
+		System.out.println("Called " + r.getFieldDeclaration());
+		
+		return delegateGetScope(context, reference);
+	}
+	
+//	public IScope scope_ExpressionElement(
+//			ExpressionElement context,
+//			EReference reference) {
+//		System.out.println("got alled");
+//		return delegateGetScope(context, reference);
+//	}
+//	
+//	public IScope scope_LinkableExpression_localField(
+//			LinkableExpression context,
+//			EReference reference) {
+//		System.out.println("got alled 2");
+//		return delegateGetScope(context, reference);
+//	}
+			
+	
+//	public IScope scope_LinkableExpression_fieldDeclarations(
+//			LinkableExpression context,
+//			EReference reference) {
+//
+//		if (!context.eIsProxy()) {
+//			System.out.println("context is not eproxy!");
+//			
+//			//if(context.getFieldDeclarations().isE)
+//			for (FieldDeclaration f : context.getFieldDeclarations()) {
+//				if (!f.eIsProxy()) {
+//					System.out.println("will try");
+//				}
+//			}
+//			if (context.getFieldDeclarations().isEmpty()) {
+//				System.out.println("fields are empty!");
+//			}
+//		} else {
+//			System.out.println("context is eproxy!");
+//		}
+//		//Scopes.scopeFor(elements)
+//		return delegateGetScope(context, reference);
+//	}
 }
