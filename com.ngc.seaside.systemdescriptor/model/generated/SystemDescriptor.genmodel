@@ -76,25 +76,36 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Metadata/json"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//JsonObject">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//JsonObject/firstObject"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//JsonObject/objects"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//JsonObject/members"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Member">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Member/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Member/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//StringValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//StringValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//BooleanValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//BooleanValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//JsonValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//JsonValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//ArrayValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ArrayValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//NullValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//NullValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//IntValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//IntValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//DblValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DblValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Value"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Array">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Array/firstItem"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Array/items"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//EmptyObject">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EmptyObject/isEmpty"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//EmptyArray">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EmptyArray/isEmpty"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//ObjectValue">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ObjectValue/value"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//TerminalObject">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//TerminalObject/element"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//TerminalObject/content"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Array/values"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
