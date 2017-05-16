@@ -216,14 +216,15 @@ Precondition
 ScenarioKeyword
 	: ID
 	;
-
 /*
  * Declares a generic parameter that is used by a particular keyword.
  */
 ScenarioParameter
-	: ID
+	: INTEGER
+	| DOUBLE
+	| ID	
 	;
-
+ 
 /*
  * The subject of a precondition expressed in a given declaration.
  * This is its own rule so we can later define additional types of

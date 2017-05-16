@@ -39,22 +39,22 @@ class JellyFishExampleParsingTest {
 			  
 			  int hour {
 			    "validation": {
-			      "min": "0",
-			      "max": "23"
+			      "min": 0,
+			      "max": 23
 			    }
 			  }
 			  
 			  int minute {
 			    "validation": {
-			      "min": "0",
-			      "max": "60"
+			      "min": 0,
+			      "max": 60
 			    }
 			  }
 			  
 			  int second {
 			    "validation": {
-			      "min": "0",
-			      "max": "60"
+			      "min": 0,
+			      "max": 60
 			    }
 			  }
 			}
@@ -80,6 +80,11 @@ class JellyFishExampleParsingTest {
 			  output {
 			    Time currentTime
 			  }
+			  
+			  scenario tick {
+			    when periodOf 1 sec elapses
+			    then publish currentTime
+			  }
 			}
 		'''
 		val timerResource = resourceHelper.resource(
@@ -102,6 +107,11 @@ class JellyFishExampleParsingTest {
 			 input {
 			     Time currentTime
 			 }
+			 
+			 //Left blank intentionally. This might be as far as we can go until we see a graphic design.
+			 //This might need to display the time in AM/PM vs a 24-hour representation.
+			 scenario displayCurrentTime {
+			 }
 			}
 		'''
 		val clockDisplayResource = resourceHelper.resource(
@@ -120,6 +130,8 @@ class JellyFishExampleParsingTest {
 			    "description": "Makes annoying buzzing sounds.",
 			    "stereotypes": ["device"]
 			  }
+			  
+			  scenario buzz { }
 			}
 		'''
 		val speakerResource = resourceHelper.resource(
@@ -147,6 +159,13 @@ class JellyFishExampleParsingTest {
 				 input {
 				   Time currentTime
 				   many Time alarmTimes
+				 }
+				 
+				 scenario triggerAlerts {
+				     given alarmTimes hasBeenReceived
+				     when receiving currentTime
+				     and anyOf alarmsTimes equals currentTime
+				     then ask speaker ^to buzz
 				 }
 			}
 		'''
@@ -181,6 +200,13 @@ class JellyFishExampleParsingTest {
 		    ClockDisplay display
 		    Alarm alarm
 		    Speaker speaker
+		  }
+		  
+		  links {
+		      link timer.currentTime to display.currentTime
+		      link timer.currentTime to alarm.currentTime
+		      link speaker to alarm.speaker
+		      link alarmTimes to alarm.alarmTimes
 		  }
 		}
 		'''
