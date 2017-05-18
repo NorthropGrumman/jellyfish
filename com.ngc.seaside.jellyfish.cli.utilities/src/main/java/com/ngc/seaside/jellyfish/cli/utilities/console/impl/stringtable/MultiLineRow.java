@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.impl.stringtable;
+package com.ngc.seaside.jellyfish.cli.utilities.console.impl.stringtable;
 
 import java.util.ArrayList;
 import java.util.List;

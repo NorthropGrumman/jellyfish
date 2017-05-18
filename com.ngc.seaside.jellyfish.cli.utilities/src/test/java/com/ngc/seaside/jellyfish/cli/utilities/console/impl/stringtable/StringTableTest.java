@@ -1,7 +1,7 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.impl.stringtable;
+package com.ngc.seaside.jellyfish.cli.utilities.console.impl.stringtable;
 
 import com.ngc.seaside.jellyfish.cli.utilities.TestItem;
-import com.ngc.seaside.jellyfish.cli.utilities.table.api.ITableFormat;
+import com.ngc.seaside.jellyfish.cli.utilities.console.api.ITableFormat;
 
 import org.junit.Before;
 import org.junit.Test;

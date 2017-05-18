@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.api;
+package com.ngc.seaside.jellyfish.cli.utilities.console.api;
 
 /**
  * Think of this class as the Controller in a model-view-controller pattern.

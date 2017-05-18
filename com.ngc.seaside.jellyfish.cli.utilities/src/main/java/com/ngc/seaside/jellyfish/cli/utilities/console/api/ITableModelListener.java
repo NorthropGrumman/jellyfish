@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.api;
+package com.ngc.seaside.jellyfish.cli.utilities.console.api;
 
 /**
  * Simple functional interface to receive callbacks on the events within the model.

@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.api;
+package com.ngc.seaside.jellyfish.cli.utilities.console.api;
 
 /**
  * This is the base class for classes that render or display data. Think of this class as a more

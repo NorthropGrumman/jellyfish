@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.utilities.table.api;
+package com.ngc.seaside.jellyfish.cli.utilities.console.api;
 
 
 import com.ngc.seaside.jellyfish.cli.utilities.TestItem;
