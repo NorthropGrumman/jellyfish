@@ -3,12 +3,12 @@ package com.ngc.seaside.jellyfish.cli.utilities.table.impl.stringtable;
 import com.ngc.seaside.jellyfish.cli.utilities.table.api.AbstractTable;
 import com.ngc.seaside.jellyfish.cli.utilities.table.api.ITableFormat;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Prints a table with representations of multi-line cells with the ability to set the amount of
@@ -21,6 +21,7 @@ public class StringTable<T> extends AbstractTable<T> {
   private char rowSpacerCharacter = ' ';
   private String columnSpacer = "   ";
   private boolean showHeader = true;
+  private boolean showRowNumber = false;
 
   /**
    * Constructor.
@@ -63,7 +64,7 @@ public class StringTable<T> extends AbstractTable<T> {
    *
    * @return true if the header will be displayed.
    */
-  public boolean isShowHeader() {
+  public boolean getShowHeader() {
     return showHeader;
   }
 
@@ -77,27 +78,50 @@ public class StringTable<T> extends AbstractTable<T> {
   }
 
   /**
+   * Determine if the row number is displayed. This value defaults to false.
+   *
+   * @return boolean if the row number will be displayed in the toString value.
+   */
+  public boolean getShowRowNumber() {
+    return showRowNumber;
+  }
+
+  /**
+   * Set this value to true if you want the row number to be displayed.
+   * This value defaults to false.
+   *
+   * @param showRowNumber the row number.
+   */
+  public void setShowRowNumber(boolean showRowNumber) {
+    this.showRowNumber = showRowNumber;
+  }
+
+  /**
    * Get the rows of the table. This method builds the rows on demand.
    *
    * @return the rows.
    */
   public List<MultiLineRow> getRows() {
-    Map<Integer, Integer> columnWidths = new HashMap<>();
-    //set the initial column widths
-    for (int column = 0; column < getFormat().getColumnCount(); column++) {
-      columnWidths.put(column, getFormat().getColumnWidth(column));
-    }
+    Map<Integer, Integer> columnWidths = getColumnWidths();
 
     List<MultiLineRow> rows = new ArrayList<>();
+    int totalItems = getModel().getItems().size();
     int rowNumber = 0;
 
     for (T item : getModel().getItems()) {
-      MultiLineRow row = new MultiLineRow(rowNumber, columnWidths);
+      MultiLineRow row = new MultiLineRow(rowNumber, totalItems, columnWidths);
       row.setColumnSpacer(columnSpacer);
+      row.setShowRowNumber(showRowNumber);
+
       int maxLines = 1;
 
       for (int column = 0; column < getFormat().getColumnCount(); column++) {
         MultiLineCell cell = new MultiLineCell(column);
+
+        if (getFormat().getColumnValue(item, column) == null) {
+          throw new IllegalArgumentException(String.format(
+              "getRows() Column '%s' Row: '%s' value is null", column, rowNumber));
+        }
 
         String value = getFormat().getColumnValue(item, column).toString();
         int length = value.length();
@@ -116,10 +140,6 @@ public class StringTable<T> extends AbstractTable<T> {
             }
             break;
           case MAX:
-            //ensure the column width is set correctly
-            if (columnWidths.get(column) < length) {
-              columnWidths.put(column, length);
-            }
             cell.addLine(value);
             break;
           default:
@@ -138,80 +158,24 @@ public class StringTable<T> extends AbstractTable<T> {
     return rows;
   }
 
-  /**
-   * get a String representation of the table.
-   *
-   * @return The String representation of the table.
-   */
-  @Override
-  public String toString() {
-    return toString(getRows());
-  }
 
   /**
-   * Build a String representation of the table.
+   * Get the header for the table. This method builds the header on demand.
    *
-   * @param rows the rows.
-   * @return The String representation of the table.
+   * @return the header.
    */
-  protected String toString(List<MultiLineRow> rows) {
-    if(rows.isEmpty()) {
-      return "";
-    }
-
-    StringBuilder builder = new StringBuilder();
-    final String NEW_LINE = String.format("%n");
-
-    MultiLineRow firstRow = rows.get(0);
-
-    final String ROW_SEP = StringUtils.rightPad(
-        "",
-        firstRow.getWidth() + 1,
-        String.valueOf(rowSpacerCharacter));
-
-    final String spacerStr = String.valueOf(columnSpacer);
-
-    String header = headerToString(firstRow.getColumnWidthMap());
-
-    if(showHeader) {
-      builder.append(spacerStr)
-          .append(String.format("%s", ROW_SEP))
-          .append(spacerStr)
-          .append(NEW_LINE);
-
-      builder.append(header);
-    }
-
-    builder.append(spacerStr)
-        .append(String.format("%s", ROW_SEP))
-        .append(spacerStr)
-        .append(NEW_LINE);
-
-    for (MultiLineRow row : rows) {
-      builder.append(row.toString())
-          .append(spacerStr)
-          .append(String.format("%s", ROW_SEP))
-          .append(spacerStr)
-          .append(NEW_LINE);
-    }
-    return builder.toString();
-  }
-
-  /**
-   * Print the header.
-   *
-   * @param columnWidths the table column widths.
-   * @return
-   */
-  protected String headerToString(Map<Integer, Integer> columnWidths) {
-    MultiLineRow row = new MultiLineRow(-1, columnWidths);
+  public MultiLineRow getHeader() {
+    Map<Integer, Integer> columnWidths = getColumnWidths();
+    MultiLineRow row = new MultiLineRow(0, getModel().getItems().size(), columnWidths);
+    row.setShowRowNumber(showRowNumber);
     row.setColumnSpacer(columnSpacer);
+
     int maxLines = 0;
     for (int column = 0; column < getFormat().getColumnCount(); column++) {
       MultiLineCell cell = new MultiLineCell(column);
       String value = getFormat().getColumnName(column);
 
-      if(value.length() > columnWidths.get(column)) {
+      if (value.length() > columnWidths.get(column)) {
         List<String> lines = StringWrap.wrap(value, columnWidths.get(column), true);
         if (maxLines < lines.size()) {
           maxLines = lines.size();
@@ -225,7 +189,117 @@ public class StringTable<T> extends AbstractTable<T> {
     }
     row.setNumberOfLines(maxLines);
 
-    return row.toString();
+    return row;
+  }
+
+  /**
+   * get a String representation of the table.
+   *
+   * @return The String representation of the table.
+   */
+  @Override
+  public String toString() {
+    return toString(getRows());
+  }
+
+  /**
+   * Determine the column widths for the table based on the format.
+   *
+   * @return the column widths.
+   */
+  protected Map<Integer, Integer> getColumnWidths() {
+    Map<Integer, Integer> columnWidths = new HashMap<>();
+    for (int column = 0; column < getFormat().getColumnCount(); column++) {
+      columnWidths.put(column, getFormat().getColumnWidth(column));
+    }
+
+    int rowNumber = 0;
+    for (T item : getModel().getItems()) {
+      for (int column = 0; column < getFormat().getColumnCount(); column++) {
+
+        if (getFormat().getColumnValue(item, column) == null) {
+          throw new IllegalArgumentException(String.format(
+              "getColumnWidths() Column '%s' Row: '%s' value is null", column, rowNumber));
+        }
+
+        int length = getFormat().getColumnValue(item, column).toString().length();
+
+        switch (getFormat().getColumnSizePolicy(column)) {
+          case FIXED:
+            break;
+          case MAX:
+            //ensure the column width is set correctly
+            if (columnWidths.get(column) < length) {
+              columnWidths.put(column, length);
+            }
+            break;
+          default:
+            throw new IllegalArgumentException(
+                String.format("Unable to determine size policy for column %s", column));
+        }
+        rowNumber++;
+      }
+    }
+
+    return columnWidths;
+  }
+
+  /**
+   * Build a String representation of the table.
+   *
+   * @param rows the rows.
+   * @return The String representation of the table.
+   */
+  protected String toString(List<MultiLineRow> rows) {
+    if (rows.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder builder = new StringBuilder();
+    MultiLineRow firstRow = rows.get(0);
+    final int ROW_WIDTH = firstRow.getWidth();
+
+
+    /**
+     * Print the header, wrapping
+     */
+    if (showHeader) {
+      MultiLineRow header = getHeader();
+      builder.append(getRowSeparator(ROW_WIDTH + 1));
+      builder.append(header.toString());
+    }
+
+    builder.append(getRowSeparator(ROW_WIDTH + 1));
+
+    for (MultiLineRow row : rows) {
+      builder.append(row.toString())
+          .append(getRowSeparator(ROW_WIDTH + 1));
+    }
+    return builder.toString();
+  }
+
+  protected String getRowSeparator(int width) {
+    StringBuilder builder = new StringBuilder();
+    final String ROW_SEP = StringUtils.rightPad("", width, rowSpacerCharacter);
+
+    if(showRowNumber) {
+
+    }
+
+    builder.append(columnSpacer)
+        .append(String.format("%s", ROW_SEP))
+        .append(columnSpacer)
+        .append(String.format("%n"));
+
+    return builder.toString();
+  }
+
+  protected int getRowColumnWidth(int totalNumberOfRows) {
+    return Integer.toString(totalNumberOfRows).length();
+  }
+
+  protected String getRowColumn(int rowNumber, int width) {
+    return StringUtils.rightPad(String.format("%s", rowNumber), width);
   }
 
 }

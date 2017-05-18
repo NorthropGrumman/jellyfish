@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author justan.provence@ngc.com
  */
@@ -42,9 +44,35 @@ public class StringTableTest {
     fixture.setColumnSpacer(" | ");
 
     fixture.setShowHeader(true);
+    fixture.setShowRowNumber(true);
 
-    System.out.println(fixture.toString());
+    List<MultiLineRow> rows = fixture.getRows();
+    assertEquals(3, rows.size());
+    MultiLineRow firstRow = rows.get(0);
+    assertEquals(3, firstRow.getNumberOfLines());
+    assertEquals(3, firstRow.getCells().size());
+    MultiLineCell firstRowFirstCell = firstRow.getCells().get(0);
+    assertEquals(3, firstRowFirstCell.getLines().size());
 
+    MultiLineRow secondRow = rows.get(1);
+    assertEquals(8, secondRow.getNumberOfLines());
+    assertEquals(3, secondRow.getCells().size());
+    MultiLineCell secondRowFirstCell = secondRow.getCells().get(0);
+    assertEquals(8, secondRowFirstCell.getLines().size());
+
+    MultiLineCell secondRowSecondCell = secondRow.getCells().get(1);
+
+    MultiLineRow lastRow = rows.get(2);
+    assertEquals(4, lastRow.getNumberOfLines());
+    assertEquals(3, lastRow.getCells().size());
+    MultiLineCell lastRowFirstCell = lastRow.getCells().get(0);
+    assertEquals(4, lastRowFirstCell.getLines().size());
+
+//    assertEquals(66, firstRow.getWidth());
+//    assertEquals(66, secondRow.getWidth());
+//    assertEquals(66, lastRow.getWidth());
+
+    System.out.println(fixture);
   }
 
   private class ItemItemFormat implements ITableFormat<TestItem> {

@@ -39,20 +39,19 @@ public class MultiLineCell {
    * @param totalNumberOfLines the number of lines that should be in this cell.
    */
   public void fillLines(int totalNumberOfLines) {
-    while(lines.size() <= totalNumberOfLines) {
+    while(lines.size() < totalNumberOfLines) {
       addLine("");
     }
   }
 
   /**
-   * Get the formatted line given the width.
+   * Get the line given the number of the line.
    *
    * @param lineNumber the number of the line
-   * @param width      the width of the line.
-   * @return the formatted line.
+   * @return the line.
    */
-  public String getFormattedLine(int lineNumber, int width) {
-    return String.format("%-" + width + "s", lines.get(lineNumber));
+  public String getLine(int lineNumber) {
+    return lines.get(lineNumber);
   }
 
   /**
