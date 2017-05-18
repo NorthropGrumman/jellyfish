@@ -74,7 +74,7 @@ public class MultiLineCell {
 
   /**
    * Get the lines in this cell.
-   * See also {@link #getFormattedLine(int, int)}
+   * See also {@link #getLine(int)}}
    *
    * @return the lines.
    */

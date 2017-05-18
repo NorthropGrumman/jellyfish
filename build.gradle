@@ -67,6 +67,7 @@ subprojects {
 
     // Configure the bundle.
     jar {
+        archiveName = "${project.group}.${project.name}-${project.version}.jar"
         // Begin bnd configuration to ensure the project is an OSGi bundle.  Note we are doing this
         // instead of applying the biz.aQute.bnd.builder plugin.  We do this to work around the
         // bnd "baseline" capability with is enabled automatically by the plugin.  This breaks
@@ -106,12 +107,14 @@ subprojects {
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from sourceSets.main.allSource
+        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
     }
 
     // Enable the creation of a Javadoc JAR which is used when uploading to Nexus.
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
         from javadoc.destinationDir
+        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
     }
 
     // Add the additional JARs are artifacts, this results in them being included when uploading
