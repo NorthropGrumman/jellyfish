@@ -40,8 +40,8 @@ public class StringTableTest {
                          "This is the last column for the last row")
         }));
     fixture.getModel().addItems(items);
-    fixture.setRowSpacerCharacter('-');
-    fixture.setColumnSpacer(" | ");
+    fixture.setRowSpacerCharacter('_');
+    fixture.setColumnSpacer("  ");
 
     fixture.setShowHeader(true);
     fixture.setShowRowNumber(true);
@@ -60,17 +60,11 @@ public class StringTableTest {
     MultiLineCell secondRowFirstCell = secondRow.getCells().get(0);
     assertEquals(8, secondRowFirstCell.getLines().size());
 
-    MultiLineCell secondRowSecondCell = secondRow.getCells().get(1);
-
     MultiLineRow lastRow = rows.get(2);
     assertEquals(4, lastRow.getNumberOfLines());
     assertEquals(3, lastRow.getCells().size());
     MultiLineCell lastRowFirstCell = lastRow.getCells().get(0);
     assertEquals(4, lastRowFirstCell.getLines().size());
-
-//    assertEquals(66, firstRow.getWidth());
-//    assertEquals(66, secondRow.getWidth());
-//    assertEquals(66, lastRow.getWidth());
 
     System.out.println(fixture);
   }
