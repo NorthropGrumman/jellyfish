@@ -8,11 +8,12 @@ This project defines the DSL uses to describe a System Descriptor.  This is an E
 See http://10.207.42.42:8080/display/SEAS/JellyFish+DSL+Keywords for a description of the keywords used by the DSL and http://10.207.42.42:8080/display/SEAS/JellyFish+-+a+MBE+Solution+for+Microservice+Architectures for an overview of the System Descriptor concept.
 
 # Building
+The project can be built both inside Eclipse or outside of Eclipse with Gradle.  You can also run the Gradle build directly within Eclipse.
 
 ## Building outside of Eclipse
 The DSL uses gradle to build.  Run the command ``gradle clean build`` from the root directory of the repo to build with gradle directly outside of Eclipse.
 
-## Load the project in Eclipse Neon
+## Building the project in Eclipse Neon
 1. Open Eclipse
 1. Switch the workspace
    1. File -> Switch Workspace -> Other...
@@ -28,7 +29,7 @@ The DSL uses gradle to build.  Run the command ``gradle clean build`` from the r
    1. Select **Browse...** and navigate to the **jellyfish-systemdescriptor-dsl** directory
    1. Select **Finish**
 
-## Build the project
+### Build the project
 1. Expand com.ngc.seaside.systemdescriptor.parent project
 1. Right click on **build.gradle**
 1. Select **Run As -> Run Configurations**
@@ -38,13 +39,13 @@ The DSL uses gradle to build.  Run the command ``gradle clean build`` from the r
 1. Select the **Workspace...** button and select the **com.ngc.seaside.systemdescriptor.parent** directory.
 1. Select **Run**
 
-## Running the Unit Test
+### Running the Unit Test
 1. Expand the **com.ngc.seaside.systemdescriptor.tests** project
 1. Expand src/com.ngc.seaside.systemdescriptor.tests 
 1. Right click **SystemDescriptorParsingTest.xtend**
 1. Select **Run As** -> **Junit Test**
 
-## Creating the JellyFish SystemDescriptor DSL Plugin for Eclipse
+### Creating the JellyFish SystemDescriptor DSL Plugin for Eclipse
 It is possible to create a plugin of the JellyFish SystemDescriptor DSL grammar for use in Eclipse to be able
 to use the Eclipse editing capabilities.  The steps below are required because of an Eclipse bug which is documented
 at https://bugs.eclipse.org/bugs/show_bug.cgi?id=278673.  Also, refer to http://infobart.com/category-not-showing-up-in-eclipse-update-site/ for a workaround that is defined in
@@ -58,7 +59,7 @@ the steps below.
       1. From the Feature Selection dialog, select the **com.ngc.seaside.systemdescriptor.feature** project and select the **OK** button
    1. Select the **Build All** button to create the appropriate Plugin jars.
    
-## Installing the plugins into an Eclipse installation
+### Installing the plugins into an Eclipse installation
 1. In the **Help** menu, select **Install New Software**
 1. Click on the **Add...** button
 1. Click the **Local..." button and traverse the file system tree to the location of the plugin
@@ -67,3 +68,9 @@ the steps below.
    1. The plugin to select is the **com.ngc.seaside.systemdescriptor.updatesite** project
 1. Click on the **Ok** button to close the Add Repository dialog (you don't have to enter a Name)
 1. In the list box panel, you should see **XText DSL**.  Select the check box and click the **Next >** button to install the plugin.
+
+# Creating a new JellyFish project in Eclipse
+Currently, until new JellyFish Eclipse plugins are created, a new blank project should be created to write SystemDescriptor
+DSL code.  Once the blank project is added, convert it to an XText project.  To do this, right click the newly created
+project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping
+(i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
