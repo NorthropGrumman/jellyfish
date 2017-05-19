@@ -1,0 +1,104 @@
+// Use Nexus to retrieve additional Gradle plugins used by the build.
+buildscript {
+    repositories {
+    	mavenLocal()
+        maven {
+            url 'http://10.207.42.43/nexus/repository/maven-public/'
+        }
+    }
+
+    dependencies {
+        // Enable te Bnd plugin for OSGi aware builds.
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.3.0'
+    }
+}
+
+// Needed to configure Bnd to create an OSGi bundle.
+import aQute.bnd.gradle.BundleTaskConvention
+
+// Disable the annoying doclint capability of Java 8 which causes builds to fail if the JavaDocs
+// aren't right.
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'maven'
+
+	group 'com.ngc.seaside'
+	version '1.0.0-SNAPSHOT'
+
+	ext {
+		// The default name of the bundle.
+		bundleName = "$group" + '.' + "$project.name"
+	}
+
+	// Configure Nexus as the main repository.
+	repositories {
+		mavenLocal()
+		maven {
+			url 'http://10.207.42.43/nexus/repository/maven-public/'
+		}
+	}
+
+	// Configure the bundle.
+	jar {
+		// Begin bnd configuration to ensure the project is an OSGi bundle.  Note we are doing this
+		// instead of applying the biz.aQute.bnd.builder plugin.  We do this to work around the
+		// bnd "baseline" capability with is enabled automatically by the plugin.  This breaks
+		// the gradle build and it isn't something we care about anyway.
+		convention.plugins.bundle = new BundleTaskConvention(jar)
+		doLast {
+			buildBundle()
+		}
+		// End bnd configuration.
+
+		// Configure bundle manifest properties.
+		manifest {
+			attributes('Bundle-Name': "$bundleName",
+					   'Bundle-SymbolicName': "$bundleName")
+		}
+	}
+
+	// Configuration for Nexus releases.
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				// Use the main repo for full releases.
+				repository(url: 'http://10.207.42.43/nexus/repository/ceacide-releases') {
+					// Make sure that nexusUsername and nexusPassword are in your
+					// ${gradle.user.home}/gradle.properties file.
+					authentication(userName: nexusUsername, password: nexusPassword)
+				}
+				// If the version has SNAPSHOT in the name, use the snapshot repo.
+				snapshotRepository(url: 'http://10.207.42.43/nexus/repository/ceacide-snapshots') {
+					authentication(userName: nexusUsername, password: nexusPassword)
+				}
+			}
+		}
+	}
+
+	// Enable the creation of sources JAR which is used when uploading to Nexus.
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	// Enable the creation of a Javadoc JAR which is used when uploading to Nexus.
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		classifier = 'javadoc'
+		from javadoc.destinationDir
+	}
+
+	// Add the additional JARs are artifacts, this results in them being included when uploading
+	// to Nexus.
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+}
