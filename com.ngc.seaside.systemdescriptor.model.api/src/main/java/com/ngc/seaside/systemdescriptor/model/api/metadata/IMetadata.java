@@ -6,6 +6,6 @@ import javax.json.JsonObject;
 
 public interface IMetadata {
 
-    Collection<JsonObject> getJsonObjects();
+  Collection<JsonObject> getJsonObjects();
 
 }

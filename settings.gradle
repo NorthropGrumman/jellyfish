@@ -1,5 +1,7 @@
 rootProject.name = 'jellyfish-systemdescriptor-api'
 
 include 'com.ngc.seaside.systemdescriptor.model.api'
+include 'com.ngc.seaside.systemdescriptor.service.api'
 
 project(':com.ngc.seaside.systemdescriptor.model.api').name = 'systemdescriptor.model.api'
+project(':com.ngc.seaside.systemdescriptor.service.api').name = 'systemdescriptor.service.api'
