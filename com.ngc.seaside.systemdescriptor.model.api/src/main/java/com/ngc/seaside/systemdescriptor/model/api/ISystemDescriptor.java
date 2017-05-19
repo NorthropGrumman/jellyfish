@@ -6,6 +6,6 @@ public interface ISystemDescriptor {
 
   Set<IPackage> getPackages();
 
-  // findModel(String fqn)
-  // findData(String fqn)
+  // Optional<Model> findModel(String fqn)
+  // Optional<Data> findData(String fqn)
 }
