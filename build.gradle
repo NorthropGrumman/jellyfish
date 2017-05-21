@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+    dependencies {
+        classpath 'com.ngc.seaside:seaside.parent:1.0-SNAPSHOT'
+    }
+}
+
+subprojects {
+    apply plugin: 'com.ngc.seaside.parent'
+
+    group = 'com.ngc.seaside'
+    version = '1.0-SNAPSHOT'
+
+
+    /**
+     * The dependencies for all the blocs items.
+     */
+    dependencies {
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.mockito:mockito-core:2.7.14'
+    }
+}
