@@ -7,7 +7,7 @@ This project defines the DSL uses to describe a System Descriptor.  This is an E
 
 See http://10.207.42.42:8080/display/SEAS/JellyFish+DSL+Keywords for a description of the keywords used by the DSL and http://10.207.42.42:8080/display/SEAS/JellyFish+-+a+MBE+Solution+for+Microservice+Architectures for an overview of the System Descriptor concept.
 
-# Quick Setup Guide for using Jthe ellyFish System Descriptor Grammar
+# Quick Setup Guide for using the JellyFish System Descriptor Grammar
 Follow this guide to avoid having to build the plugins yourself.  Use this if you just want to create new System Descriptor projects without updating the grammer.
 
 Download Eclipse with DSL support from http://10.207.42.43/resources/jellyfish/eclipse-dsl-neon-2-win32-x86_64.zip.  Download the SystemDescriptor update site from http://10.207.42.43/resources/jellyfish/com.ngc.seaside.systemdescriptor.updatesite.zip.  Unzip the update site to any location you want.
