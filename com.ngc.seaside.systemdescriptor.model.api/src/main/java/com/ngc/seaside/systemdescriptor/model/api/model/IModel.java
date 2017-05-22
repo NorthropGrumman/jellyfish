@@ -1,29 +1,28 @@
 package com.ngc.seaside.systemdescriptor.model.api.model;
 
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
+import java.util.Collection;
 import java.util.List;
 
-public interface IModel {
-
-  String getName();
+public interface IModel extends INamedChild<IPackage> {
 
   IMetadata getMetadata();
 
-  List<IDataReferenceField> getInputs();
+  INamedChildCollection<IModel, IDataReferenceField> getInputs();
 
-  List<IDataReferenceField> getOutputs();
+  INamedChildCollection<IModel, IDataReferenceField> getOutputs();
 
-  List<IModelReferenceField> getRequiredModels();
+  INamedChildCollection<IModel, IModelReferenceField> getRequiredModels();
 
-  List<IModelReferenceField> getParts();
+  INamedChildCollection<IModel, IModelReferenceField> getParts();
 
-  List<IModelLink<?>> getLinks();
+  INamedChildCollection<IModel, IScenario> getScenarios();
 
-  List<IScenario> getScenarios();
-
-  IPackage getParentPackage();
+  Collection<IModelLink<?>> getLinks();
 }

@@ -9,5 +9,5 @@ public interface IModelLink<T extends IReferenceField> {
 
   T getTarget();
 
-  IModel getParentModel();
+  IModel getParent();
 }

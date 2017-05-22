@@ -7,8 +7,8 @@ import java.util.Set;
 
 public interface IPackage {
 
-  Set<IData> getData();
+  INamedChildCollection<IPackage, IData> getData();
 
-  Set<IModel> getModels();
+  INamedChildCollection<IPackage, IModel> getModels();
 
 }
