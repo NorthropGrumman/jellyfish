@@ -8,11 +8,12 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface IModel extends INamedChild<IPackage> {
 
   IMetadata getMetadata();
+
+  IModel setMetdata(IMetadata metadata);
 
   INamedChildCollection<IModel, IDataReferenceField> getInputs();
 

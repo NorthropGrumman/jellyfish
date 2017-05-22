@@ -6,5 +6,9 @@ public interface IDataReferenceField extends IReferenceField {
 
   IData getType();
 
+  IDataReferenceField setType(IData data);
+
   ModelFieldCardinality getCardinality();
+
+  IDataReferenceField setCardinality(ModelFieldCardinality cardinality);
 }

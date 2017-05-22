@@ -7,7 +7,11 @@ public interface IModelLink<T extends IReferenceField> {
 
   T getSource();
 
+  IModelLink<T> setSource(T source);
+
   T getTarget();
+
+  IModelLink<T> setTarget(T target);
 
   IModel getParent();
 }

@@ -7,4 +7,5 @@ public interface IReferenceField extends INamedChild<IModel> {
 
   IMetadata getMetadata();
 
+  IReferenceField setMetdata(IMetadata metadata);
 }

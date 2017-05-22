@@ -6,5 +6,7 @@ public interface IScenarioStep {
 
   String getKeyword();
 
+  IScenarioStep setKeyword(String keyword);
+
   List<String> getParameters();
 }

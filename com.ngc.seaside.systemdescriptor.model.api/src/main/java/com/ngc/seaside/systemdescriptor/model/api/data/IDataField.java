@@ -7,5 +7,9 @@ public interface IDataField extends INamedChild<IData> {
 
   DataTypes getType();
 
+  IDataField setType(DataTypes type);
+
   IMetadata getMetadata();
+
+  IDataField setMetdata(IMetadata metadata);
 }
