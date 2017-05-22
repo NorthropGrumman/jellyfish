@@ -1,3 +1,3 @@
 dependencies {
-    compile project(":com.ngc.seaside.systemdescriptor.model.api")
+    compile project(':systemdescriptor.model.api')
 }
