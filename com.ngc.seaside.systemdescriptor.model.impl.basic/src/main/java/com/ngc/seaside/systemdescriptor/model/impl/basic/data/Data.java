@@ -1,5 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.data;
 
+import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -12,26 +14,33 @@ import java.util.Objects;
 
 public class Data implements IData {
 
-  protected final NamedChildCollection<IData, IDataField> fields = new NamedChildCollection<>();
+  protected final INamedChildCollection<IData, IDataField> fields;
   protected final String name;
   protected IPackage parent;
   protected IMetadata metadata;
 
-  public Data(String name) {
+  private Data(String name, INamedChildCollection<IData, IDataField> fields) {
     this.name = name;
+    this.fields = fields;
+  }
 
-    fields.setOnChildAdded(field -> {
-      if (field instanceof DataField) {
-        DataField casted = (DataField) field;
-        casted.setParent(Data.this);
-      }
-    });
-    fields.setOnChildRemoved(field -> {
-      if (field instanceof DataField) {
-        DataField casted = (DataField) field;
-        casted.setParent(null);
-      }
-    });
+  public Data(String name) {
+    Preconditions.checkNotNull(name, "name may not be null!");
+    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+    this.name = name;
+    this.fields = new NamedChildCollection<IData, IDataField>()
+        .setOnChildAdded(field -> {
+          if (field instanceof DataField) {
+            DataField casted = (DataField) field;
+            casted.setParent(Data.this);
+          }
+        })
+        .setOnChildRemoved(field -> {
+          if (field instanceof DataField) {
+            DataField casted = (DataField) field;
+            casted.setParent(null);
+          }
+        });
   }
 
   @Override
@@ -96,7 +105,8 @@ public class Data implements IData {
   }
 
   public static IData immutable(IData data) {
-    ImmutableData immutable = new ImmutableData(data.getName());
+    ImmutableData immutable = new ImmutableData(data.getName(),
+                                                NamedChildCollection.immutable(data.getFields()));
     immutable.parent = data.getParent();
     immutable.metadata = Metadata.immutable(data.getMetadata());
     return immutable;
@@ -104,8 +114,8 @@ public class Data implements IData {
 
   private static class ImmutableData extends Data {
 
-    private ImmutableData(String name) {
-      super(name);
+    private ImmutableData(String name, INamedChildCollection<IData, IDataField> fields) {
+      super(name, fields);
     }
 
     @Override

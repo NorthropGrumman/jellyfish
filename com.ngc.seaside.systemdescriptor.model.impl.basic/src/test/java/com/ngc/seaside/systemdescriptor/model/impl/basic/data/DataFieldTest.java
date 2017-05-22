@@ -8,23 +8,27 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.json.Json;
 
 import static com.ngc.seaside.systemdescriptor.model.impl.basic.TestUtils.demandImmutability;
 import static org.junit.Assert.assertEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DataFieldTest {
 
   private DataField field;
 
+  @Mock
   private IData parent;
 
   private IMetadata metadata;
 
   @Before
   public void setup() throws Throwable {
-    parent = new Data("DataType1");
     metadata = new Metadata();
     metadata.getJsonObjects().add(Json.createObjectBuilder().add("foo", "bar").build());
   }

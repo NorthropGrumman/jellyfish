@@ -31,7 +31,7 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
   @Override
   public Optional<T> getByName(String name) {
     Preconditions.checkNotNull(name, "name may not be null!");
-    Preconditions.checkArgument(name.trim().isEmpty(), "name may not be empty!");
+    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
     return Optional.ofNullable(children.get(name));
   }
 
