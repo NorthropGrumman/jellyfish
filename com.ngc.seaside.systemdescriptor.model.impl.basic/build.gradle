@@ -1,3 +1,8 @@
 dependencies {
     compile project(':systemdescriptor.model.api')
+    compile 'com.google.guava:guava:21.0'
+    compile 'com.owlike:genson:1.4'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.14'
 }

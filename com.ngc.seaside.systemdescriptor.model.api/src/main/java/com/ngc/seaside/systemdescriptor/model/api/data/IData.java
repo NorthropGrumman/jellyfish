@@ -9,7 +9,7 @@ public interface IData extends INamedChild<IPackage> {
 
   IMetadata getMetadata();
 
-  IData setMetdata(IMetadata metadata);
+  IData setMetadata(IMetadata metadata);
 
   INamedChildCollection<IData, IDataField> getFields();
 }

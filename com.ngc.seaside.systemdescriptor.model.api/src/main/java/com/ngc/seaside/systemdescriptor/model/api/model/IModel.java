@@ -13,7 +13,7 @@ public interface IModel extends INamedChild<IPackage> {
 
   IMetadata getMetadata();
 
-  IModel setMetdata(IMetadata metadata);
+  IModel setMetadata(IMetadata metadata);
 
   INamedChildCollection<IModel, IDataReferenceField> getInputs();
 

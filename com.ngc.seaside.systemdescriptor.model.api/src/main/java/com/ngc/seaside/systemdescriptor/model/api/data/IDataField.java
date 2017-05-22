@@ -11,5 +11,5 @@ public interface IDataField extends INamedChild<IData> {
 
   IMetadata getMetadata();
 
-  IDataField setMetdata(IMetadata metadata);
+  IDataField setMetadata(IMetadata metadata);
 }
