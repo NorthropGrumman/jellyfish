@@ -7,6 +7,26 @@ This project defines the DSL uses to describe a System Descriptor.  This is an E
 
 See http://10.207.42.42:8080/display/SEAS/JellyFish+DSL+Keywords for a description of the keywords used by the DSL and http://10.207.42.42:8080/display/SEAS/JellyFish+-+a+MBE+Solution+for+Microservice+Architectures for an overview of the System Descriptor concept.
 
+# Quick Setup Guide for using Jthe ellyFish System Descriptor Grammar
+Follow this guide to avoid having to build the plugins yourself.  Use this if you just want to create new System Descriptor projects without updating the grammer.
+
+Download Eclipse with DSL support from http://10.207.42.43/resources/jellyfish/eclipse-dsl-neon-2-win32-x86_64.zip.  Download the SystemDescriptor update site from http://10.207.42.43/resources/jellyfish/com.ngc.seaside.systemdescriptor.updatesite.zip.  Unzip the update site to any location you want.
+
+Start Eclipse ande **ensure your proxy settings are correct**.  To install the System Descriptor support:
+1. Select **Help**->**Install New Software**.
+   1. Click **Add...** to create a new software site.
+   1. Name the site JellyFish (or anything you want).
+   1. Select **Local...** navigate to the directory where you unziped the update site ZIP downloaded above.
+   1. Select **OK**.
+1. Select the update site in the **Work with:** drop down above.
+1. Unselect **Group items by category** at the bottom.
+1. Check JellyFish SystemDescriptor DSL and select **Next** and follow the prompts.
+
+## Creating a new JellyFish project in Eclipse
+Currently, until new JellyFish Eclipse plugins are created, a new blank project should be created to write SystemDescriptor
+DSL code.  Create a blank project by selecting **File**->**New Project**->**General/Project**.  Once the blank project is added, select yes to convert it to an XText project.  If you want to convert a pre-existing project, right click the project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping
+(i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
+
 # Building
 The project can be built both inside Eclipse or outside of Eclipse with Gradle.  You can also run the Gradle build directly within Eclipse.
 
@@ -60,17 +80,11 @@ the steps below.
    1. Select the **Build All** button to create the appropriate Plugin jars.
    
 ### Installing the plugins into an Eclipse installation
+Follow this guide if you want to install the version of the plugin *you have just updated/built* for tested.
 1. In the **Help** menu, select **Install New Software**
 1. Click on the **Add...** button
-1. Click the **Local..." button and traverse the file system tree to the location of the plugin
-  **NOTE** At some point, the plugin to select will be on a webserver and this README will be updated
-           Currently, the location will be in the **jellyfish-systemdescriptor-dsl** git clone directory
+1. Click the **Local...** button and traverse the file system tree to the location of the plugin.
+1. Select the location to be the **jellyfish-systemdescriptor-dsl** git clone directory.
    1. The plugin to select is the **com.ngc.seaside.systemdescriptor.updatesite** project
 1. Click on the **Ok** button to close the Add Repository dialog (you don't have to enter a Name)
 1. In the list box panel, you should see **XText DSL**.  Select the check box and click the **Next >** button to install the plugin.
-
-# Creating a new JellyFish project in Eclipse
-Currently, until new JellyFish Eclipse plugins are created, a new blank project should be created to write SystemDescriptor
-DSL code.  Once the blank project is added, convert it to an XText project.  To do this, right click the newly created
-project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping
-(i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
