@@ -1,5 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.metadata;
 
+import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class Metadata implements IMetadata {
   }
 
   public static IMetadata immutable(IMetadata metadata) {
+    Preconditions.checkNotNull(metadata, "metadata may not be null!");
     return new Metadata(Collections.unmodifiableCollection(metadata.getJsonObjects()));
   }
 }

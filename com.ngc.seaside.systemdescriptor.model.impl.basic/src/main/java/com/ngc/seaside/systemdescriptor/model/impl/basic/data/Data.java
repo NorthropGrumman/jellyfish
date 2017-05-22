@@ -85,13 +85,13 @@ public class Data implements IData {
     Data data = (Data) o;
     return Objects.equals(fields, data.fields) &&
            Objects.equals(name, data.name) &&
-           Objects.equals(parent, data.parent) &&
+           parent == data.parent &&
            Objects.equals(metadata, data.metadata);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fields, name, parent, metadata);
+    return Objects.hash(fields, name, System.identityHashCode(parent), metadata);
   }
 
   @Override
@@ -99,12 +99,13 @@ public class Data implements IData {
     return "Data[" +
            "fields=" + fields +
            ", name='" + name + '\'' +
-           ", parent=" + parent +
+           ", parent=" + (parent == null ? "null" : parent.getName()) +
            ", metadata=" + metadata +
            ']';
   }
 
   public static IData immutable(IData data) {
+    Preconditions.checkNotNull(data, "data may not be null!");
     ImmutableData immutable = new ImmutableData(data.getName(),
                                                 NamedChildCollection.immutable(data.getFields()));
     immutable.parent = data.getParent();

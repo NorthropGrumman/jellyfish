@@ -70,6 +70,7 @@ public class DataField implements IDataField {
     }
     DataField dataField = (DataField) o;
     return Objects.equals(name, dataField.name) &&
+           parent == dataField.parent &&
            Objects.equals(parent, dataField.parent) &&
            type == dataField.type &&
            Objects.equals(metadata, dataField.metadata);
@@ -77,20 +78,21 @@ public class DataField implements IDataField {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, parent, type, metadata);
+    return Objects.hash(name, System.identityHashCode(parent), type, metadata);
   }
 
   @Override
   public String toString() {
     return "DataField[" +
            "name='" + name + '\'' +
-           ", parent=" + parent +
+           ", parent=" + (parent == null ? "null" : parent.getName()) +
            ", type=" + type +
            ", metadata=" + metadata +
            ']';
   }
 
   public static IDataField immutable(IDataField dataField) {
+    Preconditions.checkNotNull(dataField, "dataField may not be null!");
     ImmutableDataField immutable = new ImmutableDataField(dataField.getName());
     immutable.parent = dataField.getParent();
     immutable.type = dataField.getType();
