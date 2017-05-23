@@ -69,7 +69,15 @@ public class Data implements IData {
     return fields;
   }
 
-  public Data setParent(IPackage parent) {
+  @Override
+  public String getFullyQualifiedName() {
+    return String.format("%s%s%s",
+                         parent == null ? "" : parent.getName(),
+                         parent == null ? "" : ".",
+                         name);
+  }
+
+  Data setParent(IPackage parent) {
     this.parent = parent;
     return this;
   }
@@ -111,6 +119,7 @@ public class Data implements IData {
     data.getFields().forEach(f -> fields.add(DataField.immutable(f)));
 
     ImmutableData immutable = new ImmutableData(data.getName(), NamedChildCollection.immutable(fields));
+    // TODO TH: fix this, need to point to immutable parent.
     immutable.parent = data.getParent();
     immutable.metadata = Metadata.immutable(data.getMetadata());
     // Fix the field parent pointers so they point to the new immutable parent.

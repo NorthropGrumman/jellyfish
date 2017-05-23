@@ -9,9 +9,12 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitor;
+import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitorContext;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class DataReferenceField implements IDataReferenceField {
 
@@ -111,16 +114,27 @@ public class DataReferenceField implements IDataReferenceField {
   public static IDataReferenceField immutable(IDataReferenceField field) {
     Preconditions.checkNotNull(field, "field may not be null!");
 
+    // TODO TH: fix this.
+    throw new UnsupportedOperationException("not implemented");
+
     // Get the immutable data type.
-    ISystemDescriptor descriptor = field.getParent().getParent().getParent();
-
-
-    ImmutableDataReferenceField immutable = new ImmutableDataReferenceField(field.getName());
-    immutable.metadata = Metadata.immutable(field.getMetadata());
-    immutable.type = field.getType();
-    immutable.cardinality = field.getCardinality();
-    immutable.parent = field.getParent();
-    return immutable;
+//    ISystemDescriptor descriptor = field.getParent().getParent().getParent();
+//    Optional<Object> immutableData = descriptor.traverse(new IVisitor() {
+//      @Override
+//      public void visitData(IVisitorContext ctx, IData data) {
+//        if(data.getFullyQualifiedName().equals(field.getType().getFullyQualifiedName())) {
+//          ctx.setResult(data);
+//        }
+//      }
+//    });
+//
+//
+//    ImmutableDataReferenceField immutable = new ImmutableDataReferenceField(field.getName());
+//    immutable.metadata = Metadata.immutable(field.getMetadata());
+//    immutable.type = (IData) immutableData.get();
+//    immutable.cardinality = field.getCardinality();
+//    immutable.parent = field.getParent();
+//    return immutable;
   }
 
   private static class ImmutableDataReferenceField extends DataReferenceField {

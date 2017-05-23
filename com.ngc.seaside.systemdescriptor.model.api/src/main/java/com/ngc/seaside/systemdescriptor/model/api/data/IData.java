@@ -12,4 +12,6 @@ public interface IData extends INamedChild<IPackage> {
   IData setMetadata(IMetadata metadata);
 
   INamedChildCollection<IData, IDataField> getFields();
+
+  String getFullyQualifiedName();
 }

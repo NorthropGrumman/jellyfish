@@ -26,4 +26,6 @@ public interface IModel extends INamedChild<IPackage> {
   INamedChildCollection<IModel, IScenario> getScenarios();
 
   Collection<IModelLink<?>> getLinks();
+
+  String getFullyQualifiedName();
 }

@@ -71,7 +71,6 @@ public class DataField implements IDataField {
     DataField dataField = (DataField) o;
     return Objects.equals(name, dataField.name) &&
            parent == dataField.parent &&
-           Objects.equals(parent, dataField.parent) &&
            type == dataField.type &&
            Objects.equals(metadata, dataField.metadata);
   }

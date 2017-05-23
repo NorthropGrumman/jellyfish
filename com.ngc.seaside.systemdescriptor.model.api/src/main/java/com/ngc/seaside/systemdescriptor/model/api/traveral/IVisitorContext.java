@@ -2,13 +2,13 @@ package com.ngc.seaside.systemdescriptor.model.api.traveral;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 
-public interface IVisitorContext<T> {
+public interface IVisitorContext {
 
   ISystemDescriptor getSystemDescriptor();
 
-  T getResult();
+  Object getResult();
 
-  void setResult(T result);
+  void setResult(Object result);
 
   void stop();
 }

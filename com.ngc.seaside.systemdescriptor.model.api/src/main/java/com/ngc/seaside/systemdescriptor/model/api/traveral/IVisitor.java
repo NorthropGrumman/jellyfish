@@ -11,7 +11,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
-public interface IVisitor  {
+public interface IVisitor {
 
   default void visitMetadata(IVisitorContext ctx, IMetadata metadata) {
   }
@@ -42,5 +42,4 @@ public interface IVisitor  {
 
   default void visitSystemDescriptor(IVisitorContext ctx, ISystemDescriptor systemDescriptor) {
   }
-
 }
