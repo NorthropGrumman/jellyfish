@@ -38,7 +38,9 @@ public class TemplateGenerator extends SimpleFileVisitor<Path> {
     * @param clean               whether or not to recursively delete already existing folder before creating them
     *                            again
     */
-   public TemplateGenerator(Map<String, String> parametersAndValues, Path inputFolder, Path outputFolder,
+   public TemplateGenerator(Map<String, String> parametersAndValues,
+                            Path inputFolder,
+                            Path outputFolder,
                             boolean clean) {
       this.outputFolder = outputFolder;
       this.inputFolder = inputFolder;

@@ -31,7 +31,8 @@ public class TemplateProcessorTests {
 
    @Before
    public void setup() throws URISyntaxException {
-      zipFolder = Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI());
+      zipFolder = Paths.get(getClass().getClassLoader().getResource(
+               "templates/example/TemplateExample.zip").toURI());
       templatePath = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI());
       fileCount = 0;
    }
@@ -109,8 +110,8 @@ public class TemplateProcessorTests {
        */
 
       // Setup
-      templatePath =
-               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoProperties");
+      templatePath = Paths.get(getClass().getClassLoader().getResource(
+               "InvalidTemplates").toURI()).resolve("NoProperties");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
@@ -123,7 +124,8 @@ public class TemplateProcessorTests {
        */
 
       // Setup
-      templatePath = Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NotAFile");
+      templatePath = Paths.get(getClass().getClassLoader().getResource(
+               "InvalidTemplates").toURI()).resolve("NotAFile");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
@@ -137,7 +139,8 @@ public class TemplateProcessorTests {
 
       // Setup
       templatePath =
-               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoFolderFound");
+               Paths.get(getClass().getClassLoader().getResource(
+                        "InvalidTemplates").toURI()).resolve("NoFolderFound");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
@@ -151,7 +154,8 @@ public class TemplateProcessorTests {
 
       // Setup
       templatePath =
-               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NotAFolder");
+               Paths.get(getClass().getClassLoader().getResource(
+                        "InvalidTemplates").toURI()).resolve("NotAFolder");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);

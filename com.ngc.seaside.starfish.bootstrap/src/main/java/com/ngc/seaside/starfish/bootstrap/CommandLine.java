@@ -27,9 +27,7 @@ public class CommandLine {
    /**
     * Use {@link #parseArgs(String...)} for creating an instance
     */
-   private CommandLine() {
-
-   }
+   private CommandLine() {}
 
    /**
     * Returns the folder of the unzipped template file.
