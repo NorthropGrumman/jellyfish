@@ -55,7 +55,7 @@ public class DataField implements IDataField {
     return this;
   }
 
-  public DataField setParent(IData parent) {
+  DataField setParent(IData parent) {
     this.parent = parent;
     return this;
   }

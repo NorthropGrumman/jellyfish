@@ -106,10 +106,15 @@ public class Data implements IData {
 
   public static IData immutable(IData data) {
     Preconditions.checkNotNull(data, "data may not be null!");
-    ImmutableData immutable = new ImmutableData(data.getName(),
-                                                NamedChildCollection.immutable(data.getFields()));
+
+    NamedChildCollection<IData, IDataField> fields = new NamedChildCollection<>();
+    data.getFields().forEach(f -> fields.add(DataField.immutable(f)));
+
+    ImmutableData immutable = new ImmutableData(data.getName(), NamedChildCollection.immutable(fields));
     immutable.parent = data.getParent();
     immutable.metadata = Metadata.immutable(data.getMetadata());
+    // Fix the field parent pointers so they point to the new immutable parent.
+    fields.forEach(f -> ((DataField) f).setParent(immutable));
     return immutable;
   }
 

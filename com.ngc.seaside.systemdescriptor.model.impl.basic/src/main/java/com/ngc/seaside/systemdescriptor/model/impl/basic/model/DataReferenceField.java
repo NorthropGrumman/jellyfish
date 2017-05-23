@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.model;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -109,6 +110,11 @@ public class DataReferenceField implements IDataReferenceField {
 
   public static IDataReferenceField immutable(IDataReferenceField field) {
     Preconditions.checkNotNull(field, "field may not be null!");
+
+    // Get the immutable data type.
+    ISystemDescriptor descriptor = field.getParent().getParent().getParent();
+
+
     ImmutableDataReferenceField immutable = new ImmutableDataReferenceField(field.getName());
     immutable.metadata = Metadata.immutable(field.getMetadata());
     immutable.type = field.getType();
