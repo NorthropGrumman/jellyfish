@@ -1,4 +1,6 @@
-package com.ngc.seaside.systemdescriptor.model.api.model;
+package com.ngc.seaside.systemdescriptor.service.api;
+
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collection;
 import java.util.function.Predicate;
