@@ -94,9 +94,3 @@ Follow this guide if you want to install the version of the plugin *you have jus
 1. Click on the **Ok** button to close the Add Repository dialog (you don't have to enter a Name)
 1. In the list box panel, you should see **XText DSL**.  Select the check box and click the **Next >** button to install the plugin.
 
-### Creating a new JellyFish project in Eclipse
-Currently, until new JellyFish Eclipse plugins are created, a new blank project should be created to write SystemDescriptor
-DSL code.  Once the blank project is added, convert it to an XText project.  To do this, right click the newly created
-project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping
-(i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
-
