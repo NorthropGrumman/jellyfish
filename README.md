@@ -24,8 +24,13 @@ Start Eclipse ande **ensure your proxy settings are correct**.  To install the S
 
 ## Creating a new JellyFish project in Eclipse
 Currently, until new JellyFish Eclipse plugins are created, a new blank project should be created to write SystemDescriptor
-DSL code.  Create a blank project by selecting **File**->**New Project**->**General/Project**.  Once the blank project is added, select yes to convert it to an XText project.  If you want to convert a pre-existing project, right click the project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping
-(i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
+DSL code.  
+1. Create a blank project by selecting **File**->**New Project**->**General/Project**.
+1. Once the blank project is added, add a new *.sd* file by right clicking the project and select **New**->**File**. 
+   1. Enter a filename that ends with *.sd* and click OK.  
+   1. When prompted, select yes to convert it to an XText project.
+
+If you want to convert a pre-existing project, right click the project, select **Configure** menu item, and then select **Convert to XText project**.  This will allow namespace scoping (i.e., imports) to compile properly.  It is expected that future JellyFish plugins for Eclipse will automatically setup.
 
 # Building
 The project can be built both inside Eclipse or outside of Eclipse with Gradle.  You can also run the Gradle build directly within Eclipse.
