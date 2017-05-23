@@ -18,12 +18,13 @@ subprojects {
     group = 'com.ngc.seaside'
     version = '1.0-SNAPSHOT'
 
-
-    /**
-     * The dependencies for all the blocs items.
-     */
-    dependencies {
-        testCompile 'junit:junit:4.12'
-        testCompile 'org.mockito:mockito-core:2.7.14'
+    ext {
+        velocityVersion = '1.6.2'
+        commonsIOVersion = '2.5'
+        commonsLangVersion = '2.6'
+        junitVersion = '4.12'
+        mockitoVersion = '2.7.14'
+        guavaVersion = '22.0'
     }
+
 }
