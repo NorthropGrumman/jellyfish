@@ -5,35 +5,39 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the TemplateProcessor class.
  */
-public class TemplateProcessorTests
-{
+public class TemplateProcessorTests {
    private Path zipFolder;
    private int fileCount;
    private Path templatePath;
 
    @Before
-   public void setup() throws URISyntaxException
-   {
+   public void setup() throws URISyntaxException {
       zipFolder = Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI());
       templatePath = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI());
       fileCount = 0;
    }
 
    @Test
-   public void testUnzip()
-   {
+   public void testUnzip() {
       Path results;
 
       /*
@@ -61,11 +65,9 @@ public class TemplateProcessorTests
 
          assertNotNull(results);
 
-         Files.walkFileTree(results, new SimpleFileVisitor<Path>()
-         {
+         Files.walkFileTree(results, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-            {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                assertTrue("Unexpected File: " + file, expectedFiles.contains(file.getFileName().toString()));
                fileCount++;
                return FileVisitResult.CONTINUE;
@@ -74,8 +76,7 @@ public class TemplateProcessorTests
 
          assertEquals(expectedFileCount, fileCount);
          TemplateGenerator.deleteRecursive(results, false);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          fail("Error processing file");
       }
 
@@ -86,23 +87,20 @@ public class TemplateProcessorTests
 
       try {
          results = TemplateProcessor.unzip(templatePath);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          // This exception is expected
          return;
       }
    }
 
    @Test
-   public void testValidateTemplate() throws URISyntaxException
-   {
+   public void testValidateTemplate() throws URISyntaxException {
       /*
        * Test 1: Valid template
        */
       try {
          TemplateProcessor.validateTemplate(templatePath);
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          fail();
       }
 
@@ -111,12 +109,12 @@ public class TemplateProcessorTests
        */
 
       // Setup
-      templatePath = Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoProperties");
+      templatePath =
+               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoProperties");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          assertTrue(e.failed());
       }
 
@@ -129,8 +127,7 @@ public class TemplateProcessorTests
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          assertTrue(e.failed());
       }
 
@@ -139,12 +136,12 @@ public class TemplateProcessorTests
        */
 
       // Setup
-      templatePath = Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoFolderFound");
+      templatePath =
+               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NoFolderFound");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          assertTrue(e.failed());
       }
 
@@ -153,19 +150,18 @@ public class TemplateProcessorTests
        */
 
       // Setup
-      templatePath = Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NotAFolder");
+      templatePath =
+               Paths.get(getClass().getClassLoader().getResource("InvalidTemplates").toURI()).resolve("NotAFolder");
 
       try {
          TemplateProcessor.validateTemplate(templatePath);
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          assertTrue(e.failed());
       }
    }
 
    @Test
-   public void testParseTemplateProperties() throws URISyntaxException
-   {
+   public void testParseTemplateProperties() throws URISyntaxException {
       LinkedHashMap<String, String> actual;
       LinkedHashMap<String, String> expected;
 
@@ -174,7 +170,9 @@ public class TemplateProcessorTests
        */
 
       // Setup
-      templatePath = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template.properties");
+      templatePath =
+               Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI())
+                        .resolve("template.properties");
       expected = new LinkedHashMap<>();
 
       expected.put("groupId", "com.ngc.seaside.starfish");
@@ -193,8 +191,7 @@ public class TemplateProcessorTests
             }
             assertEquals(expected.get(entry.getKey()), entry.getValue());
          }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          fail();
       }
    }
