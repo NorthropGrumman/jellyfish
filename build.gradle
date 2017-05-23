@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.seaside:seaside.parent:1.0-SNAPSHOT'
+        classpath 'com.ngc.seaside:seaside.parent:1.0'
     }
 }
 
