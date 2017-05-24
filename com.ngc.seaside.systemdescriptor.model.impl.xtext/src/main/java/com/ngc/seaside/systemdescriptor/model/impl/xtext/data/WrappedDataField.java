@@ -7,11 +7,12 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration> implements IDataField {
 
@@ -55,5 +56,14 @@ public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration>
   @Override
   public IData getParent() {
     return resolver.getWrapperFor((Data) wrapped.eContainer());
+  }
+
+  public static DataFieldDeclaration toXtext(IDataField field) {
+    Preconditions.checkNotNull(field, "field may not be null!");
+    DataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createDataFieldDeclaration();
+    x.setMetadata(WrappedMetadata.toXtextJson(field.getMetadata()));
+    x.setName(field.getName());
+    x.setType(DataType.valueOf(field.getType().name()));
+    return x;
   }
 }

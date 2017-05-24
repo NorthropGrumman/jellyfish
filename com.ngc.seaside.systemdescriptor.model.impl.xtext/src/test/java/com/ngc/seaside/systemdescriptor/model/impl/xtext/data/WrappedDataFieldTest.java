@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -10,12 +11,12 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
@@ -39,7 +40,7 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
   }
 
   @Test
-  public void testDoesWrapEmfObject() throws Throwable {
+  public void testDoesWrapXtextObject() throws Throwable {
     wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
     assertEquals("name incorrect!",
                  dataFieldDeclaration.getName(),
@@ -56,7 +57,7 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
   }
 
   @Test
-  public void testDoesUpdateEmpObject() throws Throwable {
+  public void testDoesUpdateXtextObject() throws Throwable {
     wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
     wrapped.setType(DataTypes.STRING);
     assertEquals("type incorrect!",
@@ -66,5 +67,23 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
     wrapped.setMetadata(newMetadata("foo", "bar"));
     assertNotNull("metadata not set!",
                   dataFieldDeclaration.getMetadata());
+  }
+
+  @Test
+  public void testDoesConvertToXtextObject() throws Throwable {
+    IDataField field = mock(IDataField.class);
+    when(field.getName()).thenReturn("hello");
+    when(field.getType()).thenReturn(DataTypes.STRING);
+    when(field.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+
+    DataFieldDeclaration x = WrappedDataField.toXtext(field);
+    assertEquals("name not correct!",
+                 field.getName(),
+                 x.getName());
+    assertEquals("type not correct!",
+                 DataType.STRING,
+                 x.getType());
+    assertNull("metadata not correct!",
+               x.getMetadata());
   }
 }
