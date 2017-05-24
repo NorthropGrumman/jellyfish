@@ -2,11 +2,10 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,29 +31,35 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
     dataFieldDeclaration = factory().createDataFieldDeclaration();
     dataFieldDeclaration.setName("foo");
     dataFieldDeclaration.setType(DataType.INT);
-    //dataFieldDeclaration.setMetadata(factory());
   }
 
   @Test
   public void testDoesWrapEmfObject() throws Throwable {
     wrapped = new WrappedDataField(dataFieldDeclaration, parent);
-
     assertEquals("name incorrect!",
                  dataFieldDeclaration.getName(),
                  wrapped.getName());
-
-    assertEquals("data incorrect!",
+    assertEquals("type incorrect!",
                  DataTypes.INT,
                  wrapped.getType());
-    assertEquals("data incorrect!",
-                 DataTypes.INT,
-                 wrapped.getType());
-
     assertEquals("parent incorrect!",
                  parent,
                  wrapped.getParent());
+    assertEquals("metadata not set!",
+                 IMetadata.EMPTY_METADATA,
+                 wrapped.getMetadata());
+  }
 
+  @Test
+  public void testDoesUpdateEmpObject() throws Throwable {
+    wrapped = new WrappedDataField(dataFieldDeclaration, parent);
+    wrapped.setType(DataTypes.STRING);
+    assertEquals("type incorrect!",
+                 DataType.STRING,
+                 dataFieldDeclaration.getType());
+
+    wrapped.setMetadata(newMetadata("foo", "bar"));
     assertNotNull("metadata not set!",
-                  wrapped.getMetadata());
+                  dataFieldDeclaration.getMetadata());
   }
 }

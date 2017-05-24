@@ -50,17 +50,26 @@ public class WrappedMetadata implements IMetadata {
     return this;
   }
 
-
   public static IMetadata fromXtext(Metadata metadata) {
-    Preconditions.checkNotNull(metadata, "metadata may not be null!");
-    return new WrappedMetadata(toJavaxJsonObject(metadata.getJson()));
+    return metadata == null ? IMetadata.EMPTY_METADATA : fromXtextJson(metadata.getJson());
+  }
+
+  public static IMetadata fromXtextJson(JsonObject json) {
+    return json == null ? IMetadata.EMPTY_METADATA : new WrappedMetadata(toJavaxJsonObject(json));
   }
 
   public static Metadata toXtext(IMetadata metadata) {
     Preconditions.checkNotNull(metadata, "metadata may not be null!");
     Metadata xtext = SystemDescriptorFactory.eINSTANCE.createMetadata();
-    xtext.setJson(toXtextJsonObject(metadata.getJson()));
+    if (!metadata.getJson().isEmpty()) {
+      xtext.setJson(toXtextJsonObject(metadata.getJson()));
+    }
     return xtext;
+  }
+
+  public static JsonObject toXtextJson(IMetadata metadata) {
+    Preconditions.checkNotNull(metadata, "metadata may not be null!");
+    return metadata.getJson().isEmpty() ? null : toXtextJsonObject(metadata.getJson());
   }
 
   static Member newMember(String key, Value value) {

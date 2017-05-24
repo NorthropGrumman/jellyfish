@@ -6,19 +6,20 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
-import java.util.Objects;
+public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration> implements IDataField {
 
-public class WrappedDataField implements IDataField {
-
-  private final DataFieldDeclaration wrapped;
   private final IData parent;
+  private IMetadata metadata;
 
   public WrappedDataField(DataFieldDeclaration wrapped, IData parent) {
-    this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
+    super(wrapped);
     this.parent = Preconditions.checkNotNull(parent, "parent may not be null!");
+    this.metadata = WrappedMetadata.fromXtextJson(wrapped.getMetadata());
   }
 
   @Override
@@ -35,12 +36,15 @@ public class WrappedDataField implements IDataField {
 
   @Override
   public IMetadata getMetadata() {
-    throw new UnsupportedOperationException("not implemented");
+    return metadata;
   }
 
   @Override
   public IDataField setMetadata(IMetadata metadata) {
-    throw new UnsupportedOperationException("not implemented");
+    Preconditions.checkNotNull(metadata, "metadata may not be null!");
+    this.metadata = metadata;
+    wrapped.setMetadata(WrappedMetadata.toXtextJson(metadata));
+    return this;
   }
 
   @Override
@@ -51,27 +55,5 @@ public class WrappedDataField implements IDataField {
   @Override
   public IData getParent() {
     return parent;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof WrappedDataField)) {
-      return false;
-    }
-    WrappedDataField dataField = (WrappedDataField) o;
-    return Objects.equals(wrapped, dataField.wrapped);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(wrapped);
-  }
-
-  @Override
-  public String toString() {
-    return wrapped.toString();
   }
 }
