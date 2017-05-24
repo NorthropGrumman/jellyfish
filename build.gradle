@@ -1,0 +1,26 @@
+// Use Nexus to retrieve additional Gradle plugins used by the build.
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+    dependencies {
+        classpath 'com.ngc.seaside:seaside.parent:1.0'
+    }
+}
+
+subprojects {
+    apply plugin: 'com.ngc.seaside.parent'
+
+    group 'com.ngc.seaside'
+    version '1.0-SNAPSHOT'
+	
+	ext {
+		jellyfishApiVersion = "1.0-SNAPSHOT"
+		jellyfishDslVersion = "0.2-SNAPSHOT"
+	}
+}

@@ -1,0 +1,4 @@
+dependencies {
+    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
+}

@@ -1,0 +1,5 @@
+rootProject.name = 'jellyfish-systemdescriptor-ext'
+
+include 'com.ngc.seaside.systemdescriptor.model.impl.xtext'
+
+project(':com.ngc.seaside.systemdescriptor.model.impl.xtext').name = 'model.impl.xtext'
