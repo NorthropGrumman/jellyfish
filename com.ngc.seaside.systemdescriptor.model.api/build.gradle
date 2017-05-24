@@ -4,6 +4,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.api.*')
+        attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.api.*')
     }
 }
