@@ -76,6 +76,7 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
     return true;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean remove(Object o) {
     Preconditions.checkNotNull(o, "o may not be null!");
@@ -85,6 +86,7 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
     INamedChild<?> casted = (INamedChild<?>) o;
     boolean removed = children.remove(casted.getName(), casted);
     if (removed) {
+      // Safe because the item was removed the list and it couldn't have been inserted unless it was the right type.
       postChildRemoved((T) casted);
     }
     return removed;
