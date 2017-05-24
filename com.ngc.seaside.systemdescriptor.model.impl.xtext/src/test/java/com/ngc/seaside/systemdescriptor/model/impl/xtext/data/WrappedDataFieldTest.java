@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
@@ -15,8 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
 
   private WrappedDataField wrapped;
@@ -31,11 +32,15 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
     dataFieldDeclaration = factory().createDataFieldDeclaration();
     dataFieldDeclaration.setName("foo");
     dataFieldDeclaration.setType(DataType.INT);
+
+    Data data = factory().createData();
+    data.getFields().add(dataFieldDeclaration);
+    when(resolver().getWrapperFor(data)).thenReturn(parent);
   }
 
   @Test
   public void testDoesWrapEmfObject() throws Throwable {
-    wrapped = new WrappedDataField(dataFieldDeclaration, parent);
+    wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
     assertEquals("name incorrect!",
                  dataFieldDeclaration.getName(),
                  wrapped.getName());
@@ -52,7 +57,7 @@ public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
 
   @Test
   public void testDoesUpdateEmpObject() throws Throwable {
-    wrapped = new WrappedDataField(dataFieldDeclaration, parent);
+    wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
     wrapped.setType(DataTypes.STRING);
     assertEquals("type incorrect!",
                  DataType.STRING,

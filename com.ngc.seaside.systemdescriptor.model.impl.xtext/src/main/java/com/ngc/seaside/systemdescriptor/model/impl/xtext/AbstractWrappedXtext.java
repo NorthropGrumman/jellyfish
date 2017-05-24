@@ -2,15 +2,19 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+
 import org.eclipse.emf.ecore.EObject;
 
 import java.util.Objects;
 
 public abstract class AbstractWrappedXtext<T extends EObject> {
 
+  protected final IWrapperResolver resolver;
   protected final T wrapped;
 
-  protected AbstractWrappedXtext(T wrapped) {
+  protected AbstractWrappedXtext(IWrapperResolver resolver, T wrapped) {
+    this.resolver = Preconditions.checkNotNull(resolver, "resolver may not be null!");
     this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
   }
 
