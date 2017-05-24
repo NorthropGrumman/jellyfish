@@ -1,30 +1,38 @@
-# Java class files
 *.class
-*.jar
+
+# Package Files #
 *.war
+*.ear
 
-# generated files
-bin/
-gen/
-
-# Eclipse project files
+# Eclipse
 .classpath
 .project
 .settings/
-.recommenders/
+.metadata
 
-# Intellij project files
-*.iml
-*.ipr
-*.iws
+# Intellij
 .idea/
-out/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+target/
 
 # Gradle
-.gradletasknamecache
-gradlew
-gradlew.bat
-.gradle/
-gradle/
+.gradle
 build/
-bin/
+gradle-app.setting
+.gradletasknamecache
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+#VS
+*.sln
+*.VC.db
+*.VC.opendb
+*.vcxproj
+*.vcxproj.filters
+.vs
