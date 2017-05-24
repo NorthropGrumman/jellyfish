@@ -13,11 +13,7 @@ public abstract class AbstractWrappedEmfTest {
     factory = SystemDescriptorFactory.eINSTANCE;
   }
 
-  public SystemDescriptorFactory factory() {
-    return getFactory();
-  }
-
-  public static SystemDescriptorFactory getFactory() {
+  public static SystemDescriptorFactory factory() {
     return factory;
   }
 }

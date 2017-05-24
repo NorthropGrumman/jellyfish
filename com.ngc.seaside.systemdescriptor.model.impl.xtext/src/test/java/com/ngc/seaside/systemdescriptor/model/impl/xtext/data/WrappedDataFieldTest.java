@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.junit.Before;
 import org.junit.Test;
