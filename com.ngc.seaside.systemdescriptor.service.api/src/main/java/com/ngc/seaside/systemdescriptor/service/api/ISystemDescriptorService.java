@@ -2,11 +2,14 @@ package com.ngc.seaside.systemdescriptor.service.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 
+import java.nio.file.Path;
+import java.util.Collection;
+
 public interface ISystemDescriptorService {
 
-  // result parseProject(Path projectDirectory);
+  IParsingResult parseProject(Path projectDirectory);
 
-  // result parseFiles(Collection<Path> paths);
+  IParsingResult parseFiles(Collection<Path> paths);
 
   ISystemDescriptor immutableCopy(ISystemDescriptor descriptor);
 
