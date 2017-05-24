@@ -1,5 +1,5 @@
 dependencies {
-	compile project(':com.ngc.seaside.systemdescriptor')
+	compile project(':systemdescriptor')
 	compile "org.eclipse.xtext:org.eclipse.xtext.ide:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.ide:${xtextVersion}"
 }

@@ -33,7 +33,7 @@ jar {
 		into('model')
 	}
 	manifest {
-		attributes 'Bundle-SymbolicName': project.name
+		from file("${projectDir}/META-INF/MANIFEST.MF")
 	}
 }
 
