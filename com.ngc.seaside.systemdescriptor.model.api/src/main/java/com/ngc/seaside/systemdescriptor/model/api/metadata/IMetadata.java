@@ -1,7 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.api.metadata;
 
-import java.util.Collection;
-
 import javax.json.JsonObject;
 
 /**
@@ -12,10 +10,17 @@ import javax.json.JsonObject;
 public interface IMetadata {
 
   /**
-   * Gets a collection of JSON objects that describe the metadata of an attached object.  The returned collection may
-   * not be modifiable if this object is immutable.
+   * Gets the JSON object that is the metadata.
    *
-   * @return a collection of JSON objects
+   * @return the JSON object that is the metadata
    */
-  Collection<JsonObject> getJsonObjects();
+  JsonObject getJson();
+
+  /**
+   * Sets the JSON object that is the metadata.
+   *
+   * @param json the JSON object that is the metadata
+   * @return the JSON object that is the metadata
+   */
+  IMetadata setJson(JsonObject json);
 }

@@ -30,7 +30,7 @@ public class DataFieldTest {
   @Before
   public void setup() throws Throwable {
     metadata = new Metadata();
-    metadata.getJsonObjects().add(Json.createObjectBuilder().add("foo", "bar").build());
+    metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
   }
 
   @Test

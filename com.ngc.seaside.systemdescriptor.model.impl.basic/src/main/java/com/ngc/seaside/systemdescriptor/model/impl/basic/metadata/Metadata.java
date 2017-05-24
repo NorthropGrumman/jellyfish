@@ -4,56 +4,37 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
 import javax.json.JsonObject;
 
 public class Metadata implements IMetadata {
 
-  protected final Collection<JsonObject> jsonObjects;
+  private JsonObject json;
 
-  public Metadata() {
-    this(new ArrayList<>());
-  }
-
-  public Metadata(Collection<JsonObject> jsonObjects) {
-    this.jsonObjects = jsonObjects;
+  @Override
+  public JsonObject getJson() {
+    return json;
   }
 
   @Override
-  public Collection<JsonObject> getJsonObjects() {
-    return jsonObjects;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Metadata)) {
-      return false;
-    }
-    Metadata metadata = (Metadata) o;
-    return Objects.equals(jsonObjects, metadata.jsonObjects);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(jsonObjects);
-  }
-
-  @Override
-  public String toString() {
-    return "Metadata[" +
-           "jsonObjects=" + jsonObjects +
-           ']';
+  public IMetadata setJson(JsonObject json) {
+    this.json = json;
+    return this;
   }
 
   public static IMetadata immutable(IMetadata metadata) {
     Preconditions.checkNotNull(metadata, "metadata may not be null!");
-    return new Metadata(Collections.unmodifiableCollection(metadata.getJsonObjects()));
+    return new ImmutableMetadata(metadata.getJson());
+  }
+
+  private static class ImmutableMetadata extends Metadata {
+
+    private ImmutableMetadata(JsonObject json) {
+      super.setJson(json);
+    }
+
+    @Override
+    public IMetadata setJson(JsonObject json) {
+      throw new UnsupportedOperationException("object is not modifiable!");
+    }
   }
 }

@@ -33,7 +33,7 @@ public class DataTest {
     field = new DataField("field1");
 
     metadata = new Metadata();
-    metadata.getJsonObjects().add(Json.createObjectBuilder().add("foo", "bar").build());
+    metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
   }
 
   @Test
