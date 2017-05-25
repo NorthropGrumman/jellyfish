@@ -8,8 +8,8 @@ mainClassName = '${groupId}.${artifactId}.Sample'
 
 repositories {
     maven {
-		url 'http://10.207.42.43/nexus/repository/maven-central/'
-	}
+        url 'http://10.207.42.43/nexus/repository/maven-central/'
+    }
 }
 
 dependencies {

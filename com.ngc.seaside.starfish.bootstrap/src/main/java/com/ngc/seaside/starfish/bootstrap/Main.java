@@ -9,8 +9,7 @@ import java.util.Map;
 /**
  * Main class for driving the Bootstrap program
  */
-public class Main
-{
+public class Main {
    public static final String TEMPLATE_FOLDER = "template";
    public static final String TEMPLATE_PROPERTIES = "template.properties";
 
@@ -19,8 +18,7 @@ public class Main
     *
     * @param args command line arguments
     */
-   public static void main(String[] args)
-   {
+   public static void main(String[] args) {
       int errorCode = 0;
       Path templateFolder = null;
       try {
@@ -49,24 +47,20 @@ public class Main
                                                   cl.getOutputFolder(),
                                                   cl.isClean()));
 
-      }
-      catch (ExitException e) {
+      } catch (ExitException e) {
          if (e.failed() && !e.getMessage().isEmpty()) {
             System.err.println(e.getMessage());
          }
          errorCode = e.getCode();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
          System.err.println("An unexpected error occurred: ");
          e.printStackTrace(System.err);
          errorCode = 1;
-      }
-      finally {
+      } finally {
          if (templateFolder != null) {
             try {
                TemplateGenerator.deleteRecursive(templateFolder, false);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                System.err.println("Unable to delete temporary folder " + templateFolder + ": " + e.getMessage());
             }
          }

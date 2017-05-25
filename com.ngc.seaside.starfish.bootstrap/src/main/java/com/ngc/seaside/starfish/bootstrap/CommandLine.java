@@ -27,9 +27,7 @@ public class CommandLine {
    /**
     * Use {@link #parseArgs(String...)} for creating an instance
     */
-   private CommandLine() {
-
-   }
+   private CommandLine() {}
 
    /**
     * Returns the folder of the unzipped template file.
@@ -115,7 +113,7 @@ public class CommandLine {
    /**
     * Finds the path to the template file.  The first argument is treated as an absolute path.  If the file does not
     * exist, the template is resolved by looking for ${appHome}/resources/config/${templateName}/Template${templateName}.zip.
-    *  If neither the absolute path or the appHome relative path points to an existing file an {@code ExitException} is
+    * If neither the absolute path or the appHome relative path points to an existing file an {@code ExitException} is
     * generated.
     *
     * @param args the command line args

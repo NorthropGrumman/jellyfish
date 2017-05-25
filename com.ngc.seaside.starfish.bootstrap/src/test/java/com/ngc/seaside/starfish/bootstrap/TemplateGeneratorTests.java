@@ -1,5 +1,10 @@
 package com.ngc.seaside.starfish.bootstrap;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
@@ -9,16 +14,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * Tests for the TemplateGenerator class.
  */
-public class TemplateGeneratorTests
-{
+public class TemplateGeneratorTests {
    private Path templateFolder;
    private Path outputFolder;
    private Map<String, String> parametersAndValues;
@@ -28,9 +27,9 @@ public class TemplateGeneratorTests
    private static final String VERSION = "1.0-SNAPSHOT";
 
    @Before
-   public void setup() throws URISyntaxException, IOException
-   {
-      templateFolder = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template");
+   public void setup() throws URISyntaxException, IOException {
+      templateFolder =
+               Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template");
       outputFolder = Files.createTempDirectory(null);
       templateFolder.toFile().deleteOnExit();
       outputFolder.toFile().deleteOnExit();
@@ -41,8 +40,7 @@ public class TemplateGeneratorTests
    }
 
    @Test
-   public void testGenerator() throws IOException
-   {
+   public void testGenerator() throws IOException {
       TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, false);
       Files.walkFileTree(templateFolder, gen);
 
@@ -85,8 +83,7 @@ public class TemplateGeneratorTests
    }
 
    @Test
-   public void testGeneratorWithClean() throws IOException
-   {
+   public void testGeneratorWithClean() throws IOException {
       TemplateGenerator gen = new TemplateGenerator(parametersAndValues, templateFolder, outputFolder, true);
       Files.createFile(outputFolder.resolve("should_not_be_deleted"));
       Files.walkFileTree(templateFolder, gen);
@@ -151,13 +148,11 @@ public class TemplateGeneratorTests
    }
 
    @After
-   public void cleanUp() throws IOException
-   {
+   public void cleanUp() throws IOException {
       TemplateGenerator.deleteRecursive(outputFolder, false);
    }
 
-   public static boolean checkFile(Path file, String... undesirableStrings) throws IOException
-   {
+   public static boolean checkFile(Path file, String... undesirableStrings) throws IOException {
       for (String line : Files.readAllLines(file)) {
          for (String undesirableString : undesirableStrings) {
             if (line.contains(undesirableString)) {

@@ -1,8 +1,17 @@
 package com.ngc.seaside.starfish.bootstrap;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -15,8 +24,7 @@ import java.util.Map;
 /**
  * Test for the Main class
  */
-public class MainTests
-{
+public class MainTests {
    private static final String GROUP_ID = "com.ngc.seaside.starfish";
    private static final String ARTIFACT_ID = "sample";
    private static final String VERSION = "1.0-SNAPSHOT";
@@ -27,17 +35,17 @@ public class MainTests
    private Path templateFile;
 
    @BeforeClass
-   public static void setupClass()
-   {
+   public static void setupClass() {
       System.setSecurityManager(new NoExitSecurityManager(System.getSecurityManager()));
       SYSTEM_OUT = System.out;
       SYSTEM_IN = System.in;
    }
 
    @Before
-   public void setup() throws Exception
-   {
-      templateFile = Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI()).toAbsolutePath();
+   public void setup() throws Exception {
+      templateFile =
+               Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI())
+                        .toAbsolutePath();
       outputFolder = Files.createTempDirectory(null).toAbsolutePath();
       final String input = GROUP_ID + "\n" + ARTIFACT_ID + "\n" + VERSION + "\n";
       InputStream in = new ByteArrayInputStream(input.getBytes());
@@ -49,8 +57,7 @@ public class MainTests
    }
 
    @Test
-   public void mainTest() throws IOException
-   {
+   public void mainTest() throws IOException {
       Map<String, String> parametersAndValues = new HashMap<>();
       parametersAndValues.put("groupId", GROUP_ID);
       parametersAndValues.put("artifactId", ARTIFACT_ID);
@@ -58,8 +65,7 @@ public class MainTests
 
       try {
          Main.main(new String[] { templateFile.toString(), "-o", outputFolder.toString() });
-      }
-      catch (SecurityException e) {
+      } catch (SecurityException e) {
          Assert.assertEquals("exitVM.0", e.getMessage());
       }
 
@@ -102,37 +108,31 @@ public class MainTests
    }
 
    @After
-   public void cleanUp() throws IOException
-   {
+   public void cleanUp() throws IOException {
       try {
          TemplateGenerator.deleteRecursive(outputFolder, false);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
          System.err.println("Unable to clean up temporary directory " + outputFolder + ": " + e.getMessage());
       }
    }
 
    @AfterClass
-   public static void cleanUpClass()
-   {
+   public static void cleanUpClass() {
       System.setSecurityManager(((NoExitSecurityManager) System.getSecurityManager()).baseSecurityManager);
       System.setOut(SYSTEM_OUT);
       System.setIn(SYSTEM_IN);
    }
 
-   private static class NoExitSecurityManager extends SecurityManager
-   {
+   private static class NoExitSecurityManager extends SecurityManager {
 
       private SecurityManager baseSecurityManager;
 
-      private NoExitSecurityManager(SecurityManager baseSecurityManager)
-      {
+      private NoExitSecurityManager(SecurityManager baseSecurityManager) {
          this.baseSecurityManager = baseSecurityManager;
       }
 
       @Override
-      public void checkPermission(Permission permission)
-      {
+      public void checkPermission(Permission permission) {
          if (permission.getName().startsWith("exitVM")) {
             throw new SecurityException(permission.getName());
          }

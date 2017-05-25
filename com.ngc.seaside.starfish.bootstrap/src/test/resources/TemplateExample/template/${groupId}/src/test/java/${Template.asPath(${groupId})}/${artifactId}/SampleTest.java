@@ -1,23 +1,20 @@
 package ${groupId}.${artifactId};
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+         import org.junit.Assert;
+         import org.junit.Before;
+         import org.junit.Test;
 
-public class SampleTest
-{
+public class SampleTest {
 
    private Sample sample;
 
    @Before
-   public void before()
-   {
+   public void before() {
       sample = new Sample();
    }
 
    @Test
-   public void test()
-   {
+   public void test() {
       Assert.assertEquals("Hello World", sample.getHelloWorld());
    }
 

@@ -1,8 +1,9 @@
-apply plugin: 'java'
+
 apply plugin: 'application'
 
 mainClassName = 'com.ngc.seaside.starfish.sample.Sample'
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
