@@ -16,7 +16,7 @@ public class Main
 
    /**
     * Run with --help for a description of the script.
-    * 
+    *
     * @param args command line arguments
     */
    public static void main(String[] args)

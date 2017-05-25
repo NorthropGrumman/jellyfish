@@ -27,3 +27,9 @@ startScripts {
         windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
     }
 }
+
+jar {
+    //the application plugin requires that the script name be the project.name so this line
+    //will overwrite the seaside parent plugin naming convention.
+    archiveName = "${project.name}"
+}
