@@ -11,12 +11,40 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * A collection view on top of an {@code EList} that can automatically adapt instances within the wrapped list to
+ * instances of type T and vice versa.
+ *
+ * This class is not threadsafe.
+ *
+ * @param <X> the type of object that the wrapped list contains
+ * @param <T> the type of object that the contents of the wrapped list should be bridged to
+ */
 public class AutoWrappingCollection<X extends EObject, T> implements Collection<T> {
 
+  /**
+   * The function that adapts or wraps an element in the wrapped list to an element of type T.
+   */
   protected final Function<X, T> wrapperFunction;
+
+  /**
+   * The function that adapts or unwraps an element of type T to an element that can be inserted into the wrapped list.
+   */
   protected final Function<T, X> unwrapperFunction;
+
+  /**
+   * The list that is being wrapped.
+   */
   protected EList<X> wrapped;
 
+  /**
+   * Creates a new {@code AutoWrappingCollection} that is backed by the given list.
+   *
+   * @param wrapped           the list to wrap
+   * @param wrapperFunction   the function that converts elements from the wrapped list to elements of type T
+   * @param unwrapperFunction the function that converts elements of type T to elements that can be inserted in the
+   *                          wrapped list
+   */
   public AutoWrappingCollection(EList<X> wrapped,
                                 Function<X, T> wrapperFunction,
                                 Function<T, X> unwrapperFunction) {
@@ -83,6 +111,7 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
   @Override
   public boolean add(T t) {
     Preconditions.checkNotNull(t, "t may not be null!");
+    // Unwrap the object and add the result to the list.  We don't store an actual reference to t anymore.
     return wrapped.add(unwrapperFunction.apply(t));
   }
 
@@ -165,10 +194,18 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
     return wrapped.toString();
   }
 
+  /**
+   * Sets the {@code EList} that this collection is wrapping.
+   *
+   * @param toWrap the list to wrap
+   */
   protected void setWrapped(EList<X> toWrap) {
     this.wrapped = Preconditions.checkNotNull(toWrap, "toWrap may not be null!");
   }
 
+  /**
+   * An iterator that does wrapping and unwrapping.
+   */
   protected class WrappingIterator implements Iterator<T> {
 
     protected final Iterator<X> wrappedIterator;

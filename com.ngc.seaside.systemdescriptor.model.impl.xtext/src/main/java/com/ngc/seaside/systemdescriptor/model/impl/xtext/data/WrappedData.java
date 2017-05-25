@@ -15,6 +15,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
+/**
+ * Adapts a {@code Data} instance to {@code IData}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
 
   private final WrappedNamedChildCollection<DataFieldDeclaration, IData, IDataField> fields;

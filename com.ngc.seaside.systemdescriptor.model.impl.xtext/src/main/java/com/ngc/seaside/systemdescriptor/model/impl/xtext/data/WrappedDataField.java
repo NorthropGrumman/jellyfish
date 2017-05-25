@@ -14,6 +14,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+/**
+ * Adapts a {@link DataFieldDeclaration} instance to an {@link IDataField}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration> implements IDataField {
 
   private IMetadata metadata;
@@ -58,6 +63,10 @@ public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration>
     return resolver.getWrapperFor((Data) wrapped.eContainer());
   }
 
+  /**
+   * Creates a new {@code DataFieldDeclaration} that is equivalent to the given field.  Changes to the {@code
+   * IDataField} are not reflected in the returned {@code DataFieldDeclaration} after construction.
+   */
   public static DataFieldDeclaration toXtext(IDataField field) {
     Preconditions.checkNotNull(field, "field may not be null!");
     DataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createDataFieldDeclaration();
