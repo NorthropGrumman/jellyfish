@@ -18,6 +18,11 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * Adapts a {@link Scenario} instance to {@link IScenario}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements IScenario {
 
   // Thread safety note: Absolutely no part of this implementation is thread safe.

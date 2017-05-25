@@ -28,6 +28,10 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
 
+/**
+ * Adapts an {@link Metadata} instance to {@link IMetadata}.  Unlike other wrappers, changes to this object do no
+ * "write thought" to the wrapped object.
+ */
 public class WrappedMetadata implements IMetadata {
 
   private javax.json.JsonObject json;
@@ -50,14 +54,25 @@ public class WrappedMetadata implements IMetadata {
     return this;
   }
 
+  /**
+   * Creates a new {@code IMetadata} instance that is equivalent to the given {@code Metadata}.
+   */
   public static IMetadata fromXtext(Metadata metadata) {
     return metadata == null ? IMetadata.EMPTY_METADATA : fromXtextJson(metadata.getJson());
   }
 
+  /**
+   * Creates a new {@code IMetadata} instance that is equivalent to the given {@code JsonObject}.  If the JSON is {@code
+   * null}, {@link IMetadata#EMPTY_METADATA} is returned.
+   */
   public static IMetadata fromXtextJson(JsonObject json) {
     return json == null ? IMetadata.EMPTY_METADATA : new WrappedMetadata(toJavaxJsonObject(json));
   }
 
+  /**
+   * Creates a new {@code Metadata} instance is is equivalent ot the given {@code IMetadata}.  If the metadata is empty
+   * the new instanceewill have a null JSON object.
+   */
   public static Metadata toXtext(IMetadata metadata) {
     Preconditions.checkNotNull(metadata, "metadata may not be null!");
     Metadata xtext = SystemDescriptorFactory.eINSTANCE.createMetadata();
@@ -67,10 +82,17 @@ public class WrappedMetadata implements IMetadata {
     return xtext;
   }
 
+  /**
+   * Creates a new {@code JsonObject} instance is is equivalent ot the given {@code IMetadata}.  If the metadata is
+   * empty, {@code null} is returned.
+   */
   public static JsonObject toXtextJson(IMetadata metadata) {
     Preconditions.checkNotNull(metadata, "metadata may not be null!");
     return metadata.getJson().isEmpty() ? null : toXtextJsonObject(metadata.getJson());
   }
+
+  // These factory methods below are package protected so we can use them in unit tests.  They are not intended to be
+  // public.
 
   static Member newMember(String key, Value value) {
     Member m = SystemDescriptorFactory.eINSTANCE.createMember();

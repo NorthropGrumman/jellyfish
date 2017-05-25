@@ -8,9 +8,21 @@ import org.eclipse.emf.ecore.EObject;
 
 import java.util.Objects;
 
+/**
+ * Base type of adapters that wrap XText type.
+ *
+ * @param <T> the type being wrapped
+ */
 public abstract class AbstractWrappedXtext<T extends EObject> {
 
+  /**
+   * The resolver that can resolve existing wrappers for other XText objects.
+   */
   protected final IWrapperResolver resolver;
+
+  /**
+   * The wrapped object.
+   */
   protected final T wrapped;
 
   protected AbstractWrappedXtext(IWrapperResolver resolver, T wrapped) {
@@ -18,6 +30,9 @@ public abstract class AbstractWrappedXtext<T extends EObject> {
     this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
   }
 
+  /**
+   * Gets the XText object that is being wrapped.
+   */
   public T unwrap() {
     return wrapped;
   }

@@ -13,6 +13,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
 
 import java.util.List;
 
+/**
+ * Adapts a {@link Step} instance to {@link IScenarioStep}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T> implements IScenarioStep {
 
   public WrappedScenarioStep(IWrapperResolver resolver, T wrapped) {
@@ -35,6 +40,10 @@ public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T>
     return wrapped.getParameters();
   }
 
+  /**
+   * Creates a new {@code GivenStep} that is equivalent to the given step.  Changes to the {@code
+   * IScenarioStep} are not reflected in the returned {@code GivenStep} after construction.
+   */
   public static GivenStep toXtextGivenStep(IScenarioStep step) {
     Preconditions.checkNotNull(step, "step may not be null!");
     GivenStep x = SystemDescriptorFactory.eINSTANCE.createGivenStep();
@@ -43,6 +52,10 @@ public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T>
     return x;
   }
 
+  /**
+   * Creates a new {@code WhenStep} that is equivalent to the when step.  Changes to the {@code
+   * IScenarioStep} are not reflected in the returned {@code WhenStep} after construction.
+   */
   public static WhenStep toXtextWhenStep(IScenarioStep step) {
     Preconditions.checkNotNull(step, "step may not be null!");
     WhenStep x = SystemDescriptorFactory.eINSTANCE.createWhenStep();
@@ -51,6 +64,10 @@ public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T>
     return x;
   }
 
+  /**
+   * Creates a new {@code ThenStep} that is equivalent to the then step.  Changes to the {@code
+   * IScenarioStep} are not reflected in the returned {@code ThenStep} after construction.
+   */
   public static ThenStep toXtextThenStep(IScenarioStep step) {
     Preconditions.checkNotNull(step, "step may not be null!");
     ThenStep x = SystemDescriptorFactory.eINSTANCE.createThenStep();

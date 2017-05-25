@@ -16,7 +16,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 /**
- * Adapts a {@code Data} instance to {@code IData}.
+ * Adapts a {@link Data} instance to {@link IData}.
  *
  * This class is not threadsafe.
  */
