@@ -5,18 +5,13 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
 import java.util.Collection;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Adapts a {@link Scenario} instance to {@link IScenario}.
@@ -45,7 +40,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     // invalid model which XText won't accept.
 
     if (wrapped.getGiven() == null) {
-      givens = new ScenarioInitializingCollection<>(
+      givens = new SelfInitializingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextGivenStep,
           () -> {
@@ -63,7 +58,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     }
 
     if (wrapped.getWhen() == null) {
-      whens = new ScenarioInitializingCollection<>(
+      whens = new SelfInitializingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextWhenStep,
           () -> {
@@ -81,7 +76,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     }
 
     if (wrapped.getThen() == null) {
-      thens = new ScenarioInitializingCollection<>(
+      thens = new SelfInitializingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextThenStep,
           () -> {
@@ -122,49 +117,5 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
   @Override
   public IModel getParent() {
     return resolver.getWrapperFor((Model) wrapped.eContainer());
-  }
-
-  /**
-   * Works the same as {@code AutoWrappingCollection} but it calls the provided {@link Supplier} to change the backing
-   * list before the first element is added.
-   */
-  private static class ScenarioInitializingCollection<X extends EObject, T> extends AutoWrappingCollection<X, T> {
-
-    /**
-     * The supplier that will supply the list to wrap when the first element is added to this list.
-     */
-    private final Supplier<EList<X>> initializer;
-    /**
-     * If true, the first element has been added to this list and this list is now wrapping the list returned from the
-     * supplier.
-     */
-    private boolean hasScenarioBeenInitialized = false;
-
-    /**
-     * @param wrapperFunction   the function that converts elements from the wrapped list to elements of type T
-     * @param unwrapperFunction the function that converts elements of type T to elements that can be inserted in the
-     *                          wrapped list
-     * @param initializer       the supplier that is called to get an {@code EList} before the first element is added.
-     *                          This collection will wrap the returned list.
-     */
-    private ScenarioInitializingCollection(Function<X, T> wrapperFunction,
-                                           Function<T, X> unwrapperFunction,
-                                           Supplier<EList<X>> initializer) {
-      // Just past an empty list to the super class for now.  We'll replace it before the first add so it
-      // will never actually contain anything.
-      super(ECollections.emptyEList(), wrapperFunction, unwrapperFunction);
-      this.initializer = initializer;
-    }
-
-    @Override
-    public boolean add(T t) {
-      // Is this the first add?
-      if (!hasScenarioBeenInitialized) {
-        hasScenarioBeenInitialized = true;
-        // Start wrapping the supplied  list.
-        setWrapped(initializer.get());
-      }
-      return super.add(t);
-    }
   }
 }

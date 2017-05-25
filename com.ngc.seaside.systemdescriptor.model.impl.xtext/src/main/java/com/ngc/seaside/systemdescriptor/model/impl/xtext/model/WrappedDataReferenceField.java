@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 public class WrappedDataReferenceField extends AbstractWrappedXtext<InputDeclaration> implements IDataReferenceField {
 
@@ -51,16 +52,7 @@ public class WrappedDataReferenceField extends AbstractWrappedXtext<InputDeclara
   @Override
   public IDataReferenceField setCardinality(ModelFieldCardinality cardinality) {
     Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
-    switch (cardinality) {
-      case SINGLE:
-        wrapped.setCardinality(Cardinality.DEFAULT);
-        break;
-      case MANY:
-        wrapped.setCardinality(Cardinality.MANY);
-        break;
-      default:
-        throw new UnconvertableTypeException(cardinality);
-    }
+    wrapped.setCardinality(convertCardinality(cardinality));
     return this;
   }
 
@@ -86,12 +78,36 @@ public class WrappedDataReferenceField extends AbstractWrappedXtext<InputDeclara
     return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
   }
 
+  public static InputDeclaration toXTextInputDeclaration(IWrapperResolver resolver, IDataReferenceField field) {
+    Preconditions.checkNotNull(field, "field may not be null!");
+    InputDeclaration d = SystemDescriptorFactory.eINSTANCE.createInputDeclaration();
+    d.setName(field.getName());
+    d.setCardinality(convertCardinality(field.getCardinality()));
+    d.setType(doFindXtextData(resolver, field.getType().getName(), field.getType().getParent().getName()));
+    return d;
+  }
+
   private Data findXtextData(String name, String packageName) {
+    return doFindXtextData(resolver, name, packageName);
+  }
+
+  private static Data doFindXtextData(IWrapperResolver resolver, String name, String packageName) {
     return resolver.findXTextData(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
         "Could not find XText type for data type '%s' in package '%s'!"
         + "  Make sure the IData object is added to"
-        + " a package within the ISystemDescriptor before adding reference to it!",
+        + " a package within the ISystemDescriptor before adding a reference to it!",
         name,
         packageName)));
+  }
+
+  private static Cardinality convertCardinality(ModelFieldCardinality cardinality) {
+    switch (cardinality) {
+      case SINGLE:
+        return Cardinality.DEFAULT;
+      case MANY:
+        return Cardinality.MANY;
+      default:
+        throw new UnconvertableTypeException(cardinality);
+    }
   }
 }
