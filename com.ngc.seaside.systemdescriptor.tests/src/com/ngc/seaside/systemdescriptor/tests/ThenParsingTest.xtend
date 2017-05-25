@@ -86,16 +86,16 @@ class ThenParsingTest {
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
 		val then = scenario.then
-		val fragment = then.fragments.get(0)
+		val step = then.steps.get(0)
 		assertEquals(
 			"keyword not correct!",
 			"doSomething",
-			fragment.keyword
+			step.keyword
 		)
 		assertEquals(
 			"keyword parameters not correct!",
 			"withThis",
-			fragment.parameters.get(0)
+			step.parameters.get(0)
 		)
 	}
 
@@ -131,7 +131,7 @@ class ThenParsingTest {
 		assertEquals(
 			"did not parse all then fragments!",
 			2,
-			then.fragments.size
+			then.steps.size
 		)
 	}
 }

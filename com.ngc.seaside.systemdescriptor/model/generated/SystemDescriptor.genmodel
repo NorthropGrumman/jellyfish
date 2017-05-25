@@ -58,29 +58,21 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//Requires">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Requires/declarations"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//GivenSubject">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenSubject/input"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//GivenFragment">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenFragment/subject"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//GivenFragment/precondition"/>
-    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//GivenStep"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//GivenDeclaration">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenDeclaration/fragments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//GivenDeclaration/steps"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//WhenFragment">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/keyword"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//WhenFragment/parameters"/>
-    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//WhenStep"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//WhenDeclaration">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenDeclaration/fragments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//WhenDeclaration/steps"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//ThenFragment">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/keyword"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ThenFragment/parameters"/>
-    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//ThenStep"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//ThenDeclaration">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ThenDeclaration/fragments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ThenDeclaration/steps"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//Step">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Step/keyword"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Step/parameters"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Scenario">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Scenario/name"/>

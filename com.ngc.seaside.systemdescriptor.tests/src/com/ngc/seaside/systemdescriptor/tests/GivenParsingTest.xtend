@@ -89,16 +89,16 @@ class GivenParsingTest {
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
 		val given = scenario.given
-		val fragment = given.fragments.get(0)
+		val step = given.steps.get(0)
 		assertEquals(
 			"subject not correct!",
 			"alarmTime",
-			fragment.subject.input.name
+			step.keyword
 		)
 		assertEquals(
 			"precondition not correct!",
 			"hasBeenReceived",
-			fragment.precondition
+			step.parameters.get(0)
 		)
 	}
 
@@ -133,39 +133,9 @@ class GivenParsingTest {
 		val scenario = model.scenarios.get(0)
 		val given = scenario.given
 		assertEquals(
-			"did not parse all given fragments!",
+			"did not parse all given steps!",
 			2,
-			given.fragments.size
-		)
-	}
-
-	@Test
-	def void testDoesNotParseScenarioWithGivenMissingInput() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			import clocks.models.Speaker
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	given missingInput hasBeenReceived
-			  	when validating alarmTime
-			  }
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.GIVEN_SUBJECT,
-			Diagnostic.LINKING_DIAGNOSTIC
+			given.steps.size
 		)
 	}
 }

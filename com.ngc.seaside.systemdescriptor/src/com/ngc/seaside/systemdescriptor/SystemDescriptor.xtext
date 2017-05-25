@@ -195,18 +195,6 @@ Requires
 // ----------------------------------
 
 /*
- * Declares a precondition that is associated with a given declaration.
- * The precondition can be any value but there must be some keyword
- * "handler" registered to interpret it.  Preconditions are usually
- * expressed as past tense verbs.  
- * 
- * A precondiion is basically a special case of a scenario keyword.
- */
-Precondition
-	: ID
-	;
-
-/*
  * Declares a generic keyword for use by a scenario.  These keywords
  * are usually verbs.  Keywords that are used in "whens" are usually 
  * in current tense.  Keywords that are used in "thens" are usually
@@ -224,36 +212,27 @@ ScenarioParameter
 	| DOUBLE
 	| ID	
 	;
- 
-/*
- * The subject of a precondition expressed in a given declaration.
- * This is its own rule so we can later define additional types of
- * subjects, not just input fields.
- */
-GivenSubject
-	: input=[InputDeclaration]
-	;
 
 /*
  * Represents both a precondition and its subject.
  */
-GivenFragment
-	: subject=GivenSubject precondition=Precondition
+GivenStep
+	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
 	;
 
 /*
  * Introduces a post condition that must be satisfied prior to the scenario being executable.
  */
 GivenDeclaration
-	: 'given' fragments+=GivenFragment
-	  ('and' fragments+=GivenFragment)*
+	: 'given' steps+=GivenStep
+	  ('and' steps+=GivenStep)*
 	;
 
 /*
  * Represents both a triggering condition represented as a keyword and the parameters 
  * used by that keyword.
  */
-WhenFragment
+WhenStep
 	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
 	;
 
@@ -261,15 +240,15 @@ WhenFragment
  * Introduces a condition or trigger to be tested that determines the scenario has began.
  */
 WhenDeclaration
-	: 'when' fragments+=WhenFragment
-	  ('and' fragments+=WhenFragment)*
+	: 'when' steps+=WhenStep
+	  ('and' steps+=WhenStep)*
 	;
 
 /*
  * Represents both a postcondition represented as a keyword and the parameters 
  * used by that keyword.
  */
-ThenFragment
+ThenStep
 	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
 	;
 
@@ -278,8 +257,17 @@ ThenFragment
  * triggered and has executed.
  */
 ThenDeclaration
-	: 'then' fragments+=ThenFragment
-	  ('and' fragments+=ThenFragment)*
+	: 'then' steps+=ThenStep
+	  ('and' steps+=ThenStep)*
+	;
+
+/**
+ * The base type of all scenario steps.
+ */
+Step
+	: GivenStep
+	| WhenStep
+	| ThenStep
 	;
 
 /*

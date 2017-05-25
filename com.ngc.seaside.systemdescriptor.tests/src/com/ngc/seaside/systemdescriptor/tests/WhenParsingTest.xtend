@@ -86,16 +86,16 @@ class WhenParsingTest {
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
 		val when = scenario.when
-		val fragment = when.fragments.get(0)
+		val step = when.steps.get(0)
 		assertEquals(
 			"keyword not correct!",
 			"receiving",
-			fragment.keyword
+			step.keyword
 		)
 		assertEquals(
 			"parameters not correct!",
 			"alarmTime",
-			fragment.parameters.get(0)
+			step.parameters.get(0)
 		)
 	}
 	
@@ -131,7 +131,7 @@ class WhenParsingTest {
 		assertEquals(
 			"did not parse all when fragments!",
 			2,
-			when.fragments.size
+			when.steps.size
 		)
 	}
 }
