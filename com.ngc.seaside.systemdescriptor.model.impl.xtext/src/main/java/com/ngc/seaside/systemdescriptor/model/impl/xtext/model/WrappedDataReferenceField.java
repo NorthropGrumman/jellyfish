@@ -94,20 +94,4 @@ public class WrappedDataReferenceField extends AbstractWrappedXtext<InputDeclara
         name,
         packageName)));
   }
-
-
-//  private Optional<Package> findXTextPackage(String name) {
-//    ResourceSet set = wrapped.eResource().getResourceSet();
-//    for (Resource r : set.getResources()) {
-//      for (EObject o : r.getContents()) {
-//        if (o instanceof Package) {
-//          Package p = (Package) o;
-//          if (p.getName().equals(name)) {
-//            return Optional.of(p);
-//          }
-//        }
-//      }
-//    }
-//    return Optional.empty();
-//  }
 }

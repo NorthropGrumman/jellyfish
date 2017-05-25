@@ -17,8 +17,8 @@ public interface IWrapperResolver {
 
   IPackage getWrapperFor(Package systemDescriptorPackage);
 
-  Optional<Package> findXTextPackage(String name);
-
   Optional<Data> findXTextData(String name, String packageName);
+
+  Optional<Model> findXTextModel(String name, String packageName);
 }
 
