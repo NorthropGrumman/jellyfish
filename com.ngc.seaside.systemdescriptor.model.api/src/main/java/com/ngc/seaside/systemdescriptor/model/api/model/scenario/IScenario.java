@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.api.model.scenario;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface IScenario extends INamedChild<IModel> {
    *
    * @return the "given" steps of this scenario
    */
-  List<IScenarioStep> getGivens();
+  Collection<IScenarioStep> getGivens();
 
   /**
    * Gets the "when" steps of this scenario with are effectively triggering conditions for the scenario.  Keywords for
@@ -27,7 +28,7 @@ public interface IScenario extends INamedChild<IModel> {
    *
    * @return the "when" steps of this scenario
    */
-  List<IScenarioStep> getWhens();
+  Collection<IScenarioStep> getWhens();
 
   /**
    * Gets the "then" steps of this scenario with are effectively post conditions for the scenario.  Keywords for these
@@ -36,5 +37,5 @@ public interface IScenario extends INamedChild<IModel> {
    *
    * @return the "then" steps of this scenario
    */
-  List<IScenarioStep> getThens();
+  Collection<IScenarioStep> getThens();
 }
