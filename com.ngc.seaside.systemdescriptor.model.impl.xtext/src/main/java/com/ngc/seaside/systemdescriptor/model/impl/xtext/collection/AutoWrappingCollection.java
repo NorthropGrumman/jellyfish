@@ -11,15 +11,15 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Function;
 
-public abstract class AutoWrappingCollection<X extends EObject, T> implements Collection<T> {
+public class AutoWrappingCollection<X extends EObject, T> implements Collection<T> {
 
-  protected final EList<X> wrapped;
   protected final Function<X, T> wrapperFunction;
   protected final Function<T, X> unwrapperFunction;
+  protected EList<X> wrapped;
 
-  protected AutoWrappingCollection(EList<X> wrapped,
-                                   Function<X, T> wrapperFunction,
-                                   Function<T, X> unwrapperFunction) {
+  public AutoWrappingCollection(EList<X> wrapped,
+                                Function<X, T> wrapperFunction,
+                                Function<T, X> unwrapperFunction) {
     this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
     this.wrapperFunction = Preconditions.checkNotNull(wrapperFunction, "wrapperFunction may not be null!");
     this.unwrapperFunction = Preconditions.checkNotNull(unwrapperFunction, "unwrapperFunction may not be null!");
@@ -163,6 +163,10 @@ public abstract class AutoWrappingCollection<X extends EObject, T> implements Co
   @Override
   public String toString() {
     return wrapped.toString();
+  }
+
+  protected void setWrapped(EList<X> toWrap) {
+    this.wrapped = Preconditions.checkNotNull(toWrap, "toWrap may not be null!");
   }
 
   protected class WrappingIterator implements Iterator<T> {

@@ -30,11 +30,9 @@ public class AutoWrappingCollectionTest extends AbstractWrappedXtextTest {
   public void setup() throws Throwable {
     data = factory().createData();
 
-    wrapped = new AutoWrappingCollection<DataFieldDeclaration, IDataField>(
-        data.getFields(),
-        f -> new WrappedDataField(resolver(), f),
-        WrappedDataField::toXtext) {
-    };
+    wrapped = new AutoWrappingCollection<>(data.getFields(),
+                                           f -> new WrappedDataField(resolver(), f),
+                                           WrappedDataField::toXtext);
 
     DataFieldDeclaration field = factory().createDataFieldDeclaration();
     field.setName("field1");
