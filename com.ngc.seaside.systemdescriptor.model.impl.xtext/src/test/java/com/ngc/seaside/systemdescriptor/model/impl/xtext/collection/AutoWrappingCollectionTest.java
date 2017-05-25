@@ -1,17 +1,16 @@
-package com.ngc.seaside.systemdescriptor.model.impl.xtext;
+package com.ngc.seaside.systemdescriptor.model.impl.xtext.collection;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedDataField;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Iterator;
 
@@ -21,25 +20,26 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WrappedNamedChildCollectionTest extends AbstractWrappedXtextTest {
+public class AutoWrappingCollectionTest extends AbstractWrappedXtextTest {
 
-  private WrappedNamedChildCollection<DataFieldDeclaration, IData, IDataField> wrapped;
+  private AutoWrappingCollection<DataFieldDeclaration, IDataField> wrapped;
 
-  private Data parent;
+  private Data data;
 
   @Before
   public void setup() throws Throwable {
-    parent = factory().createData();
+    data = factory().createData();
 
-    wrapped = new WrappedNamedChildCollection<>(parent.getFields(),
-                                                f -> new WrappedDataField(resolver(), f),
-                                                WrappedDataField::toXtext,
-                                                DataFieldDeclaration::getName);
+    wrapped = new AutoWrappingCollection<DataFieldDeclaration, IDataField>(
+        data.getFields(),
+        f -> new WrappedDataField(resolver(), f),
+        WrappedDataField::toXtext) {
+    };
 
     DataFieldDeclaration field = factory().createDataFieldDeclaration();
     field.setName("field1");
-    parent.getFields().add(field);
+    field.setType(DataType.STRING);
+    data.getFields().add(field);
   }
 
   @Test
@@ -53,10 +53,6 @@ public class WrappedNamedChildCollectionTest extends AbstractWrappedXtextTest {
                 wrapped.isEmpty());
     assertTrue("contains not correct!",
                wrapped.contains(field));
-
-    assertEquals("getByName not correct!",
-                 field.getName(),
-                 wrapped.getByName(field.getName()).get().getName());
 
     Iterator<IDataField> i = wrapped.iterator();
     assertTrue("iterator.hasNext() not correct!",

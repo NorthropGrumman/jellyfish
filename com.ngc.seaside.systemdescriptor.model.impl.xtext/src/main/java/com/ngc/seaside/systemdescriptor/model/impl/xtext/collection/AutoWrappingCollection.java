@@ -1,45 +1,28 @@
-package com.ngc.seaside.systemdescriptor.model.impl.xtext;
+package com.ngc.seaside.systemdescriptor.model.impl.xtext.collection;
 
 import com.google.common.base.Preconditions;
 
-import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
-public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedChild<P>>
-    implements INamedChildCollection<P, T> {
+public abstract class AutoWrappingCollection<X extends EObject, T> implements Collection<T> {
 
-  private final EList<X> wrapped;
-  private final Function<X, T> wrapperFunction;
-  private final Function<T, X> unwrapperFunction;
-  private final Function<X, String> namingFunction;
+  protected final EList<X> wrapped;
+  protected final Function<X, T> wrapperFunction;
+  protected final Function<T, X> unwrapperFunction;
 
-  public WrappedNamedChildCollection(EList<X> wrapped,
-                                     Function<X, T> wrapperFunction,
-                                     Function<T, X> unwrapperFunction,
-                                     Function<X, String> namingFunction) {
+  protected AutoWrappingCollection(EList<X> wrapped,
+                                   Function<X, T> wrapperFunction,
+                                   Function<T, X> unwrapperFunction) {
     this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
     this.wrapperFunction = Preconditions.checkNotNull(wrapperFunction, "wrapperFunction may not be null!");
     this.unwrapperFunction = Preconditions.checkNotNull(unwrapperFunction, "unwrapperFunction may not be null!");
-    this.namingFunction = Preconditions.checkNotNull(namingFunction, "namingFunction may not be null!");
-  }
-
-  @Override
-  public Optional<T> getByName(String name) {
-    Preconditions.checkNotNull(name, "name may not be null!");
-    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
-    Optional<X> xtextChild = wrapped.stream()
-        .filter(x -> namingFunction.apply(x).equals(name))
-        .findFirst();
-    return xtextChild.map(wrapperFunction);
   }
 
   @Override
@@ -52,13 +35,14 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
     return wrapped.isEmpty();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean contains(Object o) {
-    boolean contains = o instanceof INamedChild;
-    if (contains) {
-      contains = getByName(((INamedChild<?>) o).getName()).isPresent();
-    }
-    return contains;
+    Preconditions.checkNotNull(o, "o may not be null!");
+    // No way to avoid this unsafe cast, sorry.
+    X unwrapped = unwrapperFunction.apply((T) o);
+    // Equals is not implemented correctly in the Xtext objects, so we have to manually traverse the list.
+    return wrapped.stream().anyMatch(x -> EcoreUtil.equals(x, unwrapped));
   }
 
   @Override
@@ -106,18 +90,10 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
   @Override
   public boolean remove(Object o) {
     Preconditions.checkNotNull(o, "o may not be null!");
-    boolean removed = o instanceof INamedChild;
-    if (removed) {
-      String name = ((INamedChild<?>) o).getName();
-      Optional<X> xtextChild = wrapped.stream()
-          .filter(x -> namingFunction.apply(x).equals(name))
-          .findFirst();
-      removed = xtextChild.isPresent();
-      if (removed) {
-        wrapped.remove(xtextChild.get());
-      }
-    }
-    return removed;
+    // No way to avoid this unsafe cast, sorry.
+    X unwrapped = unwrapperFunction.apply((T) o);
+    // Equals is not implemented correctly in the Xtext objects, so we have to manually traverse the list.
+    return wrapped.removeIf(x -> EcoreUtil.equals(x, unwrapped));
   }
 
   @Override
@@ -172,10 +148,10 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
     if (this == o) {
       return true;
     }
-    if (!(o instanceof WrappedNamedChildCollection)) {
+    if (!(o instanceof AutoWrappingCollection)) {
       return false;
     }
-    WrappedNamedChildCollection<?, ?, ?> that = (WrappedNamedChildCollection<?, ?, ?>) o;
+    AutoWrappingCollection<?, ?> that = (AutoWrappingCollection<?, ?>) o;
     return Objects.equals(wrapped, that.wrapped);
   }
 
@@ -189,11 +165,11 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
     return wrapped.toString();
   }
 
-  private class WrappingIterator implements Iterator<T> {
+  protected class WrappingIterator implements Iterator<T> {
 
-    private final Iterator<X> wrappedIterator;
+    protected final Iterator<X> wrappedIterator;
 
-    private WrappingIterator(Iterator<X> wrappedIterator) {
+    protected WrappingIterator(Iterator<X> wrappedIterator) {
       this.wrappedIterator = wrappedIterator;
     }
 

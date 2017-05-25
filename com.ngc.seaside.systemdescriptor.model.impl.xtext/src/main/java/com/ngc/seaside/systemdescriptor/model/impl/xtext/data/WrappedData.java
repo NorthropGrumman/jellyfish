@@ -8,7 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
