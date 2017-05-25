@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedDataReferenceFieldTest extends AbstractWrappedXtextTest {
+public class WrappedInputDataReferenceFieldTest extends AbstractWrappedXtextTest {
 
-  private WrappedDataReferenceField wrapped;
+  private WrappedInputDataReferenceField wrapped;
 
   private InputDeclaration inputDeclaration;
 
@@ -56,7 +56,7 @@ public class WrappedDataReferenceFieldTest extends AbstractWrappedXtextTest {
 
   @Test
   public void testDoesWrapXtextObject() throws Throwable {
-    wrapped = new WrappedDataReferenceField(resolver(), inputDeclaration);
+    wrapped = new WrappedInputDataReferenceField(resolver(), inputDeclaration);
     assertEquals("name not correct!",
                  wrapped.getName(),
                  inputDeclaration.getName());
@@ -81,7 +81,7 @@ public class WrappedDataReferenceFieldTest extends AbstractWrappedXtextTest {
     when(p.getName()).thenReturn("some.package");
     when(resolver().findXTextData(newType.getName(), p.getName())).thenReturn(Optional.of(newXtextType));
 
-    wrapped = new WrappedDataReferenceField(resolver(), inputDeclaration);
+    wrapped = new WrappedInputDataReferenceField(resolver(), inputDeclaration);
     wrapped.setCardinality(ModelFieldCardinality.SINGLE);
     assertEquals("cardinality not updated!",
                  Cardinality.DEFAULT,
@@ -102,7 +102,7 @@ public class WrappedDataReferenceFieldTest extends AbstractWrappedXtextTest {
     when(p.getName()).thenReturn("some.package");
     when(resolver().findXTextData(newType.getName(), p.getName())).thenReturn(Optional.empty());
 
-    wrapped = new WrappedDataReferenceField(resolver(), inputDeclaration);
+    wrapped = new WrappedInputDataReferenceField(resolver(), inputDeclaration);
     wrapped.setType(newType);
   }
 }

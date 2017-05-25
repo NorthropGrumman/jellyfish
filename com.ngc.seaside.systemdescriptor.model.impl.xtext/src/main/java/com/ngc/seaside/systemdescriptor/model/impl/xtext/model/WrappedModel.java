@@ -31,8 +31,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
     if (wrapped.getInput() == null) {
       inputs = new SelfInitializingCollection<>(
-          d -> new WrappedDataReferenceField(resolver, d),
-          d -> WrappedDataReferenceField.toXTextInputDeclaration(resolver, d),
+          d -> new WrappedInputDataReferenceField(resolver, d),
+          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
           () -> {
             wrapped.setInput(SystemDescriptorFactory.eINSTANCE.createInput());
             return wrapped.getInput().getDeclarations();
@@ -41,8 +41,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       // Otherwise, just wrap the steps that are in the existing declaration.
       inputs = new AutoWrappingCollection<>(
           wrapped.getInput().getDeclarations(),
-          d -> new WrappedDataReferenceField(resolver, d),
-          d -> WrappedDataReferenceField.toXTextInputDeclaration(resolver, d));
+          d -> new WrappedInputDataReferenceField(resolver, d),
+          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d));
     }
   }
 
