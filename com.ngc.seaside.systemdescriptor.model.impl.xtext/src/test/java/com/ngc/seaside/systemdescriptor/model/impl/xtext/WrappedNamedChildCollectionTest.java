@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WrappedNamedChildCollectionTest extends AbstractWrappedEmfTest {
+public class WrappedNamedChildCollectionTest extends AbstractWrappedXtextTest {
 
   private WrappedNamedChildCollection<DataFieldDeclaration, IData, IDataField> wrapped;
 

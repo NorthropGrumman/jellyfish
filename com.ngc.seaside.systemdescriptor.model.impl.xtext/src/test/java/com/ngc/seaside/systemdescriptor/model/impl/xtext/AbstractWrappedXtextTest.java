@@ -14,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.json.Json;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractWrappedEmfTest {
+public abstract class AbstractWrappedXtextTest {
 
   @Mock
   private IWrapperResolver resolver;

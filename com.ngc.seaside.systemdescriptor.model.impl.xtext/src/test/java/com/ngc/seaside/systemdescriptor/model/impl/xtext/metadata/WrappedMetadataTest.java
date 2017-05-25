@@ -1,7 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
@@ -27,7 +27,7 @@ import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.Wrapped
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class WrappedMetadataTest extends AbstractWrappedEmfTest {
+public class WrappedMetadataTest extends AbstractWrappedXtextTest {
 
   private IMetadata wrapped;
 

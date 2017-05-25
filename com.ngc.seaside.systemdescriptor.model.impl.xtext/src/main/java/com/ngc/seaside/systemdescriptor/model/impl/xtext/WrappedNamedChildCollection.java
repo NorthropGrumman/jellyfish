@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -106,13 +107,13 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
   public boolean remove(Object o) {
     Preconditions.checkNotNull(o, "o may not be null!");
     boolean removed = o instanceof INamedChild;
-    if(removed) {
+    if (removed) {
       String name = ((INamedChild<?>) o).getName();
       Optional<X> xtextChild = wrapped.stream()
           .filter(x -> namingFunction.apply(x).equals(name))
           .findFirst();
       removed = xtextChild.isPresent();
-      if(removed) {
+      if (removed) {
         wrapped.remove(xtextChild.get());
       }
     }
@@ -164,6 +165,28 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
   @Override
   public void clear() {
     wrapped.clear();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof WrappedNamedChildCollection)) {
+      return false;
+    }
+    WrappedNamedChildCollection<?, ?, ?> that = (WrappedNamedChildCollection<?, ?, ?>) o;
+    return Objects.equals(wrapped, that.wrapped);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(wrapped);
+  }
+
+  @Override
+  public String toString() {
+    return wrapped.toString();
   }
 
   private class WrappingIterator implements Iterator<T> {

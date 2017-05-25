@@ -4,7 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedEmfTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedDataFieldTest extends AbstractWrappedEmfTest {
+public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
 
   private WrappedDataField wrapped;
 
