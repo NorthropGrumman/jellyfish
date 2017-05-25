@@ -7,6 +7,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
+import java.util.Optional;
+
 public interface IWrapperResolver {
 
   IData getWrapperFor(Data data);
@@ -14,5 +16,9 @@ public interface IWrapperResolver {
   IModel getWrapperFor(Model model);
 
   IPackage getWrapperFor(Package systemDescriptorPackage);
+
+  Optional<Package> findXTextPackage(String name);
+
+  Optional<Data> findXTextData(String name, String packageName);
 }
 

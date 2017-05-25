@@ -3,7 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata;
 import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextType;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
@@ -183,7 +183,7 @@ public class WrappedMetadata implements IMetadata {
       case SystemDescriptorPackage.ARRAY_VALUE:
         return toJavaxJsonArray(((ArrayValue) value).getValue());
       default:
-        throw new UnrecognizedXtextType(value);
+        throw new UnrecognizedXtextTypeException(value);
     }
   }
 
