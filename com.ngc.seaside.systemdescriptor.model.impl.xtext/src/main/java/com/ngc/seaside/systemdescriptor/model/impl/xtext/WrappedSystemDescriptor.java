@@ -7,7 +7,6 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitor;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.WrapperResolver;
@@ -35,11 +34,6 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
   @Override
   public INamedChildCollection<ISystemDescriptor, IPackage> getPackages() {
     return packages;
-  }
-
-  @Override
-  public Optional<Object> traverse(IVisitor visitor) {
-    throw new UnsupportedOperationException("not implemented");
   }
 
   @Override
