@@ -110,6 +110,44 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
     return resolver.getWrapperFor((Package) wrapped.eContainer());
   }
 
+  public static Model toXtextModel(IWrapperResolver resolver, IModel model) {
+    Preconditions.checkNotNull(resolver, "resolver may not be null!");
+    Preconditions.checkNotNull(model, "model may not be null!");
+    Model m = SystemDescriptorFactory.eINSTANCE.createModel();
+    m.setName(model.getName());
+    m.setMetadata(WrappedMetadata.toXtext(model.getMetadata()));
+
+    m.setInput(SystemDescriptorFactory.eINSTANCE.createInput());
+    model.getInputs()
+        .stream()
+        .map(i -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, i))
+        .forEach(m.getInput().getDeclarations()::add);
+
+    m.setOutput(SystemDescriptorFactory.eINSTANCE.createOutput());
+    model.getOutputs()
+        .stream()
+        .map(i -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, i))
+        .forEach(m.getOutput().getDeclarations()::add);
+
+    m.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
+    model.getRequiredModels()
+        .stream()
+        .map(i -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, i))
+        .forEach(m.getRequires().getDeclarations()::add);
+
+    m.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
+    model.getParts()
+        .stream()
+        .map(i -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, i))
+        .forEach(m.getParts().getDeclarations()::add);
+
+    model.getScenarios()
+        .stream()
+        .map(WrappedScenario::toXtextScenario)
+        .forEach(m.getScenarios()::add);
+    return m;
+  }
+
   private void initInputs() {
     if (wrapped.getInput() == null) {
       inputs = new SelfInitializingWrappedNamedChildCollection<>(

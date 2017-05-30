@@ -1,5 +1,6 @@
 dependencies {
     compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+    compile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
     compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
     compile 'com.google.guava:guava:21.0'
     compile 'org.glassfish:javax.json:1.1'

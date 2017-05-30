@@ -14,6 +14,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 /**
  * Adapts a {@link Data} instance to {@link IData}.
@@ -69,5 +70,17 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
   @Override
   public IPackage getParent() {
     return resolver.getWrapperFor((Package) wrapped.eContainer());
+  }
+
+  public static Data toXTextData(IData data) {
+    Preconditions.checkNotNull(data, "data may not be null!");
+    Data d = SystemDescriptorFactory.eINSTANCE.createData();
+    d.setName(data.getName());
+    d.setMetadata(WrappedMetadata.toXtext(data.getMetadata()));
+    data.getFields()
+        .stream()
+        .map(WrappedDataField::toXtext)
+        .forEach(d.getFields()::add);
+    return d;
   }
 }
