@@ -90,17 +90,22 @@ public class WrapperResolver implements IWrapperResolver {
 
   private Collection<Package> findXTextPackages(String name) {
     Collection<Package> packages = new ArrayList<>();
-    ResourceSet set = rootXtextObject.eResource().getResourceSet();
-    for (Resource r : set.getResources()) {
-      for (EObject o : r.getContents()) {
-        if (o instanceof Package) {
-          Package p = (Package) o;
-          if (p.getName().equals(name)) {
-            packages.add(p);
+
+    Resource resource = rootXtextObject.eResource();
+    if (resource != null) {
+      ResourceSet set = resource.getResourceSet();
+      for (Resource r : set.getResources()) {
+        for (EObject o : r.getContents()) {
+          if (o instanceof Package) {
+            Package p = (Package) o;
+            if (p.getName().equals(name)) {
+              packages.add(p);
+            }
           }
         }
       }
     }
+
     return packages;
   }
 }

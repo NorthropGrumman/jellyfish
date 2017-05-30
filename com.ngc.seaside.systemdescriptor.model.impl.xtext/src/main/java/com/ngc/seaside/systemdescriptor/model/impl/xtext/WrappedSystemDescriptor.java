@@ -99,18 +99,24 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
   }
 
   protected ResourceSet doGetResourceSet(EObject object) {
-    return object.eResource().getResourceSet();
+    Resource resource = object.eResource();
+    return resource == null ? null : resource.getResourceSet();
   }
 
   private void findAllPackages() {
     ResourceSet set = doGetResourceSet(rootXtextObject);
-    for (Resource r : set.getResources()) {
-      for (EObject o : r.getContents()) {
-        if (o instanceof Package) {
-          Package p = (Package) o;
-          packages.add(new WrappedPackage(resolver, this, p));
+    if (set != null) {
+      for (Resource r : set.getResources()) {
+        for (EObject o : r.getContents()) {
+          if (o instanceof Package) {
+            Package p = (Package) o;
+            packages.add(new WrappedPackage(resolver, this, p));
+          }
         }
       }
+    } else if (rootXtextObject instanceof Package) {
+      // If the resource set is null, just register the single package.
+      packages.add(new WrappedPackage(resolver, this, (Package) rootXtextObject));
     }
   }
 }
