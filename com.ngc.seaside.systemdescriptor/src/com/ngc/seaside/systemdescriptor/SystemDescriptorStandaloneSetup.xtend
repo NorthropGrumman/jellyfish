@@ -3,11 +3,48 @@
  */
 package com.ngc.seaside.systemdescriptor
 
+import com.google.inject.Injector
+import com.google.inject.Guice
+import java.util.Collection
+import com.google.inject.Module
+import com.google.common.base.Preconditions
+import org.eclipse.xtext.common.TerminalsStandaloneSetup
 
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */
 class SystemDescriptorStandaloneSetup extends SystemDescriptorStandaloneSetupGenerated {
+
+	/**
+	 * Creates an injector with the registered modules.
+	 * 
+	 * @param modules the modules to include in the Guice configuration
+	 * @param includeDefault if true, the default SystemDescriptor modules will be included
+	 * (this should almost always be true)
+	 * @return the resulting Injector
+	 */
+	def public Injector createInjector(Collection<Module> modules, boolean includeDefault) {
+		Preconditions.checkNotNull(modules, "modules may not be null!")
+		if (includeDefault) {
+			modules.add(new SystemDescriptorRuntimeModule())
+		}
+		return Guice.createInjector(modules)
+	}
+
+	/**
+	 * Creates an injector with the registered modules and performs EMF registration.
+	 * 
+	 * @param modules the modules to include in the Guice configuration
+	 * @param includeDefault if true, the default SystemDescriptor modules will be included
+	 * (this should almost always be true)
+	 * @return the resulting Injector
+	 */
+	def public Injector createInjectorAndDoEMFRegistration(Collection<Module> modules, boolean includeDefault) {
+		TerminalsStandaloneSetup.doSetup()
+		val injector = createInjector(modules, includeDefault);
+		register(injector)
+		return injector
+	}
 
 	def static void doSetup() {
 		new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration()
