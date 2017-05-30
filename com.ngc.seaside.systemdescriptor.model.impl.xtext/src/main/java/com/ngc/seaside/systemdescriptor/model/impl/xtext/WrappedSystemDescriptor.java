@@ -44,22 +44,60 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
 
   @Override
   public Optional<IModel> findModel(String fullyQualifiedName) {
-    throw new UnsupportedOperationException("not implemented");
+    Preconditions.checkNotNull(fullyQualifiedName, "fullyQualifiedName may not be null!");
+    Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
+    int namePosition = fullyQualifiedName.lastIndexOf('.');
+    Preconditions.checkArgument(namePosition > 0
+                                && namePosition < fullyQualifiedName.length() - 1,
+                                "expected a fully qualified name of the form <packageName>.<modelName> but got '%s'!",
+                                fullyQualifiedName);
+    String packageName = fullyQualifiedName.substring(0, namePosition);
+    String modelName = fullyQualifiedName.substring(namePosition + 1);
+    return findModel(packageName, modelName);
   }
 
   @Override
   public Optional<IModel> findModel(String packageName, String name) {
-    throw new UnsupportedOperationException("not implemented");
+    Preconditions.checkNotNull(packageName, "packageName may not be null!");
+    Preconditions.checkNotNull(name, "name may not be null!");
+    Preconditions.checkArgument(!packageName.trim().isEmpty(), "packageName may not be empty!");
+    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+
+    Optional<IModel> model = Optional.empty();
+    Optional<IPackage> p = packages.getByName(packageName);
+    if (p.isPresent()) {
+      model = p.get().getModels().getByName(name);
+    }
+    return model;
   }
 
   @Override
   public Optional<IData> findData(String fullyQualifiedName) {
-    throw new UnsupportedOperationException("not implemented");
+    Preconditions.checkNotNull(fullyQualifiedName, "fullyQualifiedName may not be null!");
+    Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
+    int namePosition = fullyQualifiedName.lastIndexOf('.');
+    Preconditions.checkArgument(namePosition > 0
+                                && namePosition < fullyQualifiedName.length() - 1,
+                                "expected a fully qualified name of the form <packageName>.<dataName> but got '%s'!",
+                                fullyQualifiedName);
+    String packageName = fullyQualifiedName.substring(0, namePosition);
+    String dataName = fullyQualifiedName.substring(namePosition + 1);
+    return findData(packageName, dataName);
   }
 
   @Override
   public Optional<IData> findData(String packageName, String name) {
-    throw new UnsupportedOperationException("not implemented");
+    Preconditions.checkNotNull(packageName, "packageName may not be null!");
+    Preconditions.checkNotNull(name, "name may not be null!");
+    Preconditions.checkArgument(!packageName.trim().isEmpty(), "packageName may not be empty!");
+    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+
+    Optional<IData> data = Optional.empty();
+    Optional<IPackage> p = packages.getByName(packageName);
+    if (p.isPresent()) {
+      data = p.get().getData().getByName(name);
+    }
+    return data;
   }
 
   protected IWrapperResolver newResolver() {
