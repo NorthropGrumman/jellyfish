@@ -12,6 +12,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import java.util.Iterator;
 import java.util.Optional;
 
+/**
+ * Performs traversals on system descriptors.
+ */
 public class Traversals {
 
   /**
