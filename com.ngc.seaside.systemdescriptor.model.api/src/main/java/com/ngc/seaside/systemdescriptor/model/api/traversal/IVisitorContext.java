@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.model.api.traveral;
+package com.ngc.seaside.systemdescriptor.model.api.traversal;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 

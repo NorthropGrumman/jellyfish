@@ -2,19 +2,14 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.model;
 
 import com.google.common.base.Preconditions;
 
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitor;
-import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitorContext;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class DataReferenceField implements IDataReferenceField {
 

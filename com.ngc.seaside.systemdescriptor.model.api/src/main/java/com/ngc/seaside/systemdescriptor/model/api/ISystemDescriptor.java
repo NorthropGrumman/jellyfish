@@ -2,8 +2,8 @@ package com.ngc.seaside.systemdescriptor.model.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitor;
-import com.ngc.seaside.systemdescriptor.model.api.traveral.IVisitorContext;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitor;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitorContext;
 
 import java.util.Optional;
 
