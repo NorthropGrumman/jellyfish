@@ -39,11 +39,11 @@ public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclarati
     return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
   }
 
-  protected Data findXtextData(String name, String packageName) {
+  Data findXtextData(String name, String packageName) {
     return doFindXtextData(resolver, name, packageName);
   }
 
-  protected static Data doFindXtextData(IWrapperResolver resolver, String name, String packageName) {
+  static Data doFindXtextData(IWrapperResolver resolver, String name, String packageName) {
     return resolver.findXTextData(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
         "Could not find XText type for data type '%s' in package '%s'!"
         + "  Make sure the IData object is added to"

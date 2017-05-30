@@ -5,7 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingAutoWrappingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
@@ -40,7 +40,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     // invalid model which XText won't accept.
 
     if (wrapped.getGiven() == null) {
-      givens = new SelfInitializingCollection<>(
+      givens = new SelfInitializingAutoWrappingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextGivenStep,
           () -> {
@@ -58,7 +58,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     }
 
     if (wrapped.getWhen() == null) {
-      whens = new SelfInitializingCollection<>(
+      whens = new SelfInitializingAutoWrappingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextWhenStep,
           () -> {
@@ -76,7 +76,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
     }
 
     if (wrapped.getThen() == null) {
-      thens = new SelfInitializingCollection<>(
+      thens = new SelfInitializingAutoWrappingCollection<>(
           s -> new WrappedScenarioStep<>(resolver, s),
           WrappedScenarioStep::toXtextThenStep,
           () -> {

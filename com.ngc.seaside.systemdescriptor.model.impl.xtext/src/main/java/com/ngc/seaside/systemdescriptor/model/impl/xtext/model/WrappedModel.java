@@ -11,11 +11,14 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappedNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -24,26 +27,15 @@ import java.util.Collection;
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
 
   private IMetadata metadata;
-  private Collection<IDataReferenceField> inputs;
+  private WrappedNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
+  private WrappedNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
 
   public WrappedModel(IWrapperResolver resolver, Model wrapped) {
     super(resolver, wrapped);
-
-    if (wrapped.getInput() == null) {
-      inputs = new SelfInitializingCollection<>(
-          d -> new WrappedInputDataReferenceField(resolver, d),
-          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
-          () -> {
-            wrapped.setInput(SystemDescriptorFactory.eINSTANCE.createInput());
-            return wrapped.getInput().getDeclarations();
-          });
-    } else {
-      // Otherwise, just wrap the steps that are in the existing declaration.
-      inputs = new AutoWrappingCollection<>(
-          wrapped.getInput().getDeclarations(),
-          d -> new WrappedInputDataReferenceField(resolver, d),
-          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d));
-    }
+    this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
+    // See the comment in the constructor of WrappedScenario for why we do this style of initialization.
+    initInputs();
+    initOutputs();
   }
 
   @Override
@@ -61,12 +53,12 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   @Override
   public INamedChildCollection<IModel, IDataReferenceField> getInputs() {
-    throw new UnsupportedOperationException("not implemented");
+    return inputs;
   }
 
   @Override
   public INamedChildCollection<IModel, IDataReferenceField> getOutputs() {
-    throw new UnsupportedOperationException("not implemented");
+    return outputs;
   }
 
   @Override
@@ -106,5 +98,45 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
   @Override
   public IPackage getParent() {
     return resolver.getWrapperFor((Package) wrapped.eContainer());
+  }
+
+  private void initInputs() {
+    if (wrapped.getInput() == null) {
+      inputs = new SelfInitializingWrappedNamedChildCollection<>(
+          d -> new WrappedInputDataReferenceField(resolver, d),
+          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
+          FieldDeclaration::getName,
+          () -> {
+            wrapped.setInput(SystemDescriptorFactory.eINSTANCE.createInput());
+            return wrapped.getInput().getDeclarations();
+          });
+    } else {
+      // Otherwise, just wrap the steps that are in the existing declaration.
+      inputs = new WrappedNamedChildCollection<>(
+          wrapped.getInput().getDeclarations(),
+          d -> new WrappedInputDataReferenceField(resolver, d),
+          d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
+          FieldDeclaration::getName);
+    }
+  }
+
+  private void initOutputs() {
+    if (wrapped.getOutput() == null) {
+      outputs = new SelfInitializingWrappedNamedChildCollection<>(
+          d -> new WrappedOutputDataReferenceField(resolver, d),
+          d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
+          FieldDeclaration::getName,
+          () -> {
+            wrapped.setOutput(SystemDescriptorFactory.eINSTANCE.createOutput());
+            return wrapped.getOutput().getDeclarations();
+          });
+    } else {
+      // Otherwise, just wrap the steps that are in the existing declaration.
+      outputs = new WrappedNamedChildCollection<>(
+          wrapped.getOutput().getDeclarations(),
+          d -> new WrappedOutputDataReferenceField(resolver, d),
+          d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
+          FieldDeclaration::getName);
+    }
   }
 }
