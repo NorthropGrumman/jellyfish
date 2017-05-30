@@ -28,6 +28,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 
 import java.util.Collection;
 
+/**
+ * Adapts an XText {@link Model} to an {@link IModel}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
 
   private IMetadata metadata;
@@ -110,6 +115,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
     return resolver.getWrapperFor((Package) wrapped.eContainer());
   }
 
+  /**
+   * Converts an {@code IModel} to an  XText {@code Model} instance.
+   */
   public static Model toXtextModel(IWrapperResolver resolver, IModel model) {
     Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(model, "model may not be null!");

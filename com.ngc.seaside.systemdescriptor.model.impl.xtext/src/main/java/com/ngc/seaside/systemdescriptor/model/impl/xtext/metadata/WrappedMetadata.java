@@ -29,7 +29,7 @@ import javax.json.JsonObjectBuilder;
 
 
 /**
- * Adapts an {@link Metadata} instance to {@link IMetadata}.  Unlike other wrappers, changes to this object do no
+ * Adapts an {@link Metadata} instance to {@link IMetadata}.  Unlike other wrappers, changes to this object do not
  * "write thought" to the wrapped object.
  */
 public class WrappedMetadata implements IMetadata {

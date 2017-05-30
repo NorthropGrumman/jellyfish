@@ -11,7 +11,9 @@ import java.util.function.Supplier;
 
 /**
  * Works the same as {@code AutoWrappingCollection} but it calls the provided {@link Supplier} to change the backing
- * list before the first element is added.  This collection is not threadsafe.
+ * list before the first element is added.
+ *
+ * This class is not threadsafe.
  */
 public class SelfInitializingAutoWrappingCollection<X extends EObject, T> extends AutoWrappingCollection<X, T> {
 

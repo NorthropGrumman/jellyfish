@@ -13,7 +13,9 @@ import java.util.function.Supplier;
 
 /**
  * Works the same as {@code WrappedNamedChildCollection} but it calls the provided {@link Supplier} to change the
- * backing list before the first element is added.  This collection is not threadsafe.
+ * backing list before the first element is added.
+ *
+ * This class is not threadsafe.
  */
 public class SelfInitializingWrappedNamedChildCollection<X extends EObject, P, T extends INamedChild<P>>
     extends WrappedNamedChildCollection<X, P, T> {
