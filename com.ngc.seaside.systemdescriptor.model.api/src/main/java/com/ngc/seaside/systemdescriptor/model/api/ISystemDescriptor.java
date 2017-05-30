@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitor;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitorContext;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 
 import java.util.Optional;
 
@@ -56,7 +57,9 @@ public interface ISystemDescriptor {
    * @return an optional that contains the value of {@link IVisitorContext#getResult()} if the visitor sets a result via
    * {@link IVisitorContext#setResult(Object)}; if the visitor does not set a result the optional is empty
    */
-  Optional<Object> traverse(IVisitor visitor);
+  default Optional<Object> traverse(IVisitor visitor) {
+    return Traversals.traverse(this, visitor);
+  }
 
   /**
    * Gets the model with the given fully qualified name

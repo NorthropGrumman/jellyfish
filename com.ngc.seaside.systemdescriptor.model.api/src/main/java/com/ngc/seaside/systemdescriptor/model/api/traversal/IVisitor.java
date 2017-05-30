@@ -52,23 +52,43 @@ public interface IVisitor {
   }
 
   /**
-   * Invoked to visit a model field that references data.
+   * Invoked to visit an input field that references data.
    *
    * @param ctx   the visitor context
    * @param field the field
    * @see IDataReferenceField
    */
-  default void visitDataReferenceField(IVisitorContext ctx, IDataReferenceField field) {
+  default void visitDataReferenceFieldAsInput(IVisitorContext ctx, IDataReferenceField field) {
   }
 
   /**
-   * Invoked to visit a model field that references another model.
+   * Invoked to visit an output field that references data.
+   *
+   * @param ctx   the visitor context
+   * @param field the field
+   * @see IDataReferenceField
+   */
+  default void visitDataReferenceFieldAsOutput(IVisitorContext ctx, IDataReferenceField field) {
+  }
+
+  /**
+   * Invoked to visit a requirement field that references another model.
    *
    * @param ctx   the visitor context
    * @param field the field
    * @see IModelReferenceField
    */
-  default void visitModelReferenceField(IVisitorContext ctx, IModelReferenceField field) {
+  default void visitModelReferenceFieldAsRequirement(IVisitorContext ctx, IModelReferenceField field) {
+  }
+
+  /**
+   * Invoked to visit a part field that references another model.
+   *
+   * @param ctx   the visitor context
+   * @param field the field
+   * @see IModelReferenceField
+   */
+  default void visitModelReferenceFieldAsPart(IVisitorContext ctx, IModelReferenceField field) {
   }
 
   /**
