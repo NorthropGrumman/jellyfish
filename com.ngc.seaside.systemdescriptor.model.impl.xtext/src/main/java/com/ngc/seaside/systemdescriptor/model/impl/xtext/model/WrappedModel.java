@@ -14,12 +14,16 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappedNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 import java.util.Collection;
@@ -29,6 +33,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
   private IMetadata metadata;
   private WrappedNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
   private WrappedNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
+  private WrappedNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
+  private WrappedNamedChildCollection<PartDeclaration, IModel, IModelReferenceField> parts;
+  private WrappedNamedChildCollection<Scenario, IModel, IScenario> scenarios;
 
   public WrappedModel(IWrapperResolver resolver, Model wrapped) {
     super(resolver, wrapped);
@@ -36,6 +43,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
     // See the comment in the constructor of WrappedScenario for why we do this style of initialization.
     initInputs();
     initOutputs();
+    initRequires();
+    initParts();
+    initScenarios();
   }
 
   @Override
@@ -63,17 +73,17 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   @Override
   public INamedChildCollection<IModel, IModelReferenceField> getRequiredModels() {
-    throw new UnsupportedOperationException("not implemented");
+    return requires;
   }
 
   @Override
   public INamedChildCollection<IModel, IModelReferenceField> getParts() {
-    throw new UnsupportedOperationException("not implemented");
+    return parts;
   }
 
   @Override
   public INamedChildCollection<IModel, IScenario> getScenarios() {
-    throw new UnsupportedOperationException("not implemented");
+    return scenarios;
   }
 
   @Override
@@ -131,12 +141,57 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
             return wrapped.getOutput().getDeclarations();
           });
     } else {
-      // Otherwise, just wrap the steps that are in the existing declaration.
       outputs = new WrappedNamedChildCollection<>(
           wrapped.getOutput().getDeclarations(),
           d -> new WrappedOutputDataReferenceField(resolver, d),
           d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
           FieldDeclaration::getName);
     }
+  }
+
+  private void initParts() {
+    if (wrapped.getParts() == null) {
+      parts = new SelfInitializingWrappedNamedChildCollection<>(
+          d -> new WrappedPartModelReferenceField(resolver, d),
+          d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+          FieldDeclaration::getName,
+          () -> {
+            wrapped.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
+            return wrapped.getParts().getDeclarations();
+          });
+    } else {
+      parts = new WrappedNamedChildCollection<>(
+          wrapped.getParts().getDeclarations(),
+          d -> new WrappedPartModelReferenceField(resolver, d),
+          d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+          FieldDeclaration::getName);
+    }
+  }
+
+  private void initRequires() {
+    if (wrapped.getRequires() == null) {
+      requires = new SelfInitializingWrappedNamedChildCollection<>(
+          d -> new WrappedRequireModelReferenceField(resolver, d),
+          d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+          FieldDeclaration::getName,
+          () -> {
+            wrapped.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
+            return wrapped.getRequires().getDeclarations();
+          });
+    } else {
+      requires = new WrappedNamedChildCollection<>(
+          wrapped.getRequires().getDeclarations(),
+          d -> new WrappedRequireModelReferenceField(resolver, d),
+          d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+          FieldDeclaration::getName);
+    }
+  }
+
+  private void initScenarios() {
+    scenarios = new WrappedNamedChildCollection<>(
+        wrapped.getScenarios(),
+        s -> new WrappedScenario(resolver, s),
+        WrappedScenario::toXtextScenario,
+        Scenario::getName);
   }
 }

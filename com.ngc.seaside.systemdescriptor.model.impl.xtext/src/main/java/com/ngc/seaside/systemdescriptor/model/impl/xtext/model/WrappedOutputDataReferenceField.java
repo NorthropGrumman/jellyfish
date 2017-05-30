@@ -4,13 +4,11 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnconvertableTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -52,17 +50,8 @@ public class WrappedOutputDataReferenceField extends AbstractWrappedDataReferenc
     return this;
   }
 
-  @Override
-  public String getName() {
-    return wrapped.getName();
-  }
-
-  @Override
-  public IModel getParent() {
-    return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
-  }
-
   public static OutputDeclaration toXTextOutputDeclaration(IWrapperResolver resolver, IDataReferenceField field) {
+    Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(field, "field may not be null!");
     OutputDeclaration d = SystemDescriptorFactory.eINSTANCE.createOutputDeclaration();
     d.setName(field.getName());

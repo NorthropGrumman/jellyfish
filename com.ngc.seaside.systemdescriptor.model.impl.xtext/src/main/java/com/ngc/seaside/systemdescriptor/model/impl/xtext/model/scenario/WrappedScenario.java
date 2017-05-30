@@ -118,4 +118,25 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
   public IModel getParent() {
     return resolver.getWrapperFor((Model) wrapped.eContainer());
   }
+
+  public static Scenario toXtextScenario(IScenario scenario) {
+    Scenario s = SystemDescriptorFactory.eINSTANCE.createScenario();
+    s.setName(scenario.getName());
+    s.setGiven(SystemDescriptorFactory.eINSTANCE.createGivenDeclaration());
+    s.setWhen(SystemDescriptorFactory.eINSTANCE.createWhenDeclaration());
+    s.setThen(SystemDescriptorFactory.eINSTANCE.createThenDeclaration());
+    scenario.getGivens()
+        .stream()
+        .map(WrappedScenarioStep::toXtextGivenStep)
+        .forEach(s.getGiven().getSteps()::add);
+    scenario.getWhens()
+        .stream()
+        .map(WrappedScenarioStep::toXtextWhenStep)
+        .forEach(s.getWhen().getSteps()::add);
+    scenario.getThens()
+        .stream()
+        .map(WrappedScenarioStep::toXtextThenStep)
+        .forEach(s.getThen().getSteps()::add);
+    return s;
+  }
 }

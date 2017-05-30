@@ -134,4 +134,23 @@ public class WrappedScenarioTest extends AbstractWrappedXtextTest {
                  "something",
                  scenario.getGiven().getSteps().get(0).getParameters().get(0));
   }
+
+  @Test
+  public void testDoesConvertToXtextObject() throws Throwable {
+    wrappedScenario = new WrappedScenario(resolver(), scenario);
+
+    Scenario xtext = WrappedScenario.toXtextScenario(wrappedScenario);
+    assertEquals("name not correct!",
+                 scenario.getName(),
+                 xtext.getName());
+    assertEquals("given steps not correct!",
+                 scenario.getGiven().getSteps().get(0).getKeyword(),
+                 xtext.getGiven().getSteps().get(0).getKeyword());
+    assertEquals("when steps not correct!",
+                 scenario.getWhen().getSteps().get(0).getKeyword(),
+                 xtext.getWhen().getSteps().get(0).getKeyword());
+    assertEquals("then steps not correct!",
+                 scenario.getThen().getSteps().get(0).getKeyword(),
+                 xtext.getThen().getSteps().get(0).getKeyword());
+  }
 }
