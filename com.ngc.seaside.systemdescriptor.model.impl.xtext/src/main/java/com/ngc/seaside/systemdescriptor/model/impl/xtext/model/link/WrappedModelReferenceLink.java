@@ -55,6 +55,17 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
   }
 
+  public static Optional<IModelLink<IModelReferenceField>> tryToWrap(IWrapperResolver resolver,
+                                                                     LinkDeclaration wrapper) {
+    Optional<IModelLink<IModelReferenceField>> result = Optional.empty();
+    try {
+      result = Optional.of(new WrappedModelReferenceLink(resolver, wrapper));
+    } catch (IllegalArgumentException e) {
+      // Do nothing, this means the link is not linking models.
+    }
+    return result;
+  }
+
   private IModelReferenceField getReferenceTo(LinkableReference ref) {
     // What kind of a link is this?
     switch (ref.eClass().getClassifierID()) {
@@ -74,11 +85,14 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     IModel parent = resolver.getWrapperFor((Model) declaration.eContainer().eContainer());
     // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the declaration
     // is either for a part or requirement.
-    Optional<IModelReferenceField> field = parent.getParts().getByName(declaration.getName());
+    Optional<IModelReferenceField> field = parent.getParts() == null
+                                           ? Optional.empty()
+                                           : parent.getParts().getByName(declaration.getName());
     if (!field.isPresent()) {
-      field = parent.getParts().getByName(declaration.getName());
+      field = parent.getRequiredModels() == null ? Optional.empty()
+                                                 : parent.getRequiredModels().getByName(declaration.getName());
     }
-    return field.orElseThrow(() -> new IllegalStateException(String.format(
+    return field.orElseThrow(() -> new IllegalArgumentException(String.format(
         "could not find part or requirement field named %s in model %s!",
         declaration.getName(),
         parent)));

@@ -11,13 +11,19 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingAutoWrappingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappedNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
@@ -27,6 +33,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Adapts an XText {@link Model} to an {@link IModel}.
@@ -41,6 +48,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
   private WrappedNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
   private WrappedNamedChildCollection<PartDeclaration, IModel, IModelReferenceField> parts;
   private WrappedNamedChildCollection<Scenario, IModel, IScenario> scenarios;
+  private Collection<IModelLink<?>> links;
 
   public WrappedModel(IWrapperResolver resolver, Model wrapped) {
     super(resolver, wrapped);
@@ -51,6 +59,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
     initRequires();
     initParts();
     initScenarios();
+    initLinks();
   }
 
   @Override
@@ -93,7 +102,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   @Override
   public Collection<IModelLink<?>> getLinks() {
-    throw new UnsupportedOperationException("not implemented");
+    return links;
   }
 
   @Override
@@ -239,5 +248,43 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
         s -> new WrappedScenario(resolver, s),
         WrappedScenario::toXtextScenario,
         Scenario::getName);
+  }
+
+  private void initLinks() {
+    if (wrapped.getLinks() == null) {
+      links = new SelfInitializingAutoWrappingCollection<>(
+          this::wrapLinkDeclaration,
+          this::unwrapModelLink,
+          () -> {
+            wrapped.setLinks(SystemDescriptorFactory.eINSTANCE.createLinks());
+            return wrapped.getLinks().getDeclarations();
+          });
+    } else {
+      links = new AutoWrappingCollection<>(
+          wrapped.getLinks().getDeclarations(),
+          this::wrapLinkDeclaration,
+          this::unwrapModelLink);
+    }
+  }
+
+  private IModelLink<?> wrapLinkDeclaration(LinkDeclaration link) {
+    IModelLink<?> wrappedLink;
+
+    // Is this a link to or from inputs or outputs (a link between data)?
+    Optional<IModelLink<IDataReferenceField>> dataLink = WrappedDataReferenceLink.tryToWrap(resolver, link);
+    if (dataLink.isPresent()) {
+      wrappedLink = dataLink.get();
+    } else {
+      // Otherwise, is this a link to or from parts or requirements (a link between models)?
+      wrappedLink = WrappedModelReferenceLink.tryToWrap(resolver, link)
+          .orElseThrow(() -> new UnrecognizedXtextTypeException(link));
+    }
+
+    return wrappedLink;
+  }
+
+  private LinkDeclaration unwrapModelLink(IModelLink<?> link) {
+    // TODO TH: implement this
+    throw new UnsupportedOperationException("modification of links is not currently supported!");
   }
 }

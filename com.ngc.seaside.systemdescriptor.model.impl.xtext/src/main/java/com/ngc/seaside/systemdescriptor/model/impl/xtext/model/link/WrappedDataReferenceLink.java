@@ -55,6 +55,17 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
     return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
   }
 
+  public static Optional<IModelLink<IDataReferenceField>> tryToWrap(IWrapperResolver resolver,
+                                                                    LinkDeclaration wrapper) {
+    Optional<IModelLink<IDataReferenceField>> result = Optional.empty();
+    try {
+      result = Optional.of(new WrappedDataReferenceLink(resolver, wrapper));
+    } catch (IllegalArgumentException e) {
+      // Do nothing, this means the link is not linking data.
+    }
+    return result;
+  }
+
   private IDataReferenceField getReferenceTo(LinkableReference ref) {
     // What kind of a link is this?
     switch (ref.eClass().getClassifierID()) {
@@ -74,11 +85,14 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
     IModel parent = resolver.getWrapperFor((Model) declaration.eContainer().eContainer());
     // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the declaration
     // is either for input or output.
-    Optional<IDataReferenceField> field = parent.getInputs().getByName(declaration.getName());
+    Optional<IDataReferenceField> field = parent.getInputs() == null
+                                          ? Optional.empty()
+                                          : parent.getInputs().getByName(declaration.getName());
     if (!field.isPresent()) {
-      field = parent.getOutputs().getByName(declaration.getName());
+      field = parent.getOutputs() == null ? Optional.empty()
+                                          : parent.getOutputs().getByName(declaration.getName());
     }
-    return field.orElseThrow(() -> new IllegalStateException(String.format(
+    return field.orElseThrow(() -> new IllegalArgumentException(String.format(
         "could not find input or output field named %s in model %s!",
         declaration.getName(),
         parent)));

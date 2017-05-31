@@ -13,11 +13,19 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+// Note we run this test with MockitoJUnitRunner.Silent to avoid UnnecessaryStubbingExceptions.  This happens because
+// we are cheating and reusing the setup code for the model link test.
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class WrappedDataReferenceLinkTest extends AbstractWrappedXtextTest {
 
   private WrappedDataReferenceLink wrapped;
@@ -93,5 +101,23 @@ public class WrappedDataReferenceLinkTest extends AbstractWrappedXtextTest {
     assertEquals("target not correct!",
                  wrappedTargetField,
                  wrapped.getTarget());
+  }
+
+  @Test
+  public void testDoesTryToWrapXTextObject() throws Throwable {
+    assertTrue("tryToWrap failed to wrap valid data declaration!",
+               WrappedDataReferenceLink.tryToWrap(resolver(), declaration).isPresent());
+
+    LinkTestUtil.LinkTestSetup setup = WrappedModelReferenceLinkTest.getModelLinkDeclaration();
+    assertFalse("tryToWrap should not wrap model declaration!",
+                WrappedDataReferenceLink.tryToWrap(setup.resolver, setup.declaration)
+                    .isPresent());
+  }
+
+  public static LinkTestUtil.LinkTestSetup getDataLinkDeclaration() throws Throwable {
+    WrappedDataReferenceLinkTest test = new WrappedDataReferenceLinkTest();
+    MockitoAnnotations.initMocks(test);
+    test.setup();
+    return new LinkTestUtil.LinkTestSetup(test.declaration, test.resolver());
   }
 }
