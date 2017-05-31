@@ -5,7 +5,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadat
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

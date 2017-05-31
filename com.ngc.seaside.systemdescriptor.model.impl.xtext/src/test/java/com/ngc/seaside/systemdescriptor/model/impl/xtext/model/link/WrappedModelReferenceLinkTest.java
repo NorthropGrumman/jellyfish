@@ -1,13 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
