@@ -17,6 +17,9 @@ import java.util.Optional;
  */
 public class Traversals {
 
+  private Traversals() {
+  }
+
   /**
    * Performs a traversal of the given system descriptor.
    *
