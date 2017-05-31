@@ -22,6 +22,10 @@ import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,12 +39,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.json.JsonObject;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -114,6 +120,18 @@ public class WrappedSystemDescriptorIT {
       resourceOf("clocks/models/Speaker.sd");
       resourceOf("clocks/models/Alarm.sd");
       resourceOf("clocks/AlarmClock.sd");
+
+      // This is how you get the parsing result from an XText resource.  The result has the errors.
+      IParseResult result = ((XtextResource) timerResource).getParseResult();
+      assertFalse("should not have errors!",
+                  result.hasSyntaxErrors());
+      // You can also get validation errors with this:
+      IResourceValidator validator = ((XtextResource) timerResource)
+            .getResourceServiceProvider()
+            .getResourceValidator();
+      List<Issue> issues = validator.validate(timerResource, CheckMode.ALL, CancelIndicator.NullImpl);
+      assertTrue("should not have issues!",
+                 issues.isEmpty());
 
       Package p = (Package) timerResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
