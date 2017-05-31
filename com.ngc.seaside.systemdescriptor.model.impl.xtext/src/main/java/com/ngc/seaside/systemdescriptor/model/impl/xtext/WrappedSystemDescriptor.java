@@ -27,7 +27,9 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
 
   public WrappedSystemDescriptor(Package parsedPackage) {
     this.rootXtextObject = Preconditions.checkNotNull(parsedPackage, "parsedPackage may not be null!");
+    // Create a new resolver.
     resolver = newResolver();
+    // Register all packages that XText parsed.
     findAllPackages();
   }
 
@@ -94,11 +96,20 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
     return data;
   }
 
+  /**
+   * Factory method that creates a new {@link IWrapperResolver} implementation.  Extending classes or tests may override
+   * this method.
+   */
   protected IWrapperResolver newResolver() {
     return new WrapperResolver(this, rootXtextObject);
   }
 
+  /**
+   * Template method that obtains the resource set used to create the root object or {@code null} if there is no such
+   * set.  Extending classes or tests may override this method.
+   */
   protected ResourceSet doGetResourceSet(EObject object) {
+    // eResource can be null depending on how the XText parser was used/configured.
     Resource resource = object.eResource();
     return resource == null ? null : resource.getResourceSet();
   }
@@ -115,7 +126,7 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
         }
       }
     } else if (rootXtextObject instanceof Package) {
-      // If the resource set is null, just register the single package.
+      // If the resource set is null, just register the single package.  This means imports will not resolve.
       packages.add(new WrappedPackage(resolver, this, (Package) rootXtextObject));
     }
   }
