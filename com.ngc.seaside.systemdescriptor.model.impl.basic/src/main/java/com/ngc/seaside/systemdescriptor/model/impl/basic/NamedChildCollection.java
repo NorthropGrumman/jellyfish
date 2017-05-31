@@ -21,7 +21,7 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
   private Consumer<T> onChildRemoved;
 
   private NamedChildCollection(Map<String, T> children) {
-    this.children = children;
+    this.children = new LinkedHashMap<>(children);
   }
 
   public NamedChildCollection() {
