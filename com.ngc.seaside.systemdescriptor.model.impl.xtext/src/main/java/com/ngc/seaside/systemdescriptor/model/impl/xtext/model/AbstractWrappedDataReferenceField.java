@@ -11,7 +11,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 /**
- * Base class for types that bridge input or output field declarations to {@link IDataReferenceField}s.
+ * Base class for types that adapts input or output field declarations to {@link IDataReferenceField}s.
  *
  * This class is not threadsafe.
  *

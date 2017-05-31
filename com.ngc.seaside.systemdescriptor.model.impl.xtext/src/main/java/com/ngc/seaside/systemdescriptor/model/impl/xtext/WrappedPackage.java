@@ -24,6 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Adapts a {@link Package} to an {@link IPackage}.  Unlike the XText version of {@code Package}, this package may
+ * contain multiple data and model types declarations.  Thus there is a 1 ({@link IPackage}) to many ({@link Package})
+ * relationship between the two.
+ */
 public class WrappedPackage implements IPackage {
 
   private final Collection<Package> wrapped = new ArrayList<>();
@@ -34,6 +39,10 @@ public class WrappedPackage implements IPackage {
   private final String packageName;
   private final IWrapperResolver resolver;
 
+  /**
+   * Creates a new wrapper for the given package.  Use {@link #wrap(Package)} to add an additional package with the same
+   * name to wrap.
+   */
   public WrappedPackage(IWrapperResolver resolver, ISystemDescriptor descriptor, Package p) {
     this.resolver = Preconditions.checkNotNull(resolver, "resolver may not be null!");
     this.descriptor = Preconditions.checkNotNull(descriptor, "descriptor may not be null!");
@@ -63,6 +72,9 @@ public class WrappedPackage implements IPackage {
     return descriptor;
   }
 
+  /**
+   * Begins wrapping the given package.  The name of the package must be the same as this package.
+   */
   public WrappedPackage wrap(Package p) {
     Preconditions.checkNotNull(p, "p may not be null!");
     Preconditions.checkArgument(
@@ -111,6 +123,9 @@ public class WrappedPackage implements IPackage {
     return wrapped.toString();
   }
 
+  /**
+   * Creates a new collection of {@code Package}s that contain teh models and data in the given package.
+   */
   public static Collection<Package> toXTextPackages(IWrapperResolver resolver, IPackage p) {
     Preconditions.checkNotNull(p, "p may not be null!");
     Collection<Package> packages = new ArrayList<>(p.getData().size() + p.getModels().size());

@@ -8,6 +8,11 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+/**
+ * Adapts an {@link PartDeclaration} to an {@link IModelReferenceField}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenceField<PartDeclaration> {
 
   public WrappedPartModelReferenceField(IWrapperResolver resolver, PartDeclaration wrapped) {
@@ -27,6 +32,9 @@ public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenc
     return this;
   }
 
+  /**
+   * Creates a new {@code PartDeclaration} from the given field.
+   */
   public static PartDeclaration toXTextPartDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
     Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(field, "field may not be null!");

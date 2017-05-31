@@ -23,9 +23,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WrappedNamedChildCollectionTest extends AbstractWrappedXtextTest {
+public class WrappingNamedChildCollectionTest extends AbstractWrappedXtextTest {
 
-  private WrappedNamedChildCollection<DataFieldDeclaration, IData, IDataField> wrapped;
+  private WrappingNamedChildCollection<DataFieldDeclaration, IData, IDataField> wrapped;
 
   private Data parent;
 
@@ -33,10 +33,10 @@ public class WrappedNamedChildCollectionTest extends AbstractWrappedXtextTest {
   public void setup() throws Throwable {
     parent = factory().createData();
 
-    wrapped = new WrappedNamedChildCollection<>(parent.getFields(),
+    wrapped = new WrappingNamedChildCollection<>(parent.getFields(),
                                                 f -> new WrappedDataField(resolver(), f),
-                                                WrappedDataField::toXtext,
-                                                DataFieldDeclaration::getName);
+                                                 WrappedDataField::toXtext,
+                                                 DataFieldDeclaration::getName);
 
     DataFieldDeclaration field = factory().createDataFieldDeclaration();
     field.setName("field1");

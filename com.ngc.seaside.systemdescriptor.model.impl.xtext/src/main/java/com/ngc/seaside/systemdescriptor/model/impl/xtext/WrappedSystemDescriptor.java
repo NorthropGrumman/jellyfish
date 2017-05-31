@@ -18,10 +18,14 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import java.util.Optional;
 
+/**
+ * An implementation of {@code ISystemDescriptor} that wraps one or more {@link Package}s as parsed by XText.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedSystemDescriptor implements ISystemDescriptor {
 
   private final INamedChildCollection<ISystemDescriptor, IPackage> packages = new NamedChildCollection<>();
-
   private final IWrapperResolver resolver;
   private final EObject rootXtextObject;
 

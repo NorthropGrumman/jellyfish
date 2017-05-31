@@ -10,7 +10,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 /**
- * Base class for types that bridge requirements or part field declarations to {@link IModelReferenceField}s.
+ * Base class for types that adapts requirements or part field declarations to {@link IModelReferenceField}s.
  *
  * This class is not threadsafe.
  *

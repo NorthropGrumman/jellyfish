@@ -12,6 +12,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+/**
+ * Adapts an {@link OutputDeclaration} to an {@link IDataReferenceField}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedOutputDataReferenceField extends AbstractWrappedDataReferenceField<OutputDeclaration> {
 
   public WrappedOutputDataReferenceField(IWrapperResolver resolver, OutputDeclaration wrapped) {
@@ -50,6 +55,9 @@ public class WrappedOutputDataReferenceField extends AbstractWrappedDataReferenc
     return this;
   }
 
+  /**
+   * Creates a new {@code OutputDeclaration} from the given field.
+   */
   public static OutputDeclaration toXTextOutputDeclaration(IWrapperResolver resolver, IDataReferenceField field) {
     Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(field, "field may not be null!");

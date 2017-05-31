@@ -16,12 +16,24 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 import java.util.Optional;
 
+/**
+ * Adapts a {@link LinkDeclaration} to an {@link IModelLink} that links together data elements.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
     implements IModelLink<IDataReferenceField> {
 
   private IDataReferenceField source;
   private IDataReferenceField target;
 
+  /**
+   * Creates a new wrapper for the given link declaration.  If the link declaration does not wrap data an {@code
+   * IllegalArgumentException} is thrown.  Use {@link #tryToWrap(IWrapperResolver, LinkDeclaration)} as an alternative
+   * to avoid the exception and determine if the declaration really does link data.
+   *
+   * @see #tryToWrap(IWrapperResolver, LinkDeclaration)
+   */
   public WrappedDataReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
     super(resolver, wrapped);
     source = getReferenceTo(wrapped.getSource());
@@ -55,6 +67,10 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
     return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
   }
 
+  /**
+   * Tries to create an {@code IModelLink} that links data.  If the given link declaration does not link data the
+   * returned {@code Optional} is empty.
+   */
   public static Optional<IModelLink<IDataReferenceField>> tryToWrap(IWrapperResolver resolver,
                                                                     LinkDeclaration wrapper) {
     Optional<IModelLink<IDataReferenceField>> result = Optional.empty();

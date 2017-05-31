@@ -20,7 +20,7 @@ import java.util.function.Function;
  * @param <P> the parent of the {@code INamedChild}
  * @param <T> the type that the elements in the wrapped list are being bridged to
  */
-public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedChild<P>>
+public class WrappingNamedChildCollection<X extends EObject, P, T extends INamedChild<P>>
     extends AutoWrappingCollection<X, T>
     implements INamedChildCollection<P, T> {
 
@@ -39,10 +39,10 @@ public class WrappedNamedChildCollection<X extends EObject, P, T extends INamedC
    * @param namingFunction    the function that is used to obtain the name of the elements contained in the wrapped
    *                          list
    */
-  public WrappedNamedChildCollection(EList<X> wrapped,
-                                     Function<X, T> wrapperFunction,
-                                     Function<T, X> unwrapperFunction,
-                                     Function<X, String> namingFunction) {
+  public WrappingNamedChildCollection(EList<X> wrapped,
+                                      Function<X, T> wrapperFunction,
+                                      Function<T, X> unwrapperFunction,
+                                      Function<X, String> namingFunction) {
     super(wrapped, wrapperFunction, unwrapperFunction);
     this.namingFunction = Preconditions.checkNotNull(namingFunction, "namingFunction may not be null!");
   }

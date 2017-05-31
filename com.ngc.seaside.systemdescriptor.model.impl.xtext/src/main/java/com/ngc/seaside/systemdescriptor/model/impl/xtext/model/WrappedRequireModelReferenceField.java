@@ -8,6 +8,11 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+/**
+ * Adapts an {@link RequireDeclaration} to an {@link IModelReferenceField}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedRequireModelReferenceField extends AbstractWrappedModelReferenceField<RequireDeclaration> {
 
   public WrappedRequireModelReferenceField(IWrapperResolver resolver, RequireDeclaration wrapped) {
@@ -27,6 +32,9 @@ public class WrappedRequireModelReferenceField extends AbstractWrappedModelRefer
     return this;
   }
 
+  /**
+   * Creates a new {@code RequireDeclaration} from the given field.
+   */
   public static RequireDeclaration toXTextRequireDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
     Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(field, "field may not be null!");

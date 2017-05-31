@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+/**
+ * Simple implementation of {@code IWrapperResolver}.  It largley delegates to the containing {@code ISystemDescriptor}
+ * to find wrappers.  It traverses the resource set of the root XText object as returned by XText find XText data.
+ */
 public class WrapperResolver implements IWrapperResolver {
 
   private final ISystemDescriptor systemDescriptor;
@@ -88,6 +92,9 @@ public class WrapperResolver implements IWrapperResolver {
     return Optional.empty();
   }
 
+  /**
+   * Finds the XTest packages with the given name.  There may be more than one package with the given name.
+   */
   private Collection<Package> findXTextPackages(String name) {
     Collection<Package> packages = new ArrayList<>();
 

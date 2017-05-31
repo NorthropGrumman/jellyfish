@@ -12,6 +12,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+/**
+ * Adapts an {@link InputDeclaration} to an {@link IDataReferenceField}.
+ *
+ * This class is not threadsafe.
+ */
 public class WrappedInputDataReferenceField extends AbstractWrappedDataReferenceField<InputDeclaration> {
 
   public WrappedInputDataReferenceField(IWrapperResolver resolver, InputDeclaration wrapped) {
@@ -50,6 +55,9 @@ public class WrappedInputDataReferenceField extends AbstractWrappedDataReference
     return this;
   }
 
+  /**
+   * Creates a new {@code InputDeclaration} from the given field.
+   */
   public static InputDeclaration toXTextInputDeclaration(IWrapperResolver resolver, IDataReferenceField field) {
     Preconditions.checkNotNull(resolver, "resolver may not be null!");
     Preconditions.checkNotNull(field, "field may not be null!");

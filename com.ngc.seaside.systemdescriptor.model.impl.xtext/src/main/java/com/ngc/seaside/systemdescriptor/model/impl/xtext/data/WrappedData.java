@@ -8,7 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -23,16 +23,16 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  */
 public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
 
-  private final WrappedNamedChildCollection<DataFieldDeclaration, IData, IDataField> fields;
+  private final WrappingNamedChildCollection<DataFieldDeclaration, IData, IDataField> fields;
   private IMetadata metadata;
 
   public WrappedData(IWrapperResolver resolver, Data wrapped) {
     super(resolver, wrapped);
     this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
-    this.fields = new WrappedNamedChildCollection<>(wrapped.getFields(),
+    this.fields = new WrappingNamedChildCollection<>(wrapped.getFields(),
                                                     f -> new WrappedDataField(resolver, f),
-                                                    WrappedDataField::toXtext,
-                                                    DataFieldDeclaration::getName);
+                                                     WrappedDataField::toXtext,
+                                                     DataFieldDeclaration::getName);
   }
 
   @Override

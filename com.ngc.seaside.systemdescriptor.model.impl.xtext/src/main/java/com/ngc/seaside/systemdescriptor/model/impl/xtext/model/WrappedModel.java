@@ -13,8 +13,8 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingAutoWrappingCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappedNamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappedNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappingNamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
@@ -43,11 +43,11 @@ import java.util.Optional;
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
 
   private IMetadata metadata;
-  private WrappedNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
-  private WrappedNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
-  private WrappedNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
-  private WrappedNamedChildCollection<PartDeclaration, IModel, IModelReferenceField> parts;
-  private WrappedNamedChildCollection<Scenario, IModel, IScenario> scenarios;
+  private WrappingNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
+  private WrappingNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
+  private WrappingNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
+  private WrappingNamedChildCollection<PartDeclaration, IModel, IModelReferenceField> parts;
+  private WrappingNamedChildCollection<Scenario, IModel, IScenario> scenarios;
   private Collection<IModelLink<?>> links;
 
   public WrappedModel(IWrapperResolver resolver, Model wrapped) {
@@ -167,7 +167,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   private void initInputs() {
     if (wrapped.getInput() == null) {
-      inputs = new SelfInitializingWrappedNamedChildCollection<>(
+      inputs = new SelfInitializingWrappingNamedChildCollection<>(
           d -> new WrappedInputDataReferenceField(resolver, d),
           d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
           FieldDeclaration::getName,
@@ -177,7 +177,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
           });
     } else {
       // Otherwise, just wrap the steps that are in the existing declaration.
-      inputs = new WrappedNamedChildCollection<>(
+      inputs = new WrappingNamedChildCollection<>(
           wrapped.getInput().getDeclarations(),
           d -> new WrappedInputDataReferenceField(resolver, d),
           d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
@@ -187,7 +187,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   private void initOutputs() {
     if (wrapped.getOutput() == null) {
-      outputs = new SelfInitializingWrappedNamedChildCollection<>(
+      outputs = new SelfInitializingWrappingNamedChildCollection<>(
           d -> new WrappedOutputDataReferenceField(resolver, d),
           d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
           FieldDeclaration::getName,
@@ -196,7 +196,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
             return wrapped.getOutput().getDeclarations();
           });
     } else {
-      outputs = new WrappedNamedChildCollection<>(
+      outputs = new WrappingNamedChildCollection<>(
           wrapped.getOutput().getDeclarations(),
           d -> new WrappedOutputDataReferenceField(resolver, d),
           d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
@@ -206,7 +206,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   private void initParts() {
     if (wrapped.getParts() == null) {
-      parts = new SelfInitializingWrappedNamedChildCollection<>(
+      parts = new SelfInitializingWrappingNamedChildCollection<>(
           d -> new WrappedPartModelReferenceField(resolver, d),
           d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
           FieldDeclaration::getName,
@@ -215,7 +215,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
             return wrapped.getParts().getDeclarations();
           });
     } else {
-      parts = new WrappedNamedChildCollection<>(
+      parts = new WrappingNamedChildCollection<>(
           wrapped.getParts().getDeclarations(),
           d -> new WrappedPartModelReferenceField(resolver, d),
           d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
@@ -225,7 +225,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
   private void initRequires() {
     if (wrapped.getRequires() == null) {
-      requires = new SelfInitializingWrappedNamedChildCollection<>(
+      requires = new SelfInitializingWrappingNamedChildCollection<>(
           d -> new WrappedRequireModelReferenceField(resolver, d),
           d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
           FieldDeclaration::getName,
@@ -234,7 +234,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
             return wrapped.getRequires().getDeclarations();
           });
     } else {
-      requires = new WrappedNamedChildCollection<>(
+      requires = new WrappingNamedChildCollection<>(
           wrapped.getRequires().getDeclarations(),
           d -> new WrappedRequireModelReferenceField(resolver, d),
           d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
@@ -243,7 +243,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
   }
 
   private void initScenarios() {
-    scenarios = new WrappedNamedChildCollection<>(
+    scenarios = new WrappingNamedChildCollection<>(
         wrapped.getScenarios(),
         s -> new WrappedScenario(resolver, s),
         WrappedScenario::toXtextScenario,
