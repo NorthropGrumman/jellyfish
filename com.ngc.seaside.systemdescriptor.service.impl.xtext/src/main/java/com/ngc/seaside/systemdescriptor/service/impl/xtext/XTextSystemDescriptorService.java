@@ -7,9 +7,11 @@ import com.google.inject.Injector;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.parser.IParser;
@@ -67,9 +69,19 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
          // set (in order to ensure imports are resolved).
          Iterator<XtextResource> i = resources.iterator();
          XtextResource resource = i.next();
+         // Get the validator.
          IResourceValidator validator = resource.getResourceServiceProvider().getResourceValidator();
+         // If the parsing was success, create a wrapped system descriptor from the first object.  The wrapper will
+         // find all the packages that were parsed.
+         if (!resource.getContents().isEmpty()) {
+            // A single file contains at most one package.
+            Package p = (Package) resource.getContents().get(0);
+            result.setSystemDescriptor(new WrappedSystemDescriptor(p));
+         }
+         // Aggregate the remaining issues.
          do {
             result.addIssues(validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl));
+            resource = i.hasNext() ? i.next() : null;
          } while (i.hasNext());
       } catch (IOException e) {
          throw new ParsingException(e.getMessage(), e);
