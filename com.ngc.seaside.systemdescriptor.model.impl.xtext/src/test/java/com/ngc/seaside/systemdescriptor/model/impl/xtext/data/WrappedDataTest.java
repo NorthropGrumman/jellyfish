@@ -21,66 +21,66 @@ import static org.mockito.Mockito.when;
 
 public class WrappedDataTest extends AbstractWrappedXtextTest {
 
-  private WrappedData wrappedData;
+   private WrappedData wrappedData;
 
-  private Data data;
+   private Data data;
 
-  @Mock
-  private IPackage parent;
+   @Mock
+   private IPackage parent;
 
-  @Before
-  public void setup() throws Throwable {
-    data = factory().createData();
-    data.setName("Foo");
+   @Before
+   public void setup() throws Throwable {
+      data = factory().createData();
+      data.setName("Foo");
 
-    DataFieldDeclaration field = factory().createDataFieldDeclaration();
-    field.setName("field1");
-    field.setType(DataType.STRING);
-    data.getFields().add(field);
+      DataFieldDeclaration field = factory().createDataFieldDeclaration();
+      field.setName("field1");
+      field.setType(DataType.STRING);
+      data.getFields().add(field);
 
-    Package p = factory().createPackage();
-    p.setName("my.package");
-    p.setElement(data);
-    when(resolver().getWrapperFor(p)).thenReturn(parent);
-  }
+      Package p = factory().createPackage();
+      p.setName("my.package");
+      p.setElement(data);
+      when(resolver().getWrapperFor(p)).thenReturn(parent);
+   }
 
-  @Test
-  public void testDoesWrapXtextObject() throws Throwable {
-    wrappedData = new WrappedData(resolver(), data);
-    assertEquals("name not correct!",
-                 wrappedData.getName(),
-                 data.getName());
-    assertEquals("fully qualified name not correct!",
-                 "my.package.Foo",
-                 wrappedData.getFullyQualifiedName());
-    assertEquals("parent not correct!",
-                 parent,
-                 wrappedData.getParent());
-    assertEquals("metadata not set!",
-                 IMetadata.EMPTY_METADATA,
-                 wrappedData.getMetadata());
+   @Test
+   public void testDoesWrapXtextObject() throws Throwable {
+      wrappedData = new WrappedData(resolver(), data);
+      assertEquals("name not correct!",
+                   wrappedData.getName(),
+                   data.getName());
+      assertEquals("fully qualified name not correct!",
+                   "my.package.Foo",
+                   wrappedData.getFullyQualifiedName());
+      assertEquals("parent not correct!",
+                   parent,
+                   wrappedData.getParent());
+      assertEquals("metadata not set!",
+                   IMetadata.EMPTY_METADATA,
+                   wrappedData.getMetadata());
 
-    String fieldName = data.getFields().get(0).getName();
-    assertEquals("did not get fields!",
-                 fieldName,
-                 wrappedData.getFields().getByName(fieldName).get().getName());
-  }
+      String fieldName = data.getFields().get(0).getName();
+      assertEquals("did not get fields!",
+                   fieldName,
+                   wrappedData.getFields().getByName(fieldName).get().getName());
+   }
 
-  @Test
-  public void testDoesUpdateXtextObject() throws Throwable {
-    IDataField newField = mock(IDataField.class);
-    when(newField.getName()).thenReturn("newField");
-    when(newField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
-    when(newField.getType()).thenReturn(DataTypes.INT);
+   @Test
+   public void testDoesUpdateXtextObject() throws Throwable {
+      IDataField newField = mock(IDataField.class);
+      when(newField.getName()).thenReturn("newField");
+      when(newField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(newField.getType()).thenReturn(DataTypes.INT);
 
-    wrappedData = new WrappedData(resolver(), data);
-    wrappedData.getFields().add(newField);
-    assertEquals("newField name not correct!",
-                 newField.getName(),
-                 data.getFields().get(1).getName());
+      wrappedData = new WrappedData(resolver(), data);
+      wrappedData.getFields().add(newField);
+      assertEquals("newField name not correct!",
+                   newField.getName(),
+                   data.getFields().get(1).getName());
 
-    wrappedData.setMetadata(newMetadata("foo", "bar"));
-    assertNotNull("metadata not set!",
-                  data.getMetadata());
-  }
+      wrappedData.setMetadata(newMetadata("foo", "bar"));
+      assertNotNull("metadata not set!",
+                    data.getMetadata());
+   }
 }

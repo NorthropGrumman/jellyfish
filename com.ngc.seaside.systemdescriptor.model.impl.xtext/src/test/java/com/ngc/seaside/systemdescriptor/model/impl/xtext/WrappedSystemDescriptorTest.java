@@ -24,108 +24,108 @@ import static org.mockito.Mockito.when;
 
 public class WrappedSystemDescriptorTest extends AbstractWrappedXtextTest {
 
-  private WrappedSystemDescriptor wrapped;
+   private WrappedSystemDescriptor wrapped;
 
-  private Package xtextPackage1;
+   private Package xtextPackage1;
 
-  private Package xtextPackage2;
+   private Package xtextPackage2;
 
-  @Mock
-  private ResourceSet resourceSet;
+   @Mock
+   private ResourceSet resourceSet;
 
-  @Before
-  public void setup() throws Throwable {
-    Data data = factory().createData();
-    data.setName("MyData");
+   @Before
+   public void setup() throws Throwable {
+      Data data = factory().createData();
+      data.setName("MyData");
 
-    Model model = factory().createModel();
-    model.setName("MyModel");
+      Model model = factory().createModel();
+      model.setName("MyModel");
 
-    xtextPackage1 = factory().createPackage();
-    xtextPackage2 = factory().createPackage();
-    xtextPackage1.setName("hello.world");
-    xtextPackage2.setName("hello.world.again");
-    xtextPackage1.setElement(data);
-    xtextPackage2.setElement(model);
+      xtextPackage1 = factory().createPackage();
+      xtextPackage2 = factory().createPackage();
+      xtextPackage1.setName("hello.world");
+      xtextPackage2.setName("hello.world.again");
+      xtextPackage1.setElement(data);
+      xtextPackage2.setElement(model);
 
-    Resource resource1 = mock(Resource.class);
-    Resource resource2 = mock(Resource.class);
+      Resource resource1 = mock(Resource.class);
+      Resource resource2 = mock(Resource.class);
 
-    when(resourceSet.getResources()).thenReturn(ECollections.asEList(resource1, resource2));
-    when(resource1.getContents()).thenReturn(ECollections.asEList(xtextPackage1));
-    when(resource2.getContents()).thenReturn(ECollections.asEList(xtextPackage2));
+      when(resourceSet.getResources()).thenReturn(ECollections.asEList(resource1, resource2));
+      when(resource1.getContents()).thenReturn(ECollections.asEList(xtextPackage1));
+      when(resource2.getContents()).thenReturn(ECollections.asEList(xtextPackage2));
 
-    wrapped = new WrappedSystemDescriptor(xtextPackage1) {
-      @Override
-      protected ResourceSet doGetResourceSet(EObject object) {
-        return resourceSet;
+      wrapped = new WrappedSystemDescriptor(xtextPackage1) {
+         @Override
+         protected ResourceSet doGetResourceSet(EObject object) {
+            return resourceSet;
+         }
+      };
+   }
+
+   @Test
+   public void testDoesWrapAllPackages() throws Throwable {
+      assertTrue("did not wrap package!",
+                 wrapped.getPackages().getByName(xtextPackage1.getName()).isPresent());
+      assertTrue("did not wrap package!",
+                 wrapped.getPackages().getByName(xtextPackage2.getName()).isPresent());
+   }
+
+   @Test
+   public void testDoesFindData() throws Throwable {
+      Optional<IData> data = wrapped.findData(xtextPackage1.getName(), "MyData");
+      assertTrue("did not find data with package and name!",
+                 data.isPresent());
+
+      data = wrapped.findData(xtextPackage1.getName(), "MyMissingData");
+      assertFalse("data should not be found!",
+                  data.isPresent());
+
+      data = wrapped.findData(xtextPackage1.getName() + ".MyData");
+      assertTrue("did not find data with fully qualified name!",
+                 data.isPresent());
+
+      try {
+         wrapped.findData(".MyData");
+         fail("did not detect illegal fully qualified name!");
+      } catch (IllegalArgumentException e) {
+         // Expected.
       }
-    };
-  }
 
-  @Test
-  public void testDoesWrapAllPackages() throws Throwable {
-    assertTrue("did not wrap package!",
-               wrapped.getPackages().getByName(xtextPackage1.getName()).isPresent());
-    assertTrue("did not wrap package!",
-               wrapped.getPackages().getByName(xtextPackage2.getName()).isPresent());
-  }
+      try {
+         wrapped.findData("MyData");
+         fail("did not detect illegal fully qualified name!");
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
+   }
 
-  @Test
-  public void testDoesFindData() throws Throwable {
-    Optional<IData> data = wrapped.findData(xtextPackage1.getName(), "MyData");
-    assertTrue("did not find data with package and name!",
-               data.isPresent());
+   @Test
+   public void testDoesFindModel() throws Throwable {
+      Optional<IModel> model = wrapped.findModel(xtextPackage2.getName(), "MyModel");
+      assertTrue("did not find model with package and name!",
+                 model.isPresent());
 
-    data = wrapped.findData(xtextPackage1.getName(), "MyMissingData");
-    assertFalse("data should not be found!",
-                data.isPresent());
+      model = wrapped.findModel(xtextPackage2.getName(), "MyMissingData");
+      assertFalse("model should not be found!",
+                  model.isPresent());
 
-    data = wrapped.findData(xtextPackage1.getName() + ".MyData");
-    assertTrue("did not find data with fully qualified name!",
-               data.isPresent());
+      model = wrapped.findModel(xtextPackage2.getName() + ".MyModel");
+      assertTrue("did not find model with fully qualified name!",
+                 model.isPresent());
 
-    try {
-      wrapped.findData(".MyData");
-      fail("did not detect illegal fully qualified name!");
-    } catch (IllegalArgumentException e) {
-      // Expected.
-    }
+      try {
+         wrapped.findModel(".MyModel");
+         fail("did not detect illegal fully qualified name!");
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
 
-    try {
-      wrapped.findData("MyData");
-      fail("did not detect illegal fully qualified name!");
-    } catch (IllegalArgumentException e) {
-      // Expected.
-    }
-  }
-
-  @Test
-  public void testDoesFindModel() throws Throwable {
-    Optional<IModel> model = wrapped.findModel(xtextPackage2.getName(), "MyModel");
-    assertTrue("did not find model with package and name!",
-               model.isPresent());
-
-    model = wrapped.findModel(xtextPackage2.getName(), "MyMissingData");
-    assertFalse("model should not be found!",
-                model.isPresent());
-
-    model = wrapped.findModel(xtextPackage2.getName() + ".MyModel");
-    assertTrue("did not find model with fully qualified name!",
-               model.isPresent());
-
-    try {
-      wrapped.findModel(".MyModel");
-      fail("did not detect illegal fully qualified name!");
-    } catch (IllegalArgumentException e) {
-      // Expected.
-    }
-
-    try {
-      wrapped.findModel("MyModel");
-      fail("did not detect illegal fully qualified name!");
-    } catch (IllegalArgumentException e) {
-      // Expected.
-    }
-  }
+      try {
+         wrapped.findModel("MyModel");
+         fail("did not detect illegal fully qualified name!");
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
+   }
 }

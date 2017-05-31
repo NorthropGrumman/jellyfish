@@ -5,17 +5,18 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 
 public class LinkTestUtil {
 
-  private LinkTestUtil() {
-  }
+   private LinkTestUtil() {
+   }
 
-  public static class LinkTestSetup {
-    public final LinkDeclaration declaration;
-    public final IWrapperResolver resolver;
+   public static class LinkTestSetup {
 
-    public LinkTestSetup(LinkDeclaration declaration,
-                         IWrapperResolver resolver) {
-      this.declaration = declaration;
-      this.resolver = resolver;
-    }
-  }
+      public final LinkDeclaration declaration;
+      public final IWrapperResolver resolver;
+
+      public LinkTestSetup(LinkDeclaration declaration,
+                           IWrapperResolver resolver) {
+         this.declaration = declaration;
+         this.resolver = resolver;
+      }
+   }
 }

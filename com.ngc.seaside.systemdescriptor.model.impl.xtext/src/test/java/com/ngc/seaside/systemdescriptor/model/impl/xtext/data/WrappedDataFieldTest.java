@@ -21,69 +21,69 @@ import static org.mockito.Mockito.when;
 
 public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
 
-  private WrappedDataField wrapped;
+   private WrappedDataField wrapped;
 
-  private DataFieldDeclaration dataFieldDeclaration;
+   private DataFieldDeclaration dataFieldDeclaration;
 
-  @Mock
-  private IData parent;
+   @Mock
+   private IData parent;
 
-  @Before
-  public void setup() throws Throwable {
-    dataFieldDeclaration = factory().createDataFieldDeclaration();
-    dataFieldDeclaration.setName("foo");
-    dataFieldDeclaration.setType(DataType.INT);
+   @Before
+   public void setup() throws Throwable {
+      dataFieldDeclaration = factory().createDataFieldDeclaration();
+      dataFieldDeclaration.setName("foo");
+      dataFieldDeclaration.setType(DataType.INT);
 
-    Data data = factory().createData();
-    data.getFields().add(dataFieldDeclaration);
-    when(resolver().getWrapperFor(data)).thenReturn(parent);
-  }
+      Data data = factory().createData();
+      data.getFields().add(dataFieldDeclaration);
+      when(resolver().getWrapperFor(data)).thenReturn(parent);
+   }
 
-  @Test
-  public void testDoesWrapXtextObject() throws Throwable {
-    wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
-    assertEquals("name incorrect!",
-                 dataFieldDeclaration.getName(),
-                 wrapped.getName());
-    assertEquals("type incorrect!",
-                 DataTypes.INT,
-                 wrapped.getType());
-    assertEquals("parent incorrect!",
-                 parent,
-                 wrapped.getParent());
-    assertEquals("metadata not set!",
-                 IMetadata.EMPTY_METADATA,
-                 wrapped.getMetadata());
-  }
+   @Test
+   public void testDoesWrapXtextObject() throws Throwable {
+      wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
+      assertEquals("name incorrect!",
+                   dataFieldDeclaration.getName(),
+                   wrapped.getName());
+      assertEquals("type incorrect!",
+                   DataTypes.INT,
+                   wrapped.getType());
+      assertEquals("parent incorrect!",
+                   parent,
+                   wrapped.getParent());
+      assertEquals("metadata not set!",
+                   IMetadata.EMPTY_METADATA,
+                   wrapped.getMetadata());
+   }
 
-  @Test
-  public void testDoesUpdateXtextObject() throws Throwable {
-    wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
-    wrapped.setType(DataTypes.STRING);
-    assertEquals("type incorrect!",
-                 DataType.STRING,
-                 dataFieldDeclaration.getType());
+   @Test
+   public void testDoesUpdateXtextObject() throws Throwable {
+      wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
+      wrapped.setType(DataTypes.STRING);
+      assertEquals("type incorrect!",
+                   DataType.STRING,
+                   dataFieldDeclaration.getType());
 
-    wrapped.setMetadata(newMetadata("foo", "bar"));
-    assertNotNull("metadata not set!",
-                  dataFieldDeclaration.getMetadata());
-  }
+      wrapped.setMetadata(newMetadata("foo", "bar"));
+      assertNotNull("metadata not set!",
+                    dataFieldDeclaration.getMetadata());
+   }
 
-  @Test
-  public void testDoesConvertToXtextObject() throws Throwable {
-    IDataField field = mock(IDataField.class);
-    when(field.getName()).thenReturn("hello");
-    when(field.getType()).thenReturn(DataTypes.STRING);
-    when(field.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+   @Test
+   public void testDoesConvertToXtextObject() throws Throwable {
+      IDataField field = mock(IDataField.class);
+      when(field.getName()).thenReturn("hello");
+      when(field.getType()).thenReturn(DataTypes.STRING);
+      when(field.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
-    DataFieldDeclaration x = WrappedDataField.toXtext(field);
-    assertEquals("name not correct!",
-                 field.getName(),
-                 x.getName());
-    assertEquals("type not correct!",
-                 DataType.STRING,
-                 x.getType());
-    assertNull("metadata not correct!",
-               x.getMetadata());
-  }
+      DataFieldDeclaration x = WrappedDataField.toXtext(field);
+      assertEquals("name not correct!",
+                   field.getName(),
+                   x.getName());
+      assertEquals("type not correct!",
+                   DataType.STRING,
+                   x.getType());
+      assertNull("metadata not correct!",
+                 x.getMetadata());
+   }
 }

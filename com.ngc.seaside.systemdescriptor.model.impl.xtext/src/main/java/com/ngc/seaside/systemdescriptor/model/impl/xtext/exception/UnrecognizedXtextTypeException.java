@@ -6,14 +6,14 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.exception;
  */
 public class UnrecognizedXtextTypeException extends RuntimeException {
 
-  private final Object xtextType;
+   private final Object xtextType;
 
-  public UnrecognizedXtextTypeException(Object xtextType) {
-    super(String.format("unrecognized XText type: %s", xtextType.getClass().getName()));
-    this.xtextType = xtextType;
-  }
+   public UnrecognizedXtextTypeException(Object xtextType) {
+      super(String.format("unrecognized XText type: %s", xtextType.getClass().getName()));
+      this.xtextType = xtextType;
+   }
 
-  public Object getXtextType() {
-    return xtextType;
-  }
+   public Object getXtextType() {
+      return xtextType;
+   }
 }

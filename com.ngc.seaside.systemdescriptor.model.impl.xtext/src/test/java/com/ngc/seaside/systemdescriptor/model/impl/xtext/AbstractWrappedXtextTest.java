@@ -15,26 +15,26 @@ import javax.json.Json;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractWrappedXtextTest {
 
-  @Mock
-  private IWrapperResolver resolver;
+   @Mock
+   private IWrapperResolver resolver;
 
-  private static SystemDescriptorFactory factory;
+   private static SystemDescriptorFactory factory;
 
-  @BeforeClass
-  public static void setupClass() throws Exception {
-    factory = SystemDescriptorFactory.eINSTANCE;
-  }
+   @BeforeClass
+   public static void setupClass() throws Exception {
+      factory = SystemDescriptorFactory.eINSTANCE;
+   }
 
-  protected IWrapperResolver resolver() {
-    return resolver;
-  }
+   protected IWrapperResolver resolver() {
+      return resolver;
+   }
 
-  public static SystemDescriptorFactory factory() {
-    return factory;
-  }
+   public static SystemDescriptorFactory factory() {
+      return factory;
+   }
 
-  public static IMetadata newMetadata(String key, String value) {
-    return new WrappedMetadata()
-        .setJson(Json.createObjectBuilder().add(key, value).build());
-  }
+   public static IMetadata newMetadata(String key, String value) {
+      return new WrappedMetadata()
+            .setJson(Json.createObjectBuilder().add(key, value).build());
+   }
 }
