@@ -69,10 +69,10 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
   public boolean add(T t) {
     Preconditions.checkNotNull(t, "t may not be null!");
     T previousChild = children.put(t.getName(), t);
-    postChildAdded(t);
     if (previousChild != null) {
       postChildRemoved(previousChild);
     }
+    postChildAdded(t);
     return true;
   }
 
