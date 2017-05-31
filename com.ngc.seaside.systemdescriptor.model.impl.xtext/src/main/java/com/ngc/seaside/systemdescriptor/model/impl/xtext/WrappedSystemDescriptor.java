@@ -125,7 +125,16 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
         for (EObject o : r.getContents()) {
           if (o instanceof Package) {
             Package p = (Package) o;
-            packages.add(new WrappedPackage(resolver, this, p));
+            // Have we already wrapped a package with the same name?  If so, don't create a new wrapper, but reuse the
+            // old one.
+            Optional<IPackage> wrapper = packages.getByName(p.getName());
+            if (wrapper.isPresent()) {
+              // This cast is safe because, as this point, only WrappedPackages are contained in the collection.
+              ((WrappedPackage) wrapper.get()).wrap(p);
+            } else {
+              // Otherwise, create a new wrapper for the package.
+              packages.add(new WrappedPackage(resolver, this, p));
+            }
           }
         }
       }
