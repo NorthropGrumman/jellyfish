@@ -4,9 +4,13 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 
 import org.eclipse.xtext.validation.Issue;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * An implementation of {@code  IParsingIssue} that wraps an XText {@link Issue}.
+ */
 public class XTextParsingIssue implements IParsingIssue {
 
    private final Issue wrapped;
@@ -58,17 +62,24 @@ public class XTextParsingIssue implements IParsingIssue {
    }
 
    @Override
-   public BufferedReader getOffendingResouce() {
-      throw new UnsupportedOperationException("not implemented");
+   public Path getOffendingFile() {
+      return new File(wrapped.getUriToProblem().toFileString()).toPath();
    }
 
    @Override
    public String toString() {
-      return String.format("%s: %s [l%s, c%s] - %s",
+      return String.format("%s: %s [line %s, col %s] - %s",
                            getSeverity(),
                            null,
-                           getLength(),
+                           getLineNumber(),
                            getColumn(),
                            getMessage());
+   }
+
+   /**
+    * Gets the original wrapped issue.
+    */
+   public Issue unwrap() {
+      return wrapped;
    }
 }

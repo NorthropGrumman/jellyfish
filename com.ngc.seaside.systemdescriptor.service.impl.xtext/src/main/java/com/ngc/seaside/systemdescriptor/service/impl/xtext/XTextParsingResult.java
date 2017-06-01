@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Simple implementation of {@code IParsingResult}.
+ */
 public class XTextParsingResult implements IParsingResult {
 
    private final Collection<IParsingIssue> issues;
@@ -37,6 +40,9 @@ public class XTextParsingResult implements IParsingResult {
       return unmodifiableIssues;
    }
 
+   /**
+    * Adds issues to this return.
+    */
    XTextParsingResult addIssues(Collection<Issue> xtextIssues) {
       for (Issue i : xtextIssues) {
          issues.add(new XTextParsingIssue(i));
@@ -44,6 +50,9 @@ public class XTextParsingResult implements IParsingResult {
       return this;
    }
 
+   /**
+    * Sets the system descriptor for this result.
+    */
    XTextParsingResult setSystemDescriptor(ISystemDescriptor systemDescriptor) {
       this.systemDescriptor = systemDescriptor;
       return this;
