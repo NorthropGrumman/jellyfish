@@ -166,7 +166,7 @@ public class Traversals {
 
       @Override
       public void visitScenario(IVisitorContext ctx, IScenario scenario) {
-         stream.format("          + %s [(scenario) %d total steps]%n",
+         stream.format("        - %s [(scenario) %d total steps]%n",
                        scenario.getName(),
                        scenario.getGivens().size() + scenario.getWhens().size() + scenario.getThens().size());
       }
