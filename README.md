@@ -39,6 +39,8 @@ IParsingResult result = service.parseProject(Paths.get("my", "project"));
 
 Note the porject must use the `src/main/sd` project structure layout if using the second option.
 
+See the test `XTextSystemDescriptorServiceIT.java` in the service implementation project for more information.
+
 # com.ngc.seaside.systemdescriptor.model.impl.xtext
 This project contains an implementation of the
 [model API](https://github.ms.northgrum.com/CEACIDE/jellyfish-systemdescriptor-api) that uses the
