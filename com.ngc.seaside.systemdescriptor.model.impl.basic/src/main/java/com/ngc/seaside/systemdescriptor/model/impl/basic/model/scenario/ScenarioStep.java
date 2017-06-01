@@ -1,11 +1,8 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario;
 
-import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
