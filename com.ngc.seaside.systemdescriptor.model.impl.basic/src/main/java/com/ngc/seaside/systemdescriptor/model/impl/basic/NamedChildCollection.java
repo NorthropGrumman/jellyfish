@@ -14,6 +14,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Implements the INamedChildCollection interface.
+ * @author thooper
+ *
+ * @param <P>  Parent class of the child
+ * @param <T>  INamedChild class type
+ */
 public class NamedChildCollection<P, T extends INamedChild<P>> implements INamedChildCollection<P, T> {
 
   private final Map<String, T> children;

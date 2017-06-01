@@ -10,6 +10,11 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import java.util.Objects;
 
+/**
+ * Implements an IDataField.
+ * @author psnell
+ *
+ */
 public class DataField implements IDataField {
 
   protected final String name;
