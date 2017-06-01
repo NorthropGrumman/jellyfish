@@ -32,33 +32,8 @@ public class Package implements IPackage {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       this.name = name;
-      this.data = new NamedChildCollection<IPackage, IData>()
-          .setOnChildAdded(data -> {
-            if (data instanceof Data) {
-              Data casted = (Data) data;
-              casted.setParent(this);
-            }
-          })
-          .setOnChildRemoved(data -> {
-            if (data instanceof Data) {
-              Data casted = (Data) data;
-              casted.setParent(null);
-            }
-          });
-
-      this.models = new NamedChildCollection<IPackage, IModel>()
-          .setOnChildAdded(model -> {
-            if (model instanceof Model) {
-               Model casted = (Model) model;
-              casted.setParent(this);
-            }
-          })
-          .setOnChildRemoved(model -> {
-            if (model instanceof Model) {
-               Model casted = (Model) model;
-              casted.setParent(null);
-            }
-          });
+      this.data = new NamedChildCollection<>();
+      this.models = new NamedChildCollection<>();
     }
 
    @Override
@@ -81,8 +56,21 @@ public class Package implements IPackage {
       return models;
    }
    
+   public Package addModel(IModel model) {
+      Model casted = (Model) model;
+      casted.setParent(this);
+      models.add(casted);
+      return this;
+   }
 
-   Package setParent(ISystemDescriptor parent) {
+   public Package addData(IData data) {
+      Data casted = (Data) data;
+      casted.setParent(this);
+      this.data.add(casted);
+      return this;
+   }
+
+   public Package setParent(ISystemDescriptor parent) {
      this.parent = parent;
      return this;
    }

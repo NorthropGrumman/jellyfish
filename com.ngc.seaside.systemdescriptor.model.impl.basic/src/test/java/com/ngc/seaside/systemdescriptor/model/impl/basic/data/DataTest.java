@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.data;
 
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import org.junit.Before;
@@ -12,7 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.json.Json;
 
-import static com.ngc.seaside.systemdescriptor.model.impl.basic.TestUtils.demandImmutability;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
