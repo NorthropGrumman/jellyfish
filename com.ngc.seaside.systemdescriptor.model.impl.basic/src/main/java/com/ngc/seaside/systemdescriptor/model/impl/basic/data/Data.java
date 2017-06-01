@@ -8,7 +8,6 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import java.util.Objects;
 
@@ -77,7 +76,7 @@ public class Data implements IData {
                          name);
   }
 
-  Data setParent(IPackage parent) {
+  public Data setParent(IPackage parent) {
     this.parent = parent;
     return this;
   }
@@ -112,35 +111,4 @@ public class Data implements IData {
            ']';
   }
 
-  public static IData immutable(IData data) {
-    Preconditions.checkNotNull(data, "data may not be null!");
-
-    NamedChildCollection<IData, IDataField> fields = new NamedChildCollection<>();
-    data.getFields().forEach(f -> fields.add(DataField.immutable(f)));
-
-    ImmutableData immutable = new ImmutableData(data.getName(), NamedChildCollection.immutable(fields));
-    // TODO TH: fix this, need to point to immutable parent.
-    immutable.parent = data.getParent();
-    immutable.metadata = Metadata.immutable(data.getMetadata());
-    // Fix the field parent pointers so they point to the new immutable parent.
-    fields.forEach(f -> ((DataField) f).setParent(immutable));
-    return immutable;
-  }
-
-  private static class ImmutableData extends Data {
-
-    private ImmutableData(String name, INamedChildCollection<IData, IDataField> fields) {
-      super(name, fields);
-    }
-
-    @Override
-    public IData setMetadata(IMetadata metadata) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
-
-    @Override
-    public Data setParent(IPackage parent) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
-  }
 }

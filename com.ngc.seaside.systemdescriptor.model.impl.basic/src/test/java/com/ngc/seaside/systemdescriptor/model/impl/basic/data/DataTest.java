@@ -57,14 +57,4 @@ public class DataTest {
                field.getParent());
   }
 
-  @Test
-  public void testDoesMakeImmutableData() throws Throwable {
-    data = new Data("FooData");
-    data.setMetadata(metadata);
-    data.setParent(parent);
-
-    IData immutable = Data.immutable(data);
-    demandImmutability(() -> immutable.setMetadata(new Metadata()));
-    demandImmutability(() -> immutable.getFields().clear());
-  }
 }

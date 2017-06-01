@@ -64,25 +64,4 @@ public class ScenarioStep implements IScenarioStep {
            ']';
   }
 
-  public static IScenarioStep immutable(IScenarioStep step) {
-    Preconditions.checkNotNull(step, "step may not be null!");
-
-    ImmutableScenarioStep immutable = new ImmutableScenarioStep(
-        Collections.unmodifiableList(
-            new ArrayList<>(step.getParameters())));
-    immutable.keyword = step.getKeyword();
-    return immutable;
-  }
-
-  private static class ImmutableScenarioStep extends ScenarioStep {
-
-    private ImmutableScenarioStep(List<String> parameters) {
-      super(parameters);
-    }
-
-    @Override
-    public IScenarioStep setKeyword(String keyword) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
-  }
 }
