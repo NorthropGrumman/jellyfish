@@ -55,6 +55,15 @@ public class XTextSystemDescriptorServiceIT {
    }
 
    @Test
+   public void testDoesParseProjectDirectory() throws Throwable {
+      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      assertTrue("parsing should be successful!",
+                 result.isSuccessful());
+      assertNotNull("system descriptor not set!",
+                    result.getSystemDescriptor());
+   }
+
+   @Test
    public void testDoesReturnParsingErrors() throws Throwable {
       Path time = pathTo("invalid-project", "clocks", "datatypes", "Time.sd");
 

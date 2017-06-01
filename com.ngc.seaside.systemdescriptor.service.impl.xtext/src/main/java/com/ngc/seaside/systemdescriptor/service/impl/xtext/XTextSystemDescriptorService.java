@@ -23,12 +23,15 @@ import org.eclipse.xtext.validation.IResourceValidator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
@@ -65,7 +68,21 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
       Preconditions.checkArgument(Files.isDirectory(src),
                                   "%s is not a directory, project does not contain correct file structure!",
                                   src);
-      throw new UnsupportedOperationException("not implemented");
+
+      IParsingResult result;
+      try {
+         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.sd");
+         Collection<Path> sdFiles = Files.find(
+               src,
+               Integer.MAX_VALUE,
+               (path, basicFileAttributes) -> matcher.matches(path.getFileName()))
+               .collect(Collectors.toList());
+         result = parseFiles(sdFiles);
+      } catch (IOException e) {
+         throw new ParsingException(e.getMessage(), e);
+      }
+
+      return result;
    }
 
    @Override
