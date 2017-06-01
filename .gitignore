@@ -18,7 +18,8 @@
 .DS_Store 
  
 # Maven 
-target/ 
+target/
+*/target/
  
 # Gradle 
 .gradle 
