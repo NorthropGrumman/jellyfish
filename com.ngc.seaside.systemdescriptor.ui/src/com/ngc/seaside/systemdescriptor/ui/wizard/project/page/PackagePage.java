@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class PackagePage extends WizardPage {
-	private static final String DEFAULT_PACKAGE = "com.ngc.mydsproject";
+	private static final String DEFAULT_PACKAGE = "com.ngc.mysdproject";
 	private static final String DEFAULT_FILE = "MyModel";
 
 	private Text pkgTextField;
@@ -40,6 +40,9 @@ public class PackagePage extends WizardPage {
 		}
 	};
 
+	/**
+	 * Constructor for the page that asks the user for default package and model file information.
+	 */
 	public PackagePage() {
 		super("Package Info Page");
 		setTitle("Package Info Page");
@@ -62,6 +65,9 @@ public class PackagePage extends WizardPage {
 		updateControls();
 	}
 
+	/**
+	 * Builds and populates the default package info GUI components into the page.
+	 */
 	private void buildPackageInfo() {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
@@ -69,7 +75,8 @@ public class PackagePage extends WizardPage {
 		createDefaultPkgCheck.setText("Create default package");
 		createDefaultPkgCheck.setSelection(true);
 		createDefaultPkgCheck.addSelectionListener(selectionListener);
-		new Label(container, SWT.NONE);
+
+		takeUpCellInGrid(container);
 
 		Label labelPkg = new Label(container, SWT.NONE);
 		labelPkg.setText("Package name:");
@@ -80,10 +87,13 @@ public class PackagePage extends WizardPage {
 		pkgTextField.addKeyListener(keyListener);
 		pkgTextField.setLayoutData(gd);
 
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		takeUpCellInGrid(container);
+		takeUpCellInGrid(container);
 	}
 
+	/**
+	 * Builds and populates the default model file info GUI components into the page.
+	 */
 	private void buildFileInfo() {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
@@ -91,7 +101,8 @@ public class PackagePage extends WizardPage {
 		createDefaultFileCheck.setText("Create default file in package");
 		createDefaultFileCheck.setSelection(true);
 		createDefaultFileCheck.addSelectionListener(selectionListener);
-		new Label(container, SWT.NONE);
+
+		takeUpCellInGrid(container);
 
 		Label labelPkg = new Label(container, SWT.NONE);
 		labelPkg.setText("File name:");
@@ -102,10 +113,25 @@ public class PackagePage extends WizardPage {
 		filenameTextField.addKeyListener(keyListener);
 		filenameTextField.setLayoutData(gd);
 
-		new Label(container, SWT.NONE);
+		takeUpCellInGrid(container);
+		takeUpCellInGrid(container);
+	}
+	
+	/**
+	 * Adds an empty Label to the next cell in the container which uses a Grid layout.
+	 * This is just to take up a cell.
+	 * 
+	 * @param container
+	 * 		The container to add the empty label to.
+	 */
+	private void takeUpCellInGrid(Composite container)
+	{
 		new Label(container, SWT.NONE);
 	}
 
+	/**
+	 * Updates the GUI controls' status based on inputs.
+	 */
 	private void updateControls() {
 		final boolean createDefaultPkg = createDefaultPkgCheck.getSelection();
 		final boolean createDefaultFile = createDefaultFileCheck.getSelection();

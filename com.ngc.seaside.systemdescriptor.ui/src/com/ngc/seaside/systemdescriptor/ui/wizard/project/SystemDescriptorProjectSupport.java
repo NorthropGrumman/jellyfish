@@ -17,29 +17,45 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * 
+ *
+ */
 public class SystemDescriptorProjectSupport {
 	private static final String NEWLINE = System.getProperty("line.separator");
 
 	/**
-	 * For this project we need to: - create the default Eclipse project - add
-	 * the custom project nature - create the folder structure
+	 * For this project we need to: 
+	 * - create the default Eclipse project 
+	 * - add the project nature 
+	 * - create the folder structure
+	 * - create default package and model
 	 *
 	 * @param projectName
+	 * 		The name of the project to create.
 	 * @param location
-	 * @param natureId
+	 * 		Full path of location to create the project.
+	 * @param defaultPkg
+	 * 		The default package to create.
+	 * @param defaultFile
+	 * 		The default model file to create in the default package.
+	 * 
 	 * @return
+	 * 		Returns the project resource that was created, or null if the creation failed.
 	 */
 	public static IProject createProject(String projectName, URI location, String defaultPkg, String defaultFile) {
 		Assert.isNotNull(projectName);
 		Assert.isTrue(projectName.trim().length() > 0);
 
-		IProject project = createBaseProject(projectName, location);
-
+		IProject project = null;
+		
 		try {
-			addNatures(project);
+			project = createBaseProject(projectName, location);
 
-			String sdPath = "src/main/sd";
-			String resPath = "src/main/resources";
+			addNature(project);
+
+			String sdPath   = "src/main/sd";
+			String resPath  = "src/main/resources";
 			String testPath = "src/test/gherkin";
 
 			List<String> basicPathList = new ArrayList<>();
@@ -50,7 +66,7 @@ public class SystemDescriptorProjectSupport {
 			addToProjectStructure(project, basicPathList);
 
 			if (defaultPkg != null) {
-				String pkgPath = sdPath + "/" + defaultPkg.replace(".", "/");
+				String pkgPath     = sdPath   + "/" + defaultPkg.replace(".", "/");
 				String pkgTestPath = testPath + "/" + defaultPkg.replace(".", "/");
 
 				List<String> pkgPathList = new ArrayList<>();
@@ -73,12 +89,16 @@ public class SystemDescriptorProjectSupport {
 					sb.append("}").append(NEWLINE);
 
 					String filepath = pkgPath + "/" + defaultFile + ".sd";
-
-					createFile(project, filepath, sb.toString());
+					String fileContent = sb.toString();
+					
+					addToProject(project, filepath, fileContent);
 				}
 			}
-
-		} catch (CoreException e) {
+		} catch (CoreException e) {			
+			// TODO What happens if we created the project and then have an exception
+		    //      (i.e. filename has invalid characters)... Do we want to delete the
+			//		partially created project? Popup instead of printstacktrace?
+			
 			e.printStackTrace();
 			project = null;
 		}
@@ -86,35 +106,26 @@ public class SystemDescriptorProjectSupport {
 		return project;
 	}
 
-	private static void createFile(IProject project, String filepath, String content) {
-		IFile file = project.getFile(filepath);
-
-		if (!file.exists()) {
-
-			InputStream contents = new ByteArrayInputStream(content.getBytes());
-
-			try {
-				IProgressMonitor monitor = new NullProgressMonitor();
-				file.create(contents, true, monitor);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/**
-	 * Just do the basics: create a basic project.
+	 * Create a basic project.
 	 *
-	 * @param location
 	 * @param projectName
+	 * 		The name of the project to create.
+	 * @param location
+	 * 		Full path of location to create the project.
+	 * 
+	 * @return
+	 * 		Returns the project resource that was created.
+	 * 
+	 * @throws CoreException 
 	 */
-	private static IProject createBaseProject(String projectName, URI location) {
+	private static IProject createBaseProject(String projectName, URI location) throws CoreException {
 		// it is acceptable to use the ResourcesPlugin class
-		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
-		if (!newProject.exists()) {
+		if (!project.exists()) {
 			URI projectLocation = location;
-			IProjectDescription desc = newProject.getWorkspace().newProjectDescription(newProject.getName());
+			IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
 
 			if (location != null && ResourcesPlugin.getWorkspace().getRoot().getLocationURI().equals(location)) {
 				projectLocation = null;
@@ -122,20 +133,24 @@ public class SystemDescriptorProjectSupport {
 
 			desc.setLocationURI(projectLocation);
 
-			try {
-				newProject.create(desc, null);
+			project.create(desc, null);
 
-				if (!newProject.isOpen()) {
-					newProject.open(null);
-				}
-			} catch (CoreException e) {
-				e.printStackTrace();
+			if (!project.isOpen()) {
+				project.open(null);
 			}
 		}
 
-		return newProject;
+		return project;
 	}
 
+	/**
+	 * Creates the specified folder.
+	 * 
+	 * @param folder
+	 * 		Folder resource to create.
+	 * 
+	 * @throws CoreException
+	 */
 	private static void createFolder(IFolder folder) throws CoreException {
 		IContainer parent = folder.getParent();
 
@@ -147,22 +162,73 @@ public class SystemDescriptorProjectSupport {
 			folder.create(false, true, null);
 		}
 	}
+	
+	/**
+	 * Creates a file in a specified project. 
+	 *  
+	 * @param project
+	 * 		The project to put the file in.
+	 * @param filepath
+	 * 		The full path of the file in the project to create.
+	 * @param content
+	 * 		The content to write into the file.
+	 * 
+	 * @throws CoreException 
+	 */
+	private static void createFile(IFile file, String content) throws CoreException {
+		if (!file.exists()) {
+
+			InputStream contents = new ByteArrayInputStream(content.getBytes());
+
+			IProgressMonitor monitor = new NullProgressMonitor();
+			file.create(contents, true, monitor);
+		}
+	}
 
 	/**
-	 * Create a folder structure
+	 * Create a file within the project
 	 *
-	 * @param newProject
-	 * @param paths
+	 * @param project
+	 * 		The project resource to create the file in. 
+	 * @param filepath
+	 * 		The full path of the file in the project to create.
+	 * @param content
+	 * 		The content to write into the file.
+	 * 
 	 * @throws CoreException
 	 */
-	private static void addToProjectStructure(IProject newProject, List<String> pathList) throws CoreException {
+	private static void addToProject(IProject project, String filepath, String fileContent) throws CoreException {
+		IFile file = project.getFile(filepath);
+		
+		createFile(file, fileContent);
+	}
+
+	/**
+	 * Create a folder structure within the project
+	 *
+	 * @param project
+	 * 		The project resource to create the folder structure in. 
+	 * @param pathList
+	 * 		List of the paths of folders to create
+	 * 
+	 * @throws CoreException
+	 */
+	private static void addToProjectStructure(IProject project, List<String> pathList) throws CoreException {
 		for (String path : pathList) {
-			IFolder etcFolders = newProject.getFolder(path);
+			IFolder etcFolders = project.getFolder(path);
 			createFolder(etcFolders);
 		}
 	}
 
-	private static void addNatures(IProject project) throws CoreException {
+	/**
+	 * Add the xtext nature to the project.
+	 * 
+	 * @param project
+	 * 		The project to add the nature to.
+	 * 
+	 * @throws CoreException
+	 */
+	private static void addNature(IProject project) throws CoreException {
 		IProjectDescription description = project.getDescription();
 
 		String[] prevNatures = description.getNatureIds();

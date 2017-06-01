@@ -14,9 +14,9 @@ import com.ngc.seaside.systemdescriptor.ui.wizard.project.page.PackagePage;
 public class SystemDescriptorProjectWizard extends Wizard implements INewWizard
 {
 	private static final String PAGE_NAME = "System Descriptor Project Wizard";
-	private static final String WIZARD_NAME = "New System Descriptor Project";
+	private static final String WIZARD_NAME = "Create a System Descriptor Project";
 	private static final String WIZARD_DESC = "Create a System Descriptor Project.";
-	private static final String WINDOW_TITLE = "Sd Window Title";
+	private static final String WINDOW_TITLE = "New System Descriptor Project";
 
 	protected WizardNewProjectCreationPage projPage;
 	protected PackagePage pkgPage;
