@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="com.ngc.seaside.systemdescriptor.category.wizards"
+            name="JellyFish">
+      </category>
+      <wizard
+            category="com.ngc.seaside.systemdescriptor.category.wizards"
+            class="com.ngc.seaside.systemdescriptor.ui.wizard.project.SystemDescriptorProjectWizard"
+            id="com.ngc.seaside.systemdescriptor.ui.wizard.project.systemdescriptorprojectwizard"
+            name="System Descriptor Project"
+            project="true">
+      </wizard>
+   </extension>
 	<extension
 		point="org.eclipse.ui.editors">
 		<editor
