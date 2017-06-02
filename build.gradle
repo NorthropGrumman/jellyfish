@@ -22,7 +22,7 @@ subprojects {
    ext {
       jellyfishApiVersion = "1.0"
       jellyfishDslVersion = "0.2"
-      guavaVersion = '2.1'
+      guavaVersion = '21.0'
 	  guiceVersion = '3.0'
 	  junitVersion = '4.12'
       mockitoVersion = '2.7.14'
