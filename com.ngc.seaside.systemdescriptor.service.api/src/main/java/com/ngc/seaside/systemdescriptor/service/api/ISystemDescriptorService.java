@@ -52,5 +52,5 @@ public interface ISystemDescriptorService {
     * @param validator the validator to remove
     * @return true if the validator was removed, false if the validator was never added
     */
-   boolean removeValidator(ISystemDescriptor validator);
+   boolean removeValidator(ISystemDescriptorValidator validator);
 }
