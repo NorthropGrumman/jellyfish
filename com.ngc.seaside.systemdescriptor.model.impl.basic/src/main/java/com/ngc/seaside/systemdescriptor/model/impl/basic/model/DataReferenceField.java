@@ -11,6 +11,11 @@ import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
 
 import java.util.Objects;
 
+/**
+ * Implements an IDataReferenceField interface.
+ * @author psnell
+ *
+ */
 public class DataReferenceField implements IDataReferenceField {
 
   protected final String name;
@@ -70,7 +75,7 @@ public class DataReferenceField implements IDataReferenceField {
   }
 
   public DataReferenceField setParent(IModel model) {
-    this.parent = parent;
+    this.parent = model;
     return this;
   }
 

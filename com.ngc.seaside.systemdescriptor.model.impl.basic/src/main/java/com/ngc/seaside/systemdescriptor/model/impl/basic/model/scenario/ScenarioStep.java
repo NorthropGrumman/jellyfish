@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/** 
+ * Implements the IScenarioStep interface. Maintains the list of parameters for the step
+ * along with the keyword (Given, When, or Then)
+ * @author psnell
+ *
+ */
 public class ScenarioStep implements IScenarioStep {
 
   protected final List<String> parameters;

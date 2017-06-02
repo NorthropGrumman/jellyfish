@@ -5,14 +5,17 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.data.DataField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
 import java.util.Objects;
 
+/**
+ * Implements the IPackage interface. Maintains data and models for the Package.
+ * @author psnell
+ *
+ */
 public class Package implements IPackage {
 
    private final String name;

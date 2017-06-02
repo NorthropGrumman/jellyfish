@@ -11,6 +11,12 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
 import java.util.Objects;
 
+/**
+ * Implementation of the interface IData.  Stores IDataField objects and metadata.
+ * 
+ * @author psnell
+ *
+ */
 public class Data implements IData {
 
   protected final INamedChildCollection<IData, IDataField> fields;

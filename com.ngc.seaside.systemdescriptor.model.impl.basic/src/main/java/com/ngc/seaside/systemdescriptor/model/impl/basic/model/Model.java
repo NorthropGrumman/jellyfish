@@ -10,11 +10,16 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
-
+import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
+/**
+ * Implements the IModel inteface.  Maintains all the data associated with the IModel.
+ * @author psnell
+ *
+ */
 public class Model implements IModel {
 
    private final String name;
@@ -133,5 +138,45 @@ public class Model implements IModel {
       links.add(link);
       return this;
    }
+   
+   @Override
+   public boolean equals(Object o) {
+     if (this == o) {
+       return true;
+     }
+     if (!(o instanceof Data)) {
+       return false;
+     }
+     Model model = (Model) o;
+     return Objects.equals(name, model.name) &&
+            parent == model.parent &&
+            Objects.equals(metadata, model.metadata) &&
+            Objects.equals(inputs, model.inputs) &&
+            Objects.equals(outputs, model.outputs)&&
+            Objects.equals(requiredModels, model.requiredModels) &&
+            Objects.equals(parts, model.parts)&&
+            Objects.equals(scenarios, model.scenarios) &&
+            Objects.equals(links,  model.links);
+   }
 
+   @Override
+   public int hashCode() {
+     return Objects.hash(name, System.identityHashCode(parent), 
+        metadata, inputs, outputs, requiredModels, parts, scenarios, links);
+   }
+
+   @Override
+   public String toString() {
+     return "Model[" +
+            "name='" + name + '\'' +
+            ", parent=" + (parent == null ? "null" : parent.getName()) +
+            ", metadata=" + metadata +
+            ", inputs=" + inputs +
+            ", outputs=" + outputs +
+            ", requiredModels=" + requiredModels +
+            ", parts=" + parts +
+            ", scenarios=" + scenarios +
+            ", links=" + links +
+            ']';
+   }
 }
