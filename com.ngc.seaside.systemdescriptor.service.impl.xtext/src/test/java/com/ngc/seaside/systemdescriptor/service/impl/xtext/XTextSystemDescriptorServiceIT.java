@@ -3,7 +3,6 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 import com.google.inject.Injector;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
-import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
