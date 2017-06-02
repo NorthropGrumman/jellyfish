@@ -14,31 +14,33 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class enables the user to Enter the default project and default file name 
+ * for the System Descriptor project.
+ */
 public class PackagePage extends WizardPage {
 	private static final String DEFAULT_PACKAGE = "com.ngc.mysdproject";
 	private static final String DEFAULT_FILE = "MyModel";
 
 	private Text pkgTextField;
 	private Text filenameTextField;
-
 	private Button createDefaultPkgCheck;
 	private Button createDefaultFileCheck;
-
 	private Composite container;
+   private KeyAdapter keyListener = new KeyAdapter() {
+      @Override
+      public void keyReleased(KeyEvent e) {
+         updateControls();
+      }
+   };
 
-	private KeyAdapter keyListener = new KeyAdapter() {
-		@Override
-		public void keyReleased(KeyEvent e) {
-			updateControls();
-		}
-	};
+   private SelectionListener selectionListener = new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+         updateControls();
+      }
+   };
 
-	private SelectionListener selectionListener = new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			updateControls();
-		}
-	};
 
 	/**
 	 * Constructor for the page that asks the user for default package and model file information.
@@ -64,6 +66,41 @@ public class PackagePage extends WizardPage {
 
 		updateControls();
 	}
+	
+	  /**
+    * Get the user's selected preference to determine if the package should be created.
+    * 
+    * @return true if the default package should be created.
+    */
+   public boolean getCreatePkg() {
+      return createDefaultPkgCheck.getSelection();
+   }
+
+   /**
+    * Get the value of the package. The value will be the fully qualified package using dot notation.
+    * @see {@link #getCreatePkg()}
+    * @return the string representation of the package.
+    */
+   public String getPkg() {
+      return pkgTextField.getText();
+   }
+   
+   /**
+    * Create the user's selected preference to determine if the default .sd file should be created.
+    * @return true if the default file should be created.
+    */
+   public boolean getCreateFile() {
+      return createDefaultFileCheck.getSelection();
+   }
+
+   /**
+    * Get the name of the default .sd file.
+    * @see {@link PackagePage#getCreateFile()}
+    * @return the file (without the .sd extension)
+    */
+   public String getFileName() {
+      return filenameTextField.getText();
+   }
 
 	/**
 	 * Builds and populates the default package info GUI components into the page.
@@ -163,19 +200,4 @@ public class PackagePage extends WizardPage {
 		setPageComplete(complete);
 	}
 	
-	public boolean getCreatePkg() {
-		return createDefaultPkgCheck.getSelection();
-	}
-
-	public String getPkg() {
-		return pkgTextField.getText();
-	}
-	
-	public boolean getCreateFile() {
-		return createDefaultFileCheck.getSelection();
-	}
-
-	public String getFileName() {
-		return filenameTextField.getText();
-	}
 }
