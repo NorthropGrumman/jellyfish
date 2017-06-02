@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -40,4 +41,16 @@ public interface ISystemDescriptorService {
     */
    ISystemDescriptor immutableCopy(ISystemDescriptor descriptor);
 
+   /**
+    * Registers a validator that is used when parsing and validating system descriptor.
+    * @param validator the validator to register
+    */
+   void addValidator(ISystemDescriptorValidator validator);
+
+   /**
+    * Unregisters a validator that has been registered via {@link #addValidator(ISystemDescriptorValidator)}.
+    * @param validator the validator to remove
+    * @return true if the validator was removed, false if the validator was never added
+    */
+   boolean removeValidator(ISystemDescriptor validator);
 }
