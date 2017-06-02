@@ -18,4 +18,9 @@ subprojects {
 
     group 'com.ngc.seaside'
     version '1.0.1-SNAPSHOT'
+	
+	ext {
+        junitVersion = '4.12'
+        mockitoVersion = '2.7.14'
+	}
 }
