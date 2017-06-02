@@ -3,9 +3,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
-import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -31,31 +29,41 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL.  New instances
+ * of this service should always be obtained via {@link XTextSystemDescriptorServiceBuilder#forIntegration(Consumer)}
+ * or {@link XTextSystemDescriptorServiceBuilder#forApplication()}.  In most classes, application simply obtain a
+ * reference to this service via injection.  See the Javadoc of {@link XTextSystemDescriptorServiceBuilder} for more
+ * information.
+ */
 public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
+   /**
+    * The default path that contains the {@code .sd} files for a standard system descriptor project.
+    */
    private static final Path SD_SOURCE_PATH = Paths.get("src", "main", "sd");
 
-   private final Injector injector;
+   /**
+    * The XText parser that can parse files.
+    */
+   private final IParser parser;
 
    /**
-    * The XText parser injected by Guice.
+    * The XText resource set we use to create resources that will be parsed.
     */
-   @Inject
-   private IParser parser;
+   private final XtextResourceSet resourceSet;
 
    /**
-    * The XText resource set injected by Guice.
+    * Creates a new {@code XTextSystemDescriptorService}.  <b>Applications should not invoke this constructor directly.
+    * See the Javadoc for more information.</b>
     */
    @Inject
-   private XtextResourceSet resourceSet;
-
-   public XTextSystemDescriptorService() {
-      // Get the injector.
-      this.injector = newInjector();
-      // Injector XText resources into this instance.
-      injector.injectMembers(this);
+   public XTextSystemDescriptorService(IParser parser, XtextResourceSet resourceSet) {
+      this.parser = Preconditions.checkNotNull(parser, "parser may not be null!");
+      this.resourceSet = Preconditions.checkNotNull(resourceSet, "resourceSet may not be null!");
       // Configure XText to resolve imports.
       resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
    }
@@ -110,13 +118,6 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    @Override
    public ISystemDescriptor immutableCopy(ISystemDescriptor descriptor) {
       throw new UnsupportedOperationException("not implemented");
-   }
-
-   /**
-    * Factor method invoked to create a new Injector.
-    */
-   protected Injector newInjector() {
-      return new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
    }
 
    private Collection<XtextResource> getResources(Collection<Path> paths, ParsingContext ctx) throws IOException {

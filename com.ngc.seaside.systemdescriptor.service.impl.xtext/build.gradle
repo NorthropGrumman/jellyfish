@@ -4,6 +4,7 @@ dependencies {
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
    compile "com.google.guava:guava:$guavaVersion"
+   compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
 
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"

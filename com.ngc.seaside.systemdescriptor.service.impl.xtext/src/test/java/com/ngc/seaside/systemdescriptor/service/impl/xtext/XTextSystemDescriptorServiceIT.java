@@ -1,9 +1,14 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
+import com.google.inject.Injector;
+
+import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
+import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +30,9 @@ public class XTextSystemDescriptorServiceIT {
 
    @Before
    public void setup() throws Throwable {
-      service = new XTextSystemDescriptorService();
+      Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
+      service = new XTextSystemDescriptorService(injector.getInstance(IParser.class),
+                                                 injector.getInstance(XtextResourceSet.class));
    }
 
    @Test
@@ -52,7 +59,7 @@ public class XTextSystemDescriptorServiceIT {
                  result.isSuccessful());
       assertNotNull("system descriptor not set!",
                     result.getSystemDescriptor());
-      result.getSystemDescriptor().traverse(Traversals.SYSTEM_OUT_PRINTING_VISITOR);
+      //result.getSystemDescriptor().traverse(Traversals.SYSTEM_OUT_PRINTING_VISITOR);
    }
 
    @Test
