@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.impl.xtext;
+package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.inject.Injector;
 
@@ -23,21 +23,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class XTextSystemDescriptorServiceIT {
+public class ParsingDelegateIT {
 
-   private XTextSystemDescriptorService service;
+   private ParsingDelegate delegate;
 
    @Before
    public void setup() throws Throwable {
       Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
-      service = new XTextSystemDescriptorService(injector.getInstance(IParser.class),
-                                                 injector.getInstance(XtextResourceSet.class));
+      delegate = new ParsingDelegate(injector.getInstance(IParser.class),
+                                     injector.getInstance(XtextResourceSet.class));
    }
 
    @Test
    public void testDoesParseSingleFile() throws Throwable {
       Path time = pathTo("valid-project", "clocks", "datatypes", "Time.sd");
-      IParsingResult result = service.parseFiles(Collections.singletonList(time));
+      IParsingResult result = delegate.parseFiles(Collections.singletonList(time));
       assertTrue("parsing should be successful!",
                  result.isSuccessful());
       assertNotNull("system descriptor not set!",
@@ -53,7 +53,7 @@ public class XTextSystemDescriptorServiceIT {
             pathTo("valid-project", "clocks", "models", "Speaker.sd"),
             pathTo("valid-project", "clocks", "models", "Timer.sd"),
             pathTo("valid-project", "clocks", "AlarmClock.sd"));
-      IParsingResult result = service.parseFiles(paths);
+      IParsingResult result = delegate.parseFiles(paths);
       assertTrue("parsing should be successful!",
                  result.isSuccessful());
       assertNotNull("system descriptor not set!",
@@ -63,7 +63,7 @@ public class XTextSystemDescriptorServiceIT {
 
    @Test
    public void testDoesParseProjectDirectory() throws Throwable {
-      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      IParsingResult result = delegate.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("parsing should be successful!",
                  result.isSuccessful());
       assertNotNull("system descriptor not set!",
@@ -74,7 +74,7 @@ public class XTextSystemDescriptorServiceIT {
    public void testDoesReturnParsingErrors() throws Throwable {
       Path time = pathTo("invalid-project", "clocks", "datatypes", "Time.sd");
 
-      IParsingResult result = service.parseFiles(Collections.singletonList(time));
+      IParsingResult result = delegate.parseFiles(Collections.singletonList(time));
       assertFalse("parsing should not be successful!",
                   result.isSuccessful());
 

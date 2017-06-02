@@ -20,11 +20,11 @@ subprojects {
    version '1.0.1-SNAPSHOT'
 
    ext {
-      jellyfishApiVersion = "1.0"
-      jellyfishDslVersion = "0.2"
+      jellyfishApiVersion = "1.1-SNAPSHOT"
+      jellyfishDslVersion = "0.4-SNAPSHOT"
       guavaVersion = '21.0'
-	  guiceVersion = '3.0'
-	  junitVersion = '4.12'
+      guiceVersion = '3.0'
+      junitVersion = '4.12'
       mockitoVersion = '2.7.14'
    }
 }

@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.impl.xtext;
+package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
