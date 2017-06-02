@@ -3,7 +3,7 @@ dependencies {
    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
-   compile 'com.google.guava:guava:21.0'
+   compile "com.google.guava:guava:$guavaVersion"
 
    testCompile 'junit:junit:4.12'
    testCompile 'org.mockito:mockito-core:2.7.14'
