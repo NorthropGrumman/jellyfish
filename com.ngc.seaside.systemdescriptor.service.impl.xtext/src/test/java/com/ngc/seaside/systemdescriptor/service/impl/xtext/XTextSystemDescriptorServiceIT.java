@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
+import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
@@ -51,7 +52,7 @@ public class XTextSystemDescriptorServiceIT {
                  result.isSuccessful());
       assertNotNull("system descriptor not set!",
                     result.getSystemDescriptor());
-      //result.getSystemDescriptor().traverse(Traversals.SYSTEM_OUT_PRINTING_VISITOR);
+      result.getSystemDescriptor().traverse(Traversals.SYSTEM_OUT_PRINTING_VISITOR);
    }
 
    @Test
