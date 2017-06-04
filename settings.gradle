@@ -1,5 +1,5 @@
 
-rootProject.name = 'starfish-bootstrap'
+rootProject.name = 'seaside-bootstrap'
 
 include 'com.ngc.seaside.bootstrap'
 include 'com.ngc.seaside.command.api'
