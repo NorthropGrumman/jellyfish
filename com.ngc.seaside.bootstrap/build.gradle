@@ -1,0 +1,50 @@
+
+apply plugin: 'application'
+
+mainClassName = "com.ngc.seaside.bootstrap.Bootstrap"
+
+dependencies {
+    compile project(":command.api")
+    compile project(":bootstrap.api")
+    compile project(":bootstrap.impl.provider")
+    compile project(":bootstrap.command.impl.bundlecommand")
+    compile project(":bootstrap.command.impl.projectcommand")
+
+    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    compile "com.ngc.blocs:service.api:$blocsVersion"
+    compile "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "org.apache.velocity:velocity:$velocityVersion"
+    compile "commons-io:commons-io:$commonsIOVersion"
+    compile "commons-lang:commons-lang:$commonsLangVersion"
+
+
+    testCompile "junit:junit:$junitVersion"
+}
+
+// Copies all templates to distribution zip.
+applicationDistribution.from('src/main/resources/') {
+    into 'resources/'
+}
+
+// Provide the app home directory has a system property.
+applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
+
+
+// Set the property to the value in the script (windows vs *nix).
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '\$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+    }
+}
+
+jar {
+    //the application plugin requires that the script name be the project.name so this line
+    //will overwrite the seaside parent plugin naming convention.
+    archiveName = "${project.name}"
+}

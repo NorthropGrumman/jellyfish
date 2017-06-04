@@ -1,7 +1,16 @@
 
 rootProject.name = 'starfish-bootstrap'
-include 'com.ngc.seaside.starfish.bootstrap'
-include 'com.ngc.seaside.starfish.sample'
 
-project(':com.ngc.seaside.starfish.bootstrap').name = 'com.ngc.seaside.starfish.bootstrap'
-project(':com.ngc.seaside.starfish.sample').name = 'starfish.sample'
+include 'com.ngc.seaside.bootstrap'
+include 'com.ngc.seaside.command.api'
+include 'com.ngc.seaside.bootstrap.api'
+include 'com.ngc.seaside.bootstrap.impl.provider'
+include 'com.ngc.seaside.bootstrap.command.impl.bundlecommand'
+include 'com.ngc.seaside.bootstrap.command.impl.projectcommand'
+
+project(':com.ngc.seaside.bootstrap').name = 'com.ngc.seaside.bootstrap'
+project(':com.ngc.seaside.command.api').name = 'command.api'
+project(':com.ngc.seaside.bootstrap.api').name = 'bootstrap.api'
+project(':com.ngc.seaside.bootstrap.impl.provider').name = 'bootstrap.impl.provider'
+project(':com.ngc.seaside.bootstrap.command.impl.bundlecommand').name = 'bootstrap.command.impl.bundlecommand'
+project(':com.ngc.seaside.bootstrap.command.impl.projectcommand').name = 'bootstrap.command.impl.projectcommand'

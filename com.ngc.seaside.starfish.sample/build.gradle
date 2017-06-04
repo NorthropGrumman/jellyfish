@@ -1,9 +1,0 @@
-
-apply plugin: 'application'
-
-mainClassName = 'com.ngc.seaside.starfish.sample.Sample'
-
-dependencies {
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-}

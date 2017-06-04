@@ -19,6 +19,9 @@ subprojects {
     version = '1.0-SNAPSHOT'
 
     ext {
+        blocsVersion = '2.1'
+        osgiVersion =  '6.0.0'
+        guiceVersion = '4.1.0'
         velocityVersion = '1.6.2'
         commonsIOVersion = '2.5'
         commonsLangVersion = '2.6'
@@ -26,5 +29,6 @@ subprojects {
         mockitoVersion = '2.7.14'
         guavaVersion = '22.0'
     }
+
 
 }

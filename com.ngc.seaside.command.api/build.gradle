@@ -1,0 +1,14 @@
+
+
+
+dependencies {
+    testCompile "junit:junit:$junitVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.command.api.**')
+    }
+}
+

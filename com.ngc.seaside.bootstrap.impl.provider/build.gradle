@@ -1,0 +1,18 @@
+
+
+
+dependencies {
+    compile project(":command.api")
+    compile project(":bootstrap.api")
+
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+
+
+    testCompile "junit:junit:$junitVersion"
+}
+
