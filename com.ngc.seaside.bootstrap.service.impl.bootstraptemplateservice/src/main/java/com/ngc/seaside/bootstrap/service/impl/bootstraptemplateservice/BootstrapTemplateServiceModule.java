@@ -10,6 +10,6 @@ import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
 public class BootstrapTemplateServiceModule extends AbstractModule {
    @Override
    protected void configure() {
-     bind(IBootstrapTemplateService.class).to(BootstrapTemplateServiceDelegate.class);
+     bind(IBootstrapTemplateService.class).to(BootstrapTemplateService.class);
    }
 }

@@ -7,11 +7,8 @@ import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
 import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +56,7 @@ public class BootstrapCommandProviderDelegate implements IBootstrapCommandProvid
 
    @Override
    public void addCommand(IBootstrapCommand command) {
-      Preconditions.checkNotNull(command, "Command is nullS");
+      Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions
                .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
@@ -90,6 +87,9 @@ public class BootstrapCommandProviderDelegate implements IBootstrapCommandProvid
 
       if (templateExists) {
          try {
+            //TODO update with the output directory instead of Paths.
+            //This will require the parameter service
+            logService.info(getClass(), "Unpacking template");
             bootstrapTemplateService.unpack(commandName, Paths.get("."), false);
          } catch (BootstrapTemplateException e) {
             logService.error(getClass(),
@@ -101,6 +101,7 @@ public class BootstrapCommandProviderDelegate implements IBootstrapCommandProvid
       }
 
       if (command != null) {
+         //TODO this will be updated with parameter service output
          command.run(null);
       }
    }

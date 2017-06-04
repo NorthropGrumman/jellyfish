@@ -17,11 +17,11 @@ public class BootstrapCommandProviderModule extends AbstractModule {
       // you need to use the multibinder scheme.
       Multibinder.newSetBinder(binder(), ICommandProvider.class)
                .addBinding()
-               .to(BootstrapCommandProviderDelegate.class);
+               .to(BootstrapCommandProvider.class);
 
       Multibinder.newSetBinder(binder(), IBootstrapCommandProvider.class)
                .addBinding()
-               .to(BootstrapCommandProviderDelegate.class);
+               .to(BootstrapCommandProvider.class);
 
    }
 

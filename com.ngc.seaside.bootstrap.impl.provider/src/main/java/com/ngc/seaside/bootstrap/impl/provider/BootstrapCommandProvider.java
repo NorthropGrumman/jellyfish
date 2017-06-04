@@ -6,6 +6,7 @@ import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
 import com.ngc.seaside.command.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
@@ -68,6 +69,26 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       setLogService(null);
    }
 
+   /**
+    * Set the bootstrap template service.
+    *
+    * @param ref the service
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeBootstrapTemplateService")
+   @Inject
+   public void setBootstrapTemplateService(IBootstrapTemplateService ref) {
+      delegate.setBootstrapTemplateService(ref);
+   }
+
+   /**
+    * Remove the bootstrap template service.
+    */
+   public void removeBootstrapTemplateService(IBootstrapTemplateService ref) {
+      setBootstrapTemplateService(null);
+   }
+
    @Override
    public IUsage getUsage() {
       return delegate.getUsage();
@@ -93,8 +114,4 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       commands.forEach(this::addCommand);
    }
 
-   @Override
-   public String toString() {
-      return getClass().getName();
-   }
 }

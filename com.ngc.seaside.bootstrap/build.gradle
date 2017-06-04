@@ -9,12 +9,15 @@ dependencies {
     compile project(":bootstrap.impl.provider")
     compile project(":bootstrap.command.impl.bundlecommand")
     compile project(":bootstrap.command.impl.projectcommand")
+    compile project(":bootstrap.service.impl.bootstraptemplateservice")
+    compile project(":bootstrap.service.impl.promptuserservice")
 
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
+    compile "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
     compile "org.osgi:osgi.enterprise:$osgiVersion"
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

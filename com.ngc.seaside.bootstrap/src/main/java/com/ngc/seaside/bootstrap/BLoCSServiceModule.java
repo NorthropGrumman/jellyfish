@@ -9,6 +9,10 @@ import com.google.inject.spi.TypeListener;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.log.impl.common.LogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.blocs.service.resource.impl.common.ResourceService;
+
+import sun.rmi.runtime.Log;
 
 /**
  * Register the BLoCS based services within a Guice module.
@@ -19,6 +23,9 @@ import com.ngc.blocs.service.log.impl.common.LogService;
  */
 public class BLoCSServiceModule extends AbstractModule {
 
+   private LogService logService;
+   private ResourceService resourceService;
+
    @Override
    protected void configure() {
       //The listener let's us know when the service has been bound
@@ -27,20 +34,36 @@ public class BLoCSServiceModule extends AbstractModule {
       bindListener(new AbstractMatcher<TypeLiteral>() {
          @Override
          public boolean matches(TypeLiteral literal) {
-            return literal.getRawType().equals(LogService.class);
+            return literal.getRawType().equals(LogService.class) ||
+                     literal.getRawType().equals(ResourceService.class);
          }
       }, new TypeListener() {
          @Override
          public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
             encounter.register((InjectionListener<I>) i -> {
-               LogService service = (LogService) i;
-               service.activate();
+               if(i instanceof LogService) {
+                  logService = (LogService) i;
+                  logService.activate();
+                  if(resourceService != null) {
+                     resourceService.setLogService(logService);
+                     resourceService.activate();
+                  }
+               } else if(i instanceof ResourceService) {
+                  resourceService = (ResourceService) i;
+                  if(logService != null) {
+                     resourceService.setLogService(logService);
+                     resourceService.activate();
+                  }
+               }
             });
          }
       });
 
       //bind the interface to the implementation
       bind(ILogService.class).to(LogService.class);
+      bind(IResourceService.class).to(ResourceService.class);
    }
+
+
 
 }

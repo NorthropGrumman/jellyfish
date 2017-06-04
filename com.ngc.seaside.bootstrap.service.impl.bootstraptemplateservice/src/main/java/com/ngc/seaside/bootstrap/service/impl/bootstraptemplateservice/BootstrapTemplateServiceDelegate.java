@@ -5,10 +5,9 @@ import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
 import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
-import com.sun.javaws.exceptions.ExitException;
-import com.sun.xml.internal.ws.util.StringUtils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -179,6 +178,7 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
       boolean fileFound = Files.exists(templateFile);
 
       if (!fileFound || !Files.isRegularFile(templateFile)) {
+         logService.debug(getClass(), "Unable to find a template file '%s'", templateName);
          return null;
       }
 
@@ -193,17 +193,16 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
    protected Path buildPath(String templateName) {
       return Paths.get(
                resourceService.getResourceRootPath().toString(),
-               "config",
+               "templates",
                templateName.toLowerCase(),
-               String.format("Template%s", StringUtils.capitalize(templateName)),
-               ".zip");
+               String.format("Template%s.zip", StringUtils.capitalize(templateName)));
    }
 
    /**
     * Determines if the unzipped contents of the template are valid.
     *
     * @param templateFolder path to unzipped template folder
-    * @throws ExitException if the template has an invalid structure/format
+    * @throws BootstrapTemplateException if the template has an invalid structure/format
     */
    protected boolean isValidateTemplate(Path templateFolder) {
       return Files.exists(templateFolder.resolve(TEMPLATE_PROPERTIES)) &&
