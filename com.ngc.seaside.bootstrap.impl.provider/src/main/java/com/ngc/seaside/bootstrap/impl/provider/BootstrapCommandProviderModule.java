@@ -15,13 +15,13 @@ public class BootstrapCommandProviderModule extends AbstractModule {
    protected void configure() {
       // If you want to register multiple implementations of the same interface in Guice,
       // you need to use the multibinder scheme.
-      Multibinder.newSetBinder(
-               binder(),
-               ICommandProvider.class).addBinding().to(BootstrapCommandProvider.class);
+      Multibinder.newSetBinder(binder(), ICommandProvider.class)
+               .addBinding()
+               .to(BootstrapCommandProviderDelegate.class);
 
-      Multibinder.newSetBinder(
-               binder(),
-               IBootstrapCommandProvider.class).addBinding().to(BootstrapCommandProvider.class);
+      Multibinder.newSetBinder(binder(), IBootstrapCommandProvider.class)
+               .addBinding()
+               .to(BootstrapCommandProviderDelegate.class);
 
    }
 

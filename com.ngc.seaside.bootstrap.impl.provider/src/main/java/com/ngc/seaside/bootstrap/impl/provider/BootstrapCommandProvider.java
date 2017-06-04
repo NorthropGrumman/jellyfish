@@ -1,6 +1,5 @@
 package com.ngc.seaside.bootstrap.impl.provider;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
@@ -16,18 +15,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author justan.provence@ngc.com
  */
 @Component(service = IBootstrapCommandProvider.class)
 public class BootstrapCommandProvider implements IBootstrapCommandProvider {
-   private final Map<String, IBootstrapCommand> commandMap = new ConcurrentHashMap<>();
 
-   private ILogService logService;
+   private final BootstrapCommandProviderDelegate delegate = new BootstrapCommandProviderDelegate();
 
    private DeferredDynamicReference<IBootstrapCommand> commands =
             new DeferredDynamicReference<IBootstrapCommand>() {
@@ -44,13 +40,12 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    @Activate
    public void activate() {
-      logService.trace(getClass(), "Activated");
       commands.markActivated();
    }
 
    @Deactivate
    public void deactivate() {
-      logService.trace(getClass(), "Deactivated");
+
    }
 
    /**
@@ -63,7 +58,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
             unbind = "removeLogService")
    @Inject
    public void setLogService(ILogService ref) {
-      this.logService = ref;
+      delegate.setLogService(ref);
    }
 
    /**
@@ -75,36 +70,22 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      return null;
+      return delegate.getUsage();
    }
 
    @Override
    public void addCommand(IBootstrapCommand command) {
-      Preconditions.checkNotNull(command, "Command is nullS");
-      Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
-      Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
-      commandMap.put(command.getName(), command);
+      delegate.addCommand(command);
    }
 
    @Override
    public void removeCommand(IBootstrapCommand command) {
-      commandMap.remove(command.getName());
+      delegate.removeCommand(command);
    }
 
    @Override
    public void run(String[] arguments) {
-      Preconditions.checkNotNull(arguments, "Arguments must not be null.");
-      Preconditions.checkArgument(arguments.length > 0, "Arguments must not be empty.");
-
-      String commandName = arguments[0];
-
-      IBootstrapCommand command = commandMap.get(commandName);
-      if(command == null) {
-         logService.error(getClass(), "Unable to find a command by the name of %s", commandName);
-         return;
-      }
-
-      command.run(null);
+      delegate.run(arguments);
    }
 
    @Inject
