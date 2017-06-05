@@ -1,11 +1,11 @@
-package com.ngc.seaside.bootstrap.impl.provider;
+package com.ngc.seaside.bootstrap.api.impl.provider;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
 import com.ngc.seaside.command.api.IUsage;
 

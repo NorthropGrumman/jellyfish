@@ -1,9 +1,9 @@
-package com.ngc.seaside.bootstrap.impl.provider;
+package com.ngc.seaside.bootstrap.api.impl.provider;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.command.api.ICommandProvider;
 
 /**

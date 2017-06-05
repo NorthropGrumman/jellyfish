@@ -1,10 +1,10 @@
-package com.ngc.seaside.bootstrap;
+package com.ngc.seaside.bootstrap.api;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.impl.provider.BootstrapCommandProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;

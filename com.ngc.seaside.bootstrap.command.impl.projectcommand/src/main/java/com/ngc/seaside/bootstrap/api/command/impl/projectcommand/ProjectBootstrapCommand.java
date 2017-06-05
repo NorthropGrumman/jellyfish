@@ -1,10 +1,10 @@
-package com.ngc.seaside.bootstrap.command.impl.projectcommand;
+package com.ngc.seaside.bootstrap.api.command.impl.projectcommand;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 

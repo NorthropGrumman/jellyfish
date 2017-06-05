@@ -55,11 +55,10 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
    /**
     * Converts an object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g.,
     * com/ngc/example on Unix).
-    *
+    * this method is used by the Velocity Engine when $Template.asPath($groupId) is found in order to represent
+    * something like a groupId as a file path
     * @param group object to convert to file path
     * @return a file path of the represented object
-    * @apiNote this method is used by the Velocity Engine when $Template.asPath($groupId) is found in order to represent
-    * something like a groupId as a file path
     */
    public static String asPath(Object group) {
       return group.toString().replace(".", FileSystems.getDefault().getSeparator());

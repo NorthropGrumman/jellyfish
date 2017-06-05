@@ -10,7 +10,7 @@ dependencies {
 jar {
     manifest {
         // Bnd instructions to export the api package.
-        attributes('Export-Package': 'com.ngc.seaside.bootstrap.service.**')
+        attributes('Export-Package': 'com.ngc.seaside.bootstrap.service.*')
     }
 }
 

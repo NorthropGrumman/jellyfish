@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap;
+package com.ngc.seaside.bootstrap.api;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -11,8 +11,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.log.impl.common.LogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.service.resource.impl.common.ResourceService;
-
-import sun.rmi.runtime.Log;
 
 /**
  * Register the BLoCS based services within a Guice module.

@@ -1,7 +1,6 @@
 package com.ngc.seaside.bootstrap.service.impl.promptuserservice;
 
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.PromptUserServiceException;
 
 import java.io.InputStream;
 import java.util.NoSuchElementException;
@@ -37,21 +36,22 @@ public class PromptUserServiceDelegate implements IPromptUserService {
       while (true) {
 
          System.out.print("Enter value for " + parameter + defaultString + ": ");
-         String line;
+         String line = "";
 
          try {
             line = scanner.nextLine();
-            if ((line == null || line.trim().isEmpty())) {
-               if(defaultValue != null) {
-                  return defaultValue;
-               }
-            } else {
-               if(validator.test(line)) {
-                  return line;
-               }
-            }
          } catch (NoSuchElementException e) {
            //let it try to return the default value otherwise ask again.
+         }
+
+         if ((line == null || line.trim().isEmpty())) {
+            if(defaultValue != null) {
+               return defaultValue;
+            }
+         } else {
+            if(validator.test(line)) {
+               return line;
+            }
          }
       }
    }

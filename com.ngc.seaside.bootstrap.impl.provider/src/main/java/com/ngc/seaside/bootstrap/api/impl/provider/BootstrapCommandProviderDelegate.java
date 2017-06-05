@@ -1,10 +1,10 @@
-package com.ngc.seaside.bootstrap.impl.provider;
+package com.ngc.seaside.bootstrap.api.impl.provider;
 
 import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
 import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
 import com.ngc.seaside.command.api.IUsage;

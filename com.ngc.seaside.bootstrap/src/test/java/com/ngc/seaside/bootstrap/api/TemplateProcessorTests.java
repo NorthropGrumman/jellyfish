@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap;
+package com.ngc.seaside.bootstrap.api;
 
 import org.junit.Before;
 import org.junit.Test;

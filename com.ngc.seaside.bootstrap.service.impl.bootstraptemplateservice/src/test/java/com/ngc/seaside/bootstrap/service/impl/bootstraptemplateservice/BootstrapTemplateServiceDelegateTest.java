@@ -18,8 +18,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,6 +48,7 @@ public class BootstrapTemplateServiceDelegateTest {
       resourceService = mock(IResourceService.class);
 
       URL resourcesDir = getClass().getClassLoader().getResource("templates");
+      assertNotNull(resourcesDir);
       File file = new File(resourcesDir.toURI()).getParentFile();
 
       when(resourceService.getResourceRootPath()).thenReturn(Paths.get(file.getAbsolutePath()));
