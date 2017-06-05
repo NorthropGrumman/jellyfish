@@ -1,7 +1,7 @@
 package com.ngc.seaside.bootstrap.service.promptuser.api;
 
 /**
- * Exception to throw when a script would normally exit
+ * Any exception in the IPromptUserService implementation.
  */
 public class PromptUserServiceException extends RuntimeException {
 

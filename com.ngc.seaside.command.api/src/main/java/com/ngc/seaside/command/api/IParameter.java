@@ -1,7 +1,7 @@
 package com.ngc.seaside.command.api;
 
 /**
- * @author justan.provence@ngc.com
+ * An input parameter to a command.
  */
 public interface IParameter {
    /**

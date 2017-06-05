@@ -1,7 +1,7 @@
 package com.ngc.seaside.command.api;
 
 /**
- * Exception to throw when a script would normally exit
+ * Exception for all Command related errors.
  */
 public class CommandException extends RuntimeException {
    private static final long serialVersionUID = -2159928081319923575L;

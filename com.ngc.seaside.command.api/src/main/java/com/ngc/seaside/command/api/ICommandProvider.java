@@ -4,7 +4,7 @@ package com.ngc.seaside.command.api;
  * The implementations of this class provide a convenient way to run and provide the usage for a
  * collection of commands. The type of command's that a provider can run will really depend on the
  * type of options that the commands require. The only required options for running a command are
- * the input parameters which should be provided to the user via {@link #getUsage()} method.
+ * the input parameters which should be described via the {@link #getUsage()} method.
  *
  * @see ICommand
  */

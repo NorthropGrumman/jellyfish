@@ -3,7 +3,8 @@ package com.ngc.seaside.command.api;
 import java.util.List;
 
 /**
- * @author justan.provence@ngc.com
+ * The usage of a Command and the Command provider. The command provider implementations may only require the
+ * description.
  */
 public interface IUsage {
    /**

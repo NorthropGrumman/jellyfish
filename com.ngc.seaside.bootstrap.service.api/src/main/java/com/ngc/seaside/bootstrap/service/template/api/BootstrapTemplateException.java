@@ -1,7 +1,7 @@
 package com.ngc.seaside.bootstrap.service.template.api;
 
 /**
- * Exception to throw when a script would normally exit
+ * The exception thrown by any implementation of the IBootstrapTemplateService.
  */
 public class BootstrapTemplateException extends RuntimeException {
 
