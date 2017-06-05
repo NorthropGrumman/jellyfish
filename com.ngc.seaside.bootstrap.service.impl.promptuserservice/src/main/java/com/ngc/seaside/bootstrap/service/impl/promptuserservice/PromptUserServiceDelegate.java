@@ -31,26 +31,27 @@ public class PromptUserServiceDelegate implements IPromptUserService {
       }
       Scanner scanner = new Scanner(inputStream);
       final String defaultString = defaultValue == null ? "" : " (" + defaultValue + ")";
+
+      //This will prompt the user again if they enter an invalid value. If they don't enter anything and the
+      //default value isn't null then it will just return the default value.
       while (true) {
+
          System.out.print("Enter value for " + parameter + defaultString + ": ");
-         String line = "";
+         String line;
 
          try {
             line = scanner.nextLine();
-            if (line == null || line.isEmpty()) {
-               return defaultValue;
+            if ((line == null || line.trim().isEmpty())) {
+               if(defaultValue != null) {
+                  return defaultValue;
+               }
+            } else {
+               if(validator.test(line)) {
+                  return line;
+               }
             }
          } catch (NoSuchElementException e) {
            //let it try to return the default value otherwise ask again.
-         }
-
-         if (line.isEmpty() && defaultValue != null) {
-            return defaultValue;
-         }
-         if (validator.test(line)) {
-            return line;
-         } else {
-            System.out.println("Invalid value, please try again");
          }
       }
    }

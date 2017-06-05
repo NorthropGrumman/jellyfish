@@ -69,6 +69,22 @@ public class PromptUserServiceDelegateTest {
    }
 
    @Test
+   public void doesRePrompt() throws IOException {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      String input = "\nabcd";
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
+
+      delegate.setInputStream(new ByteArrayInputStream(input.getBytes()));
+
+      String value = delegate.prompt("myParam", null, null);
+
+      outputStream.flush();
+      assertEquals("Enter value for myParam: Enter value for myParam: ", outputStream.toString());
+      assertEquals("abcd", value);
+   }
+
+   @Test
    public void doesPromptTestValidity() throws IOException {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       String input = "abcd";
