@@ -2,6 +2,8 @@
 
 
 dependencies {
+    compile project(":command.api")
+
     testCompile "junit:junit:$junitVersion"
 }
 
