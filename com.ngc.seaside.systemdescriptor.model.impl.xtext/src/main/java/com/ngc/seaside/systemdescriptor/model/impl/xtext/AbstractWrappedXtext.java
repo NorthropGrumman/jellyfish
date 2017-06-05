@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @param <T> the type being wrapped
  */
-public abstract class AbstractWrappedXtext<T extends EObject> {
+public abstract class AbstractWrappedXtext<T extends EObject> implements IUnwrappable<T> {
 
    /**
     * The resolver that can resolve existing wrappers for other XText objects.
@@ -30,9 +30,7 @@ public abstract class AbstractWrappedXtext<T extends EObject> {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
    }
 
-   /**
-    * Gets the XText object that is being wrapped.
-    */
+   @Override
    public T unwrap() {
       return wrapped;
    }

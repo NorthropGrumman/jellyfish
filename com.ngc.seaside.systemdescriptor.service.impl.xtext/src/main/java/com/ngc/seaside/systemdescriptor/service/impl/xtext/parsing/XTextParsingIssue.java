@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.eclipse.xtext.validation.Issue;
 

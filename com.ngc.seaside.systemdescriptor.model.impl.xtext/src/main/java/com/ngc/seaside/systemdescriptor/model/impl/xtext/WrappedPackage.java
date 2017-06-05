@@ -29,7 +29,7 @@ import java.util.Objects;
  * contain multiple data and model types declarations.  Thus there is a 1 ({@link IPackage}) to many ({@link Package})
  * relationship between the two.
  */
-public class WrappedPackage implements IPackage {
+public class WrappedPackage implements IPackage, IUnwrappableCollection<Package> {
 
    private final Collection<Package> wrapped = new ArrayList<>();
    private final NamedChildCollection<IPackage, IData> data = new NamedChildCollection<>();
@@ -72,6 +72,11 @@ public class WrappedPackage implements IPackage {
       return descriptor;
    }
 
+   @Override
+   public Collection<? extends Package> unwrapAll() {
+      return Collections.unmodifiableCollection(wrapped);
+   }
+
    /**
     * Begins wrapping the given package.  The name of the package must be the same as this package.
     */
@@ -95,10 +100,6 @@ public class WrappedPackage implements IPackage {
             throw new UnrecognizedXtextTypeException(element);
       }
       return this;
-   }
-
-   public Collection<Package> unwrap() {
-      return Collections.unmodifiableCollection(wrapped);
    }
 
    @Override

@@ -45,7 +45,6 @@ public class ValidationDelegateIT {
 
       Path time = ParsingDelegateIT.pathTo("valid-project", "clocks", "datatypes", "Time.sd");
       IParsingResult result = parsingDelegate.parseFiles(Collections.singletonList(time));
-      System.out.println(result.getIssues());
       assertTrue("parsing should be successful!",
                  result.isSuccessful());
    }
