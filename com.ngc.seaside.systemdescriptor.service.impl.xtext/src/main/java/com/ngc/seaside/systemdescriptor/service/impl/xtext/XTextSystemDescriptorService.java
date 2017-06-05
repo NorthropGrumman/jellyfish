@@ -54,7 +54,7 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    }
 
    @Override
-   public boolean removeValidator(ISystemDescriptor validator) {
+   public boolean removeValidator(ISystemDescriptorValidator validator) {
       throw new UnsupportedOperationException("not implemented");
    }
 }

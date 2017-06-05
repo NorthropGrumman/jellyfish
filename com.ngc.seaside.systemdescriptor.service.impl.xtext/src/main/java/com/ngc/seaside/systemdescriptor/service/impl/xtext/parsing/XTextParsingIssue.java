@@ -70,7 +70,7 @@ public class XTextParsingIssue implements IParsingIssue {
    public String toString() {
       return String.format("%s: %s [line %s, col %s] - %s",
                            getSeverity(),
-                           null,
+                           getOffendingFile(),
                            getLineNumber(),
                            getColumn(),
                            getMessage());

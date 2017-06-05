@@ -93,7 +93,7 @@ public class ParsingDelegateIT {
                    issue.getOffendingFile());
    }
 
-   private static Path pathTo(String project, String... packagesAndFile) {
+   public static Path pathTo(String project, String... packagesAndFile) {
       Collection<String> parts = new ArrayList<>();
       parts.add("resources");
       parts.add("test");
