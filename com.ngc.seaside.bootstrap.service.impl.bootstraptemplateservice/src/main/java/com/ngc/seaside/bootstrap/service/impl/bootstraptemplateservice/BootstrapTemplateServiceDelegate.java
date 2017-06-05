@@ -25,8 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- *
- * @author justan.provence@ngc.com
+ * The implementation of the IBootstrapTemplateService implementation.
  */
 public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateService {
 
@@ -79,10 +78,9 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
          updateTemplate(unzippedFolderPath, outputDirectory, clean);
 
       } catch (BootstrapTemplateException | IOException e) {
-         logService.error(getClass(), e,
-                          "An error occurred processing the template zip file: %s", templateName);
-         throw new BootstrapTemplateException(
-                  "An error occurred processing the template zip file: ", e);
+         String message = String.format("An error occurred processing the template zip file: %s", templateName);
+         logService.error(getClass(), e, message);
+         throw new BootstrapTemplateException(message, e);
       } finally {
          if (zipFile != null) {
             try {
@@ -97,8 +95,9 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
    }
 
    /**
+    * Set the log service.
     *
-    * @param ref
+    * @param ref the log service.
     */
    public void setLogService(ILogService ref) {
       this.logService = ref;
@@ -106,44 +105,56 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
 
    /**
     * Remove log service.
+    *
+    * @param ref the log service.
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
    /**
+    * Set the prompt user service.
     *
-    * @param ref
+    * @param ref the service
     */
    public void setPromptUserService(IPromptUserService ref) {
       this.promptUserService = ref;
    }
 
    /**
-    * Remove log service.
+    * Remove the prompt user service
+    *
+    * @param ref the service.
     */
    public void removePromptUserService(IPromptUserService ref) {
       setPromptUserService(null);
    }
 
    /**
+    * Set the resource service.
     *
-    * @param ref
+    * @param ref the resource service.
     */
    public void setResourceService(IResourceService ref) {
       this.resourceService = ref;
    }
 
    /**
-    * Remove log service.
+    * Remove the resource service.
+    *
+    * @param ref the resource service.
     */
    public void removeResourceService(IResourceService ref) {
       setResourceService(null);
    }
 
    /**
+    * Update the template based on the the visitor pattern. This will replace any Velocity Template
+    * parameters with the input values from the properties file.
     *
-    * @param templateFolder
+    * @param templateFolder the template folder.
+    * @param outputFolder   the output folder.
+    * @param clean          true if this should clean existing directories.
     */
    protected void updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
             throws IOException {
@@ -169,16 +180,17 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
    }
 
    /**
+    * Get the Path object represented by the name of the template. The zip file should be called
+    * <pre>Template<templateName>.zip</pre>
     *
-    * @param templateName
-    * @return
+    * @param templateName the name of the template.
+    * @return the Path to the template or null if the file doesn't exists or if it is a directory.
     */
    protected Path getTemplatePath(String templateName) {
       Path templateFile = buildPath(templateName);
       boolean fileFound = Files.exists(templateFile);
 
       if (!fileFound || !Files.isRegularFile(templateFile)) {
-         logService.debug(getClass(), "Unable to find a template file '%s'", templateName);
          return null;
       }
 
@@ -186,9 +198,11 @@ public class BootstrapTemplateServiceDelegate implements IBootstrapTemplateServi
    }
 
    /**
+    * Build the path given the template name.
     *
-    * @param templateName
-    * @return
+    * @param templateName the template name.
+    * @return the Path to the file. notice, this does not check to see if the file exists and should always return
+    *         a valid template.
     */
    protected Path buildPath(String templateName) {
       return Paths.get(

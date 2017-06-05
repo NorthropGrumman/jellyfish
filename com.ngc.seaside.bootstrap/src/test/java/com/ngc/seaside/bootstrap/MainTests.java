@@ -44,7 +44,7 @@ public class MainTests {
    @Before
    public void setup() throws Exception {
 //      templateFile =
-//               Paths.get(getClass().getClassLoader().getResource("templates/example/TemplateExample.zip").toURI())
+//               Paths.get(getClass().getClassLoader().getResource("templates/example/templates.example.TemplateExample.zip").toURI())
 //                        .toAbsolutePath();
 //      outputFolder = Files.createTempDirectory(null).toAbsolutePath();
 //      final String input = GROUP_ID + "\n" + ARTIFACT_ID + "\n" + VERSION + "\n";

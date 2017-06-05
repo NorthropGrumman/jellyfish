@@ -32,8 +32,8 @@ public class TemplateProcessorTests {
 //   @Before
 //   public void setup() throws URISyntaxException {
 //      zipFolder = Paths.get(getClass().getClassLoader().getResource(
-//               "templates/example/TemplateExample.zip").toURI());
-//      templatePath = Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI());
+//               "templates/example/templates.example.TemplateExample.zip").toURI());
+//      templatePath = Paths.get(getClass().getClassLoader().getResource("templates.example.TemplateExample").toURI());
 //      fileCount = 0;
 //   }
 //
@@ -111,7 +111,7 @@ public class TemplateProcessorTests {
 //
 //      // Setup
 //      templatePath = Paths.get(getClass().getClassLoader().getResource(
-//               "InvalidTemplates").toURI()).resolve("NoProperties");
+//               "templates.InvalidTemplates").toURI()).resolve("NoProperties");
 //
 //      try {
 //         TemplateProcessor.validateTemplate(templatePath);
@@ -125,7 +125,7 @@ public class TemplateProcessorTests {
 //
 //      // Setup
 //      templatePath = Paths.get(getClass().getClassLoader().getResource(
-//               "InvalidTemplates").toURI()).resolve("NotAFile");
+//               "templates.InvalidTemplates").toURI()).resolve("NotAFile");
 //
 //      try {
 //         TemplateProcessor.validateTemplate(templatePath);
@@ -140,7 +140,7 @@ public class TemplateProcessorTests {
 //      // Setup
 //      templatePath =
 //               Paths.get(getClass().getClassLoader().getResource(
-//                        "InvalidTemplates").toURI()).resolve("NoFolderFound");
+//                        "templates.InvalidTemplates").toURI()).resolve("NoFolderFound");
 //
 //      try {
 //         TemplateProcessor.validateTemplate(templatePath);
@@ -155,7 +155,7 @@ public class TemplateProcessorTests {
 //      // Setup
 //      templatePath =
 //               Paths.get(getClass().getClassLoader().getResource(
-//                        "InvalidTemplates").toURI()).resolve("NotAFolder");
+//                        "templates.InvalidTemplates").toURI()).resolve("NotAFolder");
 //
 //      try {
 //         TemplateProcessor.validateTemplate(templatePath);
@@ -175,7 +175,7 @@ public class TemplateProcessorTests {
 //
 //      // Setup
 //      templatePath =
-//               Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI())
+//               Paths.get(getClass().getClassLoader().getResource("templates.example.TemplateExample").toURI())
 //                        .resolve("template.properties");
 //      expected = new LinkedHashMap<>();
 //

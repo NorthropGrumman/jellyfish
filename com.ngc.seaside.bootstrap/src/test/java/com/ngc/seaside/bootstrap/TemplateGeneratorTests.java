@@ -29,7 +29,7 @@ public class TemplateGeneratorTests {
 //   @Before
 //   public void setup() throws URISyntaxException, IOException {
 //      templateFolder =
-//               Paths.get(getClass().getClassLoader().getResource("TemplateExample").toURI()).resolve("template");
+//               Paths.get(getClass().getClassLoader().getResource("templates.example.TemplateExample").toURI()).resolve("template");
 //      outputFolder = Files.createTempDirectory(null);
 //      templateFolder.toFile().deleteOnExit();
 //      outputFolder.toFile().deleteOnExit();
