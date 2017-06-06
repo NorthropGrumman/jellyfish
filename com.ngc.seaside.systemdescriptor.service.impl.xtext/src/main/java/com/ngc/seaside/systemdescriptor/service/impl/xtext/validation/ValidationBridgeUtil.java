@@ -18,8 +18,24 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.lang.reflect.Method;
 
+/**
+ * A utility that uses method names to feature out the XText structural feature the method references.  This is used to
+ * allow XText to declare validation issues on particular fields of models.
+ */
 public class ValidationBridgeUtil {
 
+   /**
+    * Gets the structural feature as identified by the name of the method.
+    *
+    * @param object the source object on which the method is called
+    * @param xtext  the raw, unwrapped XText type that corresponds to the type that is being wrapped
+    * @param method the method that was called on the object
+    * @return the structural feature
+    * @throws IllegalValidationDeclarationException if their is no structural feature associated with the method.  This
+    *                                               usually happens if the user calls a method that returns a derived
+    *                                               value or if the method returns an object that is no owned by the
+    *                                               object the {@link ProxyingValidationContext} was created for.
+    */
    public static EStructuralFeature getFeature(Object object, EObject xtext, Method method) {
       if (object instanceof IPackage) {
          return doGetFeature((IPackage) object, xtext, method);

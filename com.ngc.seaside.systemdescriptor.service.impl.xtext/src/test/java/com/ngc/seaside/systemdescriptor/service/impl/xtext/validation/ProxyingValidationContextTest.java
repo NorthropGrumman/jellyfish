@@ -55,6 +55,20 @@ public class ProxyingValidationContextTest {
    }
 
    @Test
+   public void testDoesDeclareWarning() throws Throwable {
+      String msg = "warning message";
+      ctx.declare(Severity.WARNING, msg, dataField).getName();
+      verify(validationHelper).warning(msg, xtext, SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION__NAME);
+   }
+
+   @Test
+   public void testDoesDeclareSuggestion() throws Throwable {
+      String msg = "suggestion message";
+      ctx.declare(Severity.SUGGESTION, msg, dataField).getName();
+      verify(validationHelper).info(msg, xtext, SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION__NAME);
+   }
+
+   @Test
    public void testDoesValidatePackage() throws Throwable {
       Package p = SystemDescriptorFactory.eINSTANCE.createPackage();
       p.setName("myPackage");

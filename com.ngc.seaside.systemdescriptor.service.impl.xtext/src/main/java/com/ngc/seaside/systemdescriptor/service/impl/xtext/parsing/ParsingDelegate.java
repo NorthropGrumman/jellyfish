@@ -29,6 +29,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The parsing delegate does the actual work of parsing system descriptor files.
+ */
 public class ParsingDelegate {
 
    /**

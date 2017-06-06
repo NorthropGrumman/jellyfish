@@ -19,9 +19,16 @@ import java.util.function.Consumer;
  * or {@link XTextSystemDescriptorServiceBuilder#forApplication()}.  In most classes, application simply obtain a
  * reference to this service via injection.  See the Javadoc of {@link XTextSystemDescriptorServiceBuilder} for more
  * information.
+ *
+ * <p/>
+ *
+ * This implementation delegates most concerns to other objects.
  */
 public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
+   /**
+    * Responsible for parsing system descriptor files.
+    */
    private final ParsingDelegate parsingDelegate;
 
    /**
