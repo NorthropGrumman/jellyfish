@@ -1,13 +1,20 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario;
 
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenStep;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.util.Collections;
 
@@ -21,11 +28,33 @@ public class WrappedScenarioStepTest extends AbstractWrappedXtextTest {
 
    private GivenStep step;
 
+   @Mock
+   private IScenario parentScenario;
+
+   @Mock
+   private IModel parentModel;
+
    @Before
    public void setup() throws Throwable {
       step = factory().createGivenStep();
       step.setKeyword("test");
       step.getParameters().add("param1");
+
+      Scenario scenario = factory().createScenario();
+      scenario.setName("scenarioOne");
+      scenario.setGiven(factory().createGivenDeclaration());
+      scenario.getGiven().getSteps().add(step);
+
+      Model model = factory().createModel();
+      model.getScenarios().add(scenario);
+
+      when(parentScenario.getName()).thenReturn(scenario.getName());
+
+      INamedChildCollection<IModel, IScenario> scenarioCollection = new NamedChildCollection<>();
+      scenarioCollection.add(parentScenario);
+
+      when(resolver().getWrapperFor(model)).thenReturn(parentModel);
+      when(parentModel.getScenarios()).thenReturn(scenarioCollection);
    }
 
    @Test
@@ -37,6 +66,9 @@ public class WrappedScenarioStepTest extends AbstractWrappedXtextTest {
       assertEquals("parameters not correct!",
                    step.getParameters(),
                    wrapped.getParameters());
+      assertEquals("parent not correct!",
+                   parentScenario,
+                   wrapped.getParent());
    }
 
    @Test

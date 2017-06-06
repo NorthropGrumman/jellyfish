@@ -215,6 +215,9 @@ public class WrappedSystemDescriptorIT {
       assertEquals("when step not correct!",
                    Arrays.asList("1", "sec", "elapses"),
                    step.getParameters());
+      assertEquals("step parent not correct!",
+                   s,
+                   step.getParent());
       step = s.getThens().iterator().next();
       assertEquals("then step not correct!",
                    "publish",
@@ -222,6 +225,9 @@ public class WrappedSystemDescriptorIT {
       assertEquals("then step not correct!",
                    Collections.singletonList("currentTime"),
                    step.getParameters());
+      assertEquals("step parent not correct!",
+                   s,
+                   step.getParent());
 
       model = wrapped.findModel("clocks.models", "ClockDisplay");
       assertTrue("model not found!",

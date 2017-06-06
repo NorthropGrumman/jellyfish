@@ -1,10 +1,14 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.validation;
 
 import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedDataField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
@@ -15,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,10 +48,6 @@ public class ProxyingValidationContextTest {
    }
 
    @Test
-   public void testDoesAllowForNoIssues() throws Throwable {
-   }
-
-   @Test
    public void testDoesDeclareError() throws Throwable {
       String msg = "error message";
       ctx.declare(Severity.ERROR, msg, dataField).getName();
@@ -55,5 +56,17 @@ public class ProxyingValidationContextTest {
 
    @Test
    public void testDoesValidatePackage() throws Throwable {
+      Package p = SystemDescriptorFactory.eINSTANCE.createPackage();
+      p.setName("myPackage");
+      p.setElement(SystemDescriptorFactory.eINSTANCE.createModel());
+
+      ISystemDescriptor descriptor = mock(ISystemDescriptor.class);
+      IPackage wrapped = new WrappedPackage(wrapperResolver, descriptor, p);
+
+      ProxyingValidationContext<IPackage> ctx = new ProxyingValidationContext<>(wrapped, validationHelper);
+
+      String msg = "error message";
+      ctx.declare(Severity.ERROR, msg, wrapped).getName();
+      verify(validationHelper).error(msg, p, SystemDescriptorPackage.Literals.PACKAGE__NAME);
    }
 }

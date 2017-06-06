@@ -2,10 +2,13 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenStep;
@@ -38,6 +41,16 @@ public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T>
    @Override
    public List<String> getParameters() {
       return wrapped.getParameters();
+   }
+
+   @Override
+   public IScenario getParent() {
+      // Get the parent scenario object.  The double eContainer() call is due to the fact that steps are wrapped in
+      // GivenDeclarations, WhenDeclarations, etc.
+      Scenario parentScenario = (Scenario) wrapped.eContainer().eContainer();
+      Model parentModel = (Model) parentScenario.eContainer();
+      // Now get the scenario for this step.
+      return resolver.getWrapperFor(parentModel).getScenarios().getByName(parentScenario.getName()).get();
    }
 
    /**
