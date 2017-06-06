@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.io.PrintStream;
@@ -101,6 +102,10 @@ public class Traversals {
            scenarios.hasNext() && !ctx.stopped; ) {
          visitor.visitScenario(ctx, scenarios.next());
       }
+      for (Iterator<IModelLink<?>> links = model.getLinks().iterator();
+           links.hasNext() && !ctx.stopped; ) {
+         visitor.visitLink(ctx, links.next());
+      }
    }
 
    /**
@@ -169,6 +174,13 @@ public class Traversals {
          stream.format("        - %s [(scenario) %d total steps]%n",
                        scenario.getName(),
                        scenario.getGivens().size() + scenario.getWhens().size() + scenario.getThens().size());
+      }
+
+      @Override
+      public void visitLink(IVisitorContext ctx, IModelLink<?> link) {
+         stream.format("        - link from %s to %s%n",
+                       link.getSource().getName(),
+                       link.getTarget().getName());
       }
 
       @Override
