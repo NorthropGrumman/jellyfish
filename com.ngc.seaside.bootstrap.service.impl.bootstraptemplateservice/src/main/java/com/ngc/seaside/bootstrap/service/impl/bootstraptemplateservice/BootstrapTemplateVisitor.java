@@ -1,5 +1,7 @@
 package com.ngc.seaside.bootstrap.service.impl.bootstraptemplateservice;
 
+import com.google.common.base.Preconditions;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Class for generating an instance of a template
@@ -55,13 +59,25 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
    /**
     * Converts an object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g.,
     * com/ngc/example on Unix).
-    * this method is used by the Velocity Engine when $Template.asPath($groupId) is found in order to represent
-    * something like a groupId as a file path
-    * @param group object to convert to file path
+    * this method is used by the Velocity Engine when $BootstrapTemplateVisitor.asPath($groupId, $artifactId)
+    * is found in order to represent something like a groupId and artifactId as a file structure (i.e. package).
+    * @param path      object to convert to file path
+    * @param extraPath any objects that should be added to the path. These will be separated by a . then converted to
+    *                  the file system's file separator.
     * @return a file path of the represented object
     */
-   public static String asPath(Object group) {
-      return group.toString().replace(".", FileSystems.getDefault().getSeparator());
+   public static String asPath(Object path, Object... extraPath) {
+      Preconditions.checkNotNull(path, "The path must not be null.");
+      Preconditions.checkArgument(!path.toString().trim().isEmpty(), "The initial path can't be empty.");
+      StringBuilder builder = new StringBuilder(path.toString());
+      if(extraPath != null) {
+         for(Object extra : extraPath) {
+            Preconditions.checkArgument(!extra.toString().trim().isEmpty(), "The path may not be empty.");
+            builder.append(".").append(extra.toString());
+         }
+      }
+
+      return builder.toString().replace(".", FileSystems.getDefault().getSeparator());
    }
 
    /**
@@ -74,7 +90,10 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
       Path output = outputFolder.resolve(inputFolder.relativize(input)).toAbsolutePath();
       StringWriter w = new StringWriter();
       try {
-         engine.evaluate(context, w, "", output.toAbsolutePath().toString().replace("\\$", "\\\\$"));
+         engine.evaluate(context,
+                         w,
+                         "evaluate output",
+                         output.toAbsolutePath().toString().replace("\\$", "\\\\$"));
       } catch (IOException e) {
          // ignored since StringWriter won't throw an IOException
       }
@@ -122,6 +141,13 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
    @Override
    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
       Path outputFile = getOutputPath(path);
+
+      //todo add this to a resource property file
+      if(path.toString().contains("gradlew") || path.toString().endsWith(".jar") || path.toString().endsWith(".bat")) {
+         Files.copy(path, outputFile, REPLACE_EXISTING);
+         return FileVisitResult.CONTINUE;
+      }
+
       try (Writer writer = Files.newBufferedWriter(outputFile); Reader reader = Files.newBufferedReader(path)) {
          engine.evaluate(context, writer, "", reader);
       }

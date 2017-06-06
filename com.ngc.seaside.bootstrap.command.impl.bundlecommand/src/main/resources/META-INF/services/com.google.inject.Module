@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.api.command.impl.bundlecommand.BundleBootstrapCommandModule
+com.ngc.seaside.bootstrap.command.impl.bundlecommand.BundleBootstrapCommandModule
