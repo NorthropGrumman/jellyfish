@@ -16,7 +16,8 @@ Require-Bundle: com.ngc.seaside.systemdescriptor,
  org.eclipse.compare,
  org.eclipse.xtext.builder,
  org.eclipse.xtend.lib;resolution:=optional,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.jdt.core;bundle-version="3.12.3"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.ngc.seaside.systemdescriptor.ui.contentassist,

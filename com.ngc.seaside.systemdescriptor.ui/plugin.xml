@@ -14,6 +14,13 @@
             name="System Descriptor Project"
             project="true">
       </wizard>
+      <wizard
+      		category="com.ngc.seaside.systemdescriptor.category.wizards"
+            class="com.ngc.seaside.systemdescriptor.ui.wizard.file.SystemDescriptorFileWizard"
+            id="com.ngc.seaside.systemdescriptor.ui.wizard.file.systemdescriptorfilewizard"
+            name="System Descriptor File"
+            project="false">
+      </wizard>
    </extension>
 	<extension
 		point="org.eclipse.ui.editors">
