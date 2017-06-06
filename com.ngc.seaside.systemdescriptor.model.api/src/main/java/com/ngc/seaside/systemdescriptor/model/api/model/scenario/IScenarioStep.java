@@ -8,34 +8,41 @@ import java.util.List;
  */
 public interface IScenarioStep {
 
-  /**
-   * Gets the keyword for this scenario step.  This is usually a verb.  Its tense may vary depending on the type of the
-   * step this is.
-   *
-   * @return the keyword for this scenario step
-   * @see IScenario#getGivens()
-   * @see IScenario#getWhens()
-   * @see IScenario#getThens()
-   */
-  String getKeyword();
+   /**
+    * Gets the keyword for this scenario step.  This is usually a verb.  Its tense may vary depending on the type of the
+    * step this is.
+    *
+    * @return the keyword for this scenario step
+    * @see IScenario#getGivens()
+    * @see IScenario#getWhens()
+    * @see IScenario#getThens()
+    */
+   String getKeyword();
 
-  /**
-   * Sets the keyword for this scenario step.  This is usually a verb.  Its tense may vary depending on the type of the
-   * step this is.
-   *
-   * @param keyword the keyword for this scenario step
-   * @return this step
-   * @see IScenario#getGivens()
-   * @see IScenario#getWhens()
-   * @see IScenario#getThens()
-   */
-  IScenarioStep setKeyword(String keyword);
+   /**
+    * Sets the keyword for this scenario step.  This is usually a verb.  Its tense may vary depending on the type of the
+    * step this is.
+    *
+    * @param keyword the keyword for this scenario step
+    * @return this step
+    * @see IScenario#getGivens()
+    * @see IScenario#getWhens()
+    * @see IScenario#getThens()
+    */
+   IScenarioStep setKeyword(String keyword);
 
-  /**
-   * Gets the parameters that follow the keyword in the order they occur.  The returned list may not be modifiable if
-   * this object is immutable.
-   *
-   * @return the parameters that follow the keyword
-   */
-  List<String> getParameters();
+   /**
+    * Gets the parameters that follow the keyword in the order they occur.  The returned list may not be modifiable if
+    * this object is immutable.
+    *
+    * @return the parameters that follow the keyword
+    */
+   List<String> getParameters();
+
+   /**
+    * Gets the parent scenario that contains this step.
+    *
+    * @return the parent scenario that contains this step
+    */
+   IScenario getParent();
 }
