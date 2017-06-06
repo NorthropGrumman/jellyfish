@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.validation;
 
 import com.google.inject.Injector;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
@@ -31,12 +32,16 @@ public class ValidationDelegateIT {
    @Mock
    private ISystemDescriptorValidator validator;
 
+   @Mock
+   private ILogService logService;
+
    @Before
    public void setup() throws Throwable {
       Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       delegate = new ValidationDelegate(injector.getInstance(SystemDescriptorValidator.class));
       parsingDelegate = new ParsingDelegate(injector.getInstance(IParser.class),
-                                            injector.getInstance(XtextResourceSet.class));
+                                            injector.getInstance(XtextResourceSet.class),
+                                            logService);
    }
 
    @Test

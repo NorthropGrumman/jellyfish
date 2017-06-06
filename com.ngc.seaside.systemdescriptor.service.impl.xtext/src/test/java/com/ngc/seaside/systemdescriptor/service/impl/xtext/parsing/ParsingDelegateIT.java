@@ -2,6 +2,8 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.inject.Injector;
 
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -10,6 +12,9 @@ import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,15 +28,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ParsingDelegateIT {
 
    private ParsingDelegate delegate;
+
+   @Mock
+   private ILogService logService;
 
    @Before
    public void setup() throws Throwable {
       Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       delegate = new ParsingDelegate(injector.getInstance(IParser.class),
-                                     injector.getInstance(XtextResourceSet.class));
+                                     injector.getInstance(XtextResourceSet.class),
+                                     new PrintStreamLogService());
    }
 
    @Test

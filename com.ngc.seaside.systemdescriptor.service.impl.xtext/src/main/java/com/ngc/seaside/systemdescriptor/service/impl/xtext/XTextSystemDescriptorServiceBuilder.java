@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -55,7 +57,7 @@ import java.util.function.Supplier;
  *    {@code public class MyApplication {
  *       private final ISystemDescriptorService service;
  *
- *       @literal @Inject
+ *       {@literal @}Inject
  *       public MyApplication(ISystemDescriptorService service) {
  *          this.service = service;
  *       }
@@ -68,18 +70,22 @@ import java.util.function.Supplier;
  *
  * <h1>Working with smaller applications</h1>
  *
- * As an alternative, {@link #forApplication()} can be used to create a builder that will built and instance of the
- * service for an application that doesn't use dependency injection.  This is also useful in tests.  It is used like
- * this:
+ * As an alternative, {@link #forApplication(ILogService)} can be used to create a builder that will built and instance
+ * of the service for an application that doesn't use dependency injection.  This is also useful in tests.  It is used
+ * like this:
  *
  * <pre>
  *    {@code ISystemDescriptorService service = XTextSystemDescriptorServiceBuilder.forApplication().build();
  *      // You can also get the injector with this:
- *      Injector injector = XTextSystemDescriptorServiceBuilder.forApplication()
+ *      Injector injector = XTextSystemDescriptorServiceBuilder.forApplication(logService)
  *        .buildInjector();
  *      // And resolve the service directly:
  *      service = injector.getInstance(ISystemDescriptorService.class); }
  * </pre>
+ *
+ * An {@code ILogService} implementation must be supplied.
+ *
+ * <p/>
  *
  * You can also add additional modules to be configured with {@link ForApplicationBuilder#addModule(Module, Module...)
  * addModule}. It's also possible to enable the {@link ServiceLoader service loading} mechanisms described above with
@@ -110,10 +116,12 @@ public class XTextSystemDescriptorServiceBuilder {
     * creation of the {@code Injector} is the responsibility of the application, not a component within the application.
     * Thus, consider using {@link #forIntegration(Consumer)} to integrate the service into an application instead.
     *
+    * @param logService the log service to use when building the service
     * @see #forIntegration(Consumer)
     */
-   public static ForApplicationBuilder forApplication() {
-      return new ForApplicationBuilder();
+   public static ForApplicationBuilder forApplication(ILogService logService) {
+      Preconditions.checkNotNull(logService, "logService may not be null!");
+      return new ForApplicationBuilder(logService);
    }
 
    /**
@@ -180,15 +188,24 @@ public class XTextSystemDescriptorServiceBuilder {
     * A builder for creating a standalone instance of an XText based {@code ISystemDescriptorService} implementation
     * which can be used by a lightwight application.
     *
-    * @see #forApplication()
+    * @see #forApplication(ILogService)
     */
    public static class ForApplicationBuilder {
 
       private final Collection<Module> modules = new ArrayList<>();
+      private final ILogService logService;
       private boolean includeServiceLoadedModules = false;
 
-      private ForApplicationBuilder() {
+      private ForApplicationBuilder(ILogService logService) {
+         this.logService = logService;
          modules.addAll(getDefaultModules());
+         // Add the log service binding.
+         modules.add(new AbstractModule() {
+            @Override
+            protected void configure() {
+               bind(ILogService.class).toInstance(logService);
+            }
+         });
       }
 
       /**

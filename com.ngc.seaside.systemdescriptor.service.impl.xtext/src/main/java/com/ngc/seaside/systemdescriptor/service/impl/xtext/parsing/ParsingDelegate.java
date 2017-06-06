@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
@@ -27,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -49,10 +52,16 @@ public class ParsingDelegate {
     */
    private final XtextResourceSet resourceSet;
 
+   /**
+    * Used for logging.
+    */
+   private final ILogService logService;
+
    @Inject
-   public ParsingDelegate(IParser parser, XtextResourceSet resourceSet) {
+   public ParsingDelegate(IParser parser, XtextResourceSet resourceSet, ILogService logService) {
       this.parser = Preconditions.checkNotNull(parser, "parser may not be null!");
       this.resourceSet = Preconditions.checkNotNull(resourceSet, "resourceSet may not be null!");
+      this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
       // Configure XText to resolve imports.
       resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
    }
@@ -88,15 +97,29 @@ public class ParsingDelegate {
       XTextParsingResult result;
       ParsingContext ctx = new ParsingContext();
 
+      Stopwatch timer = Stopwatch.createStarted();
       try {
          // Create all the resources.
          Collection<XtextResource> resources = getResources(paths, ctx);
          // Now aggregate the validation results.
          result = getResult(ctx, resources);
       } catch (IOException e) {
+         logService.error(getClass(), "Error while parsing content in %s!", paths);
          throw new ParsingException(e.getMessage(), e);
       } finally {
          ctx.close();
+      }
+      timer.stop();
+
+      if (result.isSuccessful()) {
+         logService.debug(getClass(), "Successfully parsed %s files in %d ms.",
+                          paths.size(),
+                          timer.elapsed(TimeUnit.MILLISECONDS));
+      } else {
+         logService.debug(getClass(), "Parsed %s files in %d ms but %d issues detected.",
+                          paths.size(),
+                          timer.elapsed(TimeUnit.MILLISECONDS),
+                          result.getIssues().size());
       }
 
       return result;

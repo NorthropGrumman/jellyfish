@@ -17,13 +17,14 @@ subprojects {
    apply plugin: 'com.ngc.seaside.parent'
 
    group 'com.ngc.seaside'
-   version '1.0.1-SNAPSHOT'
+   version '1.1-SNAPSHOT'
 
    ext {
       jellyfishApiVersion = "1.1-SNAPSHOT"
       jellyfishDslVersion = "0.4-SNAPSHOT"
       guavaVersion = '21.0'
       guiceVersion = '3.0'
+      blocsCoreVersion = '2.1'
       junitVersion = '4.12'
       mockitoVersion = '2.7.14'
    }
