@@ -4,11 +4,12 @@ dependencies {
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
    compile "com.google.guava:guava:$guavaVersion"
+   compile "com.google.inject:guice:$guiceVersion"
    compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
 
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
-   testCompile "com.google.inject:guice:$guiceVersion"
    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+   testCompile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }

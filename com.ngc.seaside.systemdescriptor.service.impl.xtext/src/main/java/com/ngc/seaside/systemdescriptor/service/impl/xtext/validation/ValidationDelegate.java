@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.EObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 public class ValidationDelegate implements IValidatorExtension {
 
@@ -59,15 +60,19 @@ public class ValidationDelegate implements IValidatorExtension {
 
    @Inject
    public ValidationDelegate(SystemDescriptorValidator validator,
-                             ILogService logService) {
+                             ILogService logService,
+                             ValidatorsHolder validatorsHolder) {
       this.validator = Preconditions.checkNotNull(validator, "validator may not be null!");
       this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
+      // Register all injected validators.
+      validatorsHolder.validators.forEach(this::addValidator);
    }
 
    @Override
    public void validate(EObject source, ValidationHelper helper) {
       // Walk the source object up the containment hierarchy to find the Package object.  Build a system descriptor
       // for the entire package.  Then instruct the validator to validate associated wrapper of the source object.
+      System.out.println("Validation is happending");
       ISystemDescriptor descriptor = new WrappedSystemDescriptor(findPackage(source));
       doValidate(source, helper, descriptor);
    }
@@ -310,5 +315,15 @@ public class ValidationDelegate implements IValidatorExtension {
             .filter(s -> s.unwrap().equals(xtext))
             .findAny()
             .get();
+   }
+
+   /**
+    * A value holder to hold {@link ISystemDescriptorValidator}s.  This is a workaround to Guice to
+    * enable optional constructor parameters.
+    */
+   public static class ValidatorsHolder {
+
+      @Inject(optional = true)
+      Set<ISystemDescriptorValidator> validators = Collections.emptySet();
    }
 }

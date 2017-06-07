@@ -12,10 +12,12 @@ import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 
@@ -48,28 +50,20 @@ public class ParsingDelegate {
    private final IParser parser;
 
    /**
-    * The XText resource set we use to create resources that will be parsed.
-    */
-   private final XtextResourceSet resourceSet;
-
-   /**
     * Used for logging.
     */
    private final ILogService logService;
 
    @Inject
-   public ParsingDelegate(IParser parser, XtextResourceSet resourceSet, ILogService logService) {
+   public ParsingDelegate(IParser parser, ILogService logService) {
       this.parser = Preconditions.checkNotNull(parser, "parser may not be null!");
-      this.resourceSet = Preconditions.checkNotNull(resourceSet, "resourceSet may not be null!");
       this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
-      // Configure XText to resolve imports.
-      resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
    }
 
    public IParsingResult parseProject(Path projectDirectory) {
       Preconditions.checkNotNull(projectDirectory, "projectDirectory may not be null!");
       Preconditions.checkArgument(Files.isDirectory(projectDirectory), "%s is not a directory!", projectDirectory);
-      Path src = projectDirectory.resolve(Paths.get("src", "main", "sd"));
+      Path src = projectDirectory.resolve(SD_SOURCE_PATH);
       Preconditions.checkArgument(Files.isDirectory(src),
                                   "%s is not a directory, project does not contain correct file structure!",
                                   src);
@@ -166,6 +160,16 @@ public class ParsingDelegate {
 
       private final Collection<InputStream> streams = new ArrayList<>();
 
+      /**
+       * The XText resource set we use to create resources that will be parsed.
+       */
+      private final XtextResourceSet resourceSet = new XtextResourceSet();
+
+      private ParsingContext() {
+         // Configure XText to resolve imports.
+         this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+      }
+
       private InputStream streamOf(Path file) throws IOException {
          InputStream is = Files.newInputStream(file);
          streams.add(is);
@@ -175,12 +179,19 @@ public class ParsingDelegate {
       private XtextResource resourceOf(Path file) throws IOException {
          XtextResource r = (XtextResource) resourceSet.createResource(
                URI.createFileURI(file.toAbsolutePath().toFile().toString()));
+         r.setCache(IResourceScopeCache.NullImpl.INSTANCE);
          r.load(streamOf(file), resourceSet.getLoadOptions());
          return r;
       }
 
       private void close() {
+         // Close all streams.
          streams.forEach(Closeables::closeQuietly);
+         // Remove all resources.  If we don't do this, Xtext will hold on to them.
+         for (Resource r : resourceSet.getResources()) {
+            r.unload();
+         }
+         resourceSet.getResources().clear();
       }
    }
 }

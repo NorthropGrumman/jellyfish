@@ -39,6 +39,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.argThat;
@@ -68,7 +69,7 @@ public class ValidationDelegateTest {
 
    @Before
    public void setup() throws Throwable {
-      delegate = new ValidationDelegate(dslValidator, logService) {
+      delegate = new ValidationDelegate(dslValidator, logService, new ValidationDelegate.ValidatorsHolder()) {
          @Override
          protected void doValidate(EObject source,
                                    ValidationHelper helper,
@@ -356,6 +357,14 @@ public class ValidationDelegateTest {
       delegate.addValidator(validator);
       delegate.validate(source, helper);
       // No exception should be thrown.
+   }
+
+   @Test
+   public void testDoesAutomaticallyRegisterInjectedValidators() throws Throwable {
+      ValidationDelegate.ValidatorsHolder holder = new ValidationDelegate.ValidatorsHolder();
+      holder.validators = Collections.singleton(validator);
+      delegate = new ValidationDelegate(dslValidator, logService, holder);
+      verify(dslValidator).addValidatorExtension(delegate);
    }
 
    private void interceptValidate(EObject source,

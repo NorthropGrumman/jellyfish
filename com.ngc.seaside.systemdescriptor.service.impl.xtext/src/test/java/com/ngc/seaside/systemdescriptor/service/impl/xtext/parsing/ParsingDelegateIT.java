@@ -39,7 +39,6 @@ public class ParsingDelegateIT {
    public void setup() throws Throwable {
       Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       delegate = new ParsingDelegate(injector.getInstance(IParser.class),
-                                     injector.getInstance(XtextResourceSet.class),
                                      logService);
    }
 
