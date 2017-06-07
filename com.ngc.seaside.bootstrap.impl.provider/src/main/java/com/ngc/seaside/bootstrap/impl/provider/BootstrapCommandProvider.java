@@ -136,8 +136,9 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    /**
     * TODO this should be in the parameter service.
-    * @param output
-    * @return
+    *
+    * @param output the template service's output
+    * @return the collection of parameters.
     */
    private IParameterCollection convertParameters(ITemplateOutput output) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
