@@ -20,6 +20,7 @@ public interface ISystemDescriptorService {
     *
     * @param projectDirectory a path to the root directory of the system descriptor project
     * @return the result of parsing
+    * @throws ParsingException if some exception occurs during parsing
     */
    IParsingResult parseProject(Path projectDirectory);
 
@@ -30,6 +31,7 @@ public interface ISystemDescriptorService {
     *
     * @param paths the paths that point to {@code .sd} files
     * @return the result of parsing
+    * @throws ParsingException if some exception occurs during parsing
     */
    IParsingResult parseFiles(Collection<Path> paths);
 
@@ -45,6 +47,7 @@ public interface ISystemDescriptorService {
     * Registers a validator that is used when parsing and validating system descriptor.
     *
     * @param validator the validator to register
+    * @see ISystemDescriptorValidator
     */
    void addValidator(ISystemDescriptorValidator validator);
 
@@ -53,6 +56,7 @@ public interface ISystemDescriptorService {
     *
     * @param validator the validator to remove
     * @return true if the validator was removed, false if the validator was never added
+    * @see ISystemDescriptorValidator
     */
    boolean removeValidator(ISystemDescriptorValidator validator);
 }
