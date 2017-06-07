@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import java.nio.file.Path;
@@ -15,10 +16,10 @@ import java.util.function.Consumer;
 
 /**
  * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL.  New instances
- * of this service should always be obtained via {@link XTextSystemDescriptorServiceBuilder#forIntegration(Consumer)}
- * or {@link XTextSystemDescriptorServiceBuilder#forApplication()}.  In most classes, application simply obtain a
- * reference to this service via injection.  See the Javadoc of {@link XTextSystemDescriptorServiceBuilder} for more
- * information.
+ * of this service should always be obtained via {@link XTextSystemDescriptorServiceBuilder#forIntegration(Consumer)
+ * forIntegration} or {@link XTextSystemDescriptorServiceBuilder#forApplication(com.ngc.blocs.service.log.api.ILogService)
+ * forApplication}.  In most classes, application simply obtain a reference to this service via injection.  See the
+ * Javadoc of {@link XTextSystemDescriptorServiceBuilder} for more information.
  *
  * <p/>
  *
@@ -32,12 +33,19 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    private final ParsingDelegate parsingDelegate;
 
    /**
+    * Responsible for validating system descriptor files and handling validators plugins.
+    */
+   private final ValidationDelegate validationDelegate;
+
+   /**
     * Creates a new {@code XTextSystemDescriptorService}.  <b>Applications should not invoke this constructor directly.
     * See the Javadoc for more information.</b>
     */
    @Inject
-   public XTextSystemDescriptorService(ParsingDelegate parsingDelegate) {
+   public XTextSystemDescriptorService(ParsingDelegate parsingDelegate,
+                                       ValidationDelegate validationDelegate) {
       this.parsingDelegate = Preconditions.checkNotNull(parsingDelegate, "parsingDelegate may not be null!");
+      this.validationDelegate = Preconditions.checkNotNull(validationDelegate, "validationDelegate may not be null!");
    }
 
    @Override
@@ -57,11 +65,11 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
    @Override
    public void addValidator(ISystemDescriptorValidator validator) {
-      throw new UnsupportedOperationException("not implemented");
+      validationDelegate.addValidator(validator);
    }
 
    @Override
    public boolean removeValidator(ISystemDescriptorValidator validator) {
-      throw new UnsupportedOperationException("not implemented");
+      return validationDelegate.removeValidator(validator);
    }
 }

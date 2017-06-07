@@ -42,8 +42,19 @@ import java.util.Collections;
 
 public class ValidationDelegate implements IValidatorExtension {
 
+   /**
+    * All registered validators.
+    */
    private final Collection<ISystemDescriptorValidator> validators = Collections.synchronizedList(new ArrayList<>());
+
+   /**
+    * The DSL validator.
+    */
    private final SystemDescriptorValidator validator;
+
+   /**
+    * Used for logging.
+    */
    private final ILogService logService;
 
    @Inject
@@ -211,10 +222,16 @@ public class ValidationDelegate implements IValidatorExtension {
       }
    }
 
+   /**
+    * Template method invoked to create a new validation context.
+    */
    protected <T> IValidationContext<T> newContext(T object, ValidationHelper helper) {
       return new ProxyingValidationContext<>(object, helper);
    }
 
+   /**
+    * Template method invoked to perform validation with the given context.
+    */
    protected void doValidation(IValidationContext<?> context) {
       synchronized (validators) {
          for (ISystemDescriptorValidator validator : validators) {

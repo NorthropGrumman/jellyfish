@@ -64,6 +64,11 @@ import java.util.function.Supplier;
  *    } }
  * </pre>
  *
+ * <b>An implementation of the {@code ILogService} interface must be bound by an application's module</b> in order for
+ * service to be created correctly.
+ *
+ * <p/>
+ *
  * It is also possible to configure build to load all {@code Module}s via {@link ServiceLoader service loaders} with the
  * {@link IntegrationBuilder#includeServiceLoadedModules(boolean) includeServiceLoadedModules} option.  The default
  * value for this behavior is false.  Only enable this if the application is not doing something like this itself.
