@@ -16,6 +16,10 @@ import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A validation context that uses a dynamic proxy instance to intercept methods.  This is used to determine which value
+ * of the object be validated in invalid.
+ */
 public class ProxyingValidationContext<T> implements IValidationContext<T> {
 
    /**
