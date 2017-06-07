@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -57,6 +58,12 @@ public class XTextSystemDescriptorServiceBuilderIT {
    @Test
    public void testDoesIntegrateWithApplication() throws Throwable {
       Collection<Module> appModules = new ArrayList<>();
+      appModules.add(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(ILogService.class).toInstance(logService);
+         }
+      });
       Injector injector = XTextSystemDescriptorServiceBuilder.forIntegration(appModules::add)
             .build(() -> Guice.createInjector(appModules));
 
@@ -71,6 +78,12 @@ public class XTextSystemDescriptorServiceBuilderIT {
    @Test
    public void testDoesUseServiceLoadersWhenIntegratingWithApplication() throws Throwable {
       Collection<Module> appModules = new ArrayList<>();
+      appModules.add(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(ILogService.class).toInstance(logService);
+         }
+      });
       Injector injector = XTextSystemDescriptorServiceBuilder.forIntegration(appModules::add)
             .includeServiceLoadedModules(true)
             .build(() -> Guice.createInjector(appModules));

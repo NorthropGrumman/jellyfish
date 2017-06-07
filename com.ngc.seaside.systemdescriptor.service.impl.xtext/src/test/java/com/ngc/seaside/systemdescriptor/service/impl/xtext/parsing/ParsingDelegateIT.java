@@ -3,7 +3,6 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 import com.google.inject.Injector;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -41,7 +40,7 @@ public class ParsingDelegateIT {
       Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       delegate = new ParsingDelegate(injector.getInstance(IParser.class),
                                      injector.getInstance(XtextResourceSet.class),
-                                     new PrintStreamLogService());
+                                     logService);
    }
 
    @Test
