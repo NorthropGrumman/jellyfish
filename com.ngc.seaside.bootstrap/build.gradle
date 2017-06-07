@@ -1,4 +1,3 @@
-
 apply plugin: 'application'
 
 mainClassName = "com.ngc.seaside.bootstrap.Bootstrap"
@@ -38,7 +37,6 @@ applicationDistribution.from('src/main/resources/') {
 // Provide the app home directory has a system property.
 applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
 
-
 // Set the property to the value in the script (windows vs *nix).
 startScripts {
     doLast {
@@ -52,3 +50,14 @@ jar {
     //will overwrite the seaside parent plugin naming convention.
     archiveName = "${project.name}"
 }
+
+task unzip( type: Copy ) {
+    def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
+    def outputDir = file("${buildDir}/distributions/")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+
+build.dependsOn unzip
