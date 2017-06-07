@@ -182,7 +182,8 @@ public class XTextSystemDescriptorServiceBuilder {
 
          // XText setup.
          TerminalsStandaloneSetup.doSetup();
-         // Request the injector be created
+
+         // Request the injector be created.
          Injector injector = injectorSupplier.get();
          new SystemDescriptorStandaloneSetup().register(injector);
          return injector;

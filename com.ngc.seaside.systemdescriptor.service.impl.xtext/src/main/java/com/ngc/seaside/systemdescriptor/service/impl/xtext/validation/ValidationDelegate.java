@@ -72,7 +72,6 @@ public class ValidationDelegate implements IValidatorExtension {
    public void validate(EObject source, ValidationHelper helper) {
       // Walk the source object up the containment hierarchy to find the Package object.  Build a system descriptor
       // for the entire package.  Then instruct the validator to validate associated wrapper of the source object.
-      System.out.println("Validation is happending");
       ISystemDescriptor descriptor = new WrappedSystemDescriptor(findPackage(source));
       doValidate(source, helper, descriptor);
    }

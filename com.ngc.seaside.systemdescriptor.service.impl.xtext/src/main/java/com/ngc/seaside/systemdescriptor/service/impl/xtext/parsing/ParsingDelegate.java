@@ -179,7 +179,6 @@ public class ParsingDelegate {
       private XtextResource resourceOf(Path file) throws IOException {
          XtextResource r = (XtextResource) resourceSet.createResource(
                URI.createFileURI(file.toAbsolutePath().toFile().toString()));
-         r.setCache(IResourceScopeCache.NullImpl.INSTANCE);
          r.load(streamOf(file), resourceSet.getLoadOptions());
          return r;
       }
