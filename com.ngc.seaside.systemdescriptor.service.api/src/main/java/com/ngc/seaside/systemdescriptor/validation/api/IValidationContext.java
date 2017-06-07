@@ -6,7 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 /**
  * A context object passed to an {@link ISystemDescriptorValidator} during validation.  This context contains the object
  * that is being validated and allows for errors, warnings, and suggestions to be declared.  The object being validated
- * is an instance of one of the interfaces in the {@link com.ngc.seaside.systemdescriptor.model.api} package or
+ * is an instance of one of the interfaces in the {@code com.ngc.seaside.systemdescriptor.model.api} package or
  * subpackages.
  *
  * <p/>
@@ -41,7 +41,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  * <pre>
  *    {@code
  *    public class MyValidator extends AbstractSystemDescriptorValidator {
- *       @Override
+ *       {@literal @}Override
  *       protected void validateModel(IValidationContext<IModel> context) {
  *         IModel model = context.getObject();
  *         IScenario scenario = model.getScenarios().getByName("foo").get();
@@ -59,7 +59,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  * <pre>
  *    {@code
  *    public class MyValidator extends AbstractSystemDescriptorValidator {
- *       @Override
+ *       {@literal @}Override
  *       protected void validateScenario(IValidationContext<IScenario> context) {
  *         IScenario scenario = context.getObject();
  *         if(scenario.getGivens().size() > 10) {
