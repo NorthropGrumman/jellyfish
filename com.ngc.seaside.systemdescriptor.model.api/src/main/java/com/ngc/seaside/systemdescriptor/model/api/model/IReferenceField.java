@@ -10,18 +10,18 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
  */
 public interface IReferenceField extends INamedChild<IModel> {
 
-  /**
-   * Gets the metadata associated with this field.
-   *
-   * @return the metadata associated with this field
-   */
-  IMetadata getMetadata();
+   /**
+    * Gets the metadata associated with this field.
+    *
+    * @return the metadata associated with this field
+    */
+   IMetadata getMetadata();
 
-  /**
-   * Sets the metadata associated with this field.
-   *
-   * @param metadata the metadata associated with this field
-   * @return this field
-   */
-  IReferenceField setMetadata(IMetadata metadata);
+   /**
+    * Sets the metadata associated with this field.
+    *
+    * @param metadata the metadata associated with this field
+    * @return this field
+    */
+   IReferenceField setMetadata(IMetadata metadata);
 }

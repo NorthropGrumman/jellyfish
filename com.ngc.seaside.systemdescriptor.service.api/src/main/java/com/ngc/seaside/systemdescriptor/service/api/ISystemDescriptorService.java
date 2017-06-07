@@ -43,12 +43,14 @@ public interface ISystemDescriptorService {
 
    /**
     * Registers a validator that is used when parsing and validating system descriptor.
+    *
     * @param validator the validator to register
     */
    void addValidator(ISystemDescriptorValidator validator);
 
    /**
     * Unregisters a validator that has been registered via {@link #addValidator(ISystemDescriptorValidator)}.
+    *
     * @param validator the validator to remove
     * @return true if the validator was removed, false if the validator was never added
     */

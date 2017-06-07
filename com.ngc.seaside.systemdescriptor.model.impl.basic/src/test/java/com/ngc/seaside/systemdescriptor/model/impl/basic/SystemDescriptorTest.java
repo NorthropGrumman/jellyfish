@@ -1,17 +1,18 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic;
 
-import static org.junit.Assert.*;
-
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SystemDescriptorTest {
 
@@ -99,7 +100,8 @@ public class SystemDescriptorTest {
       assertTrue("Model not found!", model.isPresent());
       assertEquals("Model found but does not match!", clockHandModel, model.get());
 
-      assertFalse("Bad package name and model name pair did not return a null object", sd.findModel("clocks.datatypes", "boom").isPresent());
+      assertFalse("Bad package name and model name pair did not return a null object",
+                  sd.findModel("clocks.datatypes", "boom").isPresent());
    }
 
    @Test
@@ -137,7 +139,8 @@ public class SystemDescriptorTest {
       assertTrue("Data not found!", data.isPresent());
       assertEquals("Data found but does not match!", dateTimeData, data.get());
 
-      assertFalse("Bad name did not return a null object in findData", sd.findData("clocks.datatypes", "DateTimeStamp").isPresent());
+      assertFalse("Bad name did not return a null object in findData",
+                  sd.findData("clocks.datatypes", "DateTimeStamp").isPresent());
    }
 
 }

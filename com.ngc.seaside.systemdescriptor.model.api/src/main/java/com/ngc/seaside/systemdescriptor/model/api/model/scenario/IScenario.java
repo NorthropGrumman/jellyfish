@@ -11,30 +11,30 @@ import java.util.Collection;
  */
 public interface IScenario extends INamedChild<IModel> {
 
-  /**
-   * Gets the "given" steps of this scenario which are effectively pre conditions for the scenario.  Keywords for these
-   * types of steps are usually verbs that are in the past tense.  The steps are listed in the order they were declared.
-   * The returned list may not be modifiable if this object is immutable.
-   *
-   * @return the "given" steps of this scenario
-   */
-  Collection<IScenarioStep> getGivens();
+   /**
+    * Gets the "given" steps of this scenario which are effectively pre conditions for the scenario.  Keywords for these
+    * types of steps are usually verbs that are in the past tense.  The steps are listed in the order they were
+    * declared. The returned list may not be modifiable if this object is immutable.
+    *
+    * @return the "given" steps of this scenario
+    */
+   Collection<IScenarioStep> getGivens();
 
-  /**
-   * Gets the "when" steps of this scenario which are effectively triggering conditions for the scenario.  Keywords for
-   * these types of steps are usually verbs that are in the current tense.  The steps are listed in the order they were
-   * declared.  The returned list may not be modifiable if this object is immutable.
-   *
-   * @return the "when" steps of this scenario
-   */
-  Collection<IScenarioStep> getWhens();
+   /**
+    * Gets the "when" steps of this scenario which are effectively triggering conditions for the scenario.  Keywords for
+    * these types of steps are usually verbs that are in the current tense.  The steps are listed in the order they were
+    * declared.  The returned list may not be modifiable if this object is immutable.
+    *
+    * @return the "when" steps of this scenario
+    */
+   Collection<IScenarioStep> getWhens();
 
-  /**
-   * Gets the "then" steps of this scenario which are effectively post conditions for the scenario.  Keywords for these
-   * types of steps are usually verbs that are in the future tense.  The steps are listed in the order they were
-   * declared.  The returned list may not be modifiable if this object is immutable.
-   *
-   * @return the "then" steps of this scenario
-   */
-  Collection<IScenarioStep> getThens();
+   /**
+    * Gets the "then" steps of this scenario which are effectively post conditions for the scenario.  Keywords for these
+    * types of steps are usually verbs that are in the future tense.  The steps are listed in the order they were
+    * declared.  The returned list may not be modifiable if this object is immutable.
+    *
+    * @return the "then" steps of this scenario
+    */
+   Collection<IScenarioStep> getThens();
 }

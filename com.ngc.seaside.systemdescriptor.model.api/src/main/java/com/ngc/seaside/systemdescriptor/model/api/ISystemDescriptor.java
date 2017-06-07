@@ -39,65 +39,69 @@ import java.util.Optional;
  * Operations that change the state of this object may throw {@code UnsupportedOperationException}s if the object is
  * immutable. Mutable instances of this interface may or may not be threadsafe.  In general, immutable instances of this
  * interface (and any objects referenced from this instance) are threadsafe.
+ *
+ * <p/>
+ *
+ * {@link SystemDescriptors} contains various utilities dealing with system descriptor instances.
  */
 public interface ISystemDescriptor {
 
-  /**
-   * Gets all known packages.  The returned collection may not be modifiable if this object is immutable.
-   *
-   * @return all known packages
-   */
-  INamedChildCollection<ISystemDescriptor, IPackage> getPackages();
+   /**
+    * Gets all known packages.  The returned collection may not be modifiable if this object is immutable.
+    *
+    * @return all known packages
+    */
+   INamedChildCollection<ISystemDescriptor, IPackage> getPackages();
 
-  /**
-   * Traverses all objects contained by this descriptor.  The visitor may set a result on the context object to make
-   * this operation behave similar to a "find" operation.
-   *
-   * @param visitor the visitor that will visit all objects contained by this descriptor
-   * @return an optional that contains the value of {@link IVisitorContext#getResult()} if the visitor sets a result via
-   * {@link IVisitorContext#setResult(Object)}; if the visitor does not set a result the optional is empty
-   */
-  default Optional<Object> traverse(IVisitor visitor) {
-    return Traversals.traverse(this, visitor);
-  }
+   /**
+    * Traverses all objects contained by this descriptor.  The visitor may set a result on the context object to make
+    * this operation behave similar to a "find" operation.
+    *
+    * @param visitor the visitor that will visit all objects contained by this descriptor
+    * @return an optional that contains the value of {@link IVisitorContext#getResult()} if the visitor sets a result
+    * via {@link IVisitorContext#setResult(Object)}; if the visitor does not set a result the optional is empty
+    */
+   default Optional<Object> traverse(IVisitor visitor) {
+      return Traversals.traverse(this, visitor);
+   }
 
-  /**
-   * Gets the model with the given fully qualified name
-   *
-   * @param fullyQualifiedName the fully qualified name of the model
-   * @return an optional that contains the model or an empty optional of the model was not found
-   * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
-   *                                  {@link IModel#getFullyQualifiedName()}
-   * @see IModel#getFullyQualifiedName()
-   */
-  Optional<IModel> findModel(String fullyQualifiedName);
+   /**
+    * Gets the model with the given fully qualified name
+    *
+    * @param fullyQualifiedName the fully qualified name of the model
+    * @return an optional that contains the model or an empty optional of the model was not found
+    * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
+    *                                  {@link IModel#getFullyQualifiedName()}
+    * @see IModel#getFullyQualifiedName()
+    */
+   Optional<IModel> findModel(String fullyQualifiedName);
 
-  /**
-   * Gets the model with the given name which resides in the named packaged.
-   *
-   * @param packageName the name of the package that contains the model
-   * @param name        the name of the model
-   * @return an optional that contains the model or an empty optional of the model was not found
-   */
-  Optional<IModel> findModel(String packageName, String name);
+   /**
+    * Gets the model with the given name which resides in the named packaged.
+    *
+    * @param packageName the name of the package that contains the model
+    * @param name        the name of the model
+    * @return an optional that contains the model or an empty optional of the model was not found
+    */
+   Optional<IModel> findModel(String packageName, String name);
 
-  /**
-   * Gets the data type with the given fully qualified name
-   *
-   * @param fullyQualifiedName the given fully qualified name of the model
-   * @return an optional that contains the data type or an empty optional of the data type was not found
-   * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
-   *                                  {@link IData#getFullyQualifiedName()}
-   * @see IData#getFullyQualifiedName()
-   */
-  Optional<IData> findData(String fullyQualifiedName);
+   /**
+    * Gets the data type with the given fully qualified name
+    *
+    * @param fullyQualifiedName the given fully qualified name of the model
+    * @return an optional that contains the data type or an empty optional of the data type was not found
+    * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
+    *                                  {@link IData#getFullyQualifiedName()}
+    * @see IData#getFullyQualifiedName()
+    */
+   Optional<IData> findData(String fullyQualifiedName);
 
-  /**
-   * Gets the data type with the given name which resides in the named packaged.
-   *
-   * @param packageName the name of the package that contains the data type
-   * @param name        the name of the data type
-   * @return an optional that contains the data type or an empty optional of the data type was not found
-   */
-  Optional<IData> findData(String packageName, String name);
+   /**
+    * Gets the data type with the given name which resides in the named packaged.
+    *
+    * @param packageName the name of the package that contains the data type
+    * @param name        the name of the data type
+    * @return an optional that contains the data type or an empty optional of the data type was not found
+    */
+   Optional<IData> findData(String packageName, String name);
 }

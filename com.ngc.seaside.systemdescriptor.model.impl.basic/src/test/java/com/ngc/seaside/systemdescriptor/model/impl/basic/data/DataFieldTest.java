@@ -20,36 +20,36 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class DataFieldTest {
 
-  private DataField field;
+   private DataField field;
 
-  @Mock
-  private IData parent;
+   @Mock
+   private IData parent;
 
-  private IMetadata metadata;
+   private IMetadata metadata;
 
-  @Before
-  public void setup() throws Throwable {
-    metadata = new Metadata();
-    metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
-  }
+   @Before
+   public void setup() throws Throwable {
+      metadata = new Metadata();
+      metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
+   }
 
-  @Test
-  public void testDoesMakeDataField() throws Throwable {
-    field = new DataField("field1");
-    assertEquals("name not correct!",
-                 "field1",
-                 field.getName());
-  }
+   @Test
+   public void testDoesMakeDataField() throws Throwable {
+      field = new DataField("field1");
+      assertEquals("name not correct!",
+                   "field1",
+                   field.getName());
+   }
 
-  @Test
-  public void testDoesMakeImmutableDataField() throws Throwable {
-    DataField field = new DataField("field1");
-    field.setMetadata(new Metadata());
+   @Test
+   public void testDoesMakeImmutableDataField() throws Throwable {
+      DataField field = new DataField("field1");
+      field.setMetadata(new Metadata());
 
-    IDataField immutable = DataField.immutable(field);
-    demandImmutability(() -> immutable.setType(DataTypes.BOOLEAN));
-    demandImmutability(() -> immutable.setMetadata(new Metadata()));
-  }
+      IDataField immutable = DataField.immutable(field);
+      demandImmutability(() -> immutable.setType(DataTypes.BOOLEAN));
+      demandImmutability(() -> immutable.setMetadata(new Metadata()));
+   }
 
 
 }

@@ -16,264 +16,264 @@ import java.util.function.Consumer;
 
 /**
  * Implements the INamedChildCollection interface.
- * @author thooper
  *
- * @param <P>  Parent class of the child
- * @param <T>  INamedChild class type
+ * @param <P> Parent class of the child
+ * @param <T> INamedChild class type
+ * @author thooper
  */
 public class NamedChildCollection<P, T extends INamedChild<P>> implements INamedChildCollection<P, T> {
 
-  private final Map<String, T> children;
-  private Consumer<T> onChildAdded;
-  private Consumer<T> onChildRemoved;
+   private final Map<String, T> children;
+   private Consumer<T> onChildAdded;
+   private Consumer<T> onChildRemoved;
 
-  private NamedChildCollection(Map<String, T> children) {
-    this.children = new LinkedHashMap<>(children);
-  }
+   private NamedChildCollection(Map<String, T> children) {
+      this.children = new LinkedHashMap<>(children);
+   }
 
-  public NamedChildCollection() {
-    this(new LinkedHashMap<>());
-  }
+   public NamedChildCollection() {
+      this(new LinkedHashMap<>());
+   }
 
-  @Override
-  public Optional<T> getByName(String name) {
-    Preconditions.checkNotNull(name, "name may not be null!");
-    Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
-    return Optional.ofNullable(children.get(name));
-  }
+   @Override
+   public Optional<T> getByName(String name) {
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+      return Optional.ofNullable(children.get(name));
+   }
 
-  @Override
-  public int size() {
-    return children.size();
-  }
+   @Override
+   public int size() {
+      return children.size();
+   }
 
-  @Override
-  public boolean isEmpty() {
-    return children.isEmpty();
-  }
+   @Override
+   public boolean isEmpty() {
+      return children.isEmpty();
+   }
 
-  @Override
-  public boolean contains(Object o) {
-    return children.containsValue(o);
-  }
+   @Override
+   public boolean contains(Object o) {
+      return children.containsValue(o);
+   }
 
-  @Override
-  public Iterator<T> iterator() {
-    return new DelegatingIterator(children.values().iterator());
-  }
+   @Override
+   public Iterator<T> iterator() {
+      return new DelegatingIterator(children.values().iterator());
+   }
 
-  @Override
-  public Object[] toArray() {
-    return children.values().toArray();
-  }
+   @Override
+   public Object[] toArray() {
+      return children.values().toArray();
+   }
 
-  @Override
-  public <T1> T1[] toArray(T1[] a) {
-    return children.values().toArray(a);
-  }
+   @Override
+   public <T1> T1[] toArray(T1[] a) {
+      return children.values().toArray(a);
+   }
 
-  @Override
-  public boolean add(T t) {
-    Preconditions.checkNotNull(t, "t may not be null!");
-    T previousChild = children.put(t.getName(), t);
-    if (previousChild != null) {
-      postChildRemoved(previousChild);
-    }
-    postChildAdded(t);
-    return true;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public boolean remove(Object o) {
-    Preconditions.checkNotNull(o, "o may not be null!");
-    Preconditions.checkArgument(o instanceof INamedChild,
-                                "o must be an instance of %s!",
-                                INamedChild.class.getName());
-    INamedChild<?> casted = (INamedChild<?>) o;
-    boolean removed = children.remove(casted.getName(), casted);
-    if (removed) {
-      // Safe because the item was removed the list and it couldn't have been inserted unless it was the right type.
-      postChildRemoved((T) casted);
-    }
-    return removed;
-  }
-
-  @Override
-  public boolean containsAll(Collection<?> c) {
-    Preconditions.checkNotNull(c, "c may not be null!");
-    return children.values().containsAll(c);
-  }
-
-  @Override
-  public boolean addAll(Collection<? extends T> c) {
-    Preconditions.checkNotNull(c, "c may not be null!");
-    boolean changed = false;
-    for (T child : c) {
-      changed |= add(child);
-    }
-    return changed;
-  }
-
-  @Override
-  public boolean removeAll(Collection<?> c) {
-    Preconditions.checkNotNull(c, "c may not be null!");
-    boolean changed = false;
-    for (Object child : c) {
-      changed |= remove(child);
-    }
-    return changed;
-  }
-
-  @Override
-  public boolean retainAll(Collection<?> c) {
-    Preconditions.checkNotNull(c, "c may not be null!");
-    boolean changed = false;
-    for (Map.Entry<String, T> e : children.entrySet()) {
-      if (!c.contains(e.getValue())) {
-        changed |= remove(e.getValue());
+   @Override
+   public boolean add(T t) {
+      Preconditions.checkNotNull(t, "t may not be null!");
+      T previousChild = children.put(t.getName(), t);
+      if (previousChild != null) {
+         postChildRemoved(previousChild);
       }
-    }
-    return changed;
-  }
-
-  @Override
-  public void clear() {
-    for (T child : children.values()) {
-      postChildRemoved(child);
-    }
-    children.clear();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+      postChildAdded(t);
       return true;
-    }
-    if (!(o instanceof NamedChildCollection)) {
-      return false;
-    }
-    NamedChildCollection<?, ?> that = (NamedChildCollection<?, ?>) o;
-    return Objects.equals(children, that.children);
-  }
+   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(children);
-  }
+   @SuppressWarnings("unchecked")
+   @Override
+   public boolean remove(Object o) {
+      Preconditions.checkNotNull(o, "o may not be null!");
+      Preconditions.checkArgument(o instanceof INamedChild,
+                                  "o must be an instance of %s!",
+                                  INamedChild.class.getName());
+      INamedChild<?> casted = (INamedChild<?>) o;
+      boolean removed = children.remove(casted.getName(), casted);
+      if (removed) {
+         // Safe because the item was removed the list and it couldn't have been inserted unless it was the right type.
+         postChildRemoved((T) casted);
+      }
+      return removed;
+   }
 
-  @Override
-  public String toString() {
-    return "NamedChildCollection[" +
-           "children=" + children +
-           ']';
-  }
+   @Override
+   public boolean containsAll(Collection<?> c) {
+      Preconditions.checkNotNull(c, "c may not be null!");
+      return children.values().containsAll(c);
+   }
 
-  public NamedChildCollection<P, T> setOnChildAdded(Consumer<T> onChildAdded) {
-    this.onChildAdded = onChildAdded;
-    return this;
-  }
+   @Override
+   public boolean addAll(Collection<? extends T> c) {
+      Preconditions.checkNotNull(c, "c may not be null!");
+      boolean changed = false;
+      for (T child : c) {
+         changed |= add(child);
+      }
+      return changed;
+   }
 
-  public NamedChildCollection<P, T> setOnChildRemoved(Consumer<T> onChildRemoved) {
-    this.onChildRemoved = onChildRemoved;
-    return this;
-  }
+   @Override
+   public boolean removeAll(Collection<?> c) {
+      Preconditions.checkNotNull(c, "c may not be null!");
+      boolean changed = false;
+      for (Object child : c) {
+         changed |= remove(child);
+      }
+      return changed;
+   }
 
-  protected void postChildAdded(T child) {
-    if (onChildAdded != null) {
-      onChildAdded.accept(child);
-    }
-  }
+   @Override
+   public boolean retainAll(Collection<?> c) {
+      Preconditions.checkNotNull(c, "c may not be null!");
+      boolean changed = false;
+      for (Map.Entry<String, T> e : children.entrySet()) {
+         if (!c.contains(e.getValue())) {
+            changed |= remove(e.getValue());
+         }
+      }
+      return changed;
+   }
 
-  protected void postChildRemoved(T child) {
-    if (onChildRemoved != null) {
-      onChildRemoved.accept(child);
-    }
-  }
+   @Override
+   public void clear() {
+      for (T child : children.values()) {
+         postChildRemoved(child);
+      }
+      children.clear();
+   }
 
-  private class DelegatingIterator implements Iterator<T> {
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      }
+      if (!(o instanceof NamedChildCollection)) {
+         return false;
+      }
+      NamedChildCollection<?, ?> that = (NamedChildCollection<?, ?>) o;
+      return Objects.equals(children, that.children);
+   }
 
-    private final Iterator<T> wrapped;
-    private T current;
+   @Override
+   public int hashCode() {
+      return Objects.hash(children);
+   }
 
-    private DelegatingIterator(Iterator<T> wrapped) {
-      this.wrapped = wrapped;
-    }
+   @Override
+   public String toString() {
+      return "NamedChildCollection[" +
+             "children=" + children +
+             ']';
+   }
 
-    @Override
-    public boolean hasNext() {
-      return wrapped.hasNext();
-    }
+   public NamedChildCollection<P, T> setOnChildAdded(Consumer<T> onChildAdded) {
+      this.onChildAdded = onChildAdded;
+      return this;
+   }
 
-    @Override
-    public T next() {
-      T next = wrapped.next();
-      current = next;
-      return next;
-    }
+   public NamedChildCollection<P, T> setOnChildRemoved(Consumer<T> onChildRemoved) {
+      this.onChildRemoved = onChildRemoved;
+      return this;
+   }
 
-    @Override
-    public void remove() {
-      wrapped.remove();
-      postChildRemoved(current);
-      current = null;
-    }
+   protected void postChildAdded(T child) {
+      if (onChildAdded != null) {
+         onChildAdded.accept(child);
+      }
+   }
 
-    @Override
-    public void forEachRemaining(Consumer<? super T> action) {
-      wrapped.forEachRemaining(action);
-    }
-  }
+   protected void postChildRemoved(T child) {
+      if (onChildRemoved != null) {
+         onChildRemoved.accept(child);
+      }
+   }
 
-  public static <P, T extends INamedChild<P>> INamedChildCollection<P, T> immutable(
-      INamedChildCollection<P, T> collection) {
-    Map<String, T> children = new LinkedHashMap<>(collection.size());
-    for (T child : collection) {
-      children.put(child.getName(), child);
-    }
-    return new ImmutableNamedChildCollection<>(children);
-  }
+   private class DelegatingIterator implements Iterator<T> {
 
-  private static class ImmutableNamedChildCollection<P, T extends INamedChild<P>>
-      extends NamedChildCollection<P, T> {
+      private final Iterator<T> wrapped;
+      private T current;
 
-    private ImmutableNamedChildCollection(Map<String, T> children) {
-      super(children);
-    }
+      private DelegatingIterator(Iterator<T> wrapped) {
+         this.wrapped = wrapped;
+      }
 
-    @Override
-    public Iterator<T> iterator() {
-      return Iterators.unmodifiableIterator(super.iterator());
-    }
+      @Override
+      public boolean hasNext() {
+         return wrapped.hasNext();
+      }
 
-    @Override
-    public boolean add(T t) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
+      @Override
+      public T next() {
+         T next = wrapped.next();
+         current = next;
+         return next;
+      }
 
-    @Override
-    public boolean remove(Object o) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
+      @Override
+      public void remove() {
+         wrapped.remove();
+         postChildRemoved(current);
+         current = null;
+      }
 
-    @Override
-    public boolean addAll(Collection<? extends T> c) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
+      @Override
+      public void forEachRemaining(Consumer<? super T> action) {
+         wrapped.forEachRemaining(action);
+      }
+   }
 
-    @Override
-    public boolean removeAll(Collection<?> c) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
+   public static <P, T extends INamedChild<P>> INamedChildCollection<P, T> immutable(
+         INamedChildCollection<P, T> collection) {
+      Map<String, T> children = new LinkedHashMap<>(collection.size());
+      for (T child : collection) {
+         children.put(child.getName(), child);
+      }
+      return new ImmutableNamedChildCollection<>(children);
+   }
 
-    @Override
-    public boolean retainAll(Collection<?> c) {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
+   private static class ImmutableNamedChildCollection<P, T extends INamedChild<P>>
+         extends NamedChildCollection<P, T> {
 
-    @Override
-    public void clear() {
-      throw new UnsupportedOperationException("object is not modifiable!");
-    }
-  }
+      private ImmutableNamedChildCollection(Map<String, T> children) {
+         super(children);
+      }
+
+      @Override
+      public Iterator<T> iterator() {
+         return Iterators.unmodifiableIterator(super.iterator());
+      }
+
+      @Override
+      public boolean add(T t) {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+
+      @Override
+      public boolean remove(Object o) {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+
+      @Override
+      public boolean addAll(Collection<? extends T> c) {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+
+      @Override
+      public boolean removeAll(Collection<?> c) {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+
+      @Override
+      public boolean retainAll(Collection<?> c) {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+
+      @Override
+      public void clear() {
+         throw new UnsupportedOperationException("object is not modifiable!");
+      }
+   }
 }

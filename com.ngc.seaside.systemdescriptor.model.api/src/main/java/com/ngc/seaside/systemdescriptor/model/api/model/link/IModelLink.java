@@ -12,38 +12,38 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
  */
 public interface IModelLink<T extends IReferenceField> {
 
-  /**
-   * Gets the source of the link.
-   *
-   * @return the source of the link
-   */
-  T getSource();
+   /**
+    * Gets the source of the link.
+    *
+    * @return the source of the link
+    */
+   T getSource();
 
-  /**
-   * Sets the source of the link
-   *
-   * @param source the source of the link
-   * @return this link
-   */
-  IModelLink<T> setSource(T source);
+   /**
+    * Sets the source of the link
+    *
+    * @param source the source of the link
+    * @return this link
+    */
+   IModelLink<T> setSource(T source);
 
-  /**
-   * Gets the target of the link.
-   */
-  T getTarget();
+   /**
+    * Gets the target of the link.
+    */
+   T getTarget();
 
-  /**
-   * Sets the target of the link
-   *
-   * @param target the target of the link
-   * @return this link
-   */
-  IModelLink<T> setTarget(T target);
+   /**
+    * Sets the target of the link
+    *
+    * @param target the target of the link
+    * @return this link
+    */
+   IModelLink<T> setTarget(T target);
 
-  /**
-   * Gets the parent model that contains this link.
-   *
-   * @return the parent model that contains this link
-   */
-  IModel getParent();
+   /**
+    * Gets the parent model that contains this link.
+    *
+    * @return the parent model that contains this link
+    */
+   IModel getParent();
 }

@@ -8,33 +8,33 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
  */
 public interface IDataReferenceField extends IReferenceField {
 
-  /**
-   * Gets the model type of this field that is being referenced
-   *
-   * @return the model type of this field that is being referenced
-   */
-  IData getType();
+   /**
+    * Gets the model type of this field that is being referenced
+    *
+    * @return the model type of this field that is being referenced
+    */
+   IData getType();
 
-  /**
-   * Sets the data type of this field that is being referenced.
-   *
-   * @param type the data type of this field that is being referenced
-   * @return this field
-   */
-  IDataReferenceField setType(IData type);
+   /**
+    * Sets the data type of this field that is being referenced.
+    *
+    * @param type the data type of this field that is being referenced
+    * @return this field
+    */
+   IDataReferenceField setType(IData type);
 
-  /**
-   * Gets the cardinality associated with this field.
-   *
-   * @return the cardinality associated with this field
-   */
-  ModelFieldCardinality getCardinality();
+   /**
+    * Gets the cardinality associated with this field.
+    *
+    * @return the cardinality associated with this field
+    */
+   ModelFieldCardinality getCardinality();
 
-  /**
-   * Sets the cardinality associated with this field.
-   *
-   * @param cardinality the cardinality associated with this field
-   * @return this field
-   */
-  IDataReferenceField setCardinality(ModelFieldCardinality cardinality);
+   /**
+    * Sets the cardinality associated with this field.
+    *
+    * @param cardinality the cardinality associated with this field
+    * @return this field
+    */
+   IDataReferenceField setCardinality(ModelFieldCardinality cardinality);
 }

@@ -14,11 +14,11 @@ import java.util.Optional;
  */
 public interface INamedChildCollection<P, T extends INamedChild<P>> extends Collection<T> {
 
-  /**
-   * Gets an optional that contains the named child with given name.
-   *
-   * @param name the name of the child
-   * @return an optional that contains the child or an empty optional if there is no child with the given name
-   */
-  Optional<T> getByName(String name);
+   /**
+    * Gets an optional that contains the named child with given name.
+    *
+    * @param name the name of the child
+    * @return an optional that contains the child or an empty optional if there is no child with the given name
+    */
+   Optional<T> getByName(String name);
 }

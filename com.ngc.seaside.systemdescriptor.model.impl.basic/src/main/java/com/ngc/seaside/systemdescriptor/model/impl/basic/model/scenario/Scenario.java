@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,9 +13,8 @@ import java.util.Objects;
 /**
  * Implements the IScenario interface.  Stores the "Given", "When", "Then" clauses that
  * define a Scenario.
- * 
- * @author psnell
  *
+ * @author psnell
  */
 public class Scenario implements IScenario {
 
@@ -56,10 +57,10 @@ public class Scenario implements IScenario {
    public List<IScenarioStep> getThens() {
       return thens;
    }
-   
+
    /**
     * Add a single "given" IScenarioStep to this Scenario
-    * 
+    *
     * @param given is the IScenarioStep to add
     * @return this Scenario object
     */
@@ -67,10 +68,10 @@ public class Scenario implements IScenario {
       givens.add(given);
       return this;
    }
-   
+
    /**
     * Add a single "when" IScenarioStep to this Scenario
-    * 
+    *
     * @param when is the IScenarioStep to add
     * @return this Scenario object
     */
@@ -78,10 +79,10 @@ public class Scenario implements IScenario {
       whens.add(when);
       return this;
    }
-   
+
    /**
     * Add a single "then" IScenarioStep to this Scenario
-    * 
+    *
     * @param then is the IScenarioStep to add
     * @return this Scenario object
     */
@@ -92,6 +93,7 @@ public class Scenario implements IScenario {
 
    /**
     * Sets the Scenario's "givens" array.
+    *
     * @param givens the array of IScenarioStep objects specifying the Given steps of the Scenario
     */
    public void setGivens(ArrayList<IScenarioStep> givens) {
@@ -100,14 +102,16 @@ public class Scenario implements IScenario {
 
    /**
     * Sets the Scenario's "whens" array.
+    *
     * @param whens the array of IScenarioStep objects specifying the When steps of the Scenario
     */
    public void setWhens(ArrayList<IScenarioStep> whens) {
       this.whens = whens;
    }
 
-   /** Sets the Scenarios "thens" array.
-    * 
+   /**
+    * Sets the Scenarios "thens" array.
+    *
     * @param thens the array of IScenarioStep objects specifying the Then steps of the Scenario
     */
    public void setThens(ArrayList<IScenarioStep> thens) {
@@ -121,15 +125,15 @@ public class Scenario implements IScenario {
 
    @Override
    public boolean equals(Object o) {
-     if (this == o) {
-       return true;
-     }
-     if (!(o instanceof Scenario)) {
-       return false;
-     }
+      if (this == o) {
+         return true;
+      }
+      if (!(o instanceof Scenario)) {
+         return false;
+      }
 
-     Scenario s = (Scenario) o;
-     return Objects.equals(name, s.name) &&
+      Scenario s = (Scenario) o;
+      return Objects.equals(name, s.name) &&
              parent == s.parent &&
              Objects.equals(givens, s.givens) &&
              Objects.equals(whens, s.whens) &&
@@ -138,17 +142,17 @@ public class Scenario implements IScenario {
 
    @Override
    public int hashCode() {
-     return Objects.hash(name,System.identityHashCode(parent), givens, whens, thens);
+      return Objects.hash(name, System.identityHashCode(parent), givens, whens, thens);
    }
 
    @Override
    public String toString() {
-     return "Scenario[" + 
-            "name='" + name + '\'' +
-            ", parent=" + (parent == null ? "null" : parent.getName()) +
-            ", givens=" + givens +
-            ", whens=" + whens +
-            ", thens=" + thens +
-            ']';
+      return "Scenario[" +
+             "name='" + name + '\'' +
+             ", parent=" + (parent == null ? "null" : parent.getName()) +
+             ", givens=" + givens +
+             ", whens=" + whens +
+             ", thens=" + thens +
+             ']';
    }
 }

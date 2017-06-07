@@ -6,18 +6,18 @@ package com.ngc.seaside.systemdescriptor.model.api.model;
  */
 public interface IModelReferenceField extends IReferenceField {
 
-  /**
-   * Gets the model type of this field that is being referenced.
-   *
-   * @return the model type of this field that is being referenced
-   */
-  IModel getType();
+   /**
+    * Gets the model type of this field that is being referenced.
+    *
+    * @return the model type of this field that is being referenced
+    */
+   IModel getType();
 
-  /**
-   * Sets the model type of this field that is being referenced
-   *
-   * @param model the model type of this field that is being referenced
-   * @return this field
-   */
-  IModelReferenceField setType(IModel model);
+   /**
+    * Sets the model type of this field that is being referenced
+    *
+    * @param model the model type of this field that is being referenced
+    * @return this field
+    */
+   IModelReferenceField setType(IModel model);
 }

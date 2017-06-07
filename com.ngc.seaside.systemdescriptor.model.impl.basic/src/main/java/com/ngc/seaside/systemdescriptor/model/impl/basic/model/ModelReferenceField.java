@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -10,22 +11,22 @@ import java.util.Objects;
 
 /**
  * Implements the IModelReferenceField interface.
- * @author psnell
  *
+ * @author psnell
  */
 public class ModelReferenceField implements IModelReferenceField {
-   
+
    protected final String name;
    protected IMetadata metadata;
    protected IModel type;
    protected IModel parent;
-   
+
    public ModelReferenceField(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       this.name = name;
-    }
-   
+   }
+
    @Override
    public IMetadata getMetadata() {
       return metadata;
@@ -60,36 +61,36 @@ public class ModelReferenceField implements IModelReferenceField {
 
    public void setParent(Model model) {
       parent = model;
-      
+
    }
 
    @Override
    public boolean equals(Object o) {
-     if (this == o) {
-       return true;
-     }
-     if (!(o instanceof ModelReferenceField)) {
-       return false;
-     }
-     ModelReferenceField that = (ModelReferenceField) o;
-     return Objects.equals(name, that.name) &&
-            Objects.equals(metadata, that.metadata) &&
-            Objects.equals(type, that.type) &&
-            parent == that.parent;
+      if (this == o) {
+         return true;
+      }
+      if (!(o instanceof ModelReferenceField)) {
+         return false;
+      }
+      ModelReferenceField that = (ModelReferenceField) o;
+      return Objects.equals(name, that.name) &&
+             Objects.equals(metadata, that.metadata) &&
+             Objects.equals(type, that.type) &&
+             parent == that.parent;
    }
 
    @Override
    public int hashCode() {
-     return Objects.hash(name, metadata, type, System.identityHashCode(parent));
+      return Objects.hash(name, metadata, type, System.identityHashCode(parent));
    }
 
    @Override
    public String toString() {
-     return "ModelReferenceField[" +
-            "name='" + name + '\'' +
-            ", metadata=" + metadata +
-            ", type=" + type +
-            ", parent=" + (parent == null ? "null" : parent.getName()) +
-            ']';
+      return "ModelReferenceField[" +
+             "name='" + name + '\'' +
+             ", metadata=" + metadata +
+             ", type=" + type +
+             ", parent=" + (parent == null ? "null" : parent.getName()) +
+             ']';
    }
 }

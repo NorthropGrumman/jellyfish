@@ -10,13 +10,13 @@ import static com.ngc.seaside.systemdescriptor.model.impl.basic.TestUtils.demand
 
 public class MetadataTest {
 
-  @Test
-  public void testDoesMakeImmutable() throws Throwable {
-    Metadata data = new Metadata();
-    data.setJson(Json.createObjectBuilder().add("foo", "bar").build());
+   @Test
+   public void testDoesMakeImmutable() throws Throwable {
+      Metadata data = new Metadata();
+      data.setJson(Json.createObjectBuilder().add("foo", "bar").build());
 
-    IMetadata immutable = Metadata.immutable(data);
-    demandImmutability(() -> immutable.setJson(Json.createObjectBuilder()
-                                                   .add("foo", "bar").build()));
-  }
+      IMetadata immutable = Metadata.immutable(data);
+      demandImmutability(() -> immutable.setJson(Json.createObjectBuilder()
+                                                       .add("foo", "bar").build()));
+   }
 }

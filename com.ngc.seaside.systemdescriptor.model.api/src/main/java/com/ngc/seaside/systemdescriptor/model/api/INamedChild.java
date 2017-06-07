@@ -8,17 +8,17 @@ package com.ngc.seaside.systemdescriptor.model.api;
  */
 public interface INamedChild<T> {
 
-  /**
-   * Gets the name of this child.
-   *
-   * @return the name of this child
-   */
-  String getName();
+   /**
+    * Gets the name of this child.
+    *
+    * @return the name of this child
+    */
+   String getName();
 
-  /**
-   * Gets the parent that contains this child.
-   *
-   * @return the parent that contains this child
-   */
-  T getParent();
+   /**
+    * Gets the parent that contains this child.
+    *
+    * @return the parent that contains this child
+    */
+   T getParent();
 }

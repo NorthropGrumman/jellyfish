@@ -9,19 +9,19 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  */
 public interface IPackage extends INamedChild<ISystemDescriptor> {
 
-  /**
-   * Gets a collection of all declared data types in this package.  The returned collection may not be modifiable if
-   * this object is immutable.
-   *
-   * @return a collection of all declared data types in this package
-   */
-  INamedChildCollection<IPackage, IData> getData();
+   /**
+    * Gets a collection of all declared data types in this package.  The returned collection may not be modifiable if
+    * this object is immutable.
+    *
+    * @return a collection of all declared data types in this package
+    */
+   INamedChildCollection<IPackage, IData> getData();
 
-  /**
-   * Gets a collection of all declared model types in this package.  The returned collection may not be modifiable if
-   * this object is immutable.
-   *
-   * @return a collection of all declared model types in this package
-   */
-  INamedChildCollection<IPackage, IModel> getModels();
+   /**
+    * Gets a collection of all declared model types in this package.  The returned collection may not be modifiable if
+    * this object is immutable.
+    *
+    * @return a collection of all declared model types in this package
+    */
+   INamedChildCollection<IPackage, IModel> getModels();
 }

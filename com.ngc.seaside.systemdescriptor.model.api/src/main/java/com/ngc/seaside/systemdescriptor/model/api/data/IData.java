@@ -11,35 +11,35 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
  */
 public interface IData extends INamedChild<IPackage> {
 
-  /**
-   * Gets the metadata associated with this data type.
-   *
-   * @return the metadata associated with this data type
-   */
-  IMetadata getMetadata();
+   /**
+    * Gets the metadata associated with this data type.
+    *
+    * @return the metadata associated with this data type
+    */
+   IMetadata getMetadata();
 
-  /**
-   * Sets the metadata associated with this data type.
-   *
-   * @param metadata the metadata associated with this data type
-   * @return this data type
-   */
-  IData setMetadata(IMetadata metadata);
+   /**
+    * Sets the metadata associated with this data type.
+    *
+    * @param metadata the metadata associated with this data type
+    * @return this data type
+    */
+   IData setMetadata(IMetadata metadata);
 
-  /**
-   * Gets the data fields declared within this data type.  The fields are listed in the order they were declared.
-   * The returned collection may not be modifiable if this object is immutable.
-   *
-   * @return the data fields declared within this data type
-   */
-  INamedChildCollection<IData, IDataField> getFields();
+   /**
+    * Gets the data fields declared within this data type.  The fields are listed in the order they were declared.
+    * The returned collection may not be modifiable if this object is immutable.
+    *
+    * @return the data fields declared within this data type
+    */
+   INamedChildCollection<IData, IDataField> getFields();
 
-  /**
-   * Gets the fully qualified name of this data type.  The fully qualified name is the name of the parent package,
-   * appended with ".", appended with the name of this data type.  For example, the fully qualified name of a data type
-   * named "HelloWorld" which resides in the package named "my.package" would be "my.package.HelloWorld".
-   *
-   * @return the fully qualified name of this data type
-   */
-  String getFullyQualifiedName();
+   /**
+    * Gets the fully qualified name of this data type.  The fully qualified name is the name of the parent package,
+    * appended with ".", appended with the name of this data type.  For example, the fully qualified name of a data type
+    * named "HelloWorld" which resides in the package named "my.package" would be "my.package.HelloWorld".
+    *
+    * @return the fully qualified name of this data type
+    */
+   String getFullyQualifiedName();
 }
