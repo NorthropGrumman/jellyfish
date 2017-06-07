@@ -178,8 +178,10 @@ public class Traversals {
 
       @Override
       public void visitLink(IVisitorContext ctx, IModelLink<?> link) {
-         stream.format("        - link from %s to %s%n",
+         stream.format("        - link from %s.%s to %s.%s%n",
+                       link.getSource().getParent().getFullyQualifiedName(),
                        link.getSource().getName(),
+                       link.getTarget().getParent().getFullyQualifiedName(),
                        link.getTarget().getName());
       }
 
