@@ -44,7 +44,6 @@ class SystemDescriptorFileSupport
    {
       try {
          Object selected = selection.getFirstElement();
-         System.out.println(">>>" + selected.getClass());
 
          if (selected instanceof IPackageFragment) {
             IPackageFragment pkg = (IPackageFragment) selected;
