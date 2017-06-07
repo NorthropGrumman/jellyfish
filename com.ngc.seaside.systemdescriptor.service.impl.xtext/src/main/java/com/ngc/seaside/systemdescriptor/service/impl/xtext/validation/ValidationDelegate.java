@@ -3,7 +3,16 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.validation;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -19,41 +28,80 @@ public class ValidationDelegate implements IValidatorExtension {
 
    private final Collection<ISystemDescriptorValidator> validators = Collections.synchronizedList(new ArrayList<>());
    private final SystemDescriptorValidator validator;
+   private final ILogService logService;
 
    @Inject
-   public ValidationDelegate(SystemDescriptorValidator validator) {
+   public ValidationDelegate(SystemDescriptorValidator validator,
+                             ILogService logService) {
       this.validator = Preconditions.checkNotNull(validator, "validator may not be null!");
-
+      this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
    }
 
    @Override
    public void validate(EObject source, ValidationHelper helper) {
-      // Figure out how we need to wrap this object.
-      switch (source.eClass().getClassifierID()) {
-         case SystemDescriptorPackage.PACKAGE:
-         default:
-            // Do nothing, this is not a type we want to validate.
-      }
+      // Walk the source object up the containment hierarchy to find the Package object.  Build a system descriptor
+      // for the entire package.  Then instruct the validator to validate associated wrapper of the source object.
+      ISystemDescriptor descriptor = new WrappedSystemDescriptor(findPackage(source));
+      doValidate(source, helper, descriptor);
    }
 
    public void addValidator(ISystemDescriptorValidator validator) {
-      validators.add(Preconditions.checkNotNull(validator, "validator may not be null!"));
+      Preconditions.checkNotNull(validator, "validator may not be null!");
+      logService.debug(getClass(), "Adding validator %s.", validator);
 
-//      this.validator.addValidatorExtension(new IValidatorExtension() {
-//         @Override
-//         public void validate(EObject source, ValidationHelper helper) {
-////            if(source instanceof DataFieldDeclaration) {
-////               DataFieldDeclaration f = (DataFieldDeclaration) source;
-////               if(f.getName().equals("second")) {
-////                  helper.error("blah blah", source, SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION__NAME);
-////               }
-////            }
-//         }
-//      });
+      // Synchronize to ensure the add and size calls are safe.
+      synchronized (validators) {
+         validators.add(validator);
+         // If this is the first validator added, register our self.
+         if (validators.size() == 1) {
+            registerSelf();
+         }
+      }
    }
 
    public boolean removeValidator(ISystemDescriptorValidator validator) {
-      return validators.remove(Preconditions.checkNotNull(validator, "validator may not be null!"));
+      Preconditions.checkNotNull(validator, "validator may not be null!");
+      boolean result;
+      // Synchronize to ensure the remove and isEmpty calls are safe.
+      synchronized (validators) {
+         result = validators.remove(validator);
+         if (result && validators.isEmpty()) {
+            logService.debug(getClass(), "Removed validator %s.", validator);
+            // If there are no validators, unregister our self with the DSL.
+            unregisterSelf();
+         }
+      }
+      return result;
+   }
+
+   protected void doValidate(EObject source, ValidationHelper helper, ISystemDescriptor descriptor) {
+      switch (source.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.PACKAGE:
+            String name = ((Package) source).getName();
+            IValidationContext<IPackage> ctx1 = newContext(
+                  descriptor.getPackages().getByName(name).get(),
+                  helper);
+            doValidation(ctx1);
+            break;
+         case SystemDescriptorPackage.DATA:
+            String packageName = ((Package) source.eContainer()).getName();
+            IValidationContext<IData> ctx2 = newContext(
+                  descriptor.findData(packageName, ((Data) source).getName()).get(),
+                  helper);
+            doValidation(ctx2);
+            break;
+         case SystemDescriptorPackage.DATA_FIELD_DECLARATION:
+            String fieldName = ((DataFieldDeclaration) source).getName();
+            String dataName = ((Data) source.eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer()).getName();
+            IValidationContext<IDataField> ctx3 = newContext(
+                  descriptor.findData(packageName, dataName).get().getFields().getByName(fieldName).get(),
+                  helper);
+            doValidation(ctx3);
+            break;
+         default:
+            // Do nothing, this is not a type we want to validate.
+      }
    }
 
    protected <T> IValidationContext<T> newContext(T object, ValidationHelper helper) {
@@ -63,10 +111,47 @@ public class ValidationDelegate implements IValidatorExtension {
    protected void doValidation(IValidationContext<?> context) {
       synchronized (validators) {
          for (ISystemDescriptorValidator validator : validators) {
-            validator.validate(context);
+            safelyInvokeValidator(validator, context);
          }
       }
    }
 
-   //private static safely invoke
+   private void safelyInvokeValidator(ISystemDescriptorValidator validator, IValidationContext<?> context) {
+      // Do not allow a misbehaving validator stop the entire parsing process.
+      try {
+         validator.validate(context);
+      } catch (Throwable t) {
+         logService.error(getClass(),
+                          t,
+                          "Validator %s threw an exception, consuming exception so parsing may continue.",
+                          validator.getClass());
+      }
+   }
+
+   private void registerSelf() {
+      // Note this method and unregisterSelf get called while by guarded by the validators list.  This means this
+      // and unregisterSelf can't be called concurrently.
+      logService.trace(getClass(), "Registering self as a DSL validation extension.");
+      validator.addValidatorExtension(this);
+   }
+
+   private void unregisterSelf() {
+      // See registerSelf comments above.
+      logService.trace(getClass(), "Unregistering self as a DSL validation extension.");
+      validator.removeValidatorExtension(this);
+   }
+
+   private Package findPackage(EObject source) {
+      if (source.eClass().equals(SystemDescriptorPackage.Literals.PACKAGE)) {
+         return (Package) source;
+      }
+      EObject parent = source.eContainer();
+      if (parent == null) {
+         throw new IllegalStateException(String.format(
+               "unable to find a root container object of type %s while walking the containment hierarchy of %s!",
+               Package.class.getName(),
+               source));
+      }
+      return findPackage(parent);
+   }
 }

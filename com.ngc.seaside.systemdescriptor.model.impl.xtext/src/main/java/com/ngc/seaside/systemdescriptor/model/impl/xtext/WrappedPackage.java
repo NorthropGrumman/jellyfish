@@ -87,17 +87,21 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
             "can only wrap packages with the same name!  Currently wrapping %s but package name was %s.",
             packageName,
             p.getName());
+
       wrapped.add(p);
       Element element = p.getElement();
-      switch (element.eClass().getClassifierID()) {
-         case SystemDescriptorPackage.DATA:
-            doAddData((Data) element);
-            break;
-         case SystemDescriptorPackage.MODEL:
-            doAddModel((Model) element);
-            break;
-         default:
-            throw new UnrecognizedXtextTypeException(element);
+      // It is possible that the package is empty.
+      if (element != null) {
+         switch (element.eClass().getClassifierID()) {
+            case SystemDescriptorPackage.DATA:
+               doAddData((Data) element);
+               break;
+            case SystemDescriptorPackage.MODEL:
+               doAddModel((Model) element);
+               break;
+            default:
+               throw new UnrecognizedXtextTypeException(element);
+         }
       }
       return this;
    }

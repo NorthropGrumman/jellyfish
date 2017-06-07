@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
@@ -13,8 +14,8 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(ISystemDescriptorService.class).to(XTextSystemDescriptorService.class);
-      bind(ParsingDelegate.class);
-      bind(ValidationDelegate.class);
+      bind(ISystemDescriptorService.class).to(XTextSystemDescriptorService.class).in(Singleton.class);
+      bind(ParsingDelegate.class).in(Singleton.class);
+      bind(ValidationDelegate.class).in(Singleton.class);
    }
 }

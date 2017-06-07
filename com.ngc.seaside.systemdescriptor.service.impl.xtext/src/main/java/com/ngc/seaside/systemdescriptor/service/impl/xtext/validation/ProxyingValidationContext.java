@@ -38,9 +38,10 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
    public ProxyingValidationContext(T object,
                                     IValidatorExtension.ValidationHelper validationHelper) {
       Preconditions.checkArgument(object instanceof IUnwrappable || object instanceof IUnwrappableCollection,
-                                  "object must be an instance of %s or %s!",
+                                  "object must be an instance of %s or %s but found %s!",
                                   IUnwrappable.class.getName(),
-                                  IUnwrappableCollection.class.getName());
+                                  IUnwrappableCollection.class.getName(),
+                                  object.getClass().getName());
       this.object = object;
       this.validationHelper = validationHelper;
    }
