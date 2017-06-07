@@ -28,7 +28,7 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
   private Consumer<T> onChildRemoved;
 
   private NamedChildCollection(Map<String, T> children) {
-    this.children = children;
+    this.children = new LinkedHashMap<>(children);
   }
 
   public NamedChildCollection() {
@@ -76,10 +76,10 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
   public boolean add(T t) {
     Preconditions.checkNotNull(t, "t may not be null!");
     T previousChild = children.put(t.getName(), t);
-    postChildAdded(t);
     if (previousChild != null) {
       postChildRemoved(previousChild);
     }
+    postChildAdded(t);
     return true;
   }
 
