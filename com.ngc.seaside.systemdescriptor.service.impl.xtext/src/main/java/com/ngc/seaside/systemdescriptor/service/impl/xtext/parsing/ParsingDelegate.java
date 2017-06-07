@@ -17,7 +17,6 @@ import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 
