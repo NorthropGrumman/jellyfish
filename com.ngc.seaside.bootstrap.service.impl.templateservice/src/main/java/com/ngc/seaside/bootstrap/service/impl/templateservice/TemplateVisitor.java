@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,6 +31,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    private final Path outputFolder;
    private final Path inputFolder;
    private final boolean clean;
+   private Path topLevelFolder;
 
    /**
     * Constructor that designates the input and output folders, uses velocity to generate context
@@ -50,10 +52,21 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       this.inputFolder = inputFolder;
       this.clean = clean;
       engine.setProperty("runtime.references.strict", true);
+      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
+                         "org.apache.velocity.runtime.log.NullLogSystem" );
       for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
       context.put("Template", TemplateVisitor.class);
+   }
+
+   /**
+    * Get the folder that was created for the template. Not the temporary folder.
+    *
+    * @return the folder.
+    */
+   public Path getTopLevelFolder() {
+      return topLevelFolder;
    }
 
    /**
@@ -113,6 +126,11 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    @Override
    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
       Path outputFolder = getOutputPath(path);
+      System.out.println(outputFolder.toAbsolutePath() + " =? " + this.outputFolder.toAbsolutePath());
+      if(topLevelFolder == null && !this.outputFolder.toAbsolutePath().equals(outputFolder.toAbsolutePath())) {
+         topLevelFolder = outputFolder.normalize();
+      }
+
       if (clean && !path.equals(inputFolder)) {
          try {
             deleteRecursive(outputFolder, true);

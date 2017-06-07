@@ -146,7 +146,7 @@ public class TemplateService implements ITemplateService {
    public ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
             throws TemplateServiceException {
       ZipFile zipFile = null;
-      DefaultTemplateOutput output = new DefaultTemplateOutput();
+      ITemplateOutput output;
       try {
          Path path = getTemplatePath(templateName);
          zipFile = new ZipFile(path.toString());
@@ -176,8 +176,7 @@ public class TemplateService implements ITemplateService {
             throw new TemplateServiceException(message);
          }
 
-         output.setOutputPath(unzippedFolderPath);
-         output.setProperties(updateTemplate(unzippedFolderPath, outputDirectory, clean));
+         output = updateTemplate(unzippedFolderPath, outputDirectory, clean);
 
       } catch (TemplateServiceException | IOException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
@@ -205,7 +204,7 @@ public class TemplateService implements ITemplateService {
     * @param outputFolder   the output folder.
     * @param clean          true if this should clean existing directories.
     */
-   protected Map<String, String> updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
+   protected ITemplateOutput updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
             throws IOException {
       // Parse template.properties file for each parameter and its default value
       IProperties parametersAndDefaults =
@@ -225,15 +224,18 @@ public class TemplateService implements ITemplateService {
          parametersAndValues.put(parameter, value);
       }
 
+      TemplateVisitor visitor = new TemplateVisitor(parametersAndValues,
+                          templateFolder.resolve(TEMPLATE_FOLDER),
+                          outputFolder,
+                          clean);
+
       // Walk through the unzipped template directory in order to generate the
       // instance of the template
-      Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER),
-                         new TemplateVisitor(parametersAndValues,
-                                             templateFolder.resolve(TEMPLATE_FOLDER),
-                                             outputFolder,
-                                             clean));
+      Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER), visitor);
 
-      return parametersAndValues;
+      return new DefaultTemplateOutput()
+               .setOutputPath(visitor.getTopLevelFolder())
+               .setProperties(parametersAndValues);
    }
 
    /**

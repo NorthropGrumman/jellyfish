@@ -18,8 +18,9 @@ public class DefaultTemplateOutput implements ITemplateOutput {
       return properties;
    }
 
-   public void setProperties(Map<String, String> properties) {
+   public DefaultTemplateOutput setProperties(Map<String, String> properties) {
       this.properties = properties;
+      return this;
    }
 
    @Override
@@ -27,8 +28,9 @@ public class DefaultTemplateOutput implements ITemplateOutput {
       return outputPath;
    }
 
-   public void setOutputPath(Path outputPath) {
+   public DefaultTemplateOutput setOutputPath(Path outputPath) {
       this.outputPath = outputPath;
+      return this;
    }
 
    @Override
