@@ -8,7 +8,7 @@ dependencies {
 jar {
     manifest {
         // Bnd instructions to export the api package.
-        attributes('Export-Package': 'com.ngc.seaside.command.api')
+        attributes('Export-Package': 'com.ngc.seaside.command.api.*')
     }
 }
 
