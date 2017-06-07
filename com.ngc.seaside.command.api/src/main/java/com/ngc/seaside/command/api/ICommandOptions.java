@@ -1,7 +1,5 @@
 package com.ngc.seaside.command.api;
 
-import java.util.List;
-
 /**
  * The options necessary in order to run a command. All may not require any parameters but it is assumed that most
  * likely will.
@@ -14,6 +12,6 @@ public interface ICommandOptions {
     *
     * @return the parameters.
     */
-   List<IParameter> getParameters();
+   IParameterCollection getParameters();
 
 }

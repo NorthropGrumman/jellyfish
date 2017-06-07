@@ -1,6 +1,7 @@
 package com.ngc.seaside.bootstrap.service.parameter.api;
 
 import com.ngc.seaside.command.api.IParameter;
+import com.ngc.seaside.command.api.IParameterCollection;
 
 import java.util.List;
 
