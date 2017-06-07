@@ -11,7 +11,9 @@ import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameter;
+import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
@@ -134,23 +136,22 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    /**
     * TODO this should be in the parameter service.
-    * TODO should return the {@link com.ngc.seaside.bootstrap.service.parameter.api.IParameterCollection}?
     * @param output
     * @return
     */
-   private List<IParameter> convertParameters(ITemplateOutput output) {
-      List<IParameter> parameters = new ArrayList<>();
+   private IParameterCollection convertParameters(ITemplateOutput output) {
+      DefaultParameterCollection collection = new DefaultParameterCollection();
       DefaultParameter outputDir = new DefaultParameter("outputDirectory", true);
       outputDir.setValue(output.getOutputPath().toString());
-      parameters.add(outputDir);
+      collection.addParameter(outputDir);
 
       for(Map.Entry<String, String> entry : output.getProperties().entrySet()) {
          DefaultParameter parameter = new DefaultParameter(entry.getKey(), true);
          parameter.setValue(entry.getValue());
-         parameters.add(parameter);
+         collection.addParameter(parameter);
       }
 
-      return parameters;
+      return collection;
    }
 
 

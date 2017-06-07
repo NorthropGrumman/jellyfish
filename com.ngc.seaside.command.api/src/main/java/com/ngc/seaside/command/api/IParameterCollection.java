@@ -1,6 +1,4 @@
-package com.ngc.seaside.bootstrap.service.parameter.api;
-
-import com.ngc.seaside.command.api.IParameter;
+package com.ngc.seaside.command.api;
 
 import java.util.List;
 import java.util.Map;

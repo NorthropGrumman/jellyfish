@@ -6,6 +6,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
 import com.ngc.seaside.command.api.DefaultUsage;
+import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
@@ -13,6 +14,12 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * @author justan.provence@ngc.com
@@ -66,7 +73,32 @@ public class BundleBootstrapCommand implements IBootstrapCommand {
    public void run(IBootstrapCommandOptions commandOptions) {
       logService.trace(getClass(), "Running command %s", NAME);
 
+      IParameterCollection parameters = commandOptions.getParameters();
+      if(parameters.containsParameter("outputDirectory")) {
+         Path outputDirectory = Paths.get(parameters.getParameter("outputDirectory").getValue());
 
+         Path settings = Paths.get(outputDirectory.getParent().normalize().toString(), "settings.gradle");
+
+         if(Files.exists(settings)) {
+            try {
+               String bundleName = String.format("%s.%s",
+                                                  parameters.getParameter("groupId").getValue(),
+                                                  parameters.getParameter("artifactId").getValue());
+
+               Files.write(settings,
+                          String.format("%ninclude '%s'", bundleName).getBytes(),
+                           StandardOpenOption.APPEND);
+
+               Files.write(settings,
+                           String.format("%nproject(':%s').name = '%s'%n",
+                                         bundleName,
+                                         parameters.getParameter("artifactId").getValue()).getBytes(),
+                           StandardOpenOption.APPEND);
+            } catch (IOException ioe) {
+               logService.error(getClass(), ioe, "Unable to append to the settings file.");
+            }
+         }
+      }
    }
 
    @Override
