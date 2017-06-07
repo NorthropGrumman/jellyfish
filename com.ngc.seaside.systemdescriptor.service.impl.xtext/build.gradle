@@ -16,7 +16,8 @@ dependencies {
 
 jar {
    manifest {
-      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext')
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext',
+                 'Import-Package': '!org.eclipse.xtext.util, *')
    }
 }
 

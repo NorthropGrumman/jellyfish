@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
-import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 
@@ -145,7 +144,7 @@ public class ParsingDelegate {
 
       // Aggregate the remaining issues.
       do {
-         result.addIssues(validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl));
+         result.addIssues(validator.validate(resource, CheckMode.ALL, null));
          resource = i.hasNext() ? i.next() : null;
       } while (i.hasNext());
 

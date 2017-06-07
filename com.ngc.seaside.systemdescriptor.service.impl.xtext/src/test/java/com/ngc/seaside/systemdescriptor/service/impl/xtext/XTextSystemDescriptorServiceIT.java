@@ -47,6 +47,7 @@ public class XTextSystemDescriptorServiceIT {
                  result.isSuccessful());
    }
 
+   //@Ignore("Can't get this test to pass consistently, something is going on with XText.")
    @Test
    public void testDoesProgrammaticallyRegisterValidators() throws Throwable {
       service.addValidator(validator);
