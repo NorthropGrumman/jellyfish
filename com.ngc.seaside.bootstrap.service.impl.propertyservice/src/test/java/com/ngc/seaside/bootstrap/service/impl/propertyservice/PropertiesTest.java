@@ -12,7 +12,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
- * Created by jprovence on 6/6/2017.
+ *
  */
 public class PropertiesTest {
 

@@ -25,6 +25,10 @@ public class Properties implements IProperties {
    private Map<String, String> original = new LinkedHashMap<>();
    private Map<String, String> current = new LinkedHashMap<>();
 
+   public Properties() {
+      engine.setProperty("runtime.references.strict", true);
+   }
+
    void load(Path propertiesFile) throws IOException {
       original = parseFile(propertiesFile);
    }

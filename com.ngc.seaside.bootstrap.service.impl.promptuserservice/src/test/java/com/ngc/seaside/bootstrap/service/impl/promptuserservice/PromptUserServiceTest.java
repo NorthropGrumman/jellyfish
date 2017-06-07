@@ -16,10 +16,10 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class PromptUserServiceDelegateTest {
+public class PromptUserServiceTest {
    private static PrintStream SYSTEM_OUT;
 
-   private PromptUserServiceDelegate delegate;
+   private PromptUserService delegate;
 
    @BeforeClass
    public static void setupClass() {
@@ -33,7 +33,7 @@ public class PromptUserServiceDelegateTest {
 
    @Before
    public void setup() {
-      delegate = new PromptUserServiceDelegate();
+      delegate = new PromptUserService();
    }
 
    @Test

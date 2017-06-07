@@ -13,7 +13,7 @@ import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
 import java.nio.file.Path;
 
 /**
- * @author justan.provence@ngc.com
+ * Guice wrapper around the BootstrapTemplateService class.
  */
 public class BootstrapTemplateServiceModule extends AbstractModule implements IBootstrapTemplateService {
 

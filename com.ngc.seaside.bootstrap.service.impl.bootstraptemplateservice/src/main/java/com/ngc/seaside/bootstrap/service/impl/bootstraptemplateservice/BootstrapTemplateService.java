@@ -32,6 +32,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
+ * Default implementation of the {@link IBootstrapTemplateService} interface.
+ *
  * @author justan.provence@ngc.com
  */
 @Component(service = IBootstrapTemplateService.class)
