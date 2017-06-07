@@ -12,3 +12,9 @@ dependencies {
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    testCompile "com.google.inject:guice:$guiceVersion"
 }
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.impl.xtext.*')
+   }
+}

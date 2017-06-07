@@ -3,5 +3,5 @@ rootProject.name = 'jellyfish-systemdescriptor-ext'
 include 'com.ngc.seaside.systemdescriptor.model.impl.xtext'
 include 'com.ngc.seaside.systemdescriptor.service.impl.xtext'
 
-project(':com.ngc.seaside.systemdescriptor.model.impl.xtext').name = 'model.impl.xtext'
-project(':com.ngc.seaside.systemdescriptor.service.impl.xtext').name = 'service.impl.xtext'
+project(':com.ngc.seaside.systemdescriptor.model.impl.xtext').name = 'systemdescriptor.model.impl.xtext'
+project(':com.ngc.seaside.systemdescriptor.service.impl.xtext').name = 'systemdescriptor.service.impl.xtext'

@@ -1,5 +1,5 @@
 dependencies {
-   compile project(':model.impl.xtext')
+   compile project(':systemdescriptor.model.impl.xtext')
    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
@@ -12,4 +12,15 @@ dependencies {
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
    testCompile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext')
+   }
+}
+
+task copyDependencies(type: Copy) {
+   into "$buildDir/dependencies"
+   from configurations.runtime
 }
