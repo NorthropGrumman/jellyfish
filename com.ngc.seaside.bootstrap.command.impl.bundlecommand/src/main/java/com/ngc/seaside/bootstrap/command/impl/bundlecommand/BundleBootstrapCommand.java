@@ -79,6 +79,7 @@ public class BundleBootstrapCommand implements IBootstrapCommand {
 
          Path settings = Paths.get(outputDirectory.getParent().normalize().toString(), "settings.gradle");
 
+         //TODO move this functionality to its own service?
          if(Files.exists(settings)) {
             try {
                String bundleName = String.format("%s.%s",
