@@ -9,10 +9,26 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -79,7 +95,9 @@ public class ValidationDelegate implements IValidatorExtension {
          case SystemDescriptorPackage.PACKAGE:
             String name = ((Package) source).getName();
             IValidationContext<IPackage> ctx1 = newContext(
-                  descriptor.getPackages().getByName(name).get(),
+                  descriptor.getPackages()
+                        .getByName(name)
+                        .get(),
                   helper);
             doValidation(ctx1);
             break;
@@ -95,9 +113,98 @@ public class ValidationDelegate implements IValidatorExtension {
             String dataName = ((Data) source.eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer()).getName();
             IValidationContext<IDataField> ctx3 = newContext(
-                  descriptor.findData(packageName, dataName).get().getFields().getByName(fieldName).get(),
+                  descriptor.findData(packageName, dataName).get()
+                        .getFields()
+                        .getByName(fieldName)
+                        .get(),
                   helper);
             doValidation(ctx3);
+            break;
+         case SystemDescriptorPackage.MODEL:
+            packageName = ((Package) source.eContainer()).getName();
+            IValidationContext<IModel> ctx4 = newContext(
+                  descriptor.findModel(packageName, ((Model) source).getName()).get(),
+                  helper);
+            doValidation(ctx4);
+            break;
+         case SystemDescriptorPackage.INPUT_DECLARATION:
+            fieldName = ((InputDeclaration) source).getName();
+            String modelName = ((Model) source.eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IDataReferenceField> ctx5 = newContext(
+                  descriptor.findModel(packageName, modelName).get()
+                        .getInputs()
+                        .getByName(fieldName)
+                        .get(),
+                  helper);
+            doValidation(ctx5);
+            break;
+         case SystemDescriptorPackage.OUTPUT_DECLARATION:
+            fieldName = ((OutputDeclaration) source).getName();
+            modelName = ((Model) source.eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IDataReferenceField> ctx6 = newContext(
+                  descriptor.findModel(packageName, modelName).get()
+                        .getOutputs()
+                        .getByName(fieldName)
+                        .get(),
+                  helper);
+            doValidation(ctx6);
+            break;
+         case SystemDescriptorPackage.PART_DECLARATION:
+            fieldName = ((PartDeclaration) source).getName();
+            modelName = ((Model) source.eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IModelReferenceField> ctx7 = newContext(
+                  descriptor.findModel(packageName, modelName).get()
+                        .getParts()
+                        .getByName(fieldName)
+                        .get(),
+                  helper);
+            doValidation(ctx7);
+            break;
+         case SystemDescriptorPackage.REQUIRE_DECLARATION:
+            fieldName = ((RequireDeclaration) source).getName();
+            modelName = ((Model) source.eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IModelReferenceField> ctx8 = newContext(
+                  descriptor.findModel(packageName, modelName).get()
+                        .getRequiredModels()
+                        .getByName(fieldName)
+                        .get(),
+                  helper);
+            doValidation(ctx8);
+            break;
+         case SystemDescriptorPackage.LINK_DECLARATION:
+            modelName = ((Model) source.eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IModelLink<?>> ctx9 = newContext(
+                  findLink(descriptor.findModel(packageName, modelName).get(), (LinkDeclaration) source),
+                  helper);
+            doValidation(ctx9);
+            break;
+         case SystemDescriptorPackage.SCENARIO:
+            String scenarioName = ((Scenario) source).getName();
+            modelName = ((Model) source.eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer()).getName();
+            IValidationContext<IScenario> ctx10 = newContext(
+                  descriptor.findModel(packageName, modelName).get()
+                        .getScenarios()
+                        .getByName(scenarioName)
+                        .get(),
+                  helper);
+            doValidation(ctx10);
+            break;
+         case SystemDescriptorPackage.GIVEN_STEP:
+         case SystemDescriptorPackage.WHEN_STEP:
+         case SystemDescriptorPackage.THEN_STEP:
+            scenarioName = ((Scenario) source.eContainer().eContainer()).getName();
+            modelName = ((Model) source.eContainer().eContainer().eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer().eContainer().eContainer()).getName();
+            IValidationContext<IScenarioStep> ctx11 = newContext(
+                  findStep(descriptor.findModel(packageName, modelName).get(), scenarioName, (Step) source),
+                  helper);
+            doValidation(ctx11);
             break;
          default:
             // Do nothing, this is not a type we want to validate.
@@ -141,7 +248,7 @@ public class ValidationDelegate implements IValidatorExtension {
       validator.removeValidatorExtension(this);
    }
 
-   private Package findPackage(EObject source) {
+   private static Package findPackage(EObject source) {
       if (source.eClass().equals(SystemDescriptorPackage.Literals.PACKAGE)) {
          return (Package) source;
       }
@@ -153,5 +260,38 @@ public class ValidationDelegate implements IValidatorExtension {
                source));
       }
       return findPackage(parent);
+   }
+
+   private static IModelLink<?> findLink(IModel model, LinkDeclaration xtext) {
+      return (IModelLink<?>) model.getLinks()
+            .stream()
+            .map(l -> (IUnwrappable<?>) l)
+            .filter(l -> l.unwrap().equals(xtext))
+            .findAny()
+            .get();
+   }
+
+   @SuppressWarnings("unchecked")
+   private static IScenarioStep findStep(IModel model, String scenarioName, Step xtext) {
+      IScenario scenario = model.getScenarios().getByName(scenarioName).get();
+      Collection<IScenarioStep> steps;
+      switch (xtext.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.GIVEN_STEP:
+            steps = scenario.getGivens();
+            break;
+         case SystemDescriptorPackage.WHEN_STEP:
+            steps = scenario.getWhens();
+            break;
+         case SystemDescriptorPackage.THEN_STEP:
+            steps = scenario.getThens();
+            break;
+         default:
+            throw new UnrecognizedXtextTypeException(xtext);
+      }
+      return (IScenarioStep) steps.stream()
+            .map(s -> (IUnwrappable<Step>) s)
+            .filter(s -> s.unwrap().equals(xtext))
+            .findAny()
+            .get();
    }
 }
