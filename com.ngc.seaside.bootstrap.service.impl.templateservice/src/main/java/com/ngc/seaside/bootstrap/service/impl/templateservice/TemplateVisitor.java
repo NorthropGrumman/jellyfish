@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.service.impl.bootstraptemplateservice;
+package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
 import com.google.common.base.Preconditions;
 
@@ -24,7 +24,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /**
  * Class for generating an instance of a template
  */
-public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
+public class TemplateVisitor extends SimpleFileVisitor<Path> {
    private final VelocityEngine engine = new VelocityEngine();
    private final VelocityContext context = new VelocityContext();
    private final Path outputFolder;
@@ -42,10 +42,10 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
     * @param clean               whether or not to recursively delete already existing folder before creating them
     *                            again
     */
-   public BootstrapTemplateVisitor(Map<String, String> parametersAndValues,
-                                   Path inputFolder,
-                                   Path outputFolder,
-                                   boolean clean) {
+   public TemplateVisitor(Map<String, String> parametersAndValues,
+                          Path inputFolder,
+                          Path outputFolder,
+                          boolean clean) {
       this.outputFolder = outputFolder;
       this.inputFolder = inputFolder;
       this.clean = clean;
@@ -53,13 +53,13 @@ public class BootstrapTemplateVisitor extends SimpleFileVisitor<Path> {
       for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
-      context.put("Template", BootstrapTemplateVisitor.class);
+      context.put("Template", TemplateVisitor.class);
    }
 
    /**
     * Converts an object/string with dots (e.g., com.ngc.example) to a string with file separators (e.g.,
     * com/ngc/example on Unix).
-    * this method is used by the Velocity Engine when $BootstrapTemplateVisitor.asPath($groupId, $artifactId)
+    * this method is used by the Velocity Engine when $TemplateVisitor.asPath($groupId, $artifactId)
     * is found in order to represent something like a groupId and artifactId as a file structure (i.e. package).
     * @param path      object to convert to file path
     * @param extraPath any objects that should be added to the path. These will be separated by a . then converted to

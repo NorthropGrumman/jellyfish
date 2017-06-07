@@ -64,7 +64,9 @@ public class BundleBootstrapCommand implements IBootstrapCommand {
 
    @Override
    public void run(IBootstrapCommandOptions commandOptions) {
-      logService.info(getClass(), "Running command %s", NAME);
+      logService.trace(getClass(), "Running command %s", NAME);
+
+
    }
 
    @Override

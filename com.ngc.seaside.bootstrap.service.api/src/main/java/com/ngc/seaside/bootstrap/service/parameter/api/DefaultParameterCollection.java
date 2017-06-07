@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Default implementation of the {@link IParameterCollection} interface that is backed by a
@@ -53,4 +54,25 @@ public class DefaultParameterCollection implements IParameterCollection {
       parameters.forEach(this::addParameter);
    }
 
+   @Override
+   public String toString() {
+      return String.format("parameterMap: %s", parameterMap);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (obj == this) {
+         return true;
+      }
+      if (!(obj instanceof IParameterCollection)) {
+         return false;
+      }
+      IParameterCollection that = (IParameterCollection) obj;
+      return Objects.equals(parameterMap, that.getParameterMap());
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(parameterMap);
+   }
 }

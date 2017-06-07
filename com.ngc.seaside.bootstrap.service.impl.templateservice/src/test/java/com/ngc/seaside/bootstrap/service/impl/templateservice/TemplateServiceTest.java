@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.service.impl.bootstraptemplateservice;
+package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
@@ -6,7 +6,7 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.property.api.IProperties;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,14 +36,14 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
-public class BootstrapTemplateServiceTest {
+public class TemplateServiceTest {
 
    private ILogService logService;
    private IResourceService resourceService;
    private IPromptUserService promptUserService;
    private IPropertyService propertyService;
 
-   private BootstrapTemplateService delegate;
+   private TemplateService delegate;
 
    @Rule
    public TemporaryFolder testFolder = new TemporaryFolder();
@@ -62,7 +62,7 @@ public class BootstrapTemplateServiceTest {
       promptUserService = mock(IPromptUserService.class);
       propertyService = mock(IPropertyService.class);
 
-      delegate = new BootstrapTemplateService();
+      delegate = new TemplateService();
       delegate.setLogService(logService);
       delegate.setResourceService(resourceService);
       delegate.setPromptUserService(promptUserService);
@@ -138,7 +138,7 @@ public class BootstrapTemplateServiceTest {
 
       try {
          delegate.unpack("invalidnofile", Paths.get(outputDirectory.getAbsolutePath()), false);
-      } catch (BootstrapTemplateException e) {
+      } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: invalidnofile");
          assertEquals(e.getCause().getMessage(),
@@ -147,7 +147,7 @@ public class BootstrapTemplateServiceTest {
 
       try {
          delegate.unpack("invalidnofolder", Paths.get(outputDirectory.getAbsolutePath()), false);
-      } catch (BootstrapTemplateException e) {
+      } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: invalidnofolder");
          assertEquals(e.getCause().getMessage(),

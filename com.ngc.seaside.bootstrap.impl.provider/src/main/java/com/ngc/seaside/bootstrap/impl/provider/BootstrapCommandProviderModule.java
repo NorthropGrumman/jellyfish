@@ -11,14 +11,15 @@ import com.google.inject.spi.TypeListener;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
-import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
-import com.ngc.seaside.command.api.ICommandProvider;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 
 import java.util.Set;
 
 /**
  * Guice wrapper around the {@link BootstrapCommandProvider} implementation.
+ *
+ * TODO abstract the isReady and Update technique to a reusable software pattern
  */
 public class BootstrapCommandProviderModule extends AbstractModule implements IBootstrapCommandProvider {
 
@@ -83,7 +84,7 @@ public class BootstrapCommandProviderModule extends AbstractModule implements IB
    }
 
    @Inject
-   public void setBootstrapTemplateService(IBootstrapTemplateService ref) {
+   public void setBootstrapTemplateService(ITemplateService ref) {
       delegate.setBootstrapTemplateService(ref);
       templateServiceSet = true;
       update();

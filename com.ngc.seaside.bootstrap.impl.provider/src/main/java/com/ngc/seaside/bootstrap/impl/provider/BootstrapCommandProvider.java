@@ -4,10 +4,14 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.DefaultBootstrapCommandOptions;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
-import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
-import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
@@ -18,6 +22,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,7 +35,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    private final Map<String, IBootstrapCommand> commandMap = new ConcurrentHashMap<>();
    private ILogService logService;
-   private IBootstrapTemplateService bootstrapTemplateService;
+   private ITemplateService bootstrapTemplateService;
 
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
@@ -98,6 +104,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          return;
       }
 
+      DefaultBootstrapCommandOptions options = new DefaultBootstrapCommandOptions();
+
       /**
        * Unpack the template
        */
@@ -105,8 +113,11 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          try {
             //TODO update with the output directory instead of PWD. This will require the parameter service
             logService.trace(getClass(), "Unpacking template for '%s' ", commandName);
-            bootstrapTemplateService.unpack(commandName, Paths.get("."), false);
-         } catch (BootstrapTemplateException e) {
+            ITemplateOutput templateOutput =
+                     bootstrapTemplateService.unpack(commandName, Paths.get("."), false);
+
+            options.setParameters(convertParameters(templateOutput));
+         } catch (TemplateServiceException e) {
             logService.error(getClass(),
                              e,
                              "Unable to unpack the template for command'%s'. Aborting",
@@ -116,10 +127,32 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       }
 
       if (command != null) {
-         //TODO this will be updated with parameter service output
-         command.run(null);
+         //TODO this will be updated with parameter service output as well
+         command.run(options);
       }
    }
+
+   /**
+    * TODO this should be in the parameter service.
+    * TODO should return the {@link com.ngc.seaside.bootstrap.service.parameter.api.IParameterCollection}?
+    * @param output
+    * @return
+    */
+   private List<IParameter> convertParameters(ITemplateOutput output) {
+      List<IParameter> parameters = new ArrayList<>();
+      DefaultParameter outputDir = new DefaultParameter("outputDirectory", true);
+      outputDir.setValue(output.getOutputPath().toString());
+      parameters.add(outputDir);
+
+      for(Map.Entry<String, String> entry : output.getProperties().entrySet()) {
+         DefaultParameter parameter = new DefaultParameter(entry.getKey(), true);
+         parameter.setValue(entry.getValue());
+         parameters.add(parameter);
+      }
+
+      return parameters;
+   }
+
 
    /**
     * Sets log service.
@@ -148,14 +181,14 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.STATIC,
             unbind = "removeBootstrapTemplateService")
-   public void setBootstrapTemplateService(IBootstrapTemplateService ref) {
+   public void setBootstrapTemplateService(ITemplateService ref) {
       this.bootstrapTemplateService = ref;
    }
 
    /**
     * Remove the bootstrap template service.
     */
-   public void removeBootstrapTemplateService(IBootstrapTemplateService ref) {
+   public void removeBootstrapTemplateService(ITemplateService ref) {
       setBootstrapTemplateService(null);
    }
 

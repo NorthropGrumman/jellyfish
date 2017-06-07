@@ -1,14 +1,14 @@
 package com.ngc.seaside.bootstrap.service.template.api;
 
 /**
- * The exception thrown by any implementation of the IBootstrapTemplateService.
+ * The exception thrown by any implementation of the ITemplateService.
  */
-public class BootstrapTemplateException extends RuntimeException {
+public class TemplateServiceException extends RuntimeException {
 
    /**
     * Default constructor with default exit code.
     */
-   public BootstrapTemplateException() {
+   public TemplateServiceException() {
       super();
    }
 
@@ -17,7 +17,7 @@ public class BootstrapTemplateException extends RuntimeException {
     *
     * @param message the exception description
     */
-   public BootstrapTemplateException(String message) {
+   public TemplateServiceException(String message) {
       super(message);
    }
 
@@ -26,7 +26,7 @@ public class BootstrapTemplateException extends RuntimeException {
     *
     * @param message the exception description
     */
-   public BootstrapTemplateException(String message, Throwable cause) {
+   public TemplateServiceException(String message, Throwable cause) {
       super(message, cause);
    }
 
@@ -35,7 +35,7 @@ public class BootstrapTemplateException extends RuntimeException {
     *
     * @param cause the exception
     */
-   public BootstrapTemplateException(Throwable cause) {
+   public TemplateServiceException(Throwable cause) {
       super(cause);
    }
 }

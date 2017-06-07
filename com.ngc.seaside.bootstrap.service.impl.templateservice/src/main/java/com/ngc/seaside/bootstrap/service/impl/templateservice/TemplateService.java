@@ -1,12 +1,14 @@
-package com.ngc.seaside.bootstrap.service.impl.bootstraptemplateservice;
+package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.property.api.IProperties;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
-import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,12 +34,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Default implementation of the {@link IBootstrapTemplateService} interface.
+ * Default implementation of the {@link ITemplateService} interface.
  *
  * @author justan.provence@ngc.com
  */
-@Component(service = IBootstrapTemplateService.class)
-public class BootstrapTemplateService implements IBootstrapTemplateService {
+@Component(service = ITemplateService.class)
+public class TemplateService implements ITemplateService {
 
    private static final String TEMPLATE_FOLDER = "template";
    private static final String TEMPLATE_PROPERTIES = "template.properties";
@@ -141,14 +143,14 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
    }
 
    @Override
-   public Path unpack(String templateName, Path outputDirectory, boolean clean)
-            throws BootstrapTemplateException {
+   public ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
+            throws TemplateServiceException {
       ZipFile zipFile = null;
-      Path unzippedFolderPath = null;
+      DefaultTemplateOutput output = new DefaultTemplateOutput();
       try {
          Path path = getTemplatePath(templateName);
          zipFile = new ZipFile(path.toString());
-         unzippedFolderPath = Files.createTempDirectory(null);
+         Path unzippedFolderPath = Files.createTempDirectory(null);
          Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
          while (entries.hasMoreElements()) {
@@ -171,15 +173,16 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
                      "Invalid template. Each template must contain %s and a template folder named '%s'",
                      TEMPLATE_PROPERTIES, TEMPLATE_FOLDER);
             logService.error(getClass(), message);
-            throw new BootstrapTemplateException(message);
+            throw new TemplateServiceException(message);
          }
 
-         updateTemplate(unzippedFolderPath, outputDirectory, clean);
+         output.setOutputPath(unzippedFolderPath);
+         output.setProperties(updateTemplate(unzippedFolderPath, outputDirectory, clean));
 
-      } catch (BootstrapTemplateException | IOException e) {
+      } catch (TemplateServiceException | IOException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
          logService.error(getClass(), e, message);
-         throw new BootstrapTemplateException(message, e);
+         throw new TemplateServiceException(message, e);
       } finally {
          if (zipFile != null) {
             try {
@@ -190,7 +193,8 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
             }
          }
       }
-      return unzippedFolderPath;
+
+      return output;
    }
 
    /**
@@ -201,7 +205,7 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
     * @param outputFolder   the output folder.
     * @param clean          true if this should clean existing directories.
     */
-   protected void updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
+   protected Map<String, String> updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
             throws IOException {
       // Parse template.properties file for each parameter and its default value
       IProperties parametersAndDefaults =
@@ -224,10 +228,12 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
       // Walk through the unzipped template directory in order to generate the
       // instance of the template
       Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER),
-                         new BootstrapTemplateVisitor(parametersAndValues,
-                                                      templateFolder.resolve(TEMPLATE_FOLDER),
-                                                      outputFolder,
-                                                      clean));
+                         new TemplateVisitor(parametersAndValues,
+                                             templateFolder.resolve(TEMPLATE_FOLDER),
+                                             outputFolder,
+                                             clean));
+
+      return parametersAndValues;
    }
 
    /**
@@ -267,7 +273,7 @@ public class BootstrapTemplateService implements IBootstrapTemplateService {
     * Determines if the unzipped contents of the template are valid.
     *
     * @param templateFolder path to unzipped template folder
-    * @throws BootstrapTemplateException if the template has an invalid structure/format
+    * @throws TemplateServiceException if the template has an invalid structure/format
     */
    protected boolean isValidateTemplate(Path templateFolder) {
       return Files.exists(templateFolder.resolve(TEMPLATE_PROPERTIES)) &&

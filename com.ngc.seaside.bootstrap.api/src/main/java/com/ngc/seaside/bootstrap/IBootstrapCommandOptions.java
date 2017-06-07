@@ -3,6 +3,7 @@ package com.ngc.seaside.bootstrap;
 import com.ngc.seaside.command.api.ICommandOptions;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The bootstrap command options don't extend that of the {@link ICommandOptions} interface but it does make
@@ -11,5 +12,6 @@ import java.util.List;
  * @see ICommandOptions
  */
 public interface IBootstrapCommandOptions extends ICommandOptions {
+
 
 }

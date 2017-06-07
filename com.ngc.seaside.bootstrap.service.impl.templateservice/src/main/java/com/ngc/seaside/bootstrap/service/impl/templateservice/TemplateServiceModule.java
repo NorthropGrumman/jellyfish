@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.service.impl.bootstraptemplateservice;
+package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -7,21 +7,22 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.BootstrapTemplateException;
-import com.ngc.seaside.bootstrap.service.template.api.IBootstrapTemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 
 import java.nio.file.Path;
 
 /**
- * Guice wrapper around the BootstrapTemplateService class.
+ * Guice wrapper around the TemplateService class.
  */
-public class BootstrapTemplateServiceModule extends AbstractModule implements IBootstrapTemplateService {
+public class TemplateServiceModule extends AbstractModule implements ITemplateService {
 
-   private BootstrapTemplateService delegate = new BootstrapTemplateService();
+   private TemplateService delegate = new TemplateService();
 
    @Override
    protected void configure() {
-     bind(IBootstrapTemplateService.class).toInstance(this);
+      bind(ITemplateService.class).toInstance(this);
    }
 
    @Override
@@ -30,7 +31,8 @@ public class BootstrapTemplateServiceModule extends AbstractModule implements IB
    }
 
    @Override
-   public Path unpack(String templateName, Path outputDirectory, boolean clean) throws BootstrapTemplateException {
+   public ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
+            throws TemplateServiceException {
       return delegate.unpack(templateName, outputDirectory, clean);
    }
 

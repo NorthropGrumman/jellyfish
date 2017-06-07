@@ -9,7 +9,7 @@ dependencies {
     compile project(":bootstrap.impl.provider")
     compile project(":bootstrap.command.impl.bundlecommand")
     compile project(":bootstrap.command.impl.projectcommand")
-    compile project(":bootstrap.service.impl.bootstraptemplateservice")
+    compile project(":bootstrap.service.impl.templateservice")
     compile project(":bootstrap.service.impl.promptuserservice")
     compile project(":bootstrap.service.impl.propertyservice")
 
