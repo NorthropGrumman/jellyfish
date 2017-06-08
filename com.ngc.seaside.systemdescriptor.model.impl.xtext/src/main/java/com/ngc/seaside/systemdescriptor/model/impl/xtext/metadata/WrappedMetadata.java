@@ -35,11 +35,6 @@ import javax.json.spi.JsonProvider;
 public class WrappedMetadata implements IMetadata {
 
    /**
-    * The name of the JSON provider to use in OSGi.
-    */
-   private final static String FALLBACK_PROVIDER_CLASSNAME = "org.glassfish.json.JsonProviderImpl";
-
-   /**
     * The cached JSON provider.  We don't use synchronization here.  If it gets loaded twice, that is not a problem.
     */
    private static JsonProvider provider;
