@@ -224,12 +224,6 @@ public class WrappedMetadata implements IMetadata {
    }
 
    private static JsonProvider getProvider() {
-      // This is a hacky way to load a JSON provider in both an OSGi and non-OSGi environment.
-      // JsonProvider.provider() will work fine in a non OSGi environment provided a JSON provider implementation is
-      // installed on the classpath.  However, this won't work when this bundle is in Eclipse (an OSGi environment).
-      // To get around this, we try to load the the Glassfish implementation using this bundle's classloader.  This
-      // bundle has an import on that package, so it should load provided the Glassfish bundle is deployed.
-
       // Don't worry about synchronization, if the provider gets loaded twice that is fine.
       if (provider == null) {
          // Important note about OSGi and Glassfish.  If this bundle is running in OSGi *do not* deploy both the
