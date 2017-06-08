@@ -7,7 +7,10 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
+import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
+
+import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +33,8 @@ public class InjectorTestFactory {
     */
    public synchronized static Injector getSharedInstance() {
       if (injector == null) {
+         TerminalsStandaloneSetup.doSetup();
+
          ILogService logService = mock(ILogService.class);
          Collection<Module> modules = new ArrayList<>();
          modules.add(new AbstractModule() {
@@ -39,8 +44,9 @@ public class InjectorTestFactory {
             }
          });
          modules.add(new SystemDescriptorRuntimeModule());
-         modules.add(XTextSystemDescriptorServiceModule.prepare());
+         modules.add(new XTextSystemDescriptorServiceModule());
          injector = Guice.createInjector(modules);
+         new SystemDescriptorStandaloneSetup().register(injector);
       }
       return injector;
    }

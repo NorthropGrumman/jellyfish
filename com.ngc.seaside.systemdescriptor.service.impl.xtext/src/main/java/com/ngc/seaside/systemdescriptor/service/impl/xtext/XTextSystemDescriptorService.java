@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
@@ -17,14 +16,27 @@ import java.nio.file.Path;
 import java.util.Collection;
 
 /**
- * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL.  New instances
- * of this service should always be obtained via injection with Guice.  Include the {@link
- * XTextSystemDescriptorServiceModule#prepare() module} with the Guice configuration like so:
+ * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL. New instances
+ * of this service should always be obtained via injection with Guice.  This class is configured in one of to ways:
+ * either for use <i>within</i> Eclipse or for standalone use <i>outside</i> of Eclipse.  If using this service inside
+ * eclipse include the {@link XTextSystemDescriptorServiceModule} with the Guice configuration like so:
  *
  * <pre>
  *    {@code
  *      Collection<Module> modules = new ArrayList<>();
- *      modules.add(XTextSystemDescriptorServiceModule.prepare());
+ *      modules.add(new XTextSystemDescriptorServiceModule());
+ *      Injector injector = Guice.createInjector(modules);
+ *      ISystemDescriptorService service = injector.getInstance(ISystemDescriptorService.class);
+ *    }
+ * </pre>
+ *
+ * Alternately, use {@link XTextSystemDescriptorServiceModule#forStandaloneUsage()} to use the service outside of
+ * Eclipse:
+ *
+ * <pre>
+ *    {@code
+ *      Collection<Module> modules = new ArrayList<>();
+ *      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
  *      Injector injector = Guice.createInjector(modules);
  *      ISystemDescriptorService service = injector.getInstance(ISystemDescriptorService.class);
  *    }
@@ -64,15 +76,29 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
     */
    private final ValidationDelegate validationDelegate;
 
-   @Inject
+   /**
+    * Creates an instance of the {@code XTextSystemDescriptorService} <b>for use within Eclipse</b>.  An instance of
+    * this service should always be obtained via an {@link Injector} instead of invoking this constructor directly.  See
+    * the {@link XTextSystemDescriptorService class javadoc}.
+    */
+   public XTextSystemDescriptorService(ParsingDelegate parsingDelegate,
+                                       ValidationDelegate validationDelegate) {
+      this.parsingDelegate = Preconditions.checkNotNull(parsingDelegate, "parsingDelegate may not be null!");
+      this.validationDelegate = Preconditions.checkNotNull(validationDelegate, "validationDelegate may not be null!");
+   }
+
+   /**
+    * Creates a new instance of the standalone XText system descriptor service <b>for use outside of Eclipse</b>.  An
+    * instance of this service should always be obtained via an {@link Injector} instead of invoking this constructor
+    * directly.  See the {@link XTextSystemDescriptorService class javadoc}.
+    */
    public XTextSystemDescriptorService(Injector injector,
                                        ParsingDelegate parsingDelegate,
                                        ValidationDelegate validationDelegate) {
+      this(parsingDelegate, validationDelegate);
       Preconditions.checkNotNull(injector, "injector may not be null!");
       // Configure XText.
       new SystemDescriptorStandaloneSetup().register(injector);
-      this.parsingDelegate = Preconditions.checkNotNull(parsingDelegate, "parsingDelegate may not be null!");
-      this.validationDelegate = Preconditions.checkNotNull(validationDelegate, "validationDelegate may not be null!");
    }
 
    @Override

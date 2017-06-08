@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 
+import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
@@ -11,28 +13,75 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.Validation
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 
+import java.lang.reflect.Constructor;
+
 /**
- * The Guice module configuration for the service.  Use {@link #prepare()} to get an instance of this module.
+ * The Guice module configuration for the service.
  */
 public class XTextSystemDescriptorServiceModule extends AbstractModule {
 
-   private XTextSystemDescriptorServiceModule() {
+   private final Constructor<XTextSystemDescriptorService> constructor;
+   private final boolean isStandalone;
+
+   /**
+    * Creates a new instance of this module that is configured to provide a {@code ISystemDescriptorService} for use
+    * within Eclipse.  If the service is being used outside of Eclipse use {@link #forStandaloneUsage()} instead to
+    * create this module.
+    */
+   public XTextSystemDescriptorServiceModule() {
+      this(getEclipseIntegratedConstructor(), false);
+   }
+
+   /**
+    * Private constructor used to specify the constructor of the service which will be bound..
+    */
+   private XTextSystemDescriptorServiceModule(Constructor<XTextSystemDescriptorService> constructor,
+                                              boolean isStandalone) {
+      this.constructor = constructor;
+      this.isStandalone = isStandalone;
    }
 
    @Override
    protected void configure() {
-      bind(ISystemDescriptorService.class).to(XTextSystemDescriptorService.class).in(Singleton.class);
+      // Use either the standalone or embedded constructor to create the service.
+      bind(ISystemDescriptorService.class).toConstructor(constructor).in(Singleton.class);
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
+
+      // If in standalone mode, include the DSL module so the client does not have to.
+      if (isStandalone) {
+         install(new SystemDescriptorRuntimeModule());
+      }
    }
 
    /**
-    * Prepares the {@code XTextSystemDescriptorService} for use and returns the {@code Module} that can be included with
-    * the Guice configuration.
+    * Prepares the {@code XTextSystemDescriptorService} for use outside of Eclipse and returns the {@code Module} that
+    * can be included with the Guice configuration.  Use this option when using the service outside of Eclipse.  If
+    * using the service inside Eclipse use the {@link #XTextSystemDescriptorServiceModule() public constructor}.
     */
-   public static Module prepare() {
+   public static Module forStandaloneUsage() {
       // Perform XText setup.
       TerminalsStandaloneSetup.doSetup();
-      return new XTextSystemDescriptorServiceModule();
+      return new XTextSystemDescriptorServiceModule(getStandaloneConstructor(), true);
+   }
+
+   private static Constructor<XTextSystemDescriptorService> getEclipseIntegratedConstructor() {
+      try {
+         return XTextSystemDescriptorService.class.getConstructor(ParsingDelegate.class, ValidationDelegate.class);
+      } catch (NoSuchMethodException e) {
+         // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
+         throw new RuntimeException(e.getMessage(), e);
+      }
+   }
+
+   private static Constructor<XTextSystemDescriptorService> getStandaloneConstructor() {
+      try {
+         return XTextSystemDescriptorService.class.getConstructor(Injector.class,
+                                                                  ParsingDelegate.class,
+                                                                  ValidationDelegate.class);
+      } catch (NoSuchMethodException e) {
+         // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
+         throw new RuntimeException(e.getMessage(), e);
+      }
    }
 }

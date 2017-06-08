@@ -1,7 +1,15 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
 import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -9,19 +17,23 @@ import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class XTextSystemDescriptorServiceIT {
+public class StandaloneXTextSystemDescriptorServiceIT {
 
-   private XTextSystemDescriptorService service;
+   private ISystemDescriptorService service;
 
    private ISystemDescriptorValidator validator;
 
@@ -37,7 +49,7 @@ public class XTextSystemDescriptorServiceIT {
          }
       };
 
-      service = InjectorTestFactory.getSharedInstance().getInstance(XTextSystemDescriptorService.class);
+      service = InjectorTestFactory.getSharedInstance().getInstance(ISystemDescriptorService.class);
    }
 
    @Test
@@ -46,7 +58,7 @@ public class XTextSystemDescriptorServiceIT {
       assertTrue("did not parse project!",
                  result.isSuccessful());
    }
-   
+
    @Test
    public void testDoesProgrammaticallyRegisterValidators() throws Throwable {
       service.addValidator(validator);
@@ -57,5 +69,26 @@ public class XTextSystemDescriptorServiceIT {
       } finally {
          service.removeValidator(validator);
       }
+   }
+
+   @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"
+           + " by itself to make sure the standalone configuration works.")
+   @Test
+   public void testDoesCreateStandaloneServiceWithGuice() throws Throwable {
+      ILogService logService = mock(ILogService.class);
+      Collection<Module> modules = new ArrayList<>();
+      modules.add(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(ILogService.class).toInstance(logService);
+         }
+      });
+      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      Injector injector = Guice.createInjector(modules);
+      service = injector.getInstance(ISystemDescriptorService.class);
+
+      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      assertTrue("did not parse project!",
+                 result.isSuccessful());
    }
 }
