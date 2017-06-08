@@ -12,7 +12,7 @@ dependencies {
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
-   testCompile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
 jar {

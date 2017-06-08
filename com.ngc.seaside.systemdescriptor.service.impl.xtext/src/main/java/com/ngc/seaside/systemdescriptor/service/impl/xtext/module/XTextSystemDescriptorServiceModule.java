@@ -4,12 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.FakeValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
+import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 
@@ -46,7 +49,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
    @Override
    protected void configure() {
       // Use either the standalone or embedded constructor to create the service.
-      bind(ISystemDescriptorService.class).toConstructor(constructor).in(Singleton.class);
+      bind(ISystemDescriptorService.class).toConstructor(constructor).asEagerSingleton();
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
 
@@ -54,6 +57,11 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       if (isStandalone) {
          install(new SystemDescriptorRuntimeModule());
       }
+
+      Multibinder<ISystemDescriptorValidator> pluginBinder = Multibinder.newSetBinder(
+            binder(),
+            ISystemDescriptorValidator.class);
+      pluginBinder.addBinding().to(FakeValidator.class);
    }
 
    /**
