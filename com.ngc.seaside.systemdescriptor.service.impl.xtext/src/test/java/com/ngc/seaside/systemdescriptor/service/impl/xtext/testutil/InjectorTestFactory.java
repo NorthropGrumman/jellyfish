@@ -6,7 +6,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorServiceBuilder;
+import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +38,9 @@ public class InjectorTestFactory {
                bind(ILogService.class).toInstance(logService);
             }
          });
-         injector = XTextSystemDescriptorServiceBuilder.forIntegration(modules::add)
-               .build(() -> Guice.createInjector(modules));
+         modules.add(new SystemDescriptorRuntimeModule());
+         modules.add(XTextSystemDescriptorServiceModule.prepare());
+         injector = Guice.createInjector(modules);
       }
       return injector;
    }

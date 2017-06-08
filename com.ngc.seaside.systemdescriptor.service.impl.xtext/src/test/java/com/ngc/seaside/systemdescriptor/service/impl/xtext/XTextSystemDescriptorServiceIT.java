@@ -46,8 +46,7 @@ public class XTextSystemDescriptorServiceIT {
       assertTrue("did not parse project!",
                  result.isSuccessful());
    }
-
-   //@Ignore("Can't get this test to pass consistently, something is going on with XText.")
+   
    @Test
    public void testDoesProgrammaticallyRegisterValidators() throws Throwable {
       service.addValidator(validator);

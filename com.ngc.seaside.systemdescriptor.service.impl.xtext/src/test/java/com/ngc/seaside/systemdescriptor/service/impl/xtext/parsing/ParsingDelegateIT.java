@@ -1,11 +1,11 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
 
-import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +31,9 @@ public class ParsingDelegateIT {
 
    @Before
    public void setup() throws Throwable {
-      delegate = new ParsingDelegate(InjectorTestFactory.getSharedInstance().getInstance(IParser.class),
-                                     InjectorTestFactory.getSharedInstance().getInstance(ILogService.class));
+      TerminalsStandaloneSetup.doSetup();
+      new SystemDescriptorStandaloneSetup().register(InjectorTestFactory.getSharedInstance());
+      delegate = InjectorTestFactory.getSharedInstance().getInstance(ParsingDelegate.class);
    }
 
    @Test

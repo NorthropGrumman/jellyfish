@@ -185,10 +185,10 @@ public class ParsingDelegate {
          // Close all streams.
          streams.forEach(Closeables::closeQuietly);
          // Remove all resources.  If we don't do this, Xtext will hold on to them.
-         for (Resource r : resourceSet.getResources()) {
-            r.unload();
-         }
-         resourceSet.getResources().clear();
+//         for (Resource r : resourceSet.getResources()) {
+//            r.unload();
+//         }
+//         resourceSet.getResources().clear();
       }
    }
 }
