@@ -1,10 +1,13 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -14,6 +17,9 @@ import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidato
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL. New instances
@@ -66,6 +72,10 @@ import java.util.Collection;
  */
 public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
+   private final Collection<IScenarioStepHandler> stepHandlers = new CopyOnWriteArrayList<>();
+
+   private final ILogService logService;
+
    /**
     * Responsible for parsing system descriptor files.
     */
@@ -81,10 +91,15 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
     * this service should always be obtained via an {@link Injector} instead of invoking this constructor directly.  See
     * the {@link XTextSystemDescriptorService class javadoc}.
     */
-   public XTextSystemDescriptorService(ParsingDelegate parsingDelegate,
-                                       ValidationDelegate validationDelegate) {
+   public XTextSystemDescriptorService(ILogService logService,
+                                       ParsingDelegate parsingDelegate,
+                                       ValidationDelegate validationDelegate,
+                                       StepsHolder holder) {
+      this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
       this.parsingDelegate = Preconditions.checkNotNull(parsingDelegate, "parsingDelegate may not be null!");
       this.validationDelegate = Preconditions.checkNotNull(validationDelegate, "validationDelegate may not be null!");
+      Preconditions.checkNotNull(holder, "holder may not be null!");
+      holder.handlers.forEach(this::addScenarioStepHandler);
    }
 
    /**
@@ -93,9 +108,11 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
     * directly.  See the {@link XTextSystemDescriptorService class javadoc}.
     */
    public XTextSystemDescriptorService(Injector injector,
+                                       ILogService logService,
                                        ParsingDelegate parsingDelegate,
-                                       ValidationDelegate validationDelegate) {
-      this(parsingDelegate, validationDelegate);
+                                       ValidationDelegate validationDelegate,
+                                       StepsHolder holder) {
+      this(logService, parsingDelegate, validationDelegate, holder);
       Preconditions.checkNotNull(injector, "injector may not be null!");
       // Configure XText.
       new SystemDescriptorStandaloneSetup().register(injector);
@@ -117,6 +134,32 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    }
 
    @Override
+   public Collection<IScenarioStepHandler> getScenarioStepHandlers() {
+      return Collections.unmodifiableCollection(stepHandlers);
+   }
+
+   @Override
+   public void addScenarioStepHandler(IScenarioStepHandler handler) {
+      Preconditions.checkNotNull(handler, "stepHandlers may not be null!");
+      stepHandlers.add(handler);
+      logService.debug(XTextSystemDescriptorService.class,
+                       "Added step handler %s.",
+                       handler);
+   }
+
+   @Override
+   public boolean removeScenarioStepHandler(IScenarioStepHandler handler) {
+      Preconditions.checkNotNull(handler, "handler may not be null!");
+      boolean result = stepHandlers.remove(handler);
+      if (result) {
+         logService.debug(XTextSystemDescriptorService.class,
+                          "Removed step handler %s.",
+                          handler);
+      }
+      return result;
+   }
+
+   @Override
    public void addValidator(ISystemDescriptorValidator validator) {
       validationDelegate.addValidator(validator);
    }
@@ -124,5 +167,15 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    @Override
    public boolean removeValidator(ISystemDescriptorValidator validator) {
       return validationDelegate.removeValidator(validator);
+   }
+
+   /**
+    * A value holder to hold {@link IScenarioStepHandler}s.  This is a workaround to Guice to
+    * enable optional constructor parameters.
+    */
+   public static class StepsHolder {
+
+      @Inject(optional = true)
+      Set<IScenarioStepHandler> handlers = Collections.emptySet();
    }
 }

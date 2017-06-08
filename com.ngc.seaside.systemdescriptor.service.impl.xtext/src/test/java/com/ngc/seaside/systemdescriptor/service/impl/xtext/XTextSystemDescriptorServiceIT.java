@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StandaloneXTextSystemDescriptorServiceIT {
+public class XTextSystemDescriptorServiceIT {
 
    private ISystemDescriptorService service;
 
@@ -80,12 +81,14 @@ public class StandaloneXTextSystemDescriptorServiceIT {
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
-            bind(ILogService.class).toInstance(logService);
+            bind(ILogService.class).toInstance(new PrintStreamLogService());
          }
       });
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       Injector injector = Guice.createInjector(modules);
       service = injector.getInstance(ISystemDescriptorService.class);
+
+      // Disable scenario validation.
 
       IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("did not parse project!",

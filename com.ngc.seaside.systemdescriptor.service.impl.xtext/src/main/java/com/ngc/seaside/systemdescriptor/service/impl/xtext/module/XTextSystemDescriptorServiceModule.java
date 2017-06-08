@@ -6,11 +6,12 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.FakeValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
@@ -52,16 +53,19 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       bind(ISystemDescriptorService.class).toConstructor(constructor).asEagerSingleton();
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
+      bindDefaultValidators();
 
       // If in standalone mode, include the DSL module so the client does not have to.
       if (isStandalone) {
          install(new SystemDescriptorRuntimeModule());
       }
+   }
 
+   protected void bindDefaultValidators() {
       Multibinder<ISystemDescriptorValidator> pluginBinder = Multibinder.newSetBinder(
             binder(),
             ISystemDescriptorValidator.class);
-      pluginBinder.addBinding().to(FakeValidator.class);
+      pluginBinder.addBinding().to(ScenarioStepValidator.class);
    }
 
    /**
@@ -77,7 +81,10 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
 
    private static Constructor<XTextSystemDescriptorService> getEclipseIntegratedConstructor() {
       try {
-         return XTextSystemDescriptorService.class.getConstructor(ParsingDelegate.class, ValidationDelegate.class);
+         return XTextSystemDescriptorService.class.getConstructor(ILogService.class,
+                                                                  ParsingDelegate.class,
+                                                                  ValidationDelegate.class,
+                                                                  XTextSystemDescriptorService.StepsHolder.class);
       } catch (NoSuchMethodException e) {
          // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
          throw new RuntimeException(e.getMessage(), e);
@@ -87,8 +94,10 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
    private static Constructor<XTextSystemDescriptorService> getStandaloneConstructor() {
       try {
          return XTextSystemDescriptorService.class.getConstructor(Injector.class,
+                                                                  ILogService.class,
                                                                   ParsingDelegate.class,
-                                                                  ValidationDelegate.class);
+                                                                  ValidationDelegate.class,
+                                                                  XTextSystemDescriptorService.StepsHolder.class);
       } catch (NoSuchMethodException e) {
          // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
          throw new RuntimeException(e.getMessage(), e);

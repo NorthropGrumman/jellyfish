@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.junit.Before;

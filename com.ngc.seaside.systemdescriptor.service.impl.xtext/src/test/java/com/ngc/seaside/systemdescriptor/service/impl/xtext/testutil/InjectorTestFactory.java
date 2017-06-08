@@ -44,7 +44,13 @@ public class InjectorTestFactory {
             }
          });
          modules.add(new SystemDescriptorRuntimeModule());
-         modules.add(new XTextSystemDescriptorServiceModule());
+         // Disable scenario validation.
+         modules.add(new XTextSystemDescriptorServiceModule() {
+            @Override
+            protected void bindDefaultValidators() {
+               // Do nothing.
+            }
+         });
          injector = Guice.createInjector(modules);
          new SystemDescriptorStandaloneSetup().register(injector);
       }
