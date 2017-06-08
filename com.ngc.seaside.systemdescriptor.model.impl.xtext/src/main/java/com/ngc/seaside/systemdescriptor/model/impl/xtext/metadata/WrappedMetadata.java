@@ -22,10 +22,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.json.spi.JsonProvider;
 
 
 /**
@@ -33,6 +33,16 @@ import javax.json.JsonObjectBuilder;
  * "write thought" to the wrapped object.
  */
 public class WrappedMetadata implements IMetadata {
+
+   /**
+    * The name of the JSON provider to use in OSGi.
+    */
+   private final static String FALLBACK_PROVIDER_CLASSNAME = "org.glassfish.json.JsonProviderImpl";
+
+   /**
+    * The cached JSON provider.  We don't use synchronization here.  If it gets loaded twice, that is not a problem.
+    */
+   private static JsonProvider provider;
 
    private javax.json.JsonObject json;
 
@@ -140,7 +150,7 @@ public class WrappedMetadata implements IMetadata {
    }
 
    private static javax.json.JsonObject toJavaxJsonObject(JsonObject object) {
-      JsonObjectBuilder builder = Json.createObjectBuilder();
+      JsonObjectBuilder builder = getProvider().createObjectBuilder();
       for (Member member : object.getMembers()) {
          builder.add(member.getKey(), convertValueToWrapped(member.getValue()));
       }
@@ -157,7 +167,7 @@ public class WrappedMetadata implements IMetadata {
    }
 
    private static javax.json.JsonArray toJavaxJsonArray(Array array) {
-      JsonArrayBuilder builder = Json.createArrayBuilder();
+      JsonArrayBuilder builder = getProvider().createArrayBuilder();
       for (Value value : array.getValues()) {
          builder.add(convertValueToWrapped(value));
       }
@@ -167,11 +177,11 @@ public class WrappedMetadata implements IMetadata {
    private static javax.json.JsonValue convertValueToWrapped(Value value) {
       switch (value.eClass().getClassifierID()) {
          case SystemDescriptorPackage.STRING_VALUE:
-            return Json.createValue(((StringValue) value).getValue());
+            return getProvider().createValue(((StringValue) value).getValue());
          case SystemDescriptorPackage.INT_VALUE:
-            return Json.createValue(((IntValue) value).getValue());
+            return getProvider().createValue(((IntValue) value).getValue());
          case SystemDescriptorPackage.DBL_VALUE:
-            return Json.createValue(((DblValue) value).getValue());
+            return getProvider().createValue(((DblValue) value).getValue());
          case SystemDescriptorPackage.BOOLEAN_VALUE:
             // TODO TH: the current grammar requires a boolean value to be a string: 'true' or 'false' which is incorrect.
             // Fix the grammar first then fix this.
@@ -216,5 +226,23 @@ public class WrappedMetadata implements IMetadata {
             throw new IllegalStateException(
                   String.format("cannot convert JSON value %s to XText!", value.getValueType()));
       }
+   }
+
+   private static JsonProvider getProvider() {
+      // This is a hacky way to load a JSON provider in both an OSGi and non-OSGi environment.
+      // JsonProvider.provider() will work fine in a non OSGi environment provided a JSON provider implementation is
+      // installed on the classpath.  However, this won't work when this bundle is in Eclipse (an OSGi environment).
+      // To get around this, we try to load the the Glassfish implementation using this bundle's classloader.  This
+      // bundle has an import on that package, so it should load provided the Glassfish bundle is deployed.
+
+      // Don't worry about synchronization, if the provider gets loaded twice that is fine.
+      if (provider == null) {
+         // Important note about OSGi and Glassfish.  If this bundle is running in OSGi *do not* deploy both the
+         // Glassfish implementation bundle and the JSON API bundle.  Only deploy the Glassfish implementation bundle
+         // or errors will result.  This is because the Glassfish implementation bundle contains the API classes
+         // directly.
+         provider = JsonProvider.provider();
+      }
+      return provider;
    }
 }

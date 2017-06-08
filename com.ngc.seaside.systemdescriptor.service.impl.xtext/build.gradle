@@ -7,6 +7,7 @@ dependencies {
    compile "com.google.inject:guice:$guiceVersion"
    compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
+   compile 'org.glassfish:javax.json:1.1'
 
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
@@ -16,7 +17,9 @@ dependencies {
 
 jar {
    manifest {
-      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext',
+      // Note we don't import org.eclipse.xtext.util.  If we do, this bundle will not allow Eclipse to start if it is
+      // deployed in Eclipse.
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.*',
                  'Import-Package': '!org.eclipse.xtext.util, *')
    }
 }
