@@ -16,7 +16,9 @@ import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import java.lang.reflect.Constructor;
 
 /**
- * The Guice module configuration for the service.
+ * The Guice module configuration for the service.  Only use the {@link #XTextSystemDescriptorServiceModule() default
+ * constructor} of this module if the service is being used within Eclipse.  Otherwise, use {@link
+ * #forStandaloneUsage()} to create the module.
  */
 public class XTextSystemDescriptorServiceModule extends AbstractModule {
 
