@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import java.nio.file.Path;
@@ -42,6 +43,12 @@ public interface ISystemDescriptorService {
     * @return an immutable copy
     */
    ISystemDescriptor immutableCopy(ISystemDescriptor descriptor);
+
+   Collection<IScenarioStepHandler> getScenarioStepHandlers();
+
+   void addScenarioStepHandler(IScenarioStepHandler handler);
+
+   boolean removeScenarioStepHandler(IScenarioStepHandler handler);
 
    /**
     * Registers a validator that is used when parsing and validating system descriptor.

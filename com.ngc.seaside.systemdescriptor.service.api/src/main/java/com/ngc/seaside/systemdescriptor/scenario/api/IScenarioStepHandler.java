@@ -1,6 +1,6 @@
 package com.ngc.seaside.systemdescriptor.scenario.api;
 
-public interface IScenarioHandler {
+public interface IScenarioStepHandler {
 
    ScenarioStepVerb getVerb();
 }
