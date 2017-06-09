@@ -7,8 +7,4 @@ import java.util.Optional;
 public interface IHelpService {
 
    Optional<String> getDescription(ScenarioStepVerb verb);
-
-   void addDescription(ScenarioStepVerb verb, String description);
-
-   boolean removeDescription(ScenarioStepVerb verb);
 }
