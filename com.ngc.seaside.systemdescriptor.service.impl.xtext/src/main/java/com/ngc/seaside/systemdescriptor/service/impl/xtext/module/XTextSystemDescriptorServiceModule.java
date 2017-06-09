@@ -80,12 +80,25 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
     * Invoked to bind the default {@link IScenarioStepHandler}s.
     */
    protected void bindDefaultStepHandlers() {
-      Multibinder<IScenarioStepHandler> multibinder = Multibinder.newSetBinder(
+      // Step handlers should be singletons.
+      bind(ReceiveStepHandler.class).in(Singleton.class);
+      bind(AskStepHandler.class).in(Singleton.class);
+      bind(PublishStepHandler.class).in(Singleton.class);
+
+      Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
             binder(),
             IScenarioStepHandler.class);
-      multibinder.addBinding().to(ReceiveStepHandler.class);
-      multibinder.addBinding().to(AskStepHandler.class);
-      multibinder.addBinding().to(PublishStepHandler.class);
+      handlers.addBinding().to(ReceiveStepHandler.class);
+      handlers.addBinding().to(AskStepHandler.class);
+      handlers.addBinding().to(PublishStepHandler.class);
+
+      // These handlers are also validators.
+      Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
+            binder(),
+            ISystemDescriptorValidator.class);
+      validators.addBinding().to(PublishStepHandler.class);
+      validators.addBinding().to(ReceiveStepHandler.class);
+      validators.addBinding().to(AskStepHandler.class);
    }
 
    /**
