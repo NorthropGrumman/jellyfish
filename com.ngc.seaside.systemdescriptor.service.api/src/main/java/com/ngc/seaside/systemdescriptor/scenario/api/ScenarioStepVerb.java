@@ -2,6 +2,18 @@ package com.ngc.seaside.systemdescriptor.scenario.api;
 
 import java.util.Objects;
 
+/**
+ * Stores a form of a verb and its tense.  This class can be used as shown below to present the 3 tenses of the verb
+ * "publish":
+ *
+ * <pre>
+ *    {@code
+ *      ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("havePublished");
+ *      ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("publishing");
+ *      ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willPublish");
+ *    }
+ * </pre>
+ */
 public class ScenarioStepVerb {
 
    private final String verb;
@@ -43,18 +55,41 @@ public class ScenarioStepVerb {
       return Objects.hash(tense, verb);
    }
 
+   /**
+    * Creates a verb in past tense.
+    *
+    * @see #create(String, VerbTense)
+    */
    public static ScenarioStepVerb pastTense(String verb) {
       return create(verb, VerbTense.PAST_TENSE);
    }
 
+   /**
+    * Creates a verb in present tense.
+    *
+    * @see #create(String, VerbTense)
+    */
    public static ScenarioStepVerb presentTense(String verb) {
       return create(verb, VerbTense.PRESENT_TENSE);
    }
 
+   /**
+    * Creates a verb in future tense.
+    *
+    * @see #create(String, VerbTense)
+    */
    public static ScenarioStepVerb futureTense(String verb) {
       return create(verb, VerbTense.FUTURE_TENSE);
    }
 
+   /**
+    * Creates a verb in the given tense.
+    *
+    * @param verb  the actual verb
+    * @param tense the tense of the verb
+    * @throws NullPointerException     {@code verb} or {@code tense} is {@code null}
+    * @throws IllegalArgumentException {@code verb} is an empty string
+    */
    public static ScenarioStepVerb create(String verb, VerbTense tense) {
       if (verb == null) {
          throw new NullPointerException("verb may not be null!");

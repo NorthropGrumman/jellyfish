@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
@@ -44,10 +45,28 @@ public interface ISystemDescriptorService {
     */
    ISystemDescriptor immutableCopy(ISystemDescriptor descriptor);
 
+   /**
+    * Gets an unmodifiable, threadsafe collection of all {@link IScenarioStepHandler} that have been registered.
+    *
+    * @return an unmodifiable, threadsafe collection of all {@link IScenarioStepHandler} that have been registered
+    */
    Collection<IScenarioStepHandler> getScenarioStepHandlers();
 
+   /**
+    * Registers a handler that is used to process keywords referenced in scenario steps.
+    *
+    * @param handler the handler to register
+    * @see IScenarioStepHandler
+    * @see IScenarioStep#getKeyword()
+    */
    void addScenarioStepHandler(IScenarioStepHandler handler);
 
+   /**
+    * Unregisters a step handler that has been registered via {@link #addScenarioStepHandler(IScenarioStepHandler)}.
+    *
+    * @param handler the handler to unregister
+    * @return true if the handler was removed, false if the handler was never added
+    */
    boolean removeScenarioStepHandler(IScenarioStepHandler handler);
 
    /**
