@@ -12,7 +12,8 @@ import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.DefaultStepHandler;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.AskStepHandler;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
@@ -77,6 +78,8 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
             binder(),
             IScenarioStepHandler.class);
       multibinder.addBinding().to(ReceiveStepHandler.class);
+      multibinder.addBinding().to(AskStepHandler.class);
+      multibinder.addBinding().to(PublishStepHandler.class);
    }
 
    /**
