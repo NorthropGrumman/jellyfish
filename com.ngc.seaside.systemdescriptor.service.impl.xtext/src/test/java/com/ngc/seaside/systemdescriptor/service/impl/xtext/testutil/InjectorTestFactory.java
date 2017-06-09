@@ -8,12 +8,15 @@ import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
+import com.ngc.seaside.systemdescriptor.service.help.api.IHelpService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 
@@ -41,6 +44,7 @@ public class InjectorTestFactory {
             @Override
             protected void configure() {
                bind(ILogService.class).toInstance(logService);
+               bind(IHelpService.class).to(NullHelpService.class);
             }
          });
          modules.add(new SystemDescriptorRuntimeModule());
@@ -55,5 +59,22 @@ public class InjectorTestFactory {
          new SystemDescriptorStandaloneSetup().register(injector);
       }
       return injector;
+   }
+
+   private static class NullHelpService implements IHelpService {
+
+      @Override
+      public Optional<String> getDescription(ScenarioStepVerb verb) {
+         return Optional.empty();
+      }
+
+      @Override
+      public void addDescription(ScenarioStepVerb verb, String description) {
+      }
+
+      @Override
+      public boolean removeDescription(ScenarioStepVerb verb) {
+         return false;
+      }
    }
 }

@@ -88,8 +88,6 @@ public class XTextSystemDescriptorServiceIT {
       Injector injector = Guice.createInjector(modules);
       service = injector.getInstance(ISystemDescriptorService.class);
 
-      // Disable scenario validation.
-
       IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("did not parse project!",
                  result.isSuccessful());

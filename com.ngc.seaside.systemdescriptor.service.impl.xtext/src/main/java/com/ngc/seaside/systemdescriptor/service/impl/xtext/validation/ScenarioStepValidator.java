@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
@@ -27,17 +28,17 @@ public class ScenarioStepValidator extends AbstractSystemDescriptorValidator {
       if (SystemDescriptors.isGivenStep(step)) {
          hasHandler = service.getScenarioStepHandlers()
                             .stream()
-                            .filter(h -> h.getVerb().getPastTense().equals(keyword))
+                            .filter(h -> h.getVerbs().get(VerbTense.PAST_TENSE).getVerb().equals(keyword))
                             .count() > 0;
       } else if (SystemDescriptors.isWhenStep(step)) {
          hasHandler = service.getScenarioStepHandlers()
                             .stream()
-                            .filter(h -> h.getVerb().getCurrentTense().equals(keyword))
+                            .filter(h -> h.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb().equals(keyword))
                             .count() > 0;
       } else {
          hasHandler = service.getScenarioStepHandlers()
                             .stream()
-                            .filter(h -> h.getVerb().getFutureTense().equals(keyword))
+                            .filter(h -> h.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb().equals(keyword))
                             .count() > 0;
       }
 
