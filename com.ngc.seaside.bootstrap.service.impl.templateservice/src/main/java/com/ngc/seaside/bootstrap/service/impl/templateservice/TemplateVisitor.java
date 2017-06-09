@@ -126,7 +126,6 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    @Override
    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
       Path outputFolder = getOutputPath(path);
-      System.out.println(outputFolder.toAbsolutePath() + " =? " + this.outputFolder.toAbsolutePath());
       if(topLevelFolder == null && !this.outputFolder.toAbsolutePath().equals(outputFolder.toAbsolutePath())) {
          topLevelFolder = outputFolder.normalize();
       }
