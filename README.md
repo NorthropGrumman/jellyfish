@@ -8,34 +8,34 @@ it in a project add the following dependencies to your gradle build:
 compile "com.ngc.seaside:systemdescriptor.model.api:1.0"
 compile "com.ngc.seaside:systemdescriptor.service.api:1.0"
 compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:1.0"
-```
-
-## Getting an instance of the service
-First, you need to configure you application to use the service.  If you app is simple and has no dependency injection
-(or you are in a test), you can do something like this:
-```
-ISystemDescriptorService service = XTextSystemDescriptorServiceBuilder.forApplication().build();
-```
-
-However, if you app is using Guice for dependency injection, you can better integrate the service with you app by
-following the example below.  To do this, make sure you have a dependency on Guice in your build:
-```
 compile "com.google.inject:guice:4.1.0"
 ```
 
-In your code, do:
+## Getting an instance of the service
+First, you need to configure you application to use the service.  The service uses Guice for dependency injection, so 
+you will need to include the service's module when creating the injector.  Note that some implementation of BLoCS'
+`com.ngc.blocs.service.log.api.ILogService` must be bound in order to start the service.
+
+If you are using the service **outside** of Eclipse, you include the service's module as follows:
 ```
 Collection<Module> appModules = new ArrayList<>();
 // Add any application modules here, ie
 appModules.add(new MyAppModule());
-// Configure Guice and create the Injector.
-Injector injector = XTextSystemDescriptorServiceBuilder.forIntegration(appModules::add)
-  .build(() -> Guice.createInjector(appModules));
+// Include the module for the service.
+appModules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+// Create the injector.
+Injector injector = Guice.createInjector(appModules);
+// Get the service.
 ISystemDescriptorService service = injector.getInstance(ISystemDescriptorService.class);
 ```
 
-With this method, you can inject the service directly into your own component instead of resolving it directly from
-the `Injector`:
+If you are using the service **within** Eclipse, you use the constructor of `XTextSystemDescriptorServiceModule`, ie:
+```
+appModules.add(new XTextSystemDescriptorServiceModule());
+```
+
+Uou can inject the service directly into your own component instead of resolving it directly from
+the `Injector`, which is the preferred method of obtaining the service:
 ```
 public class MyApplication {
   private final ISystemDescriptorService service;
@@ -46,7 +46,9 @@ public class MyApplication {
   }
 }
 ```
-This is the preferred way to manage the service.
+
+Note that this bundle also includes a `META-INF/services/com.google.inject.Module` service loader file, so the module
+for this service can be created via the service loader mechanism.
 
 ## Using the service
 You can parse a set of SD files with the following code:
