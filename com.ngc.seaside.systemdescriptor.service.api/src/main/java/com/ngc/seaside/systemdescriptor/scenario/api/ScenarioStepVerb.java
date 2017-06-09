@@ -4,28 +4,25 @@ import java.util.Objects;
 
 public class ScenarioStepVerb {
 
-   private final String pastTense;
-   private final String currentTense;
-   private final String futureTense;
+   private final String verb;
+   private final VerbTense tense;
 
-   private ScenarioStepVerb(String pastTense,
-                            String currentTense,
-                            String futureTense) {
-      this.pastTense = pastTense;
-      this.currentTense = currentTense;
-      this.futureTense = futureTense;
+   private ScenarioStepVerb(String verb, VerbTense tense) {
+      this.verb = verb;
+      this.tense = tense;
    }
 
-   public String getPastTense() {
-      return pastTense;
+   public String getVerb() {
+      return verb;
    }
 
-   public String getCurrentTense() {
-      return currentTense;
+   public VerbTense getTense() {
+      return tense;
    }
 
-   public String getFutureTense() {
-      return futureTense;
+   @Override
+   public String toString() {
+      return verb;
    }
 
    @Override
@@ -37,42 +34,37 @@ public class ScenarioStepVerb {
          return false;
       }
       ScenarioStepVerb that = (ScenarioStepVerb) o;
-      return Objects.equals(pastTense, that.pastTense) &&
-             Objects.equals(currentTense, that.currentTense) &&
-             Objects.equals(futureTense, that.futureTense);
+      return tense == that.tense &&
+             Objects.equals(verb, that.verb);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(pastTense, currentTense, futureTense);
+      return Objects.hash(tense, verb);
    }
 
-   @Override
-   public String toString() {
-      return currentTense;
+   public static ScenarioStepVerb pastTense(String verb) {
+      return create(verb, VerbTense.PAST_TENSE);
    }
 
-   public static ScenarioStepVerb create(String pastTense,
-                                         String currentTense,
-                                         String futureTense) {
-      if (pastTense == null) {
-         throw new NullPointerException("pastTense may not be null!");
+   public static ScenarioStepVerb presentTense(String verb) {
+      return create(verb, VerbTense.PRESENT_TENSE);
+   }
+
+   public static ScenarioStepVerb futureTense(String verb) {
+      return create(verb, VerbTense.FUTURE_TENSE);
+   }
+
+   public static ScenarioStepVerb create(String verb, VerbTense tense) {
+      if (verb == null) {
+         throw new NullPointerException("verb may not be null!");
       }
-      if (pastTense.trim().isEmpty()) {
-         throw new IllegalArgumentException("pastTense may not be empty!");
+      if (verb.trim().isEmpty()) {
+         throw new IllegalArgumentException("verb may not be empty!");
       }
-      if (currentTense == null) {
-         throw new NullPointerException("currentTense may not be null!");
+      if (tense == null) {
+         throw new NullPointerException("tense may not be null!");
       }
-      if (currentTense.trim().isEmpty()) {
-         throw new IllegalArgumentException("currentTense may not be empty!");
-      }
-      if (futureTense == null) {
-         throw new NullPointerException("futureTense may not be null!");
-      }
-      if (futureTense.trim().isEmpty()) {
-         throw new IllegalArgumentException("futureTense may not be empty!");
-      }
-      return new ScenarioStepVerb(pastTense, currentTense, futureTense);
+      return new ScenarioStepVerb(verb, tense);
    }
 }

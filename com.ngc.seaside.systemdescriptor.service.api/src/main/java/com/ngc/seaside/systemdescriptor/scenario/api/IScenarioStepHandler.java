@@ -1,6 +1,8 @@
 package com.ngc.seaside.systemdescriptor.scenario.api;
 
+import java.util.Map;
+
 public interface IScenarioStepHandler {
 
-   ScenarioStepVerb getVerb();
+   Map<VerbTense, ScenarioStepVerb> getVerbs();
 }
