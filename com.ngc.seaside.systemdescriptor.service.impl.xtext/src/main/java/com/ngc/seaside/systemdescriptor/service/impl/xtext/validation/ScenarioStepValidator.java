@@ -10,6 +10,10 @@ import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorV
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+/**
+ * A validator that requires a {@link com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler} be registered
+ * to handle a {@link IScenarioStep#getKeyword() step keyword} that is referenced in a step.
+ */
 public class ScenarioStepValidator extends AbstractSystemDescriptorValidator {
 
    private final ISystemDescriptorService service;

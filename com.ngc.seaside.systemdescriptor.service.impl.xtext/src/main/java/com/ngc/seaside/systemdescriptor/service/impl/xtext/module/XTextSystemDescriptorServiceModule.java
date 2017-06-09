@@ -66,6 +66,9 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       }
    }
 
+   /**
+    * Invoked to bind the default {@link ISystemDescriptorValidator}s.
+    */
    protected void bindDefaultValidators() {
       Multibinder<ISystemDescriptorValidator> multibinder = Multibinder.newSetBinder(
             binder(),
@@ -73,6 +76,9 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       multibinder.addBinding().to(ScenarioStepValidator.class);
    }
 
+   /**
+    * Invoked to bind the default {@link IScenarioStepHandler}s.
+    */
    protected void bindDefaultStepHandlers() {
       Multibinder<IScenarioStepHandler> multibinder = Multibinder.newSetBinder(
             binder(),
