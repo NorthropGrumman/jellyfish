@@ -79,6 +79,12 @@ Note the project must use the `src/main/sd` project structure layout if using th
 See the test `XTextSystemDescriptorServiceIT.java` in the service implementation or the Javadoc of
 `XTextSystemDescriptorServiceBuilder` project for more information.
 
+# Creating Custom Validators
+TODO
+
+# Creating Custom Scenario Step Handlers
+TODO
+
 # com.ngc.seaside.systemdescriptor.model.impl.xtext
 This project contains an implementation of the
 [model API](https://github.ms.northgrum.com/CEACIDE/jellyfish-systemdescriptor-api) that uses the
