@@ -18,17 +18,4 @@ public class DefaultHelpService implements IHelpService {
       Preconditions.checkNotNull(verb, "verb may not be null!");
       return Optional.ofNullable(stepVerbDescriptions.get(verb));
    }
-
-   @Override
-   public void addDescription(ScenarioStepVerb verb, String description) {
-      Preconditions.checkNotNull(verb, "verb may not be null!");
-      Preconditions.checkNotNull(description, "description may not be null!");
-      stepVerbDescriptions.put(verb, description);
-   }
-
-   @Override
-   public boolean removeDescription(ScenarioStepVerb verb) {
-      Preconditions.checkNotNull(verb, "verb may not be null!");
-      return stepVerbDescriptions.remove(verb) != null;
-   }
 }
