@@ -8,9 +8,11 @@ import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
+import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -54,6 +56,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
       bindDefaultValidators();
+      bindDefaultStepHandlers();
 
       // If in standalone mode, include the DSL module so the client does not have to.
       if (isStandalone) {
@@ -62,10 +65,17 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
    }
 
    protected void bindDefaultValidators() {
-      Multibinder<ISystemDescriptorValidator> pluginBinder = Multibinder.newSetBinder(
+      Multibinder<ISystemDescriptorValidator> multibinder = Multibinder.newSetBinder(
             binder(),
             ISystemDescriptorValidator.class);
-      pluginBinder.addBinding().to(ScenarioStepValidator.class);
+      multibinder.addBinding().to(ScenarioStepValidator.class);
+   }
+
+   protected void bindDefaultStepHandlers() {
+      Multibinder<IScenarioStepHandler> multibinder = Multibinder.newSetBinder(
+            binder(),
+            IScenarioStepHandler.class);
+      multibinder.addBinding().to(ReceiveStepHandler.class);
    }
 
    /**
