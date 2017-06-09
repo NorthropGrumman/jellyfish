@@ -1,0 +1,14 @@
+dependencies {
+   compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
+   compile "com.google.guava:guava:$guavaVersion"
+   compile "com.google.inject:guice:$guiceVersion"
+
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.help.impl.defaultz.module')
+   }
+}
