@@ -27,7 +27,3 @@ public interface IParameterService {
    IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException;
 
 }
-/**
- *
- * @see IParameter
- */
