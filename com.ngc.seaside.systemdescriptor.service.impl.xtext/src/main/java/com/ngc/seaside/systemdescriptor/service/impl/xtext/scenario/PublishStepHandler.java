@@ -4,6 +4,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 
+/**
+ * Implements the "publish" step verb.
+ */
 public class PublishStepHandler extends AbstractStepHandler {
 
    public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("havePublished");

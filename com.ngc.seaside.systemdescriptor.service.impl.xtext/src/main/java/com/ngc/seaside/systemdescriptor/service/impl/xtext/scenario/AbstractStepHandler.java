@@ -14,10 +14,17 @@ import java.util.Map;
 
 /**
  * A base class for {@code IScenarioStepHandler}s.  The different forms of the verb supported by this handler must be
- * {@link #register(ScenarioStepVerb, ScenarioStepVerb...) registered} in the constructor.
+ * {@link #register(ScenarioStepVerb, ScenarioStepVerb...) registered} in the constructor.  Instances that extend this
+ * class are also {@code ISystemDescriptorValidator}s.  This allows a step handler to validate the arguments included
+ * with the step are valid for the given verb.  Implementations should perform any validation in {@link
+ * #doValidateStep(IValidationContext)}.  For convenience, {@link #requireStepParameters(IValidationContext, String)} is
+ * provided to indicate that a verb requires at least 1 argument.
  */
 public abstract class AbstractStepHandler extends AbstractSystemDescriptorValidator implements IScenarioStepHandler {
 
+   /**
+    * All the verbs supported by this handler, keyed by tense.
+    */
    private Map<VerbTense, ScenarioStepVerb> verbs = new EnumMap<>(VerbTense.class);
 
    @Override
@@ -30,6 +37,11 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
       return "StepHandler for " + verbs;
    }
 
+   /**
+    * Invoked to validate this step.  Place validation logic instead of overriding {@link
+    * #validateStep(IValidationContext)} directly.  Otherwise, the validation logic may be called for <i>all</i> steps,
+    * not just steps that use the verb handled by this handler.
+    */
    protected abstract void doValidateStep(IValidationContext<IScenarioStep> context);
 
    /**
@@ -45,6 +57,10 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
       verbs = Collections.unmodifiableMap(verbs);
    }
 
+   /**
+    * Delegates to {@code doValidateStep} only if the provided step is a step that is using the verb provided by this
+    * handler.  Place validation logic in {@code doValidateStep} instead of overriding this implementation.
+    */
    @Override
    protected void validateStep(IValidationContext<IScenarioStep> context) {
       if (shouldStepBeValidated(context.getObject())) {
@@ -52,7 +68,12 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
       }
    }
 
-
+   /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the step has at least 1 argument.
+    *
+    * @param context      the validation context
+    * @param errorMessage the error message to use if the scenario step has no parameters
+    */
    protected void requireStepParameters(IValidationContext<IScenarioStep> context,
                                         String errorMessage) {
       IScenarioStep step = context.getObject();
