@@ -80,10 +80,99 @@ See the test `XTextSystemDescriptorServiceIT.java` in the service implementation
 `XTextSystemDescriptorServiceBuilder` project for more information.
 
 # Creating Custom Validators
-TODO
+Custom validators implement the `ISystemDescriptorValidator` interface and usually extend
+`AbstractSystemDescriptorValidator`:
+```
+public class ExampleModelValidator extends AbstractSystemDescriptorValidator {
+  @Override
+  protected void validateModel(IValidationContext<IModel> context) {
+    IModel model = context.getObject();
+    if("Foo".equals(model.getName())) {
+      context.declare(Severity.ERROR, "Foo is not a valid model name!", model).getName();
+    }
+  }
+}
+```
+
+Validators are declared in modules:
+```
+public class ExampleModelValidatorModule extends AbstractModule {
+  @Override
+  protected void configure() {
+    // Always use a multibinder when binding validators since there is more than one implementation.
+    Multibinder<ISystemDescriptorValidator> multibinder = Multibinder.newSetBinder(
+      binder(),
+      ISystemDescriptorValidator.class);
+    multibinder.addBinding().to(ExampleModelValidator.class);
+  }
+}
+```
+
+Modules have service loader files at `src/main/resources/META-INF/services/com.google.inject.Module`:
+```
+com.ngc.seaside.systemdescriptor.validation.impl.mymodel.module.ExampleModelValidatorModule
+```
+
+Always export the package that contains the module.
+
+See http://10.207.42.42:8080/display/SEAS/JellyFish+-+How+to+extend+JellyFish#JellyFish-HowtoextendJellyFish-CreatingnewvalidationrulesfortheSystemDescriptor
+for a complete tutorial.
 
 # Creating Custom Scenario Step Handlers
-TODO
+Scenario step handlers declare keywords or verbs that can be used in scenario steps.  The `IScenarioStepHandler`
+interface must be implemented and usually extend `AbstractStepHandler`.  Handlers that extend `AbstractStepHandler` are
+also validators:
+```
+public class CookStepHandler extends AbstractStepHandler {
+  private final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("cooked");
+  private final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("cooking");
+  private final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCook");
+ 
+  public CookStepHandler () {
+   register(PAST, PRESENT, FUTURE);
+  }
+ 
+  @Override
+  protected void doValidateStep(IValidationContext<IScenarioStep> context) {
+   requireStepParameters(context, "The 'cook' verb requires parameters!");
+   
+   IScenarioStep step = context.getObject();
+    if(step.getParameters().contains("sushi")) {
+     context.declare(Severity.WARNING, "Are you sure you want to cook this?", step).getParameters();
+    }
+  }
+}
+```
+
+Handlers are declared in `Module`s as both handlers and validators:
+```
+public class CookStepHandlerModule extends AbstractModule {
+  @Override
+  protected void configure() {
+    // Most of the time, plugins are singletons.
+    bind(CookStepHandler.class).in(Singleton.class);
+ 
+    // Bind CookStepHandler as a handler.
+    Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
+      binder(),
+      IScenarioStepHandler.class);
+    handlers.addBinding().to(CookStepHandler.class);
+ 
+    // Bind CookStepHandler as a validator.
+    Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
+      binder(),
+      ISystemDescriptorValidator.class);
+    validators.addBinding().to(CookStepHandler.class);
+  }
+}
+```
+
+Modules have service loader files at `src/main/resources/META-INF/services/com.google.inject.Module`:
+```
+com.ngc.seaside.systemdescriptor.scenario.impl.cook.module.CookStepHandlerModule 
+```
+
+Always export the package that contains the module.
 
 # com.ngc.seaside.systemdescriptor.model.impl.xtext
 This project contains an implementation of the
