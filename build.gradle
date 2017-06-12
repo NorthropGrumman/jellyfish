@@ -22,6 +22,8 @@ subprojects {
     version = '1.0-SNAPSHOT'
 
     ext {
+        jellyfishDSLVersion = '1.1-SNAPSHOT'
+        boostrapVersion = '1.0-SNAPSHOT'
         blocsVersion = '2.1'
         osgiVersion =  '6.0.0'
         guavaVersion = '21.0'

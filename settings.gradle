@@ -1,5 +1,5 @@
 
 rootProject.name = 'jellyfish-cli'
-include 'com.ngc.seaside.jellyfish.cli.utilities'
 
-project(':com.ngc.seaside.jellyfish.cli.utilities').name = 'jellyfish.cli.utilities'
+include 'com.ngc.seaside.jellyfish.api'
+project(':com.ngc.seaside.jellyfish.api').name = 'jellyfish.api'

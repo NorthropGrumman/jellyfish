@@ -1,0 +1,17 @@
+
+
+
+dependencies {
+    compile "com.ngc.seaside:bootstrap.api:$boostrapVersion"
+    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishDSLVersion"
+
+    testCompile "junit:junit:$junitVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.jellyfish.api.*')
+    }
+}
+
