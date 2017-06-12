@@ -175,8 +175,11 @@ public class TemplateService implements ITemplateService {
             logService.error(getClass(), message);
             throw new TemplateServiceException(message);
          }
-
-         output = updateTemplate(unzippedFolderPath, outputDirectory, clean);
+         
+         TemplateIgnoreComponent templateIgnoreComponent = new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER);
+         templateIgnoreComponent.parse();
+         
+         output = updateTemplate(unzippedFolderPath, outputDirectory, clean, templateIgnoreComponent);
 
       } catch (TemplateServiceException | IOException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
@@ -200,11 +203,15 @@ public class TemplateService implements ITemplateService {
     * Update the template based on the the visitor pattern. This will replace any Velocity Template
     * parameters with the input values from the properties file.
     *
-    * @param templateFolder the template folder.
-    * @param outputFolder   the output folder.
-    * @param clean          true if this should clean existing directories.
+    * @param templateFolder          the template folder.
+    * @param outputFolder            the output folder.
+    * @param clean                   true if this should clean existing directories.
+    * @param templateIgnoreComponent used to check files that should be copied instead of evaluated by velocity.
     */
-   protected ITemplateOutput updateTemplate(Path templateFolder, Path outputFolder, boolean clean)
+   protected ITemplateOutput updateTemplate(Path templateFolder, 
+		   									Path outputFolder, 
+		   									boolean clean, 
+		   									TemplateIgnoreComponent templateIgnoreComponent)
             throws IOException {
       // Parse template.properties file for each parameter and its default value
       IProperties parametersAndDefaults =
@@ -227,7 +234,8 @@ public class TemplateService implements ITemplateService {
       TemplateVisitor visitor = new TemplateVisitor(parametersAndValues,
                           templateFolder.resolve(TEMPLATE_FOLDER),
                           outputFolder,
-                          clean);
+                          clean,
+                          templateIgnoreComponent);
 
       // Walk through the unzipped template directory in order to generate the
       // instance of the template

@@ -32,25 +32,29 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    private final Path inputFolder;
    private final boolean clean;
    private Path topLevelFolder;
+   private TemplateIgnoreComponent templateIgnoreComponent;
 
    /**
     * Constructor that designates the input and output folders, uses velocity to generate context
     * using the provided parameters, and gives the option to cleanup the output folder in case it
     * was previously generated.
     *
-    * @param parametersAndValues Map of parameter-values used
-    * @param inputFolder         folder of the unzipped template
-    * @param outputFolder        folder for outputting the generated template instance
-    * @param clean               whether or not to recursively delete already existing folder before creating them
-    *                            again
+    * @param parametersAndValues     Map of parameter-values used
+    * @param inputFolder             folder of the unzipped template
+    * @param outputFolder            folder for outputting the generated template instance
+    * @param clean                   whether or not to recursively delete already existing folder before creating them again
+    * @param templateIgnoreComponent used to check files that should be copied instead of evaluated by velocity.
     */
    public TemplateVisitor(Map<String, String> parametersAndValues,
                           Path inputFolder,
                           Path outputFolder,
-                          boolean clean) {
+                          boolean clean,
+                          TemplateIgnoreComponent templateIgnoreComponent) {
       this.outputFolder = outputFolder;
       this.inputFolder = inputFolder;
       this.clean = clean;
+      this.templateIgnoreComponent = templateIgnoreComponent;
+      
       engine.setProperty("runtime.references.strict", true);
       engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
                          "org.apache.velocity.runtime.log.NullLogSystem" );
@@ -159,15 +163,19 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
       Path outputFile = getOutputPath(path);
 
-      //todo add this to a resource property file
-      if(path.toString().contains("gradlew") || path.toString().endsWith(".jar") || path.toString().endsWith(".bat")) {
-         Files.copy(path, outputFile, REPLACE_EXISTING);
-         return FileVisitResult.CONTINUE;
+      if (templateIgnoreComponent.contains(path))
+      {
+    	  Files.copy(path, outputFile, REPLACE_EXISTING);
       }
-
-      try (Writer writer = Files.newBufferedWriter(outputFile); Reader reader = Files.newBufferedReader(path)) {
-         engine.evaluate(context, writer, "", reader);
+      else
+      {
+	      try (Writer writer = Files.newBufferedWriter(outputFile); 
+	    	   Reader reader = Files.newBufferedReader(path)) 
+	      {
+	         engine.evaluate(context, writer, "", reader);
+	      }
       }
+      
       return FileVisitResult.CONTINUE;
    }
 
