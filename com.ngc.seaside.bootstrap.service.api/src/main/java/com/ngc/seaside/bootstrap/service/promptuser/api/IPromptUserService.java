@@ -19,14 +19,14 @@ public interface IPromptUserService {
    String prompt(String parameter, String defaultValue, Predicate<String> validator);
 
    /**
-    * Utilize a customer question to prompt the user to enter data.
+    * Utilize a custom question to prompt the user to enter data.
     *
     * @param question      the question of the prompt. What are you asking?
     * @param note          the note to clarify the accepted input types along with providing the default.
     * @param defaultValue  the default value will be included in the note. This is the default value set if they just
     *                      hit enter.
     * @param validator     Optional.
-    * @return the String or an empty value if not set.
+    * @return a valid value for the prompt.
     */
    String promptDataEntry(String question, String note, String defaultValue, Predicate<String> validator);
 }
