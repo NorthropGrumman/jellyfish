@@ -30,11 +30,11 @@ public class DefaultBootstrapCommandOptions implements IBootstrapCommandOptions 
       if (obj == this) {
          return true;
       }
-      if (!(obj instanceof IParameterCollection)) {
+      if (!(obj instanceof IBootstrapCommandOptions)) {
          return false;
       }
-      IParameterCollection that = (IParameterCollection) obj;
-      return Objects.equals(parameters, that.getParameterMap());
+      IBootstrapCommandOptions that = (IBootstrapCommandOptions) obj;
+      return Objects.equals(parameters, that.getParameters());
    }
 
    @Override
