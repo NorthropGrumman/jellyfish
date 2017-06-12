@@ -39,11 +39,43 @@ public class PromptUserService implements IPromptUserService {
          }
 
          if ((line == null || line.trim().isEmpty())) {
-            if(defaultValue != null) {
+            if (defaultValue != null) {
                return defaultValue;
             }
          } else {
-            if(validator.test(line)) {
+            if (validator.test(line)) {
+               return line;
+            }
+         }
+      }
+   }
+
+   @Override
+   public String promptDataEntry(String question, String note, String defaultValue, Predicate<String> validator) {
+      if (validator == null) {
+         validator = __ -> true;
+      }
+      Scanner scanner = new Scanner(inputStream);
+
+      //This will prompt the user again if they enter an invalid value. If they don't enter anything and the
+      //default value isn't null then it will just return the default value.
+      while (true) {
+
+         System.out.print(question + " " + note + ": ");
+         String line = "";
+
+         try {
+            line = scanner.nextLine();
+         } catch (NoSuchElementException e) {
+            //let it try to return the default value otherwise ask again.
+         }
+
+         if ((line == null || line.trim().isEmpty())) {
+            if (defaultValue != null) {
+               return defaultValue;
+            }
+         } else {
+            if (validator.test(line)) {
                return line;
             }
          }
