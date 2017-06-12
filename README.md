@@ -174,6 +174,10 @@ com.ngc.seaside.systemdescriptor.scenario.impl.cook.module.CookStepHandlerModule
 
 Always export the package that contains the module.
 
+See
+http://10.207.42.42:8080/display/SEAS/JellyFish+-+How+to+extend+JellyFish#JellyFish-HowtoextendJellyFish-CreatingnewScenarioStepKeywordsorVerbs
+for a complete tutorial.
+
 # com.ngc.seaside.systemdescriptor.model.impl.xtext
 This project contains an implementation of the
 [model API](https://github.ms.northgrum.com/CEACIDE/jellyfish-systemdescriptor-api) that uses the
