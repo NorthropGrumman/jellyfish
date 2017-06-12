@@ -176,7 +176,7 @@ public class TemplateService implements ITemplateService {
             throw new TemplateServiceException(message);
          }
          
-         TemplateIgnoreComponent templateIgnoreComponent = new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER);
+         TemplateIgnoreComponent templateIgnoreComponent = new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER, logService);
          templateIgnoreComponent.parse();
          
          output = updateTemplate(unzippedFolderPath, outputDirectory, clean, templateIgnoreComponent);
