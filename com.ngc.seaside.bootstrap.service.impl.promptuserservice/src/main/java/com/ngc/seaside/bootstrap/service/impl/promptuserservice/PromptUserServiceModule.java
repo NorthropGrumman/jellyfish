@@ -22,4 +22,9 @@ public class PromptUserServiceModule extends AbstractModule implements IPromptUs
    public String prompt(String parameter, String defaultValue, Predicate<String> validator) {
       return delegate.prompt(parameter, defaultValue, validator);
    }
+
+   @Override
+   public String promptDataEntry(String question, String note, String defaultValue, Predicate<String> validator) {
+      return delegate.promptDataEntry(question, note, defaultValue, validator);
+   }
 }
