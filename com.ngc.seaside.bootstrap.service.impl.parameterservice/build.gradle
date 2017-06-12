@@ -1,0 +1,23 @@
+
+
+
+dependencies {
+    compile project(":command.api")
+    compile project(":bootstrap.api")
+    compile project(":bootstrap.service.api")
+
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+    compile "org.apache.velocity:velocity:$velocityVersion"
+    compile "commons-io:commons-io:$commonsIOVersion"
+    compile "commons-lang:commons-lang:$commonsLangVersion"
+
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+}
+

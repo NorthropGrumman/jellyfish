@@ -103,6 +103,44 @@ public class PromptUserServiceTest {
       assertEquals(1, check.count);
    }
 
+   @Test
+   public void doesPromptDataEntry() throws IOException {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      String input = "abcd";
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
+
+      delegate.setInputStream(new ByteArrayInputStream(input.getBytes()));
+
+      ValidCheck check = new ValidCheck();
+      String value = delegate.promptDataEntry("Do you wish to continue?", "(y or n, press enter for 'y')", "y", check);
+
+      outputStream.flush();
+      assertEquals("Do you wish to continue? (y or n, press enter for 'y'): ", outputStream.toString());
+
+      assertEquals("abcd", value);
+      assertEquals(1, check.count);
+   }
+
+   @Test
+   public void doesPromptDataEntryDefault() throws IOException {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      String input = "";
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
+
+      delegate.setInputStream(new ByteArrayInputStream(input.getBytes()));
+
+      ValidCheck check = new ValidCheck();
+      String value = delegate.promptDataEntry("Please enter the group ID", "(Press enter for 'com.ngc.seaside')", "com.ngc.seaside", check);
+
+      outputStream.flush();
+      assertEquals("Please enter the group ID (Press enter for 'com.ngc.seaside'): ", outputStream.toString());
+
+      assertEquals("com.ngc.seaside", value);
+      assertEquals(0, check.count);
+   }
+
    private class ValidCheck implements Predicate<String> {
       int count = 0;
 
