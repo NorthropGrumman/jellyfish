@@ -12,8 +12,9 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,8 +23,20 @@ import java.util.regex.Pattern;
  */
 public class ParameterService implements IParameterService {
 
+   private static final String PATTERN = "^-D[\\w]+=[.]+$";
+
    private ILogService logService;
-   private static final String PATTERN = "^-D[\\w]+=[\\w\\d]+$";
+   private final LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
+
+   @Override
+   public Set<String> getRequiredParameters() {
+      return new LinkedHashSet<>(requiredParameters);
+   }
+
+   @Override
+   public void setRequiredParameters(Set<String> newRequiredParameters) {
+      this.requiredParameters.addAll(newRequiredParameters);
+   };
 
    @Activate
    public void activate() {
@@ -42,35 +55,61 @@ public class ParameterService implements IParameterService {
 
    @Override
    public IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException {
-
-      // TODO populate required Parameters list.
-      List<String> requiredParameters = new ArrayList<>();
-
       DefaultParameterCollection pc = new DefaultParameterCollection();
+
       for (String eachParameterArg : parameters) {
-         boolean isValid = validateParameter(eachParameterArg);
-         if (!isValid) {
-            throw new ParameterServiceException(
-                  "Invalid Argument: " + eachParameterArg + ". Expected format: " + PATTERN);
-         }
+         validateParameter(eachParameterArg);
 
          String name = eachParameterArg.split("=")[0].substring(2);
          String value = eachParameterArg.split("=")[1];
 
-         //TODO To read JellyFish properties to determine if parameters are required.
          DefaultParameter eachParameter = new DefaultParameter(name, true);
          eachParameter.setValue(value);
          pc.addParameter(eachParameter);
       }
 
+      validateRequiredParameters(pc);
+
       return pc;
    }
 
-   private boolean validateParameter(String parameter) {
+   private void validateRequiredParameters(DefaultParameterCollection parameterCollection) throws ParameterServiceException{
+      for(String  eachRequiredParameter : requiredParameters) {
+         if (!parameterCollection.containsParameter(eachRequiredParameter)){
+            throw new ParameterServiceException(
+                  "Required parameter not found: " + eachRequiredParameter);
+         }
 
+      }
+   }
+
+   private void validateParameter(String parameter) throws ParameterServiceException {
       Pattern r = Pattern.compile(PATTERN);
       Matcher m = r.matcher(parameter);
 
-      return m.matches();
+      if(!m.matches()) {
+         throw new ParameterServiceException(
+               "Invalid Argument: " + parameter + ". Expected format: " + PATTERN);
+      }
    }
+
+
+//   /**
+//    * Sets log service.
+//    *
+//    * @param ref the ref
+//    */
+//   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+//         policy = ReferencePolicy.STATIC,
+//         unbind = "removeLogService")
+//   public void setLogService(ILogService ref) {
+//      this.logService = ref;
+//   }
+//
+//   /**
+//    * Remove log service.
+//    */
+//   public void removeLogService(ILogService ref) {
+//      setLogService(null);
+//   }
 }

@@ -4,6 +4,7 @@ import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The purpose of this interface is to allow for passing in parameters in a collection of Strings in the
@@ -26,4 +27,7 @@ public interface IParameterService {
     */
    IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException;
 
+   Set<String> getRequiredParameters();
+
+   void setRequiredParameters(Set<String> newRequiredParameters);
 }
