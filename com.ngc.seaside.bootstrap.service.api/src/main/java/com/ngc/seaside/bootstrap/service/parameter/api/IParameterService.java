@@ -19,15 +19,25 @@ public interface IParameterService {
     *
     * @param parameters the list of parameters as strings.
     * @return The collection of parameters
-    * @throws ParameterServiceException If the format of the given parameters is invalid.
-    *                                   the exception will be thrown
-    *                                   if the parameter doesn't start with -D or
-    *                                   if the parameter doesn't contain a
+    * @throws ParameterServiceException If the format of the given parameters is invalid. the exception will be thrown
+    *                                   if the parameter doesn't start with -D or if the parameter doesn't contain a
     *                                   value.
     */
    IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException;
 
+   /**
+    * Returns a set of required parameters belonging to this service.
+    *
+    * @return A set of required parameters names
+    */
    Set<String> getRequiredParameters();
 
+   /**
+    * Sets the required parameters names for this service which aids in validation and creation of individual
+    * IParameters. The Required parameters must be passed in for the service to operate.
+    *
+    * @param newRequiredParameters the set of required parameters of which this service must have.
+    */
    void setRequiredParameters(Set<String> newRequiredParameters);
+
 }
