@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.ngc.seaside.systemdescriptor.feature_1.0.0.201706132052.jar" id="com.ngc.seaside.systemdescriptor.feature" version="1.0.0.201706132052">
+   <feature url="features/com.ngc.seaside.systemdescriptor.feature_1.0.0.201706141227.jar" id="com.ngc.seaside.systemdescriptor.feature" version="1.0.0.201706141227">
       <category name="jellyfish.sd"/>
    </feature>
-   <category-def name="jellyfish.sd" label="JellyFish System Descriptor"/>
+   <category-def name="jellyfish.sd" label="JellyFishSystem Descriptor"/>
 </site>
