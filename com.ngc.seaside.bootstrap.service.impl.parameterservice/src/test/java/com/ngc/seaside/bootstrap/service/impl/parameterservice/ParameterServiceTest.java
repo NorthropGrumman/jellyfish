@@ -32,7 +32,6 @@ public class ParameterServiceTest {
       Set<String> requiredParameters = delegate.getRequiredParameters();
 
       assertTrue(requiredParameters.containsAll(requiredParameterInputs));
-      assertTrue(requiredParameterInputs.containsAll(requiredParameters));
    }
 
    @Test

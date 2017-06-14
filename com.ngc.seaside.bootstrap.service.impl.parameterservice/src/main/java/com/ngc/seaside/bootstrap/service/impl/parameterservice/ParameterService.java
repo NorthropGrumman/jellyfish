@@ -1,7 +1,5 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
-import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
@@ -10,7 +8,11 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,12 +23,12 @@ import java.util.regex.Pattern;
 /**
  * Created by J55690 on 6/7/2017.
  */
+@Component(service = IParameterService.class)
 public class ParameterService implements IParameterService {
 
    private static final String PATTERN = "^-D[\\w]+=[.]+$";
-
-   private ILogService logService;
    private final LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
+   private ILogService logService;
 
    @Override
    public Set<String> getRequiredParameters() {
@@ -36,7 +38,9 @@ public class ParameterService implements IParameterService {
    @Override
    public void setRequiredParameters(Set<String> newRequiredParameters) {
       this.requiredParameters.addAll(newRequiredParameters);
-   };
+   }
+
+   ;
 
    @Activate
    public void activate() {
@@ -48,9 +52,23 @@ public class ParameterService implements IParameterService {
       logService.trace(getClass(), "deactivated");
    }
 
-   @Inject
+   /**
+    * Sets log service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeLogService")
    public void setLogService(ILogService ref) {
-      this.setLogService(ref);
+      this.logService = ref;
+   }
+
+   /**
+    * Remove log service.
+    */
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
    }
 
    @Override
@@ -73,11 +91,12 @@ public class ParameterService implements IParameterService {
       return pc;
    }
 
-   private void validateRequiredParameters(DefaultParameterCollection parameterCollection) throws ParameterServiceException{
-      for(String  eachRequiredParameter : requiredParameters) {
-         if (!parameterCollection.containsParameter(eachRequiredParameter)){
+   private void validateRequiredParameters(DefaultParameterCollection parameterCollection)
+            throws ParameterServiceException {
+      for (String eachRequiredParameter : requiredParameters) {
+         if (!parameterCollection.containsParameter(eachRequiredParameter)) {
             throw new ParameterServiceException(
-                  "Required parameter not found: " + eachRequiredParameter);
+                     "Required parameter not found: " + eachRequiredParameter);
          }
 
       }
@@ -87,29 +106,9 @@ public class ParameterService implements IParameterService {
       Pattern r = Pattern.compile(PATTERN);
       Matcher m = r.matcher(parameter);
 
-      if(!m.matches()) {
+      if (!m.matches()) {
          throw new ParameterServiceException(
-               "Invalid Argument: " + parameter + ". Expected format: " + PATTERN);
+                  "Invalid Argument: " + parameter + ". Expected format: " + PATTERN);
       }
    }
-
-
-//   /**
-//    * Sets log service.
-//    *
-//    * @param ref the ref
-//    */
-//   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-//         policy = ReferencePolicy.STATIC,
-//         unbind = "removeLogService")
-//   public void setLogService(ILogService ref) {
-//      this.logService = ref;
-//   }
-//
-//   /**
-//    * Remove log service.
-//    */
-//   public void removeLogService(ILogService ref) {
-//      setLogService(null);
-//   }
 }
