@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Text;
  * This class enables the user to Enter the default project and default file name 
  * for the System Descriptor project.
  */
-public class PackagePage extends WizardPage {
+public class PackageInfoPage extends WizardPage {
 	private static final String DEFAULT_PACKAGE = "com.ngc.mysdproject";
 	private static final String DEFAULT_FILE = "MyModel";
 
@@ -45,7 +45,7 @@ public class PackagePage extends WizardPage {
 	/**
 	 * Constructor for the page that asks the user for default package and model file information.
 	 */
-	public PackagePage() {
+	public PackageInfoPage() {
 		super("Package Info Page");
 		setTitle("Package Info Page");
 		setDescription("Enter package information");
@@ -95,7 +95,7 @@ public class PackagePage extends WizardPage {
 
    /**
     * Get the name of the default .sd file.
-    * @see {@link PackagePage#getCreateFile()}
+    * @see {@link PackageInfoPage#getCreateFile()}
     * @return the file (without the .sd extension)
     */
    public String getFileName() {

@@ -1,6 +1,6 @@
 package com.ngc.seaside.systemdescriptor.ui.wizard.project;
 
-import com.ngc.seaside.systemdescriptor.ui.wizard.project.page.PackagePage;
+import com.ngc.seaside.systemdescriptor.ui.wizard.project.page.PackageInfoPage;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -25,7 +25,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
    private static final String WINDOW_TITLE = "New System Descriptor Project";
 
    protected WizardNewProjectCreationPage projPage;
-   protected PackagePage pkgPage;
+   protected PackageInfoPage pkgPage;
    protected StatusManager statusManager;
 
    /**
@@ -50,7 +50,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       projPage.setTitle(WIZARD_NAME);
       projPage.setDescription(WIZARD_DESC);
 
-      pkgPage = new PackagePage();
+      pkgPage = new PackageInfoPage();
 
       addPage(projPage);
       addPage(pkgPage);
