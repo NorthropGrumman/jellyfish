@@ -2,6 +2,7 @@ package com.ngc.seaside.bootstrap.service.parameter.api;
 
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.command.api.IUsage;
 
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public interface IParameterService {
     *                                   if the parameter doesn't start with -D or if the parameter doesn't contain a
     *                                   value.
     */
-   IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException;
+   IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException;
 
    /**
     * Returns a set of required parameters belonging to this service.
@@ -39,5 +40,4 @@ public interface IParameterService {
     * @param newRequiredParameters the set of required parameters of which this service must have.
     */
    void setRequiredParameters(Set<String> newRequiredParameters);
-
 }

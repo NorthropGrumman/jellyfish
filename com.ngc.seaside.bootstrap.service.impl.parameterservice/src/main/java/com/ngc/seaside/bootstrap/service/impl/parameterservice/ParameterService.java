@@ -1,18 +1,13 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.command.api.IUsage;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,7 +23,6 @@ public class ParameterService implements IParameterService {
 
    private static final String PATTERN = "^-D[\\w]+=[.]+$";
    private final LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
-   private ILogService logService;
 
    @Override
    public Set<String> getRequiredParameters() {
@@ -40,39 +34,8 @@ public class ParameterService implements IParameterService {
       this.requiredParameters.addAll(newRequiredParameters);
    }
 
-   ;
-
-   @Activate
-   public void activate() {
-      logService.trace(getClass(), "activated");
-   }
-
-   @Deactivate
-   public void deactivate() {
-      logService.trace(getClass(), "deactivated");
-   }
-
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
    @Override
-   public IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException {
+   public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
       DefaultParameterCollection pc = new DefaultParameterCollection();
 
       for (String eachParameterArg : parameters) {

@@ -7,6 +7,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.command.api.IUsage;
 
 import java.util.List;
 import java.util.Set;
@@ -19,8 +20,8 @@ public class ParameterServiceModule extends AbstractModule implements IParameter
    private final ParameterService delegate = new ParameterService();
 
    @Override
-   public IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException {
-      return delegate.parseParameters(parameters);
+   public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
+      return delegate.parseParameters(usage, parameters);
    }
 
    @Override
@@ -36,11 +37,6 @@ public class ParameterServiceModule extends AbstractModule implements IParameter
    @Override
    protected void configure() {
       bind(IParameterService.class).toInstance(this);
-   }
-
-   @Inject
-   public void setLogService(ILogService ref) {
-      delegate.setLogService(ref);
    }
 }
 
