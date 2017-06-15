@@ -5,9 +5,9 @@ import com.google.inject.AbstractModule;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.command.api.IUsage;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * The Guice module that wraps the ParameterService implementation.
@@ -17,22 +17,13 @@ public class ParameterServiceModule extends AbstractModule implements IParameter
    private final ParameterService delegate = new ParameterService();
 
    @Override
-   public IParameterCollection parseParameters(List<String> parameters) throws ParameterServiceException {
-      return delegate.parseParameters(parameters);
+   public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
+      return delegate.parseParameters(usage, parameters);
    }
 
-   @Override
-   protected void configure() { bind(IParameterService.class).toInstance(this);  }
-
-   @Override
-   public Set<String> getRequiredParameters() {
-      return delegate.getRequiredParameters();
+   protected void configure() {
+      bind(IParameterService.class).toInstance(this);
    }
-
-   @Override
-   public void setRequiredParameters(Set<String> newRequiredParameters) {
-      delegate.setRequiredParameters(newRequiredParameters);
-   };
 }
 
 
