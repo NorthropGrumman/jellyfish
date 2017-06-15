@@ -9,8 +9,8 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -76,12 +76,14 @@ public class ParameterServiceTest {
 
    @Test
    public void doesNotParseInvalidParameters() {
-     /* Map<String, String> parameterInputMap = new HashMap<>();
-      parameterInputMap.put("name", "value");
-      parameterInputMap.put("name ", "VALUE.");
-      parameterInputMap.put("Name5", "Value7");
-      parameterInputMap.put("NAME!", "VALUEx");
-      parameterInputMap.put("age", "15..! ");
+      Map<String, String> parameterInputMap = new HashMap<>();
+      // invalid names
+      parameterInputMap.put("n ame", "value");
+      parameterInputMap.put("name ", "value");
+      parameterInputMap.put("Name5", "value");
+      parameterInputMap.put("NAME!", "value");
+      // invalid values
+      parameterInputMap.put("name", "15..! ");
 
 
       for (Map.Entry<String, String> eachInputEntry : parameterInputMap.entrySet())
@@ -96,7 +98,8 @@ public class ParameterServiceTest {
          try
          {
             // ACT
-            //delegate.parseParameters(invalidParameterInputs);
+            DefaultUsage usage = new DefaultUsage("This is a test usage with no required parameters.");
+            delegate.parseParameters(usage, invalidParameterInputs);
 
             // ASSERT
             fail("Expected a " + ParameterServiceException.class.getSimpleName());
@@ -105,29 +108,39 @@ public class ParameterServiceTest {
          {
             // expected
          }
-      }*/
+      }
    }
 
    @Test
-   public void doesParseRequiredParametersWithoutException() throws ParameterServiceException {
-      /*
+   public void doesParseWithRequiredParameters() {
       // Set some required parameters
-      Set<String> requiredParameterInputs = new LinkedHashSet<>();
-      requiredParameterInputs.add("Classname");
-      requiredParameterInputs.add("groupId");
-      requiredParameterInputs.add("artifactId");
-      requiredParameterInputs.add("dashPackage");
+      List<String> requiredParameterNames = new ArrayList<>();
+      requiredParameterNames.add("Classname");
+      requiredParameterNames.add("groupId");
+      requiredParameterNames.add("artifactId");
+      requiredParameterNames.add("dashPackage");
 
-      //delegate.setRequiredParameters(requiredParameterInputs);
+      // Create the required parameter usage
+      List<IParameter> requiredParameters = new ArrayList<>();
+      for (String eachRequiredParameterName : requiredParameterNames)
+      {
+         requiredParameters.add(new DefaultParameter(eachRequiredParameterName, true));
+      }
+      DefaultUsage usage = new DefaultUsage("This is a test usage with some required parameters.", requiredParameters);
 
+      // Add all the required params to the input list
       Map<String, String> parameterInputMap = new HashMap<>();
-      parameterInputMap.put("Classname", "value");
-      parameterInputMap.put("grouupId", "VALUE.");
-      parameterInputMap.put("dashPackage", "Value7");
-      parameterInputMap.put("artifactId", "VALUEx");
+      for (String eachRequiredParameterName : requiredParameterNames)
+      {
+         parameterInputMap.put(eachRequiredParameterName, "value");
+      }
 
+      // Add some more required params to the input list
+      parameterInputMap.put("SomeOtherName", "value");
+      parameterInputMap.put("AnotherName", "value");
+
+      // Create the actual parameters from the input map
       List<String> validParameterInputs = new LinkedList<>();
-
       for (Map.Entry<String, String> eachInputEntry : parameterInputMap.entrySet())
       {
          String key = eachInputEntry.getKey();
@@ -135,69 +148,58 @@ public class ParameterServiceTest {
          validParameterInputs.add("-D" + key + "=" + val);
       }
 
-     // IParameterCollection parameterCollection = delegate.parseParameters(validParameterInputs);
+      // ACT
+      IParameterCollection parameterCollection = delegate.parseParameters(usage, validParameterInputs);
 
+      // ASSERT
       // assert that the parameter collection that is returned is what is expected
-      for (IParameter eachParameter : parameterCollection.getAllParameters())
-      {
+      for (IParameter eachParameter : parameterCollection.getAllParameters()) {
          String key = eachParameter.getName();
          String value = eachParameter.getValue();
 
          // Make sure the parameter collection has the parameter at all
          assertTrue(parameterInputMap.containsKey(key));
-         assertTrue(requiredParameterInputs.contains(key));
-         String mapKey = parameterInputMap.remove(key);
+
+         String mapValue = parameterInputMap.remove(key);
 
          // Make sure parameter has the correct value
-         //assertEquals(mapKey, value);
-
+         assertEquals(mapValue, value);
       }
 
       assertTrue(parameterInputMap.isEmpty());
 
-      // parse the parameters*/
    }
 
    @Test
    public void doesNotParseIfMissingRequiredParameters() {
-      // Set some required parameters
-      LinkedHashSet<String> requiredParameterInputs = new LinkedHashSet<>();
-      requiredParameterInputs.add("Classname");
-      requiredParameterInputs.add("groupId");
-      requiredParameterInputs.add("artifactId");
-      requiredParameterInputs.add("dashPackage");
+      // Create some required parameters
+      List<IParameter> requiredParameters = new ArrayList<>();
+      requiredParameters.add(new DefaultParameter("Classname", true));
+      requiredParameters.add(new DefaultParameter("groupId", true));
+      requiredParameters.add(new DefaultParameter("artifactId", true));
+      requiredParameters.add(new DefaultParameter("dashPackage", true));
 
+      // Create the required usage
+      DefaultUsage usage = new DefaultUsage("This is a test usage with some required parameters.", requiredParameters);
+
+      // Add some non-required params to the input list
       Map<String, String> parameterInputMap = new HashMap<>();
-      parameterInputMap.put("Classname", "value");
-      parameterInputMap.put("name", "value");
-      parameterInputMap.put("artifactId", "value");
-      parameterInputMap.put("age", "value");
+      parameterInputMap.put("SomeOtherName", "value");
+      parameterInputMap.put("AnotherName", "value");
 
-      List<IParameter> validUsageParameterInputs = new LinkedList<>();
-      List<String> inputsWithoutARequiredParameter = new LinkedList<>();
-
-      // Add required parameters
-      for (String requiredParameter : requiredParameterInputs) {
-         DefaultParameter param = new DefaultParameter(requiredParameter, true);
-         validUsageParameterInputs.add(param);
-      }
-
-      // Add a couple optional parameters
-      validUsageParameterInputs.add(new DefaultParameter("name", false));
-      validUsageParameterInputs.add(new DefaultParameter("age", false));
-      DefaultUsage usage = new DefaultUsage("Testing usage for required Parameters", validUsageParameterInputs);
-
-      // create some parameters that do not match all of the required parameters
-      for (Map.Entry<String, String> eachInputEntry : parameterInputMap.entrySet()) {
+      // Create the actual parameters from the input map
+      List<String> parameterInputsMissingRequiredParameters = new LinkedList<>();
+      for (Map.Entry<String, String> eachInputEntry : parameterInputMap.entrySet())
+      {
          String key = eachInputEntry.getKey();
          String val = eachInputEntry.getValue();
-         inputsWithoutARequiredParameter.add("-D" + key + "=" + val);
+         parameterInputsMissingRequiredParameters.add("-D" + key + "=" + val);
       }
 
       // parse the parameters and assert that an exception is thrown
       try {
          // ACT
-         delegate.parseParameters(usage, inputsWithoutARequiredParameter);
+         delegate.parseParameters(usage, parameterInputsMissingRequiredParameters);
 
          // ASSERT
          fail("Expected a " + ParameterServiceException.class.getSimpleName());
