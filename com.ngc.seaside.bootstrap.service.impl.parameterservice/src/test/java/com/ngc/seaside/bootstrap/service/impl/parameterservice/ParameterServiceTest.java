@@ -10,13 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.fail;
 
 /**
  * Created by J55690 on 6/7/2017.
@@ -46,7 +47,6 @@ public class ParameterServiceTest {
          String key = eachInputEntry.getKey();
          String val = eachInputEntry.getValue();
          DefaultParameter param = new DefaultParameter("-D" + key, false);
-         param.setValue(val);
          validUsageParameterInputs.add(param);
          validParameterInputs.add("-D" + key + "=" + val);
       }
@@ -161,9 +161,48 @@ public class ParameterServiceTest {
    @Test
    public void doesNotParseIfMissingRequiredParameters() {
       // Set some required parameters
+      LinkedHashSet<String> requiredParameterInputs = new LinkedHashSet<>();
+      requiredParameterInputs.add("Classname");
+      requiredParameterInputs.add("groupId");
+      requiredParameterInputs.add("artifactId");
+      requiredParameterInputs.add("dashPackage");
+
+      Map<String, String> parameterInputMap = new HashMap<>();
+      parameterInputMap.put("Classname", "value");
+      parameterInputMap.put("name", "value");
+      parameterInputMap.put("artifactId", "value");
+      parameterInputMap.put("age", "value");
+
+      List<IParameter> validUsageParameterInputs = new LinkedList<>();
+      List<String> inputsWithoutARequiredParameter = new LinkedList<>();
+
+      // Add required parameters
+      for (String requiredParameter : requiredParameterInputs) {
+         DefaultParameter param = new DefaultParameter(requiredParameter, true);
+         validUsageParameterInputs.add(param);
+      }
+
+      // Add a couple optional parameters
+      validUsageParameterInputs.add(new DefaultParameter("name", false));
+      validUsageParameterInputs.add(new DefaultParameter("age", false));
+      DefaultUsage usage = new DefaultUsage("Testing usage for required Parameters", validUsageParameterInputs);
 
       // create some parameters that do not match all of the required parameters
+      for (Map.Entry<String, String> eachInputEntry : parameterInputMap.entrySet()) {
+         String key = eachInputEntry.getKey();
+         String val = eachInputEntry.getValue();
+         inputsWithoutARequiredParameter.add("-D" + key + "=" + val);
+      }
 
       // parse the parameters and assert that an exception is thrown
+      try {
+         // ACT
+         delegate.parseParameters(usage, inputsWithoutARequiredParameter);
+
+         // ASSERT
+         fail("Expected a " + ParameterServiceException.class.getSimpleName());
+      } catch (ParameterServiceException e) {
+         // expected
+      }
    }
 }
