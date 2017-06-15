@@ -4,6 +4,7 @@ import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
@@ -22,21 +23,14 @@ import java.util.regex.Pattern;
 public class ParameterService implements IParameterService {
 
    private static final String PATTERN = "^-D[\\w]+=[.]+$";
-   private final LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
-
-   @Override
-   public Set<String> getRequiredParameters() {
-      return new LinkedHashSet<>(requiredParameters);
-   }
-
-   @Override
-   public void setRequiredParameters(Set<String> newRequiredParameters) {
-      this.requiredParameters.addAll(newRequiredParameters);
-   }
 
    @Override
    public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
       DefaultParameterCollection pc = new DefaultParameterCollection();
+      LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
+      for (IParameter param: usage.getRequiredParameters()) {
+         requiredParameters.add(param.getName());
+      }
 
       for (String eachParameterArg : parameters) {
          validateParameter(eachParameterArg);
@@ -44,17 +38,22 @@ public class ParameterService implements IParameterService {
          String name = eachParameterArg.split("=")[0].substring(2);
          String value = eachParameterArg.split("=")[1];
 
-         DefaultParameter eachParameter = new DefaultParameter(name, true);
+         DefaultParameter eachParameter;
+         if (requiredParameters.contains(name)){
+            eachParameter = new DefaultParameter(name, true);
+         } else {
+            eachParameter = new DefaultParameter(name, false);
+         }
          eachParameter.setValue(value);
          pc.addParameter(eachParameter);
       }
 
-      validateRequiredParameters(pc);
+      validateRequiredParameters(requiredParameters, pc);
 
       return pc;
    }
 
-   private void validateRequiredParameters(DefaultParameterCollection parameterCollection)
+   private void validateRequiredParameters(LinkedHashSet<String> requiredParameters, DefaultParameterCollection parameterCollection)
             throws ParameterServiceException {
       for (String eachRequiredParameter : requiredParameters) {
          if (!parameterCollection.containsParameter(eachRequiredParameter)) {

@@ -25,19 +25,4 @@ public interface IParameterService {
     *                                   value.
     */
    IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException;
-
-   /**
-    * Returns a set of required parameters belonging to this service.
-    *
-    * @return A set of required parameters names
-    */
-   Set<String> getRequiredParameters();
-
-   /**
-    * Sets the required parameters names for this service which aids in validation and creation of individual
-    * IParameters. The Required parameters must be passed in for the service to operate.
-    *
-    * @param newRequiredParameters the set of required parameters of which this service must have.
-    */
-   void setRequiredParameters(Set<String> newRequiredParameters);
 }
