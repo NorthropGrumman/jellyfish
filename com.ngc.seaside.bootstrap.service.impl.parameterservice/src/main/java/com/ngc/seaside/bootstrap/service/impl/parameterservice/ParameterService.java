@@ -12,7 +12,6 @@ import org.osgi.service.component.annotations.Component;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,11 +26,14 @@ public class ParameterService implements IParameterService {
    @Override
    public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
       DefaultParameterCollection pc = new DefaultParameterCollection();
+
+      // Construct required parameters from usage data
       LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
       for (IParameter param: usage.getRequiredParameters()) {
          requiredParameters.add(param.getName());
       }
 
+      // Parse params then construct IParameters
       for (String eachParameterArg : parameters) {
          validateParameter(eachParameterArg);
 
