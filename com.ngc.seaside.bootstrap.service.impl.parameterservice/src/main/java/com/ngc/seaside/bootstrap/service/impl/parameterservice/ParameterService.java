@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class ParameterService implements IParameterService {
 
-   private static final String PATTERN = "^-D[\\w]+=[.]+$";
+   private static final String PATTERN = "^-D[a-zA-Z]+=[\\S]+$";
 
    private ILogService logService;
    private final LinkedHashSet<String> requiredParameters = new LinkedHashSet<>();
