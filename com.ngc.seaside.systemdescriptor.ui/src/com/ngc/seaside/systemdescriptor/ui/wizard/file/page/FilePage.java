@@ -177,6 +177,7 @@ public class FilePage extends WizardPage
 
       if (!Pattern.matches("[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*", packageName)) {
          updateStatus("Package name is invalid");
+         return;
       }
 
       // File Validation

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -15,8 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 
@@ -55,53 +56,54 @@ public class SystemDescriptorPackageSupport {
 		}
 		return new AbstractMap.SimpleEntry<>(new Path(""), "");
 	}
-	
+
 	/**
-	    * Searches the path for a src folder and returns the default source folder and default package as best as possible.
-	    * 
-	    * @param path selected path
-	    * @return the default source folder and package
-	    */
-	   private static Map.Entry<IPath, String> getDefaultSourceAndPackage(IPath projectPath, IPath path)
-	   {
-	      IPath defaultSourceFolder = projectPath.append("src").append("main").append("sd");
-	      if (projectPath.segmentCount() > 0) {
-	         projectPath = projectPath.removeLastSegments(1);
-	      }
-	      if (defaultSourceFolder.toFile().isDirectory()) {
-	         defaultSourceFolder = defaultSourceFolder.makeRelativeTo(projectPath);
-	      }
-	      else {
-	         defaultSourceFolder = new Path("");
-	      }
-	      while (projectPath.append(path).toFile().isFile() && path.segmentCount() > 0) {
-	         path = path.removeLastSegments(1);
-	      }
-	      List<String> pathList = Arrays.asList(path.segments());
+	 * Searches the path for a src folder and returns the default source folder
+	 * and default package as best as possible.
+	 * 
+	 * @param path
+	 *            selected path
+	 * @return the default source folder and package
+	 */
+	private static Map.Entry<IPath, String> getDefaultSourceAndPackage(IPath projectPath, IPath path) {
+		IPath defaultSourceFolder = projectPath.append("src").append("main").append("sd");
+		if (projectPath.segmentCount() > 0) {
+			projectPath = projectPath.removeLastSegments(1);
+		}
+		if (defaultSourceFolder.toFile().isDirectory()) {
+			defaultSourceFolder = defaultSourceFolder.makeRelativeTo(projectPath);
+		} else {
+			defaultSourceFolder = new Path("");
+		}
+		while (projectPath.append(path).toFile().isFile() && path.segmentCount() > 0) {
+			path = path.removeLastSegments(1);
+		}
+		List<String> pathList = Arrays.asList(path.segments());
 
-	      for (int i = pathList.size() - 1; i >= 0; i--) {
-	         if (pathList.get(i).equals("src")) {
-	            if (i + 2 < pathList.size()) {
-	               IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 3)));
-	               String pkg = String.join(".", pathList.subList(i + 3, pathList.size()));
-	               return new AbstractMap.SimpleEntry<>(sourceFolder, pkg);
-	            }
-	            if (i + 1 < pathList.size()) {
-	               IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 2))).append("sd");
-	               if (projectPath.append(sourceFolder).toFile().isDirectory()) {
-	                  return new AbstractMap.SimpleEntry<>(sourceFolder, "");
-	               }
-	            }
-	            IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 1))).append("main").append("sd");
-	            if (projectPath.append(sourceFolder).toFile().isDirectory()) {
-	               return new AbstractMap.SimpleEntry<>(sourceFolder, "");
-	            }
-	            break;
-	         }
-	      }
+		for (int i = pathList.size() - 1; i >= 0; i--) {
+			if (pathList.get(i).equals("src")) {
+				if (i + 2 < pathList.size()) {
+					IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 3)));
+					String pkg = String.join(".", pathList.subList(i + 3, pathList.size()));
+					return new AbstractMap.SimpleEntry<>(sourceFolder, pkg);
+				}
+				if (i + 1 < pathList.size()) {
+					IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 2))).append("sd");
+					if (projectPath.append(sourceFolder).toFile().isDirectory()) {
+						return new AbstractMap.SimpleEntry<>(sourceFolder, "");
+					}
+				}
+				IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 1))).append("main")
+						.append("sd");
+				if (projectPath.append(sourceFolder).toFile().isDirectory()) {
+					return new AbstractMap.SimpleEntry<>(sourceFolder, "");
+				}
+				break;
+			}
+		}
 
-	      return new AbstractMap.SimpleEntry<>(defaultSourceFolder, "");
-	   }
+		return new AbstractMap.SimpleEntry<>(defaultSourceFolder, "");
+	}
 
 	/**
 	 * Creates the specified folder.
@@ -133,19 +135,12 @@ public class SystemDescriptorPackageSupport {
 	 *             <code>IResourceChangeEvent</code> for more details.</li>
 	 *             </ul>
 	 */
-	private static void createFolder(IFolder folder) throws CoreException {
-		IContainer parent = folder.getParent();
-
-		if (parent instanceof IFolder) {
-			createFolder((IFolder) parent);
-		}
-
-		if (!folder.exists()) {
-			folder.create(false, true, null);
-		}
+	static void createFolder(Shell shell, IFolder folder) throws CoreException {
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		createRecursively(folder, monitor);
 	}
 
-	static void createRecursively(IResource resource, IProgressMonitor monitor) throws CoreException {
+	private static void createRecursively(IResource resource, IProgressMonitor monitor) throws CoreException {
 		if (resource == null || resource.exists()) {
 			return;
 		}

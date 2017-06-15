@@ -16,6 +16,13 @@
       </wizard>
       <wizard
       		category="com.ngc.seaside.systemdescriptor.category.wizards"
+            class="com.ngc.seaside.systemdescriptor.ui.wizard.pkg.SystemDescriptorPackageWizard"
+            id="com.ngc.seaside.systemdescriptor.ui.wizard.pkg.systemdescriptorpackagewizard"
+            name="System Descriptor Package"
+            project="false">
+      </wizard>
+      <wizard
+      		category="com.ngc.seaside.systemdescriptor.category.wizards"
             class="com.ngc.seaside.systemdescriptor.ui.wizard.file.SystemDescriptorFileWizard"
             id="com.ngc.seaside.systemdescriptor.ui.wizard.file.systemdescriptorfilewizard"
             name="System Descriptor File"

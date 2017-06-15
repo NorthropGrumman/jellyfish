@@ -3,7 +3,7 @@ package com.ngc.seaside.systemdescriptor.ui.wizard.pkg.page;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -27,12 +27,8 @@ public class PackagePage extends WizardPage {
 	private static final String PAGE_TITLE = "System Descriptor Package";
 	private static final String PAGE_DESC = "Create a new System Descriptor Package";
 
-	private Text packageTextField;
 	private Text sourceFolderText;
 	private Text packageNameText;
-	private Text fileText;
-	private Button modelButton;
-	private Button dataButton;
 	private String defaultSourceFolder;
 	private String defaultPackage;
 
@@ -46,8 +42,6 @@ public class PackagePage extends WizardPage {
 			this.defaultSourceFolder = "";
 		}
 		this.defaultPackage = defaultPackage;
-
-		setControl(packageTextField);
 	}
 
 	@Override
@@ -57,7 +51,7 @@ public class PackagePage extends WizardPage {
 
 		createContainer(container);
 
-		// validate();
+		validate();
 		setControl(container);
 	}
 
@@ -109,13 +103,12 @@ public class PackagePage extends WizardPage {
 		final Text focus;
 		if (defaultSourceFolder.isEmpty()) {
 			focus = this.sourceFolderText;
-		} else if (defaultPackage.isEmpty()) {
-			focus = this.packageNameText;
 		} else {
-			focus = this.fileText;
+			focus = this.packageNameText;
 		}
 		container.getShell().getDisplay().asyncExec(() -> {
 			focus.setFocus();
+			focus.setSelection(focus.getText().length());
 		});
 
 	}
@@ -151,38 +144,11 @@ public class PackagePage extends WizardPage {
 
 		if (!Pattern.matches("[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*", packageName)) {
 			updateStatus("Package name is invalid");
-		}
-
-		// File Validation
-
-		String filename = getFileName();
-
-		if (filename.isEmpty()) {
-			updateStatus("System descriptor name must be specified");
 			return;
 		}
 
-		if (filename.toLowerCase().endsWith(".sd")) {
-			filename = filename.substring(filename.length() - 3);
-		} else if (filename.lastIndexOf('.') != -1) {
-			updateStatus("File extension must be \"sd\"");
-			return;
-		}
-
-		if (!Pattern.matches("[a-zA-Z_]\\w*", filename)) {
-			updateStatus("System descriptor name is invalid");
-			return;
-		}
-
-		// Button Validation
-		if (!modelButton.getSelection() && !dataButton.getSelection()) {
-			updateStatus("Either Model or Data must be selected");
-			return;
-		}
-
-		IFile file = getAbsolutePath();
-		if (file.exists()) {
-			updateStatus("File already exists");
+		if (getAbsolutePath().exists()) {
+			updateStatus("Package already exists");
 			return;
 		}
 
@@ -202,27 +168,15 @@ public class PackagePage extends WizardPage {
 		return this.packageNameText.getText().trim();
 	}
 
-	public String getFileName() {
-		return this.fileText.getText().trim();
-	}
-
-	public boolean isModelSelected() {
-		return modelButton.getSelection();
-	}
-
-	public IFile getAbsolutePath() {
+	public IFolder getAbsolutePath() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		String filename = getFileName();
-		if (!filename.toLowerCase().endsWith(".sd")) {
-			filename += ".sd";
-		}
 		String packageName = getPackageName();
-		String fullPath = filename;
+		String fullPath = "";
 		if (packageName != null && !packageName.isEmpty()) {
-			fullPath = packageName.replace('.', File.separatorChar) + File.separatorChar + filename;
+			fullPath = packageName.replace('.', File.separatorChar) + File.separatorChar;
 		}
 
 		Path absolutePath = new Path(getSourceFolder() + File.separatorChar + fullPath);
-		return root.getFile(absolutePath);
+		return root.getFolder(absolutePath);
 	}
 }

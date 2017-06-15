@@ -2,6 +2,8 @@ package com.ngc.seaside.systemdescriptor.ui.wizard.pkg;
 
 import java.util.Map;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -29,14 +31,21 @@ public class SystemDescriptorPackageWizard extends Wizard implements INewWizard 
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		Map.Entry<IPath, String> result = SystemDescriptorPackageSupport.getDefaultSourceAndPackage(workbench, selection);
+		Map.Entry<IPath, String> result = SystemDescriptorPackageSupport.getDefaultSourceAndPackage(workbench,
+				selection);
 		this.defaultSourceFolder = result.getKey();
 		this.defaultPackage = result.getValue();
 	}
 
 	@Override
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
+		IFolder folder = this.packagePage.getAbsolutePath();
+		try {
+			SystemDescriptorPackageSupport.createFolder(getShell(), folder);
+		} catch (CoreException e) {
+			e.printStackTrace(System.err);
+			return false;
+		}
 		return true;
 	}
 
