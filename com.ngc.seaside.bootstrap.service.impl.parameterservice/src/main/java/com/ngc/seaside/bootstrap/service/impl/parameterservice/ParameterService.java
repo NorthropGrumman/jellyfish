@@ -12,6 +12,8 @@ import org.osgi.service.component.annotations.Component;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by J55690 on 6/7/2017.
@@ -19,7 +21,7 @@ import java.util.List;
 @Component(service = IParameterService.class)
 public class ParameterService implements IParameterService {
 
-   //private static final String PATTERN = "^-D[a-zA-Z]+=[\\S]+$";
+   private static final String PATTERN = "^-D[a-zA-Z]+=[\\S]+$";
 
    @Override
    public IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException {
@@ -33,7 +35,7 @@ public class ParameterService implements IParameterService {
 
       // Parse params then construct IParameters
       for (String eachParameterArg : parameters) {
-         //validateParameter(eachParameterArg);
+         validateParameter(eachParameterArg);
 
          String name = eachParameterArg.split("=")[0].substring(2);
          String value = eachParameterArg.split("=")[1];
@@ -64,13 +66,13 @@ public class ParameterService implements IParameterService {
       }
    }
 
-//   private void validateParameter(String parameter) throws ParameterServiceException {
-//      Pattern r = Pattern.compile(PATTERN);
-//      Matcher m = r.matcher(parameter);
-//
-//      if (!m.matches()) {
-//         throw new ParameterServiceException(
-//                  "Invalid Argument: " + parameter + ". Expected format: " + PATTERN);
-//      }
-//   }
+   private void validateParameter(String parameter) throws ParameterServiceException {
+      Pattern r = Pattern.compile(PATTERN);
+      Matcher m = r.matcher(parameter);
+
+      if (!m.matches()) {
+         throw new ParameterServiceException(
+                  "Invalid Argument: " + parameter + ". Expected format: " + PATTERN);
+      }
+   }
 }
