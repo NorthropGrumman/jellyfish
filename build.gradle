@@ -26,4 +26,10 @@ subprojects {
         junitVersion = '4.12'
         mockitoVersion = '2.7.14'
     }
+	
+    sonarqube {
+        properties {
+            property 'sonar.jacoco.reportPaths', ["${project.buildDir}/jacoco/test.exec"]
+        }
+    }
 }
