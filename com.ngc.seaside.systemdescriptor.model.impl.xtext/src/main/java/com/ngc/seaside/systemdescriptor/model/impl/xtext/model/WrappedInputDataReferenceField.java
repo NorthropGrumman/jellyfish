@@ -17,7 +17,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedInputDataReferenceField extends AbstractWrappedDataReferenceField<InputDeclaration> {
+public class WrappedInputDataReferenceField extends AbstractWrappedDataReferenceField<InputDeclaration, WrappedInputDataReferenceField> {
 
    public WrappedInputDataReferenceField(IWrapperResolver resolver, InputDeclaration wrapped) {
       super(resolver, wrapped);
