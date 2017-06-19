@@ -15,16 +15,16 @@ import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JellyfishTest {
+public class JellyFishTest {
 
-   private Jellyfish component;
+   private JellyFishMain component;
    private ILogService logService;
 
    @Before
    public void before() throws Throwable {
       logService = new PrintStreamLogService();
    
-      component = new Jellyfish();
+      component = new JellyFishMain();
       component.setLogService(logService);
       component.activate();
    }

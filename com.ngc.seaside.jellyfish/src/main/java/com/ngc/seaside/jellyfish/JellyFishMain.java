@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = {}, immediate = true)
-public class Jellyfish {
+public class JellyFishMain {
 
    private ILogService logService;
 

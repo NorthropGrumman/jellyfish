@@ -1,3 +1,6 @@
+apply plugin: 'application'
+
+mainClassName = "com.ngc.seaside.jellyfish.JellyFishMain"
 
 dependencies {
     compile "com.ngc.blocs:service.api:$blocsVersion"
