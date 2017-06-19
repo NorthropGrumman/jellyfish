@@ -1,0 +1,19 @@
+
+dependencies {
+    compile "com.ngc.blocs:service.api:$blocsVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+    
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+	testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+    manifest {
+        // Uncomment the following line if your bundle needs to export its packages.
+        // attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
+    }
+}
+
