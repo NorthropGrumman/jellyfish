@@ -13,7 +13,7 @@ dependencies {
 jar {
     manifest {
         // Uncomment the following line if your bundle needs to export its packages.
-        // attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
+         attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
     }
 }
 
