@@ -127,7 +127,7 @@ enum Cardinality
  * An output declaration may also specify an optional cardinality.
  */
 OutputDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName json=JsonObject?
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
 
 /*
@@ -144,7 +144,7 @@ Output
  * An output declaration may also specify an optional cardinality.
  */
 InputDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName json=JsonObject?
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
 
 /*
@@ -160,7 +160,7 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
-	: type=[Model|UnqualifiedName] name=UnqualifiedName json=JsonObject?
+	: type=[Model|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
  
 /*
@@ -177,7 +177,7 @@ Parts
  * and an unqualified name.
  */
 RequireDeclaration
-	: type=[Model|UnqualifiedName] name=UnqualifiedName ('{' '}')? json=JsonObject?
+	: type=[Model|UnqualifiedName] name=UnqualifiedName ('{' '}')? metadata=JsonObject?
 	;
  
 /*
