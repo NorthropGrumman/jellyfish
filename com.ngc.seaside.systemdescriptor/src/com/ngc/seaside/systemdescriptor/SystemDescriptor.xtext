@@ -352,12 +352,12 @@ Data
  */
 Model
 	: 'model' name=UnqualifiedName '{'
-		metadata=Metadata?
-		requires=Requires?
-		input=Input?
-		output=Output?
-		scenarios+=Scenario*
-		parts=Parts?
+		metadata=Metadata? &
+		requires=Requires? &
+		input=Input? &
+		output=Output? &
+		scenarios+=Scenario* &
+		parts=Parts? &
 		links=Links?
 	  '}'
 	;
