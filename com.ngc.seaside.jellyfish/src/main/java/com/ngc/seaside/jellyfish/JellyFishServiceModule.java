@@ -17,7 +17,7 @@ import com.ngc.blocs.service.resource.impl.common.ResourceService;
  * This class should use the Guice binding to match the interface to the
  * default implementation and call the activate method on the implementation.
  *
- * @author justan.provence@ngc.com
+ * @author blake.perkins@ngc.com
  */
 public class JellyFishServiceModule extends AbstractModule {
 

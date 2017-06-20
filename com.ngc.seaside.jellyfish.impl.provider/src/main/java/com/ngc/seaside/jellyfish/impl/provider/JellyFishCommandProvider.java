@@ -80,9 +80,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    @Override
    public void run(String[] arguments) {
       // TODO Call IBootstrapCommandProvider from here???
+      // What do I pass it?
+      // Do I parse the -d option here and then pass the rest of the args to IBootstrapCommandProvider?
       
-      bootstrapCommandProvider.run(arguments);
-      
+      bootstrapCommandProvider.run(arguments);   
    }
    
    /**

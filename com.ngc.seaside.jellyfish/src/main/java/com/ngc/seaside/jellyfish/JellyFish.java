@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.ServiceLoader;
 
 /**
- * @author bperkins
+ * @author blake.perkins@ngc.com
  */
 public class JellyFish {
 
