@@ -10,9 +10,10 @@ buildscript {
         }
     }
 
-    dependencies {
-        classpath 'com.ngc.seaside:seaside.parent:1.0'
-    }
+   dependencies {
+      classpath 'com.ngc.seaside:gradle.plugins:1.1'
+      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+   }
 }
 
 subprojects {
