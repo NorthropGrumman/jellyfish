@@ -177,7 +177,7 @@ Parts
  * and an unqualified name.
  */
 RequireDeclaration
-	: type=[Model|UnqualifiedName] name=UnqualifiedName ('{' '}')? metadata=JsonObject?
+	: type=[Model|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
  
 /*
@@ -409,9 +409,6 @@ DblValue: value=DOUBLE;
 
 Value:
 	StringValue | BooleanValue | JsonValue | ArrayValue | NullValue | IntValue | DblValue;
-
-//Value:
-//	JsonObject | STRING | Array | Boolean | Null | NUMBER;
 
 Array:
 	'[' {Array} 
