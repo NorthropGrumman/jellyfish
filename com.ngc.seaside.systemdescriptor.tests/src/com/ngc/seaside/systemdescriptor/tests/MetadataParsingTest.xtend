@@ -87,19 +87,27 @@ class MetadataParsingTest {
 			
 			model AlarmClock {
 			  input {
-			    many Time alarmTimes
+			    many Time alarmTimes {
+			      "satisifes": "requirement1"
+			    }
 			  }
 			
 			  output {
-			    Time timeOfAlarmDeactivation
+			    Time timeOfAlarmDeactivation {
+			       "since": "2.0"
+			     }
 			  }
 			
 			  parts {
-			    Timer timer
+			    Timer timer {
+			      "description": "This is provided by 3rd party software"
+			    }
 			  }
-
+			
 			  requires {
-			    Gatorade thristQuencher
+			    Gatorade thristQuencher {
+			      "flavor": "purple"
+			    }
 			  }
 			}
 		'''
