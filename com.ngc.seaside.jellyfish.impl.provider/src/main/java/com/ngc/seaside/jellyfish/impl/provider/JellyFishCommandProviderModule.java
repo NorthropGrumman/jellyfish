@@ -1,9 +1,19 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.AbstractMatcher;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+
+import java.util.Set;
 
 /**
  * Guice wrapper around the {@link JellyFishCommandProvider} implementation.
@@ -12,34 +22,93 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
  */
 public class JellyFishCommandProviderModule extends AbstractModule implements IJellyFishCommandProvider {
 
+   private final JellyFishCommandProvider delegate = new JellyFishCommandProvider();
+
+   private boolean logServiceSet = false;
+   private boolean bootstrapCommandProviderSet = false;
+   private Set<IJellyFishCommand> temporaryCommands;
+
    @Override
    protected void configure() {
-      // TODO Auto-generated method stub
-      
+      bindListener(new AbstractMatcher<TypeLiteral>() {
+         @Override
+         public boolean matches(TypeLiteral literal) {
+            return literal.getRawType().equals(JellyFishCommandProviderModule.class);
+         }
+      }, new TypeListener() {
+         @Override
+         public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
+            // this Component requires that the activate method be called.
+            encounter.register((InjectionListener<I>) i -> delegate.activate());
+         }
+      });
+
+      bind(IJellyFishCommandProvider.class).toInstance(this);
    }
 
    public void run(String[] args) {
-      // TODO Auto-generated method stub
-      
+      delegate.run(args);
+
    }
 
    @Override
    public IUsage getUsage() {
-      // TODO Auto-generated method stub
-      return null;
+      return delegate.getUsage();
    }
 
    @Override
    public void addCommand(IJellyFishCommand command) {
-      // TODO Auto-generated method stub
-      
+      delegate.addCommand(command);
+
    }
 
    @Override
    public void removeCommand(IJellyFishCommand command) {
-      // TODO Auto-generated method stub
-      
+      delegate.removeCommand(command);
+
+   }
+   
+   @Inject
+   public void addCommands(Set<IJellyFishCommand> commands) {
+      if(isReady()) {
+         commands.forEach(this::addCommand);
+      } else {
+         temporaryCommands = commands;
+      }
+   }
+   
+   @Inject
+   public void setLogService(ILogService ref) {
+      delegate.setLogService(ref);
+      logServiceSet = true;
+      update();
    }
 
+   @Inject
+   public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
+      delegate.setIBootstrapCommandProvider(ref);
+      bootstrapCommandProviderSet = true;
+      update();
+   }
+   
+   /**
+    * Update the delegate with the commands.
+    */
+   private void update() {
+      if(isReady() && temporaryCommands != null) {
+         addCommands(temporaryCommands);
+         temporaryCommands = null;
+      }
+   }
+
+   
+   /**
+    * Determine if the required services exists and the commands can be added.
+    *
+    * @return true if the services exists.
+    */
+   private boolean isReady() {
+      return bootstrapCommandProviderSet && logServiceSet;
+   }
 
 }
