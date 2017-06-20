@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.seaside:seaside.parent:1.1-SNAPSHOT'
+        classpath 'com.ngc.seaside:gradle.plugins:1.1-SNAPSHOT'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
@@ -18,7 +18,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.parent'
 	
     group 'com.ngc.seaside'
-    version '1.1-SNAPSHOT'
+    version '1.1'
 	
     ext {
         junitVersion = '4.12'
