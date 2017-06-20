@@ -17,16 +17,16 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class JellyFishTest {
 
-   private JellyFishMain component;
+   private JellyFish component;
    private ILogService logService;
 
    @Before
    public void before() throws Throwable {
       logService = new PrintStreamLogService();
    
-      component = new JellyFishMain();
-      component.setLogService(logService);
-      component.activate();
+//      component = new JellyFish();
+//      component.setLogService(logService);
+//      component.activate();
    }
 
    @Test
@@ -36,6 +36,6 @@ public class JellyFishTest {
 
    @After
    public void after() throws Throwable {
-      component.deactivate();
+     // component.deactivate();
    }
 }

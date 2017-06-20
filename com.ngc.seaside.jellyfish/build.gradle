@@ -1,12 +1,22 @@
 apply plugin: 'application'
 
-mainClassName = "com.ngc.seaside.jellyfish.JellyFishMain"
+mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
 
 dependencies {
+
+    compile project(":jellyfish.impl.provider")
+
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    compile "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
+    compile "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
     compile "org.osgi:osgi.enterprise:$osgiVersion"
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "commons-io:commons-io:$commonsIOVersion"
+    compile "commons-lang:commons-lang:$commonsLangVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 	testCompile "junit:junit:$junitVersion"
