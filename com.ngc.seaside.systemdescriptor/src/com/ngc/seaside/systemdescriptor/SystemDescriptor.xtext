@@ -95,6 +95,7 @@ enum DataType
 	| BOOLEAN="boolean"
 	;
 	
+	
 /*
  * A data field declaration consists of a type and unqualified name.
  * It may also contain optional metadata.
@@ -330,11 +331,15 @@ Links
 		declarations+=LinkDeclaration+
 	  '}'
 	;
- 
+	
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
 
+ DataDeclaration
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
+	;
+	
 /*
  * Declares an object of data type; a type of object that contains attributes
  * of metadata and optional members.
@@ -343,6 +348,7 @@ Data
 	: 'data' name=UnqualifiedName '{'
 		metadata=Metadata?
 		fields+=DataFieldDeclaration*
+		dataRefs+=DataDeclaration*
 	  '}'
 	;
 

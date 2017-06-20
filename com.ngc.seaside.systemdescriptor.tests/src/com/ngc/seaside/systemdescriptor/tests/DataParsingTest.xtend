@@ -263,4 +263,80 @@ class DataParsingTest {
 			null
 		)
 	}
+	
+	@Test
+	def void testDoesParseImportedDataAsFieldsInData() {
+		val dateSource = '''
+			package clocks.datatypes
+			
+			data Date {
+				int day
+				int month
+				int year
+			}
+		''';
+		
+		val dataResource = resourceHelper.resource(dateSource, URI.createURI("datatypes.sd"))
+		validationTester.assertNoIssues(dataResource)
+		
+		val timeSource = '''
+			package clocks.datatypes
+			
+			data Time {
+				int hour
+				int minute
+				int second
+			}
+		''';
+		
+		val timeResource = resourceHelper.resource(timeSource, dataResource.resourceSet)
+		validationTester.assertNoIssues(timeResource)
+
+		val dateTimeSource = '''
+			package clocks.otherdatatypes
+			
+			import clocks.datatypes.Date
+			import clocks.datatypes.Time
+			
+			data DateTime {
+			  Date date
+			  Time time
+			}
+		'''
+
+		val result = parseHelper.parse(dateTimeSource, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)	
+
+		var resultData = result.element as Data
+		assertEquals(
+			"wrong number of fields!",
+			2,
+			resultData.dataRefs.size
+		)
+
+		var dateField = resultData.dataRefs.get(0)
+		assertEquals(
+			"data type not correct!",
+			"Date",
+			dateField.type.name
+		)
+		assertEquals(
+			"field name not correct!",
+			"date",
+			dateField.name
+		)	
+		
+		var timeField = resultData.dataRefs.get(1)
+		assertEquals(
+			"data type not correct!",
+			"Time",
+			timeField.type.name
+		)
+		assertEquals(
+			"field name not correct!",
+			"time",
+			timeField.name
+		)	
+	}
 }

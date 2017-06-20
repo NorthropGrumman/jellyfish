@@ -88,8 +88,14 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//Links">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Links/declarations"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//DataDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataDeclaration/cardinality"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataDeclaration/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataDeclaration/name"/>
+    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/dataRefs"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/requires"/>
