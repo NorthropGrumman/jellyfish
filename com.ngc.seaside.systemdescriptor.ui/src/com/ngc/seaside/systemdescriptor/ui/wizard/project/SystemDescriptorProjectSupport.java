@@ -6,8 +6,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -16,6 +16,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Delegate for the creation of the System Descriptor project.
@@ -58,12 +62,16 @@ public class SystemDescriptorProjectSupport {
       Assert.isTrue(projectName.trim().length() > 0);
 
       IProject project = createBaseProject(projectName, location);
-
+      
+      
+      
          addNature(project);
 
          String sdPath = "src/main/sd";
          String resPath = "src/main/resources";
          String testPath = "src/test/gherkin";
+         String[] srcFolders = {sdPath, resPath, testPath};
+         
 
          List<String> basicPathList = new ArrayList<>();
          basicPathList.add(sdPath);
@@ -71,6 +79,16 @@ public class SystemDescriptorProjectSupport {
          basicPathList.add(testPath);
 
          addToProjectStructure(project, basicPathList);
+         
+         IJavaProject javaProject = JavaCore.create(project);
+         
+         IClasspathEntry[] newEntries = new IClasspathEntry[srcFolders.length];
+         int index = 0;
+         for (String srcFolder : srcFolders) {
+            IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(project.getFolder(srcFolder));
+            newEntries[index++] = JavaCore.newSourceEntry(root.getPath());
+         }
+         javaProject.setRawClasspath(newEntries, null);
 
          if (defaultPkg != null) {
             String pkgPath = sdPath + "/" + defaultPkg.replace(".", "/");
@@ -268,11 +286,12 @@ public class SystemDescriptorProjectSupport {
       IProjectDescription description = project.getDescription();
 
       String[] prevNatures = description.getNatureIds();
-      String[] newNatures = new String[prevNatures.length + 1];
+      String[] newNatures = new String[prevNatures.length + 2];
 
       System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 
       newNatures[prevNatures.length] = "org.eclipse.xtext.ui.shared.xtextNature";
+      newNatures[prevNatures.length + 1] = JavaCore.NATURE_ID;
       description.setNatureIds(newNatures);
 
       IProgressMonitor monitor = new NullProgressMonitor();
