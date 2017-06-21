@@ -1,9 +1,15 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.impl.EValidatorRegistryImpl;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
+import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -14,8 +20,6 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-
-import java.util.Set;
 
 /**
  * Guice wrapper around the {@link JellyFishCommandProvider} implementation.
@@ -34,9 +38,9 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    @Override
    protected void configure() {
-      bindListener(new AbstractMatcher<TypeLiteral>() {
+      bindListener(new AbstractMatcher<TypeLiteral<?>>() {
          @Override
-         public boolean matches(TypeLiteral literal) {
+         public boolean matches(TypeLiteral<?> literal) {
             return literal.getRawType().equals(JellyFishCommandProviderModule.class);
          }
       }, new TypeListener() {
@@ -46,13 +50,13 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
             encounter.register((InjectionListener<I>) i -> delegate.activate());
          }
       });
-
+      bind(EValidator.Registry.class).to(EValidatorRegistryImpl.class);
       bind(IJellyFishCommandProvider.class).toInstance(this);
+      bind(String.class).annotatedWith(Names.named("languageName")).toInstance("java"); // This works somehow
    }
 
    public void run(String[] args) {
       delegate.run(args);
-
    }
 
    @Override
@@ -72,14 +76,14 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    }
    
-//   @Inject
-//   public void addCommands(Set<IJellyFishCommand> commands) {
-//      if(isReady()) {
-//         commands.forEach(this::addCommand);
-//      } else {
-//         temporaryCommands = commands;
-//      }
-//   }
+   @Inject
+   public void addCommands(Set<IJellyFishCommand> commands) {
+      if(isReady()) {
+         commands.forEach(this::addCommand);
+      } else {
+         temporaryCommands = commands;
+      }
+   }
    
    @Inject
    public void setLogService(ILogService ref) {
@@ -114,7 +118,7 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
     */
    private void update() {
       if(isReady() && temporaryCommands != null) {
-         //addCommands(temporaryCommands);
+         addCommands(temporaryCommands);
          temporaryCommands = null;
       }
    }
@@ -126,7 +130,7 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
     * @return true if the services exists.
     */
    private boolean isReady() {
-      return bootstrapCommandProviderSet && logServiceSet && systemDescriptorServiceSet;
+      return bootstrapCommandProviderSet && logServiceSet && parameterCollectionSet && systemDescriptorServiceSet;
    }
 
 }
