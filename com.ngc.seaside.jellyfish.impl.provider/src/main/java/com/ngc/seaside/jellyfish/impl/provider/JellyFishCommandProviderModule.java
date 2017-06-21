@@ -9,9 +9,11 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import java.util.Set;
 
@@ -26,6 +28,8 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    private boolean logServiceSet = false;
    private boolean bootstrapCommandProviderSet = false;
+   private boolean parameterCollectionSet = false;
+   private boolean systemDescriptorServiceSet = false;
    private Set<IJellyFishCommand> temporaryCommands;
 
    @Override
@@ -68,14 +72,14 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    }
    
-   @Inject
-   public void addCommands(Set<IJellyFishCommand> commands) {
-      if(isReady()) {
-         commands.forEach(this::addCommand);
-      } else {
-         temporaryCommands = commands;
-      }
-   }
+//   @Inject
+//   public void addCommands(Set<IJellyFishCommand> commands) {
+//      if(isReady()) {
+//         commands.forEach(this::addCommand);
+//      } else {
+//         temporaryCommands = commands;
+//      }
+//   }
    
    @Inject
    public void setLogService(ILogService ref) {
@@ -91,12 +95,26 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
       update();
    }
    
+   @Inject
+   public void setIParameterService(IParameterService ref) {
+      delegate.setIParameterService(ref);
+      parameterCollectionSet = true;
+      update();
+   }
+   
+   @Inject
+   public void setISystemDescriptorService(ISystemDescriptorService ref) {
+      delegate.setISystemDescriptorService(ref);
+      systemDescriptorServiceSet = true;
+      update();
+   }
+   
    /**
     * Update the delegate with the commands.
     */
    private void update() {
       if(isReady() && temporaryCommands != null) {
-         addCommands(temporaryCommands);
+         //addCommands(temporaryCommands);
          temporaryCommands = null;
       }
    }
@@ -108,7 +126,7 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
     * @return true if the services exists.
     */
    private boolean isReady() {
-      return bootstrapCommandProviderSet && logServiceSet;
+      return bootstrapCommandProviderSet && logServiceSet && systemDescriptorServiceSet;
    }
 
 }

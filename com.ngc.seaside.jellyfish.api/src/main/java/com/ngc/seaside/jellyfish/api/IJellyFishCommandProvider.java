@@ -8,4 +8,5 @@ import com.ngc.seaside.command.api.ICommandProvider;
  * contents. The individual command must validate their own input.
  */
 public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommand> {
+   
 }
