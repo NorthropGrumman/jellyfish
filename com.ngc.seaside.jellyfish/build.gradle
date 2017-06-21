@@ -3,13 +3,20 @@ apply plugin: 'application'
 mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
 
 run {
-
 	if ( project.hasProperty("appArgs") ) {
-	
-		args Eval.me(appArgs)
-	
+		def matcher = appArgs =~ /"(?:[^\\"]|\\[\\"])*"|'(?:[^\\']|\\[\\'])*'|(?:[^\s\\"']|\\[\\"'])+/
+		def _args = []
+		while (matcher.find()) {
+			String _arg = matcher.group();
+			if (_arg.length() > 1 && ((_arg.startsWith("'") && _arg.endsWith("'"))
+					|| (_arg.startsWith("\"") && _arg.endsWith("\"")))) {
+				_arg = _arg.substring(1, actual.length() - 1);
+			}
+			_arg = _arg.replace($/\\/$, $/\/$).replace($/\"/$, $/"/$).replace($/\'/$, $/'/$);
+			_args += _arg
+		}
+		args _args
 	}
-
 }
 
 dependencies {
