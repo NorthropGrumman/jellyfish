@@ -1,12 +1,6 @@
 package com.ngc.seaside.jellyfish;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.AbstractMatcher;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.log.impl.common.LogService;
 import com.ngc.blocs.service.resource.api.IResourceService;

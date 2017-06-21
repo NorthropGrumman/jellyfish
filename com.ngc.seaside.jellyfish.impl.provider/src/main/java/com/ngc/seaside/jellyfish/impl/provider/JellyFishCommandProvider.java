@@ -159,7 +159,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
    
    private IJellyFishCommand lookupCommand(String cmd) {
-      IJellyFishCommand command = commandMap.get(cmd);
       return commandMap.get(cmd);
    }
 
@@ -174,7 +173,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       bootstrapCommandProvider.run(arguments);   
       
       IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(arguments).subList(1, arguments.length));
-      
       IJellyFishCommandOptions options = convert(collection);
       
       IJellyFishCommand command = lookupCommand(arguments[0]);
