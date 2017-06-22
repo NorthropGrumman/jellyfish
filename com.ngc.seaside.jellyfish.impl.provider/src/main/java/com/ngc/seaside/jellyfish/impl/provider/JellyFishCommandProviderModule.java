@@ -2,9 +2,6 @@ package com.ngc.seaside.jellyfish.impl.provider;
 
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.ecore.impl.EValidatorRegistryImpl;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
@@ -50,9 +47,6 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
             encounter.register((InjectionListener<I>) i -> delegate.activate());
          }
       });
-      bind(EValidator.Registry.class).to(EValidatorRegistryImpl.class);
-      bind(IJellyFishCommandProvider.class).toInstance(this);
-      bind(String.class).annotatedWith(Names.named("languageName")).toInstance("java"); // This works somehow
    }
 
    public void run(String[] args) {

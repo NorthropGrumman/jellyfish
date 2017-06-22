@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderModule;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,10 @@ public class JellyFish {
          System.out.println(String.format("%s", dynamicModule.getClass()));
          modules.add(dynamicModule);
       }
+      // TODO TH: put a comment here explaining this
+      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
+      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      System.out.println(modules);
       return modules;
    }
 }
