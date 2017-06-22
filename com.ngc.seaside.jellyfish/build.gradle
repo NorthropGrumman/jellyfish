@@ -42,8 +42,20 @@ dependencies {
 
 // Copies all templates to distribution zip.
 applicationDistribution.from('src/main/resources/') {
-    into 'bin/resources'
+    into 'resources'
 }
+
+// Provide the app home directory has a system property.
+applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
+
+// Set the property to the value in the script (windows vs *nix).
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '\$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+    }
+}
+
 
 
 jar {
