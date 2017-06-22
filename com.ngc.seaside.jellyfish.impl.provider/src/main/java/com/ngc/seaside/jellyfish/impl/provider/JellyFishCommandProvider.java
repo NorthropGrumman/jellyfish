@@ -49,18 +49,17 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
     */
-   private DeferredDynamicReference<IJellyFishCommand> commands =
-         new DeferredDynamicReference<IJellyFishCommand>() {
-            @Override
-            protected void addPostActivate(IJellyFishCommand command) {
-               addCommand(command);
-            }
+   private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>() {
+      @Override
+      protected void addPostActivate(IJellyFishCommand command) {
+         addCommand(command);
+      }
 
-            @Override
-            protected void removePostActivate(IJellyFishCommand command) {
-               removeCommand(command);
-            }
-         };
+      @Override
+      protected void removePostActivate(IJellyFishCommand command) {
+         removeCommand(command);
+      }
+   };
 
    @Activate
    public void activate() {
@@ -74,52 +73,50 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      DefaultUsage usage = new DefaultUsage("JellyFish Description",
-                                            Collections.singletonList(new DefaultParameter("root", true)));
+      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("root", true)));
       return usage;
 
-//      new DefaultParameter()
-//      return new IUsage() {
-//
-//         @Override
-//         public List<IParameter> getRequiredParameters() {
-//            return Collections.singletonList(new IParameter() {
-//
-//               @Override
-//               public boolean isRequired() {
-//                  return true;
-//               }
-//
-//               @Override
-//               public String getValue() {
-//                  return null;
-//               }
-//
-//               @Override
-//               public String getName() {
-//                  return "root";
-//               }
-//            });
-//         }
-//
-//         @Override
-//         public String getDescription() {
-//            return "JellyFish Description";
-//         }
-//
-//         @Override
-//         public List<IParameter> getAllParameters() {
-//            return getRequiredParameters();
-//         }
-//      };
+      // new DefaultParameter()
+      // return new IUsage() {
+      //
+      // @Override
+      // public List<IParameter> getRequiredParameters() {
+      // return Collections.singletonList(new IParameter() {
+      //
+      // @Override
+      // public boolean isRequired() {
+      // return true;
+      // }
+      //
+      // @Override
+      // public String getValue() {
+      // return null;
+      // }
+      //
+      // @Override
+      // public String getName() {
+      // return "root";
+      // }
+      // });
+      // }
+      //
+      // @Override
+      // public String getDescription() {
+      // return "JellyFish Description";
+      // }
+      //
+      // @Override
+      // public List<IParameter> getAllParameters() {
+      // return getRequiredParameters();
+      // }
+      // };
    }
 
    @Override
    public void addCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
-      Preconditions
-            .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
+      Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
 
       logService.trace(getClass(), "Adding command '%s'", command.getName());
       commandMap.put(command.getName(), command);
@@ -172,33 +169,30 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public void run(String[] arguments) {
-      Preconditions.checkNotNull(arguments, "Arguments must not be null.");
-      Preconditions.checkArgument(arguments.length > 0, "Arguments must not be empty.");
-      // TODO Call IBootstrapCommandProvider from here???
-      // What do I pass it?
-      // Do I parse the -d option here and then pass the rest of the args to IBootstrapCommandProvider?
-//
-//      bootstrapCommandProvider.run(arguments);
-//
-      IParameterCollection
-            collection =
-            parameterService.parseParameters(getUsage(), Arrays.asList(arguments));
+      String[] validatedArgs;
+      
+      if (arguments.length == 0) {
+         validatedArgs = new String[] {"-Droot="+System.getProperty("user.dir")};
+      } else {
+         validatedArgs = arguments;
+      }
+      
+      IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs));
       IJellyFishCommandOptions options = convert(collection);
 
-      IJellyFishCommand command = lookupCommand(arguments[0]);
+      IJellyFishCommand command = lookupCommand(validatedArgs[0]);
       if (command != null) {
          command.run(options);
       }
    }
+
 
    /**
     * Sets log service.
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -215,9 +209,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeIBootstrapCommandProvider")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIBootstrapCommandProvider")
    public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
       this.bootstrapCommandProvider = ref;
    }
@@ -234,9 +226,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeIParameterService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIParameterService")
    public void setIParameterService(IParameterService ref) {
       this.parameterService = ref;
    }
@@ -253,9 +243,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeISystemDescriptorService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeISystemDescriptorService")
    public void setISystemDescriptorService(ISystemDescriptorService ref) {
       this.sdService = ref;
    }
