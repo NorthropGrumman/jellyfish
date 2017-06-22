@@ -169,12 +169,12 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       // TODO Call IBootstrapCommandProvider from here???
       // What do I pass it?
       // Do I parse the -d option here and then pass the rest of the args to IBootstrapCommandProvider?
-      
-      bootstrapCommandProvider.run(arguments);   
-      
+//
+//      bootstrapCommandProvider.run(arguments);
+//
       IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(arguments).subList(1, arguments.length));
       IJellyFishCommandOptions options = convert(collection);
-      
+
       IJellyFishCommand command = lookupCommand(arguments[0]);
       if (command != null) {
          command.run(options);
