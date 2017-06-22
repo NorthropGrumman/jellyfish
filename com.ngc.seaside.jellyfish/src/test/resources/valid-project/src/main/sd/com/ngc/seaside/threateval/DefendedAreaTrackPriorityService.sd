@@ -26,8 +26,8 @@ model DefendedAreaTrackPriorityService {
 	scenario calculateTrackPriority {
 		//link to white-paper or trade study in metadata. 
 		when receiving systemTrack
-		then ask defendedAreaService ^to calculateImpactProbability
-		and publish trackPriority
+		then willAsk defendedAreaService ^to calculateImpactProbability
+		and willPublish trackPriority
 	}
 	
 }

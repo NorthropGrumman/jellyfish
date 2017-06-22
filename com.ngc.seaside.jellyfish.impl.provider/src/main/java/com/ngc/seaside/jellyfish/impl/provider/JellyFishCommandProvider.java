@@ -160,7 +160,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private ISystemDescriptor getSystemDescriptor(Path path) {
       IParsingResult result = sdService.parseProject(path);
       if (!result.isSuccessful()) {
-         result.getIssues().forEach(issue -> logService.error(this.getClass(), issue.getMessage()));
+         result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
          throw new IllegalArgumentException();
       }
       return result.getSystemDescriptor();

@@ -21,7 +21,7 @@ model EngagementTrackPriorityService {
 	scenario calculateTrackPriority {
 		//link to white-paper or trade study in metadata
 		when receiving trackEngagementStatus
-		then publish trackPriority
+		then willPublish trackPriority
 	}
 	
 }

@@ -21,7 +21,7 @@ model ClassificationTrackPriorityService {
 	scenario calculateTrackPriority {
 		//link to white-paper or trade study in metadata
 		when receiving systemTrackClassification
-		then publish trackPriority
+		then willPublish trackPriority
 	}
 
 }
