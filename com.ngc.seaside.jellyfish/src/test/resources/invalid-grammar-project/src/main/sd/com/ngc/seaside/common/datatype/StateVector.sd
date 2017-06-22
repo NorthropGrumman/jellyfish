@@ -1,0 +1,11 @@
+package com.ngc.seaside.common.datatype
+
+//import com.ngc.seaside.systemdescriptor.common.GPSTime
+//import com.ngc.seaside.systemdescriptor.common.Vector3
+
+data StateVector {
+	//GPSTime validityTime
+	//Vector3 ecefPosition
+	//Vector3 ecefVelocity
+	//Vector3 ecefAcc
+}

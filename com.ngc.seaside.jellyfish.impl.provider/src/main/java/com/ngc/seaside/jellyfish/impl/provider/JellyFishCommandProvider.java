@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
@@ -75,41 +74,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    public IUsage getUsage() {
       DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("root", true)));
       return usage;
-
-      // new DefaultParameter()
-      // return new IUsage() {
-      //
-      // @Override
-      // public List<IParameter> getRequiredParameters() {
-      // return Collections.singletonList(new IParameter() {
-      //
-      // @Override
-      // public boolean isRequired() {
-      // return true;
-      // }
-      //
-      // @Override
-      // public String getValue() {
-      // return null;
-      // }
-      //
-      // @Override
-      // public String getName() {
-      // return "root";
-      // }
-      // });
-      // }
-      //
-      // @Override
-      // public String getDescription() {
-      // return "JellyFish Description";
-      // }
-      //
-      // @Override
-      // public List<IParameter> getAllParameters() {
-      // return getRequiredParameters();
-      // }
-      // };
    }
 
    @Override
@@ -130,62 +94,26 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       commandMap.remove(command.getName());
    }
 
-   /**
-    * TODO this should be in the parameter service.
-    *
-    * @param output the template service's output
-    * @return the collection of parameters.
-    */
-   private IJellyFishCommandOptions convert(IParameterCollection output) {
-      IParameter rootDir = output.getParameter("root");
-      Path path = Paths.get(rootDir.getValue());
-      if (!Files.isDirectory(path)) {
-         throw new IllegalArgumentException(rootDir.getValue() + " does not exist as a directory");
-      }
-      if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
-         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/main/sd");
-      }
-      if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
-         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/test/gherkin");
-      }
-      DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
-      def.setParameters(output);
-      def.setSystemDescriptor(getSystemDescriptor(path));
-      return def;
-   }
-
-   private ISystemDescriptor getSystemDescriptor(Path path) {
-      IParsingResult result = sdService.parseProject(path);
-      if (!result.isSuccessful()) {
-         result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
-         throw new IllegalArgumentException();
-      }
-      return result.getSystemDescriptor();
-   }
-
-   private IJellyFishCommand lookupCommand(String cmd) {
-      return commandMap.get(cmd);
-   }
-
    @Override
    public void run(String[] arguments) {
       String[] validatedArgs;
-      
+
       if (arguments.length == 0) {
-         validatedArgs = new String[] {"-Droot="+System.getProperty("user.dir")};
+         validatedArgs = new String[] { "-Droot=" + System.getProperty("user.dir") };
       } else {
          validatedArgs = arguments;
       }
-      
+
       IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs));
-      IJellyFishCommandOptions options = convert(collection);
+      IJellyFishCommandOptions jellyFishCommandptions = convert(collection);
 
-      IJellyFishCommand command = lookupCommand(validatedArgs[0]);
-      if (command != null) {
-         command.run(options);
-      }
+      // TODO: This needs to be implemented eventually
+      // IJellyFishCommand command = lookupCommand(validatedArgs[0]);
+      //
+      // if (command != null) {
+      // command.run(options);
+      // }
    }
-
 
    /**
     * Sets log service.
@@ -253,6 +181,45 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     */
    public void removeISystemDescriptorService(ISystemDescriptorService ref) {
       setISystemDescriptorService(null);
+   }
+
+   /**
+    *
+    * @param the parameter collection
+    * @return the JellyFish command options
+    */
+   public IJellyFishCommandOptions convert(IParameterCollection output) {
+      IParameter rootDir = output.getParameter("root");
+      Path path = Paths.get(rootDir.getValue());
+      if (!Files.isDirectory(path)) {
+         logService.error(getClass(), rootDir.getValue() + " does not exist as a directory");
+         throw new IllegalArgumentException(rootDir.getValue() + " does not exist as a directory");
+      }
+      if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
+         logService.error(getClass(), rootDir.getValue() + " does not contain src/main/sd");
+         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/main/sd");
+      }
+      if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
+         logService.error(getClass(), rootDir.getValue() + " does not contain src/test/gherkin");
+         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/test/gherkin");
+      }
+      DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
+      def.setParameters(output);
+      def.setSystemDescriptor(getSystemDescriptor(path));
+      return def;
+   }
+
+   private ISystemDescriptor getSystemDescriptor(Path path) {
+      IParsingResult result = sdService.parseProject(path);
+      if (!result.isSuccessful()) {
+         result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
+         throw new IllegalArgumentException("Error occurred parsing project");
+      }
+      return result.getSystemDescriptor();
+   }
+
+   private IJellyFishCommand lookupCommand(String cmd) {
+      return commandMap.get(cmd);
    }
 
 }
