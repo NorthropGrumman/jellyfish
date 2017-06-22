@@ -40,6 +40,12 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
+// Copies all templates to distribution zip.
+applicationDistribution.from('src/main/resources/') {
+    into 'bin/resources'
+}
+
+
 jar {
     manifest {
         // Uncomment the following line if your bundle needs to export its packages.
