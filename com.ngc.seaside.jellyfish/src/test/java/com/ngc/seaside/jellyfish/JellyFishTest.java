@@ -7,12 +7,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
+import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JellyFishTest {
@@ -23,7 +20,7 @@ public class JellyFishTest {
    @Before
    public void before() throws Throwable {
       logService = new PrintStreamLogService();
-   
+
 //      component = new JellyFish();
 //      component.setLogService(logService);
 //      component.activate();
@@ -31,12 +28,19 @@ public class JellyFishTest {
 
    @Test
    public void doesRunAsACommandLineInterface() {
-      System.setProperty("NG_FW_HOME", "C:\\projects\\ceacide\\jellyfish-cli\\com.ngc.seaside.jellyfish\\build\\resources\\main");
-      JellyFish.main(new String[]{"-Droot=C:\\projects\\ceacide\\threat-eval-system-descriptor"});
+      String ngFwHome = Paths.get(System.getProperty("user.dir"), "build", "resources", "test")
+            .toAbsolutePath()
+            .toString();
+      String root = Paths.get(System.getProperty("user.dir"), "build", "resources", "test", "valid-project")
+            .toAbsolutePath()
+            .toString();
+
+      System.setProperty("NG_FW_HOME", ngFwHome);
+      JellyFish.main(new String[]{"-Droot=" + root});
    }
 
    @After
    public void after() throws Throwable {
-     // component.deactivate();
+      // component.deactivate();
    }
 }
