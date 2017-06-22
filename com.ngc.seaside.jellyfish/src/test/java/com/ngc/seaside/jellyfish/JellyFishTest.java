@@ -32,7 +32,7 @@ public class JellyFishTest {
    @Test
    public void doesRunAsACommandLineInterface() {
       System.setProperty("NG_FW_HOME", "C:\\projects\\ceacide\\jellyfish-cli\\com.ngc.seaside.jellyfish\\build\\resources\\main");
-      JellyFish.main(new String[]{"root", "C:\\projects\\ceacide\\jellyfish-systemdescriptor-ext\\com.ngc.seaside.systemdescriptor.service.impl.xtext\\src\\test\\resources\\valid-project"});
+      JellyFish.main(new String[]{"-Droot=C:\\projects\\ceacide\\threat-eval-system-descriptor"});
    }
 
    @After
