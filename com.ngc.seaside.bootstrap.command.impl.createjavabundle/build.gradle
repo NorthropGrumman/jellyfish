@@ -1,0 +1,29 @@
+
+
+dependencies {
+    compile project(":command.api")
+    compile project(":bootstrap.api")
+
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "com.ngc.blocs:service.api:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+
+    testCompile "junit:junit:$junitVersion"
+}
+
+task template(type: Zip) {
+    classifier = 'template'
+    from "$projectDir/src/main/template/"
+    include "*"
+    include "*/**"
+    archiveName "${project.group}.${project.name}-${project.version}-template.zip"
+    destinationDir(file("$projectDir/build/libs"))
+}
+
+artifacts {
+    archives template
+}
+
+build.dependsOn template
