@@ -128,18 +128,17 @@ class SystemDescriptorValidatorTest {
 		override validate(EObject source, ValidationHelper helper) {
 			validatedObjects.add(source);
 			if(source instanceof DataFieldDeclaration) {
-				val field = source as DataFieldDeclaration
-				if(field.name.equals(errorWhenFieldNamed)) {
+				if(source.name.equals(errorWhenFieldNamed)) {
 					helper.error(
 					"trying mocked validator",
-						field,
+						source,
 						SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION__NAME
 					)
 				}
-				if(field.name.equals(warnWhenFieldNamed)) {
+				if(source.name.equals(warnWhenFieldNamed)) {
 					helper.warning(
 					"trying mocked validator",
-						field,
+						source,
 						SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION__NAME
 					)
 				}
