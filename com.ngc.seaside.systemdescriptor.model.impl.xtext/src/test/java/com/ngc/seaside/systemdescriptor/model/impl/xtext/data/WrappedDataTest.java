@@ -7,8 +7,8 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 
       DataFieldDeclaration field = factory().createDataFieldDeclaration();
       field.setName("field1");
-      field.setType(DataType.STRING);
+      field.setType(PrimitiveDataType.STRING);
       data.getFields().add(field);
 
       Package p = factory().createPackage();
