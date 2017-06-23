@@ -19,10 +19,14 @@ public class JellyFish {
     * Run the JellyFish application
     */
    public static void main(String[] args) {
-      Injector injector = Guice.createInjector(getModules());
+      Injector injector = getInjector();
       JellyFishCommandProviderModule provider = injector.getInstance(JellyFishCommandProviderModule.class);
       provider.run(args);
       
+   }
+   
+   static Injector getInjector() {
+	   return Guice.createInjector(getModules());
    }
 
    /**

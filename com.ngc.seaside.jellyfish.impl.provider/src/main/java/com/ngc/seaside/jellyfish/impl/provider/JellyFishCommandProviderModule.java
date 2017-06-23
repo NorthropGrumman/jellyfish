@@ -6,7 +6,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
-import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -15,6 +14,7 @@ import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
@@ -51,6 +51,14 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    public void run(String[] args) {
       delegate.run(args);
+   }
+   
+   /**
+    * Returns the JellyFish command options. {@link #run(String[])} must be called first.
+    * @return the JellyFish command options or null of {@link #run(String[])} has not been called
+    */
+   public IJellyFishCommandOptions getCommandOptions() {
+	   return delegate.getOptions();
    }
 
    @Override

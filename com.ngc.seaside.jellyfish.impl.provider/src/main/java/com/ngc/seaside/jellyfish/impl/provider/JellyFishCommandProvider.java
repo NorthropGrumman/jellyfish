@@ -1,5 +1,20 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -17,21 +32,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -44,6 +45,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IBootstrapCommandProvider bootstrapCommandProvider;
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
+   private IJellyFishCommandOptions jellyFishCommandOptions;
 
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
@@ -105,7 +107,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       }
 
       IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs));
-      IJellyFishCommandOptions jellyFishCommandptions = convert(collection);
+      jellyFishCommandOptions = convert(collection);
 
       // TODO: This needs to be implemented eventually
       // IJellyFishCommand command = lookupCommand(validatedArgs[0]);
@@ -175,6 +177,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    public void setISystemDescriptorService(ISystemDescriptorService ref) {
       this.sdService = ref;
    }
+   
+   IJellyFishCommandOptions getOptions() {
+	   return jellyFishCommandOptions;
+   }
 
    /**
     * Remove ISystemDescriptorService.
@@ -188,7 +194,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @param the parameter collection
     * @return the JellyFish command options
     */
-   public IJellyFishCommandOptions convert(IParameterCollection output) {
+   private IJellyFishCommandOptions convert(IParameterCollection output) {
       IParameter rootDir = output.getParameter("root");
       Path path = Paths.get(rootDir.getValue());
       if (!Files.isDirectory(path)) {
@@ -213,7 +219,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IParsingResult result = sdService.parseProject(path);
       if (!result.isSuccessful()) {
          result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
-         throw new IllegalArgumentException("Error occurred parsing project");
+         throw new ParsingException("Error occurred parsing project");
       }
       return result.getSystemDescriptor();
    }
