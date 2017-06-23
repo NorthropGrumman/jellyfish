@@ -43,6 +43,7 @@ public class JellyFishTest {
 		module.run(new String[] { "-Droot=" + root });
 		IJellyFishCommandOptions options = module.getCommandOptions();
 		Assert.assertNotNull(options);
+		Assert.assertNotNull(options.getSystemDescriptor());
 	}
 
 	@Test(expected = ParsingException.class)
@@ -56,6 +57,18 @@ public class JellyFishTest {
 		module.run(new String[] { "-Droot=" + root });
 		IJellyFishCommandOptions options = module.getCommandOptions();
 	}
+	
+	  @Test(expected = IllegalArgumentException.class)
+	   public void invalidDirProjectStructureParsed() {
+
+	      String root = Paths.get(System.getProperty("user.dir"), "build", "resources", "test", "invalid-dir-struct-project")
+	            .toAbsolutePath().toString();
+
+	      Injector injector = JellyFish.getInjector();
+	      JellyFishCommandProviderModule module = injector.getInstance(JellyFishCommandProviderModule.class);
+	      module.run(new String[] { "-Droot=" + root });
+	      IJellyFishCommandOptions options = module.getCommandOptions();
+	   }
 
 	@After
 	public void after() throws Throwable {
