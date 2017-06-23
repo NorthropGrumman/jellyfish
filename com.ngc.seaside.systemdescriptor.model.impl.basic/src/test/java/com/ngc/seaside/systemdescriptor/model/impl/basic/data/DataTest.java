@@ -17,42 +17,33 @@ import static org.junit.Assert.assertNull;
 @RunWith(MockitoJUnitRunner.class)
 public class DataTest {
 
-   private Data data;
+	private Data data;
+	private Metadata metadata;
+	private DataField field;
 
-   private Metadata metadata;
+	@Mock
+	private IPackage parent;
 
-   private DataField field;
+	@Before
+	public void setup() throws Throwable {
+		field = new DataField("field1");
+		metadata = new Metadata();
+		metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
+	}
 
-   @Mock
-   private IPackage parent;
+	@Test
+	public void testDoesCreateData() throws Throwable {
+		data = new Data("FooData");
+		assertEquals("name not correct!", "FooData", data.getName());
+	}
 
-   @Before
-   public void setup() throws Throwable {
-      field = new DataField("field1");
+	@Test
+	public void testDoesManageFields() throws Throwable {
+		data = new Data("FooData");
+		data.getFields().add(field);
+		assertEquals("parent not correct!", field.getParent(), data);
 
-      metadata = new Metadata();
-      metadata.setJson(Json.createObjectBuilder().add("foo", "bar").build());
-   }
-
-   @Test
-   public void testDoesCreateData() throws Throwable {
-      data = new Data("FooData");
-      assertEquals("name not correct!",
-                   "FooData",
-                   data.getName());
-   }
-
-   @Test
-   public void testDoesManageFields() throws Throwable {
-      data = new Data("FooData");
-      data.getFields().add(field);
-      assertEquals("parent not correct!",
-                   field.getParent(),
-                   data);
-
-      data.getFields().remove(field);
-      assertNull("parent not removed!",
-                 field.getParent());
-   }
-
+		data.getFields().remove(field);
+		assertNull("parent not removed!", field.getParent());
+	}
 }
