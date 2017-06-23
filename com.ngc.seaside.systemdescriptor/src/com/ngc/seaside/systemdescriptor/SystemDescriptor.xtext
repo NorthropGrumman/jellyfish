@@ -88,7 +88,7 @@ Import
 /*
  * Defines the different data types that are built in.
  */
-enum DataType
+enum PrimitiveDataType
 	: INT='int'
 	| FLOAT='float'
 	| STRING="string"
@@ -100,8 +100,8 @@ enum DataType
  * A data field declaration consists of a type and unqualified name.
  * It may also contain optional metadata.
  */
-DataFieldDeclaration
-	: type=DataType
+PrimitiveDataFieldDeclaration
+	: type=PrimitiveDataType
 	  name=UnqualifiedName
 	  metadata=JsonObject?
 	;
@@ -336,8 +336,16 @@ Links
 // ---- Basic model elements ----
 // ------------------------------
 
- DataDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
+DataFieldDeclaration
+	: PrimitiveDataFieldDeclaration
+	| ReferencedDataFieldDeclaration
+	;
+	
+ReferencedDataFieldDeclaration
+	: cardinality=Cardinality?
+	  data=[Data|UnqualifiedName] 
+	  name=UnqualifiedName
+	  metadata=JsonObject?
 	;
 	
 /*
@@ -347,8 +355,7 @@ Links
 Data
 	: 'data' name=UnqualifiedName '{'
 		metadata=Metadata?
-		fields+=DataFieldDeclaration*
-		dataRefs+=DataDeclaration*
+		fields+=DataFieldDeclaration* 
 	  '}'
 	;
 

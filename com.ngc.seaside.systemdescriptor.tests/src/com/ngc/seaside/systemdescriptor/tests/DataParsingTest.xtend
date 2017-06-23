@@ -2,7 +2,7 @@ package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.emf.common.util.URI
@@ -20,6 +20,8 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -83,10 +85,13 @@ class DataParsingTest {
 			data.fields.size
 		)
 
-		var field = data.fields.get(0)
+		var rawField = data.fields.get(0)		
+		assertTrue(rawField instanceof PrimitiveDataFieldDeclaration)		
+		var field = rawField as PrimitiveDataFieldDeclaration		
+		
 		assertEquals(
 			"data type not correct!",
-			DataType.INT,
+			PrimitiveDataType.INT,
 			field.type
 		)
 		assertEquals(
@@ -171,6 +176,10 @@ class DataParsingTest {
 
 		var data = result.element as Data
 		var field = data.fields.get(0)
+		
+		assertTrue(field instanceof PrimitiveDataFieldDeclaration)		
+		field = field as PrimitiveDataFieldDeclaration		
+		
 		var metadata = field.metadata
 		var validation = metadata.members.get(0)
 
@@ -312,31 +321,37 @@ class DataParsingTest {
 		assertEquals(
 			"wrong number of fields!",
 			2,
-			resultData.dataRefs.size
+			resultData.fields.size
 		)
 
-		var dateField = resultData.dataRefs.get(0)
+		var rawDateField = resultData.fields.get(0)
+		assertTrue(rawDateField instanceof ReferencedDataFieldDeclaration)		
+		var dateDateRef = rawDateField as ReferencedDataFieldDeclaration		
+		
 		assertEquals(
 			"data type not correct!",
 			"Date",
-			dateField.type.name
+			dateDateRef.data.name
 		)
 		assertEquals(
-			"field name not correct!",
+			"data ref name not correct!",
 			"date",
-			dateField.name
+			dateDateRef.name
 		)	
 		
-		var timeField = resultData.dataRefs.get(1)
+		var rawTimeField = resultData.fields.get(1)
+		assertTrue(rawTimeField instanceof ReferencedDataFieldDeclaration)		
+		var timeDataRef = rawTimeField as ReferencedDataFieldDeclaration	
+			
 		assertEquals(
 			"data type not correct!",
 			"Time",
-			timeField.type.name
+			timeDataRef.data.name
 		)
 		assertEquals(
-			"field name not correct!",
+			"data ref name not correct!",
 			"time",
-			timeField.name
+			timeDataRef.name
 		)	
 	}
 }

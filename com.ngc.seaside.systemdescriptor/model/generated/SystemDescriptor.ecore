@@ -15,17 +15,14 @@
   <eClassifiers xsi:type="ecore:EClass" name="Import">
     <eStructuralFeatures xsi:type="ecore:EReference" name="importedNamespace" eType="#//Element"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="DataType">
+  <eClassifiers xsi:type="ecore:EEnum" name="PrimitiveDataType">
     <eLiterals name="INT" literal="int"/>
     <eLiterals name="FLOAT" value="1" literal="float"/>
     <eLiterals name="STRING" value="2" literal="string"/>
     <eLiterals name="BOOLEAN" value="3" literal="boolean"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DataFieldDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//DataType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PrimitiveDataFieldDeclaration" eSuperTypes="#//DataFieldDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//PrimitiveDataType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Cardinality">
     <eLiterals name="DEFAULT" literal="default"/>
@@ -101,16 +98,18 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//LinkDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DataDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Data"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DataFieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferencedDataFieldDeclaration" eSuperTypes="#//DataFieldDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="data" eType="#//Data"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Data" eSuperTypes="#//Element">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
         eType="#//DataFieldDeclaration" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="dataRefs" upperBound="-1"
-        eType="#//DataDeclaration" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Element">
     <eStructuralFeatures xsi:type="ecore:EReference" name="requires" eType="#//Requires"
