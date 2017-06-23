@@ -133,7 +133,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
 
-      if (command != null) {
+      if (command == null) {
+         logService.warn(getClass(), "Unknown command: %s", validatedArgs[0]);
+      }
+      else {
          command.run(jellyFishCommandOptions);
       }
    }
@@ -260,7 +263,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * @param path system descriptor project path
     * @return the system descriptor
     */
-   private ISystemDescriptor getSystemDescriptor(Path path) {
+   private ISystemDescriptor getSystemDescriptor(Path path)
+   {
       IParsingResult result = sdService.parseProject(path);
       if (!result.isSuccessful()) {
          result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
@@ -276,7 +280,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * @param cmd the string representation of a JellyFish command
     * @return the JellyFish command
     */
-   private IJellyFishCommand lookupCommand(String cmd) {
+   private IJellyFishCommand lookupCommand(String cmd)
+   {
       return commandMap.get(cmd);
    }
 
