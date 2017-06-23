@@ -24,7 +24,7 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
 
    @Override
    public String toString() {
-      return  String.format("%s, systemDescriptor: %s", super.toString(), systemDescriptor);
+      return String.format("%s, systemDescriptor: %s", super.toString(), systemDescriptor);
    }
 
    @Override
