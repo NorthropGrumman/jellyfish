@@ -1,0 +1,38 @@
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.threateval.datatype.TrackPriority
+import com.ngc.seaside.threateval.datatype.TrackPriorityRequest
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+model TrackPriorityService {
+	metadata {
+		"description": "Aggregates track priorities from 1..n sources and upon request will provide a set of prioritized track IDs.",
+		"stereotypes": ["service", "aggregator"],
+		"satisfies": ["TE0005"]
+	}
+	
+	input {
+		many TrackPriority trackPriority
+		TrackPriorityRequest request
+	}
+	
+	output {
+		many SystemTrackIdentifier prioritizedSystemTrackIds
+	}
+
+	scenario processTrackPriority {
+		when receiving trackPriority 
+		then addOrUpdate trackPriority //still not sure about this
+		  and computeSystemTrackPriorities //can we make sub 'and' items auto indent?
+	}
+	
+	scenario getPrioritizedSystemTracks {
+		when receiving request
+		then replyWith prioritizedSystemTrackIds
+		and totalTimeOnRequest isLessThanOrEqual 1 sec
+	}
+	
+	scenario computeSystemTrackPriorities {
+		//The algorithm trade or white-paper would be linked here in metadata
+	}
+}

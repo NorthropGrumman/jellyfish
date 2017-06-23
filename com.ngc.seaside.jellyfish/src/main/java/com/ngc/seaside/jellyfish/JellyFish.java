@@ -10,23 +10,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
 
-/**
- * @author blake.perkins@ngc.com
- */
-public class JellyFish {
+public class JellyFish
+{
 
    /**
     * Run the JellyFish application
     */
-   public static void main(String[] args) {
+   public static void main(String[] args)
+   {
       Injector injector = getInjector();
       JellyFishCommandProviderModule provider = injector.getInstance(JellyFishCommandProviderModule.class);
       provider.run(args);
-      
+
    }
-   
-   static Injector getInjector() {
-	   return Guice.createInjector(getModules());
+
+   static Injector getInjector()
+   {
+      return Guice.createInjector(getModules());
    }
 
    /**
@@ -36,18 +36,18 @@ public class JellyFish {
     *
     * @return A collection of modules or an empty collection.
     */
-   private static Collection<Module> getModules() {
+   private static Collection<Module> getModules()
+   {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishServiceModule());
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         //TODO log this
+         // TODO log this
          System.out.println(String.format("%s", dynamicModule.getClass()));
          modules.add(dynamicModule);
       }
       // TODO TH: put a comment here explaining this
       modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      System.out.println(modules);
       return modules;
    }
 }

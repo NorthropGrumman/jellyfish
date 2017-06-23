@@ -33,12 +33,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
  */
 @Component(service = IJellyFishCommandProvider.class)
-public class JellyFishCommandProvider implements IJellyFishCommandProvider {
+public class JellyFishCommandProvider implements IJellyFishCommandProvider
+{
 
    private final Map<String, IJellyFishCommand> commandMap = new ConcurrentHashMap<>();
    private ILogService logService;
@@ -47,38 +49,46 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private ISystemDescriptorService sdService;
 
    /**
-    * Ensure the dynamic references are added only after the activation of this Component.
+    * Ensure the dynamic references are added only after the activation of this
+    * Component.
     */
-   private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>() {
+   private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>()
+   {
       @Override
-      protected void addPostActivate(IJellyFishCommand command) {
+      protected void addPostActivate(IJellyFishCommand command)
+      {
          addCommand(command);
       }
 
       @Override
-      protected void removePostActivate(IJellyFishCommand command) {
+      protected void removePostActivate(IJellyFishCommand command)
+      {
          removeCommand(command);
       }
    };
 
    @Activate
-   public void activate() {
+   public void activate()
+   {
       commands.markActivated();
    }
 
    @Deactivate
-   public void deactivate() {
+   public void deactivate()
+   {
 
    }
 
    @Override
-   public IUsage getUsage() {
+   public IUsage getUsage()
+   {
       DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", true)));
       return usage;
    }
 
    @Override
-   public void addCommand(IJellyFishCommand command) {
+   public void addCommand(IJellyFishCommand command)
+   {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
@@ -88,7 +98,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    @Override
-   public void removeCommand(IJellyFishCommand command) {
+   public void removeCommand(IJellyFishCommand command)
+   {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       logService.trace(getClass(), "Removing command '%s'", command.getName());
@@ -96,16 +107,27 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    @Override
-   public void run(String[] arguments) {
+   public void run(String[] arguments)
+   {
       String[] validatedArgs;
 
       if (arguments.length == 0) {
-         validatedArgs = new String[] { "-DinputDir=" + System.getProperty("user.dir") };
-      } else {
-         validatedArgs = arguments;
+         throw new IllegalArgumentException("");
+      }
+      else {
+         Pattern p = Pattern.compile("[a-zA-Z_][\\w-]*");
+         if (!p.matcher(arguments[0]).matches()) {
+            throw new IllegalArgumentException("Invalid command: " + arguments[0] + ". Expected format: " + p.pattern());
+         }
+         if (arguments.length == 1) {
+            validatedArgs = new String[] { arguments[0], "-DinputDir=" + System.getProperty("user.dir") };
+         }
+         else {
+            validatedArgs = arguments;
+         }
       }
 
-      IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs));
+      IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
       IJellyFishCommandOptions jellyFishCommandOptions = convert(collection);
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
@@ -118,77 +140,91 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Sets log service.
     *
-    * @param ref the ref
+    * @param ref
+    *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
+   public void setLogService(ILogService ref)
+   {
       this.logService = ref;
    }
 
    /**
     * Remove log service.
     */
-   public void removeLogService(ILogService ref) {
+   public void removeLogService(ILogService ref)
+   {
       setLogService(null);
    }
 
    /**
     * Set the IBootstrapCommandProvider.
     *
-    * @param ref the ref
+    * @param ref
+    *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIBootstrapCommandProvider")
-   public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
+   public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref)
+   {
       this.bootstrapCommandProvider = ref;
    }
 
    /**
     * Remove log service.
     */
-   public void removeIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
+   public void removeIBootstrapCommandProvider(IBootstrapCommandProvider ref)
+   {
       setIBootstrapCommandProvider(null);
    }
 
    /**
     * Set the IParameterService.
     *
-    * @param ref the ref
+    * @param ref
+    *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIParameterService")
-   public void setIParameterService(IParameterService ref) {
+   public void setIParameterService(IParameterService ref)
+   {
       this.parameterService = ref;
    }
 
    /**
     * Remove IParameterCollection.
     */
-   public void removeIParameterService(IParameterService ref) {
+   public void removeIParameterService(IParameterService ref)
+   {
       setIParameterService(null);
    }
 
    /**
     * Set the ISystemDescriptorService.
     *
-    * @param ref the ref
+    * @param ref
+    *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeISystemDescriptorService")
-   public void setISystemDescriptorService(ISystemDescriptorService ref) {
+   public void setISystemDescriptorService(ISystemDescriptorService ref)
+   {
       this.sdService = ref;
    }
 
    /**
     * Remove ISystemDescriptorService.
     */
-   public void removeISystemDescriptorService(ISystemDescriptorService ref) {
+   public void removeISystemDescriptorService(ISystemDescriptorService ref)
+   {
       setISystemDescriptorService(null);
    }
 
    /**
     *
-    * @param the parameter collection
+    * @param the
+    *           parameter collection
     * @return the JellyFish command options
     */
-   private IJellyFishCommandOptions convert(IParameterCollection output) {
+   private IJellyFishCommandOptions convert(IParameterCollection output)
+   {
       IParameter inputDir = output.getParameter("inputDir");
       Path path = Paths.get(inputDir.getValue());
       if (!Files.isDirectory(path)) {
@@ -209,7 +245,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       return def;
    }
 
-   private ISystemDescriptor getSystemDescriptor(Path path) {
+   private ISystemDescriptor getSystemDescriptor(Path path)
+   {
       IParsingResult result = sdService.parseProject(path);
       if (!result.isSuccessful()) {
          result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
@@ -218,7 +255,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       return result.getSystemDescriptor();
    }
 
-   private IJellyFishCommand lookupCommand(String cmd) {
+   private IJellyFishCommand lookupCommand(String cmd)
+   {
       return commandMap.get(cmd);
    }
 

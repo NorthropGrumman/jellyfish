@@ -30,7 +30,10 @@ dependencies {
 	compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishDSLVersion"
 	compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishDSLVersion"
 
-    testCompile "junit:junit:$junitVersion"
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+	testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    
 }
 
 jar {
