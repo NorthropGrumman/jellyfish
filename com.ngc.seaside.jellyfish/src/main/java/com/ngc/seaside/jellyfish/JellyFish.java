@@ -17,16 +17,22 @@ public class JellyFish {
 
    /**
     * Run the JellyFish application
+    * 
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
+    *           followed by a list of parameters for that command.
     */
    public static void main(String[] args) {
       Injector injector = getInjector();
       JellyFishCommandProviderModule provider = injector.getInstance(JellyFishCommandProviderModule.class);
       provider.run(args);
-      
+
    }
-   
+
+   /**
+    * @return the Guice injector
+    */
    static Injector getInjector() {
-	   return Guice.createInjector(getModules());
+      return Guice.createInjector(getModules());
    }
 
    /**
@@ -40,14 +46,15 @@ public class JellyFish {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishServiceModule());
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         //TODO log this
          System.out.println(String.format("%s", dynamicModule.getClass()));
          modules.add(dynamicModule);
       }
-      // TODO TH: put a comment here explaining this
+
+      // The following code was added because multiple instances of the {@link XTextSystemDescriptorServiceModule}
+      // were being created. This code can be removed once the system descriptor services have been updated
+      // to handle this situation.
       modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      System.out.println(modules);
       return modules;
    }
 }
