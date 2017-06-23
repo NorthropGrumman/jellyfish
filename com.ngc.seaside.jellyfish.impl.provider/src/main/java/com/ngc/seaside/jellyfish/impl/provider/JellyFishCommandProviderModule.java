@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
-import java.util.Set;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
@@ -14,9 +12,10 @@ import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+
+import java.util.Set;
 
 /**
  * Guice wrapper around the {@link JellyFishCommandProvider} implementation.
@@ -52,14 +51,6 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
    public void run(String[] args) {
       delegate.run(args);
    }
-   
-   /**
-    * Returns the JellyFish command options. {@link #run(String[])} must be called first.
-    * @return the JellyFish command options or null of {@link #run(String[])} has not been called
-    */
-   public IJellyFishCommandOptions getCommandOptions() {
-	   return delegate.getOptions();
-   }
 
    @Override
    public IUsage getUsage() {
@@ -77,16 +68,16 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
       delegate.removeCommand(command);
 
    }
-   
+
    @Inject
    public void addCommands(Set<IJellyFishCommand> commands) {
-      if(isReady()) {
+      if (isReady()) {
          commands.forEach(this::addCommand);
       } else {
          temporaryCommands = commands;
       }
    }
-   
+
    @Inject
    public void setLogService(ILogService ref) {
       delegate.setLogService(ref);
@@ -100,32 +91,31 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
       bootstrapCommandProviderSet = true;
       update();
    }
-   
+
    @Inject
    public void setIParameterService(IParameterService ref) {
       delegate.setIParameterService(ref);
       parameterCollectionSet = true;
       update();
    }
-   
+
    @Inject
    public void setISystemDescriptorService(ISystemDescriptorService ref) {
       delegate.setISystemDescriptorService(ref);
       systemDescriptorServiceSet = true;
       update();
    }
-   
+
    /**
     * Update the delegate with the commands.
     */
    private void update() {
-      if(isReady() && temporaryCommands != null) {
+      if (isReady() && temporaryCommands != null) {
          addCommands(temporaryCommands);
          temporaryCommands = null;
       }
    }
 
-   
    /**
     * Determine if the required services exists and the commands can be added.
     *

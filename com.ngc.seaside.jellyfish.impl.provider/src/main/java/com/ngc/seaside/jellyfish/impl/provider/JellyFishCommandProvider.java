@@ -1,20 +1,5 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -34,6 +19,21 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
  */
@@ -45,7 +45,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IBootstrapCommandProvider bootstrapCommandProvider;
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
-   private IJellyFishCommandOptions jellyFishCommandOptions;
 
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
@@ -74,7 +73,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("root", true)));
+      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", true)));
       return usage;
    }
 
@@ -101,20 +100,19 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       String[] validatedArgs;
 
       if (arguments.length == 0) {
-         validatedArgs = new String[] { "-Droot=" + System.getProperty("user.dir") };
+         validatedArgs = new String[] { "-DinputDir=" + System.getProperty("user.dir") };
       } else {
          validatedArgs = arguments;
       }
 
       IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs));
-      jellyFishCommandOptions = convert(collection);
+      IJellyFishCommandOptions jellyFishCommandOptions = convert(collection);
 
-      // TODO: This needs to be implemented eventually
-      // IJellyFishCommand command = lookupCommand(validatedArgs[0]);
-      //
-      // if (command != null) {
-      // command.run(options);
-      // }
+      IJellyFishCommand command = lookupCommand(validatedArgs[0]);
+
+      if (command != null) {
+         command.run(jellyFishCommandOptions);
+      }
    }
 
    /**
@@ -177,10 +175,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    public void setISystemDescriptorService(ISystemDescriptorService ref) {
       this.sdService = ref;
    }
-   
-   IJellyFishCommandOptions getOptions() {
-	   return jellyFishCommandOptions;
-   }
 
    /**
     * Remove ISystemDescriptorService.
@@ -195,19 +189,19 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @return the JellyFish command options
     */
    private IJellyFishCommandOptions convert(IParameterCollection output) {
-      IParameter rootDir = output.getParameter("root");
-      Path path = Paths.get(rootDir.getValue());
+      IParameter inputDir = output.getParameter("inputDir");
+      Path path = Paths.get(inputDir.getValue());
       if (!Files.isDirectory(path)) {
-         logService.error(getClass(), rootDir.getValue() + " does not exist as a directory");
-         throw new IllegalArgumentException(rootDir.getValue() + " does not exist as a directory");
+         logService.error(getClass(), inputDir.getValue() + " does not exist as a directory");
+         throw new IllegalArgumentException(inputDir.getValue() + " does not exist as a directory");
       }
       if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
-         logService.error(getClass(), rootDir.getValue() + " does not contain src/main/sd");
-         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/main/sd");
+         logService.error(getClass(), inputDir.getValue() + " does not contain src/main/sd");
+         throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/main/sd");
       }
       if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
-         logService.error(getClass(), rootDir.getValue() + " does not contain src/test/gherkin");
-         throw new IllegalArgumentException(rootDir.getValue() + " does not contain src/test/gherkin");
+         logService.error(getClass(), inputDir.getValue() + " does not contain src/test/gherkin");
+         throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/test/gherkin");
       }
       DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
       def.setParameters(output);
