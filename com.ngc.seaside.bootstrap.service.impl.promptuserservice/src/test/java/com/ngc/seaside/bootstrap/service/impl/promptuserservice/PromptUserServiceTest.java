@@ -141,6 +141,25 @@ public class PromptUserServiceTest {
       assertEquals(0, check.count);
    }
 
+   @Test
+   public void doesPromptDataEntryDefaultEmpty() throws IOException {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      String input = "";
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
+
+      delegate.setInputStream(new ByteArrayInputStream(input.getBytes()));
+
+      ValidCheck check = new ValidCheck();
+      String value = delegate.promptDataEntry("Please enter the group ID", "", "", check);
+
+      outputStream.flush();
+      assertEquals("Please enter the group ID : ", outputStream.toString());
+
+      assertEquals("", value);
+      assertEquals(0, check.count);
+   }
+
    private class ValidCheck implements Predicate<String> {
       int count = 0;
 

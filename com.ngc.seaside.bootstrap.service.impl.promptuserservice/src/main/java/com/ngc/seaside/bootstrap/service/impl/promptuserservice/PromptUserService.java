@@ -17,19 +17,19 @@ public class PromptUserService implements IPromptUserService {
 
    private InputStream inputStream = System.in;
 
-   @Override
-   public String prompt(String parameter, String defaultValue, Predicate<String> validator) {
+   private String prompter(String prompt, String defaultValue, Predicate<String> validator) {
+      Predicate<String> inputValidator = validator;
       if (validator == null) {
-         validator = __ -> true;
+         inputValidator = __ -> true;
       }
       Scanner scanner = new Scanner(inputStream);
-      final String defaultString = defaultValue == null ? "" : " (" + defaultValue + ")";
 
       //This will prompt the user again if they enter an invalid value. If they don't enter anything and the
       //default value isn't null then it will just return the default value.
-      while (true) {
+      String returnStr = null;
+      while (returnStr == null) {
 
-         System.out.print("Enter value for " + parameter + defaultString + ": ");
+         System.out.print(prompt);
          String line = "";
 
          try {
@@ -40,46 +40,29 @@ public class PromptUserService implements IPromptUserService {
 
          if ((line == null || line.trim().isEmpty())) {
             if (defaultValue != null) {
-               return defaultValue;
+               returnStr = defaultValue;
             }
          } else {
-            if (validator.test(line)) {
-               return line;
+            if (inputValidator.test(line)) {
+               returnStr = line;
             }
          }
       }
+
+      return returnStr;
+   }
+
+   @Override
+   public String prompt(String parameter, String defaultValue, Predicate<String> validator) {
+      final String defaultString = defaultValue == null ? "" : " (" + defaultValue + ")";
+      String prompt = "Enter value for " + parameter + defaultString + ": ";
+      return this.prompter(prompt, defaultValue, validator);
    }
 
    @Override
    public String promptDataEntry(String question, String note, String defaultValue, Predicate<String> validator) {
-      if (validator == null) {
-         validator = __ -> true;
-      }
-      Scanner scanner = new Scanner(inputStream);
-
-      //This will prompt the user again if they enter an invalid value. If they don't enter anything and the
-      //default value isn't null then it will just return the default value.
-      while (true) {
-
-         System.out.print(question + " " + note + ": ");
-         String line = "";
-
-         try {
-            line = scanner.nextLine();
-         } catch (NoSuchElementException e) {
-            //let it try to return the default value otherwise ask again.
-         }
-
-         if ((line == null || line.trim().isEmpty())) {
-            if (defaultValue != null) {
-               return defaultValue;
-            }
-         } else {
-            if (validator.test(line)) {
-               return line;
-            }
-         }
-      }
+      String prompt = question + " " + note + ": ";
+      return this.prompter(prompt, defaultValue, validator);
    }
 
    /**
