@@ -1,4 +1,7 @@
-
+/**
+ * Wrap anything in src/main/template in a zip with a "template" classifier.
+ */
+apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
     compile project(":command.api")
@@ -12,18 +15,3 @@ dependencies {
 
     testCompile "junit:junit:$junitVersion"
 }
-
-task template(type: Zip) {
-    classifier = 'template'
-    from "$projectDir/src/main/template/"
-    include "*"
-    include "*/**"
-    archiveName "${project.group}.${project.name}-${project.version}-template.zip"
-    destinationDir(file("$projectDir/build/libs"))
-}
-
-artifacts {
-    archives template
-}
-
-build.dependsOn template
