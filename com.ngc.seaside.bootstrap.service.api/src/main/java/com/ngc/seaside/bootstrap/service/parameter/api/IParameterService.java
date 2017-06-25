@@ -15,14 +15,32 @@ import java.util.List;
 public interface IParameterService {
 
    /**
-    * Parse a collection of String objects in the format -Dproperty=value
+    * Parse the list of parameters in the format of -Dkey=value
     *
-    * @param usage the usage data that will be used to validate passed in parameters.
-    * @param parameters the list of parameters as strings.
-    * @return The collection of parameters
-    * @throws ParameterServiceException If the format of the given parameters is invalid. the exception will be thrown
-    *                                   if the parameter doesn't start with -D or if the parameter doesn't contain a
-    *                                   value.
+    * @param parameters the parameters.
+    * @return the collection of parameters. The collection will be empty if the format is incorrect.
     */
-   IParameterCollection parseParameters(IUsage usage, List<String> parameters) throws ParameterServiceException;
+   IParameterCollection parseParameters(List<String> parameters);
+
+   /**
+    * Determine if the usage is satisfied by the given collection. This means that all the required
+    * parameters in the usage are present in the collection.
+    *
+    * It would be normal usage to call this method after calling {@link #parseParameters(List)}
+    *
+    * @param usage       the usage.
+    * @param collection  the parameters.
+    * @return true if the usage is satisfied.
+    */
+   boolean isUsageSatisfied(IUsage usage, IParameterCollection collection);
+
+   /**
+    * Get the parameters that are required but that are not present in the
+    * given parameter collection.
+    *
+    * @param usage       the usage.
+    * @param collection  the collection.
+    * @return the collection or an empty collection if the usage is satisfied.
+    */
+   IParameterCollection getUnsetRequiredParameters(IUsage usage, IParameterCollection collection);
 }
