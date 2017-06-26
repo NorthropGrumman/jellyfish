@@ -86,7 +86,7 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
 
    }
 
-   @Inject(optional = true)
+   @Inject
    public void addCommands(Set<IJellyFishCommand> commands)
    {
       if (isReady()) {

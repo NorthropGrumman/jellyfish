@@ -5,6 +5,7 @@ import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
@@ -113,7 +114,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
 
       // If no input directory is provided, look in working directory
       if (arguments.length == 0) {
-         throw new IllegalArgumentException("");
+         throw new IllegalArgumentException("No command provided");
       }
       else {
          Pattern p = Pattern.compile("[a-zA-Z_][\\w-]*");
