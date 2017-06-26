@@ -81,10 +81,10 @@ public class TemplateServiceTest {
     */
    @Test
    public void testTemplateExists() {
-      assertFalse(delegate.templateExists("invalid"));
-      assertTrue(delegate.templateExists("example"));
-      assertTrue(delegate.templateExists("invalidnofile"));
-      assertTrue(delegate.templateExists("invalidnofolder"));
+      assertFalse(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalid"));
+      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
+      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
+      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
    }
 
    /**

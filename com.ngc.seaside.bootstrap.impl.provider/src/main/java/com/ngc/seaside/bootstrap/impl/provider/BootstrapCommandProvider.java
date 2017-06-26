@@ -127,7 +127,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
             logService.trace(getClass(),
                              "Unpacking template for '%s' to '%s'", commandName, outputPath);
             ITemplateOutput templateOutput =
-                  templateService.unpack(commandName, outputPath, false);
+                  templateService.unpack(templatePrefix, outputPath, false);
 
 
             options.setParameters(convertParameters(templateOutput));
