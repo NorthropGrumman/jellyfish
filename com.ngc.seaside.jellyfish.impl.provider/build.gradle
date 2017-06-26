@@ -5,7 +5,7 @@ dependencies {
 
 	compile project(":jellyfish.api")
 	compile project(":jellyfish.cli.command.help")
-	compile project(":jellyfish.command.impl.validatecommand")
+	compile project(":jellyfish.cli.command.validate")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

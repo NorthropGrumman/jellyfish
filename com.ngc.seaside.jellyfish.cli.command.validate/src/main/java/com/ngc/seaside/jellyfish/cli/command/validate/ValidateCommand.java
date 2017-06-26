@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.command.impl.validatecommand;
+package com.ngc.seaside.jellyfish.cli.command.validate;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 /**
  * @author blake.perkins@ngc.com
  */
-public class ValidateJellyFishCommand implements IJellyFishCommand {
+public class ValidateCommand implements IJellyFishCommand {
    private final static String NAME = "validate";
 
    private ILogService logService;
