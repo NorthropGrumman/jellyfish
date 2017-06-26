@@ -39,9 +39,7 @@ public class ValidateCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, 
-            policy = ReferencePolicy.STATIC, 
-            unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    @Inject
    public void setLogService(ILogService ref) {
       this.logService = ref;
@@ -67,9 +65,13 @@ public class ValidateCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      // TODO Add functionality once we determine how the validate command will be used.
       logService.trace(getClass(), "Running command %s", NAME);
-      logService.info(getClass(), "Validate command currently does nothing.");
+      if (commandOptions == null || commandOptions.getSystemDescriptor() == null) {
+         logService.error(getClass(), "System Descriptor is null.  Verify project path and syntax.");
+         throw new IllegalArgumentException("System Descriptor is null.  Verify project path and syntax.");
+      } else {
+         logService.info(getClass(), "System Descriptor validated!");
+      }
    }
 
    @Override

@@ -64,11 +64,14 @@ public class JellyFishCommandProviderTests
       module.run(new String[] { "mock", "-DinputDir=" + root });
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test
    public void invalidDirProjectStructureParsed() throws URISyntaxException
    {
       Path root = Paths.get(System.getProperty("user.dir"), "invalid", "path");
       module.run(new String[] { "mock", "-DinputDir=" + root });
+      IJellyFishCommandOptions options = mockCommand.options;
+      Assert.assertNotNull(options);
+      Assert.assertNull(options.getSystemDescriptor());
    }
 
    @After

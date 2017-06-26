@@ -41,8 +41,7 @@ import java.util.regex.Pattern;
  * Default implementation of the IJellyFishCommandProvider interface.
  */
 @Component(service = IJellyFishCommandProvider.class)
-public class JellyFishCommandProvider implements IJellyFishCommandProvider
-{
+public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    private final Map<String, IJellyFishCommand> commandMap = new ConcurrentHashMap<>();
    private ILogService logService;
@@ -54,43 +53,36 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * Ensure the dynamic references are added only after the activation of this
     * Component.
     */
-   private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>()
-   {
+   private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>() {
       @Override
-      protected void addPostActivate(IJellyFishCommand command)
-      {
+      protected void addPostActivate(IJellyFishCommand command) {
          addCommand(command);
       }
 
       @Override
-      protected void removePostActivate(IJellyFishCommand command)
-      {
+      protected void removePostActivate(IJellyFishCommand command) {
          removeCommand(command);
       }
    };
 
    @Activate
-   public void activate()
-   {
+   public void activate() {
       commands.markActivated();
    }
 
    @Deactivate
-   public void deactivate()
-   {
+   public void deactivate() {
 
    }
 
    @Override
-   public IUsage getUsage()
-   {
+   public IUsage getUsage() {
       DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", true)));
       return usage;
    }
 
    @Override
-   public void addCommand(IJellyFishCommand command)
-   {
+   public void addCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
@@ -99,8 +91,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
    }
 
    @Override
-   public void removeCommand(IJellyFishCommand command)
-   {
+   public void removeCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       logService.trace(getClass(), "Removing command '%s'", command.getName());
@@ -108,23 +99,20 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
    }
 
    @Override
-   public void run(String[] arguments)
-   {
+   public void run(String[] arguments) {
       String[] validatedArgs;
 
       // If no input directory is provided, look in working directory
       if (arguments.length == 0) {
          throw new IllegalArgumentException("No command provided");
-      }
-      else {
+      } else {
          Pattern p = Pattern.compile("[a-zA-Z_][\\w-]*");
          if (!p.matcher(arguments[0]).matches()) {
             throw new IllegalArgumentException("Invalid command: " + arguments[0] + ". Expected format: " + p.pattern());
          }
          if (arguments.length == 1) {
             validatedArgs = new String[] { arguments[0], "-DinputDir=" + System.getProperty("user.dir") };
-         }
-         else {
+         } else {
             validatedArgs = arguments;
          }
       }
@@ -136,8 +124,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
 
       if (command == null) {
          logService.warn(getClass(), "Unknown command: %s", validatedArgs[0]);
-      }
-      else {
+      } else {
          command.run(jellyFishCommandOptions);
       }
    }
@@ -149,16 +136,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
-   public void setLogService(ILogService ref)
-   {
+   public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
    /**
     * Remove log service.
     */
-   public void removeLogService(ILogService ref)
-   {
+   public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
@@ -169,16 +154,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIBootstrapCommandProvider")
-   public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref)
-   {
+   public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
       this.bootstrapCommandProvider = ref;
    }
 
    /**
     * Remove bootstrap command provider.
     */
-   public void removeIBootstrapCommandProvider(IBootstrapCommandProvider ref)
-   {
+   public void removeIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
       setIBootstrapCommandProvider(null);
    }
 
@@ -189,16 +172,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIParameterService")
-   public void setIParameterService(IParameterService ref)
-   {
+   public void setIParameterService(IParameterService ref) {
       this.parameterService = ref;
    }
 
    /**
     * Remove paramater service.
     */
-   public void removeIParameterService(IParameterService ref)
-   {
+   public void removeIParameterService(IParameterService ref) {
       setIParameterService(null);
    }
 
@@ -209,16 +190,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     *           the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeISystemDescriptorService")
-   public void setISystemDescriptorService(ISystemDescriptorService ref)
-   {
+   public void setISystemDescriptorService(ISystemDescriptorService ref) {
       this.sdService = ref;
    }
 
    /**
     * Remove the system descriptor service.
     */
-   public void removeISystemDescriptorService(ISystemDescriptorService ref)
-   {
+   public void removeISystemDescriptorService(ISystemDescriptorService ref) {
       setISystemDescriptorService(null);
    }
 
@@ -231,29 +210,31 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * thrown exception of {@link IllegalArgumentException} for illegal directory structure or
     * {@link ParseException} for invalid system descriptor file contents.
     *
-    * @param the
-    *           parameter collection
+    * @param the parameter collection
     * @return the JellyFish command options
     */
-   private IJellyFishCommandOptions convert(IParameterCollection output)
-   {
+   private IJellyFishCommandOptions convert(IParameterCollection output) {
+      DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
       IParameter inputDir = output.getParameter("inputDir");
       Path path = Paths.get(inputDir.getValue());
-      if (!Files.isDirectory(path)) {
-         logService.error(getClass(), inputDir.getValue() + " does not exist as a directory");
-         throw new IllegalArgumentException(inputDir.getValue() + " does not exist as a directory");
+
+      try {
+         if (!Files.isDirectory(path)) {
+            throw new IllegalArgumentException(inputDir.getValue() + " does not exist as a directory");
+         }
+         if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
+            throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/main/sd");
+         }
+         if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
+            throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/test/gherkin");
+         }
+         def.setSystemDescriptor(getSystemDescriptor(path));
+      } catch (IllegalArgumentException e) {
+         logService.warn(getClass(), e.getMessage());
+         def.setSystemDescriptor(null);
+      } finally {
+         def.setParameters(output);
       }
-      if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
-         logService.error(getClass(), inputDir.getValue() + " does not contain src/main/sd");
-         throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/main/sd");
-      }
-      if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
-         logService.error(getClass(), inputDir.getValue() + " does not contain src/test/gherkin");
-         throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/test/gherkin");
-      }
-      DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
-      def.setParameters(output);
-      def.setSystemDescriptor(getSystemDescriptor(path));
       return def;
    }
 
@@ -264,8 +245,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * @param path system descriptor project path
     * @return the system descriptor
     */
-   private ISystemDescriptor getSystemDescriptor(Path path)
-   {
+   private ISystemDescriptor getSystemDescriptor(Path path) {
       IParsingResult result = sdService.parseProject(path);
       if (!result.isSuccessful()) {
          result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
@@ -281,8 +261,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider
     * @param cmd the string representation of a JellyFish command
     * @return the JellyFish command
     */
-   private IJellyFishCommand lookupCommand(String cmd)
-   {
+   private IJellyFishCommand lookupCommand(String cmd) {
       return commandMap.get(cmd);
    }
 
