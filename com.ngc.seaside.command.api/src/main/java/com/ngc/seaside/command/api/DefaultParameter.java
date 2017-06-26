@@ -23,6 +23,7 @@ import java.util.Objects;
 public class DefaultParameter implements IParameter {
 
    private String name;
+   private String description = "";
    private String value = "";
    private boolean required;
 
@@ -36,6 +37,19 @@ public class DefaultParameter implements IParameter {
       this.name = name;
       this.required = required;
    }
+   
+   /**
+    * Constructor.
+    *
+    * @param name      the name of the parameter.
+    * @param description the description of the parameter.
+    * @param required  true if the parameter is required.
+    */
+   public DefaultParameter(String name, String description, boolean required) {
+      this.name = name;
+      this.description = description;
+      this.required = required;
+   }
 
    @Override
    public String getName() {
@@ -44,6 +58,15 @@ public class DefaultParameter implements IParameter {
 
    public void setName(String name) {
       this.name = name;
+   }
+   
+   @Override
+   public String getDescription() {
+      return description;
+   }
+
+   public void setDescription(String description) {
+      this.description = description;
    }
 
    @Override
@@ -66,7 +89,7 @@ public class DefaultParameter implements IParameter {
 
    @Override
    public String toString() {
-      return String.format("Name: %s, Required: %s, Value: %s", name, required, value);
+      return String.format("Name: %s, Description: %s, Required: %s, Value: %s", name, description, required, value);
    }
 
    @Override
@@ -79,6 +102,7 @@ public class DefaultParameter implements IParameter {
       }
       IParameter that = (IParameter) obj;
       return Objects.equals(name, that.getName()) &&
+             Objects.equals(description, that.getDescription()) &&
              Objects.equals(value, that.getValue()) &&
              Objects.equals(required, that.isRequired());
    }

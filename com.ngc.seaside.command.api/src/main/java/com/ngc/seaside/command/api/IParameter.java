@@ -19,6 +19,13 @@ public interface IParameter {
    String getValue();
 
    /**
+    * Gets the description of the parameter.
+    * 
+    * @return the description of the parameter.
+    */
+   String getDescription();
+   
+   /**
     * Determine if the parameter is required.
     *
     * @return true if the parameter is required.
