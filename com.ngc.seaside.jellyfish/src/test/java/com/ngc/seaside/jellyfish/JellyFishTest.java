@@ -47,13 +47,6 @@ public class JellyFishTest
       JellyFish.main(new String[] { "mock", "-DinputDir=" + root });
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void invalidDirProjectStructureParsed() throws URISyntaxException
-   {
-      Path root = Paths.get(System.getProperty("user.dir"), "invalid", "path");
-      JellyFish.main(new String[] { "mock", "-DinputDir=" + root });
-   }
-
    @After
    public void after() throws Throwable
    {

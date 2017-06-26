@@ -14,6 +14,9 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
+ * This class provides the implementation of the validate command. It currently has
+ * no functionality.
+ * 
  * @author blake.perkins@ngc.com
  */
 public class ValidateCommand implements IJellyFishCommand {
@@ -58,11 +61,13 @@ public class ValidateCommand implements IJellyFishCommand {
 
    @Override
    public IUsage getUsage() {
+      // TODO Add usage once we determine how this command will be used.
       return new DefaultUsage("Fix me");
    }
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
+      // TODO Add functionality once we determine how the validate command will be used.
       logService.trace(getClass(), "Running command %s", NAME);
       logService.info(getClass(), "Validate command currently does nothing.");
    }
