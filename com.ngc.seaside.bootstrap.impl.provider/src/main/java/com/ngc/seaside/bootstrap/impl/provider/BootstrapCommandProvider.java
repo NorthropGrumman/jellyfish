@@ -7,12 +7,12 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.DefaultBootstrapCommandOptions;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
@@ -23,9 +23,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,23 +37,24 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    private final Map<String, IBootstrapCommand> commandMap = new ConcurrentHashMap<>();
    private ILogService logService;
-   private ITemplateService bootstrapTemplateService;
+   private ITemplateService templateService;
+   private IParameterService parameterService;
 
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
     */
    private DeferredDynamicReference<IBootstrapCommand> commands =
-            new DeferredDynamicReference<IBootstrapCommand>() {
-               @Override
-               protected void addPostActivate(IBootstrapCommand command) {
-                  addCommand(command);
-               }
+         new DeferredDynamicReference<IBootstrapCommand>() {
+            @Override
+            protected void addPostActivate(IBootstrapCommand command) {
+               addCommand(command);
+            }
 
-               @Override
-               protected void removePostActivate(IBootstrapCommand command) {
-                  removeCommand(command);
-               }
-            };
+            @Override
+            protected void removePostActivate(IBootstrapCommand command) {
+               removeCommand(command);
+            }
+         };
 
    @Activate
    public void activate() {
@@ -75,7 +76,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions
-               .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
+            .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
 
       logService.trace(getClass(), "Adding command '%s'", command.getName());
       commandMap.put(command.getName(), command);
@@ -98,25 +99,36 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       logService.trace(getClass(), "Running command '%s'", commandName);
 
       IBootstrapCommand command = commandMap.get(commandName);
-      boolean templateExists = bootstrapTemplateService.templateExists(commandName);
 
-      if (command == null && !templateExists) {
-         logService.error(getClass(),
-                          "Unable to find a command or template by the name '%s'", commandName);
+      if (command == null) {
+         logService.error(getClass(), "Unable to find command '%s'", commandName);
          return;
       }
 
       DefaultBootstrapCommandOptions options = new DefaultBootstrapCommandOptions();
 
+      IParameterCollection parameters =
+            parameterService.parseParameters(Arrays.asList(
+                  Arrays.copyOfRange(arguments, 1,  arguments.length)
+            ));
+
+      String templatePrefix = command.getClass().getPackage().getName();
+
       /**
        * Unpack the template
        */
-      if (templateExists) {
+      if (templateService.templateExists(templatePrefix)) {
          try {
-            //TODO update with the output directory instead of PWD. This will require the parameter service
-            logService.trace(getClass(), "Unpacking template for '%s' ", commandName);
+            Path outputPath = Paths.get(".");
+            if(parameters.containsParameter("outputDirectory")) {
+               outputPath = Paths.get(parameters.getParameter("outputDirectory").getValue());
+            }
+
+            logService.trace(getClass(),
+                             "Unpacking template for '%s' to '%s'", commandName, outputPath);
             ITemplateOutput templateOutput =
-                     bootstrapTemplateService.unpack(commandName, Paths.get("."), false);
+                  templateService.unpack(commandName, outputPath, false);
+
 
             options.setParameters(convertParameters(templateOutput));
          } catch (TemplateServiceException e) {
@@ -127,6 +139,9 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
             return;
          }
       }
+
+
+
 
       if (command != null) {
          //TODO this will be updated with parameter service output as well
@@ -142,15 +157,15 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     */
    private IParameterCollection convertParameters(ITemplateOutput output) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter("outputDirectory", true);
-      outputDir.setValue(output.getOutputPath().toString());
-      collection.addParameter(outputDir);
-
-      for(Map.Entry<String, String> entry : output.getProperties().entrySet()) {
-         DefaultParameter parameter = new DefaultParameter(entry.getKey(), true);
-         parameter.setValue(entry.getValue());
-         collection.addParameter(parameter);
-      }
+//      DefaultParameter outputDir = new DefaultParameter("outputDirectory", true);
+//      outputDir.setValue(output.getOutputPath().toString());
+//      collection.addParameter(outputDir);
+//
+//      for (Map.Entry<String, String> entry : output.getProperties().entrySet()) {
+//         DefaultParameter parameter = new DefaultParameter(entry.getKey(), true);
+//         parameter.setValue(entry.getValue());
+//         collection.addParameter(parameter);
+//      }
 
       return collection;
    }
@@ -162,8 +177,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeLogService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -181,19 +196,36 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * @param ref the service
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeBootstrapTemplateService")
-   public void setBootstrapTemplateService(ITemplateService ref) {
-      this.bootstrapTemplateService = ref;
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
    }
 
    /**
     * Remove the bootstrap template service.
     */
-   public void removeBootstrapTemplateService(ITemplateService ref) {
-      setBootstrapTemplateService(null);
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
    }
 
 
+   /**
+    * Set the parameter service.
+    *
+    * @param ref the service
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeParameterService")
+   public void setParameterService(IParameterService ref) {
+      this.parameterService = ref;
+   }
 
+   /**
+    * Remove the bootstrap template service.
+    */
+   public void removeParameterService(IParameterService ref) {
+      setParameterService(null);
+   }
 }

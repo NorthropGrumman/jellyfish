@@ -29,21 +29,16 @@ public class DefaultParameter implements IParameter {
    /**
     * Constructor.
     *
-    * @param name      the name of the parameter.
-    * @param required  true if the parameter is required.
+    * @param name the name of the parameter.
     */
-   public DefaultParameter(String name, boolean required) {
+   public DefaultParameter(String name) {
       this.name = name;
-      this.required = required;
    }
+
 
    @Override
    public String getName() {
       return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
    }
 
    @Override
@@ -51,8 +46,9 @@ public class DefaultParameter implements IParameter {
       return value;
    }
 
-   public void setValue(String value) {
+   public DefaultParameter setValue(String value) {
       this.value = value;
+      return this;
    }
 
    @Override
@@ -60,8 +56,9 @@ public class DefaultParameter implements IParameter {
       return required;
    }
 
-   public void setRequired(boolean required) {
+   public DefaultParameter setRequired(boolean required) {
       this.required = required;
+      return this;
    }
 
    @Override

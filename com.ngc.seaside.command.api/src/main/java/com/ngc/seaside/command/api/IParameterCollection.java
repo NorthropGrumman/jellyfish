@@ -11,6 +11,13 @@ import java.util.Map;
 public interface IParameterCollection {
 
    /**
+    * Determine if the collection has any parameters.
+    *
+    * @return true if the collection is empty
+    */
+   boolean isEmpty();
+
+   /**
     * Determine if the given parameter name exists within the collection.
     *
     * @param parameterName the name of the parameter {@link IParameter#getName()}

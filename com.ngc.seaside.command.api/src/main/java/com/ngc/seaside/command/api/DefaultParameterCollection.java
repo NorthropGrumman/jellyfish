@@ -15,6 +15,11 @@ public class DefaultParameterCollection implements IParameterCollection {
    private Map<String, IParameter> parameterMap = new LinkedHashMap<>();
 
    @Override
+   public boolean isEmpty() {
+      return parameterMap.isEmpty();
+   }
+
+   @Override
    public boolean containsParameter(String parameterName) {
       return parameterMap.containsKey(parameterName);
    }

@@ -26,5 +26,5 @@ project(':com.ngc.seaside.bootstrap.service.impl.propertyservice').name = 'boots
 project(':com.ngc.seaside.bootstrap.impl.provider').name = 'bootstrap.impl.provider'
 project(':com.ngc.seaside.bootstrap.command.impl.bundlecommand').name = 'bootstrap.command.impl.bundlecommand'
 project(':com.ngc.seaside.bootstrap.command.impl.projectcommand').name = 'bootstrap.command.impl.projectcommand'
-project(':com.ngc.seaside.bootstrap.command.impl.createjavabundle').name = 'command.impl.createjavabundle'
+project(':com.ngc.seaside.bootstrap.command.impl.createjavabundle').name = 'bootstrap.command.impl.createjavabundle'
 project(':com.ngc.seaside.bootstrap.utilities').name = 'bootstrap.utilities'

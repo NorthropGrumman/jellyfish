@@ -85,7 +85,7 @@ public class BootstrapCommandProviderModule extends AbstractModule implements IB
 
    @Inject
    public void setBootstrapTemplateService(ITemplateService ref) {
-      delegate.setBootstrapTemplateService(ref);
+      delegate.setTemplateService(ref);
       templateServiceSet = true;
       update();
    }
