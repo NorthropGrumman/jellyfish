@@ -13,3 +13,8 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
 }
 
+jar {
+    manifest {
+         attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
+    }
+}
