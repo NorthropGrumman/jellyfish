@@ -1,5 +1,7 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
+import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
@@ -18,6 +20,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +63,21 @@ public class ParameterService implements IParameterService {
             logService.warn(getClass(), "Unable to parse parameter '%s'", eachParameterArg);
          }
       }
+      return parameterCollection;
+   }
+
+   @Override
+   public IParameterCollection parseParameters(Map<String, String> parameters) {
+      //if they are empty, we will just return an empty collection. but a null parameter being passed in might
+      //not be the intended outcome.
+      Preconditions.checkNotNull(parameters, "The input parameters must not be null.");
+
+      DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
+      for(Map.Entry<String, String> entry : parameters.entrySet()) {
+         parameterCollection.addParameter(new DefaultParameter(
+                  entry.getKey()).setValue(entry.getValue()));
+      }
+
       return parameterCollection;
    }
 

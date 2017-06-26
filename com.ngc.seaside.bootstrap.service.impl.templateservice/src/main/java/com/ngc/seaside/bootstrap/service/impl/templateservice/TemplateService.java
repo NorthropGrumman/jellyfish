@@ -9,6 +9,7 @@ import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -148,7 +149,8 @@ public class TemplateService implements ITemplateService {
    }
 
    @Override
-   public ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
+   public ITemplateOutput unpack(
+            String templateName, IParameterCollection parameters, Path outputDirectory, boolean clean)
             throws TemplateServiceException {
       ZipFile zipFile = null;
       ITemplateOutput output;
@@ -186,7 +188,7 @@ public class TemplateService implements ITemplateService {
                   new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER, logService);
          templateIgnoreComponent.parse();
 
-         output = updateTemplate(unzippedFolderPath, outputDirectory, clean, templateIgnoreComponent);
+         output = updateTemplate(unzippedFolderPath, parameters, outputDirectory, clean, templateIgnoreComponent);
 
       } catch (TemplateServiceException | IOException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
@@ -211,11 +213,14 @@ public class TemplateService implements ITemplateService {
     * parameters with the input values from the properties file.
     *
     * @param templateFolder          the template folder.
+    * @param parameters              the parameters that should overwrite any parameter values in the
+    *                                template.properties this means that it should
     * @param outputFolder            the output folder.
     * @param clean                   true if this should clean existing directories.
     * @param templateIgnoreComponent used to check files that should be copied instead of evaluated by velocity.
     */
    protected ITemplateOutput updateTemplate(Path templateFolder,
+                                            IParameterCollection parameters,
                                             Path outputFolder,
                                             boolean clean,
                                             TemplateIgnoreComponent templateIgnoreComponent)
@@ -224,11 +229,17 @@ public class TemplateService implements ITemplateService {
       IProperties parametersAndDefaults =
                propertyService.load(templateFolder.resolve(TEMPLATE_PROPERTIES));
 
-      // For each parameter query the user for its value
+      // For each parameter query the user for its value if that property isn't already in the parameters collection.
       Map<String, String> parametersAndValues = new HashMap<>();
       for (String parameter : parametersAndDefaults.getKeys()) {
-         String defaultValue = parametersAndDefaults.get(parameter);
-         String value = promptUserService.prompt(parameter, defaultValue, null);
+         String value;
+         if(parameters.containsParameter(parameter)) {
+            //if the value is already passed in by the user, don't ask them for it again.
+            value = parameters.getParameter(parameter).getValue();
+         } else {
+            String defaultValue = parametersAndDefaults.get(parameter);
+            value = promptUserService.prompt(parameter, defaultValue, null);
+         }
 
          if (!parametersAndDefaults.get(parameter).equals(value)) {
             parametersAndDefaults.put(parameter, value);

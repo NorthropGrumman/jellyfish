@@ -22,8 +22,12 @@ public class CreateJavaBundle implements IBootstrapCommand {
    public IUsage getUsage() {
       return new DefaultUsage(
             "Test class",
-            new DefaultParameter("outputDirectory").setRequired(true),
-            new DefaultParameter("anotherKey").setRequired(false));
+            new DefaultParameter("outputDir")
+                     .setRequired(true)
+                     .setDescription("The directory in which the template should be unpacked."),
+            new DefaultParameter("templateFinalOutputDir")
+                     .setRequired(false)
+                     .setDescription("The path to the output directory plus the name of the template unpacked location"));
    }
 
    @Override

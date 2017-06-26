@@ -24,6 +24,7 @@ public class DefaultParameter implements IParameter {
 
    private String name;
    private String value = "";
+   private String description = "";
    private boolean required;
 
    /**
@@ -48,6 +49,16 @@ public class DefaultParameter implements IParameter {
 
    public DefaultParameter setValue(String value) {
       this.value = value;
+      return this;
+   }
+
+   @Override
+   public String getDescription() {
+      return value;
+   }
+
+   public DefaultParameter setDescription(String description) {
+      this.description = description;
       return this;
    }
 

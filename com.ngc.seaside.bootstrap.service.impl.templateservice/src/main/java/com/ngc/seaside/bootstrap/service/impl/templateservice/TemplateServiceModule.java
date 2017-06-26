@@ -10,6 +10,7 @@ import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.command.api.IParameterCollection;
 
 import java.nio.file.Path;
 
@@ -31,9 +32,12 @@ public class TemplateServiceModule extends AbstractModule implements ITemplateSe
    }
 
    @Override
-   public ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
+   public ITemplateOutput unpack(String templateName,
+                                 IParameterCollection parameters,
+                                 Path outputDirectory,
+                                 boolean clean)
             throws TemplateServiceException {
-      return delegate.unpack(templateName, outputDirectory, clean);
+      return delegate.unpack(templateName, parameters, outputDirectory, clean);
    }
 
    @Inject

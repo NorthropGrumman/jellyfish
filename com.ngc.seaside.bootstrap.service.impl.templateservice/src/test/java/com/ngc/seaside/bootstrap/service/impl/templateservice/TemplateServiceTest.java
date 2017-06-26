@@ -7,6 +7,8 @@ import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.property.api.IProperties;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -112,10 +114,15 @@ public class TemplateServiceTest {
       when(promptUserService.prompt(
                parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
 
-      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.example",
-                      Paths.get(outputDirectory.getAbsolutePath()), false);
+      IParameterCollection collection = mock(IParameterCollection.class);
+      when(collection.containsParameter("classname")).thenReturn(true);
+      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyUserClass"));
 
-      verify(promptUserService, times(5))
+      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.example",
+                      collection, Paths.get(outputDirectory.getAbsolutePath()), false);
+
+      //verify that the prompt service isn't called for the default parameter that we passed in for classname!
+      verify(promptUserService, times(4))
                .prompt(anyString(), anyString(), any());
 
       //this is called 'value' because of the "when" above that mocks the promptUserService
@@ -135,11 +142,15 @@ public class TemplateServiceTest {
    public void doesNotUnpack() throws IOException {
       File outputDirectory = testFolder.newFolder("output");
 
+      IParameterCollection collection = mock(IParameterCollection.class);
+
       when(promptUserService.prompt(anyString(), anyString(), any())).thenReturn("value");
 
       try {
          delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofile",
-                         Paths.get(outputDirectory.getAbsolutePath()), false);
+                         collection,
+                         Paths.get(outputDirectory.getAbsolutePath()),
+                         false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofile");
@@ -149,7 +160,9 @@ public class TemplateServiceTest {
 
       try {
          delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofolder",
-                         Paths.get(outputDirectory.getAbsolutePath()), false);
+                         collection,
+                         Paths.get(outputDirectory.getAbsolutePath()),
+                         false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");

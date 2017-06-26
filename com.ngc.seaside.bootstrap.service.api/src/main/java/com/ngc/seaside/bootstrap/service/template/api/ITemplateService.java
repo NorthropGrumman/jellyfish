@@ -1,5 +1,7 @@
 package com.ngc.seaside.bootstrap.service.template.api;
 
+import com.ngc.seaside.command.api.IParameterCollection;
+
 import java.nio.file.Path;
 
 /**
@@ -25,10 +27,12 @@ public interface ITemplateService {
     *
     * @param templateName    the name of the template.
     * @param outputDirectory the directory to unpack the template.
+    * @param parameters      the parameters that should take the place of any parameters located
+    *                        in the template.properties file.
     * @param clean           whether or not to recursively delete already existing folder before creating them again
     * @return The Path to the unpacked template directory.
     * @throws TemplateServiceException if any errors occur when parsing or unpacking the template.
     */
-   ITemplateOutput unpack(String templateName, Path outputDirectory, boolean clean)
+   ITemplateOutput unpack(String templateName, IParameterCollection parameters, Path outputDirectory, boolean clean)
             throws TemplateServiceException;
 }

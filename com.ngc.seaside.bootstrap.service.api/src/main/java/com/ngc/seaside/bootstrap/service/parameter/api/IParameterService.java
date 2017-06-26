@@ -5,6 +5,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The purpose of this interface is to allow for passing in parameters in a collection of Strings in the
@@ -21,6 +22,15 @@ public interface IParameterService {
     * @return the collection of parameters. The collection will be empty if the format is incorrect.
     */
    IParameterCollection parseParameters(List<String> parameters);
+
+   /**
+    * Parse the map of parameters. This is similar to the above method but the key value pairs are already
+    * separated.
+    *
+    * @param parameters the map of key value pairs.
+    * @return the collection.
+    */
+   IParameterCollection parseParameters(Map<String, String> parameters);
 
    /**
     * Determine if the usage is satisfied by the given collection. This means that all the required

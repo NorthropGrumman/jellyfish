@@ -6,6 +6,7 @@ import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.DefaultBootstrapCommandOptions;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
@@ -13,6 +14,7 @@ import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
@@ -105,48 +107,80 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          return;
       }
 
-      DefaultBootstrapCommandOptions options = new DefaultBootstrapCommandOptions();
-
+      //the first parameter is the name of the command, strip it off before converting the command input parameters.
       IParameterCollection parameters =
             parameterService.parseParameters(Arrays.asList(
                   Arrays.copyOfRange(arguments, 1,  arguments.length)
             ));
 
-      String templatePrefix = command.getClass().getPackage().getName();
+      IParameterCollection templateParameters = unpackTemplate(command, parameters);
 
+      IBootstrapCommandOptions options = createBootstrapCommandOptions(parameters, templateParameters);
+
+      //TODO this will be updated with parameter service output as well
+      command.run(options);
+   }
+
+   /**
+    * Create the bootstrap options given the user supplied parameters and the template supplied parameters. The
+    * template may be null due to the fact that you can have a command that doesn't have a template.
+    *
+    * @param userInputParameters the parameters that the user input on the command line
+    * @param templateParameters  the parameters that were fulfilled by the template.properties file in the template
+    * @return the bootstrap command options. Never null.
+    */
+   protected IBootstrapCommandOptions createBootstrapCommandOptions(
+            IParameterCollection userInputParameters, IParameterCollection templateParameters) {
+      DefaultBootstrapCommandOptions options = new DefaultBootstrapCommandOptions();
+
+      if(templateParameters == null) {
+         options.setParameters(userInputParameters);
+      } else {
+         DefaultParameterCollection all = new DefaultParameterCollection();
+         all.addParameters(userInputParameters.getAllParameters());
+         all.addParameters(templateParameters.getAllParameters());
+         options.setParameters(all);
+      }
+
+      return options;
+   }
+
+   /**
+    * Unpack the template if it exists. If not, just return an empty collection of parameters.
+    *
+    * @param command                 the command.
+    * @param userSuppliedParameters  the parameters the user passed in. These should overwrite any properties that
+    *                                exists in the template.properties. meaning, if they pass in these parameters they
+    *                                should not be prompted!
+    * @return the parameters that were required to be input for usage within the template.
+    */
+   protected IParameterCollection unpackTemplate(
+            IBootstrapCommand command,
+            IParameterCollection userSuppliedParameters) {
+      String templatePrefix = command.getClass().getPackage().getName();
       /**
        * Unpack the template
        */
       if (templateService.templateExists(templatePrefix)) {
          try {
             Path outputPath = Paths.get(".");
-            if(parameters.containsParameter("outputDirectory")) {
-               outputPath = Paths.get(parameters.getParameter("outputDirectory").getValue());
+            if(userSuppliedParameters.containsParameter("outputDir")) {
+               outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getValue());
             }
 
-            logService.trace(getClass(),
-                             "Unpacking template for '%s' to '%s'", commandName, outputPath);
+            logService.trace(getClass(), "Unpacking template for '%s' to '%s'", userSuppliedParameters, outputPath);
             ITemplateOutput templateOutput =
-                  templateService.unpack(templatePrefix, outputPath, false);
+                     templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
 
-
-            options.setParameters(convertParameters(templateOutput));
+            return convertParameters(templateOutput);
          } catch (TemplateServiceException e) {
             logService.error(getClass(),
                              e,
                              "Unable to unpack the template for command'%s'. Aborting",
                              command);
-            return;
          }
       }
-
-
-
-
-      if (command != null) {
-         //TODO this will be updated with parameter service output as well
-         command.run(options);
-      }
+      return null;
    }
 
    /**
@@ -156,16 +190,16 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * @return the collection of parameters.
     */
    private IParameterCollection convertParameters(ITemplateOutput output) {
+      IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
+
       DefaultParameterCollection collection = new DefaultParameterCollection();
-//      DefaultParameter outputDir = new DefaultParameter("outputDirectory", true);
-//      outputDir.setValue(output.getOutputPath().toString());
-//      collection.addParameter(outputDir);
-//
-//      for (Map.Entry<String, String> entry : output.getProperties().entrySet()) {
-//         DefaultParameter parameter = new DefaultParameter(entry.getKey(), true);
-//         parameter.setValue(entry.getValue());
-//         collection.addParameter(parameter);
-//      }
+      DefaultParameter outputDir = new DefaultParameter("templateFinalOutputDir").setRequired(true);
+      outputDir.setValue(output.getOutputPath().toString());
+      collection.addParameter(outputDir);
+
+      for (IParameter templateParameter : templateParameters.getAllParameters()) {
+         collection.addParameter(templateParameter);
+      }
 
       return collection;
    }
