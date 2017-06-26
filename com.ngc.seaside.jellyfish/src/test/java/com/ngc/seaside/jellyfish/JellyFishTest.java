@@ -32,6 +32,13 @@ public class JellyFishTest
       Path root = Paths.get(getClass().getClassLoader().getResource("valid-project").toURI());
       JellyFish.main(new String[] { "help", "-DinputDir=" + root });
    }
+   
+   @Test
+   public void validateTest() throws URISyntaxException
+   {
+      Path root = Paths.get(getClass().getClassLoader().getResource("valid-project").toURI());
+      JellyFish.main(new String[] { "validate", "-DinputDir=" + root });
+   }
 
    @Test(expected = ParsingException.class)
    public void invalidSdProjectStructureParsed() throws URISyntaxException
