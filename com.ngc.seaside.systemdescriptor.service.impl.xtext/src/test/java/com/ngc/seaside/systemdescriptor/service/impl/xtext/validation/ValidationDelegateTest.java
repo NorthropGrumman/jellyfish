@@ -23,6 +23,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -117,9 +119,30 @@ public class ValidationDelegateTest {
    }
 
    @Test
-   public void testDoesValidateDataField() throws Throwable {
-      DataFieldDeclaration source = factory().createDataFieldDeclaration();
-      source.setName("myField");
+   public void testDoesValidatePrimitiveDataField() throws Throwable {
+      PrimitiveDataFieldDeclaration source = factory().createPrimitiveDataFieldDeclaration();
+      source.setName("myPrimitiveDataField");
+      Data data = factory().createData();
+      data.setName("MyData");
+      data.getFields().add(source);
+      Package p = factory().createPackage();
+      p.setName("foo.package");
+      p.setElement(data);
+
+      delegate.addValidator(validator);
+      delegate.validate(source, helper);
+
+      IDataField toValidate = descriptor.findData(p.getName(), data.getName()).get()
+            .getFields()
+            .getByName(source.getName())
+            .get();
+      verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
+   }
+
+   @Test
+   public void testDoesValidateReferencedDataField() throws Throwable {
+      ReferencedDataFieldDeclaration source = factory().createReferencedDataFieldDeclaration();
+      source.setName("myReferencedDataField");
       Data data = factory().createData();
       data.setName("MyData");
       data.getFields().add(source);
