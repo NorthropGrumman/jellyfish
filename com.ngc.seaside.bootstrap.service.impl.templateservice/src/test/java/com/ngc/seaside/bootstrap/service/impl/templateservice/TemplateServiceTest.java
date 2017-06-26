@@ -112,7 +112,8 @@ public class TemplateServiceTest {
       when(promptUserService.prompt(
                parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
 
-      delegate.unpack("example", Paths.get(outputDirectory.getAbsolutePath()), false);
+      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.example",
+                      Paths.get(outputDirectory.getAbsolutePath()), false);
 
       verify(promptUserService, times(5))
                .prompt(anyString(), anyString(), any());
@@ -137,21 +138,23 @@ public class TemplateServiceTest {
       when(promptUserService.prompt(anyString(), anyString(), any())).thenReturn("value");
 
       try {
-         delegate.unpack("invalidnofile", Paths.get(outputDirectory.getAbsolutePath()), false);
+         delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofile",
+                         Paths.get(outputDirectory.getAbsolutePath()), false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
-                      "An error occurred processing the template zip file: invalidnofile");
+                      "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofile");
          assertEquals(e.getCause().getMessage(),
-                      "Invalid template. Each template must contain template.properties and a template folder named 'template'");
+                      "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
       }
 
       try {
-         delegate.unpack("invalidnofolder", Paths.get(outputDirectory.getAbsolutePath()), false);
+         delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofolder",
+                         Paths.get(outputDirectory.getAbsolutePath()), false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
-                      "An error occurred processing the template zip file: invalidnofolder");
+                      "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");
          assertEquals(e.getCause().getMessage(),
-                      "Invalid template. Each template must contain template.properties and a template folder named 'template'");
+                      "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
       }
    }
 
