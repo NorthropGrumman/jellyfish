@@ -27,7 +27,7 @@ import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JellyFishCommandProviderTests {
+public class JellyFishCommandProviderModuleTest {
 
    private JellyFishCommandProviderModule module;
 
