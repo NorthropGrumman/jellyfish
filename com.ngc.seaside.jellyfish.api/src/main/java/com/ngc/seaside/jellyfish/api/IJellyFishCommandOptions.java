@@ -24,4 +24,4 @@ public interface IJellyFishCommandOptions extends IBootstrapCommandOptions {
     * @return the system descriptor model.
     */
    ISystemDescriptor getSystemDescriptor();
-}  
+}

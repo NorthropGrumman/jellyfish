@@ -12,12 +12,8 @@ public class ValidateCommandModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
-               .addBinding()
-               .to(ValidateCommand.class);
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding().to(ValidateCommand.class);
 
-      Multibinder.newSetBinder(binder(), ICommand.class)
-               .addBinding()
-               .to(ValidateCommand.class);
+      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(ValidateCommand.class);
    }
 }

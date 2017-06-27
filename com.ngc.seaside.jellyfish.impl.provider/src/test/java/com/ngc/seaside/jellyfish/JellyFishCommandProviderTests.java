@@ -27,18 +27,16 @@ import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JellyFishCommandProviderTests
-{
+public class JellyFishCommandProviderTests {
 
    private JellyFishCommandProviderModule module;
 
    private final MockCommand mockCommand = new MockCommand();
 
    private String previousNgFwHome;
-   
+
    @Before
-   public void before() throws Throwable
-   {
+   public void before() throws Throwable {
       previousNgFwHome = System.getProperty("NG_FW_HOME");
       String ngFwHome = Paths.get(System.getProperty("user.dir"), "build", "resources", "test").toAbsolutePath().toString();
       System.setProperty("NG_FW_HOME", ngFwHome);
@@ -48,8 +46,7 @@ public class JellyFishCommandProviderTests
    }
 
    @Test
-   public void systemDescriptorLoadedIntoMemoryTest() throws URISyntaxException
-   {
+   public void systemDescriptorLoadedIntoMemoryTest() throws URISyntaxException {
       Path root = Paths.get(getClass().getClassLoader().getResource("valid-project").toURI());
       module.run(new String[] { "mock", "-DinputDir=" + root });
       IJellyFishCommandOptions options = mockCommand.options;
@@ -58,15 +55,13 @@ public class JellyFishCommandProviderTests
    }
 
    @Test(expected = ParsingException.class)
-   public void invalidSdProjectStructureParsed() throws URISyntaxException
-   {
+   public void invalidSdProjectStructureParsed() throws URISyntaxException {
       Path root = Paths.get(getClass().getClassLoader().getResource("invalid-grammar-project").toURI());
       module.run(new String[] { "mock", "-DinputDir=" + root });
    }
 
    @Test
-   public void invalidDirProjectStructureParsed() throws URISyntaxException
-   {
+   public void invalidDirProjectStructureParsed() throws URISyntaxException {
       Path root = Paths.get(System.getProperty("user.dir"), "invalid", "path");
       module.run(new String[] { "mock", "-DinputDir=" + root });
       IJellyFishCommandOptions options = mockCommand.options;
@@ -75,8 +70,7 @@ public class JellyFishCommandProviderTests
    }
 
    @After
-   public void after() throws Throwable
-   {
+   public void after() throws Throwable {
       if (previousNgFwHome == null) {
          System.clearProperty("NG_FW_HOME");
       } else {
@@ -84,34 +78,29 @@ public class JellyFishCommandProviderTests
       }
    }
 
-   private static class MockCommand implements IJellyFishCommand
-   {
+   private static class MockCommand implements IJellyFishCommand {
 
       private IJellyFishCommandOptions options;
 
       @Override
-      public String getName()
-      {
+      public String getName() {
          return "mock";
       }
 
       @Override
-      public IUsage getUsage()
-      {
+      public IUsage getUsage() {
          return new DefaultUsage("", new DefaultParameter("inputDir", false));
       }
 
       @Override
-      public void run(IJellyFishCommandOptions commandOptions)
-      {
+      public void run(IJellyFishCommandOptions commandOptions) {
          Assert.assertNull("MockCommand should be only called once", options);
          this.options = commandOptions;
       }
 
    }
 
-   private static Injector getInjector()
-   {
+   private static Injector getInjector() {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishCommandProviderModule());
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {

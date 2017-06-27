@@ -13,40 +13,34 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
-public class HelpCommand implements IJellyFishCommand
-{
+public class HelpCommand implements IJellyFishCommand {
    public final static String COMMAND_NAME = "help";
 
    private ILogService logService;
 
    @Override
-   public String getName()
-   {
+   public String getName() {
       return COMMAND_NAME;
    }
 
    @Override
-   public IUsage getUsage()
-   {
+   public IUsage getUsage() {
       // TODO
       return new DefaultUsage("");
    }
 
    @Override
-   public void run(IJellyFishCommandOptions commandOptions)
-   {
+   public void run(IJellyFishCommandOptions commandOptions) {
       // TODO Auto-generated method stub
    }
 
    @Activate
-   public void activate()
-   {
+   public void activate() {
       logService.trace(getClass(), "Activated");
    }
 
    @Deactivate
-   public void deactivate()
-   {
+   public void deactivate() {
       logService.trace(getClass(), "Deactivated");
    }
 
@@ -57,16 +51,14 @@ public class HelpCommand implements IJellyFishCommand
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    @Inject
-   public void setLogService(ILogService ref)
-   {
+   public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
    /**
     * Remove log service.
     */
-   public void removeLogService(ILogService ref)
-   {
+   public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
