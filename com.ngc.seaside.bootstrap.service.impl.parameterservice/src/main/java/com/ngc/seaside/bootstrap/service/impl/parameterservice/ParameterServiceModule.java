@@ -10,6 +10,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Guice module that wraps the ParameterService implementation.
@@ -25,6 +26,11 @@ public class ParameterServiceModule extends AbstractModule implements IParameter
    @Override
    public IParameterCollection parseParameters(List<String> parameters)
          throws ParameterServiceException {
+      return delegate.parseParameters(parameters);
+   }
+
+   @Override
+   public IParameterCollection parseParameters(Map<String, String> parameters) {
       return delegate.parseParameters(parameters);
    }
 

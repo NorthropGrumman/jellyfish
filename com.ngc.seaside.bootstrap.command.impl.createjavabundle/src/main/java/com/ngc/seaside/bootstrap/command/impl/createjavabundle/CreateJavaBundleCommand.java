@@ -8,7 +8,7 @@ import com.ngc.seaside.command.api.IUsage;
 /**
  *
  */
-public class CreateJavaBundleBootstrapCommand implements IBootstrapCommand {
+public class CreateJavaBundleCommand implements IBootstrapCommand {
    private static final String NAME = "create-java-bundle";
 
    @Override
