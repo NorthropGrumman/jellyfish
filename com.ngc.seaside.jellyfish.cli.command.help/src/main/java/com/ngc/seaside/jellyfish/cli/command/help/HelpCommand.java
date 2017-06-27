@@ -1,5 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -25,21 +29,23 @@ public final class HelpCommand implements IJellyFishCommand
 {
    public static final String COMMAND_NAME = "help";
 
-   private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help", new DefaultParameter("verbose", false), new DefaultParameter("command", false));
+   private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help", new DefaultParameter("verbose", "Prints the help of all of the known commands", false),
+      new DefaultParameter("command", "Command to print help", false));
 
    private ILogService logService;
 
    private TreeMap<String, IJellyFishCommand> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-   private StringTable<IJellyFishCommand> table = new StringTable<>(new IJellyFishCommandFormat());
+   private int lineWidth = 80;
 
-   private final ITableFormat<IJellyFishCommand> normalFormat = new IJellyFishCommandFormat();
-   private final ITableFormat<IJellyFishCommand> verboseFormat = new IJellyFishCommandVerboseFormat();
+   private String indent = "   ";
 
-   public HelpCommand() {
-      table.setShowHeader(false);
+   @Inject(optional = true)
+   public void setLineWidth(int width)
+   {
+      lineWidth = width;
    }
-   
+
    @Override
    public String getName()
    {
@@ -76,54 +82,108 @@ public final class HelpCommand implements IJellyFishCommand
       }
 
       IParameter commandParameter = commandOptions.getParameters().getParameter("command");
-      
+
       if (commandParameter == null) {
          printHelp(verbose);
       }
       else {
-         printCommandHelp(verbose, commandParameter.getValue());
+         printCommandHelp(true, verbose, commandParameter.getValue());
       }
    }
 
    private void printHelp(boolean verbose)
    {
-      table.setTableFormat(verbose ? verboseFormat : normalFormat);
       System.out.println("Usage: jellyfish command [-DinputDir=dir] [-Doption1=value1 ...]");
       System.out.println();
       System.out.println("Commands:");
       System.out.println();
-      System.out.println(table);
+      if (verbose) {
+         for (String cmd : commands.keySet()) {
+            printCommandHelp(false, true, cmd);
+         }
+      }
+      else {
+         StringTable<IJellyFishCommand> table = getCommandTable(indent, commands.values());
+         System.out.println(table);
+      }
    }
 
-   private void printCommandHelp(boolean verbose, String name)
+   private void printCommandHelp(boolean standAloneHelp, boolean verbose, String name)
    {
+      String baseIndent = standAloneHelp ? "" : this.indent;
+      String parameterIndent = standAloneHelp ? this.indent : this.indent + this.indent;
       IJellyFishCommand command = commands.get(name);
       if (command == null) {
          System.out.println(name + " command not found");
       }
       else {
-         String parameterUsage = " " + command.getUsage().getAllParameters().stream().map(p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]")).collect(Collectors.joining(" "));
-         System.out.printf("Usage: jellyfish %s [-DinputDir=dir]%s%n", name, parameterUsage);
-         System.out.println();
-         System.out.println(command.getUsage().getDescription());
+         StringTable<IParameter> parameterTable = getParameterTable(parameterIndent, command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
+         StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent, command.getUsage().getRequiredParameters());
+         if (standAloneHelp) {
+            String parameterUsage = command.getUsage().getAllParameters().stream().map(p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
+                     .collect(Collectors.joining(" "));
+            if (!parameterUsage.isEmpty()) {
+               parameterUsage = " " + parameterUsage;
+            }
+            System.out.printf("Usage: jellyfish %s [-DinputDir=dir]%s%n", name, parameterUsage);
+            System.out.println();
+            System.out.println(command.getUsage().getDescription());
+            System.out.println();
+         }
+         else {
+            StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
+            System.out.println(table);
+         }
+         if (!requiredParameterTable.getModel().getItems().isEmpty()) {
+            System.out.println(baseIndent + "required parameters:");
+            System.out.println();
+            System.out.println(requiredParameterTable);
+         }
+         if (!parameterTable.getModel().getItems().isEmpty()) {
+            System.out.println(baseIndent + "optional parameters:");
+            System.out.println();
+            System.out.println(parameterTable);
+         }
       }
    }
 
    public void addCommand(IJellyFishCommand command)
    {
       Preconditions.checkNotNull(command);
-      IJellyFishCommand previous = commands.put(command.getName(), command);
-      if (previous != null) {
-         table.getModel().removeItem(previous);
-      }
-      table.getModel().addItem(command);
+      commands.put(command.getName(), command);
    }
 
    public void removeCommand(IJellyFishCommand command)
    {
       Preconditions.checkNotNull(command);
       commands.remove(command.getName());
-      table.getModel().removeItem(command);
+   }
+
+   private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements)
+   {
+      int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
+      return getTable(columnSpace, elements, new IJellyFishCommandFormat(lineWidth, columnSpace.length(), maxNameWidth));
+   }
+
+   private StringTable<IParameter> getParameterTable(String columnSpace, Collection<IParameter> elements)
+   {
+      int maxNameWidth = commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream()).mapToInt(p -> p.getName().length()).max().orElse(0);
+      return getTable(columnSpace, elements, new IParameterFormat(lineWidth, columnSpace.length(), maxNameWidth));
+   }
+
+   private <T> StringTable<T> getTable(String columnSpace, Collection<T> elements, ITableFormat<T> format)
+   {
+      StringTable<T> table = new StringTable<>(format);
+      if (columnSpace != null) {
+         table.setColumnSpacer(columnSpace);
+      }
+      table.setRowSpacer("");
+      table.setShowHeader(false);
+      table.setShowRowNumber(false);
+      List<T> list = new ArrayList<>();
+      list.addAll(elements);
+      table.getModel().addItems(list);
+      return table;
    }
 
    @Activate
@@ -156,143 +216,6 @@ public final class HelpCommand implements IJellyFishCommand
    public void removeLogService(ILogService ref)
    {
       setLogService(null);
-   }
-
-   private class IJellyFishCommandFormat implements ITableFormat<IJellyFishCommand>
-   {
-
-      @Override
-      public int getColumnCount()
-      {
-         return 2;
-      }
-
-      @Override
-      public String getColumnName(int column)
-      {
-         switch (column) {
-         case 0:
-            return "Name";
-         case 1:
-            return "Description";
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public ITableFormat.ColumnSizePolicy getColumnSizePolicy(int column)
-      {
-         switch (column) {
-         case 0:
-            return ITableFormat.ColumnSizePolicy.MAX;
-         case 1:
-            return ITableFormat.ColumnSizePolicy.FIXED;
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public int getColumnWidth(int column)
-      {
-         int nameSize = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
-         switch (column) {
-         case 0:
-            return 0;
-         case 1:
-            return 80 - nameSize;
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public Object getColumnValue(IJellyFishCommand object, int column)
-      {
-         switch (column) {
-         case 0:
-            return object.getName();
-         case 1:
-            return object.getUsage().getDescription();
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-   }
-
-   private class IJellyFishCommandVerboseFormat implements ITableFormat<IJellyFishCommand>
-   {
-
-      @Override
-      public int getColumnCount()
-      {
-         return 3;
-      }
-
-      @Override
-      public String getColumnName(int column)
-      {
-         switch (column) {
-         case 0:
-            return "Name";
-         case 1:
-            return "Description";
-         case 2:
-            return "Parameters";
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public ITableFormat.ColumnSizePolicy getColumnSizePolicy(int column)
-      {
-         switch (column) {
-         case 0:
-            return ITableFormat.ColumnSizePolicy.MAX;
-         case 1:
-            return ITableFormat.ColumnSizePolicy.FIXED;
-         case 2:
-            return ITableFormat.ColumnSizePolicy.FIXED;
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public int getColumnWidth(int column)
-      {
-         int nameSize = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
-         switch (column) {
-         case 0:
-            return 0;
-         case 1:
-            return 40 - nameSize;
-         case 2:
-            return 40 - nameSize;
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
-      @Override
-      public Object getColumnValue(IJellyFishCommand object, int column)
-      {
-         switch (column) {
-         case 0:
-            return object.getName();
-         case 1:
-            return object.getUsage().getDescription();
-         case 2:
-            String parameters = object.getUsage().getAllParameters().stream().map(p -> p.isRequired() ? p.getName() : ('[' + p.getName() + ']')).collect(Collectors.joining(", "));
-            return parameters;
-         default:
-            throw new IndexOutOfBoundsException("Invalid column: " + column);
-         }
-      }
-
    }
 
 }
