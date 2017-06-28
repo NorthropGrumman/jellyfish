@@ -3,6 +3,10 @@
  */
 apply plugin: 'com.ngc.seaside.command'
 
+configurations {
+    templates
+}
+
 dependencies {
     compile project(":command.api")
     compile project(":bootstrap.api")
@@ -14,4 +18,8 @@ dependencies {
     compile "org.osgi:osgi.enterprise:$osgiVersion"
 
     testCompile "junit:junit:$junitVersion"
+}
+
+artifacts {
+    templates template
 }

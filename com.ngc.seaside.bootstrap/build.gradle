@@ -2,6 +2,10 @@ apply plugin: 'application'
 
 mainClassName = "com.ngc.seaside.bootstrap.Bootstrap"
 
+configurations {
+    templates
+}
+
 dependencies {
     compile project(":command.api")
     compile project(":bootstrap.api")
@@ -11,7 +15,11 @@ dependencies {
     compile project(":bootstrap.service.impl.templateservice")
     compile project(":bootstrap.service.impl.promptuserservice")
     compile project(":bootstrap.service.impl.propertyservice")
-//    compile project(":bootstrap.command.impl.createjavabundle")
+
+    compile project(":bootstrap.command.impl.createjavabundle")
+//    templates project(path: ":bootstrap.command.impl.createjavabundle", configuration: "templates")
+
+    templates "com.ngc.seaside:bootstrap.command.impl.createjavabundle:1.0-SNAPSHOT:template@zip"
 
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -26,14 +34,19 @@ dependencies {
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
 
-
     testCompile "junit:junit:$junitVersion"
+}
+
+task copyTemplate(type: Copy) {
+    from configurations.templates
+    into "${buildDir}/distributions/${project.name}-${project.version}/resources/templates"
 }
 
 // Copies all templates to distribution zip.
 applicationDistribution.from('src/main/resources/') {
     into 'resources/'
 }
+
 
 // Provide the app home directory has a system property.
 applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
@@ -52,7 +65,7 @@ jar {
     archiveName = "${project.name}"
 }
 
-task unzip( type: Copy ) {
+task unzip( type: Copy , dependsOn: copyTemplate) {
     def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
     def outputDir = file("${buildDir}/distributions/")
 
@@ -60,5 +73,5 @@ task unzip( type: Copy ) {
     into outputDir
 }
 
-
+install.dependsOn unzip
 build.dependsOn unzip
