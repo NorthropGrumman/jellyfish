@@ -154,7 +154,8 @@ public final class HelpCommand implements IJellyFishCommand {
       }
    }
 
-   private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements) {
+   private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements)
+   {
       int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
       return getTable(columnSpace, elements, new IJellyFishCommandFormat(lineWidth, columnSpace.length(), maxNameWidth));
    }

@@ -27,7 +27,7 @@ public class JellyFishTest {
    @Test
    public void validSDProjectParsedTest() throws URISyntaxException {
       Path root = Paths.get(getClass().getClassLoader().getResource("valid-project").toURI());
-      JellyFish.main(new String[] { "help", "-DinputDir=" + root });
+      JellyFish.main(new String[] { "help", "-Dverbose=false", "-DinputDir=" + root });
    }
 
    @Test
