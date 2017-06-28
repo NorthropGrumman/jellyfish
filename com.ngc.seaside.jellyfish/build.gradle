@@ -38,13 +38,3 @@ startScripts {
         windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
     }
 }
-
-
-
-jar {
-    manifest {
-        // Uncomment the following line if your bundle needs to export its packages.
-         attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
-    }
-}
-

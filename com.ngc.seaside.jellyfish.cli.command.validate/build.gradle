@@ -1,6 +1,4 @@
 
-
-
 dependencies {
     compile project(":jellyfish.api")
 
@@ -11,10 +9,4 @@ dependencies {
     compile "org.osgi:osgi.enterprise:$osgiVersion"
 
     testCompile "junit:junit:$junitVersion"
-}
-
-jar {
-    manifest {
-         attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
-    }
 }

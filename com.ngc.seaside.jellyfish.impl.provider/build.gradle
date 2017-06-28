@@ -1,6 +1,4 @@
 
-
-
 dependencies {
 
 	compile project(":jellyfish.api")
@@ -36,11 +34,4 @@ dependencies {
 	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     
-}
-
-jar {
-    manifest {
-        // Uncomment the following line if your bundle needs to export its packages.
-         attributes('Export-Package': 'com.ngc.seaside.jellyfish.*')
-    }
 }
