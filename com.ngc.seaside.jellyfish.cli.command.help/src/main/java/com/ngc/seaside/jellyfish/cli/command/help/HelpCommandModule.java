@@ -6,10 +6,13 @@ import com.ngc.seaside.command.api.ICommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 
 public class HelpCommandModule extends AbstractModule {
+
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding().to(HelpCommand.class);
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding().to(HelpCommand.class).asEagerSingleton();
 
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(HelpCommand.class);
+      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(HelpCommand.class).asEagerSingleton();
+
    }
+
 }
