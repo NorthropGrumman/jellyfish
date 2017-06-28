@@ -1,22 +1,5 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-
-import org.eclipse.xtext.parser.ParseException;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -31,11 +14,27 @@ import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.cli.command.help.HelpCommand;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+
+import org.eclipse.xtext.parser.ParseException;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -48,7 +47,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IBootstrapCommandProvider bootstrapCommandProvider;
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
-   private HelpCommand helpCommand;
 
    /**
     * Ensure the dynamic references are added only after the activation of this
@@ -88,16 +86,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
       logService.trace(getClass(), "Adding command '%s'", command.getName());
-      if (command instanceof HelpCommand) {
-         helpCommand = (HelpCommand) command;
-         for (IJellyFishCommand cmd : commandMap.values()) {
-            helpCommand.addCommand(cmd);
-         }
-      }
       commandMap.put(command.getName(), command);
-      if (helpCommand != null) {
-         helpCommand.addCommand(command);
-      }
    }
 
    @Override
@@ -106,12 +95,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       logService.trace(getClass(), "Removing command '%s'", command.getName());
       commandMap.remove(command.getName());
-      if (helpCommand != null) {
-         helpCommand.removeCommand(command);
-         if (command instanceof HelpCommand) {
-            helpCommand = null;
-         }
-      }
    }
 
    @Override

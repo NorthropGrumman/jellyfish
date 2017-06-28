@@ -3,14 +3,12 @@ package com.ngc.seaside.jellyfish.cli.command.help;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.command.api.IParameter;
 
-class IParameterFormat implements ITableFormat<IParameter>
-{
+class IParameterFormat implements ITableFormat<IParameter> {
    private final int lineWidth;
    private final int maxNameWidth;
    private final int columnWidth;
 
-   public IParameterFormat(int lineWidth, int columnWidth, int maxNameWidth)
-   {
+   public IParameterFormat(int lineWidth, int columnWidth, int maxNameWidth) {
       super();
       this.lineWidth = lineWidth;
       this.maxNameWidth = maxNameWidth;
@@ -18,14 +16,12 @@ class IParameterFormat implements ITableFormat<IParameter>
    }
 
    @Override
-   public int getColumnCount()
-   {
+   public int getColumnCount() {
       return 2;
    }
 
    @Override
-   public String getColumnName(int column)
-   {
+   public String getColumnName(int column) {
       switch (column) {
       case 0:
          return "Name";
@@ -37,8 +33,7 @@ class IParameterFormat implements ITableFormat<IParameter>
    }
 
    @Override
-   public ITableFormat.ColumnSizePolicy getColumnSizePolicy(int column)
-   {
+   public ITableFormat.ColumnSizePolicy getColumnSizePolicy(int column) {
       switch (column) {
       case 0:
          return ITableFormat.ColumnSizePolicy.FIXED;
@@ -50,8 +45,7 @@ class IParameterFormat implements ITableFormat<IParameter>
    }
 
    @Override
-   public int getColumnWidth(int column)
-   {
+   public int getColumnWidth(int column) {
       switch (column) {
       case 0:
          return maxNameWidth;
@@ -63,8 +57,7 @@ class IParameterFormat implements ITableFormat<IParameter>
    }
 
    @Override
-   public Object getColumnValue(IParameter object, int column)
-   {
+   public Object getColumnValue(IParameter object, int column) {
       switch (column) {
       case 0:
          return object.getName();

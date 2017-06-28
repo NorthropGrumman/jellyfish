@@ -16,30 +16,24 @@ import com.ngc.blocs.service.resource.impl.common.ResourceService;
  * This class should use the Guice binding to match the interface to the
  * default implementation and call the activate method on the implementation.
  */
-public class JellyFishServiceModule extends AbstractModule
-{
+public class JellyFishServiceModule extends AbstractModule {
 
    private LogService logService;
    private ResourceService resourceService;
 
    @Override
-   protected void configure()
-   {
+   protected void configure() {
       // The listener let's us know when the service has been bound
       // and then we call activate on the service.
       // TODO figure out how to deactivate the component and make this generic for all OSGi services
-      bindListener(new AbstractMatcher<TypeLiteral<?>>()
-      {
+      bindListener(new AbstractMatcher<TypeLiteral<?>>() {
          @Override
-         public boolean matches(TypeLiteral<?> literal)
-         {
+         public boolean matches(TypeLiteral<?> literal) {
             return literal.getRawType().equals(LogService.class) || literal.getRawType().equals(ResourceService.class);
          }
-      }, new TypeListener()
-      {
+      }, new TypeListener() {
          @Override
-         public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter)
-         {
+         public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
             encounter.register((InjectionListener<I>) i -> {
                if (i instanceof LogService) {
                   logService = (LogService) i;
@@ -48,8 +42,7 @@ public class JellyFishServiceModule extends AbstractModule
                      resourceService.setLogService(logService);
                      resourceService.activate();
                   }
-               }
-               else if (i instanceof ResourceService) {
+               } else if (i instanceof ResourceService) {
                   resourceService = (ResourceService) i;
                   if (logService != null) {
                      resourceService.setLogService(logService);
