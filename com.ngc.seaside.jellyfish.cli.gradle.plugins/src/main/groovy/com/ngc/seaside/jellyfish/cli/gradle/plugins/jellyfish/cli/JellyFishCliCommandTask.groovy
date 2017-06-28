@@ -1,4 +1,4 @@
-package com.ngc.seaside.gradle.plugins.jellyfish.cli
+package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
 import com.ngc.seaside.jellyfish.JellyFish
 import org.gradle.api.DefaultTask
