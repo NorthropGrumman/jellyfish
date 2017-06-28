@@ -23,4 +23,32 @@ public interface IDataField extends INamedChild<IData> {
     * @return this field
     */
    IDataField setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the type of this field.
+    */
+   DataTypes getType();
+
+   /**
+    * Sets the type of this field.
+    *
+    * @param type the type of this field
+    * @return this field
+    */
+   IDataField setType(DataTypes type);
+
+   /**
+    * Gets the data type this field is referencing
+    *
+    * @return the data type this field is referencing
+    */
+   IData getReferencedDataType();
+
+   /**
+    * Sets the data type this field is referencing.
+    *
+    * @param dataType the data tyep this field is referencing
+    * @return the data type this field is referencing
+    */
+   IDataField setReferencedDataType(IData dataType);
 }

@@ -7,5 +7,6 @@ public enum DataTypes {
    INT,
    FLOAT,
    STRING,
-   BOOLEAN
+   BOOLEAN,
+   DATA
 }

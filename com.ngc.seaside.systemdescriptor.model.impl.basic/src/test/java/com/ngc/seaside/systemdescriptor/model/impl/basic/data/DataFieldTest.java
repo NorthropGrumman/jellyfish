@@ -1,7 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
@@ -13,8 +13,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.json.Json;
 
-import static com.ngc.seaside.systemdescriptor.model.impl.basic.TestUtils.demandImmutability;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataFieldTest {
@@ -23,6 +23,9 @@ public class DataFieldTest {
 
    @Mock
    private IData parent;
+
+   @Mock
+   private IData referencedDataType;
 
    private IMetadata metadata;
 
@@ -33,21 +36,32 @@ public class DataFieldTest {
    }
 
    @Test
-   public void testDoesMakeDataField() throws Throwable {
+   public void testDoesMakePrimitiveDataField() throws Throwable {
       field = new DataField("field1");
+      field.setType(DataTypes.STRING);
       assertEquals("name not correct!",
                    "field1",
                    field.getName());
+      assertEquals("type not correct!",
+                   DataTypes.STRING,
+                   field.getType());
+      assertNull("referenceDataType should be null if field is primitive!",
+                 field.getReferencedDataType());
    }
 
    @Test
-   public void testDoesMakeImmutableDataField() throws Throwable {
+   public void testDoesMakeDataReferencingDataField() throws Throwable {
       field = new DataField("field1");
-      field.setMetadata(new Metadata());
-
-      IDataField immutable = DataField.immutable(field);
-      demandImmutability(() -> immutable.setMetadata(new Metadata()));
+      field.setType(DataTypes.DATA);
+      field.setReferencedDataType(referencedDataType);
+      assertEquals("name not correct!",
+                   "field1",
+                   field.getName());
+      assertEquals("type not correct!",
+                   DataTypes.DATA,
+                   field.getType());
+      assertEquals("referenceDataType not correct!!",
+                   referencedDataType,
+                   field.getReferencedDataType());
    }
-
-
 }
