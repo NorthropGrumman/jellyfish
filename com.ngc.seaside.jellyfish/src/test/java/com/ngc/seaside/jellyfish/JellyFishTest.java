@@ -1,8 +1,6 @@
 package com.ngc.seaside.jellyfish;
 
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,7 +8,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JellyFishTest {
@@ -27,7 +27,7 @@ public class JellyFishTest {
    @Test
    public void validSDProjectParsedTest() throws URISyntaxException {
       Path root = Paths.get(getClass().getClassLoader().getResource("valid-project").toURI());
-      JellyFish.main(new String[] { "help", "-DinputDir=" + root });
+      JellyFish.main(new String[] { "help", "-Dverbose=false", "-DinputDir=" + root });
    }
 
    @Test
@@ -39,7 +39,7 @@ public class JellyFishTest {
    @Test(expected = ParsingException.class)
    public void invalidSdProjectStructureParsed() throws URISyntaxException {
       Path root = Paths.get(getClass().getClassLoader().getResource("invalid-grammar-project").toURI());
-      JellyFish.main(new String[] { "mock", "-DinputDir=" + root });
+      JellyFish.main(new String[] { "help", "-DinputDir=" + root });
    }
 
    @After
