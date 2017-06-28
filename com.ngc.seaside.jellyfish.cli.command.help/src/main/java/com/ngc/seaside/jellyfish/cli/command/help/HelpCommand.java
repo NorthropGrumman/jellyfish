@@ -118,6 +118,11 @@ public final class HelpCommand implements IJellyFishCommand {
       }
    }
 
+   /**
+    * @param standAloneHelp if the help was called for just this command
+    * @param verbose
+    * @param name name of command
+    */
    private void printCommandHelp(boolean standAloneHelp, boolean verbose, String name) {
       String baseIndent = standAloneHelp ? "" : this.indent;
       String parameterIndent = standAloneHelp ? this.indent : this.indent + this.indent;

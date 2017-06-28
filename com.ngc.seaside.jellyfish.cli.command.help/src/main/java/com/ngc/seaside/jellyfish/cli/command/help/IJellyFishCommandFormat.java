@@ -3,11 +3,21 @@ package com.ngc.seaside.jellyfish.cli.command.help;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 
+/**
+ * Formatter for JellyFish commands with two columns: the name and the description.
+ */
 class IJellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
    private final int lineWidth;
    private final int columnWidth;
    private final int maxNameWidth;
 
+   /**
+    * Constructor.
+    * 
+    * @param lineWidth max line width for the entire table
+    * @param columnWidth width of column separator
+    * @param maxNameWidth max length of command name
+    */
    public IJellyFishCommandFormat(int lineWidth, int columnWidth, int maxNameWidth) {
       this.lineWidth = lineWidth;
       this.columnWidth = columnWidth;
