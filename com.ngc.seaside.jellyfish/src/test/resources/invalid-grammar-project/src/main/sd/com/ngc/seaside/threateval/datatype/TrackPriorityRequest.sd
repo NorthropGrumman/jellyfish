@@ -1,0 +1,5 @@
+package com.ngc.seaside.threateval.datatype
+
+data TrackPriorityRequest {
+
+}

@@ -4,12 +4,12 @@ import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 
 /**
- *  This interface provides the same information as the {@link IBootstrapCommandOptions} plus the added
- *  System Descriptor model. The commands will be passed this object upon the execution of their tasks by the
- *  {@link IJellyFishCommandProvider}.
+ * This interface provides the same information as the {@link IBootstrapCommandOptions} plus the added
+ * System Descriptor model. The commands will be passed this object upon the execution of their tasks by the
+ * {@link IJellyFishCommandProvider}.
  *
- *  Each command should determine if the system descriptor must be set, not the provider. In the event that the
- *  system descriptor is null and it is required, the command should issue an error to the user.
+ * Each command should determine if the system descriptor must be set, not the provider. In the event that the
+ * system descriptor is null and it is required, the command should issue an error to the user.
  *
  */
 public interface IJellyFishCommandOptions extends IBootstrapCommandOptions {
