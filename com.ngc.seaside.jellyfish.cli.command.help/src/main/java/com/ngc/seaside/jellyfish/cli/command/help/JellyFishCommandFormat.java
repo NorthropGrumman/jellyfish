@@ -6,7 +6,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 /**
  * Formatter for JellyFish commands with two columns: the name and the description.
  */
-class IJellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
+class JellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
    private final int lineWidth;
    private final int columnWidth;
    private final int maxNameWidth;
@@ -18,7 +18,7 @@ class IJellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
     * @param columnWidth width of column separator
     * @param maxNameWidth max length of command name
     */
-   public IJellyFishCommandFormat(int lineWidth, int columnWidth, int maxNameWidth) {
+   public JellyFishCommandFormat(int lineWidth, int columnWidth, int maxNameWidth) {
       this.lineWidth = lineWidth;
       this.columnWidth = columnWidth;
       this.maxNameWidth = maxNameWidth;

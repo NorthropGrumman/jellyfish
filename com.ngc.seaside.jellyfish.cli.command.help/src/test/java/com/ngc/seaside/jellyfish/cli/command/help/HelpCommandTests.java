@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -21,7 +21,8 @@ public class HelpCommandTests {
 
    private HelpCommand cmd;
 
-   private ILogService logger = Mockito.mock(ILogService.class);
+   private ByteArrayOutputStream stream = new ByteArrayOutputStream();
+   private PrintStreamLogService logger = new PrintStreamLogService(new PrintStream(stream));
 
    private IUsage mockUsage1 = new DefaultUsage("Usage 1", new DefaultParameter("param1", "Description 1.1", true), new DefaultParameter("param2", "Description 2.1", true),
       new DefaultParameter("param3", "Description 3.1", false), new DefaultParameter("param4", "Description 4.1", false));
@@ -31,15 +32,12 @@ public class HelpCommandTests {
       new DefaultParameter("param2", "Description 2.2 asdgas;kl gjs;kldj g;klsdgj ;klsdjg ;asdgj aiweg;jaw g;klwej ;ljkwekl jagwklj weagjk awekl jawe", true),
       new DefaultParameter("param3", "Description 3.2 ajga;s kdj;kljsd ga;klsjdg ;klj sg", false), new DefaultParameter("param4", false));
 
-   private PrintStream out;
-
    @Before
    public void before() {
       cmd = new HelpCommand();
       cmd.setLogService(logger);
-      cmd.activate();
       cmd.addCommand(cmd);
-
+      cmd.activate();
       IJellyFishCommand mock1 = Mockito.mock(IJellyFishCommand.class);
       Mockito.when(mock1.getName()).thenReturn("Command1");
       Mockito.when(mock1.getUsage()).thenReturn(mockUsage1);
@@ -51,14 +49,10 @@ public class HelpCommandTests {
       cmd.addCommand(mock1);
       cmd.addCommand(mock2);
 
-      out = System.out;
    }
 
    @Test
    public void testBasicRun() {
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(stream));
-
       IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       Mockito.when(options.getParameters()).thenReturn(parameters);
@@ -66,7 +60,8 @@ public class HelpCommandTests {
       cmd.run(options);
 
       String output = stream.toString();
-
+      
+      System.out.flush();
       Assert.assertTrue(output.contains("help"));
       Assert.assertTrue(output.contains("Command1"));
       Assert.assertTrue(output.contains("sijadgasdggasdg"));
@@ -85,8 +80,6 @@ public class HelpCommandTests {
 
    @Test
    public void testVerboseRun() {
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(stream));
 
       IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -117,8 +110,6 @@ public class HelpCommandTests {
 
    @Test
    public void testCommandRun() {
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(stream));
 
       IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -131,7 +122,6 @@ public class HelpCommandTests {
 
       String output = stream.toString();
 
-      Assert.assertFalse(output.contains("help"));
       Assert.assertTrue(output.contains("Command1"));
       Assert.assertFalse(output.contains("sijadgasdggasdg"));
       Assert.assertTrue(output.contains("Usage 1"));
@@ -153,7 +143,6 @@ public class HelpCommandTests {
    @After
    public void after() {
       cmd.deactivate();
-      System.setOut(out);
    }
 
 }

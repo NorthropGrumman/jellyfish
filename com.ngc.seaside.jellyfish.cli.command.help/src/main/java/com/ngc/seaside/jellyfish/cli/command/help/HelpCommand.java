@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -42,12 +41,6 @@ public final class HelpCommand implements IJellyFishCommand {
 
    private String indent = "   ";
 
-   @Inject(optional = true)
-   public void setLineWidth(int width) {
-      Preconditions.checkArgument(width > 0);
-      lineWidth = width;
-   }
-
    public void addCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command);
       commands.put(command.getName(), command);
@@ -57,10 +50,33 @@ public final class HelpCommand implements IJellyFishCommand {
       Preconditions.checkNotNull(command);
       commands.remove(command.getName());
    }
-
+   
+   /**
+    * Sets log service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    @Inject
-   public void addCommands(Set<IJellyFishCommand> commands) {
-      commands.forEach(this::addCommand);
+   public void setLogService(ILogService ref) {
+      logService = ref;
+   }
+   
+   @Activate
+   public void activate() {
+      logService.trace(getClass(), "Activated");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      logService.trace(getClass(), "Deactivated");
+}
+
+   /**
+    * Remove log service.
+    */
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
    }
 
    @Override
@@ -95,26 +111,24 @@ public final class HelpCommand implements IJellyFishCommand {
       }
 
       IParameter commandParameter = commandOptions.getParameters().getParameter("command");
-
+      StringBuilder builder = new StringBuilder();
       if (commandParameter == null) {
-         printHelp(verbose);
+         printHelp(builder, verbose);
       } else {
-         printCommandHelp(true, verbose, commandParameter.getValue());
+         printCommandHelp(builder, true, verbose, commandParameter.getValue());
       }
+      logService.info(getClass(), builder.toString());
    }
 
-   private void printHelp(boolean verbose) {
-      System.out.println("Usage: jellyfish command [-DinputDir=dir] [-Doption1=value1 ...]");
-      System.out.println();
-      System.out.println("Commands:");
-      System.out.println();
+   private void printHelp(StringBuilder builder, boolean verbose) {
+      builder.append("Usage: jellyfish command [-DinputDir=dir] [-Doption1=value1 ...]\n\nCommands:\n\n");
       if (verbose) {
          for (String cmd : commands.keySet()) {
-            printCommandHelp(false, true, cmd);
+            printCommandHelp(builder, false, true, cmd);
          }
       } else {
          StringTable<IJellyFishCommand> table = getCommandTable(indent, commands.values());
-         System.out.println(table);
+         builder.append(table);
       }
    }
 
@@ -123,12 +137,12 @@ public final class HelpCommand implements IJellyFishCommand {
     * @param verbose
     * @param name name of command
     */
-   private void printCommandHelp(boolean standAloneHelp, boolean verbose, String name) {
+   private void printCommandHelp(StringBuilder builder, boolean standAloneHelp, boolean verbose, String name) {
       String baseIndent = standAloneHelp ? "" : this.indent;
       String parameterIndent = standAloneHelp ? this.indent : this.indent + this.indent;
       IJellyFishCommand command = commands.get(name);
       if (command == null) {
-         System.out.println(name + " command not found");
+         builder.append(name + " command not found\n");
       } else {
          StringTable<IParameter> parameterTable = getParameterTable(parameterIndent, command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
          StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent, command.getUsage().getRequiredParameters());
@@ -138,23 +152,19 @@ public final class HelpCommand implements IJellyFishCommand {
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
             }
-            System.out.printf("Usage: jellyfish %s [-DinputDir=dir]%s%n", name, parameterUsage);
-            System.out.println();
-            System.out.println(command.getUsage().getDescription());
-            System.out.println();
+            builder.append(String.format("Usage: jellyfish %s [-DinputDir=dir]%s%n%n", name, parameterUsage));
+            builder.append(command.getUsage().getDescription()).append('\n');
          } else {
             StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
-            System.out.println(table);
+            builder.append(table).append('\n');
          }
          if (!requiredParameterTable.getModel().getItems().isEmpty()) {
-            System.out.println(baseIndent + "required parameters:");
-            System.out.println();
-            System.out.println(requiredParameterTable);
+            builder.append(baseIndent).append("required parameters:\n\n");
+            builder.append(requiredParameterTable).append('\n');
          }
          if (!parameterTable.getModel().getItems().isEmpty()) {
-            System.out.println(baseIndent + "optional parameters:");
-            System.out.println();
-            System.out.println(parameterTable);
+            builder.append(baseIndent).append("optional parameters:\n\n");
+            builder.append(parameterTable).append('\n');
          }
       }
    }
@@ -162,12 +172,12 @@ public final class HelpCommand implements IJellyFishCommand {
    private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements)
    {
       int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
-      return getTable(columnSpace, elements, new IJellyFishCommandFormat(lineWidth, columnSpace.length(), maxNameWidth));
+      return getTable(columnSpace, elements, new JellyFishCommandFormat(lineWidth, columnSpace.length(), maxNameWidth));
    }
 
    private StringTable<IParameter> getParameterTable(String columnSpace, Collection<IParameter> elements) {
       int maxNameWidth = commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream()).mapToInt(p -> p.getName().length()).max().orElse(0);
-      return getTable(columnSpace, elements, new IParameterFormat(lineWidth, columnSpace.length(), maxNameWidth));
+      return getTable(columnSpace, elements, new ParameterFormat(lineWidth, columnSpace.length(), maxNameWidth));
    }
 
    private <T> StringTable<T> getTable(String columnSpace, Collection<T> elements, ITableFormat<T> format) {
@@ -182,34 +192,6 @@ public final class HelpCommand implements IJellyFishCommand {
       list.addAll(elements);
       table.getModel().addItems(list);
       return table;
-   }
-
-   @Activate
-   public void activate() {
-      logService.trace(getClass(), "Activated");
-   }
-
-   @Deactivate
-   public void deactivate() {
-      logService.trace(getClass(), "Deactivated");
-   }
-
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
-   @Inject
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
    }
 
 }

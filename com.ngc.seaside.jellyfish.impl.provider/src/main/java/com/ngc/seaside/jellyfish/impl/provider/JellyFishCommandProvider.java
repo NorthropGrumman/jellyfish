@@ -1,22 +1,5 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-
-import org.eclipse.xtext.parser.ParseException;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -36,6 +19,22 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+
+import org.eclipse.xtext.parser.ParseException;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -78,7 +77,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", true)));
+      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", false)));
       return usage;
    }
 
@@ -122,10 +121,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       if (arguments.length == 0) {
          throw new IllegalArgumentException("No command provided");
       } else {
-         Pattern p = Pattern.compile("[a-zA-Z_][\\w-]*");
-         if (!p.matcher(arguments[0]).matches()) {
-            throw new IllegalArgumentException("Invalid command: " + arguments[0] + ". Expected format: " + p.pattern());
-         }
          if (arguments.length == 1) {
             validatedArgs = new String[] { arguments[0], "-DinputDir=" + System.getProperty("user.dir") };
          } else {
@@ -232,20 +227,19 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IJellyFishCommandOptions convert(IParameterCollection output) {
       DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
       IParameter inputDir = output.getParameter("inputDir");
-      Path path = Paths.get(inputDir.getValue());
+      Path path;
+      if (inputDir == null) {
+         path = Paths.get(System.getProperty("user.dir"));
+      }else {
+         path = Paths.get(inputDir.getValue());
+      }
 
       try {
          if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException(inputDir.getValue() + " does not exist as a directory");
          }
-         if (!Files.isDirectory(path.resolve("src").resolve("main").resolve("sd"))) {
-            throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/main/sd");
-         }
-         if (!Files.isDirectory(path.resolve("src").resolve("test").resolve("gherkin"))) {
-            throw new IllegalArgumentException(inputDir.getValue() + " does not contain src/test/gherkin");
-         }
          def.setSystemDescriptor(getSystemDescriptor(path));
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | ParsingException e) {
          logService.warn(getClass(), e.getMessage());
          def.setSystemDescriptor(null);
       } finally {

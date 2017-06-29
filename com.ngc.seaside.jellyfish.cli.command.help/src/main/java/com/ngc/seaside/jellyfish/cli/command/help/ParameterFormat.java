@@ -6,7 +6,7 @@ import com.ngc.seaside.command.api.IParameter;
 /**
  * Formatter for parameters with two columns: the name and the description.
  */
-class IParameterFormat implements ITableFormat<IParameter> {
+class ParameterFormat implements ITableFormat<IParameter> {
    private final int lineWidth;
    private final int maxNameWidth;
    private final int columnWidth;
@@ -18,7 +18,7 @@ class IParameterFormat implements ITableFormat<IParameter> {
     * @param columnWidth width of column separator
     * @param maxNameWidth max length of command name
     */
-   public IParameterFormat(int lineWidth, int columnWidth, int maxNameWidth) {
+   public ParameterFormat(int lineWidth, int columnWidth, int maxNameWidth) {
       super();
       this.lineWidth = lineWidth;
       this.maxNameWidth = maxNameWidth;
