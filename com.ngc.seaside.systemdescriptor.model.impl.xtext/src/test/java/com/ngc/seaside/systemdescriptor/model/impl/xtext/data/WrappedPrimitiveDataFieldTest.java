@@ -3,11 +3,13 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IPrimitiveDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
 
 import org.junit.Before;
@@ -19,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedDataTest extends AbstractWrappedXtextTest {
+public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
 
 	private WrappedData wrappedData;
 
@@ -33,8 +35,9 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 		data = factory().createData();
 		data.setName("Foo");
 
-		DataFieldDeclaration field = factory().createDataFieldDeclaration();
+		PrimitiveDataFieldDeclaration field = factory().createPrimitiveDataFieldDeclaration();
 		field.setName("field1");
+		field.setType(PrimitiveDataType.STRING);
 		data.getFields().add(field);
 
 		Package p = factory().createPackage();
@@ -57,7 +60,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 
 	@Test
 	public void testDoesUpdateXtextObject() throws Throwable {
-		IDataField newField = mock(IDataField.class);
+		IPrimitiveDataField newField = mock(IPrimitiveDataField.class);
 		when(newField.getName()).thenReturn("newField");
 		when(newField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 

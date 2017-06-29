@@ -19,7 +19,8 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -127,18 +128,30 @@ public class ValidationDelegate implements IValidatorExtension {
                   helper);
             doValidation(ctx2);
             break;
-         case SystemDescriptorPackage.DATA_FIELD_DECLARATION:
-            String fieldName = ((DataFieldDeclaration) source).getName();
-            String dataName = ((Data) source.eContainer()).getName();
-            packageName = ((Package) source.eContainer().eContainer()).getName();
-            IValidationContext<IDataField> ctx3 = newContext(
-                  descriptor.findData(packageName, dataName).get()
-                        .getFields()
-                        .getByName(fieldName)
-                        .get(),
-                  helper);
-            doValidation(ctx3);
-            break;
+         case SystemDescriptorPackage.PRIMITIVE_DATA_FIELD_DECLARATION:
+             String fieldName = ((PrimitiveDataFieldDeclaration) source).getName();
+             String dataName = ((Data) source.eContainer()).getName();
+             packageName = ((Package) source.eContainer().eContainer()).getName();
+             IValidationContext<IDataField> ctx3 = newContext(
+                   descriptor.findData(packageName, dataName).get()
+                         .getFields()
+                         .getByName(fieldName)
+                         .get(),
+                   helper);
+             doValidation(ctx3);
+             break;
+         case SystemDescriptorPackage.REFERENCED_DATA_FIELD_DECLARATION:
+             fieldName = ((ReferencedDataFieldDeclaration) source).getName();
+             dataName = ((Data) source.eContainer()).getName();
+             packageName = ((Package) source.eContainer().eContainer()).getName();
+             ctx3 = newContext(
+                   descriptor.findData(packageName, dataName).get()
+                         .getFields()
+                         .getByName(fieldName)
+                         .get(),
+                   helper);
+             doValidation(ctx3);
+             break;
          case SystemDescriptorPackage.MODEL:
             packageName = ((Package) source.eContainer()).getName();
             IValidationContext<IModel> ctx4 = newContext(

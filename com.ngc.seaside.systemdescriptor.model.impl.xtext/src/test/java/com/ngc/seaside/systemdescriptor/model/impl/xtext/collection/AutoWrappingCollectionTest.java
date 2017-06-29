@@ -7,7 +7,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTes
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedDataField;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +35,6 @@ public class AutoWrappingCollectionTest extends AbstractWrappedXtextTest {
 
       DataFieldDeclaration field = factory().createDataFieldDeclaration();
       field.setName("field1");
-      field.setType(DataType.STRING);
       data.getFields().add(field);
    }
 
@@ -75,7 +73,6 @@ public class AutoWrappingCollectionTest extends AbstractWrappedXtextTest {
    private static IDataField fieldWithName(String name) {
       IDataField f = mock(IDataField.class);
       when(f.getName()).thenReturn(name);
-      when(f.getType()).thenReturn(DataTypes.STRING);
       when(f.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       return f;
    }

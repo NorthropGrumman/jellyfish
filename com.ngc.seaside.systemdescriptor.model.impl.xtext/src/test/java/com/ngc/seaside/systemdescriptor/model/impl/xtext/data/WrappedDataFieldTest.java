@@ -1,13 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +30,6 @@ public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
    public void setup() throws Throwable {
       dataFieldDeclaration = factory().createDataFieldDeclaration();
       dataFieldDeclaration.setName("foo");
-      dataFieldDeclaration.setType(DataType.INT);
 
       Data data = factory().createData();
       data.getFields().add(dataFieldDeclaration);
@@ -45,9 +42,6 @@ public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("name incorrect!",
                    dataFieldDeclaration.getName(),
                    wrapped.getName());
-      assertEquals("type incorrect!",
-                   DataTypes.INT,
-                   wrapped.getType());
       assertEquals("parent incorrect!",
                    parent,
                    wrapped.getParent());
@@ -59,10 +53,6 @@ public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesUpdateXtextObject() throws Throwable {
       wrapped = new WrappedDataField(resolver(), dataFieldDeclaration);
-      wrapped.setType(DataTypes.STRING);
-      assertEquals("type incorrect!",
-                   DataType.STRING,
-                   dataFieldDeclaration.getType());
 
       wrapped.setMetadata(newMetadata("foo", "bar"));
       assertNotNull("metadata not set!",
@@ -73,16 +63,12 @@ public class WrappedDataFieldTest extends AbstractWrappedXtextTest {
    public void testDoesConvertToXtextObject() throws Throwable {
       IDataField field = mock(IDataField.class);
       when(field.getName()).thenReturn("hello");
-      when(field.getType()).thenReturn(DataTypes.STRING);
       when(field.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       DataFieldDeclaration x = WrappedDataField.toXtext(field);
       assertEquals("name not correct!",
                    field.getName(),
                    x.getName());
-      assertEquals("type not correct!",
-                   DataType.STRING,
-                   x.getType());
       assertNull("metadata not correct!",
                  x.getMetadata());
    }
