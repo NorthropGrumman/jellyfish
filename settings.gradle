@@ -1,0 +1,15 @@
+
+rootProject.name = 'seaside-bootstrap-api'
+
+include 'com.ngc.seaside.command.api'
+project(':com.ngc.seaside.command.api').name = 'command.api'
+
+include 'com.ngc.seaside.bootstrap.api'
+project(':com.ngc.seaside.bootstrap.api').name = 'bootstrap.api'
+
+include 'com.ngc.seaside.bootstrap.service.api'
+project(':com.ngc.seaside.bootstrap.service.api').name = 'bootstrap.service.api'
+
+
+
+
