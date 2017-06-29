@@ -52,7 +52,7 @@ public class XTextSystemDescriptorServiceIT {
 
       service = InjectorTestFactory.getSharedInstance().getInstance(ISystemDescriptorService.class);
    }
-
+   
    @Test
    public void testDoesParseProject() throws Throwable {
       IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
@@ -64,7 +64,7 @@ public class XTextSystemDescriptorServiceIT {
    public void testDoesProgrammaticallyRegisterValidators() throws Throwable {
       service.addValidator(validator);
       try {
-         IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+         IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));         
          assertFalse("validator should have triggered issues!",
                      result.isSuccessful());
       } finally {
