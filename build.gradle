@@ -23,8 +23,8 @@ subprojects {
     version = '1.0-SNAPSHOT'
 
     ext {
-        jellyfishDSLVersion = '1.1-SNAPSHOT'
-        boostrapVersion = '1.0-SNAPSHOT'
+        jellyfishDSLVersion = '1.1'
+        boostrapVersion = '1.0'
         blocsVersion = '2.1'
         guiceVersion = '4.1.0'
         osgiVersion =  '6.0.0'
