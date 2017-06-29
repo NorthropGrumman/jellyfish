@@ -1,19 +1,26 @@
+# Java Files
 *.class
-
-# Package Files #
+*.jar
 *.war
 *.ear
+
+# generated files
+bin/
+gen/
 
 # Eclipse
 .classpath
 .project
 .settings/
 .metadata
+.recommenders/
 
 # Intellij
-.idea/
 *.iml
+*.ipr
 *.iws
+.idea/
+out/
 
 # Mac
 .DS_Store

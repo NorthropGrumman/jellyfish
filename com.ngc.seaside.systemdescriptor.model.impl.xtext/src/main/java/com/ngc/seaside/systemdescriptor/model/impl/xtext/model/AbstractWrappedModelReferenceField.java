@@ -3,8 +3,8 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -15,8 +15,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
  * This class is not threadsafe.
  *
  * @param <T> the type of XText field this class is wrapping
+ * @param <I> the type of the class implementing this class
  */
-public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclaration> extends AbstractWrappedXtext<T>
+public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclaration, I extends AbstractWrappedModelReferenceField<T, I>> extends AbstractWrappedXtext<T>
       implements IModelReferenceField {
 
    public AbstractWrappedModelReferenceField(IWrapperResolver resolver, T wrapped) {
@@ -25,14 +26,14 @@ public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclarat
 
    @Override
    public IMetadata getMetadata() {
-      // TODO TH: metadata on fields not currently supported.
-      return IMetadata.EMPTY_METADATA;
+      return WrappedMetadata.fromXtextJson(wrapped.getMetadata());
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public IReferenceField setMetadata(IMetadata metadata) {
-      // TODO TH: metadata on fields not currently supported.
-      throw new UnsupportedOperationException("not implemented");
+   public I setMetadata(IMetadata metadata) {
+      wrapped.setMetadata(WrappedMetadata.toXtextJsonObject(metadata.getJson()));
+      return (I) this;
    }
 
    @Override

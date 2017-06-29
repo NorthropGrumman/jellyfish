@@ -13,7 +13,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenceField<PartDeclaration> {
+public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenceField<PartDeclaration, WrappedPartModelReferenceField> {
 
    public WrappedPartModelReferenceField(IWrapperResolver resolver, PartDeclaration wrapped) {
       super(resolver, wrapped);
