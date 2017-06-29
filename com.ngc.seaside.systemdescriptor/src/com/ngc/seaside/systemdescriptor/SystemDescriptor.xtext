@@ -128,7 +128,7 @@ enum Cardinality
  * An output declaration may also specify an optional cardinality.
  */
 OutputDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
 
 /*
@@ -145,7 +145,7 @@ Output
  * An output declaration may also specify an optional cardinality.
  */
 InputDeclaration
-	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName
+	: cardinality=Cardinality? type=[Data|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
 
 /*
@@ -161,7 +161,7 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
-	: type=[Model|UnqualifiedName] name=UnqualifiedName
+	: type=[Model|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
  
 /*
@@ -178,7 +178,7 @@ Parts
  * and an unqualified name.
  */
 RequireDeclaration
-	: type=[Model|UnqualifiedName] name=UnqualifiedName
+	: type=[Model|UnqualifiedName] name=UnqualifiedName metadata=JsonObject?
 	;
  
 /*
@@ -365,12 +365,12 @@ Data
  */
 Model
 	: 'model' name=UnqualifiedName '{'
-		metadata=Metadata?
-		requires=Requires?
-		input=Input?
-		output=Output?
-		scenarios+=Scenario*
-		parts=Parts?
+		metadata=Metadata? &
+		requires=Requires? &
+		input=Input? &
+		output=Output? &
+		scenarios+=Scenario* &
+		parts=Parts? &
 		links=Links?
 	  '}'
 	;
@@ -422,9 +422,6 @@ DblValue: value=DOUBLE;
 
 Value:
 	StringValue | BooleanValue | JsonValue | ArrayValue | NullValue | IntValue | DblValue;
-
-//Value:
-//	JsonObject | STRING | Array | Boolean | Null | NUMBER;
 
 Array:
 	'[' {Array} 

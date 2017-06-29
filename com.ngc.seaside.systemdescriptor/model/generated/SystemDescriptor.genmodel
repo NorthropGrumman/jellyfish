@@ -23,6 +23,7 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//FieldDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//FieldDeclaration/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//FieldDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Import">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Import/importedNamespace"/>
