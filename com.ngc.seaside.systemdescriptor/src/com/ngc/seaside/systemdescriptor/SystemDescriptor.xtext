@@ -88,19 +88,20 @@ Import
 /*
  * Defines the different data types that are built in.
  */
-enum DataType
+enum PrimitiveDataType
 	: INT='int'
 	| FLOAT='float'
 	| STRING="string"
 	| BOOLEAN="boolean"
 	;
 	
+	
 /*
  * A data field declaration consists of a type and unqualified name.
  * It may also contain optional metadata.
  */
-DataFieldDeclaration
-	: type=DataType
+PrimitiveDataFieldDeclaration
+	: type=PrimitiveDataType
 	  name=UnqualifiedName
 	  metadata=JsonObject?
 	;
@@ -330,11 +331,23 @@ Links
 		declarations+=LinkDeclaration+
 	  '}'
 	;
- 
+	
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
 
+DataFieldDeclaration
+	: PrimitiveDataFieldDeclaration
+	| ReferencedDataFieldDeclaration
+	;
+	
+ReferencedDataFieldDeclaration
+	: cardinality=Cardinality?
+	  data=[Data|UnqualifiedName] 
+	  name=UnqualifiedName
+	  metadata=JsonObject?
+	;
+	
 /*
  * Declares an object of data type; a type of object that contains attributes
  * of metadata and optional members.
@@ -342,7 +355,7 @@ Links
 Data
 	: 'data' name=UnqualifiedName '{'
 		metadata=Metadata?
-		fields+=DataFieldDeclaration*
+		fields+=DataFieldDeclaration* 
 	  '}'
 	;
 
