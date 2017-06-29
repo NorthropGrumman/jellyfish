@@ -10,6 +10,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -24,6 +25,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * @author justan.provence@ngc.com
  */
+@Component(service = IBootstrapCommand.class)
 public class BundleBootstrapCommand implements IBootstrapCommand {
    private final static String NAME = "bundle";
 

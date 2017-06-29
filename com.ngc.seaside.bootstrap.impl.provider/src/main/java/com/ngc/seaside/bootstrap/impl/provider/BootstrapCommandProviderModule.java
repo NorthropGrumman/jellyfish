@@ -11,6 +11,7 @@ import com.google.inject.spi.TypeListener;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 
@@ -18,16 +19,22 @@ import java.util.Set;
 
 /**
  * Guice wrapper around the {@link BootstrapCommandProvider} implementation.
- *
- * TODO abstract the isReady and Update technique to a reusable software pattern
  */
 public class BootstrapCommandProviderModule extends AbstractModule implements IBootstrapCommandProvider {
 
    private final BootstrapCommandProvider delegate = new BootstrapCommandProvider();
 
-   private boolean logServiceSet = false;
-   private boolean templateServiceSet = false;
-   private Set<IBootstrapCommand> temporaryCommands;
+   @Inject
+   public BootstrapCommandProviderModule(
+            ILogService logService,
+            ITemplateService templateService,
+            IParameterService parameterService,
+            Set<IBootstrapCommand> commands) {
+       delegate.setLogService(logService);
+       delegate.setTemplateService(templateService);
+       delegate.setParameterService(parameterService);
+       commands.forEach(delegate::addCommand);
+   }
 
    @Override
    protected void configure() {
@@ -67,45 +74,24 @@ public class BootstrapCommandProviderModule extends AbstractModule implements IB
       delegate.run(arguments);
    }
 
-   @Inject
-   public void addCommands(Set<IBootstrapCommand> commands) {
-      if(isReady()) {
-         commands.forEach(this::addCommand);
-      } else {
-         temporaryCommands = commands;
-      }
-   }
+//   @Inject
+//   public void addCommands(Set<IBootstrapCommand> commands) {
+//      commands.forEach(this::addCommand);
+//   }
+//
+//   @Inject
+//   public void setLogService(ILogService ref) {
+//      delegate.setLogService(ref);
+//   }
+//
+//   @Inject
+//   public void setBootstrapTemplateService(ITemplateService ref) {
+//      delegate.setTemplateService(ref);
+//   }
+//
+//   @Inject
+//   public void setParameterService(IParameterService ref) {
+//      delegate.setParameterService(ref);
+//   }
 
-   @Inject
-   public void setLogService(ILogService ref) {
-      delegate.setLogService(ref);
-      logServiceSet = true;
-      update();
-   }
-
-   @Inject
-   public void setBootstrapTemplateService(ITemplateService ref) {
-      delegate.setTemplateService(ref);
-      templateServiceSet = true;
-      update();
-   }
-
-   /**
-    * Update the delegate with the commands.
-    */
-   private void update() {
-      if(isReady() && temporaryCommands != null) {
-         addCommands(temporaryCommands);
-         temporaryCommands = null;
-      }
-   }
-
-   /**
-    * Determine if the required services exists and the commands can be added.
-    *
-    * @return true if the services exists.
-    */
-   private boolean isReady() {
-      return templateServiceSet && logServiceSet;
-   }
 }

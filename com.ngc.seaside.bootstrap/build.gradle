@@ -3,23 +3,27 @@ apply plugin: 'application'
 mainClassName = "com.ngc.seaside.bootstrap.Bootstrap"
 
 configurations {
-    templates
+    commandTemplate
 }
 
 dependencies {
-    compile project(":command.api")
-    compile project(":bootstrap.api")
+    compile "com.ngc.seaside:command.api:$apiVersion"
+    compile "com.ngc.seaside:bootstrap.api:$apiVersion"
     compile project(":bootstrap.impl.provider")
-    compile project(":bootstrap.command.impl.bundlecommand")
-    compile project(":bootstrap.command.impl.projectcommand")
     compile project(":bootstrap.service.impl.templateservice")
     compile project(":bootstrap.service.impl.promptuserservice")
     compile project(":bootstrap.service.impl.propertyservice")
+    compile project(":bootstrap.service.impl.parameterservice")
 
-    compile project(":bootstrap.command.impl.createjavabundle")
-//    templates project(path: ":bootstrap.command.impl.createjavabundle", configuration: "templates")
+    //core command projects
+    compile project(":bootstrap.command.impl.help")
+    commandTemplate project(path: ":bootstrap.command.impl.help", configuration: "commandTemplate")
 
-    templates "com.ngc.seaside:bootstrap.command.impl.createjavabundle:1.0-SNAPSHOT:template@zip"
+    //external command projects
+    //this will eventually be replaced by downloadable commands once Nexus 3 has a useful REST API.
+    compile "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion"
+    commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion:template@zip"
+
 
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -37,8 +41,17 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
 }
 
-task copyTemplate(type: Copy) {
-    from configurations.templates
+/**
+ * Copy the archive to the distribution directory and rename it to contain the groupId prefix.
+ */
+task copyCommandTemplate(type: Copy) {
+    from configurations.commandTemplate {
+        rename { name ->
+            def artifacts = configurations.commandTemplate.resolvedConfiguration.resolvedArtifacts
+            def artifact = artifacts.find { it.file.name == name }
+            "${artifact.moduleVersion.id.group}.${artifact.name}-${artifact.moduleVersion.id.version}-${artifact.classifier}.${artifact.extension}"
+        }
+    }
     into "${buildDir}/distributions/${project.name}-${project.version}/resources/templates"
 }
 
@@ -46,7 +59,6 @@ task copyTemplate(type: Copy) {
 applicationDistribution.from('src/main/resources/') {
     into 'resources/'
 }
-
 
 // Provide the app home directory has a system property.
 applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
@@ -65,7 +77,11 @@ jar {
     archiveName = "${project.name}"
 }
 
-task unzip( type: Copy , dependsOn: copyTemplate) {
+/**
+ * Unzip the distribution created by the application plugin to make it easier when
+ * developing the CLI.
+ */
+task unzipDistribution( type: Copy , dependsOn: copyCommandTemplate) {
     def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
     def outputDir = file("${buildDir}/distributions/")
 
@@ -73,5 +89,5 @@ task unzip( type: Copy , dependsOn: copyTemplate) {
     into outputDir
 }
 
-install.dependsOn unzip
-build.dependsOn unzip
+install.dependsOn unzipDistribution
+build.dependsOn unzipDistribution

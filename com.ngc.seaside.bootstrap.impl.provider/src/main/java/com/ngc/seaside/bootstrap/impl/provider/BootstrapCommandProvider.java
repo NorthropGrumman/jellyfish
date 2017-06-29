@@ -49,12 +49,12 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          new DeferredDynamicReference<IBootstrapCommand>() {
             @Override
             protected void addPostActivate(IBootstrapCommand command) {
-               addCommand(command);
+               doAddCommand(command);
             }
 
             @Override
             protected void removePostActivate(IBootstrapCommand command) {
-               removeCommand(command);
+               doRemoveCommand(command);
             }
          };
 
@@ -74,22 +74,17 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    @Override
+   @Reference(unbind = "removeCommand",
+            service = IBootstrapCommand.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC)
    public void addCommand(IBootstrapCommand command) {
-      Preconditions.checkNotNull(command, "Command is null");
-      Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
-      Preconditions
-            .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
-
-      logService.trace(getClass(), "Adding command '%s'", command.getName());
-      commandMap.put(command.getName(), command);
+      commands.add(command);
    }
 
    @Override
    public void removeCommand(IBootstrapCommand command) {
-      Preconditions.checkNotNull(command, "Command is null");
-      Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
-      logService.trace(getClass(), "Removing command '%s'", command.getName());
-      commandMap.remove(command.getName());
+      commands.remove(command);
    }
 
    @Override
@@ -119,6 +114,32 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
       //TODO this will be updated with parameter service output as well
       command.run(options);
+   }
+
+   /**
+    * Add the command.
+    *
+    * @param command the command to add.
+    */
+   protected void doAddCommand(IBootstrapCommand command) {
+      Preconditions.checkNotNull(command, "Command is null");
+      Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
+      Preconditions
+               .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
+      logService.trace(getClass(), "Adding command '%s'", command.getName());
+      commandMap.put(command.getName(), command);
+   }
+
+   /**
+    * Remove the command.
+    *
+    * @param command the command to remove.
+    */
+   protected void doRemoveCommand(IBootstrapCommand command) {
+      Preconditions.checkNotNull(command, "Command is null");
+      Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
+      logService.trace(getClass(), "Removing command '%s'", command.getName());
+      commandMap.remove(command.getName());
    }
 
    /**

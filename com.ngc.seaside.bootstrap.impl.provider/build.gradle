@@ -1,7 +1,7 @@
 dependencies {
-   compile project(":command.api")
-   compile project(":bootstrap.api")
-   compile project(":bootstrap.service.api")
+   compile "com.ngc.seaside:command.api:$apiVersion"
+   compile "com.ngc.seaside:bootstrap.api:$apiVersion"
+   compile "com.ngc.seaside:bootstrap.service.api:$apiVersion"
 
    compile "com.google.inject:guice:$guiceVersion"
    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
