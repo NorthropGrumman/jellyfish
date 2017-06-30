@@ -20,8 +20,6 @@ import java.util.Map;
 public class Properties implements IProperties {
    private final VelocityEngine engine = new VelocityEngine();
    private final VelocityContext context = new VelocityContext();
-   private final Map<String, String> map = new LinkedHashMap<>();
-
    private Map<String, String> original = new LinkedHashMap<>();
    private Map<String, String> current = new LinkedHashMap<>();
 
@@ -64,16 +62,16 @@ public class Properties implements IProperties {
        * package=$groupId.$artifactId
        * capitalized=${package.toUpperCase()}
        */
-      for (String key : original.keySet()) {
-         String value = original.get(key);
+      for(Map.Entry<String, String> entry : original.entrySet()) {
          StringWriter writer = new StringWriter();
          engine.evaluate(context,
                          writer,
-                         String.format("parsing property %s with value %s", key, value),
-                         value);
+                         String.format("parsing property %s with value %s",
+                                       entry.getKey(), entry.getValue()),
+                         entry.getValue());
 
-         context.put(key, writer.toString());
-         current.put(key, writer.toString());
+         context.put(entry.getKey(), writer.toString());
+         current.put(entry.getKey(), writer.toString());
       }
    }
 

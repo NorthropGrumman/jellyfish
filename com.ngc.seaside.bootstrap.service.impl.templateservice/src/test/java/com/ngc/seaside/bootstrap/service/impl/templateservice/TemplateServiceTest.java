@@ -69,6 +69,7 @@ public class TemplateServiceTest {
       delegate.setResourceService(resourceService);
       delegate.setPromptUserService(promptUserService);
       delegate.setPropertyService(propertyService);
+      delegate.activate();
    }
 
    @After
@@ -76,6 +77,7 @@ public class TemplateServiceTest {
       delegate.removeLogService(logService);
       delegate.removePromptUserService(promptUserService);
       delegate.removeResourceService(resourceService);
+      delegate.deactivate();
    }
 
    /**

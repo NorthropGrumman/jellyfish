@@ -12,7 +12,6 @@ import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -38,8 +37,6 @@ import java.util.zip.ZipFile;
 
 /**
  * Default implementation of the {@link ITemplateService} interface.
- *
- * @author justan.provence@ngc.com
  */
 @Component(service = ITemplateService.class)
 public class TemplateService implements ITemplateService {
@@ -233,7 +230,7 @@ public class TemplateService implements ITemplateService {
       Map<String, String> parametersAndValues = new HashMap<>();
       for (String parameter : parametersAndDefaults.getKeys()) {
          String value;
-         if(parameters.containsParameter(parameter)) {
+         if (parameters.containsParameter(parameter)) {
             //if the value is already passed in by the user, don't ask them for it again.
             value = parameters.getParameter(parameter).getValue();
          } else {
@@ -282,20 +279,19 @@ public class TemplateService implements ITemplateService {
          List<String> templatePrefixList = Arrays.asList(templatePrefix.split("\\."));
          File[] files = templatesDir.listFiles(pathname -> {
             String name = pathname.getName();
-            if(!pathname.isFile() ||
-               !name.startsWith(templatePrefix) ||
-               !name.endsWith(TEMPLATE_NAME_ENDING)) {
+            if (!pathname.isFile() ||
+                !name.startsWith(templatePrefix) ||
+                !name.endsWith(TEMPLATE_NAME_ENDING)) {
                return false;
             }
 
             //must test to make sure all parts are actually equal and the last value doesn't just being with
             //the same word.
-            name = name.substring(0, pathname.getName().indexOf("-"));
+            name = name.substring(0, pathname.getName().indexOf('-'));
             List<String> nameList = Arrays.asList(name.split("\\."));
-               return nameList.size() >= templatePrefixList.size() &&
-                      templatePrefixList.equals(nameList);
+            return nameList.size() >= templatePrefixList.size() &&
+                   templatePrefixList.equals(nameList);
          });
-
 
          if (files != null && files.length > 0) {
             //it should not be possible to get 2 different versions of the same
@@ -306,7 +302,6 @@ public class TemplateService implements ITemplateService {
 
       return templateFile;
    }
-
 
    /**
     * Determines if the unzipped contents of the template are valid.

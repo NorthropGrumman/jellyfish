@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,24 @@ public class ParameterServiceTest {
       IParameterCollection collection = delegate.parseParameters(validParameters);
 
       assertEquals(3, collection.getAllParameters().size());
+
+      assertTrue(collection.containsParameter("key1"));
+      assertTrue(collection.containsParameter("key2"));
+      assertTrue(collection.containsParameter("key3"));
+
+      assertEquals("value1", collection.getParameter("key1").getValue());
+      assertEquals("value2", collection.getParameter("key2").getValue());
+      assertEquals("value3", collection.getParameter("key3").getValue());
+   }
+
+   @Test
+   public void doesParseMap() {
+      Map<String, String> parameters = new LinkedHashMap<>();
+      parameters.put("key1", "value1");
+      parameters.put("key2", "value2");
+      parameters.put("key3", "value3");
+
+      IParameterCollection collection = delegate.parseParameters(parameters);
 
       assertTrue(collection.containsParameter("key1"));
       assertTrue(collection.containsParameter("key2"));
