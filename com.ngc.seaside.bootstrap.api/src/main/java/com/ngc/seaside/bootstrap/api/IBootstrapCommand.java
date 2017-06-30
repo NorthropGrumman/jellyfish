@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap;
+package com.ngc.seaside.bootstrap.api;
 
 import com.ngc.seaside.command.api.ICommand;
 
