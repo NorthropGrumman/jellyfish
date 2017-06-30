@@ -27,6 +27,15 @@ dependencies {
    compile name: 'org.eclipse.core.jobs_3.8.0.v20160509-0411'
    compile name: 'org.eclipse.core.runtime_3.12.0.v20160606-1342'
    compile name: 'org.eclipse.osgi_3.11.2.v20161107-1947'
+   compile name: 'org.eclipse.xtext.ui_2.10.0.v201605250459'
+   compile name: 'org.eclipse.core.commands_3.8.0.v20160316-1921'
+   compile name: 'org.eclipse.compare_3.7.0.v20161024-1724'
+   compile name: 'org.eclipse.xtext.builder_2.10.0.v201605250459'
+   compile name: 'org.eclipse.emf.edit.ui_2.12.0.v20160526-0356'
+   compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.10.0.v201605250459'
+   compile name: 'org.eclipse.xtext.ui.shared_2.10.0.v201605250459'
+   compile name: 'org.eclipse.emf.edit_2.12.0.v20160526-0356'
+   compile name: 'org.eclipse.equinox.registry_3.6.100.v20160223-2218'
 }
 
 jar {
