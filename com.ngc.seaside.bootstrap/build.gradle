@@ -20,14 +20,14 @@ dependencies {
 
     //core command projects
     compile project(":bootstrap.command.impl.help")
-    commandTemplate project(path: ":bootstrap.command.impl.help", configuration: "commandTemplate")
+//    commandTemplate project(path: ":bootstrap.command.impl.help", configuration: "commandTemplate")
 
     //external command projects
     //this will eventually be replaced by downloadable commands once Nexus 3 has a useful REST API.
-    compile "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion"
-    commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion:template@zip"
-    compile "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$commandVersion"
-    commandTemplate "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$commandVersion:template@zip"
+    compile "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion"
+    commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion:template@zip"
+    compile "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion"
+    commandTemplate "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion:template@zip"
 
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
