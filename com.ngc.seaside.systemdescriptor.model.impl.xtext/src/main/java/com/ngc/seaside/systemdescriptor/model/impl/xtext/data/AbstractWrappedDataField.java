@@ -2,28 +2,44 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 /**
- * Adapts a {@link DataFieldDeclaration} instance to an {@link IDataField}.
+ * Base class for types that adapts data field declarations to {@link IDataField}s.
  *
  * This class is not threadsafe.
+ *
+ * @param <T> the type of XText field this class is wrapping
  */
-public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration> implements IDataField {
+public abstract class AbstractWrappedDataField<T extends DataFieldDeclaration> extends AbstractWrappedXtext<T>
+      implements IDataField {
 
-   private IMetadata metadata;
+   protected IMetadata metadata;
 
-   public WrappedDataField(IWrapperResolver resolver, DataFieldDeclaration wrapped) {
+   protected AbstractWrappedDataField(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
-      this.metadata = WrappedMetadata.fromXtextJson(wrapped.getMetadata());
+      metadata = WrappedMetadata.fromXtextJson(wrapped.getMetadata());
+   }
+
+   @Override
+   public FieldCardinality getCardinality() {
+      return ConversionUtil.convertCardinalityFromXtext(wrapped.getCardinality());
+   }
+
+   @Override
+   public IDataField setCardinality(FieldCardinality cardinality) {
+      Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
+      wrapped.setCardinality(ConversionUtil.convertCardinalityToXtext(cardinality));
+      return this;
    }
 
    @Override
@@ -47,17 +63,5 @@ public class WrappedDataField extends AbstractWrappedXtext<DataFieldDeclaration>
    @Override
    public IData getParent() {
       return resolver.getWrapperFor((Data) wrapped.eContainer());
-   }
-
-   /**
-    * Creates a new {@code DataFieldDeclaration} that is equivalent to the given field.  Changes to the {@code
-    * IDataField} are not reflected in the returned {@code DataFieldDeclaration} after construction.
-    */
-   public static DataFieldDeclaration toXtext(IDataField field) {
-      Preconditions.checkNotNull(field, "field may not be null!");
-      DataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createDataFieldDeclaration();
-      x.setMetadata(WrappedMetadata.toXtextJson(field.getMetadata()));
-      x.setName(field.getName());
-      return x;
    }
 }

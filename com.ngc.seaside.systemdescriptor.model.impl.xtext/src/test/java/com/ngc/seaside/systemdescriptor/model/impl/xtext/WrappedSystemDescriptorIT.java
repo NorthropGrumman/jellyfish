@@ -10,7 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
@@ -187,7 +187,7 @@ public class WrappedSystemDescriptorIT {
                  dataRefField.isPresent());
       IDataReferenceField df = dataRefField.get();
       assertEquals("cardinality not correct!",
-                   ModelFieldCardinality.SINGLE,
+                   FieldCardinality.SINGLE,
                    df.getCardinality());
       assertEquals("parent not correct!",
                    model.get(),
@@ -237,7 +237,7 @@ public class WrappedSystemDescriptorIT {
                  dataRefField.isPresent());
       df = dataRefField.get();
       assertEquals("cardinality not correct!",
-                   ModelFieldCardinality.SINGLE,
+                   FieldCardinality.SINGLE,
                    df.getCardinality());
       assertEquals("parent not correct!",
                    model.get(),

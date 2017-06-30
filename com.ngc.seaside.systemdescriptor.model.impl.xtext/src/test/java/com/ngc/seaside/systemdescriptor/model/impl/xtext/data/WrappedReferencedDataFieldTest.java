@@ -1,9 +1,13 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.IReferencedDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
@@ -12,63 +16,139 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
 
-	private WrappedData wrappedData;
+   private WrappedReferencedDataField wrappedDataField;
 
-	private Data data;
-	private Data referencedData;
-	private Data referencedData2;
+   private ReferencedDataFieldDeclaration field;
 
-	@Mock
-	private IPackage parent;
+   private Data referencedData;
 
-	@Before
-	public void setup() throws Throwable {
-		data = factory().createData();
-		data.setName("Foo");
+   @Mock
+   private IData referenced;
 
-		referencedData = factory().createData();
-		referencedData.setName("referencedData");
+   @Mock
+   private IData parent;
 
-		referencedData2 = factory().createData();
-		referencedData2.setName("referencedData2");
+   @Mock
+   private IPackage pack;
 
-		ReferencedDataFieldDeclaration field = factory().createReferencedDataFieldDeclaration();
-		field.setName("field1");
-		field.setData(referencedData);
-		data.getFields().add(field);
+   @Before
+   public void setup() throws Throwable {
+      Data parentData = factory().createData();
+      parentData.setName("Foo");
 
-		Package p = factory().createPackage();
-		p.setName("my.package");
-		p.setElement(data);
-		when(resolver().getWrapperFor(p)).thenReturn(parent);
-	}
+      referencedData = factory().createData();
+      referencedData.setName("referencedData");
 
-	@Test
-	public void testDoesWrapXtextObject() throws Throwable {
-		wrappedData = new WrappedData(resolver(), data);
-		assertEquals("name not correct!", wrappedData.getName(), data.getName());
-		assertEquals("fully qualified name not correct!", "my.package.Foo", wrappedData.getFullyQualifiedName());
-		assertEquals("parent not correct!", parent, wrappedData.getParent());
-		assertEquals("metadata not set!", IMetadata.EMPTY_METADATA, wrappedData.getMetadata());
+      Package packageZ = factory().createPackage();
+      packageZ.setName("my.foo.data");
+      packageZ.setElement(referencedData);
 
-		String fieldName = data.getFields().get(0).getName();
-		assertEquals("did not get fields!", fieldName, wrappedData.getFields().getByName(fieldName).get().getName());
-	}
+      field = factory().createReferencedDataFieldDeclaration();
+      field.setName("field1");
+      field.setData(referencedData);
+      field.setCardinality(Cardinality.DEFAULT);
+      parentData.getFields().add(field);
 
-	@Test
-	public void testDoesUpdateXtextObject() throws Throwable {
-		IReferencedDataField newField = mock(IReferencedDataField.class);
-		when(newField.getName()).thenReturn("newField");
-		when(newField.getMetadata()).thenReturn(newMetadata("foo", "bar"));
+      when(referenced.getName()).thenReturn(referencedData.getName());
+      when(referenced.getParent()).thenReturn(pack);
+      when(pack.getName()).thenReturn(packageZ.getName());
 
-		wrappedData = new WrappedData(resolver(), data);
-		wrappedData.getFields().add(newField);
-		assertEquals("newField name not correct!", newField.getName(), data.getFields().get(1).getName());
-	}
+      when(resolver().getWrapperFor(parentData)).thenReturn(parent);
+      when(resolver().getWrapperFor(referencedData)).thenReturn(referenced);
+      when(resolver().findXTextData(referenced.getName(), packageZ.getName())).thenReturn(Optional.of(referencedData));
+   }
+
+   @Test
+   public void testDoesWrapXtextObject() throws Throwable {
+      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
+      assertEquals("name not correct!",
+                   wrappedDataField.getName(),
+                   field.getName());
+      assertEquals("parent not correct!",
+                   parent,
+                   wrappedDataField.getParent());
+      assertEquals("metadata not set!",
+                   IMetadata.EMPTY_METADATA,
+                   wrappedDataField.getMetadata());
+      assertEquals("referenced data not correct!",
+                   referenced,
+                   wrappedDataField.getReferencedDataType());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   wrappedDataField.getCardinality());
+   }
+
+   @Test
+   public void testDoesUpdateXtextObject() throws Throwable {
+      Data anotherReferencedData = factory().createData();
+      anotherReferencedData.setName("referencedData2");
+
+      Package packageZ = factory().createPackage();
+      packageZ.setName("more.of.foo.data");
+      packageZ.setElement(anotherReferencedData);
+
+      IPackage anotherPackage = mock(IPackage.class);
+      when(anotherPackage.getName()).thenReturn(packageZ.getName());
+      IData anotherReference = mock(IData.class);
+      when(anotherReference.getName()).thenReturn(anotherReferencedData.getName());
+      when(anotherReference.getParent()).thenReturn(anotherPackage);
+
+      when(resolver().findXTextData(anotherReference.getName(), packageZ.getName()))
+            .thenReturn(Optional.of(anotherReferencedData));
+
+      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
+      // Should not throw an error.
+      wrappedDataField.setType(DataTypes.DATA);
+      wrappedDataField.setReferencedDataType(anotherReference);
+      assertEquals("data not correct!",
+                   anotherReferencedData,
+                   field.getData());
+
+      wrappedDataField.setCardinality(FieldCardinality.MANY);
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.MANY,
+                   wrappedDataField.getCardinality());
+   }
+
+   @Test
+   public void testDoesCreateXtextObject() throws Throwable {
+      IDataField newField = mock(IDataField.class);
+      when(newField.getName()).thenReturn("newField");
+      when(newField.getType()).thenReturn(DataTypes.DATA);
+      when(newField.getReferencedDataType()).thenReturn(referenced);
+      when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
+
+      ReferencedDataFieldDeclaration xtext = WrappedReferencedDataField.toXtext(resolver(), newField);
+      assertEquals("name not correct!",
+                   newField.getName(),
+                   xtext.getName());
+      assertEquals("referenced data not correct!",
+                   referencedData,
+                   xtext.getData());
+      assertEquals("cardinality not correct!",
+                   xtext.getCardinality(),
+                   Cardinality.MANY);
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNotAllowDataTypeToBeChangedToPrimitiveType() throws Throwable {
+      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
+      wrappedDataField.setType(DataTypes.INT);
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testDoesNotCreateXtextObjectForNPrimitiveType() throws Throwable {
+      IDataField newField = mock(IDataField.class);
+      when(newField.getType()).thenReturn(DataTypes.INT);
+
+      WrappedReferencedDataField.toXtext(resolver(), newField);
+   }
 }

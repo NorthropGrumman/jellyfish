@@ -3,7 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -64,7 +64,7 @@ public class WrappedOutputDataReferenceFieldTest extends AbstractWrappedXtextTes
                    parent,
                    wrapped.getParent());
       assertEquals("cardinality not correct!",
-                   ModelFieldCardinality.MANY,
+                   FieldCardinality.MANY,
                    wrapped.getCardinality());
       assertEquals("type not correct!",
                    wrappedDataType,
@@ -82,7 +82,7 @@ public class WrappedOutputDataReferenceFieldTest extends AbstractWrappedXtextTes
       when(resolver().findXTextData(newType.getName(), p.getName())).thenReturn(Optional.of(newXtextType));
 
       wrapped = new WrappedOutputDataReferenceField(resolver(), outputDeclaration);
-      wrapped.setCardinality(ModelFieldCardinality.SINGLE);
+      wrapped.setCardinality(FieldCardinality.SINGLE);
       assertEquals("cardinality not updated!",
                    Cardinality.DEFAULT,
                    outputDeclaration.getCardinality());

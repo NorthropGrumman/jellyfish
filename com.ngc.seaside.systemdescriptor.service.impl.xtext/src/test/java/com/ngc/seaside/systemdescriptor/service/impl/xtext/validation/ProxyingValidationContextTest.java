@@ -5,10 +5,10 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedDataField;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedPrimitiveDataField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
@@ -29,7 +29,7 @@ public class ProxyingValidationContextTest {
 
    private IDataField dataField;
 
-   private DataFieldDeclaration xtext;
+   private PrimitiveDataFieldDeclaration xtext;
 
    @Mock
    private IValidatorExtension.ValidationHelper validationHelper;
@@ -39,10 +39,10 @@ public class ProxyingValidationContextTest {
 
    @Before
    public void setup() throws Throwable {
-      xtext = SystemDescriptorFactory.eINSTANCE.createDataFieldDeclaration();
+      xtext = SystemDescriptorFactory.eINSTANCE.createPrimitiveDataFieldDeclaration();
       xtext.setName("foo");
 
-      dataField = new WrappedDataField(wrapperResolver, xtext);
+      dataField = new WrappedPrimitiveDataField(wrapperResolver, xtext);
 
       ctx = new ProxyingValidationContext<>(dataField, validationHelper);
    }
