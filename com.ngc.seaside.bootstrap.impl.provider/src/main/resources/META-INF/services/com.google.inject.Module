@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderModule
+com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderGuiceModule

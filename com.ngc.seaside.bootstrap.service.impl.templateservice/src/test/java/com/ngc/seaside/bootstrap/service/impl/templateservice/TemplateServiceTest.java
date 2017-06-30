@@ -74,10 +74,10 @@ public class TemplateServiceTest {
 
    @After
    public void shutdown() {
+      delegate.deactivate();
       delegate.removeLogService(logService);
       delegate.removePromptUserService(promptUserService);
       delegate.removeResourceService(resourceService);
-      delegate.deactivate();
    }
 
    /**

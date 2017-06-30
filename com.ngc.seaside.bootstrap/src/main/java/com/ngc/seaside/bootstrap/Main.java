@@ -4,8 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderDelegate;
-import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderModule;
+import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderGuiceWrapper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,7 @@ public class Main {
     */
    public static void main(String[] args) {
       Injector injector = Guice.createInjector(getModules());
-      BootstrapCommandProviderDelegate provider = injector.getInstance(BootstrapCommandProviderDelegate.class);
+      BootstrapCommandProviderGuiceWrapper provider = injector.getInstance(BootstrapCommandProviderGuiceWrapper.class);
       provider.run(args);
    }
 

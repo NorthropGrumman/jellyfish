@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.service.impl.promptuserservice.PromptUserServiceModule
+com.ngc.seaside.bootstrap.service.impl.promptuserservice.PromptUserServiceGuiceModule

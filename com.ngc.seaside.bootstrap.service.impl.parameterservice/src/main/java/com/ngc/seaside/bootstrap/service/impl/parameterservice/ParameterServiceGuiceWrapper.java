@@ -1,7 +1,7 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
@@ -13,19 +13,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The Guice module that wraps the ParameterService implementation.
+ * Wrap the service using Guice Injection
  */
-public class ParameterServiceModule extends AbstractModule implements IParameterService {
+@Singleton
+public class ParameterServiceGuiceWrapper implements IParameterService {
 
    private final ParameterService delegate = new ParameterService();
 
-   protected void configure() {
-      bind(IParameterService.class).toInstance(this);
+   @Inject
+   public ParameterServiceGuiceWrapper(ILogService logService) {
+      delegate.setLogService(logService);
+      delegate.activate();
    }
 
    @Override
    public IParameterCollection parseParameters(List<String> parameters)
-         throws ParameterServiceException {
+            throws ParameterServiceException {
       return delegate.parseParameters(parameters);
    }
 
@@ -45,10 +48,6 @@ public class ParameterServiceModule extends AbstractModule implements IParameter
       return delegate.getUnsetRequiredParameters(usage, collection);
    }
 
-   @Inject
-   public void setLogService(ILogService ref) {
-      delegate.setLogService(ref);
-   }
 }
 
 

@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.command.impl.help.HelpCommandModule
+com.ngc.seaside.bootstrap.command.impl.help.HelpCommandGuiceModule

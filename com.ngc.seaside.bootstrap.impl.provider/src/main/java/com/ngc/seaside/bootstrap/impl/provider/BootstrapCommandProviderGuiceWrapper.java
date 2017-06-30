@@ -1,6 +1,7 @@
 package com.ngc.seaside.bootstrap.impl.provider;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
@@ -14,14 +15,15 @@ import java.util.Set;
 /**
  *
  */
-public class BootstrapCommandProviderDelegate implements IBootstrapCommandProvider {
+@Singleton
+public class BootstrapCommandProviderGuiceWrapper implements IBootstrapCommandProvider {
    private final BootstrapCommandProvider delegate = new BootstrapCommandProvider();
 
    @Inject
-   public BootstrapCommandProviderDelegate(ILogService logService,
-                                           ITemplateService templateService,
-                                           IParameterService parameterService,
-                                           Set<IBootstrapCommand> commands) {
+   public BootstrapCommandProviderGuiceWrapper(ILogService logService,
+                                               ITemplateService templateService,
+                                               IParameterService parameterService,
+                                               Set<IBootstrapCommand> commands) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setParameterService(parameterService);

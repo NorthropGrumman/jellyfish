@@ -8,11 +8,11 @@ import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 /**
  * Guice wrapper around the {@link BootstrapCommandProvider} implementation.
  */
-public class BootstrapCommandProviderModule extends AbstractModule {
+public class BootstrapCommandProviderGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(IBootstrapCommandProvider.class).to(BootstrapCommandProviderDelegate.class).in(Scopes.SINGLETON);
+      bind(IBootstrapCommandProvider.class).to(BootstrapCommandProviderGuiceWrapper.class);
    }
 
 }

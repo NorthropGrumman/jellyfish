@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.service.impl.propertyservice.PropertyServiceModule
+com.ngc.seaside.bootstrap.service.impl.propertyservice.PropertyServiceGuiceModule

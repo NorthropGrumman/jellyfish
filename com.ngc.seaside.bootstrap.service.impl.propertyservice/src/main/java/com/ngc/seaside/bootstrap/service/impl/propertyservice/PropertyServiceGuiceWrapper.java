@@ -1,7 +1,7 @@
 package com.ngc.seaside.bootstrap.service.impl.propertyservice;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.property.api.IProperties;
@@ -11,15 +11,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * The Guice module that wraps the PropertyService implementation.
+ * Wrap the service using Guice Injection
  */
-public class PropertyServiceModule extends AbstractModule implements IPropertyService {
+@Singleton
+public class PropertyServiceGuiceWrapper implements IPropertyService {
 
    private final PropertyService delegate = new PropertyService();
 
-   @Override
-   protected void configure() {
-      bind(IPropertyService.class).toInstance(this);
+   @Inject
+   public PropertyServiceGuiceWrapper(ILogService logService) {
+      delegate.setLogService(logService);
+      delegate.activate();
    }
 
    @Override

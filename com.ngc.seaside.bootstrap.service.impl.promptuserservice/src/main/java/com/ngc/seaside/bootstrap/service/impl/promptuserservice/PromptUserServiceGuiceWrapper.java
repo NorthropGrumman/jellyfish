@@ -1,21 +1,25 @@
 package com.ngc.seaside.bootstrap.service.impl.promptuserservice;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 
 import java.util.function.Predicate;
 
 /**
- * @author justan.provence@ngc.com
+ * Wrap the service using Guice Injection
  */
-public class PromptUserServiceModule extends AbstractModule implements IPromptUserService {
+@Singleton
+public class PromptUserServiceGuiceWrapper implements IPromptUserService {
 
    private final PromptUserService delegate = new PromptUserService();
 
-   @Override
-   protected void configure() {
-      bind(IPromptUserService.class).toInstance(this);
+   @Inject
+   public PromptUserServiceGuiceWrapper(ILogService logService) {
+      delegate.setLogService(logService);
+      delegate.activate();
    }
 
    @Override

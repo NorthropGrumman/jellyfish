@@ -1,1 +1,1 @@
-com.ngc.seaside.bootstrap.service.impl.parameterservice.ParameterServiceModule
+com.ngc.seaside.bootstrap.service.impl.parameterservice.ParameterServiceGuiceModule

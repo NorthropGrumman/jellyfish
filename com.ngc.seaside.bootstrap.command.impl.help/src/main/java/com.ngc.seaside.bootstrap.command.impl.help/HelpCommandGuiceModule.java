@@ -9,7 +9,7 @@ import com.ngc.seaside.command.api.ICommand;
 /**
  * Configure the service for use in Guice
  */
-public class HelpCommandModule extends AbstractModule {
+public class HelpCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
