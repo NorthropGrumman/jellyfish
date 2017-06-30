@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
@@ -59,7 +59,7 @@ public class ModelTest
       Model model = new Model("AlarmClock");
 
       IDataReferenceField input = new DataReferenceField("alarmTimes");
-      input.setCardinality(ModelFieldCardinality.MANY);
+      input.setCardinality(FieldCardinality.MANY);
       input.setType(time);
       input.setMetadata(createMetadata("satisfies", "requirement1"));
       model.addInput(input);

@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.api.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
@@ -27,6 +28,21 @@ public interface IDataField extends INamedChild<IData> {
     * @return this field
     */
    IDataField setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the cardinality of the field.
+    *
+    * @return the cardinality of the field
+    */
+   FieldCardinality getCardinality();
+
+   /**
+    * Sets the cardinality of the field.
+    *
+    * @param cardinality the cardinality of the field
+    * @return this field
+    */
+   IDataField setCardinality(FieldCardinality cardinality);
 
    /**
     * Gets the type of this field.

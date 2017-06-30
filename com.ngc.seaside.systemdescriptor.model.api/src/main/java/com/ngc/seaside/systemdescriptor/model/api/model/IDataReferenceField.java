@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.api.model;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 
 /**
@@ -28,7 +29,7 @@ public interface IDataReferenceField extends IReferenceField {
     *
     * @return the cardinality associated with this field
     */
-   ModelFieldCardinality getCardinality();
+   FieldCardinality getCardinality();
 
    /**
     * Sets the cardinality associated with this field.
@@ -36,5 +37,5 @@ public interface IDataReferenceField extends IReferenceField {
     * @param cardinality the cardinality associated with this field
     * @return this field
     */
-   IDataReferenceField setCardinality(ModelFieldCardinality cardinality);
+   IDataReferenceField setCardinality(FieldCardinality cardinality);
 }

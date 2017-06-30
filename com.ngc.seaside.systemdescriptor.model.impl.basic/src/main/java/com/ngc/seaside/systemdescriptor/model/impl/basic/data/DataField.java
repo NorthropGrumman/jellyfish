@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.data;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -21,6 +22,7 @@ public class DataField implements IDataField {
    protected IMetadata metadata;
    protected IData referencedDataType;
    protected DataTypes type;
+   protected FieldCardinality cardinality;
 
    public DataField(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
@@ -46,6 +48,17 @@ public class DataField implements IDataField {
    @Override
    public DataField setMetadata(IMetadata metadata) {
       this.metadata = metadata;
+      return this;
+   }
+
+   @Override
+   public FieldCardinality getCardinality() {
+      return cardinality;
+   }
+
+   @Override
+   public IDataField setCardinality(FieldCardinality cardinality) {
+      this.cardinality = Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
       return this;
    }
 
@@ -88,17 +101,19 @@ public class DataField implements IDataField {
       return Objects.equals(name, dataField.name) && parent == dataField.parent
              && Objects.equals(metadata, dataField.metadata)
              && type == dataField.type
-             && Objects.equals(referencedDataType, dataField.referencedDataType);
+             && Objects.equals(referencedDataType, dataField.referencedDataType)
+             && cardinality == dataField.cardinality;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, System.identityHashCode(parent), metadata, type, referencedDataType);
+      return Objects.hash(name, System.identityHashCode(parent), metadata, type, referencedDataType, cardinality);
    }
 
    @Override
    public String toString() {
       return "DataField[" + "name='" + name + '\'' + ", parent=" + (parent == null ? "null" : parent.getName())
-             + ", metadata=" + metadata + ", type=" + type + ", referencedDataType=" + referencedDataType + ']';
+             + ", metadata=" + metadata + ", type=" + type + ", referencedDataType=" + referencedDataType
+             + ", cardinality='" + cardinality + ']';
    }
 }
