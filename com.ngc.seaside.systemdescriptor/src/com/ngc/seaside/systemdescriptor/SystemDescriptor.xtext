@@ -56,6 +56,19 @@ UnqualifiedName
 // ---------------------------
 
 /*
+ * Defines different cardinality values.
+ * 
+ * Note the first value of a enum is the default value that the parsed 
+ * model will have.  Since cardinality is optional for inputs and 
+ * outputs we have to make sure we have a default value listed first
+ * that means not set.
+ */
+enum Cardinality
+    : DEFAULT='default'
+	| MANY='many'
+	;
+
+/*
  * FieldDeclaration is the base type of all type of declarations in a model.
  * This includes inputs, outputs, parts, and requirements.
  * 
@@ -94,34 +107,41 @@ enum PrimitiveDataType
 	| STRING="string"
 	| BOOLEAN="boolean"
 	;
-	
-	
+		
 /*
- * A data field declaration consists of a type and unqualified name.
+ * A primitive data field declaration consists of a type and unqualified name.
  * It may also contain optional metadata.
  */
 PrimitiveDataFieldDeclaration
-	: type=PrimitiveDataType
+	: cardinality=Cardinality?
+	  type=PrimitiveDataType
 	  name=UnqualifiedName
 	  metadata=JsonObject?
+	;
+
+/*
+ * A referenced data field declaration consists of a data type and unqualified name.
+ * It may also contain optional metadata.
+ */	
+ReferencedDataFieldDeclaration
+	: cardinality=Cardinality?
+	  data=[Data|UnqualifiedName] 
+	  name=UnqualifiedName
+	  metadata=JsonObject?
+	;
+
+/*
+ * A data field declaration may either be a primitive type or reference another
+ * data type.
+ */
+DataFieldDeclaration
+	: PrimitiveDataFieldDeclaration
+	| ReferencedDataFieldDeclaration
 	;
 
 // -------------------------------
 // ---- Model related objects ----
 // -------------------------------
-
-/*
- * Defines different cardinality values.
- * 
- * Note the first value of a enum is the default value that the parsed 
- * model will have.  Since cardinality is optional for inputs and 
- * outputs we have to make sure we have a default value listed first
- * that means not set.
- */
-enum Cardinality
-    : DEFAULT='default'
-	| MANY='many'
-	;
 
 /*
  * Declares a output via a referenced data type and an unqualified name.
@@ -335,18 +355,6 @@ Links
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
-
-DataFieldDeclaration
-	: PrimitiveDataFieldDeclaration
-	| ReferencedDataFieldDeclaration
-	;
-	
-ReferencedDataFieldDeclaration
-	: cardinality=Cardinality?
-	  data=[Data|UnqualifiedName] 
-	  name=UnqualifiedName
-	  metadata=JsonObject?
-	;
 	
 /*
  * Declares an object of data type; a type of object that contains attributes

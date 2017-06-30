@@ -6,15 +6,15 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="SystemDescriptor" basePackage="com.ngc.seaside.systemdescriptor"
       disposableProviderFactory="true" fileExtensions="sd" ecorePackage="SystemDescriptor.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//Cardinality">
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/DEFAULT"/>
+      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/MANY"/>
+    </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//PrimitiveDataType">
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//PrimitiveDataType/INT"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//PrimitiveDataType/FLOAT"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//PrimitiveDataType/STRING"/>
       <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//PrimitiveDataType/BOOLEAN"/>
-    </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="SystemDescriptor.ecore#//Cardinality">
-      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/DEFAULT"/>
-      <genEnumLiterals ecoreEnumLiteral="SystemDescriptor.ecore#//Cardinality/MANY"/>
     </genEnums>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Package">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Package/name"/>
@@ -30,6 +30,14 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//PrimitiveDataFieldDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//PrimitiveDataFieldDeclaration/type"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//ReferencedDataFieldDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ReferencedDataFieldDeclaration/data"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//DataFieldDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/cardinality"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//OutputDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//OutputDeclaration/cardinality"/>
@@ -86,14 +94,6 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Links">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Links/declarations"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//DataFieldDeclaration">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//DataFieldDeclaration/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//DataFieldDeclaration/metadata"/>
-    </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//ReferencedDataFieldDeclaration">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//ReferencedDataFieldDeclaration/cardinality"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//ReferencedDataFieldDeclaration/data"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
