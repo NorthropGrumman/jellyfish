@@ -2,7 +2,7 @@ buildscript {
 	repositories {
 		mavenLocal()
         maven {
-            url 'http://10.207.42.43/nexus/repository/maven-public/'
+            url nexusConsolidated
         }
 	}
 	dependencies {
@@ -14,11 +14,19 @@ subprojects {
 	ext.xtextVersion = '2.10.0'
 	
 	apply plugin: 'java'
-	apply plugin: 'org.xtext.xtend'
-	apply from: "${rootDir}/gradle/source-layout.gradle"
-	apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
+	
+	// Don't apply the XText configuration to the UI plugin.
+	if(!name.equals('systemdescriptor.ui')) {
+		apply plugin: 'org.xtext.xtend'
+		apply from: "${rootDir}/gradle/source-layout.gradle"
+		apply from: "${rootDir}/gradle/maven-deployment.gradle"
+	} else {
+	   // We have to apply the maven plugin here instead of in the build.gradle for 
+	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
+	   apply plugin: 'maven'
+	}
 	
 	group = 'com.ngc.seaside'
 	version = '0.4.1-SNAPSHOT'

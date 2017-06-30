@@ -1,7 +1,9 @@
 include 'com.ngc.seaside.systemdescriptor'
 include 'com.ngc.seaside.systemdescriptor.ide'
 include 'com.ngc.seaside.systemdescriptor.tests'
+include 'com.ngc.seaside.systemdescriptor.ui'
 
 project(':com.ngc.seaside.systemdescriptor').name = 'systemdescriptor'
 project(':com.ngc.seaside.systemdescriptor.ide').name = 'systemdescriptor.ide'
 project(':com.ngc.seaside.systemdescriptor.tests').name = 'systemdescriptor.tests'
+project(':com.ngc.seaside.systemdescriptor.ui').name = 'systemdescriptor.ui'
