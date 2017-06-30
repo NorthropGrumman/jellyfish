@@ -1,5 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.api;
 
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
@@ -87,5 +89,12 @@ public class SystemDescriptors {
       }
       return step.getParent() != null
              && step.getParent().getThens().contains(step);
+   }
+
+   /**
+    * Returns true if the {@code IDataField} references a primitive type.
+    */
+   public static boolean isPrimitiveDataFieldDeclaration(IDataField field) {
+      return field.getType() != DataTypes.DATA;
    }
 }

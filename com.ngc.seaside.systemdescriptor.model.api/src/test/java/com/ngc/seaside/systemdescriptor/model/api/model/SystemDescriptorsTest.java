@@ -2,6 +2,8 @@ package com.ngc.seaside.systemdescriptor.model.api.model;
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
@@ -36,13 +38,16 @@ public class SystemDescriptorsTest {
    private INamedChildCollection<IModel, IModelReferenceField> modelChildren;
 
    @Mock
-   private IDataReferenceField dataField;
+   private IDataReferenceField dataRefField;
 
    @Mock
    private IModelReferenceField modelField;
 
    @Mock
    private IScenarioStep step;
+
+   @Mock
+   private IDataField dataField;
 
    @Before
    public void setup() throws Throwable {
@@ -59,42 +64,42 @@ public class SystemDescriptorsTest {
 
    @Test
    public void testDoesDetermineIfFieldIsInput() throws Throwable {
-      when(dataField.getParent()).thenReturn(parent);
-      when(dataChildren.contains(dataField))
+      when(dataRefField.getParent()).thenReturn(parent);
+      when(dataChildren.contains(dataRefField))
             .thenReturn(true)
             .thenReturn(false);
 
       assertTrue("should be input!",
-                 SystemDescriptors.isInput(dataField));
+                 SystemDescriptors.isInput(dataRefField));
       assertFalse("should not be input!",
-                  SystemDescriptors.isInput(dataField));
+                  SystemDescriptors.isInput(dataRefField));
    }
 
    @Test
    public void testDoesDetermineIfFieldIsNotInput() throws Throwable {
-      when(dataField.getParent()).thenReturn(null);
+      when(dataRefField.getParent()).thenReturn(null);
       assertFalse("should not be input!",
-                  SystemDescriptors.isInput(dataField));
+                  SystemDescriptors.isInput(dataRefField));
    }
 
    @Test
    public void testDoesDetermineIfFieldIsOutput() throws Throwable {
-      when(dataField.getParent()).thenReturn(parent);
-      when(dataChildren.contains(dataField))
+      when(dataRefField.getParent()).thenReturn(parent);
+      when(dataChildren.contains(dataRefField))
             .thenReturn(true)
             .thenReturn(false);
 
       assertTrue("should be output!",
-                 SystemDescriptors.isOutput(dataField));
+                 SystemDescriptors.isOutput(dataRefField));
       assertFalse("should not be output!",
-                  SystemDescriptors.isOutput(dataField));
+                  SystemDescriptors.isOutput(dataRefField));
    }
 
    @Test
    public void testDoesDetermineIfFieldIsNotOutput() throws Throwable {
-      when(dataField.getParent()).thenReturn(null);
+      when(dataRefField.getParent()).thenReturn(null);
       assertFalse("should not be output!",
-                  SystemDescriptors.isOutput(dataField));
+                  SystemDescriptors.isOutput(dataRefField));
    }
 
    @Test
@@ -192,5 +197,16 @@ public class SystemDescriptorsTest {
       when(step.getParent()).thenReturn(null);
       assertFalse("should not be then step!",
                   SystemDescriptors.isThenStep(step));
+   }
+
+   @Test
+   public void testDoesDetermineIfDataFieldIsForPrimitiveType() throws Throwable {
+      when(dataField.getType())
+            .thenReturn(DataTypes.INT)
+            .thenReturn(DataTypes.DATA);
+      assertTrue("field should be a primitive data field!",
+                 SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
+      assertFalse("field should not be a primitive data field!",
+                  SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
    }
 }
