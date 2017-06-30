@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -72,6 +73,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
       when(primitiveField.getName()).thenReturn("newField");
       when(primitiveField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(primitiveField.getType()).thenReturn(DataTypes.STRING);
+      when(primitiveField.getCardinality()).thenReturn(FieldCardinality.SINGLE);
 
       wrappedData = new WrappedData(resolver(), data);
       wrappedData.getFields().add(primitiveField);

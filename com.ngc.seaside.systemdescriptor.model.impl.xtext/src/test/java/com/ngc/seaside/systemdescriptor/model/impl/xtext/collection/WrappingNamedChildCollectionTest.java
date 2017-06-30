@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.collection;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -74,6 +75,7 @@ public class WrappingNamedChildCollectionTest extends AbstractWrappedXtextTest {
       when(f.getName()).thenReturn(name);
       when(f.getType()).thenReturn(DataTypes.STRING);
       when(f.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(f.getCardinality()).thenReturn(FieldCardinality.SINGLE);
       return f;
    }
 }
