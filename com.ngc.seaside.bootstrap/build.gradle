@@ -26,7 +26,8 @@ dependencies {
     //this will eventually be replaced by downloadable commands once Nexus 3 has a useful REST API.
     compile "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion"
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion:template@zip"
-
+    compile "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$commandVersion"
+    commandTemplate "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$commandVersion:template@zip"
 
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
