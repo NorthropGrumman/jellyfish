@@ -260,7 +260,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
             ITemplateOutput templateOutput =
                      templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
 
-            return convertParameters(templateOutput);
+            return convertParameters(templateOutput, outputPath);
          } catch (TemplateServiceException e) {
             logService.error(getClass(),
                              e,
@@ -289,13 +289,16 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * @param output the template service's output
     * @return the collection of parameters.
     */
-   protected IParameterCollection convertParameters(ITemplateOutput output) {
+   protected IParameterCollection convertParameters(ITemplateOutput output, Path outputPath) {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter("templateFinalOutputDir").setRequired(true);
-      outputDir.setValue(output.getOutputPath().toString());
+      DefaultParameter outputDir = new DefaultParameter("outputDirectory")
+               .setValue(outputPath.toString());
+      DefaultParameter templateOutputDir = new DefaultParameter("templateFinalOutputDirectory")
+               .setValue(output.getOutputPath().toString());
       collection.addParameter(outputDir);
+      collection.addParameter(templateOutputDir);
 
       for (IParameter templateParameter : templateParameters.getAllParameters()) {
          collection.addParameter(templateParameter);

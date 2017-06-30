@@ -92,11 +92,8 @@ public class BootstrapCommandProviderTest {
 
       assertNotNull("The options must not be null", options);
 
-      assertTrue(options.getParameters().containsParameter("outputDir"));
-      assertTrue(options.getParameters().containsParameter("templateFinalOutputDir"));
-
-      assertEquals("//does//not//matter//", options.getParameters().getParameter("outputDir").getValue());
-      assertEquals(".", options.getParameters().getParameter("templateFinalOutputDir").getValue());
+      assertTrue(options.getParameters().containsParameter("outputDirectory"));
+      assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
    }
 
 }
