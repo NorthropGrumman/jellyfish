@@ -22,6 +22,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -68,7 +69,7 @@ class DataParsingTest {
 			package clocks.datatypes
 			
 			data Time {
-				int hour
+				many int hour
 				int minute
 				int second
 			}
@@ -98,6 +99,11 @@ class DataParsingTest {
 			"field name not correct!",
 			"hour",
 			field.name
+		)
+		assertEquals(
+			"cardinality not correct!",
+			Cardinality.MANY,
+			field.cardinality
 		)
 	}
 
@@ -309,7 +315,7 @@ class DataParsingTest {
 			
 			data DateTime {
 			  Date date
-			  Time time
+			  many Time time
 			}
 		'''
 
@@ -352,6 +358,11 @@ class DataParsingTest {
 			"data ref name not correct!",
 			"time",
 			timeDataRef.name
-		)	
+		)
+		assertEquals(
+			"data cardinality not correct!",
+			Cardinality.MANY,
+			timeDataRef.cardinality
+		)
 	}
 }
