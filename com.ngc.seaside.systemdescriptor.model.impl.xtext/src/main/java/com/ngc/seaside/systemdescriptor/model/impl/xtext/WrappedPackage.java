@@ -137,7 +137,7 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
       for (IData data : p.getData()) {
          Package newPackage = SystemDescriptorFactory.eINSTANCE.createPackage();
          newPackage.setName(p.getName());
-         newPackage.setElement(WrappedData.toXTextData(data));
+         newPackage.setElement(WrappedData.toXTextData(resolver, data));
          packages.add(newPackage);
       }
 
