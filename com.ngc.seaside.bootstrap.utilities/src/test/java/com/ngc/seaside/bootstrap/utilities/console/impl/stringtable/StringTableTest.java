@@ -40,7 +40,7 @@ public class StringTableTest {
                          "This is the last column for the last row")
         }));
     fixture.getModel().addItems(items);
-    fixture.setRowSpacerCharacter('_');
+    fixture.setRowSpacer("_");
     fixture.setColumnSpacer("  ");
 
     fixture.setShowHeader(true);

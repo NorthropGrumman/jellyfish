@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class StringTable<T> extends AbstractTable<T> {
 
-  private char rowSpacerCharacter = ' ';
+  private String rowSpacer = " ";
   private String columnSpacer = "   ";
   private boolean showHeader = true;
   private boolean showRowNumber = false;
@@ -36,7 +36,7 @@ public class StringTable<T> extends AbstractTable<T> {
   }
 
   /**
-   * Set the space between the column.
+   * Set the space between the columns.
    *
    * @param spacer the columnSpacer value.
    */
@@ -54,12 +54,13 @@ public class StringTable<T> extends AbstractTable<T> {
   }
 
   /**
-   * Set the character to use for the space between rows. The default is set to an empty character.
+   * Set the space between rows. The default is set to a single empty
+   * character.
    *
-   * @param value the value.
+   * @param spacer the rowSpacer value.
    */
-  public void setRowSpacerCharacter(char value) {
-    rowSpacerCharacter = value;
+  public void setRowSpacer(String spacer) {
+    this.rowSpacer = spacer;
   }
 
   /**
@@ -98,8 +99,7 @@ public class StringTable<T> extends AbstractTable<T> {
   public void setShowRowNumber(boolean showRowNumber) {
     this.showRowNumber = showRowNumber;
   }
-
-
+  
   /**
    * Get the rows of the table. This method builds the rows on demand.
    *
@@ -360,13 +360,14 @@ public class StringTable<T> extends AbstractTable<T> {
    */
   protected String buildRowSeparator(int tableWidth) {
     StringBuilder builder = new StringBuilder();
-    final String ROW_SEP = StringUtils.rightPad("", tableWidth, rowSpacerCharacter);
-
-    builder.append(columnSpacer)
-        .append(String.format("%s", ROW_SEP))
-        .append(columnSpacer)
-        .append(String.format("%n"));
-
+    for (int i = 0; i < rowSpacer.length(); i++) {
+	    final String ROW_SEP = StringUtils.rightPad("", tableWidth, rowSpacer.charAt(i));
+	
+	    builder.append(columnSpacer)
+	        .append(String.format("%s", ROW_SEP))
+	        .append(columnSpacer)
+	        .append(String.format("%n"));
+    }
     return builder.toString();
   }
 
