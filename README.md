@@ -11,3 +11,5 @@ Contains the API for the service based interfaces for interacting with the syste
 # com.ngc.seaside.systemdescriptor.model.impl.basic
 Contains a basic POJO based implementation of the model API.  This implementation is useful in tests and other areas
 where you don't want to create a dependency on the XTest based DSL.
+
+Testing change and branch protection
