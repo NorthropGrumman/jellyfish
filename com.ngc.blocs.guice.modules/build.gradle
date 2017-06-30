@@ -1,0 +1,9 @@
+dependencies {
+   compile "com.ngc.blocs:service.api:$blocsVersion"
+   compile "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
+   compile "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
+
+   compile "com.google.inject:guice:$guiceVersion"
+   compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+}
+

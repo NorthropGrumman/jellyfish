@@ -1,6 +1,6 @@
 apply plugin: 'application'
 
-mainClassName = "com.ngc.seaside.bootstrap.Bootstrap"
+mainClassName = "com.ngc.seaside.bootstrap.Main"
 
 configurations {
     commandTemplate
@@ -15,6 +15,9 @@ dependencies {
     compile project(":bootstrap.service.impl.propertyservice")
     compile project(":bootstrap.service.impl.parameterservice")
 
+    //include the blocs guice wrappers
+    compile project(":guice.modules")
+
     //core command projects
     compile project(":bootstrap.command.impl.help")
     commandTemplate project(path: ":bootstrap.command.impl.help", configuration: "commandTemplate")
@@ -25,12 +28,9 @@ dependencies {
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$commandVersion:template@zip"
 
 
-    compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-    compile "com.ngc.blocs:service.api:$blocsVersion"
-    compile "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
-    compile "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
+
     compile "org.osgi:osgi.enterprise:$osgiVersion"
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

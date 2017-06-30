@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderDelegate;
 import com.ngc.seaside.bootstrap.impl.provider.BootstrapCommandProviderModule;
 
 import java.util.ArrayList;
@@ -11,19 +12,19 @@ import java.util.Collection;
 import java.util.ServiceLoader;
 
 /**
- * @author justan.provence@ngc.com
+ *
  */
-public class Bootstrap {
+public class Main {
 
    /**
-    * Run the Bootstrap application.
+    * Run the Main application.
     *
     * @param args the program arguments. The first argument should always be the name of the command in which to run
     *             followed by a list of parameters for that command.
     */
    public static void main(String[] args) {
       Injector injector = Guice.createInjector(getModules());
-      BootstrapCommandProviderModule provider = injector.getInstance(BootstrapCommandProviderModule.class);
+      BootstrapCommandProviderDelegate provider = injector.getInstance(BootstrapCommandProviderDelegate.class);
       provider.run(args);
    }
 
@@ -36,12 +37,13 @@ public class Bootstrap {
     */
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.add(new BLoCSServiceModule());
+
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         //TODO log this
          System.out.println(String.format("%s", dynamicModule.getClass()));
          modules.add(dynamicModule);
       }
       return modules;
    }
+
+
 }

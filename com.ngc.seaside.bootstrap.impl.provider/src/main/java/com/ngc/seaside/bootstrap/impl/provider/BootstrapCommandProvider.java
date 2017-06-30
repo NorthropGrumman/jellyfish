@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.DefaultBootstrapCommandOptions;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.DefaultBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -74,10 +74,6 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    @Override
-   @Reference(unbind = "removeCommand",
-            service = IBootstrapCommand.class,
-            cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC)
    public void addCommand(IBootstrapCommand command) {
       commands.add(command);
    }
@@ -109,11 +105,82 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
             ));
 
       IParameterCollection templateParameters = unpackTemplate(command, parameters);
-
       IBootstrapCommandOptions options = createBootstrapCommandOptions(parameters, templateParameters);
 
-      //TODO this will be updated with parameter service output as well
       command.run(options);
+   }
+
+   /**
+    * Sets log service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   /**
+    * Remove log service.
+    */
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   /**
+    * Set the bootstrap template service.
+    *
+    * @param ref the service
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   /**
+    * Remove the bootstrap template service.
+    */
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
+   /**
+    * Set the parameter service.
+    *
+    * @param ref the service
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeParameterService")
+   public void setParameterService(IParameterService ref) {
+      this.parameterService = ref;
+   }
+
+   /**
+    * Remove the bootstrap template service.
+    */
+   public void removeParameterService(IParameterService ref) {
+      setParameterService(null);
+   }
+
+   /**
+    * This method is required due to an issue when BND tries to resolve the
+    * dependencies and the IBootstrapCommand extends an interface that is typed.
+    */
+   @Reference(unbind = "removeCommandOSGi",
+            service = IBootstrapCommand.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC)
+   protected void addCommandOSGi(IBootstrapCommand command) {
+      addCommand(command);
+   }
+
+   protected void removeCommandOSGi(IBootstrapCommand command) {
+      removeCommand(command);
    }
 
    /**
@@ -178,7 +245,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    protected IParameterCollection unpackTemplate(
             IBootstrapCommand command,
             IParameterCollection userSuppliedParameters) {
-      String templatePrefix = command.getClass().getPackage().getName();
+      String templatePrefix = getCommandTemplatePrefix(command);
       /**
        * Unpack the template
        */
@@ -205,12 +272,24 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * TODO this should be in the parameter service.
+    * Return the prefix used in order to look the command's template up within the templates resource directory.
+    * Currently this assumes that the naming convention for the command's package includes the same name used for
+    * creating the template zip. This is actually done for us using the correct build tools.
+    *
+    * @param command the command in which to create the prefix
+    * @return the String representation of the command's package.
+    */
+   protected String getCommandTemplatePrefix(IBootstrapCommand command) {
+      return command.getClass().getPackage().getName();
+   }
+
+   /**
+    * Convert the template output to a parameter collection. This includes the templateFinalOutputDir.
     *
     * @param output the template service's output
     * @return the collection of parameters.
     */
-   private IParameterCollection convertParameters(ITemplateOutput output) {
+   protected IParameterCollection convertParameters(ITemplateOutput output) {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
@@ -225,62 +304,4 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       return collection;
    }
 
-
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
-   /**
-    * Set the bootstrap template service.
-    *
-    * @param ref the service
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateService")
-   public void setTemplateService(ITemplateService ref) {
-      this.templateService = ref;
-   }
-
-   /**
-    * Remove the bootstrap template service.
-    */
-   public void removeTemplateService(ITemplateService ref) {
-      setTemplateService(null);
-   }
-
-
-   /**
-    * Set the parameter service.
-    *
-    * @param ref the service
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeParameterService")
-   public void setParameterService(IParameterService ref) {
-      this.parameterService = ref;
-   }
-
-   /**
-    * Remove the bootstrap template service.
-    */
-   public void removeParameterService(IParameterService ref) {
-      setParameterService(null);
-   }
 }

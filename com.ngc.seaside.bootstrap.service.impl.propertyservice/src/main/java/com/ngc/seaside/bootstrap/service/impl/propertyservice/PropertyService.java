@@ -4,8 +4,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.property.api.IProperties;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -15,7 +13,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * Provide an OSGi enabled component representation of the IPropertyService interface.

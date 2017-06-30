@@ -298,8 +298,8 @@ public class TemplateService implements ITemplateService {
 
 
          if (files != null && files.length > 0) {
-            //TODO it should not be possible to get 2 different versions of the same
-            //template. The update command should only provide only the latest version for an API.
+            //it should not be possible to get 2 different versions of the same
+            //template. The update command should only provide the latest version for an API.
             templateFile = Paths.get(files[0].getAbsolutePath());
          }
       }
@@ -307,22 +307,6 @@ public class TemplateService implements ITemplateService {
       return templateFile;
    }
 
-
-
-   /**
-    * Build the path given the template name.
-    *
-    * @param templateName the template name.
-    * @return the Path to the file. notice, this does not check to see if the file exists and should always return a
-    * valid template.
-    */
-   protected Path buildPath(String templateName) {
-      return Paths.get(
-               resourceService.getResourceRootPath().toString(),
-               "templates",
-               templateName.toLowerCase(),
-               String.format("Template%s.zip", StringUtils.capitalize(templateName)));
-   }
 
    /**
     * Determines if the unzipped contents of the template are valid.

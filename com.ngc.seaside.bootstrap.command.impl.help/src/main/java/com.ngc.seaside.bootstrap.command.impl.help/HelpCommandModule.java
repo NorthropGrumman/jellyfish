@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
 import com.ngc.seaside.command.api.ICommand;
 import com.ngc.seaside.command.api.IUsage;
 
 /**
- * @author justan.provence@ngc.com
+ *
  */
 public class HelpCommandModule extends AbstractModule implements IBootstrapCommand {
 

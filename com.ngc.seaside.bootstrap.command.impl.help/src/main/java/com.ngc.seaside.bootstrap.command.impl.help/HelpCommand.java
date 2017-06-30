@@ -1,8 +1,8 @@
 package com.ngc.seaside.bootstrap.command.impl.help;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.IBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 

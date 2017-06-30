@@ -1,0 +1,2 @@
+com.ngc.blocs.guice.module.LogServiceModule
+com.ngc.blocs.guice.module.ResourceServiceModule
