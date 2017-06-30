@@ -1,11 +1,13 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
@@ -52,6 +54,7 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       field = factory().createReferencedDataFieldDeclaration();
       field.setName("field1");
       field.setData(referencedData);
+      field.setCardinality(Cardinality.DEFAULT);
       parentData.getFields().add(field);
 
       when(referenced.getName()).thenReturn(referencedData.getName());
@@ -78,6 +81,9 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("referenced data not correct!",
                    referenced,
                    wrappedDataField.getReferencedDataType());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   wrappedDataField.getCardinality());
    }
 
    @Test
@@ -105,6 +111,11 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("data not correct!",
                    anotherReferencedData,
                    field.getData());
+
+      wrappedDataField.setCardinality(FieldCardinality.MANY);
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.MANY,
+                   wrappedDataField.getCardinality());
    }
 
    @Test
@@ -113,6 +124,7 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       when(newField.getName()).thenReturn("newField");
       when(newField.getType()).thenReturn(DataTypes.DATA);
       when(newField.getReferencedDataType()).thenReturn(referenced);
+      when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
 
       ReferencedDataFieldDeclaration xtext = WrappedReferencedDataField.toXtext(resolver(), newField);
       assertEquals("name not correct!",
@@ -121,6 +133,9 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("referenced data not correct!",
                    referencedData,
                    xtext.getData());
+      assertEquals("cardinality not correct!",
+                   xtext.getCardinality(),
+                   Cardinality.MANY);
    }
 
    @Test(expected = IllegalArgumentException.class)

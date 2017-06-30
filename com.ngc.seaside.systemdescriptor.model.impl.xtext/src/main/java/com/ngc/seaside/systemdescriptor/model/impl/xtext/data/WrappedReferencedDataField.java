@@ -5,11 +5,8 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -18,37 +15,10 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedReferencedDataField extends AbstractWrappedXtext<ReferencedDataFieldDeclaration>
-      implements IDataField {
-
-   private IMetadata metadata;
+public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataFieldDeclaration> {
 
    public WrappedReferencedDataField(IWrapperResolver resolver, ReferencedDataFieldDeclaration wrapped) {
       super(resolver, wrapped);
-      this.metadata = WrappedMetadata.fromXtextJson(wrapped.getMetadata());
-   }
-
-   @Override
-   public String getName() {
-      return wrapped.getName();
-   }
-
-   @Override
-   public IData getParent() {
-      return resolver.getWrapperFor((Data) wrapped.eContainer());
-   }
-
-   @Override
-   public IMetadata getMetadata() {
-      return metadata;
-   }
-
-   @Override
-   public IDataField setMetadata(IMetadata metadata) {
-      Preconditions.checkNotNull(metadata, "metadata may not be null!");
-      this.metadata = metadata;
-      wrapped.setMetadata(WrappedMetadata.toXtextJson(metadata));
-      return this;
    }
 
    @Override
@@ -94,6 +64,7 @@ public class WrappedReferencedDataField extends AbstractWrappedXtext<ReferencedD
       x.setName(dataRef.getName());
       x.setData(resolver.findXTextData(dataRef.getReferencedDataType().getName(),
                                        dataRef.getReferencedDataType().getParent().getName()).get());
+      x.setCardinality(ConversionUtil.convertCardinalityToXtext(dataRef.getCardinality()));
       return x;
    }
 }

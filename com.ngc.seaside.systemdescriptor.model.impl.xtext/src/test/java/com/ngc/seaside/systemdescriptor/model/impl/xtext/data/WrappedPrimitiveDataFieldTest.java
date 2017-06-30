@@ -1,10 +1,12 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
@@ -34,6 +36,7 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       field = factory().createPrimitiveDataFieldDeclaration();
       field.setName("field1");
       field.setType(PrimitiveDataType.STRING);
+      field.setCardinality(Cardinality.DEFAULT);
       parentData.getFields().add(field);
 
       when(resolver().getWrapperFor(parentData)).thenReturn(parent);
@@ -51,6 +54,9 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("metadata not set!",
                    IMetadata.EMPTY_METADATA,
                    wrappedDataField.getMetadata());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   wrappedDataField.getCardinality());
    }
 
    @Test
@@ -61,6 +67,11 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("did not update type!",
                    PrimitiveDataType.INT,
                    field.getType());
+
+      wrappedDataField.setCardinality(FieldCardinality.MANY);
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.MANY,
+                   wrappedDataField.getCardinality());
    }
 
    @Test
@@ -69,6 +80,7 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       when(newField.getName()).thenReturn("newField");
       when(newField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(newField.getType()).thenReturn(DataTypes.INT);
+      when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
 
       PrimitiveDataFieldDeclaration xtext = WrappedPrimitiveDataField.toXtext(newField);
       assertEquals("name not correct!",
@@ -77,6 +89,9 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       assertEquals("type not correct!",
                    PrimitiveDataType.INT,
                    xtext.getType());
+      assertEquals("cardinality not correct!",
+                   xtext.getCardinality(),
+                   Cardinality.MANY);
    }
 
    @Test(expected = IllegalArgumentException.class)
