@@ -4,8 +4,6 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.data.IReferencedDataField;
-import com.ngc.seaside.systemdescriptor.model.api.data.IPrimitiveDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -157,24 +155,10 @@ public class Traversals {
 
       @Override
       public void visitDataField(IVisitorContext ctx, IDataField dataField) {
-    	  if (dataField instanceof IPrimitiveDataField) {
-    		  IPrimitiveDataField field = (IPrimitiveDataField) dataField;    		  
-	          stream.format("        - %s [%s] %s%n",
-		        		    field.getName(),
-		        		    field.getType(),
-		        		    field.getMetadata().getJson().toString());
-    	  }
-    	  else if (dataField instanceof IReferencedDataField) {
-    		  IReferencedDataField field = (IReferencedDataField) dataField;
-	          stream.format("        - %s %s%n",
-	                        field.getName(),
-	                        field.getMetadata().getJson().toString());
-    	  }
-    	  else {
-    		  stream.format("Unknown %s type for traversing: [%s]", 
-    				        IDataField.class.getName(),
-    				        dataField.getClass().getName());  
-    	  }
+         stream.format("        - %s [%s] %s%n",
+                       dataField.getName(),
+                       dataField.getType(),
+                       dataField.getMetadata().getJson().toString());
       }
 
       @Override

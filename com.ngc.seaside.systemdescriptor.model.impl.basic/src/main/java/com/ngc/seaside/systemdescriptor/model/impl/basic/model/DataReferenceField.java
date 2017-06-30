@@ -7,7 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.ModelFieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 
 import java.util.Objects;
 
@@ -21,7 +21,7 @@ public class DataReferenceField implements IDataReferenceField {
    protected final String name;
    protected IMetadata metadata;
    protected IData type;
-   protected ModelFieldCardinality cardinality = ModelFieldCardinality.SINGLE;
+   protected FieldCardinality cardinality = FieldCardinality.SINGLE;
    protected IModel parent;
 
    public DataReferenceField(String name) {
@@ -52,12 +52,12 @@ public class DataReferenceField implements IDataReferenceField {
    }
 
    @Override
-   public ModelFieldCardinality getCardinality() {
+   public FieldCardinality getCardinality() {
       return cardinality;
    }
 
    @Override
-   public IDataReferenceField setCardinality(ModelFieldCardinality cardinality) {
+   public IDataReferenceField setCardinality(FieldCardinality cardinality) {
       Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
       this.cardinality = cardinality;
       return this;
@@ -149,7 +149,7 @@ public class DataReferenceField implements IDataReferenceField {
       }
 
       @Override
-      public IDataReferenceField setCardinality(ModelFieldCardinality cardinality) {
+      public IDataReferenceField setCardinality(FieldCardinality cardinality) {
          throw new UnsupportedOperationException("object is not modifiable!");
       }
 

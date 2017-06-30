@@ -22,8 +22,7 @@ import java.util.Map;
  * The simplest extension of this class might look something like this:
  *
  * <pre>
- *    {@code
- *    public class SurfingStepHandler extends AbstractStepHandler {
+ *    {@code public class SurfingStepHandler extends AbstractStepHandler {
  *      private final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("surfed");
  *      private final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("surfing");
  *      private final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("will surf");
@@ -32,7 +31,7 @@ import java.util.Map;
  *        register(PAST, PRESENT, FUTURE);
  *      }
  *
- *      @Override
+ *      {@literal @}Override
  *      protected void doValidateStep(IValidationContext<IScenarioStep> context) {
  *        requireStepParameters(context, "The 'surf' verb requires parameters!");
  *      }
