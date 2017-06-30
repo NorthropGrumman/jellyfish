@@ -15,7 +15,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataFieldDeclaration> {
+public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataFieldDeclaration>
+      implements IDataField {
+
+   // Note the "implements IDataField" is redundant since the base class implements the interface as well.  But this
+   // avoid an issue in ProxyingValidationContext when that class tries to create a dynamic proxy of this class.
+   // It uses dataField.getClass().getInterfaces() to determine which interfaces the proxy should implement but
+   // getInterfaces() only returns the interfaces declared by the class directly and not the interfaces of the sub-
+   // class.
 
    public WrappedReferencedDataField(IWrapperResolver resolver, ReferencedDataFieldDeclaration wrapped) {
       super(resolver, wrapped);
