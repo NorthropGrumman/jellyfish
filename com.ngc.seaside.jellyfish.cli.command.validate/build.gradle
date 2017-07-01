@@ -9,4 +9,6 @@ dependencies {
     compile "org.osgi:osgi.enterprise:$osgiVersion"
 
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
