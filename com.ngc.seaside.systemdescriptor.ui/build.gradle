@@ -42,4 +42,6 @@ jar {
    manifest {
      from 'META-INF/MANIFEST.MF'
    }
+  // Include 'plugin.xml'
+  from('.', { include('plugin.xml') }) 
 }
