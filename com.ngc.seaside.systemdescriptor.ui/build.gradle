@@ -41,8 +41,10 @@ dependencies {
 
 jar {
    manifest {
-     from 'META-INF/MANIFEST.MF'
+     from('META-INF/MANIFEST.MF') {
+       attributes('Bundle-Version': "1.0.1") // TODO TH: this doesn't work.
+     }
    }
-  // Include 'plugin.xml'
-  from('.', { include('plugin.xml') }) 
+   // Include 'plugin.xml'
+   from('.', { include('plugin.xml') }) 
 }
