@@ -1,0 +1,29 @@
+ext {
+   buildDir = 'build'
+}
+
+configurations {
+  feature
+}
+
+task clean() {
+   doLast {
+      delete("$buildDir")
+   }
+}
+
+task createJar(type: Zip) {
+   from '.', { include('feature.xml') }
+   from '.', { include('build.properties') }
+   destinationDir = file("$buildDir/libs")
+   archiveName = "${project.group}.${project.name}-${project.version}.jar"
+}
+
+task build(dependsOn: createJar) {
+}
+
+artifacts {
+  feature createJar
+}
+
+defaultTasks = ['build']
