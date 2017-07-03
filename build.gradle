@@ -10,107 +10,132 @@ buildscript {
 	}
 }
 
+import org.gradle.api.ProjectConfigurationException
+
+allprojects {
+	group = 'com.ngc.seaside'
+	version = '0.4.1-SNAPSHOT'
+}
+
 subprojects {
-	ext.xtextVersion = '2.10.0'
-	
-	apply plugin: 'java'
-	apply plugin: 'eclipse'
-	apply plugin: 'idea'
+	// Require the user to set the eclipseInstallationDirectory property in
+	// $GRADLE_USER_HOME/gradle.properties.
+	if(!project.properties.containsKey('eclipseInstallationDirectory')) {
+	  throw new ProjectConfigurationException(
+	  '''
+	  the property eclipseInstallationDirectory is not set!  Please ensure this property is set to the directory
+	  that contains a valid Eclipse with DSL support installation.  
+	  
+	  These type of properties can be set in $GRADLE_USER_HOME/gradle.properties.  Note that $GRADLE_USER_HOME is
+	  not necessarily the directory where Gradle is installed.  If $GRADLE_USER_HOME is not set, gradle.properties
+	  can usually be found in $USER/.gradle/.  You can check which properties are set by running
+	  gradle properties.
+	  ''', null)
+	}
+
+	ext.xtextVersion = '2.10.0'	
+	// This is the location of the Eclipse we use when compiling and building the 
+	// update site.
+	ext.eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
 	
 	if(name.equals('systemdescriptor.ui')) {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
+	   apply plugin: 'java'
+	   apply plugin: 'eclipse'
+	   apply plugin: 'idea'
 	   apply plugin: 'maven'
 	} else if(name.equals('systemdescriptor.feature')) {
-	   apply plugin: 'maven'
+	   // Don't apply any parent plugins.
 	} else {
 	    // Apply XText plugins.
+	    apply plugin: 'java'
+	    apply plugin: 'eclipse'
+	    apply plugin: 'idea'
 		apply plugin: 'org.xtext.xtend'
 		apply from: "${rootDir}/gradle/source-layout.gradle"
 		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
 	
-	group = 'com.ngc.seaside'
-	version = '0.4.1-SNAPSHOT'
+	if(!name.equals('systemdescriptor.feature')) {		
+		sourceCompatibility = '1.8'
+		targetCompatibility = '1.8'
+		
+		configurations.all {
+			exclude group: 'asm'
+		}
+		
+		repositories {
+	      	mavenLocal()
 	
-	sourceCompatibility = '1.8'
-	targetCompatibility = '1.8'
+	        maven {
+		        url nexusConsolidated
+	        }
+		}
 	
-	configurations.all {
-		exclude group: 'asm'
-	}
+	    uploadArchives {
+	        repositories {
+	            mavenDeployer {
+	                // Use the main repo for full releases.
+	                repository(url: nexusReleases) {
+	                    // Make sure that nexusUsername and nexusPassword are in your
+	                    // ${gradle.user.home}/gradle.properties file.
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	                // If the version has SNAPSHOT in the name, use the snapshot repo.
+	                snapshotRepository(url: nexusSnapshots) {
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	            }
+	        }
+	    }	
+	    
+		/**
+	     * Create a task for generating the source jar. This will also be uploaded to Nexus.
+	     */
+	    task('sourcesJar', type: Jar, dependsOn: [classes]) {
+	        classifier = 'sources'
+	        from sourceSets.main.allSource
+	    }
 	
-	repositories {
-      	mavenLocal()
-
-        maven {
-	        url nexusConsolidated
-        }
-	}
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                // Use the main repo for full releases.
-                repository(url: nexusReleases) {
-                    // Make sure that nexusUsername and nexusPassword are in your
-                    // ${gradle.user.home}/gradle.properties file.
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-                // If the version has SNAPSHOT in the name, use the snapshot repo.
-                snapshotRepository(url: nexusSnapshots) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-            }
-        }
-    }	
-    
-	/**
-     * Create a task for generating the source jar. This will also be uploaded to Nexus.
-     */
-    task('sourcesJar', type: Jar, dependsOn: [classes]) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    /**
-     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
-     */
-    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-    
-	/**
-     * Augment the jar name to be $groupId.$project.name).
-     */
-    tasks.getByName('sourcesJar') { jar ->
-        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-    }
-
-    tasks.getByName('javadocJar') { jar ->
-        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-    }
-    
-    tasks.getByName('jar') { jar ->
-      archiveName = "${project.group}.${project.name}-${project.version}.jar"
-    }
-    
-    /**
-	 * Ensure to add the doclint option to the javadoc task if using Java 8.
-	 */
-	if (JavaVersion.current().isJava8Compatible()) {
-	    tasks.getByName('javadoc') { doc ->
-	        options.addStringOption('Xdoclint:none', '-quiet')
+	    /**
+	     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
+	     */
+	    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
+	        classifier = 'javadoc'
+	        from javadoc.destinationDir
+	    }
+	    
+		/**
+	     * Augment the jar name to be $groupId.$project.name).
+	     */
+	    tasks.getByName('sourcesJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	
+	    tasks.getByName('javadocJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	    
+	    tasks.getByName('jar') { jar ->
+	      archiveName = "${project.group}.${project.name}-${project.version}.jar"
+	    }
+	    
+	    /**
+		 * Ensure to add the doclint option to the javadoc task if using Java 8.
+		 */
+		if (JavaVersion.current().isJava8Compatible()) {
+		    tasks.getByName('javadoc') { doc ->
+		        options.addStringOption('Xdoclint:none', '-quiet')
+		    }
+		}
+	
+	    /**
+	     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
+	     */
+	    artifacts {
+	        archives sourcesJar
+	        archives javadocJar
 	    }
 	}
-
-    /**
-     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
-     */
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
-
 }

@@ -8,7 +8,8 @@ sourceSets {
 
 repositories {
   flatDir {
-    dirs 'C:/projects/ceacide/eclipse-dsl-installed/eclipse-dsl-neon-2-win32-x86_64/plugins'
+    // Use the directory that contains the Eclipse plugins as a repository.
+    dirs "$eclipsePluginsDirectory"
   }
 }
 
