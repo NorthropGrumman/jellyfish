@@ -2,13 +2,39 @@ ext {
    buildDir = 'build'
 }
 
+configurations {
+   features
+   // note that plugins is reserved
+   eclipsePlugins {
+      transitive = false
+   }
+}
+
+dependencies {
+   features project(path: ':systemdescriptor.feature', configuration: 'feature')
+   
+   eclipsePlugins project(':systemdescriptor')
+   eclipsePlugins project(':systemdescriptor.ide')
+   eclipsePlugins project(':systemdescriptor.ui')
+}
+
 task clean() {
    doLast {
       delete("$buildDir")
    }
 }
 
-task build(/*dependsOn: createJar*/) {
+task copyFeatures(type: Copy) {
+   from configurations.features
+   into { "$buildDir/updatesite/features" }
+}
+
+task copyPlugins(type: Copy) {
+   from configurations.eclipsePlugins
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task build(dependsOn: [copyFeatures, copyPlugins]) {
 }
 
 defaultTasks = ['build']
