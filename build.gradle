@@ -17,15 +17,17 @@ subprojects {
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
 	
-	// Don't apply the XText configuration to the UI plugin.
-	if(!name.equals('systemdescriptor.ui')) {
-		apply plugin: 'org.xtext.xtend'
-		apply from: "${rootDir}/gradle/source-layout.gradle"
-		apply from: "${rootDir}/gradle/maven-deployment.gradle"
-	} else {
+	if(name.equals('systemdescriptor.ui')) {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
 	   apply plugin: 'maven'
+	} else if(name.equals('systemdescriptor.feature')) {
+	   apply plugin: 'maven'
+	} else {
+	    // Apply XText plugins.
+		apply plugin: 'org.xtext.xtend'
+		apply from: "${rootDir}/gradle/source-layout.gradle"
+		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
 	
 	group = 'com.ngc.seaside'
