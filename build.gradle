@@ -47,6 +47,8 @@ subprojects {
 	   apply plugin: 'maven'
 	} else if(name.equals('systemdescriptor.feature')) {
 	   // Don't apply any parent plugins.
+	} else if(name.equals('systemdescriptor.updatesite')) {
+	   // Don't apply any parent plugins.
 	} else {
 	    // Apply XText plugins.
 	    apply plugin: 'java'
@@ -57,7 +59,7 @@ subprojects {
 		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
 	
-	if(!name.equals('systemdescriptor.feature')) {		
+	if(!name.equals('systemdescriptor.feature') && !name.equals('systemdescriptor.updatesite')) {		
 		sourceCompatibility = '1.8'
 		targetCompatibility = '1.8'
 		

@@ -1,0 +1,14 @@
+ext {
+   buildDir = 'build'
+}
+
+task clean() {
+   doLast {
+      delete("$buildDir")
+   }
+}
+
+task build(/*dependsOn: createJar*/) {
+}
+
+defaultTasks = ['build']
