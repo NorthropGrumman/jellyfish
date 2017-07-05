@@ -1,0 +1,20 @@
+
+dependencies {
+    compile project(":command.api")
+    compile project(":bootstrap.api")
+    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.bootstrap.utilities.*')
+    }
+}

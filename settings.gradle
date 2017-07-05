@@ -10,6 +10,7 @@ project(':com.ngc.seaside.bootstrap.api').name = 'bootstrap.api'
 include 'com.ngc.seaside.bootstrap.service.api'
 project(':com.ngc.seaside.bootstrap.service.api').name = 'bootstrap.service.api'
 
-
+include 'com.ngc.seaside.bootstrap.utilities'
+project(':com.ngc.seaside.bootstrap.utilities').name = 'bootstrap.utilities'
 
 
