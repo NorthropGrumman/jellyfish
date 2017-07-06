@@ -1,1 +1,1 @@
-com.ngc.seaside.jellyfish.cli.command.help.HelpCommandModule
+com.ngc.seaside.jellyfish.cli.command.help.HelpCommandGuiceModule
