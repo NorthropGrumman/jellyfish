@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
-import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
@@ -16,12 +15,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * This class provides the implementation of the validate command.
- * 
- * @author blake.perkins@ngc.com
  */
 @Component(service = IJellyFishCommand.class)
 public class ValidateCommand implements IJellyFishCommand {
    private final static String NAME = "validate";
+   private static final IUsage COMMAND_USAGE = new DefaultUsage("Validates the System Descriptor. Requires a system descriptor project within src/main/sd");
 
    private ILogService logService;
 
@@ -41,7 +39,6 @@ public class ValidateCommand implements IJellyFishCommand {
     * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
-   @Inject
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -60,7 +57,7 @@ public class ValidateCommand implements IJellyFishCommand {
 
    @Override
    public IUsage getUsage() {
-      return new DefaultUsage("Fix me");
+      return COMMAND_USAGE;
    }
 
    @Override
@@ -68,10 +65,9 @@ public class ValidateCommand implements IJellyFishCommand {
       // A System Descriptor is considered valid if it isn't null
       logService.trace(getClass(), "Running command %s", NAME);
       if (commandOptions == null || commandOptions.getSystemDescriptor() == null) {
-         logService.error(getClass(), "System Descriptor is null.  Verify project path and syntax.");
-         throw new IllegalArgumentException("System Descriptor is null.  Verify project path and syntax.");
+         throw new IllegalArgumentException("System Descriptor is invalid.  Verify the correct project path and syntax.");
       } else {
-         logService.info(getClass(), "System Descriptor validated!");
+         logService.info(getClass(), "System Descriptor is valid");
       }
    }
 

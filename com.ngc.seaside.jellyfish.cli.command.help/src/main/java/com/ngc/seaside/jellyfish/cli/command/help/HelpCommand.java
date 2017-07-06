@@ -141,6 +141,7 @@ public final class HelpCommand implements IJellyFishCommand {
       } else {
          StringTable<IJellyFishCommand> table = getCommandTable(INDENT, commands.values());
          builder.append(table);
+         builder.append("\nTo see more detail about a command, run `jellyfish help -Dcommand=<command-name>`\n");
       }
    }
 
@@ -152,15 +153,21 @@ public final class HelpCommand implements IJellyFishCommand {
     * @param commandName name of command
     */
    private void writeCommandHelp(StringBuilder builder, boolean inUsage, String commandName) {
-      String baseIndent = inUsage ? "" : INDENT;
-      String parameterIndent = inUsage ? INDENT : INDENT + INDENT;
+      String baseIndent = inUsage ? INDENT : "";
+      String parameterIndent = inUsage ? INDENT + INDENT : INDENT;
       IJellyFishCommand command = commands.get(commandName);
       if (command == null) {
          builder.append(commandName + " command not found\n");
       } else {
          StringTable<IParameter> parameterTable = getParameterTable(parameterIndent, command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
+         if (!command.getUsage().getAllParameters().contains("inputDir")) {
+            parameterTable.getModel().addItem(new DefaultParameter("inputDir", "Directory containing the system descriptor project", false));
+         }
          StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent, command.getUsage().getRequiredParameters());
          if (inUsage) {
+            StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
+            builder.append(table).append('\n');
+         } else {
             String parameterUsage = command.getUsage().getAllParameters().stream().map(p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
                      .collect(Collectors.joining(" "));
             if (!parameterUsage.isEmpty()) {
@@ -168,9 +175,6 @@ public final class HelpCommand implements IJellyFishCommand {
             }
             builder.append(String.format("Usage: jellyfish %s [-DinputDir=dir]%s%n%n", commandName, parameterUsage));
             builder.append(command.getUsage().getDescription()).append('\n');
-         } else {
-            StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
-            builder.append(table).append('\n');
          }
          if (!requiredParameterTable.getModel().getItems().isEmpty()) {
             builder.append(baseIndent).append("required parameters:\n\n");
