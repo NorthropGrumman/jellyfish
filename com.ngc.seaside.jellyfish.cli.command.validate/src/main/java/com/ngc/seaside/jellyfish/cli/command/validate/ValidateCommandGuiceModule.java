@@ -8,12 +8,12 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 /**
  * @author blake.perkins@ngc.com
  */
-public class ValidateCommandModule extends AbstractModule {
+public class ValidateCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding().to(ValidateCommand.class);
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding().to(ValidateCommandGuiceWrapper.class);
 
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(ValidateCommand.class);
+      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(ValidateCommandGuiceWrapper.class);
    }
 }

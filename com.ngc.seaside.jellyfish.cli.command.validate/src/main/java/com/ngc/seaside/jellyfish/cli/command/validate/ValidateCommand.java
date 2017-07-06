@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -18,6 +19,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * 
  * @author blake.perkins@ngc.com
  */
+@Component(service = IJellyFishCommand.class)
 public class ValidateCommand implements IJellyFishCommand {
    private final static String NAME = "validate";
 
