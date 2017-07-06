@@ -35,6 +35,7 @@ public class PropertiesTest {
       assertEquals("com-ngc-seaside-myclass", fixture.get("dashPackage"));
    }
 
+
    @Test
    public void doesReevaluate() throws URISyntaxException, IOException {
       fixture = new Properties();
@@ -46,6 +47,7 @@ public class PropertiesTest {
       fixture.evaluate();
 
       assertEquals("MyClass", fixture.get("classname"));
+      assertEquals("my-class", fixture.get("hyphens"));
       assertEquals("com.ngc.seaside", fixture.get("groupId"));
       assertEquals("myclass", fixture.get("artifactId"));
       assertEquals("com.ngc.seaside.myclass", fixture.get("package"));

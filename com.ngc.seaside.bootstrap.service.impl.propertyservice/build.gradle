@@ -6,6 +6,7 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.api:$apiVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$apiVersion"
 
+    compile "com.google.guava:guava:$guavaVersion"
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "com.ngc.blocs:service.api:$blocsVersion"

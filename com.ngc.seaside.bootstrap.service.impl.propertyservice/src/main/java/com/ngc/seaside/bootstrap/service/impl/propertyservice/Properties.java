@@ -23,10 +23,20 @@ public class Properties implements IProperties {
    private Map<String, String> original = new LinkedHashMap<>();
    private Map<String, String> current = new LinkedHashMap<>();
 
+   /**
+    * Constructor
+    */
    public Properties() {
       engine.setProperty("runtime.references.strict", true);
+      context.put("StringUtilities", StringUtilities.class);
    }
 
+   /**
+    * Load the properties given the properties file.
+    *
+    * @param propertiesFile the properties file.
+    * @throws IOException if the file can't be parsed
+    */
    void load(Path propertiesFile) throws IOException {
       original = parseFile(propertiesFile);
    }
