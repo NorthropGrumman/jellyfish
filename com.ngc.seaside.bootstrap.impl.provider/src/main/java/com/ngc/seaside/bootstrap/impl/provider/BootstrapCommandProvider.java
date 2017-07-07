@@ -130,7 +130,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Set the bootstrap template service.
+    * Set the bootstrap templateContent service.
     *
     * @param ref the service
     */
@@ -142,7 +142,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Remove the bootstrap template service.
+    * Remove the bootstrap templateContent service.
     */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
@@ -161,7 +161,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Remove the bootstrap template service.
+    * Remove the bootstrap templateContent service.
     */
    public void removeParameterService(IParameterService ref) {
       setParameterService(null);
@@ -210,11 +210,11 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Create the bootstrap options given the user supplied parameters and the template supplied parameters. The
-    * template may be null due to the fact that you can have a command that doesn't have a template.
+    * Create the bootstrap options given the user supplied parameters and the templateContent supplied parameters. The
+    * templateContent may be null due to the fact that you can have a command that doesn't have a templateContent.
     *
     * @param userInputParameters the parameters that the user input on the command line
-    * @param templateParameters  the parameters that were fulfilled by the template.properties file in the template
+    * @param templateParameters  the parameters that were fulfilled by the templateContent.properties file in the templateContent
     * @return the bootstrap command options. Never null.
     */
    protected IBootstrapCommandOptions createBootstrapCommandOptions(
@@ -234,20 +234,20 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Unpack the template if it exists. If not, just return an empty collection of parameters.
+    * Unpack the templateContent if it exists. If not, just return an empty collection of parameters.
     *
     * @param command                 the command.
     * @param userSuppliedParameters  the parameters the user passed in. These should overwrite any properties that
-    *                                exists in the template.properties. meaning, if they pass in these parameters they
+    *                                exists in the templateContent.properties. meaning, if they pass in these parameters they
     *                                should not be prompted!
-    * @return the parameters that were required to be input for usage within the template.
+    * @return the parameters that were required to be input for usage within the templateContent.
     */
    protected IParameterCollection unpackTemplate(
             IBootstrapCommand command,
             IParameterCollection userSuppliedParameters) {
       String templatePrefix = getCommandTemplatePrefix(command);
       /**
-       * Unpack the template
+       * Unpack the templateContent
        */
       if (templateService.templateExists(templatePrefix)) {
          try {
@@ -256,7 +256,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
                outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getValue());
             }
 
-            logService.trace(getClass(), "Unpacking template for '%s' to '%s'", userSuppliedParameters, outputPath);
+            logService.trace(getClass(), "Unpacking templateContent for '%s' to '%s'", userSuppliedParameters, outputPath);
             ITemplateOutput templateOutput =
                      templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
 
@@ -264,7 +264,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          } catch (TemplateServiceException e) {
             logService.error(getClass(),
                              e,
-                             "Unable to unpack the template for command'%s'. Aborting",
+                             "Unable to unpack the templateContent for command'%s'. Aborting",
                              command);
          }
       }
@@ -272,9 +272,9 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Return the prefix used in order to look the command's template up within the templates resource directory.
+    * Return the prefix used in order to look the command's templateContent up within the templates resource directory.
     * Currently this assumes that the naming convention for the command's package includes the same name used for
-    * creating the template zip. This is actually done for us using the correct build tools.
+    * creating the templateContent zip. This is actually done for us using the correct build tools.
     *
     * @param command the command in which to create the prefix
     * @return the String representation of the command's package.
@@ -284,9 +284,9 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Convert the template output to a parameter collection. This includes the templateFinalOutputDir.
+    * Convert the templateContent output to a parameter collection. This includes the templateFinalOutputDir.
     *
-    * @param output the template service's output
+    * @param output the templateContent service's output
     * @return the collection of parameters.
     */
    protected IParameterCollection convertParameters(ITemplateOutput output, Path outputPath) {

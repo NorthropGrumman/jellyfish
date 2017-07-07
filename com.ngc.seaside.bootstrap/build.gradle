@@ -7,8 +7,6 @@ configurations {
 }
 
 dependencies {
-    compile "com.ngc.seaside:command.api:$apiVersion"
-    compile "com.ngc.seaside:bootstrap.api:$apiVersion"
     compile project(":bootstrap.impl.provider")
     compile project(":bootstrap.service.impl.templateservice")
     compile project(":bootstrap.service.impl.promptuserservice")
@@ -16,6 +14,8 @@ dependencies {
     compile project(":bootstrap.service.impl.parameterservice")
 
     //include the blocs guice wrappers
+    compile "com.ngc.seaside:command.api:$apiVersion"
+    compile "com.ngc.seaside:bootstrap.api:$apiVersion"
     compile project(":guice.modules")
 
     //core command projects
@@ -28,10 +28,11 @@ dependencies {
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion:template@zip"
     compile "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion"
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion:template@zip"
+    compile "com.ngc.seaside:bootstrap.command.impl.createbootstrapcommand:$bootstrapCommandsVersion"
+    commandTemplate "com.ngc.seaside:bootstrap.command.impl.createbootstrapcommand:$bootstrapCommandsVersion:template@zip"
 
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-
     compile "org.osgi:osgi.enterprise:$osgiVersion"
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

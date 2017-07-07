@@ -1,0 +1,3 @@
+# List all files that should be ignored by post-processing template engine
+template.properties
+template.ignore

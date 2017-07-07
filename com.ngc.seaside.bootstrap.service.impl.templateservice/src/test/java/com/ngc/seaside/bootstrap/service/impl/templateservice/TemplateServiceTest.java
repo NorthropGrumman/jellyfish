@@ -31,6 +31,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -170,6 +171,76 @@ public class TemplateServiceTest {
                       "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");
          assertEquals(e.getCause().getMessage(),
                       "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
+      }
+   }
+
+   @Test
+   public void doesUnpackIgnore() throws IOException {
+      File outputDirectory = testFolder.newFolder("output");
+
+      ArgumentCaptor<String> parameterCapture = ArgumentCaptor.forClass(String.class);
+      ArgumentCaptor<String> defaultCapture = ArgumentCaptor.forClass(String.class);
+
+      IProperties properties = mock(IProperties.class);
+      when(properties.get("classname")).thenReturn("MyClass");
+      when(properties.get("groupId")).thenReturn("com.ngc.seaside");
+      when(properties.get("artifactId")).thenReturn("mybundle");
+      when(properties.get("commandName")).thenReturn("my-bundle");
+      when(properties.get("package")).thenReturn("com.ngc.seaside.mybundle");
+      when(properties.getKeys()).thenReturn(
+               Arrays.asList(new String[] { "classname", "groupId", "artifactId", "commandName", "package" }));
+
+      when(propertyService.load(any())).thenReturn(properties);
+      when(promptUserService.prompt(
+               parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
+
+      IParameterCollection collection = mock(IParameterCollection.class);
+      when(collection.containsParameter("classname")).thenReturn(true);
+      when(collection.containsParameter("groupId")).thenReturn(true);
+      when(collection.containsParameter("artifactId")).thenReturn(true);
+      when(collection.containsParameter("commandName")).thenReturn(true);
+      when(collection.containsParameter("package")).thenReturn(true);
+      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyClass"));
+      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside"));
+      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter("artifactId").setValue("mybundle"));
+      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter("commandName").setValue("my-bundle"));
+      when(collection.getParameter("package")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside.mybundle"));
+
+
+      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",
+                      collection, Paths.get(outputDirectory.getAbsolutePath()), false);
+
+      //verify that the prompt service isn't called for the default parameter that we passed in for classname!
+      verify(promptUserService, never()).prompt(anyString(), anyString(), any());
+
+      //this is called 'value' because of the "when" above that mocks the promptUserService
+      File bundle = Paths.get(outputDirectory.getAbsolutePath(), "com.ngc.seaside.mybundle").toFile();
+      File src = Paths.get(bundle.getAbsolutePath(), "src").toFile();
+      File main = Paths.get(src.getAbsolutePath(), "main").toFile();
+      File template = Paths.get(main.getAbsolutePath(), "template").toFile();
+      File templateContent = Paths.get(template.getAbsolutePath(), "templateContent").toFile();
+      File groupArtifact = Paths.get(templateContent.getAbsolutePath(), "${groupId}.${artifactId}").toFile();
+
+      assertTrue(bundle.exists());
+      assertTrue(src.exists());
+      assertTrue(main.exists());
+      assertTrue(template.exists());
+      assertTrue(templateContent.exists());
+      assertTrue(groupArtifact.exists());
+
+//      listFiles(bundle, "");
+   }
+
+   private void listFiles(File file, String indent) {
+      System.out.println(String.format("%s%s", indent, file.getAbsolutePath()));
+      if(file.isFile()) {
+         return;
+      }
+      String newIndent = indent + "";
+      if(file.isDirectory()) {
+         for(File sub : file.listFiles()) {
+            listFiles(sub, newIndent);
+         }
       }
    }
 
