@@ -1,7 +1,5 @@
 package com.ngc.seaside.bootstrap.utilities.file;
 
-import com.ngc.seaside.bootstrap.utilites.file.FileUtilities;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -26,7 +24,7 @@ public class FileUtilitiesTest {
 
 
    @Test
-   public void doesAddLineToFile() throws IOException {
+   public void doesAddLineToFile() throws IOException, FileUtilitiesException {
       File settingsFile = testFolder.newFile("settings.gradle");
       Path settingsPath = Paths.get(settingsFile.getAbsolutePath());
 

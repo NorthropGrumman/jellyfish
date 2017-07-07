@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.utilites.file;
+package com.ngc.seaside.bootstrap.utilities.file;
 
 import com.google.common.base.Preconditions;
 
@@ -12,6 +12,10 @@ import java.util.List;
  *
  */
 public class FileUtilities {
+
+   private FileUtilities() {
+
+   }
 
    /**
     * Add lines to the given file.

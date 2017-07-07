@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.utilites.file;
+package com.ngc.seaside.bootstrap.utilities.file;
 
 /**
  *
