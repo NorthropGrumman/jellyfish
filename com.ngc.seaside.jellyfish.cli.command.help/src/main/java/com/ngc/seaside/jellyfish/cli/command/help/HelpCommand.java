@@ -30,7 +30,6 @@ public final class HelpCommand implements IJellyFishCommand {
    public static final String COMMAND_NAME = "help";
    private static final int LINE_WIDTH = 80;
    private static final String INDENT = "   ";
-
    private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help", new DefaultParameter("verbose", "Prints the help of all of the known commands", false),
       new DefaultParameter("command", "Command to print help", false));
 
@@ -38,11 +37,22 @@ public final class HelpCommand implements IJellyFishCommand {
 
    private final TreeMap<String, IJellyFishCommand> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
+   /**
+    * Adds a command to the help
+    * 
+    * @param command command to be added
+    */
+   @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.STATIC, unbind = "removeCommand")
    public void addCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command);
       commands.put(command.getName(), command);
    }
 
+   /**
+    * Removes a command from the help
+    * 
+    * @param command command to be removed
+    */
    public void removeCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command);
       commands.remove(command.getName());
@@ -174,7 +184,7 @@ public final class HelpCommand implements IJellyFishCommand {
                parameterUsage = " " + parameterUsage;
             }
             builder.append(String.format("Usage: jellyfish %s [-DinputDir=dir]%s%n%n", commandName, parameterUsage));
-            builder.append(command.getUsage().getDescription()).append('\n');
+            builder.append(command.getUsage().getDescription()).append("\n\n");
          }
          if (!requiredParameterTable.getModel().getItems().isEmpty()) {
             builder.append(baseIndent).append("required parameters:\n\n");
@@ -207,7 +217,7 @@ public final class HelpCommand implements IJellyFishCommand {
     * @return a properly-formatted StringTable for printing IParameters
     */
    private StringTable<IParameter> getParameterTable(String columnSpace, Collection<IParameter> elements) {
-      int maxNameWidth = commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream()).mapToInt(p -> p.getName().length()).max().orElse(0);
+      int maxNameWidth = Math.max("inputDir".length(), commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream()).mapToInt(p -> p.getName().length()).max().orElse(0));
       return getTable(columnSpace, elements, new ParameterFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
    }
 

@@ -18,7 +18,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  */
 @Component(service = IJellyFishCommand.class)
 public class ValidateCommand implements IJellyFishCommand {
-   private final static String NAME = "validate";
+   private static final String NAME = "validate";
    private static final IUsage COMMAND_USAGE = new DefaultUsage("Validates the System Descriptor. Requires a system descriptor project within src/main/sd");
 
    private ILogService logService;

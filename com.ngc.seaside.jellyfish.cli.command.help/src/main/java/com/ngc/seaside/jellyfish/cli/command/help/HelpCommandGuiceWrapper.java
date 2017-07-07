@@ -17,6 +17,7 @@ public class HelpCommandGuiceWrapper implements IJellyFishCommand {
    @Inject
    public HelpCommandGuiceWrapper(ILogService logService) {
       delegate.setLogService(logService);
+      delegate.activate();
    }
    
    @Inject
