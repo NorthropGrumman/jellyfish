@@ -41,9 +41,14 @@ dependencies {
 
 jar {
    manifest {
-     from('META-INF/MANIFEST.MF') {
-       attributes('Bundle-Version': "1.0.1") // TODO TH: this doesn't work.
-     }
+      from('META-INF/MANIFEST.MF') {
+         // Replace the version with the version from the gradle build.
+         eachEntry {
+            if(getKey().equals('Bundle-Version')) {
+               setValue("$version")
+            }
+         }
+      }
    }
    // Include 'plugin.xml'
    from('.', { include('plugin.xml') }) 
