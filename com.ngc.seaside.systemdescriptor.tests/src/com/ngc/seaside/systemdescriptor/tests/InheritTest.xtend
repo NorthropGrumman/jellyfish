@@ -21,6 +21,8 @@ import com.google.inject.Provider
 import org.eclipse.xtext.resource.XtextResourceSet
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.eclipse.xtext.diagnostics.Diagnostic
+import org.eclipse.xtext.diagnostics.Severity
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -489,85 +491,90 @@ class InheritTest {
 	def void testWarnBaseInheritedClassInput() {
 
 		val dataASource = '''
-			package datathing.datatypes
-			
-			import datathing.datetypes.Date
-			
-			data A {
-				Date date
-			}
+				package datathing.datatypes
+				
+				data A {
+					int value
+				}
 			''';
 		
-		val dataAResult = parseHelper.parse(dataASource)
+		val dataAResult = parseHelper.parse(dataASource, resources)
 		assertNotNull(dataAResult)
 		validationTester.assertNoIssues(dataAResult)
 		
 		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
 		validationTester.assertNoIssues(resourceA)
-		
+
 		val dataBSource = '''
-				package datathing.otherdatatypes
-				
-				import datathing.datatypes.A
-				
-				data B : A {
-				}
-			''';
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
 		
 		val dataBResult = parseHelper.parse(dataBSource, resources)
 		assertNotNull(dataBResult)
 		validationTester.assertNoIssues(dataBResult)
 		
-		var resourceB = resourceHelper.resource(dataASource, URI.createURI("B.sd"), resources);
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
-			package data.models
+			package datathing.models
 			
-			import data.datatypes
+			import datathing.datatypes.A
 			
 			model ModelA {
-			  input {
-			    A a {}
-			  }
+				
+				input {
+					A a
+				}
+			}
 		'''
 
 		val result = parseHelper.parse(modelSource, resources)
 		assertNotNull(result)
+		//validationTester.assertNoIssues(result);
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
+			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
 			null);		
 	}
 	
 	@Test
 	def void testWarnBaseInheritedClassOutput() {
-	var resourceA = resourceHelper.resource(
-			'''
-				package data.datatypes
+	val dataASource = '''
+				package datathing.datatypes
 				
 				data A {
 					int value
 				}
-			''',
-			URI.createURI("A.sd"),
-			resources
-		)
-		validationTester.assertNoIssues(resourceA)
+			''';
 		
-		var resourceB = resourceHelper.resource(
-			'''
-				package data.otherdatatypes
-				
-				import data.datatypes.A
-				
-				data B : A {
-				}
-			''',
-			URI.createURI("B.sd"),
-			resources
-		)
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
@@ -595,31 +602,35 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassLink() {
-	var resourceA = resourceHelper.resource(
-			'''
-				package data.datatypes
+	val dataASource = '''
+				package datathing.datatypes
 				
 				data A {
 					int value
 				}
-			''',
-			URI.createURI("A.sd"),
-			resources
-		)
-		validationTester.assertNoIssues(resourceA)
+			''';
 		
-		var resourceB = resourceHelper.resource(
-			'''
-				package data.otherdatatypes
-				
-				import data.datatypes.A
-				
-				data B : A {
-				}
-			''',
-			URI.createURI("B.sd"),
-			resources
-		)
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
@@ -647,31 +658,35 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassScenario() {
-	var resourceA = resourceHelper.resource(
-			'''
-				package data.datatypes
+	val dataASource = '''
+				package datathing.datatypes
 				
 				data A {
 					int value
 				}
-			''',
-			URI.createURI("A.sd"),
-			resources
-		)
-		validationTester.assertNoIssues(resourceA)
+			''';
 		
-		var resourceB = resourceHelper.resource(
-			'''
-				package data.otherdatatypes
-				
-				import data.datatypes.A
-				
-				data B : A {
-				}
-			''',
-			URI.createURI("B.sd"),
-			resources
-		)
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
@@ -680,7 +695,8 @@ class InheritTest {
 			import data.datatypes
 			
 			model ModelA {
-			scenario A a {}
+				scenario a {}
+			}
 		'''
 
 		val result = parseHelper.parse(modelSource, resources)

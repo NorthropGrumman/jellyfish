@@ -9,20 +9,22 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class DataValidator extends AbstractSystemDescriptorValidator {
 
 	@Check
 	public void checkHierarchy(Data data) {
-		 
-	}
-
-	protected void checkNotInheritSelf(Data data) {
-
+	
 	}
 	
-	protected void compileSuperClassFields(Data data){
-		
+	@Check
+	public void checkBaseDataObject(Data data) {
+		// Ensure that the model does not already have a part with the same
+		// name.
+//		System.out.println("Psssst! data");
+//		System.out.println(data);
+//		System.out.println(data.eContainingFeature().getClass());
 	}
 }

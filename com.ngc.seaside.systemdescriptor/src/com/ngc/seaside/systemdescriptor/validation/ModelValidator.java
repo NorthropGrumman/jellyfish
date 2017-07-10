@@ -1,12 +1,23 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import org.eclipse.xtext.validation.Check;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.xtext.validation.Check;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -234,6 +245,88 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+		}
+	}
+	
+	/**
+	 * If the model is using a base class in the links, scenarios, output, or input fields
+	 * it needs to warn the user.
+	 * 
+	 * @param declaration
+	 */
+	@Check
+	public void checkBaseDataObject(Model model) {
+		// Ensure that the model does not already have a part with the same
+		// name.
+		List<String> superclasses = new ArrayList<String>();
+		List<InputDeclaration> declarationClasses = new ArrayList<InputDeclaration>();
+		
+		Resource eResource = (Resource) model.eResource();
+		EList<Resource> resourceSetList = eResource.getResourceSet().getResources();
+		Input input = model.getInput();
+		EList<InputDeclaration> inputDecs = input.getDeclarations();
+
+		for(int i = 0; i < inputDecs.size(); i++){
+			InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
+			System.out.println("Adding class to dec classes");
+			String decClassName = decInp.getType().getName();
+			if(!declarationClasses.contains(decClassName)){
+				declarationClasses.add(decInp);	
+			}
+		}
+		
+		for(int i = 0; i < resourceSetList.size(); i++)
+		{
+			//Resources
+			Resource tempResource = (Resource) resourceSetList.get(i);
+			EList<EObject> eObjectsList = tempResource.getContents();
+			//System.out.println("I " + tempResource.getURI());
+			for(int j = 0; j < eObjectsList.size(); j++)
+			{
+				//System.out.println("J " + eObjectsList.get(j).getClass());
+				//Packages
+				EList<EObject> eObjectsInnerList = eObjectsList.get(j).eContents();
+				for(int l = 0; l < eObjectsInnerList.size(); l++)
+				{
+					
+					//Import/Data 
+					EObject obj = (EObject) eObjectsInnerList.get(l);
+					
+					if(obj.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+						Data data = (Data) obj;
+						//System.out.println("Data name " + data.getName());
+						//System.out.println("Data superclass " + data.getSuperclass());
+						Data superclass = data.getSuperclass();
+						if(superclass != null ){
+							String superclassName = superclass.getName();
+							if(!superclasses.contains(superclassName)){
+								superclasses.add(superclassName);	
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		System.out.println("Superclasses");
+		for(int i = 0; i < superclasses.size(); i++){
+			System.out.println(superclasses.get(i));
+		}
+		
+		System.out.println("Declaration Classes");
+		for(int i = 0; i < declarationClasses.size(); i++){
+			System.out.println(declarationClasses.get(i).getType().getName());
+		}
+	
+		for(int i = 0; i < declarationClasses.size(); i++){
+			if(superclasses.contains(declarationClasses.get(i).getType().getName())){
+				System.out.println("Warning!");
+				
+				String msg = String.format(
+						"You are using superclass '%s' in your declaration. Try using a subclass instead.",
+						declarationClasses.get(i).getType().getName());
+				warning(msg, declarationClasses.get(i), SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+			}
 		}
 	}
 
