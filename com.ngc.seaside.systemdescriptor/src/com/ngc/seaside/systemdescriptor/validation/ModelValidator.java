@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -11,6 +12,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
@@ -259,114 +261,106 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	public void checkBaseDataObject(Model model) {
 		// Ensure that the model does not already have a part with the same
 		// name.
-		System.out.println("Flag 1");
+		HashMap<String, String> objectDeclarations = new HashMap<String, String>(); //<Objectname, Classname>
 		List<String> superclasses = new ArrayList<String>();
-		List<InputDeclaration> declarationClasses = new ArrayList<InputDeclaration>();
 		
 		Resource eResource = (Resource) model.eResource();
-		EList<Resource> resourceSetList = eResource.getResourceSet().getResources();
-		//EList<Scenario> scenarios = model.getScenarios();
-
-		if(model.getInput() != null) {
-			System.out.println("Getting Input Decs");
-			EList<InputDeclaration> inputDecs = model.getInput().getDeclarations();
+		if(eResource != null) {
+			//if eResource is null, no point in continuing since we need it to "see" all the classes.
+			EList<Resource> resourceSetList = eResource.getResourceSet().getResources();
 			
-			for(int i = 0; i < inputDecs.size(); i++){
-				InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
-				System.out.println("Adding class to input dec classes");
-				String decClassName = decInp.getType().getName();
-				if(!declarationClasses.contains(decClassName)){
-					declarationClasses.add(decInp);	
-				}
-			}		
-		} else {
-			System.out.println("Input Decs Are Empty!");
-		}
-
-		if(model.getLinks() != null) {
-			System.out.println("Getting Link Decs");
-			EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
-			
-			for(int i = 0; i < linkDecs.size(); i++){
-				InputDeclaration decLink = (InputDeclaration) linkDecs.get(i);
-				System.out.println("Adding class to link dec classes");
-				String decClassName = decLink.getType().getName();
-				if(!declarationClasses.contains(decClassName)){
-					declarationClasses.add(decLink);	
-				}
-			}		
-		}else {
-			System.out.println("Links Decs Are Empty!");
-		}
-
-		if(model.getOutput() != null) {	
-			System.out.println("Getting Output Decs");
-			EList<OutputDeclaration> outputDecs = model.getOutput().getDeclarations();
-			
-			for(int i = 0; i < outputDecs.size(); i++){
-				InputDeclaration decOut = (InputDeclaration) outputDecs.get(i);
-				System.out.println("Adding class to output dec classes");
-				String decClassName = decOut.getType().getName();
-				if(!declarationClasses.contains(decClassName)){
-					declarationClasses.add(decOut);	
-				}
-			}
-		} else {
-			System.out.println("Output Decs Are Empty!");
-		}
-		
-//		for(int i = 0; i < scenarios.size(); i++){
-//			Scenario scenario = scenarios.get(i);
-//			scenario
-//			String decClassName = decInp.getType().getName();
-//			if(!declarationClasses.contains(decClassName)){
-//				System.out.println("Adding class to dec classes");
-//				declarationClasses.add(decInp);	
-//			}
-//		}
-//		
-		for(int i = 0; i < resourceSetList.size(); i++)
-		{
-			//Resources
-			Resource tempResource = (Resource) resourceSetList.get(i);
-			EList<EObject> eObjectsList = tempResource.getContents();
-			//System.out.println("I " + tempResource.getURI());
-			for(int j = 0; j < eObjectsList.size(); j++)
+			//Iterate through all of our resources to identify any Data superclasses
+			for(int i = 0; i < resourceSetList.size(); i++)
 			{
-				//System.out.println("J " + eObjectsList.get(j).getClass());
-				//Packages
-				EList<EObject> eObjectsInnerList = eObjectsList.get(j).eContents();
-				for(int l = 0; l < eObjectsInnerList.size(); l++)
+				//Resources
+				Resource tempResource = (Resource) resourceSetList.get(i);
+				EList<EObject> eObjectsList = tempResource.getContents();
+				//System.out.println("I " + tempResource.getURI());
+				for(int j = 0; j < eObjectsList.size(); j++)
 				{
-					
-					//Import/Data 
-					EObject obj = (EObject) eObjectsInnerList.get(l);
-					
-					if(obj.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
-						Data data = (Data) obj;
-						//System.out.println("Data name " + data.getName());
-						//System.out.println("Data superclass " + data.getSuperclass());
-						Data superclass = data.getSuperclass();
-						if(superclass != null ){
-							String superclassName = superclass.getName();
-							if(!superclasses.contains(superclassName)){
-								superclasses.add(superclassName);	
+					//System.out.println("J " + eObjectsList.get(j).getClass());
+					//Packages
+					EList<EObject> eObjectsInnerList = eObjectsList.get(j).eContents();
+					for(int l = 0; l < eObjectsInnerList.size(); l++)
+					{
+						
+						//Import/Data 
+						EObject obj = (EObject) eObjectsInnerList.get(l);
+						
+						if(obj.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+							Data data = (Data) obj;
+							Data superclass = data.getSuperclass();
+							if(superclass != null ){
+								String superclassName = superclass.getName();
+								if(!superclasses.contains(superclassName)){
+									superclasses.add(superclassName);	
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-	
-		for(int i = 0; i < declarationClasses.size(); i++){
-			if(superclasses.contains(declarationClasses.get(i).getType().getName())){
-				System.out.println("Warning!");
+			
+			if(model.getInput() != null) {
+				EList<InputDeclaration> inputDecs = model.getInput().getDeclarations();
 				
-				String msg = String.format(
-						"You are using superclass '%s' in your declaration. Try using a subclass instead.",
-						declarationClasses.get(i).getType().getName());
-				warning(msg, declarationClasses.get(i), SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+				for(int i = 0; i < inputDecs.size(); i++){
+					InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
+					String classname = decInp.getType().getName();
+					objectDeclarations.put(decInp.getName(), classname); //Keep track for later
+					if(superclasses.contains(classname)){
+						//if this classname is already identified as a superclass.
+						String msg = String.format(
+								"You are using class '%s', a superclass, in your  input declaration. Try using a class that inherits from '%s' instead.",
+								classname, classname);
+						warning(msg, decInp, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+					}
+				}		
 			}
+			
+			if(model.getOutput() != null) {	
+				EList<OutputDeclaration> outputDecs = model.getOutput().getDeclarations();
+				
+				for(int i = 0; i < outputDecs.size(); i++){
+					OutputDeclaration decOut = (OutputDeclaration) outputDecs.get(i);
+					String classname = decOut.getType().getName();
+					objectDeclarations.put(decOut.getName(), classname); //Keep track for later
+					if(superclasses.contains(classname)){
+						//if this classname is already identified as a superclass.
+						String msg = String.format(
+								"You are using class '%s', a superclass, in your  output declaration. Try using a class that inherits from '%s' instead.",
+								classname, classname);
+						warning(msg, decOut, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+					}
+				}	
+			}
+			
+//			if(model.getLinks() != null) {
+//				//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
+//				EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
+//				
+//				for(int i = 0; i < linkDecs.size(); i++){
+//					LinkDeclaration decLink = (LinkDeclaration) linkDecs.get(i);
+//					System.out.println("Adding class to link dec classes");
+//					String decClassName = decLink.getType().getName();
+//					if(!linkDeclarationClasses.contains(decClassName)){
+//						linkDeclarationClasses.add(decLink);	
+//					}
+//				}		
+//			}else {
+//				System.out.println("Links Decs Are Empty!");
+//			}
+					
+	//		for(int i = 0; i < scenarios.size(); i++){
+			//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
+	//			Scenario scenario = scenarios.get(i);
+	//			scenario
+	//			String decClassName = decInp.getType().getName();
+	//			if(!declarationClasses.contains(decClassName)){
+	//				System.out.println("Adding class to dec classes");
+	//				declarationClasses.add(decInp);	
+	//			}
+	//		}
 		}
 	}
 

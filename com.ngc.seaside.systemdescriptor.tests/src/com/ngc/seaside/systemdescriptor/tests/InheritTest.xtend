@@ -489,7 +489,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassInput() {
-
+		println("~~~INPUT~~~")
 		val dataASource = '''
 				package datathing.datatypes
 				
@@ -526,7 +526,7 @@ class InheritTest {
 			
 			import datathing.datatypes.A
 			
-			model ModelA {
+			model ModelAInput {
 				
 				input {
 					A a
@@ -545,6 +545,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassOutput() {
+	println("~~~OUTPUT~~~")	
 	val dataASource = '''
 				package datathing.datatypes
 				
@@ -577,23 +578,25 @@ class InheritTest {
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
-			package data.models
+			package datathing.models
 			
-			import data.datatypes
+			import datathing.datatypes.A
 			
-			model ModelA {
-			  output {
-			    A a {}
-			  }
-		'''
-
-		val result = parseHelper.parse(modelSource, resources)
-		assertNotNull(result)
+			model ModelAOutput {
+				
+				output {
+					A a
+				}
+			}
+		''';
 		
+		val result = parseHelper.parse(modelSource, resources)
+	
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
+			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
 			null);	
+			
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 		
@@ -601,6 +604,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassLink() {
+		println("~~~LINK~~~")
 		val dataASource = '''
 				package datathing.datatypes
 				
@@ -633,22 +637,29 @@ class InheritTest {
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
-			package data.models
+			package datathing.models
 			
-			import data.datatypes
+			import datathing.datatypes.A
 			
-			model ModelA {
+			model ModelALink {
+			  parts {
+				A partA	
+			  }
+			  input {
+			  	A a
+			  }
 			  links {
-			    A a {}
+			    link a to partA
 			  }
 		'''
 
 		val result = parseHelper.parse(modelSource, resources)
-		assertNotNull(result)
+		assertNotNull(result)	
+		validationTester.assertNoIssues(dataBResult)
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
+			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.
@@ -656,6 +667,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassScenario() {
+		println("~~~SCENARIO~~~")
 	val dataASource = '''
 				package datathing.datatypes
 				
@@ -688,12 +700,15 @@ class InheritTest {
 		validationTester.assertNoIssues(resourceB)
 		
 		val modelSource = '''
-			package data.models
+			package datathing.models
 			
-			import data.datatypes
+			import datathing.datatypes.A
 			
-			model ModelA {
-				scenario a {}
+			model ModelAScenario {
+				scenario scenA {
+					when recieving a
+					then something a
+				}
 			}
 		'''
 
@@ -702,7 +717,7 @@ class InheritTest {
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
+			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.	

@@ -7,23 +7,18 @@ import org.eclipse.xtext.generator.IGeneratorContext;
 
 /**
  * Generates code from your model files on save.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 public class SystemDescriptorGenerator extends AbstractGenerator {
 
-	public SystemDescriptorGenerator() {
-		System.out.println("SystemDescriptorGenerator");
-	}
-	
 	@Override
 	public void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-		System.out.println(String.format("Generator resource '%s'", resource));
 //		fsa.generateFile('greetings.txt', 'People to greet: ' + 
 //			resource.allContents
 //				.filter(typeof(Greeting))
 //				.map[name]
 //				.join(', '))
 	}
-	
+
 }

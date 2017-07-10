@@ -8,14 +8,11 @@ import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
-import org.eclipse.xtext.scoping.impl.MultimapBasedScope;
 
 import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
@@ -39,7 +36,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 	@Override
 	public IScope getScope(EObject context, EReference reference) {
 		// Is the object related to the importing a namespace?
-		
 		if (scopeProviderDelegate.isNamespaceRelevant(context)) {
 			// If so, use the import namespace aware local scope provider.
 			return scopeProviderDelegate.getScope(context, reference);
