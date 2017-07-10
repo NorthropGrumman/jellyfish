@@ -11,7 +11,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-public class InheritanceValidator extends AbstractSystemDescriptorValidator {
+public class DataValidator extends AbstractSystemDescriptorValidator {
 
 	@Check
 	public void checkHierarchy(Data data) {

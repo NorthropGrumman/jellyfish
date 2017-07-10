@@ -39,12 +39,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 	@Override
 	public IScope getScope(EObject context, EReference reference) {
 		// Is the object related to the importing a namespace?
-//		IScope superScope;
-//		if(context instanceof SuperClassName){
-//			System.out.println("In superscope");
-//			superScope = getSuperScope((SuperClassName)context);
-//			return MultimapBasedScope.createScope(superScope, delegateGetScope(context, reference).getAllElements(), false);
-//		}
 		
 		if (scopeProviderDelegate.isNamespaceRelevant(context)) {
 			// If so, use the import namespace aware local scope provider.
@@ -55,41 +49,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 			return super.getScope(context, reference);
 		}
 	}
-	
-//	private IScope getSuperScope(SuperClassName superClassName){
-//		//This scopes the superclassname then calls for the data to be scoped
-//		IScope superScope;
-//		
-//		System.out.println("In superscope recursive!");
-//		if(superClassName != null)
-//		{
-//			Data superClassData = superClassName.getSuperclass();
-//			System.out.println("In scopes for!");
-//			superScope = Scopes.scopeFor(superClassData.getFields(), getSuperScopeData(superClassData));
-//		} else {
-//			System.out.println("In superscope null!");
-//			superScope = IScope.NULLSCOPE;
-//		}	
-//		
-//		return superScope;
-//	}
-	
-//	private IScope getSuperScopeData(Data subclass){
-//		//this scopes the data
-//		IScope superScope;
-//		
-//		System.out.println("In superscope recursive!");
-//		if(subclass != null)
-//		{
-//			System.out.println("In scopes for!");
-//			superScope = Scopes.scopeFor(subclass.getFields(), getSuperScope(subclass.getSuperClass()));
-//		} else {
-//			System.out.println("In superscope null!");
-//			superScope = IScope.NULLSCOPE;
-//		}	
-//		
-//		return superScope;
-//	}
 
 	/**
 	 * Provides scope for a link expression of the form
