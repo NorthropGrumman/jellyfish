@@ -536,7 +536,6 @@ class InheritTest {
 
 		val result = parseHelper.parse(modelSource, resources)
 		assertNotNull(result)
-		//validationTester.assertNoIssues(result);
 		
 		validationTester.assertWarning(
 			result,
@@ -602,7 +601,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassLink() {
-	val dataASource = '''
+		val dataASource = '''
 				package datathing.datatypes
 				
 				data A {
@@ -636,7 +635,7 @@ class InheritTest {
 		val modelSource = '''
 			package data.models
 			
-			import data.datatypes.A
+			import data.datatypes
 			
 			model ModelA {
 			  links {
@@ -653,7 +652,6 @@ class InheritTest {
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.
-		
 	}
 	
 	@Test

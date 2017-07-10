@@ -319,6 +319,46 @@ class ModelParsingTest {
 	}
 
 	@Test
+	def void testDoesParseModelWithOutput() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				output {
+					Time currentTime
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val input = model.output
+		val declaration = input.declarations.get(0)
+
+		assertEquals(
+			"input name not correct!",
+			"currentTime",
+			declaration.name
+		)
+		assertEquals(
+			"input type not correct!",
+			"Time",
+			declaration.type.name
+		)
+		assertEquals(
+			"cardinality is not the default value!",
+			Cardinality.DEFAULT,
+			declaration.cardinality
+		)
+	}
+
+	@Test
 	def void testDoesParseModelWithInputsWithCardinality() {
 		val source = '''
 			package clocks.models

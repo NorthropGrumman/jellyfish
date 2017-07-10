@@ -14,6 +14,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
@@ -258,23 +259,72 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	public void checkBaseDataObject(Model model) {
 		// Ensure that the model does not already have a part with the same
 		// name.
+		System.out.println("Flag 1");
 		List<String> superclasses = new ArrayList<String>();
 		List<InputDeclaration> declarationClasses = new ArrayList<InputDeclaration>();
 		
 		Resource eResource = (Resource) model.eResource();
 		EList<Resource> resourceSetList = eResource.getResourceSet().getResources();
-		Input input = model.getInput();
-		EList<InputDeclaration> inputDecs = input.getDeclarations();
+		//EList<Scenario> scenarios = model.getScenarios();
 
-		for(int i = 0; i < inputDecs.size(); i++){
-			InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
-			System.out.println("Adding class to dec classes");
-			String decClassName = decInp.getType().getName();
-			if(!declarationClasses.contains(decClassName)){
-				declarationClasses.add(decInp);	
+		if(model.getInput() != null) {
+			System.out.println("Getting Input Decs");
+			EList<InputDeclaration> inputDecs = model.getInput().getDeclarations();
+			
+			for(int i = 0; i < inputDecs.size(); i++){
+				InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
+				System.out.println("Adding class to input dec classes");
+				String decClassName = decInp.getType().getName();
+				if(!declarationClasses.contains(decClassName)){
+					declarationClasses.add(decInp);	
+				}
+			}		
+		} else {
+			System.out.println("Input Decs Are Empty!");
+		}
+
+		if(model.getLinks() != null) {
+			System.out.println("Getting Link Decs");
+			EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
+			
+			for(int i = 0; i < linkDecs.size(); i++){
+				InputDeclaration decLink = (InputDeclaration) linkDecs.get(i);
+				System.out.println("Adding class to link dec classes");
+				String decClassName = decLink.getType().getName();
+				if(!declarationClasses.contains(decClassName)){
+					declarationClasses.add(decLink);	
+				}
+			}		
+		}else {
+			System.out.println("Links Decs Are Empty!");
+		}
+
+		if(model.getOutput() != null) {	
+			System.out.println("Getting Output Decs");
+			EList<OutputDeclaration> outputDecs = model.getOutput().getDeclarations();
+			
+			for(int i = 0; i < outputDecs.size(); i++){
+				InputDeclaration decOut = (InputDeclaration) outputDecs.get(i);
+				System.out.println("Adding class to output dec classes");
+				String decClassName = decOut.getType().getName();
+				if(!declarationClasses.contains(decClassName)){
+					declarationClasses.add(decOut);	
+				}
 			}
+		} else {
+			System.out.println("Output Decs Are Empty!");
 		}
 		
+//		for(int i = 0; i < scenarios.size(); i++){
+//			Scenario scenario = scenarios.get(i);
+//			scenario
+//			String decClassName = decInp.getType().getName();
+//			if(!declarationClasses.contains(decClassName)){
+//				System.out.println("Adding class to dec classes");
+//				declarationClasses.add(decInp);	
+//			}
+//		}
+//		
 		for(int i = 0; i < resourceSetList.size(); i++)
 		{
 			//Resources
@@ -306,16 +356,6 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					}
 				}
 			}
-		}
-		
-		System.out.println("Superclasses");
-		for(int i = 0; i < superclasses.size(); i++){
-			System.out.println(superclasses.get(i));
-		}
-		
-		System.out.println("Declaration Classes");
-		for(int i = 0; i < declarationClasses.size(); i++){
-			System.out.println(declarationClasses.get(i).getType().getName());
 		}
 	
 		for(int i = 0; i < declarationClasses.size(); i++){
