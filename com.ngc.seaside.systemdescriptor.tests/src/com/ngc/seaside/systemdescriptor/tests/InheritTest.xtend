@@ -489,7 +489,6 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassInput() {
-		println("~~~INPUT~~~")
 		val dataASource = '''
 				package datathing.datatypes
 				
@@ -536,16 +535,16 @@ class InheritTest {
 
 		val result = parseHelper.parse(modelSource, resources)
 		assertNotNull(result)
-		
+		validationTester.assertNoErrors(result)
+				
 		validationTester.assertWarning(
 			result,
 			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
-			null);		
+			null)	
 	}
 	
 	@Test
 	def void testWarnBaseInheritedClassOutput() {
-	println("~~~OUTPUT~~~")	
 	val dataASource = '''
 				package datathing.datatypes
 				
@@ -591,20 +590,21 @@ class InheritTest {
 		''';
 		
 		val result = parseHelper.parse(modelSource, resources)
+		assertNotNull(result)
+		validationTester.assertNoErrors(result)
 	
 		validationTester.assertWarning(
 			result,
 			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
-			null);	
-			
+			null)
+				
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 		
 	}
 	
 	@Test
-	def void testWarnBaseInheritedClassLink() {
-		println("~~~LINK~~~")
+	def void testWarnBaseInheritedClassLinkPartsWithOutput() {
 		val dataASource = '''
 				package datathing.datatypes
 				
@@ -636,38 +636,311 @@ class InheritTest {
 		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
 		validationTester.assertNoIssues(resourceB)
 		
+		val modelPartsSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+
+			model Thing {
+				output {
+				  A a
+				}
+			}
+		''';
+				
+		var modelPartsResource = resourceHelper.resource(modelPartsSource, URI.createURI("model.sd"), resources);
+		validationTester.assertNoErrors(modelPartsResource) //No errors as we would see an issue/warning.
+		
 		val modelSource = '''
 			package datathing.models
 			
 			import datathing.datatypes.A
+			import datathing.models.Thing
 			
 			model ModelALink {
 			  parts {
-				A partA	
+				Thing thing	
 			  }
-			  input {
+			  output {
 			  	A a
 			  }
 			  links {
-			    link a to partA
+			    link a to thing.a
 			  }
+			 }
 		'''
 
 		val result = parseHelper.parse(modelSource, resources)
 		assertNotNull(result)	
-		validationTester.assertNoIssues(dataBResult)
+		validationTester.assertNoErrors(result)
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
-			null);	
+			SystemDescriptorPackage.Literals.FIELD_REFERENCE,
+			null)	
+			
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
+			null)
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 	}
 	
 	@Test
-	def void testWarnBaseInheritedClassScenario() {
-		println("~~~SCENARIO~~~")
+	def void testWarnBaseInheritedClassLinkRequiresWithOutput() {
+		val dataASource = '''
+				package datathing.datatypes
+				
+				data A {
+					int value
+				}
+			''';
+		
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
+		validationTester.assertNoIssues(resourceB)
+		
+		val modelPartsSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+
+			model Thing {
+				output {
+				  A a
+				}
+			}
+		''';
+				
+		var modelPartsResource = resourceHelper.resource(modelPartsSource, URI.createURI("model.sd"), resources);
+		validationTester.assertNoErrors(modelPartsResource) //No errors as we would see an issue/warning.
+		
+		val modelSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+			import datathing.models.Thing
+			
+			model ModelALink {
+			  requires {
+				Thing thing	
+			  }
+			  output {
+			  	A a
+			  }
+			  links {
+			    link a to thing.a
+			  }
+			 }
+		'''
+
+		val result = parseHelper.parse(modelSource, resources)
+		assertNotNull(result)	
+		validationTester.assertNoErrors(result)
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.FIELD_REFERENCE,
+			null)	
+			
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
+			null)
+		//Asserts and testing...
+		//Test a warning is given when a base class is used in the input, output, scenario, etc.
+	}
+	
+	@Test
+	def void testWarnBaseInheritedClassLinkPartsWithInput() {
+		val dataASource = '''
+				package datathing.datatypes
+				
+				data A {
+					int value
+				}
+			''';
+		
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
+		validationTester.assertNoIssues(resourceB)
+		
+		val modelPartsSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+
+			model Thing {
+				input {
+				  A a
+				}
+			}
+		''';
+				
+		var modelPartsResource = resourceHelper.resource(modelPartsSource, URI.createURI("model.sd"), resources);
+		validationTester.assertNoErrors(modelPartsResource) //No errors as we would see an issue/warning.
+		
+		val modelSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+			import datathing.models.Thing
+			
+			model ModelALink {
+			  parts {
+				Thing thing	
+			  }
+			  input {
+			  	A a
+			  }
+			  links {
+			    link a to thing.a
+			  }
+			 }
+		'''
+
+		val result = parseHelper.parse(modelSource, resources)
+		assertNotNull(result)	
+		validationTester.assertNoErrors(result)
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.FIELD_REFERENCE,
+			null)	
+			
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
+			null)	
+		//Asserts and testing...
+		//Test a warning is given when a base class is used in the input, output, scenario, etc.
+	}
+	
+	@Test
+	def void testWarnBaseInheritedClassLinkRequiresWithInput() {
+		val dataASource = '''
+				package datathing.datatypes
+				
+				data A {
+					int value
+				}
+			''';
+		
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
+		validationTester.assertNoIssues(resourceB)
+		
+		val modelPartsSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+
+			model Thing {
+				input {
+				  A a
+				}
+			}
+		''';
+				
+		var modelPartsResource = resourceHelper.resource(modelPartsSource, URI.createURI("model.sd"), resources);
+		validationTester.assertNoErrors(modelPartsResource) //No errors as we would see an issue/warning.
+		
+		val modelSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+			import datathing.models.Thing
+			
+			model ModelALink {
+			  requires {
+				Thing thing	
+			  }
+			  input {
+			  	A a
+			  }
+			  links {
+			    link a to thing.a
+			  }
+			 }
+		'''
+
+		val result = parseHelper.parse(modelSource, resources)
+		assertNotNull(result)	
+		validationTester.assertNoErrors(result)
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.FIELD_REFERENCE,
+			null)	
+			
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
+			null)	
+		//Asserts and testing...
+		//Test a warning is given when a base class is used in the input, output, scenario, etc.
+	}
+	
+	@Test
+	def void testWarnBaseInheritedClassScenarioInput() {
 	val dataASource = '''
 				package datathing.datatypes
 				
@@ -705,6 +978,9 @@ class InheritTest {
 			import datathing.datatypes.A
 			
 			model ModelAScenario {
+				input {
+				  	A a
+				}
 				scenario scenA {
 					when recieving a
 					then something a
@@ -714,10 +990,83 @@ class InheritTest {
 
 		val result = parseHelper.parse(modelSource, resources)
 		assertNotNull(result)
+		validationTester.assertNoErrors(result)
 		
 		validationTester.assertWarning(
 			result,
 			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
+			null)	
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.SCENARIO,
+			null);	
+		//Asserts and testing...
+		//Test a warning is given when a base class is used in the input, output, scenario, etc.	
+	}
+	
+		@Test
+	def void testWarnBaseInheritedClassScenarioOutput() {
+	val dataASource = '''
+				package datathing.datatypes
+				
+				data A {
+					int value
+				}
+			''';
+		
+		val dataAResult = parseHelper.parse(dataASource, resources)
+		assertNotNull(dataAResult)
+		validationTester.assertNoIssues(dataAResult)
+		
+		var resourceA = resourceHelper.resource(dataASource, URI.createURI("A.sd"), resources);
+		validationTester.assertNoIssues(resourceA)
+
+		val dataBSource = '''
+			package datathing.otherdatatypes
+			
+			import datathing.datatypes.A
+
+			data B : A {
+			}
+		''';
+		
+		val dataBResult = parseHelper.parse(dataBSource, resources)
+		assertNotNull(dataBResult)
+		validationTester.assertNoIssues(dataBResult)
+		
+		var resourceB = resourceHelper.resource(dataBSource, URI.createURI("B.sd"), resources);
+		validationTester.assertNoIssues(resourceB)
+		
+		val modelSource = '''
+			package datathing.models
+			
+			import datathing.datatypes.A
+			
+			model ModelAScenario {
+				output {
+				  	A a
+				}
+				scenario scenA {
+					given have a
+					when recieving a
+					then something a
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(modelSource, resources)
+		assertNotNull(result)
+		validationTester.assertNoErrors(result)
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
+			null)	
+		
+		validationTester.assertWarning(
+			result,
+			SystemDescriptorPackage.Literals.SCENARIO,
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.	
