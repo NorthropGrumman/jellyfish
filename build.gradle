@@ -20,7 +20,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.parent'
 
     group = 'com.ngc.seaside'
-    version = '1.0'
+    version = '1.0.1-SNAPSHOT'
 
     ext {
         jellyfishDSLVersion = '1.1'
