@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicReference;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JellyFishCommandProviderModuleTest {

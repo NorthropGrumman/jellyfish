@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish;
 
-import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)

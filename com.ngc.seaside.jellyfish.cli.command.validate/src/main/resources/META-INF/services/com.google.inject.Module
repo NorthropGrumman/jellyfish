@@ -1,1 +1,1 @@
-com.ngc.seaside.jellyfish.cli.command.validate.ValidateCommandModule
+com.ngc.seaside.jellyfish.cli.command.validate.ValidateCommandGuiceModule
