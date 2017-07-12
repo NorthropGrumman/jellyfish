@@ -999,7 +999,7 @@ class InheritTest {
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.SCENARIO,
+			SystemDescriptorPackage.Literals.STEP,
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.	
@@ -1066,7 +1066,7 @@ class InheritTest {
 		
 		validationTester.assertWarning(
 			result,
-			SystemDescriptorPackage.Literals.SCENARIO,
+			SystemDescriptorPackage.Literals.STEP,
 			null);	
 		//Asserts and testing...
 		//Test a warning is given when a base class is used in the input, output, scenario, etc.	

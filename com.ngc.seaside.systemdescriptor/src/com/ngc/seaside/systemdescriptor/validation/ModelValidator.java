@@ -260,44 +260,118 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		}
 	}
 	
+	
+	private void checkModelScenarios(Model model, List<String> superclasses, HashMap<String, String> dataFieldDeclarations){
+		if(model.getScenarios() != null){
+			//Only need to check input and output at the moment since parts and requires use models.
+			
+			for(Scenario scenario : model.getScenarios()){		
+				GivenDeclaration given = scenario.getGiven();
+				if(given != null){
+					for(Step step : given.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+				
+				WhenDeclaration when = scenario.getWhen();
+				if(when != null){
+					for(Step step : when.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+				
+				ThenDeclaration then = scenario.getThen();
+				if(then != null){
+					for(Step step : then.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void checkModelScenarioStep(List<String> superclasses, String classname, Step step){
+		if(classname != null && superclasses.contains(classname)){
+			String msg = String.format(
+					"You are using class '%s', a superclass, in your scenario declaration. Try using a class that inherits from '%s' instead.",
+					classname, classname);
+			warning(msg, step, SystemDescriptorPackage.Literals.STEP__PARAMETERS);		
+		}
+	}
+
+	
+	private void checkModelLinks(Model model, List<String> superclasses, HashMap<String, String> dataFieldDeclarations){
+		
+		if(model.getLinks() != null) {
+			//Only need to check input and output at the moment since parts and requires use models.
+			//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
+			EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
+			
+			for(int i = 0; i < linkDecs.size(); i++){
+
+				List<LinkableReference> linksList = new ArrayList<LinkableReference>();
+				//compile linkable references from sources and targets.
+				linksList.add(linkDecs.get(i).getSource());
+				linksList.add(linkDecs.get(i).getTarget());
+					
+				for(LinkableReference linkRef : linksList){
+					//For linkable references
+					for(EObject crossLink : linkRef.eCrossReferences()){ 
+						//FieldDeclaration
+						EClass crossClass = crossLink.eClass();
+						if(crossClass == SystemDescriptorPackage.Literals.INPUT_DECLARATION || crossClass == SystemDescriptorPackage.Literals.OUTPUT_DECLARATION ){
+							FieldDeclaration crossLinkData = (FieldDeclaration) crossLink;
+							String classname = dataFieldDeclarations.get(crossLinkData.getName());
+							if(classname != null && superclasses.contains(classname)){
+								EStructuralFeature eFeature = null;
+								if(linkRef.eClass().equals(SystemDescriptorPackage.Literals.FIELD_REFERENCE)){
+									eFeature = SystemDescriptorPackage.Literals.FIELD_REFERENCE__FIELD_DECLARATION;
+								} else if (linkRef.eClass().equals(SystemDescriptorPackage.Literals.LINKABLE_REFERENCE)) {
+									eFeature = SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION__REF;
+								}
+								
+								//if this classname is already identified as a superclass.
+								String msg = String.format(
+										"You are using class '%s', a superclass, in your  link declaration. Try using a class that inherits from '%s' instead.",
+										classname, classname);
+								warning(msg, linkRef, eFeature);
+							}
+						}			
+					}
+				} 
+			}			
+		}
+	}
+	
 	/**
 	 * If the model is using a base class in the links, scenarios, output, or input fields
 	 * it needs to warn the user.
 	 * 
-	 * @param declaration
+	 * @param Model
 	 */
 	@Check
-	public void checkBaseDataObject(Model model) {
-		// Ensure that the model does not already have a part with the same
-		// name.
-		HashMap<String, String> objectDeclarations = new HashMap<String, String>(); //<Objectname, Classname>
+	public void checkForSuperClassDataObject(Model model) {
+
+		HashMap<String, String> dataFieldDeclarations = new HashMap<String, String>(); //<dataFieldDeclarations, Classname>
 		List<String> superclasses = new ArrayList<String>();
 		
 		Resource eResource = (Resource) model.eResource();
 		if(eResource != null) {
-			//if eResource is null, no point in continuing since we need it to "see" all the classes.
-			EList<Resource> resourceSetList = eResource.getResourceSet().getResources();
 			
 			//Iterate through all of our resources to identify any Data superclasses
-			for(int i = 0; i < resourceSetList.size(); i++)
-			{
+			for(Resource resource : eResource.getResourceSet().getResources()){
 				//Resources
-				Resource tempResource = (Resource) resourceSetList.get(i);
-				EList<EObject> eObjectsList = tempResource.getContents();
-				//System.out.println("I " + tempResource.getURI());
-				for(int j = 0; j < eObjectsList.size(); j++)
-				{
-					//System.out.println("J " + eObjectsList.get(j).getClass());
+				for(EObject ePackage : resource.getContents()){
 					//Packages
-					EList<EObject> eObjectsInnerList = eObjectsList.get(j).eContents();
-					for(int l = 0; l < eObjectsInnerList.size(); l++)
-					{
-						
-						//Import/Data 
-						EObject obj = (EObject) eObjectsInnerList.get(l);
-						
-						if(obj.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
-							Data data = (Data) obj;
+					for(EObject eObject : ePackage.eContents()){
+						if(eObject.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+							Data data = (Data) eObject;
 							Data superclass = data.getSuperclass();
 							if(superclass != null ){
 								String superclassName = superclass.getName();
@@ -311,159 +385,35 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			}
 			
 			if(model.getInput() != null) {
-				EList<InputDeclaration> inputDecs = model.getInput().getDeclarations();
-				
-				for(int i = 0; i < inputDecs.size(); i++){
-					InputDeclaration decInp = (InputDeclaration) inputDecs.get(i);
-					String classname = decInp.getType().getName();
-					objectDeclarations.put(decInp.getName(), classname); //Keep track for later
+				for(InputDeclaration inputDeclaration : model.getInput().getDeclarations()){
+					String classname = inputDeclaration.getType().getName();
+					dataFieldDeclarations.put(inputDeclaration.getName(), classname); //Keep track for later
 					if(superclasses.contains(classname)){
 						//if this classname is already identified as a superclass.
 						String msg = String.format(
 								"You are using class '%s', a superclass, in your  input declaration. Try using a class that inherits from '%s' instead.",
 								classname, classname);
-						warning(msg, decInp, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+						warning(msg, inputDeclaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 					}
 				}		
 			}
 			
 			if(model.getOutput() != null) {	
-				EList<OutputDeclaration> outputDecs = model.getOutput().getDeclarations();
-				
-				for(int i = 0; i < outputDecs.size(); i++){
-					OutputDeclaration decOut = (OutputDeclaration) outputDecs.get(i);
-					String classname = decOut.getType().getName();
-					objectDeclarations.put(decOut.getName(), classname); //Keep track for later
+				for(OutputDeclaration outputDeclaration : model.getOutput().getDeclarations()){
+					String classname = outputDeclaration.getType().getName();
+					dataFieldDeclarations.put(outputDeclaration.getName(), classname); //Keep track for later
 					if(superclasses.contains(classname)){
 						//if this classname is already identified as a superclass.
 						String msg = String.format(
 								"You are using class '%s', a superclass, in your  output declaration. Try using a class that inherits from '%s' instead.",
 								classname, classname);
-						warning(msg, decOut, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+						warning(msg, outputDeclaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 					}
 				}	
 			}
 			
-			if(model.getLinks() != null) {
-				//Only need to check input and output at the moment since parts and requires use models.
-				//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
-				EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
-				
-				//Sources
-				for(int i = 0; i < linkDecs.size(); i++){
-					//For link declarations
-					List<LinkableReference> linkList = new ArrayList<LinkableReference>();
-					//compile linkable references from sources and targets.
-					linkList.add(linkDecs.get(i).getSource());
-					linkList.add(linkDecs.get(i).getTarget());
-						
-					for(int j = 0; j < linkList.size(); j++){
-						//For linkable references
-						LinkableReference linkRef = (LinkableReference) linkList.get(j);
-						EList<EObject> crossLinks = linkRef.eCrossReferences();
-						for(int l = 0; l < crossLinks.size(); l++){ 
-							EObject crossLink = crossLinks.get(l); //FieldDeclaration
-							EClass crossClass = crossLink.eClass();
-							if(crossClass == SystemDescriptorPackage.Literals.INPUT_DECLARATION || crossClass == SystemDescriptorPackage.Literals.OUTPUT_DECLARATION ){
-								FieldDeclaration crossLinkData = (FieldDeclaration) crossLink;
-								String objectname = crossLinkData.getName();
-								String classname = objectDeclarations.get(objectname);
-								if(classname != null && superclasses.contains(classname)){
-										
-									EStructuralFeature eFeature = null;
-									if(linkRef.eClass() == SystemDescriptorPackage.Literals.FIELD_REFERENCE){
-										eFeature = SystemDescriptorPackage.Literals.FIELD_REFERENCE__FIELD_DECLARATION;
-									} else if (linkRef.eClass() == SystemDescriptorPackage.Literals.LINKABLE_REFERENCE) {
-										eFeature = SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION__REF;
-									}
-									
-									//if this classname is already identified as a superclass.
-									String msg = String.format(
-											"You are using class '%s', a superclass, in your  link declaration. Try using a class that inherits from '%s' instead.",
-											classname, classname);
-									warning(msg, linkRef, eFeature);
-								}
-							}			
-						}
-					} 
-				}			
-			}
-			
-			if(model.getScenarios() != null) {
-				//Only need to check input and output at the moment since parts and requires use models.
-				
-				EList<Scenario> scenarios = model.getScenarios();
-				
-				//Collect together all the steps.
-				for(int i = 0; i < scenarios.size(); i++){
-					List<Step> steps = 	new ArrayList<Step>();
-					Scenario scenario = scenarios.get(i);
-					
-					GivenDeclaration given = scenario.getGiven();
-					if(given != null){
-						EList<GivenStep> stepsGiven = given.getSteps();
-						for(int j = 0; j < stepsGiven.size(); j++){
-							//Since Java won't let us add a <GivenStep> list to a <Step> list
-							steps.add((Step) stepsGiven.get(j));
-						}	
-					}
-					
-					WhenDeclaration when = scenario.getWhen();
-					if(when != null){
-						EList<WhenStep> stepsWhen = when.getSteps();
-						for(int j = 0; j < stepsWhen.size(); j++){
-							//Since Java won't let us add a <GivenStep> list to a <Step> list
-							steps.add((Step) stepsWhen.get(j));
-						}
-					}
-					
-					ThenDeclaration then = scenario.getThen();
-					if(then != null){
-						EList<ThenStep> stepsThen = then.getSteps();
-						for(int j = 0; j < stepsThen.size(); j++){
-							//Since Java won't let us add a <GivenStep> list to a <Step> list
-							steps.add((Step) stepsThen.get(j));
-						}
-					}
-					
-					for(int j = 0; j < steps.size(); j++){
-						Step step = steps.get(j);
-						EList<String> params = step.getParameters();
-						
-						for(int l = 0; l < params.size(); l++){
-							String objectname = params.get(l);
-							String classname = objectDeclarations.get(objectname);
-							if(superclasses.contains(classname))
-							{
-								EStructuralFeature eFeature = null;
-								if(step.eClass() == SystemDescriptorPackage.Literals.GIVEN_STEP){
-									eFeature = SystemDescriptorPackage.Literals.SCENARIO__GIVEN;
-								} else if (step.eClass() == SystemDescriptorPackage.Literals.WHEN_STEP) {
-									eFeature = SystemDescriptorPackage.Literals.SCENARIO__WHEN;
-								} else if (step.eClass() == SystemDescriptorPackage.Literals.THEN_STEP) {
-									eFeature = SystemDescriptorPackage.Literals.SCENARIO__THEN;
-								}
-								
-								String msg = String.format(
-										"You are using class '%s', a superclass, in your scenario declaration. Try using a class that inherits from '%s' instead.",
-										classname, classname);
-								warning(msg, scenario, eFeature);	
-							}
-						}
-					}
-				}			
-			}
-					
-	//		for(int i = 0; i < scenarios.size(); i++){
-			//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
-	//			Scenario scenario = scenarios.get(i);
-	//			scenario
-	//			String decClassName = decInp.getType().getName();
-	//			if(!declarationClasses.contains(decClassName)){
-	//				System.out.println("Adding class to dec classes");
-	//				declarationClasses.add(decInp);	
-	//			}
-	//		}
+			checkModelLinks(model, superclasses, dataFieldDeclarations);
+			checkModelScenarios(model, superclasses, dataFieldDeclarations);
 		}
 	}
 
