@@ -1,18 +1,48 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import org.eclipse.xtext.validation.Check;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
+import org.eclipse.xtext.validation.Check;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenStep;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
 
 /**
  * Validates a {@code Model} is correct. This validator mostly handles checking
@@ -20,6 +50,13 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
  */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
+	
+	@Inject
+	ResourceDescriptionsProvider resourceDescriptionsProvider;
+	
+	@Inject
+	IContainer.Manager containerManager;
+	
 	// The grammar allows the various blocks to be declared in the following
 	// order:
 	//
@@ -234,6 +271,183 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 					declaration.getName(),
 					model.getName());
 			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+		}
+	}
+	
+	
+	private void checkModelScenarios(Model model, List<String> superclasses, HashMap<String, String> dataFieldDeclarations){
+		if(model.getScenarios() != null){
+			//Only need to check input and output at the moment since parts and requires use models.
+			
+			for(Scenario scenario : model.getScenarios()){		
+				GivenDeclaration given = scenario.getGiven();
+				if(given != null){
+					for(Step step : given.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+				
+				WhenDeclaration when = scenario.getWhen();
+				if(when != null){
+					for(Step step : when.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+				
+				ThenDeclaration then = scenario.getThen();
+				if(then != null){
+					for(Step step : then.getSteps()){
+						for(String objectname : step.getParameters()){
+							checkModelScenarioStep(superclasses, dataFieldDeclarations.get(objectname), step);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void checkModelScenarioStep(List<String> superclasses, String classname, Step step){
+		if(classname != null && superclasses.contains(classname)){
+			String msg = String.format(
+					"You are using class '%s', a superclass, in your scenario declaration. Try using a class that inherits from '%s' instead.",
+					classname, classname);
+			warning(msg, step, SystemDescriptorPackage.Literals.STEP__PARAMETERS);		
+		}
+	}
+
+	
+	private void checkModelLinks(Model model, List<String> superclasses, HashMap<String, String> dataFieldDeclarations){
+		
+		if(model.getLinks() != null) {
+			//Only need to check input and output at the moment since parts and requires use models.
+			//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
+			EList<LinkDeclaration> linkDecs = model.getLinks().getDeclarations();
+			
+			for(int i = 0; i < linkDecs.size(); i++){
+
+				List<LinkableReference> linksList = new ArrayList<LinkableReference>();
+				//compile linkable references from sources and targets.
+				linksList.add(linkDecs.get(i).getSource());
+				linksList.add(linkDecs.get(i).getTarget());
+					
+				for(LinkableReference linkRef : linksList){
+					//For linkable references
+					for(EObject crossLink : linkRef.eCrossReferences()){ 
+						//FieldDeclaration
+						EClass crossClass = crossLink.eClass();
+						if(crossClass == SystemDescriptorPackage.Literals.INPUT_DECLARATION || crossClass == SystemDescriptorPackage.Literals.OUTPUT_DECLARATION ){
+							FieldDeclaration crossLinkData = (FieldDeclaration) crossLink;
+							String classname = dataFieldDeclarations.get(crossLinkData.getName());
+							if(classname != null && superclasses.contains(classname)){
+								EStructuralFeature eFeature = null;
+								if(linkRef.eClass().equals(SystemDescriptorPackage.Literals.FIELD_REFERENCE)){
+									eFeature = SystemDescriptorPackage.Literals.FIELD_REFERENCE__FIELD_DECLARATION;
+								} else if (linkRef.eClass().equals(SystemDescriptorPackage.Literals.LINKABLE_REFERENCE)) {
+									eFeature = SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION__REF;
+								}
+								
+								//if this classname is already identified as a superclass.
+								String msg = String.format(
+										"You are using class '%s', a superclass, in your  link declaration. Try using a class that inherits from '%s' instead.",
+										classname, classname);
+								warning(msg, linkRef, eFeature);
+							}
+						}			
+					}
+				} 
+			}			
+		}
+	}
+	
+	private List<EObject> getAllProjectObjectsFor(EObject object) {
+		List<EObject> objects = new ArrayList<EObject>();
+		IResourceDescriptions resourceDescriptions = resourceDescriptionsProvider.getResourceDescriptions(object.eResource());
+		IResourceDescription resourceDescription = resourceDescriptions.getResourceDescription(object.eResource().getURI());
+		for (IContainer container : containerManager.getVisibleContainers(resourceDescription, resourceDescriptions)) {
+			for (IEObjectDescription objectDescription : container.getExportedObjects()) {
+				EObject objectOrProxy = objectDescription.getEObjectOrProxy();
+				objects.add(objectOrProxy);
+			}
+		}
+		
+		return objects;
+	}
+	
+	/**
+	 * If the model is using a base class in the links, scenarios, output, or input fields
+	 * it needs to warn the user.
+	 * 
+	 * @param Model
+	 */
+	@Check
+	public void checkForSuperClassDataObject(Model model) {
+
+		HashMap<String, String> dataFieldDeclarations = new HashMap<String, String>(); //<dataFieldDeclarations, Classname>
+		List<String> superclasses = new ArrayList<String>();
+		
+		Resource eResource = (Resource) model.eResource();
+		if(eResource != null) {
+			
+			for(EObject eObject : getAllProjectObjectsFor(model)){
+				if(eObject.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+					
+					if(eObject.eIsProxy()){
+						eObject = model.eResource().getResourceSet().getEObject(EcoreUtil.getURI(eObject), true);
+					}
+					
+					Data data = (Data) eObject;
+					Data superclass = data.getSuperclass();
+					if(superclass != null ){
+						String superclassName = superclass.getName();
+						if(!superclasses.contains(superclassName)){
+							superclasses.add(superclassName);	
+						}
+					}
+				}
+			}
+
+			
+			if(model.getInput() != null) {
+				for(InputDeclaration inputDeclaration : model.getInput().getDeclarations()){
+					
+					Data inputDeclarationType = inputDeclaration.getType();
+					
+					if(inputDeclarationType.eIsProxy()){
+						inputDeclarationType = (Data) model.eResource().getResourceSet().getEObject(EcoreUtil.getURI(inputDeclarationType), true);
+					}
+					
+					String classname = inputDeclarationType.getName();
+					dataFieldDeclarations.put(inputDeclaration.getName(), classname); //Keep track for later
+					if(superclasses.contains(classname)){
+						//if this classname is already identified as a superclass.
+						String msg = String.format(
+								"You are using class '%s', a superclass, in your  input declaration. Try using a class that inherits from '%s' instead.",
+								classname, classname);
+						warning(msg, inputDeclaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+					}
+				}		
+			}
+			
+			if(model.getOutput() != null) {	
+				for(OutputDeclaration outputDeclaration : model.getOutput().getDeclarations()){
+					String classname = outputDeclaration.getType().getName();
+					dataFieldDeclarations.put(outputDeclaration.getName(), classname); //Keep track for later
+					if(superclasses.contains(classname)){
+						//if this classname is already identified as a superclass.
+						String msg = String.format(
+								"You are using class '%s', a superclass, in your  output declaration. Try using a class that inherits from '%s' instead.",
+								classname, classname);
+						warning(msg, outputDeclaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+					}
+				}	
+			}
+			
+			checkModelLinks(model, superclasses, dataFieldDeclarations);
+			checkModelScenarios(model, superclasses, dataFieldDeclarations);
 		}
 	}
 
