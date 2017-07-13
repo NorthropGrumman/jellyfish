@@ -197,7 +197,7 @@ class InheritTest {
 		)	
 	}
 	
-		@Test
+	@Test
 	def void testInheritFieldName() {
 		
 		val dataASource = '''
@@ -368,7 +368,7 @@ class InheritTest {
 		var dataB = dataBResult.element as Data
 		var dataAFieldValue = dataA.fields.get(0) as PrimitiveDataFieldDeclaration
 		var dataBFieldValue = dataB.superclass.fields.get(0) as PrimitiveDataFieldDeclaration
-		equalityFieldsTest(dataAFieldValue, dataBFieldValue); //A.val == B.val
+		equalityPrimitiveFieldsTest(dataAFieldValue, dataBFieldValue); //A.val == B.val
 	}
 	
 	
@@ -418,8 +418,7 @@ class InheritTest {
 		val dataCResult = parseHelper.parse(dataCSource, resources)
 		assertNotNull(dataCResult)
 		validationTester.assertNoIssues(dataCResult)
-		
-		//test that B.value == A.value, C.value == A.value, B.value == C.value, B == A, C == A, B =\= C
+	
 		var dataA = dataAResult.element as Data
 		var dataB = dataBResult.element as Data
 		var dataC = dataCResult.element as Data
@@ -428,13 +427,13 @@ class InheritTest {
 		var dataBFieldValue = dataB.superclass.fields.get(0) as PrimitiveDataFieldDeclaration
 		var dataCFieldValue = dataC.superclass.superclass.fields.get(0) as PrimitiveDataFieldDeclaration
 		
-		equalityFieldsTest(dataAFieldValue, dataBFieldValue); //A.val == B.val
-		equalityFieldsTest(dataBFieldValue, dataCFieldValue); //B.val == C.val
-		equalityFieldsTest(dataAFieldValue, dataCFieldValue); //A.val == C.val
+		equalityPrimitiveFieldsTest(dataAFieldValue, dataBFieldValue); //A.val == B.val
+		equalityPrimitiveFieldsTest(dataBFieldValue, dataCFieldValue); //B.val == C.val
+		equalityPrimitiveFieldsTest(dataAFieldValue, dataCFieldValue); //A.val == C.val
 	}
 
 	@Test
-	def void testInheritDataobjectFields() {
+	def void testInheritDataObjectFields() {
 		
 		val dateSource = '''
 			package clocks.datatypes
@@ -545,7 +544,7 @@ class InheritTest {
 	
 	@Test
 	def void testWarnBaseInheritedClassOutput() {
-	val dataASource = '''
+		val dataASource = '''
 				package datathing.datatypes
 				
 				data A {
@@ -597,10 +596,6 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.FIELD_DECLARATION,
 			null)
-				
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.
-		
 	}
 	
 	@Test
@@ -683,8 +678,6 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
 			null)
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 	}
 	
 	@Test
@@ -767,8 +760,6 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
 			null)
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 	}
 	
 	@Test
@@ -851,8 +842,6 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
 			null)	
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 	}
 	
 	@Test
@@ -935,13 +924,11 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.LINKABLE_REFERENCE,
 			null)	
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.
 	}
 	
 	@Test
 	def void testWarnBaseInheritedClassScenarioInput() {
-	val dataASource = '''
+		val dataASource = '''
 				package datathing.datatypes
 				
 				data A {
@@ -1001,13 +988,11 @@ class InheritTest {
 			result,
 			SystemDescriptorPackage.Literals.STEP,
 			null);	
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.	
 	}
 	
-		@Test
+	@Test
 	def void testWarnBaseInheritedClassScenarioOutput() {
-	val dataASource = '''
+		val dataASource = '''
 				package datathing.datatypes
 				
 				data A {
@@ -1067,8 +1052,6 @@ class InheritTest {
 		validationTester.assertWarning(
 			result,
 			SystemDescriptorPackage.Literals.STEP,
-			null);	
-		//Asserts and testing...
-		//Test a warning is given when a base class is used in the input, output, scenario, etc.	
+			null);		
 	}
 }
