@@ -37,7 +37,7 @@ jar {
          // Replace the version with the version from the gradle build.
          eachEntry {
             if(getKey().equals('Bundle-Version')) {
-               setValue("$version")
+               setValue("$version".replace('-', '.'))
             }
          }
       }
