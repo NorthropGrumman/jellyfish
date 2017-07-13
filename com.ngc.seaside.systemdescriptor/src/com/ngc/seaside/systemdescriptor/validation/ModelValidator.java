@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -12,6 +17,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
@@ -43,6 +49,13 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
  */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
+	
+	@Inject
+	ResourceDescriptionsProvider resourceDescriptionsProvider;
+	
+	@Inject
+	IContainer.Manager containerManager;
+	
 	// The grammar allows the various blocks to be declared in the following
 	// order:
 	//
@@ -349,6 +362,20 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		}
 	}
 	
+	private List<EObject> getAllProjectObjectsFor(EObject object) {
+		List<EObject> objects = new ArrayList<EObject>();
+		IResourceDescriptions resourceDescriptions = resourceDescriptionsProvider.getResourceDescriptions(object.eResource());
+		IResourceDescription resourceDescription = resourceDescriptions.getResourceDescription(object.eResource().getURI());
+		for (IContainer container : containerManager.getVisibleContainers(resourceDescription, resourceDescriptions)) {
+			for (IEObjectDescription objectDescription : container.getExportedObjects()) {
+				EObject objectOrProxy = objectDescription.getEObjectOrProxy();
+				objects.add(objectOrProxy);
+			}
+		}
+		
+		return objects;
+	}
+	
 	/**
 	 * If the model is using a base class in the links, scenarios, output, or input fields
 	 * it needs to warn the user.
@@ -364,25 +391,20 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		Resource eResource = (Resource) model.eResource();
 		if(eResource != null) {
 			
-			//Iterate through all of our resources to identify any Data superclasses
-			for(Resource resource : eResource.getResourceSet().getResources()){
-				//Resources
-				for(EObject ePackage : resource.getContents()){
-					//Packages
-					for(EObject eObject : ePackage.eContents()){
-						if(eObject.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
-							Data data = (Data) eObject;
-							Data superclass = data.getSuperclass();
-							if(superclass != null ){
-								String superclassName = superclass.getName();
-								if(!superclasses.contains(superclassName)){
-									superclasses.add(superclassName);	
-								}
-							}
+
+			for(EObject eObject : getAllProjectObjectsFor(model)){
+				if(eObject.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+					Data data = (Data) eObject;
+					Data superclass = data.getSuperclass();
+					if(superclass != null ){
+						String superclassName = superclass.getName();
+						if(!superclasses.contains(superclassName)){
+							superclasses.add(superclassName);	
 						}
 					}
 				}
 			}
+
 			
 			if(model.getInput() != null) {
 				for(InputDeclaration inputDeclaration : model.getInput().getDeclarations()){
