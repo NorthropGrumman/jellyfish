@@ -361,7 +361,7 @@ Links
  * of metadata and optional members.
  */
 Data
-	: 'data' name=UnqualifiedName (':' superclass=[Data])? '{'
+	: 'data' name=UnqualifiedName (':' superclass=[Data|QualifiedName])? '{'
 		metadata=Metadata?
 		fields+=DataFieldDeclaration* 
 	  '}'

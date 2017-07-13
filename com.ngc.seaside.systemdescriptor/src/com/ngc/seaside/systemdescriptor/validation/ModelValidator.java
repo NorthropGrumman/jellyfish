@@ -413,7 +413,14 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			
 			if(model.getInput() != null) {
 				for(InputDeclaration inputDeclaration : model.getInput().getDeclarations()){
-					String classname = inputDeclaration.getType().getName();
+					
+					Data inputDeclarationType = inputDeclaration.getType();
+					
+					if(inputDeclarationType.eIsProxy()){
+						inputDeclarationType = (Data) model.eResource().getResourceSet().getEObject(EcoreUtil.getURI(inputDeclarationType), true);
+					}
+					
+					String classname = inputDeclarationType.getName();
 					dataFieldDeclarations.put(inputDeclaration.getName(), classname); //Keep track for later
 					if(superclasses.contains(classname)){
 						//if this classname is already identified as a superclass.
