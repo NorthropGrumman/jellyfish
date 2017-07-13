@@ -21,7 +21,7 @@ subprojects {
 	apply plugin: 'idea'
 	
 	group = 'com.ngc.seaside'
-	version = '0.4.1-SNAPSHOT'
+	version = '0.5.0'
 	
 	sourceCompatibility = '1.8'
 	targetCompatibility = '1.8'
