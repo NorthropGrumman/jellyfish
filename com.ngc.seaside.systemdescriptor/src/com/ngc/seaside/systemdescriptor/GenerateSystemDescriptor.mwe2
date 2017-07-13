@@ -19,15 +19,15 @@ Workflow {
 					enabled = false
 				}
 				
-				eclipsePlugin = {
-					// Disable generation of the UI plugin because we have made custom modifications.
-					enabled = false
-				}
-				
-				eclipsePluginTest = {
-					// Disable generation of the tests for the UI plugin because we have made custom modifications.
-					enabled = false
-				}
+//				eclipsePlugin = {
+//					// Disable generation of the UI plugin because we have made custom modifications.
+//					enabled = true
+//				}
+//				
+//				eclipsePluginTest = {
+//					// Disable generation of the tests for the UI plugin because we have made custom modifications.
+//					enabled = false
+//				}
 				
 				createEclipseMetaData = true
 			}

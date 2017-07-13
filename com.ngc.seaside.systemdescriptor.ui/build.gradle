@@ -3,6 +3,7 @@ sourceSets {
       java {
          srcDirs 'src', 'src-gen'
       }
+      xtendOutputDir = 'xtend-gen'
    }
 }
 

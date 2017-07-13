@@ -45,6 +45,7 @@ subprojects {
 	   apply plugin: 'eclipse'
 	   apply plugin: 'idea'
 	   apply plugin: 'maven'
+	   apply plugin: 'org.xtext.xtend'
 	} else if(name.equals('systemdescriptor.feature')) {
 	   // Don't apply any parent plugins.
 	} else if(name.equals('systemdescriptor.updatesite')) {
