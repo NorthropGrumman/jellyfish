@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -391,9 +392,13 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 		Resource eResource = (Resource) model.eResource();
 		if(eResource != null) {
 			
-
 			for(EObject eObject : getAllProjectObjectsFor(model)){
 				if(eObject.eClass().equals(SystemDescriptorPackage.Literals.DATA)){
+					
+					if(eObject.eIsProxy()){
+						eObject = model.eResource().getResourceSet().getEObject(EcoreUtil.getURI(eObject), true);
+					}
+					
 					Data data = (Data) eObject;
 					Data superclass = data.getSuperclass();
 					if(superclass != null ){
