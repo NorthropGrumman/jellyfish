@@ -1,3 +1,5 @@
+import com.ngc.seaside.gradle.plugins.util.EclipsePlugins
+
 ext {
    buildDir = 'build'
 
@@ -68,14 +70,8 @@ task copyFeatures(type: Copy, dependsOn: unzipEclipse) {
 
    // We have to rename the feature JARs built with Gradle to make the naming
    // convention expected by Eclipse or the feature won't install correctly.
-   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
-   if ("$project.version".endsWith("SNAPSHOT")) {
-      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
-   } else {
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
+   rename { String name ->
+      name = EclipsePlugins.makeEclipseCompliantJarFileName(name)
    }
 }
 
@@ -85,14 +81,8 @@ task copyPlugins(type: Copy, dependsOn: unzipEclipse) {
 
    // We have to rename the feature JARs built with Gradle to make the naming
    // convention expected by Eclipse or the feature won't install correctly.
-   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
-   if ("$project.version".endsWith("SNAPSHOT")) {
-      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
-   } else {
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
+   rename { String name ->
+      name = EclipsePlugins.makeEclipseCompliantJarFileName(name)
    }
 }
 
