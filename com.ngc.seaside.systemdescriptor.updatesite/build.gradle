@@ -71,6 +71,9 @@ task copyPlugins(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
+task createMetadata() {
+}
+
 task createZip(type: Zip, dependsOn: [copyFeatures, copyPlugins]) {
    from "$buildDir/updatesite"
    destinationDir = file("$buildDir")
