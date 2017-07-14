@@ -11,6 +11,7 @@ repositories {
 
 configurations {
    features
+   
    // note that plugins is reserved
    eclipsePlugins {
       transitive = false
@@ -64,11 +65,35 @@ task clean() {
 task copyFeatures(type: Copy) {
    from configurations.features
    into { "$buildDir/updatesite/features" }
+   
+   // We have to rename the feature JARs built with Gradle to make the naming
+   // convention expected by Eclipse or the feature won't install correctly.
+   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
+   if ("$project.version".endsWith("SNAPSHOT")) {
+      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   } else {
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   }
 }
 
 task copyPlugins(type: Copy) {
    from configurations.eclipsePlugins
    into { "$buildDir/updatesite/plugins" }
+   
+   // We have to rename the feature JARs built with Gradle to make the naming
+   // convention expected by Eclipse or the feature won't install correctly.
+   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
+   if ("$project.version".endsWith("SNAPSHOT")) {
+      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   } else {
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   }
 }
 
 task createMetadata() {
