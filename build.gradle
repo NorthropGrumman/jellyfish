@@ -2,7 +2,7 @@ buildscript {
 	repositories {
 		mavenLocal()
         maven {
-            url 'http://10.207.42.43/nexus/repository/maven-public/'
+            url nexusConsolidated
         }
 	}
 	dependencies {
@@ -10,97 +10,158 @@ buildscript {
 	}
 }
 
-subprojects {
-	ext.xtextVersion = '2.10.0'
+import org.gradle.api.ProjectConfigurationException
+
+ext {
+   	xtextVersion = '2.10.0'
+   	
+   	eclipseVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+   	
+   	// The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
+   	eclipseDownloadUrl = "http://10.207.42.43/resources/jellyfish/${eclipseVersion}.zip"
+   	// The local file to save the ZIP to.
+   	eclipseDownloadDestFile = "build/${eclipseVersion}.zip"
+   	// This is the location where the Eclipse download will be unzipped to.
+   	// Note this name may change if the download URL changes to a different version of Eclipse.
+   	eclipseInstallationDirectory = file("build/$eclipseVersion").getAbsolutePath()
+   	
+	// This is the location of the Eclipse we use when compiling and building the 
+	// update site.
+	eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
 	
-	apply plugin: 'java'
-	apply plugin: 'org.xtext.xtend'
-	apply from: "${rootDir}/gradle/source-layout.gradle"
-	apply from: "${rootDir}/gradle/maven-deployment.gradle"
-	apply plugin: 'eclipse'
-	apply plugin: 'idea'
-	
+	// This is the location of the Eclispe exe we use to create the update site
+	// metadata.
+	eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
+}
+
+allprojects {
 	group = 'com.ngc.seaside'
 	version = '0.5.1-SNAPSHOT'
-	
-	sourceCompatibility = '1.8'
-	targetCompatibility = '1.8'
-	
-	configurations.all {
-		exclude group: 'asm'
+}
+
+subprojects {
+	if(name.equals('systemdescriptor.ui')) {
+	   // We have to apply the maven plugin here instead of in the build.gradle for 
+	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
+	   apply plugin: 'java'
+	   apply plugin: 'eclipse'
+	   apply plugin: 'idea'
+	   apply plugin: 'maven'
+	   apply plugin: 'org.xtext.xtend'
+	} else if(name.equals('systemdescriptor.feature')) {
+	   // Don't apply any parent plugins.
+	} else if(name.equals('systemdescriptor.updatesite')) {
+	   // Don't apply any parent plugins.
+	} else {
+	    // Apply XText plugins.
+	    apply plugin: 'java'
+	    apply plugin: 'eclipse'
+	    apply plugin: 'idea'
+		apply plugin: 'org.xtext.xtend'
+		apply from: "${rootDir}/gradle/source-layout.gradle"
+		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
 	
-	repositories {
-      	mavenLocal()
-
-        maven {
-	        url nexusConsolidated
-        }
-	}
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                // Use the main repo for full releases.
-                repository(url: nexusReleases) {
-                    // Make sure that nexusUsername and nexusPassword are in your
-                    // ${gradle.user.home}/gradle.properties file.
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-                // If the version has SNAPSHOT in the name, use the snapshot repo.
-                snapshotRepository(url: nexusSnapshots) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-            }
-        }
-    }	
-    
-	/**
-     * Create a task for generating the source jar. This will also be uploaded to Nexus.
-     */
-    task('sourcesJar', type: Jar, dependsOn: [classes]) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    /**
-     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
-     */
-    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-    
-	/**
-     * Augment the jar name to be $groupId.$project.name).
-     */
-    tasks.getByName('sourcesJar') { jar ->
-        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-    }
-
-    tasks.getByName('javadocJar') { jar ->
-        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-    }
-    
-    tasks.getByName('jar') { jar ->
-      archiveName = "${project.group}.${project.name}-${project.version}.jar"
-    }
-    
-    /**
-	 * Ensure to add the doclint option to the javadoc task if using Java 8.
-	 */
-	if (JavaVersion.current().isJava8Compatible()) {
-	    tasks.getByName('javadoc') { doc ->
-	        options.addStringOption('Xdoclint:none', '-quiet')
+	if(!name.equals('systemdescriptor.feature') && !name.equals('systemdescriptor.updatesite')) {		
+		sourceCompatibility = '1.8'
+		targetCompatibility = '1.8'
+		
+		configurations.all {
+			exclude group: 'asm'
+		}
+		
+		repositories {
+	      	mavenLocal()
+	
+	        maven {
+		        url nexusConsolidated
+	        }
+		}
+	
+	    uploadArchives {
+	        repositories {
+	            mavenDeployer {
+	                // Use the main repo for full releases.
+	                repository(url: nexusReleases) {
+	                    // Make sure that nexusUsername and nexusPassword are in your
+	                    // ${gradle.user.home}/gradle.properties file.
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	                // If the version has SNAPSHOT in the name, use the snapshot repo.
+	                snapshotRepository(url: nexusSnapshots) {
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	            }
+	        }
+	    }	
+	    
+		/**
+	     * Create a task for generating the source jar. This will also be uploaded to Nexus.
+	     */
+	    task('sourcesJar', type: Jar, dependsOn: [classes]) {
+	        classifier = 'sources'
+	        from sourceSets.main.allSource
+	    }
+	
+	    /**
+	     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
+	     */
+	    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
+	        classifier = 'javadoc'
+	        from javadoc.destinationDir
+	    }
+	    
+		/**
+	     * Augment the jar name to be $groupId.$project.name).
+	     */
+	    tasks.getByName('sourcesJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	
+	    tasks.getByName('javadocJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	    
+	    tasks.getByName('jar') { jar ->
+	      archiveName = "${project.group}.${project.name}-${project.version}.jar"
+	    }
+	    
+	    /**
+		 * Ensure to add the doclint option to the javadoc task if using Java 8.
+		 */
+		if (JavaVersion.current().isJava8Compatible()) {
+		    tasks.getByName('javadoc') { doc ->
+		        options.addStringOption('Xdoclint:none', '-quiet')
+		    }
+		}
+	
+	    /**
+	     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
+	     */
+	    artifacts {
+	        archives sourcesJar
+	        archives javadocJar
 	    }
 	}
+}
 
-    /**
-     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
-     */
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
+task downloadEclipse() {
+   doLast {
+      def destFile = file("$eclipseDownloadDestFile")
+      destFile.getParentFile().mkdir()
+         println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
+         new URL("$eclipseDownloadUrl").withInputStream { is ->
+            destFile.withOutputStream { it << is  }
+      }
+   }
+}
+downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
 
+task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+   from zipTree(file("$eclipseDownloadDestFile"))
+   into 'build' 
+}
+unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
+
+task build(dependsOn: unzipEclipse) {
 }

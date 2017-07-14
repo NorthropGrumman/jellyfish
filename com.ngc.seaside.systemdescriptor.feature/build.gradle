@@ -1,0 +1,46 @@
+ext {
+   buildDir = 'build'
+}
+
+configurations {
+  feature
+}
+
+task clean() {
+   doLast {
+      delete("$buildDir")
+   }
+}
+
+task copyBuildProperties(type: Copy) {
+   from '.', { include('build.properties') }
+   destinationDir = file("$buildDir/tmp")
+}
+
+task copyAndFilterFeatureFile(type: Copy) {
+   from '.', { include('feature.xml') }
+   destinationDir = file("$buildDir/tmp")
+   
+   filter { String line ->
+      if (line.trim().equals('version="1.0.0.qualifier"')) {
+         def formattedVersion = "$project.version".replace('-', '.')
+         line = "version=\"$formattedVersion\"" 
+      }
+      return line
+   }
+}
+
+task createJar(type: Zip, dependsOn: [copyBuildProperties, copyAndFilterFeatureFile]) {
+   from "$buildDir/tmp"
+   destinationDir = file("$buildDir")
+   archiveName = "${project.group}.${project.name}-${project.version}.jar"
+}
+
+task build(dependsOn: createJar) {
+}
+
+artifacts {
+  feature createJar
+}
+
+defaultTasks = ['build']

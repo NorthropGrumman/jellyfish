@@ -30,3 +30,19 @@ eclipse.classpath.plusConfigurations += [configurations.mwe2]
 //this is an eclipse plugin project
 eclipseClasspath.enabled=false
 cleanEclipseClasspath.enabled=false
+
+jar {
+   manifest {
+      from('META-INF/MANIFEST.MF') {
+         // Replace the version with the version from the gradle build.
+         eachEntry {
+            if(getKey().equals('Bundle-Version')) {
+               setValue("$version".replace('-', '.'))
+            }
+         }
+      }
+   }
+   
+   // Include 'plugin.xml'
+   from('.', { include('plugin.xml') }) 
+}

@@ -1,0 +1,56 @@
+sourceSets {
+   main {
+      java {
+         srcDirs 'src', 'src-gen'
+      }
+      xtendOutputDir = 'xtend-gen'
+   }
+}
+
+repositories {
+  flatDir {
+    // Use the directory that contains the Eclipse plugins as a repository.
+    dirs "$eclipsePluginsDirectory"
+  }
+}
+
+dependencies {
+   compile project(':systemdescriptor')
+   compile project(':systemdescriptor.ide')
+
+   compile name: 'org.eclipse.core.resources_3.11.1.v20161107-2032'
+   compile name: 'org.eclipse.equinox.common_3.8.0.v20160509-1230'
+   compile name: 'org.eclipse.jface_3.12.1.v20160923-1528'
+   compile name: 'org.eclipse.swt_3.105.2.v20161122-0613'
+   compile name: 'org.eclipse.swt.win32.win32.x86_64_3.105.2.v20161122-0613'
+   compile name: 'org.eclipse.ui.workbench_3.108.2.v20161025-2029'
+   compile name: 'org.eclipse.jdt.core_3.12.2.v20161117-1814'
+   compile name: 'org.eclipse.ui.ide_3.12.2.v20161115-1450'
+   compile name: 'org.eclipse.core.jobs_3.8.0.v20160509-0411'
+   compile name: 'org.eclipse.core.runtime_3.12.0.v20160606-1342'
+   compile name: 'org.eclipse.osgi_3.11.2.v20161107-1947'
+   compile name: 'org.eclipse.xtext.ui_2.10.0.v201605250459'
+   compile name: 'org.eclipse.core.commands_3.8.0.v20160316-1921'
+   compile name: 'org.eclipse.compare_3.7.0.v20161024-1724'
+   compile name: 'org.eclipse.xtext.builder_2.10.0.v201605250459'
+   compile name: 'org.eclipse.emf.edit.ui_2.12.0.v20160526-0356'
+   compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.10.0.v201605250459'
+   compile name: 'org.eclipse.xtext.ui.shared_2.10.0.v201605250459'
+   compile name: 'org.eclipse.emf.edit_2.12.0.v20160526-0356'
+   compile name: 'org.eclipse.equinox.registry_3.6.100.v20160223-2218'
+}
+
+jar {
+   manifest {
+      from('META-INF/MANIFEST.MF') {
+         // Replace the version with the version from the gradle build.
+         eachEntry {
+            if(getKey().equals('Bundle-Version')) {
+               setValue("$version".replace('-', '.'))
+            }
+         }
+      }
+   }
+   // Include 'plugin.xml'
+   from('.', { include('plugin.xml') }) 
+}
