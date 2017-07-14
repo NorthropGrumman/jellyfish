@@ -5,6 +5,7 @@ Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: com.ngc.seaside.systemdescriptor.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
+DynamicImport-Package: *
 Require-Bundle: com.ngc.seaside.systemdescriptor,
  com.ngc.seaside.systemdescriptor.ide,
  org.eclipse.xtext.ui,
