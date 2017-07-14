@@ -41,6 +41,10 @@ configurations {
       transitive = false
    }
 
+   guava {
+      transitive = false
+   }
+
    multibindings {
       transitive = false
    }
@@ -60,7 +64,7 @@ dependencies {
    eclipsePlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
 
    eclipsePlugins "org.glassfish:javax.json:$glassfishJsonVersion"
-   eclipsePlugins "com.google.guava:guava:$guavaVersion"
+   guava "com.google.guava:guava:$guavaVersion"
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
@@ -127,7 +131,20 @@ task copyMultibings(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings]) {
+task copyGuava(type: Copy) {
+   from configurations.guava {
+      rename { String name ->
+         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // And guava is messed up too...  At least according to Eclipse.
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings, copyGuava]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
