@@ -1,3 +1,5 @@
+import com.ngc.seaside.gradle.plugins.util.Versions
+
 ext {
    buildDir = 'build'
 }
@@ -18,8 +20,8 @@ task copyAndFilterFeatureFile(type: Copy) {
 
    filter { String line ->
       if (line.trim() == 'version="${project.version}"') {
-         def formattedVersion = "$project.version".replace('-', '.')
-         line = "version=\"$formattedVersion\""
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${project.version}")
+         line = "version=\"$osgiVersion\""
       }
       return line
    }
