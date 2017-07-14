@@ -1,4 +1,5 @@
 import com.ngc.seaside.gradle.plugins.util.EclipsePlugins
+import com.ngc.seaside.gradle.plugins.util.Versions
 
 ext {
    buildDir = 'build'
@@ -24,11 +25,23 @@ ext {
    eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
 }
 
+repositories {
+   mavenLocal()
+
+   maven {
+      url nexusConsolidated
+   }
+}
+
 configurations {
    features
 
    // note that plugins is reserved
    eclipsePlugins {
+      transitive = false
+   }
+
+   eclipsePluginsNoRenameWithGroupPrefix {
       transitive = false
    }
 }
@@ -38,6 +51,16 @@ dependencies {
 
    eclipsePlugins project(':systemdescriptor.model.impl.xtext')
    eclipsePlugins project(':systemdescriptor.service.impl.xtext')
+
+   eclipsePlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   eclipsePlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
+
+   eclipsePlugins "com.ngc.blocs:api:$blocsCoreVersion"
+   eclipsePlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
+
+   eclipsePlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+   eclipsePlugins "com.google.guava:guava:$guavaVersion"
+   eclipsePluginsNoRenameWithGroupPrefix "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
 task clean() {
@@ -64,29 +87,44 @@ task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
 }
 unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
 
-task copyFeatures(type: Copy, dependsOn: unzipEclipse) {
+task copyFeatures(type: Copy) {
    from configurations.features
    into { "$buildDir/updatesite/features" }
 
    // We have to rename the feature JARs built with Gradle to make the naming
    // convention expected by Eclipse or the feature won't install correctly.
    rename { String name ->
-      name = EclipsePlugins.makeEclipseCompliantJarFileName(name)
+      EclipsePlugins.makeEclipseCompliantJarFileName(name)
    }
 }
 
-task copyPlugins(type: Copy, dependsOn: unzipEclipse) {
-   from configurations.eclipsePlugins
+task copyPlugins(type: Copy) {
+   from configurations.eclipsePlugins {
+      rename { String name ->
+         // We have to rename the feature JARs built with Gradle to make the naming
+         // convention expected by Eclipse or the feature won't install correctly.
+         // For these dependencies, we need to prefix the group ID to the filename.
+         def artifacts = configurations.eclipsePlugins.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         "${artifact.moduleVersion.id.group}.${artifact.name}_${osgiVersion}.${artifact.extension}"
+      }
+   }
    into { "$buildDir/updatesite/plugins" }
-
-   // We have to rename the feature JARs built with Gradle to make the naming
-   // convention expected by Eclipse or the feature won't install correctly.
-   rename { String name ->
-      name = EclipsePlugins.makeEclipseCompliantJarFileName(name)
-   }
 }
 
-task createMetadata(dependsOn: [copyFeatures, copyPlugins]) {
+task copyPluginsWithoutRenamingGroupPrefix(type: Copy) {
+   from configurations.eclipsePluginsNoRenameWithGroupPrefix {
+      rename { String name ->
+         // We don't have to prefix the group ID to the file name for these JARs, but we still need to fix the version.
+         // We don't have to prefix the group ID because the artifact ID matches the bundle name in the manifest.
+         EclipsePlugins.makeEclipseCompliantJarFileName(name)
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyPluginsWithoutRenamingGroupPrefix]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.

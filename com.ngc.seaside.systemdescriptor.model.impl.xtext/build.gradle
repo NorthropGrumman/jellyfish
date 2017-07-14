@@ -10,7 +10,7 @@ dependencies {
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    testCompile "com.google.inject:guice:$guiceVersion"
-   testCompile 'org.glassfish:javax.json:1.1'
+   testCompile "org.glassfish:javax.json:$glassfishJsonVersion"
 }
 
 jar {
