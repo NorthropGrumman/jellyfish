@@ -50,7 +50,7 @@ QualifiedNameWithWildcard
 UnqualifiedName
 	: ID
 	;
-
+	
 // ---------------------------
 // ---- Common base types ----
 // ---------------------------
@@ -361,7 +361,7 @@ Links
  * of metadata and optional members.
  */
 Data
-	: 'data' name=UnqualifiedName '{'
+	: 'data' name=UnqualifiedName (':' superclass=[Data|QualifiedName])? '{'
 		metadata=Metadata?
 		fields+=DataFieldDeclaration* 
 	  '}'

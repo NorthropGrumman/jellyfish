@@ -36,11 +36,10 @@ ext {
 
 allprojects {
 	group = 'com.ngc.seaside'
-	version = '0.4.1-SNAPSHOT'
+	version = '0.5.1-SNAPSHOT'
 }
 
 subprojects {
-	
 	if(name.equals('systemdescriptor.ui')) {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.

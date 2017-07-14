@@ -21,7 +21,8 @@ import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 		DuplicateElementValidator.class,
 		ModelValidator.class,
 		ScenarioValidator.class,
-		LinkValidator.class })
+		LinkValidator.class,
+		DataValidator.class})
 public class SystemDescriptorValidator extends AbstractSystemDescriptorValidator
 		implements IValidatorExtension.ValidationHelper {
 
