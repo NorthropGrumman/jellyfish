@@ -22,6 +22,22 @@ ext {
    eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
 }
 
+configurations {
+   features
+
+   // note that plugins is reserved
+   eclipsePlugins {
+      transitive = false
+   }
+}
+
+dependencies {
+   features project(path: ':systemdescriptor.ext.feature', configuration: 'feature')
+
+   eclipsePlugins project(':systemdescriptor.model.impl.xtext')
+   eclipsePlugins project(':systemdescriptor.service.impl.xtext')
+}
+
 task clean() {
    doLast {
       delete("$buildDir")
@@ -46,5 +62,73 @@ task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
 }
 unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
 
-task build (dependsOn: unzipEclipse) {
+task copyFeatures(type: Copy, dependsOn: unzipEclipse) {
+   from configurations.features
+   into { "$buildDir/updatesite/features" }
+
+   // We have to rename the feature JARs built with Gradle to make the naming
+   // convention expected by Eclipse or the feature won't install correctly.
+   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
+   if ("$project.version".endsWith("SNAPSHOT")) {
+      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   } else {
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
+   }
 }
+
+task copyPlugins(type: Copy, dependsOn: unzipEclipse) {
+   from configurations.eclipsePlugins
+   into { "$buildDir/updatesite/plugins" }
+
+   // We have to rename the feature JARs built with Gradle to make the naming
+   // convention expected by Eclipse or the feature won't install correctly.
+   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
+   if ("$project.version".endsWith("SNAPSHOT")) {
+      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+   } else {
+      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
+   }
+}
+
+task createMetadata(dependsOn: [copyFeatures, copyPlugins]) {
+   // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
+   // files.  Note that the arguments -metadataRepository and -artifactRepository want
+   // "file URLs" but -source wants a plain old absolute path.
+   doLast {
+      project.exec {
+         commandLine(
+               "$eclipseExe",
+               '-nosplash',
+               '-application', 'org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher',
+               '-compress',
+               '-metadataRepository', file("$buildDir/updatesite/").toURI().toURL(),
+               '-artifactRepository', file("$buildDir/updatesite/").toURI().toURL(),
+               '-source', new File("$buildDir", "updatesite")
+         )
+      }
+   }
+}
+
+task createZip(type: Zip, dependsOn: createMetadata) {
+   from "$buildDir/updatesite"
+   destinationDir = file("$buildDir")
+   archiveName = "com.ngc.seaside.systemdescriptor.ext.updatesite-${project.version}.zip"
+}
+
+task createTarGz(type: Tar, dependsOn: createMetadata) {
+   from "$buildDir/updatesite"
+   compression = Compression.GZIP
+   destinationDir = file("$buildDir")
+   archiveName = "com.ngc.seaside.systemdescriptor.ext.updatesite-${project.version}.tar.gz"
+}
+
+task build (dependsOn: [createZip, createTarGz]) {
+}
+
+defaultTasks = ['build']
