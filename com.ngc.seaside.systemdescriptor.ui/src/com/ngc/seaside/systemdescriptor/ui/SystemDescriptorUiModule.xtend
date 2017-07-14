@@ -4,10 +4,23 @@
 package com.ngc.seaside.systemdescriptor.ui
 
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import com.google.inject.Binder
+import com.google.inject.Module
+import com.ngc.seaside.systemdescriptor.ui.dynamic.DynamicModuleLoader
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
 @FinalFieldsConstructor
 class SystemDescriptorUiModule extends AbstractSystemDescriptorUiModule {
+	
+	override public void configure(Binder binder) {
+		super.configure(binder)
+
+		// Use the dynamic module loader to find all Guice modules that are
+		// available via OSGi.
+		for(Module m : new DynamicModuleLoader().loadModules()) {
+			binder.install(m)
+		}
+	}
 }
