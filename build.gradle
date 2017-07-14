@@ -15,7 +15,11 @@ buildscript {
 }
 
 subprojects {
-   apply plugin: 'com.ngc.seaside.parent'
+   // Do not make the feature and update site projects Java projects.
+   if(name != 'systemdescriptor.ext.feature'
+      && name != 'systemdescriptor.ext.updatesite') {
+      apply plugin: 'com.ngc.seaside.parent'
+   }
 
    group 'com.ngc.seaside'
    version '1.2-SNAPSHOT'
