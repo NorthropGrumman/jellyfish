@@ -41,7 +41,7 @@ configurations {
       transitive = false
    }
 
-   eclipsePluginsNoRenameWithGroupPrefix {
+   multibindings {
       transitive = false
    }
 }
@@ -61,7 +61,7 @@ dependencies {
 
    eclipsePlugins "org.glassfish:javax.json:$glassfishJsonVersion"
    eclipsePlugins "com.google.guava:guava:$guavaVersion"
-   eclipsePluginsNoRenameWithGroupPrefix "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
 task clean() {
@@ -114,18 +114,20 @@ task copyPlugins(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task copyPluginsWithoutRenamingGroupPrefix(type: Copy) {
-   from configurations.eclipsePluginsNoRenameWithGroupPrefix {
+task copyMultibings(type: Copy) {
+   from configurations.multibindings {
       rename { String name ->
-         // We don't have to prefix the group ID to the file name for these JARs, but we still need to fix the version.
-         // We don't have to prefix the group ID because the artifact ID matches the bundle name in the manifest.
-         EclipsePlugins.makeEclipseCompliantJarFileName(name)
+         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // The bundle name is all messed up for multibindings.  Just hardcode the name.
+         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
       }
    }
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyPluginsWithoutRenamingGroupPrefix]) {
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.

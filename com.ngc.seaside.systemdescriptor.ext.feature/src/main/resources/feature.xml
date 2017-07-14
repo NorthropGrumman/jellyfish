@@ -86,7 +86,7 @@
 
 
    <plugin
-         id="com.ngc.blocs.api.service"
+         id="com.ngc.blocs.service.api"
          download-size="0"
          install-size="0"
          version="${blocsCoreVersion}"
@@ -100,7 +100,7 @@
          unpack="false"/>
 
    <plugin
-         id="guice-multibindings"
+         id="com.google.inject.multibindings"
          download-size="0"
          install-size="0"
          version="${guiceVersion}"
