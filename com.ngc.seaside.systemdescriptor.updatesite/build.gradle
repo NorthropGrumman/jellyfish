@@ -75,7 +75,7 @@ task copyFeatures(type: Copy) {
       rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
    } else {
       // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
    }
 }
 
@@ -92,7 +92,7 @@ task copyPlugins(type: Copy) {
       rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
    } else {
       // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
+      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
    }
 }
 

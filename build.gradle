@@ -36,7 +36,7 @@ ext {
 
 allprojects {
 	group = 'com.ngc.seaside'
-	version = '0.5.1-SNAPSHOT'
+	version = '0.5.1'
 }
 
 subprojects {
