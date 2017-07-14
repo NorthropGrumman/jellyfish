@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.ngc.seaside.systemdescriptor.ext.feature"
+      label="JellyFish SystemDescriptor DSL Extensions"
+      version="${project.version}"
+      provider-name="Northrop Grumman Corporation">
+
+   <description url="http://www.systemdescriptor.seaside.ngc.com/description">
+      This is the JellyFish System Descriptor DSL extensions Eclipse plugin.
+   </description>
+
+   <copyright url="http://www.systemdescriptor.seaside.ngc.com/copyright">
+	  Northrop Grumman Proprietary
+	  ____________________________
+	
+	   Copyright (C) 2017, Northrop Grumman Systems Corporation
+	   All Rights Reserved.
+	
+	  NOTICE:  All information contained herein is, and remains the property of
+	  Northrop Grumman Systems Corporation. The intellectual and technical concepts
+	  contained herein are proprietary to Northrop Grumman Systems Corporation and
+	  may be covered by U.S. and Foreign Patents or patents in process, and are
+	  protected by trade secret or copyright law. Dissemination of this information
+	  or reproduction of this material is strictly forbidden unless prior written
+	  permission is obtained from Northrop Grumman.
+
+   </copyright>
+
+   <license url="http://www.systemdescriptor.seaside.ngc.com/license">
+	  Northrop Grumman Proprietary
+	  ____________________________
+	
+	   Copyright (C) 2017, Northrop Grumman Systems Corporation
+	   All Rights Reserved.
+	
+	  NOTICE:  All information contained herein is, and remains the property of
+	  Northrop Grumman Systems Corporation. The intellectual and technical concepts
+	  contained herein are proprietary to Northrop Grumman Systems Corporation and
+	  may be covered by U.S. and Foreign Patents or patents in process, and are
+	  protected by trade secret or copyright law. Dissemination of this information
+	  or reproduction of this material is strictly forbidden unless prior written
+	  permission is obtained from Northrop Grumman.
+   </license>
+
+   <plugin
+         id="com.ngc.seaside.systemdescriptor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ngc.seaside.systemdescriptor.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="com.ngc.seaside.systemdescriptor.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
