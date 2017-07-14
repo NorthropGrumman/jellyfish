@@ -12,26 +12,23 @@ buildscript {
 
 import org.gradle.api.ProjectConfigurationException
 
-// Require the user to set the eclipseInstallationDirectory property in
-// $GRADLE_USER_HOME/gradle.properties.
-if(!project.properties.containsKey('eclipseInstallationDirectory')) {
-   throw new ProjectConfigurationException(
-   '''
-   the property eclipseInstallationDirectory is not set!  Please ensure this property is set to the directory
-   that contains a valid Eclipse with DSL support installation.  
-  
-   These type of properties can be set in $GRADLE_USER_HOME/gradle.properties.  Note that $GRADLE_USER_HOME is
-   not necessarily the directory where Gradle is installed.  If $GRADLE_USER_HOME is not set, gradle.properties
-   can usually be found in $USER/.gradle/.  You can check which properties are set by running
-   gradle properties.
-   ''', null)
-}
-
 ext {
-   	xtextVersion = '2.10.0'	
+   	xtextVersion = '2.10.0'
+   	
+   	eclipseVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+   	
+   	// The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
+   	eclipseDownloadUrl = "http://10.207.42.43/resources/jellyfish/${eclipseVersion}.zip"
+   	// The local file to save the ZIP to.
+   	eclipseDownloadDestFile = "build/${eclipseVersion}.zip"
+   	// This is the location where the Eclipse download will be unzipped to.
+   	// Note this name may change if the download URL changes to a different version of Eclipse.
+   	eclipseInstallationDirectory = file("build/$eclipseVersion").getAbsolutePath()
+   	
 	// This is the location of the Eclipse we use when compiling and building the 
 	// update site.
 	eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+	
 	// This is the location of the Eclispe exe we use to create the update site
 	// metadata.
 	eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
@@ -147,4 +144,25 @@ subprojects {
 	        archives javadocJar
 	    }
 	}
+}
+
+task downloadEclipse() {
+   doLast {
+      def destFile = file("$eclipseDownloadDestFile")
+      destFile.getParentFile().mkdir()
+         println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
+         new URL("$eclipseDownloadUrl").withInputStream { is ->
+            destFile.withOutputStream { it << is  }
+      }
+   }
+}
+downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
+
+task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+   from zipTree(file("$eclipseDownloadDestFile"))
+   into 'build' 
+}
+unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
+
+task build(dependsOn: unzipEclipse) {
 }
