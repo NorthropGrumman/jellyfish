@@ -2,7 +2,7 @@
 <feature
       id="com.ngc.seaside.systemdescriptor.ext.feature"
       label="JellyFish SystemDescriptor DSL Extensions"
-      version="${project.version}"
+      version="${osgiVersion}"
       provider-name="Northrop Grumman Corporation">
 
    <description url="http://www.systemdescriptor.seaside.ngc.com/description">
@@ -46,42 +46,42 @@
          id="com.ngc.seaside.systemdescriptor.model.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${jellyfishApiVersion}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.model.impl.basic"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${jellyfishApiVersion}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.model.impl.xtext"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${osgiVersion}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.service.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${jellyfishApiVersion}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.service.impl.xtext"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${osgiVersion}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.blocs.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${blocsCoreVersion}"
          unpack="false"/>
 
 
@@ -89,21 +89,28 @@
          id="com.ngc.blocs.api.service"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${blocsCoreVersion}"
          unpack="false"/>
 
    <plugin
          id="com.google.guava"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${guavaVersion}"
          unpack="false"/>
 
    <plugin
          id="guice-multibindings"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="${guiceVersion}"
+         unpack="false"/>
+
+   <plugin
+         id="org.glassfish.javax.json"
+         download-size="0"
+         install-size="0"
+         version="${glassfishJsonVersion}"
          unpack="false"/>
 
 </feature>

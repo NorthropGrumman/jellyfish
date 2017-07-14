@@ -16,15 +16,13 @@ task clean() {
 
 task copyAndFilterFeatureFile(type: Copy) {
    from 'src/main/resources', { include('feature.xml') }
+   expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
+          'jellyfishApiVersion': Versions.makeOsgiCompliantVersion("${jellyfishApiVersion}"),
+          'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
+          'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
+          'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsCoreVersion}"),
+          'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
    destinationDir = file("$buildDir/tmp")
-
-   filter { String line ->
-      if (line.trim() == 'version="${project.version}"') {
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${project.version}")
-         line = "version=\"$osgiVersion\""
-      }
-      return line
-   }
 }
 
 task createJar(type: Zip, dependsOn: [copyAndFilterFeatureFile]) {

@@ -52,6 +52,7 @@ dependencies {
    eclipsePlugins project(':systemdescriptor.model.impl.xtext')
    eclipsePlugins project(':systemdescriptor.service.impl.xtext')
 
+   eclipsePlugins "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    eclipsePlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    eclipsePlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
 
