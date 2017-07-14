@@ -96,16 +96,32 @@ task copyPlugins(type: Copy) {
    }
 }
 
-task createMetadata() {
+task createMetadata(dependsOn: [copyFeatures, copyPlugins]) {
+   // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
+   // files.  Note that the arguments -metadataRepository and -artifactRepository want
+   // "file URLs" but -source wants a plain old absolute path.
+   doLast {
+	   project.exec {
+	      commandLine(
+	         "$eclipseExe",
+	         '-nosplash',
+	         '-application', 'org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher',
+	         '-compress',
+	         '-metadataRepository', file("$buildDir/updatesite/").toURI().toURL(),
+	         '-artifactRepository', file("$buildDir/updatesite/").toURI().toURL(),
+	         '-source', new File("$buildDir", "updatesite")
+	      )
+	   }
+   }
 }
 
-task createZip(type: Zip, dependsOn: [copyFeatures, copyPlugins]) {
+task createZip(type: Zip, dependsOn: createMetadata) {
    from "$buildDir/updatesite"
    destinationDir = file("$buildDir")
    archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.zip"
 }
 
-task createTarGz(type: Tar, dependsOn: [copyFeatures, copyPlugins]) {
+task createTarGz(type: Tar, dependsOn: createMetadata) {
    from "$buildDir/updatesite"
    compression = Compression.GZIP
    destinationDir = file("$buildDir")

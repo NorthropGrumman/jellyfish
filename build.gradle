@@ -12,31 +12,37 @@ buildscript {
 
 import org.gradle.api.ProjectConfigurationException
 
+// Require the user to set the eclipseInstallationDirectory property in
+// $GRADLE_USER_HOME/gradle.properties.
+if(!project.properties.containsKey('eclipseInstallationDirectory')) {
+   throw new ProjectConfigurationException(
+   '''
+   the property eclipseInstallationDirectory is not set!  Please ensure this property is set to the directory
+   that contains a valid Eclipse with DSL support installation.  
+  
+   These type of properties can be set in $GRADLE_USER_HOME/gradle.properties.  Note that $GRADLE_USER_HOME is
+   not necessarily the directory where Gradle is installed.  If $GRADLE_USER_HOME is not set, gradle.properties
+   can usually be found in $USER/.gradle/.  You can check which properties are set by running
+   gradle properties.
+   ''', null)
+}
+
+ext {
+   	xtextVersion = '2.10.0'	
+	// This is the location of the Eclipse we use when compiling and building the 
+	// update site.
+	eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+	// This is the location of the Eclispe exe we use to create the update site
+	// metadata.
+	eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
+}
+
 allprojects {
 	group = 'com.ngc.seaside'
 	version = '0.4.1-SNAPSHOT'
 }
 
 subprojects {
-	// Require the user to set the eclipseInstallationDirectory property in
-	// $GRADLE_USER_HOME/gradle.properties.
-	if(!project.properties.containsKey('eclipseInstallationDirectory')) {
-	  throw new ProjectConfigurationException(
-	  '''
-	  the property eclipseInstallationDirectory is not set!  Please ensure this property is set to the directory
-	  that contains a valid Eclipse with DSL support installation.  
-	  
-	  These type of properties can be set in $GRADLE_USER_HOME/gradle.properties.  Note that $GRADLE_USER_HOME is
-	  not necessarily the directory where Gradle is installed.  If $GRADLE_USER_HOME is not set, gradle.properties
-	  can usually be found in $USER/.gradle/.  You can check which properties are set by running
-	  gradle properties.
-	  ''', null)
-	}
-
-	ext.xtextVersion = '2.10.0'	
-	// This is the location of the Eclipse we use when compiling and building the 
-	// update site.
-	ext.eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
 	
 	if(name.equals('systemdescriptor.ui')) {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
