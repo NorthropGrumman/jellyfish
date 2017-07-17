@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.bootstrap.DefaultBootstrapCommandOptions;
+import com.ngc.seaside.bootstrap.api.DefaultBootstrapCommandOptions;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 

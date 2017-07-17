@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.impl.provider;
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;

@@ -24,7 +24,9 @@ subprojects {
 
     ext {
         jellyfishDSLVersion = '1.1'
-        boostrapVersion = '1.0'
+        bootstrapApiVersion = '1.2'
+        bootstrapVersion = '1.2'
+        bootstrapCommandsVersion = '1.1'
         blocsVersion = '2.1'
         guiceVersion = '4.1.0'
         osgiVersion =  '6.0.0'

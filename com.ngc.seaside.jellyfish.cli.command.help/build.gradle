@@ -13,7 +13,7 @@ dependencies {
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
     
-	compile "com.ngc.seaside:bootstrap.utilities:$boostrapVersion"
+	compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
 	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
