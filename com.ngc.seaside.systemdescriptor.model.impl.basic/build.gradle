@@ -1,0 +1,15 @@
+dependencies {
+   compile project(':systemdescriptor.model.api')
+   compile 'com.google.guava:guava:21.0'
+   compile 'org.glassfish:javax.json:1.1'
+   compile 'javax.json:javax.json-api:1.1'
+
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.impl.basic.*')
+   }
+}
