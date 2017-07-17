@@ -14,25 +14,18 @@ task clean() {
    }
 }
 
-task copyBuildProperties(type: Copy) {
-   from '.', { include('build.properties') }
-   destinationDir = file("$buildDir/tmp")
-}
-
 task copyAndFilterFeatureFile(type: Copy) {
-   from '.', { include('feature.xml') }
+   from 'src/main/resources', { include('feature.xml') }
+   expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
+          'jellyfishApiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
+          'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
+          'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
+          'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsCoreVersion}"),
+          'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
    destinationDir = file("$buildDir/tmp")
-   
-   filter { String line ->
-      if (line.trim().equals('version="1.0.0.qualifier"')) {
-         def formattedVersion = Versions.makeOsgiCompliantVersion("$project.version")
-         line = "version=\"$formattedVersion\"" 
-      }
-      return line
-   }
 }
 
-task createJar(type: Zip, dependsOn: [copyBuildProperties, copyAndFilterFeatureFile]) {
+task createJar(type: Zip, dependsOn: copyAndFilterFeatureFile) {
    from "$buildDir/tmp"
    destinationDir = file("$buildDir")
    archiveName = "${project.group}.${project.name}-${project.version}.jar"
