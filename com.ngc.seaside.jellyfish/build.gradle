@@ -23,9 +23,11 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-// Copies all templates to distribution zip.
-applicationDistribution.from('src/main/resources/') {
-    into 'resources'
+// Copies all resources to distribution zip.
+parent.subprojects.each { 
+	applicationDistribution.from(it.file('src/main/resources')) { 
+		into 'resources'
+	}
 }
 
 // Provide the app home directory has a system property.
