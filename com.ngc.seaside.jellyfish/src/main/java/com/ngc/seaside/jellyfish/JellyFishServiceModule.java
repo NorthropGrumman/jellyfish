@@ -52,10 +52,6 @@ public class JellyFishServiceModule extends AbstractModule {
             });
          }
       });
-
-      // bind the interface to the implementation
-      bind(ILogService.class).to(LogService.class);
-      bind(IResourceService.class).to(ResourceService.class);
    }
 
 }

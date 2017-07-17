@@ -11,7 +11,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.log.impl.common.LogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.service.resource.impl.common.ResourceService;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -49,10 +49,6 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
             encounter.register((InjectionListener<I>) i -> delegate.activate());
          }
       });
-
-      // bind the interface to the implementation
-      bind(ILogService.class).to(LogService.class);
-      bind(IResourceService.class).to(ResourceService.class);
    }
 
    public void run(String[] args) {
