@@ -37,15 +37,7 @@ configurations {
    features
 
    // note that plugins is reserved
-   eclipsePlugins {
-      transitive = false
-   }
-
-   guava {
-      transitive = false
-   }
-
-   multibindings {
+   sdPlugins {
       transitive = false
    }
 }
@@ -53,19 +45,8 @@ configurations {
 dependencies {
    features project(path: ':systemdescriptor.ext.feature', configuration: 'feature')
 
-   eclipsePlugins project(':systemdescriptor.model.impl.xtext')
-   eclipsePlugins project(':systemdescriptor.service.impl.xtext')
-
-   eclipsePlugins "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
-   eclipsePlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
-   eclipsePlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
-
-   eclipsePlugins "com.ngc.blocs:api:$blocsCoreVersion"
-   eclipsePlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
-
-   eclipsePlugins "org.glassfish:javax.json:$glassfishJsonVersion"
-   guava "com.google.guava:guava:$guavaVersion"
-   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   sdPlugins project(':systemdescriptor.model.impl.xtext')
+   sdPlugins project(':systemdescriptor.service.impl.xtext')
 }
 
 task clean() {
@@ -104,12 +85,12 @@ task copyFeatures(type: Copy) {
 }
 
 task copyPlugins(type: Copy) {
-   from configurations.eclipsePlugins {
+   from configurations.sdPlugins {
       rename { String name ->
          // We have to rename the feature JARs built with Gradle to make the naming
          // convention expected by Eclipse or the feature won't install correctly.
          // For these dependencies, we need to prefix the group ID to the filename.
-         def artifacts = configurations.eclipsePlugins.resolvedConfiguration.resolvedArtifacts
+         def artifacts = configurations.sdPlugins.resolvedConfiguration.resolvedArtifacts
          def artifact = artifacts.find { it.file.name == name }
          def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
          "${artifact.moduleVersion.id.group}.${artifact.name}_${osgiVersion}.${artifact.extension}"
@@ -118,33 +99,7 @@ task copyPlugins(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task copyMultibings(type: Copy) {
-   from configurations.multibindings {
-      rename { String name ->
-         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         // The bundle name is all messed up for multibindings.  Just hardcode the name.
-         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into { "$buildDir/updatesite/plugins" }
-}
-
-task copyGuava(type: Copy) {
-   from configurations.guava {
-      rename { String name ->
-         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         // And guava is messed up too...  At least according to Eclipse.
-         "com.google.guava_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into { "$buildDir/updatesite/plugins" }
-}
-
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings, copyGuava]) {
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.

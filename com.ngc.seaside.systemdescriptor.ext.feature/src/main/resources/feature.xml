@@ -43,20 +43,6 @@
    </license>
 
    <plugin
-         id="com.ngc.seaside.systemdescriptor.model.api"
-         download-size="0"
-         install-size="0"
-         version="${jellyfishApiVersion}"
-         unpack="false"/>
-
-   <plugin
-         id="com.ngc.seaside.systemdescriptor.model.impl.basic"
-         download-size="0"
-         install-size="0"
-         version="${jellyfishApiVersion}"
-         unpack="false"/>
-
-   <plugin
          id="com.ngc.seaside.systemdescriptor.model.impl.xtext"
          download-size="0"
          install-size="0"
@@ -64,53 +50,10 @@
          unpack="false"/>
 
    <plugin
-         id="com.ngc.seaside.systemdescriptor.service.api"
-         download-size="0"
-         install-size="0"
-         version="${jellyfishApiVersion}"
-         unpack="false"/>
-
-   <plugin
          id="com.ngc.seaside.systemdescriptor.service.impl.xtext"
          download-size="0"
          install-size="0"
          version="${osgiVersion}"
-         unpack="false"/>
-
-   <plugin
-         id="com.ngc.blocs.api"
-         download-size="0"
-         install-size="0"
-         version="${blocsCoreVersion}"
-         unpack="false"/>
-
-
-   <plugin
-         id="com.ngc.blocs.service.api"
-         download-size="0"
-         install-size="0"
-         version="${blocsCoreVersion}"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="${guavaVersion}"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.inject.multibindings"
-         download-size="0"
-         install-size="0"
-         version="${guiceVersion}"
-         unpack="false"/>
-
-   <plugin
-         id="org.glassfish.javax.json"
-         download-size="0"
-         install-size="0"
-         version="${glassfishJsonVersion}"
          unpack="false"/>
 
 </feature>
