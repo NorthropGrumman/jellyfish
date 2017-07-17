@@ -10,18 +10,37 @@ repositories {
     // Use the directory that contains the Eclipse plugins as a repository.
     dirs "$eclipsePluginsDirectory"
   }
+  
+  mavenLocal()
+  
+  maven {
+      url nexusConsolidated
+   }
 }
 
 configurations {
+   // Add feature files to this configuration.
    features
    
    // note that plugins is reserved
    
+   // Add gradle built custom JF bundles to this configuration.
    sdPlugins {
       transitive = false
    }
    
+   // Add Eclipse plugins to this configuration.
    eclipsePlugins {
+      transitive = false
+   }
+   
+   // Only add Guava to this configuration.
+   guava {
+      transitive = false
+   }
+
+   // Only add guice multibindgs for this configuration.
+   multibindings {
       transitive = false
    }
 }
@@ -32,6 +51,17 @@ dependencies {
    sdPlugins project(':systemdescriptor')
    sdPlugins project(':systemdescriptor.ide')
    sdPlugins project(':systemdescriptor.ui')
+   sdPlugins project(':systemdescriptor.model.api')
+   sdPlugins project(':systemdescriptor.service.api')
+   sdPlugins project(':systemdescriptor.ui')
+   sdPlugins project(':systemdescriptor.model.impl.basic')
+   
+   sdPlugins "com.ngc.blocs:api:$blocsCoreVersion"
+   sdPlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
+   sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+   
+   guava "com.google.guava:guava:$guavaVersion"
+   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    
    eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
    eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
@@ -101,7 +131,33 @@ task copyEclipsePlugins(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [copyFeatures, copySdPlugins, copyEclipsePlugins]) {
+task copyMultibings(type: Copy) {
+   from configurations.multibindings {
+      rename { String name ->
+         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // The bundle name is all messed up for multibindings.  Just hardcode the name.
+         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task copyGuava(type: Copy) {
+   from configurations.guava {
+      rename { String name ->
+         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // And guava is messed up too...  At least according to Eclipse.
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task createMetadata(dependsOn: [copyFeatures, copySdPlugins, copyEclipsePlugins, copyMultibings, copyGuava]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
