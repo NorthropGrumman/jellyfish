@@ -11,6 +11,7 @@ import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 import com.google.inject.Module;
 import com.ngc.seaside.systemdescriptor.ui.internal.SystemdescriptorActivator;
@@ -66,9 +67,14 @@ public class DynamicModuleLoader {
 
 	private static Collection<Module> loadModulesFrom(URL url, Bundle bundle) {
 		Collection<Module> modules = new ArrayList<>();
-
+		
 		// Read in all the lines and treat each line as a fully qualified class name.
 		try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+			// The bundle must be active for dynamic imports to resolve correctly.
+			// If the bundle is already active, this method will do nothing.  Note this method
+			// may not return until the bundle is actually activated (see the OSGi API JavaDoc).
+			bundle.start();
+			
 			String line = in.readLine();
 			while (line != null) {
 				try {
@@ -87,7 +93,7 @@ public class DynamicModuleLoader {
 				}
 				line = in.readLine();
 			}
-		} catch (IOException e) {
+		} catch (IOException | BundleException e) {
 			LOGGER.error(String.format(
 					"Failed to load modules from bundle %s due to exception where reading service loader file.",
 					bundle.getSymbolicName()),
