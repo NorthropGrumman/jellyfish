@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -24,34 +25,53 @@ public class CreateJellyFishCommandTest {
 
    private CreateJellyFishCommand cmd = new CreateJellyFishCommand();
 
+   private PrintStreamLogService logger = new PrintStreamLogService();
+
+   private IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
+
    private Path outputDir;
 
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
+      cmd.setLogService(logger);
+      cmd.setPromptService(mockPromptService);
    }
 
+   private void createSettings() throws IOException {
+      Files.createFile(outputDir.resolve("settings.gradle"));
+   }
+   
    @Test
    public void testCommand() throws IOException {
-      testCommand(null, "commandName", "test-command");
+      createSettings();
+      testCommand(null, CreateJellyFishCommand.COMMAND_NAME_PROPERTY, "test-command");
    }
 
    @Test
    public void testCommandWithGroup() throws IOException {
-      testCommand(null, "commandName", "test-command-2", "groupId", "com.ngc.test");
+      createSettings();
+      testCommand(null, CreateJellyFishCommand.COMMAND_NAME_PROPERTY, "test-command-2", "groupId", "com.ngc.test");
    }
 
    @Test
    public void testCommandWithArtifact() throws IOException {
-      testCommand(null, "commandName", "test-command-3", "groupId", "com.ngc.test", "artifactId", "test.artifact.id");
+      createSettings();
+      testCommand(null, CreateJellyFishCommand.COMMAND_NAME_PROPERTY, "test-command-3", "groupId", "com.ngc.test", "artifactId", "test.artifact.id");
    }
 
    @Test
    public void testCommandWithoutCommandName() throws IOException {
       final String name = "test-command-4";
-      IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
-      Mockito.when(mockPromptService.prompt(Mockito.eq("commandName"), Mockito.any(), Mockito.any())).thenReturn(name);
+      Mockito.when(mockPromptService.prompt(Mockito.eq(CreateJellyFishCommand.COMMAND_NAME_PROPERTY), Mockito.any(), Mockito.any())).thenReturn(name);
+
+      createSettings();
       testCommand(name);
+   }
+   
+   @Test(expected = Exception.class)
+   public void testCommandWithoutSettings() throws IOException {
+      testCommand(null, CreateJellyFishCommand.COMMAND_NAME_PROPERTY, "test-command-5");
    }
 
    private void testCommand(String commandName, String... keyValues) throws IOException {
@@ -59,13 +79,10 @@ public class CreateJellyFishCommandTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n < keyValues.length; n += 2) {
-         DefaultParameter param = new DefaultParameter(keyValues[n], false);
-         param.setValue(keyValues[n + 1]);
-         collection.addParameter(param);
+         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter("outputDirectory", false);
-      outputDirectory.setValue(outputDir.toString());
+      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);
@@ -73,10 +90,10 @@ public class CreateJellyFishCommandTest {
       cmd.run(mockOptions);
 
       if (commandName == null) {
-         commandName = Optional.ofNullable(collection.getParameter("commandName")).map(IParameter::getValue).orElse(null);
+         commandName = Optional.ofNullable(collection.getParameter(CreateJellyFishCommand.COMMAND_NAME_PROPERTY)).map(IParameter::getValue).orElse(null);
       }
-      String groupId = Optional.ofNullable(collection.getParameter("groupId")).map(IParameter::getValue).orElse(null);
-      String artifactId = Optional.ofNullable(collection.getParameter("groupId")).map(IParameter::getValue).orElse(null);
+      String groupId = Optional.ofNullable(collection.getParameter(CreateJellyFishCommand.GROUP_ID_PROPERTY)).map(IParameter::getValue).orElse(null);
+      String artifactId = Optional.ofNullable(collection.getParameter(CreateJellyFishCommand.ARTIFACT_ID_PROPERTY)).map(IParameter::getValue).orElse(null);
 
       checkCommandOutput(commandName, outputDir, groupId, artifactId);
    }
@@ -90,22 +107,18 @@ public class CreateJellyFishCommandTest {
       }
 
       StringBuilder commandNameJavaBuilder = new StringBuilder();
-      StringBuilder commandNamePackageBuilder = new StringBuilder();
       for (int n = 0; n < commandName.length(); n++) {
          if (commandName.charAt(n) == '-') {
             if (n + 1 < commandName.length()) {
                commandNameJavaBuilder.append(Character.toUpperCase(commandName.charAt(n + 1)));
-               commandNamePackageBuilder.append(commandName.charAt(n + 1));
                n++;
             }
          } else {
             commandNameJavaBuilder.append(commandName.charAt(n));
-            commandNamePackageBuilder.append(commandName.charAt(n));
          }
       }
 
       final String commandNameJava = commandNameJavaBuilder.toString();
-      final String commandNamePackage = commandNamePackageBuilder.toString();
 
       Assert.assertTrue(
          outputDir.resolve(Paths.get("src", "main", "java", groupId.replace('.', File.separatorChar), artifactId.replace('.', File.separatorChar), commandNameJava + ".java")).toFile().exists());
