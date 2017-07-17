@@ -20,11 +20,15 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-jellyfish-command";
    private static final IUsage COMMAND_USAGE = new DefaultUsage("Generates a JellyFish command project.",
-      new DefaultParameter("outputDirectory", "the directory in which to output the command", false), new DefaultParameter("commandName", "name of the command", false));
+      new DefaultParameter("outputDirectory", "the directory in which to output the command", false), new DefaultParameter("commandName", "name of the command", true),
+      new DefaultParameter("groupId", "The project's group ID", false), new DefaultParameter("artifactId", "The project's artifact ID", false));
+
+   public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
+   public static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
 
    private ILogService logService;
    private IPromptUserService promptService;
-   
+
    @Activate
    public void activate() {
       logService.trace(getClass(), "Activated");
@@ -34,7 +38,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
    public void deactivate() {
       logService.trace(getClass(), "Deactivated");
    }
-   
+
    /**
     * Sets log service.
     *
@@ -51,7 +55,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-   
+
    /**
     * Sets log service.
     *
@@ -68,7 +72,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
    }
-   
+
    @Override
    public String getName() {
       return NAME;
