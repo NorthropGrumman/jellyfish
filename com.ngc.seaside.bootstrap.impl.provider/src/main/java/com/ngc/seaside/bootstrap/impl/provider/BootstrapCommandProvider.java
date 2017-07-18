@@ -1,7 +1,6 @@
 package com.ngc.seaside.bootstrap.impl.provider;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.DefaultBootstrapCommandOptions;
@@ -43,20 +42,20 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    private IParameterService parameterService;
 
    /**
-    * Ensure the dynamic references are added only after the activation of this Component.
+    * Ensure the dynamic references are added only after the activation of this
+    * Component.
     */
-   private DeferredDynamicReference<IBootstrapCommand> commands =
-         new DeferredDynamicReference<IBootstrapCommand>() {
-            @Override
-            protected void addPostActivate(IBootstrapCommand command) {
-               doAddCommand(command);
-            }
+   private DeferredDynamicReference<IBootstrapCommand> commands = new DeferredDynamicReference<IBootstrapCommand>() {
+      @Override
+      protected void addPostActivate(IBootstrapCommand command) {
+         doAddCommand(command);
+      }
 
-            @Override
-            protected void removePostActivate(IBootstrapCommand command) {
-               doRemoveCommand(command);
-            }
-         };
+      @Override
+      protected void removePostActivate(IBootstrapCommand command) {
+         doRemoveCommand(command);
+      }
+   };
 
    @Activate
    public void activate() {
@@ -70,7 +69,19 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      return null; //TODO this needs to be the usage for all commands in this provider
+      return null; // TODO this needs to be the usage for all commands in this
+                   // provider
+   }
+
+   @Override
+   public IBootstrapCommand getCommand(String commandName) {
+      IBootstrapCommand command = commandMap.get(commandName);
+      if (command == null) {
+         logService.error(getClass(), "Unable to find command '%s'", commandName);
+         return null;
+      } else {
+         return command;
+      }
    }
 
    @Override
@@ -98,11 +109,9 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
          return;
       }
 
-      //the first parameter is the name of the command, strip it off before converting the command input parameters.
-      IParameterCollection parameters =
-            parameterService.parseParameters(Arrays.asList(
-                  Arrays.copyOfRange(arguments, 1,  arguments.length)
-            ));
+      // the first parameter is the name of the command, strip it off before
+      // converting the command input parameters.
+      IParameterCollection parameters = parameterService.parseParameters(Arrays.asList(Arrays.copyOfRange(arguments, 1, arguments.length)));
 
       IParameterCollection templateParameters = unpackTemplate(command, parameters);
       IBootstrapCommandOptions options = createBootstrapCommandOptions(parameters, templateParameters);
@@ -115,9 +124,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -134,9 +141,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     *
     * @param ref the service
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -153,9 +158,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     *
     * @param ref the service
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeParameterService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeParameterService")
    public void setParameterService(IParameterService ref) {
       this.parameterService = ref;
    }
@@ -169,12 +172,10 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
 
    /**
     * This method is required due to an issue when BND tries to resolve the
-    * dependencies and the IBootstrapCommand extends an interface that is typed.
+    * dependencies and the IBootstrapCommand extends an interface that is
+    * typed.
     */
-   @Reference(unbind = "removeCommandOSGi",
-            service = IBootstrapCommand.class,
-            cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC)
+   @Reference(unbind = "removeCommandOSGi", service = IBootstrapCommand.class, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
    protected void addCommandOSGi(IBootstrapCommand command) {
       addCommand(command);
    }
@@ -191,8 +192,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    protected void doAddCommand(IBootstrapCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
-      Preconditions
-               .checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
+      Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
       logService.trace(getClass(), "Adding command '%s'", command.getName());
       commandMap.put(command.getName(), command);
    }
@@ -210,18 +210,19 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Create the bootstrap options given the user supplied parameters and the templateContent supplied parameters. The
-    * templateContent may be null due to the fact that you can have a command that doesn't have a templateContent.
+    * Create the bootstrap options given the user supplied parameters and the
+    * templateContent supplied parameters. The templateContent may be null due
+    * to the fact that you can have a command that doesn't have a
+    * templateContent.
     *
     * @param userInputParameters the parameters that the user input on the command line
-    * @param templateParameters  the parameters that were fulfilled by the templateContent.properties file in the templateContent
+    * @param templateParameters the parameters that were fulfilled by the templateContent.properties file in the templateContent
     * @return the bootstrap command options. Never null.
     */
-   protected IBootstrapCommandOptions createBootstrapCommandOptions(
-            IParameterCollection userInputParameters, IParameterCollection templateParameters) {
+   protected IBootstrapCommandOptions createBootstrapCommandOptions(IParameterCollection userInputParameters, IParameterCollection templateParameters) {
       DefaultBootstrapCommandOptions options = new DefaultBootstrapCommandOptions();
 
-      if(templateParameters == null) {
+      if (templateParameters == null) {
          options.setParameters(userInputParameters);
       } else {
          DefaultParameterCollection all = new DefaultParameterCollection();
@@ -234,17 +235,18 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Unpack the templateContent if it exists. If not, just return an empty collection of parameters.
+    * Unpack the templateContent if it exists. If not, just return an empty
+    * collection of parameters.
     *
-    * @param command                 the command.
-    * @param userSuppliedParameters  the parameters the user passed in. These should overwrite any properties that
-    *                                exists in the templateContent.properties. meaning, if they pass in these parameters they
-    *                                should not be prompted!
-    * @return the parameters that were required to be input for usage within the templateContent.
+    * @param command the command.
+    * @param userSuppliedParameters the parameters the user passed in. These should overwrite any
+    *           properties that exists in the templateContent.properties.
+    *           meaning, if they pass in these parameters they should not be
+    *           prompted!
+    * @return the parameters that were required to be input for usage within
+    *         the templateContent.
     */
-   protected IParameterCollection unpackTemplate(
-            IBootstrapCommand command,
-            IParameterCollection userSuppliedParameters) {
+   protected IParameterCollection unpackTemplate(IBootstrapCommand command, IParameterCollection userSuppliedParameters) {
       String templatePrefix = getCommandTemplatePrefix(command);
       /**
        * Unpack the templateContent
@@ -252,29 +254,27 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       if (templateService.templateExists(templatePrefix)) {
          try {
             Path outputPath = Paths.get(".");
-            if(userSuppliedParameters.containsParameter("outputDir")) {
+            if (userSuppliedParameters.containsParameter("outputDir")) {
                outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getValue());
             }
 
             logService.trace(getClass(), "Unpacking templateContent for '%s' to '%s'", userSuppliedParameters, outputPath);
-            ITemplateOutput templateOutput =
-                     templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
+            ITemplateOutput templateOutput = templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
 
             return convertParameters(templateOutput, outputPath);
          } catch (TemplateServiceException e) {
-            logService.error(getClass(),
-                             e,
-                             "Unable to unpack the templateContent for command'%s'. Aborting",
-                             command);
+            logService.error(getClass(), e, "Unable to unpack the templateContent for command'%s'. Aborting", command);
          }
       }
       return null;
    }
 
    /**
-    * Return the prefix used in order to look the command's templateContent up within the templates resource directory.
-    * Currently this assumes that the naming convention for the command's package includes the same name used for
-    * creating the templateContent zip. This is actually done for us using the correct build tools.
+    * Return the prefix used in order to look the command's templateContent up
+    * within the templates resource directory. Currently this assumes that the
+    * naming convention for the command's package includes the same name used
+    * for creating the templateContent zip. This is actually done for us using
+    * the correct build tools.
     *
     * @param command the command in which to create the prefix
     * @return the String representation of the command's package.
@@ -284,7 +284,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    }
 
    /**
-    * Convert the templateContent output to a parameter collection. This includes the templateFinalOutputDir.
+    * Convert the templateContent output to a parameter collection. This
+    * includes the templateFinalOutputDir.
     *
     * @param output the templateContent service's output
     * @return the collection of parameters.
@@ -293,10 +294,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter("outputDirectory")
-               .setValue(outputPath.toString());
-      DefaultParameter templateOutputDir = new DefaultParameter("templateFinalOutputDirectory")
-               .setValue(output.getOutputPath().toString());
+      DefaultParameter outputDir = new DefaultParameter("outputDirectory").setValue(outputPath.toString());
+      DefaultParameter templateOutputDir = new DefaultParameter("templateFinalOutputDirectory").setValue(output.getOutputPath().toString());
       collection.addParameter(outputDir);
       collection.addParameter(templateOutputDir);
 

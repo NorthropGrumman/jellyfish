@@ -2,7 +2,6 @@ package com.ngc.seaside.bootstrap.impl.provider;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
@@ -20,10 +19,7 @@ public class BootstrapCommandProviderGuiceWrapper implements IBootstrapCommandPr
    private final BootstrapCommandProvider delegate = new BootstrapCommandProvider();
 
    @Inject
-   public BootstrapCommandProviderGuiceWrapper(ILogService logService,
-                                               ITemplateService templateService,
-                                               IParameterService parameterService,
-                                               Set<IBootstrapCommand> commands) {
+   public BootstrapCommandProviderGuiceWrapper(ILogService logService, ITemplateService templateService, IParameterService parameterService, Set<IBootstrapCommand> commands) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setParameterService(parameterService);
@@ -34,6 +30,11 @@ public class BootstrapCommandProviderGuiceWrapper implements IBootstrapCommandPr
    @Override
    public IUsage getUsage() {
       return delegate.getUsage();
+   }
+
+   @Override
+   public IBootstrapCommand getCommand(String commandName) {
+      return delegate.getCommand(commandName);
    }
 
    @Override
@@ -50,4 +51,5 @@ public class BootstrapCommandProviderGuiceWrapper implements IBootstrapCommandPr
    public void run(String[] arguments) {
       delegate.run(arguments);
    }
+
 }
