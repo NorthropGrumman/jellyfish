@@ -9,7 +9,6 @@ import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -36,7 +35,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-jellyfish-command";
    private static final IUsage USAGE = createUsage();
-   
+
    private static final Pattern JAVA_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*");
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
@@ -48,12 +47,12 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    public static final String COMMAND_NAME_PROPERTY = "commandName";
    public static final String CLEAN_PROPERTY = "clean";
 
-   public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
-   public static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
+   static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
+   static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
 
    private ILogService logService;
    private IPromptUserService promptService;
-   public ITemplateService templateService;
+   private ITemplateService templateService;
 
    @Activate
    public void activate() {
@@ -77,20 +76,16 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      IParameterCollection parameters = commandOptions.getParameters();
-
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      collection.addParameters(parameters.getAllParameters());
+      collection.addParameters(commandOptions.getParameters().getAllParameters());
 
-      final String commandName;
-      if (!parameters.containsParameter(COMMAND_NAME_PROPERTY)) {
-         commandName = promptService.prompt(COMMAND_NAME_PROPERTY, "", null);
+      if (!collection.containsParameter(COMMAND_NAME_PROPERTY)) {
+         String commandName = promptService.prompt(COMMAND_NAME_PROPERTY, "", null);
          collection.addParameter(new DefaultParameter(COMMAND_NAME_PROPERTY).setValue(commandName));
-      } else {
-         commandName = parameters.getParameter(COMMAND_NAME_PROPERTY).getValue();
       }
-      
-      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY)) {
+      final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getValue();
+
+      if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
          collection.addParameter(new DefaultParameter(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
       }
       final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getValue());
@@ -100,34 +95,33 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
          logService.error(CreateJellyFishCommandCommand.class, e);
          throw new CommandException(e);
       }
-      
+
       if (Files.isDirectory(outputDirectory.resolve("com.ngc.seaside.jellyfish.api"))) {
          collection.addParameter(new DefaultParameter("withApi").setValue("true"));
       } else {
          collection.addParameter(new DefaultParameter("withApi").setValue("false"));
       }
 
-      
-      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
+      if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
          collection.addParameter(new DefaultParameter(GROUP_ID_PROPERTY).setValue(DEFAULT_GROUP_ID));
       }
       final String group = collection.getParameter(GROUP_ID_PROPERTY).getValue();
 
-      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
          String artifact = collection.getParameter(COMMAND_NAME_PROPERTY).getValue().replace("-", "").toLowerCase();
          collection.addParameter(new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
       }
       final String artifact = collection.getParameter(ARTIFACT_ID_PROPERTY).getValue();
-      
-      if (!parameters.containsParameter(PACKAGE_PROPERTY)) {
+
+      if (!collection.containsParameter(PACKAGE_PROPERTY)) {
          collection.addParameter(new DefaultParameter(PACKAGE_PROPERTY).setValue(group + '.' + artifact));
       }
       String pkg = collection.getParameter(PACKAGE_PROPERTY).getValue();
       if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
          throw new CommandException("Invalid package name: " + pkg);
       }
-      
-      if (!parameters.containsParameter(CLASSNAME_PROPERTY)) {
+
+      if (!collection.containsParameter(CLASSNAME_PROPERTY)) {
          String classname = WordUtils.capitalize(commandName).replaceAll("[^a-zA-Z0-9_$]", "") + "Command";
          collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(classname));
       }
@@ -144,8 +138,8 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
       }
 
       final boolean clean;
-      if (parameters.containsParameter(CLEAN_PROPERTY)) {
-         String value = parameters.getParameter(CLEAN_PROPERTY).getValue();
+      if (collection.containsParameter(CLEAN_PROPERTY)) {
+         String value = collection.getParameter(CLEAN_PROPERTY).getValue();
          switch (value.toLowerCase()) {
          case "true":
             clean = true;
@@ -216,7 +210,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    }
 
    /**
-    * Create the usage for this command. Some of these parameters are provided in the template.
+    * Create the usage for this command.
     *
     * @return the usage.
     */
