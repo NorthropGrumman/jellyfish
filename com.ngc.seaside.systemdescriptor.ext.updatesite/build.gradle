@@ -40,6 +40,22 @@ configurations {
    sdPlugins {
       transitive = false
    }
+
+   // Only add Guava to this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   guava {
+      transitive = false
+   }
+
+   // Only add guice multibindings for this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   multibindings {
+      transitive = false
+   }
 }
 
 dependencies {
@@ -47,6 +63,17 @@ dependencies {
 
    sdPlugins project(':systemdescriptor.model.impl.xtext')
    sdPlugins project(':systemdescriptor.service.impl.xtext')
+
+   sdPlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   sdPlugins "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
+   sdPlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
+
+   sdPlugins "com.ngc.blocs:api:$blocsCoreVersion"
+   sdPlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
+   sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+
+   guava "com.google.guava:guava:$guavaVersion"
+   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
 task clean() {
@@ -99,7 +126,33 @@ task copyPlugins(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins]) {
+task copyMultibings(type: Copy) {
+   from configurations.multibindings {
+      rename { String name ->
+         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // The bundle name is all messed up for multibindings.  Just hardcode the name.
+         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task copyGuava(type: Copy) {
+   from configurations.guava {
+      rename { String name ->
+         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // And guava is messed up too...  At least according to Eclipse.
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings, copyGuava]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
