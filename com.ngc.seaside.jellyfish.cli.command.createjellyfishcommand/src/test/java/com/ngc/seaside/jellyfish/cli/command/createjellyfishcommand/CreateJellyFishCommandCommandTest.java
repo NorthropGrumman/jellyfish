@@ -61,7 +61,7 @@ public class CreateJellyFishCommandCommandTest {
       final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
          command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
-      final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
+      final String classname = "TestCommand1Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command);
       checkCommandOutput(classname, group, artifact, pkg);
    }
@@ -75,7 +75,7 @@ public class CreateJellyFishCommandCommandTest {
       final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
          command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
-      final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
+      final String classname = "TestCommand2Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.GROUP_ID_PROPERTY, group);
       checkCommandOutput(classname, group, artifact, pkg);
@@ -89,7 +89,7 @@ public class CreateJellyFishCommandCommandTest {
       final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
       final String artifact = "test.artifact.id";
       final String pkg = group + '.' + artifact;
-      final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
+      final String classname = "TestCommand3Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.ARTIFACT_ID_PROPERTY, artifact);
       checkCommandOutput(classname, group, artifact, pkg);
@@ -104,7 +104,7 @@ public class CreateJellyFishCommandCommandTest {
       final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
          command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
-      final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
+      final String classname = "TestCommand4Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.PACKAGE_PROPERTY, pkg);
       checkCommandOutput(classname, group, artifact, pkg);
@@ -119,7 +119,7 @@ public class CreateJellyFishCommandCommandTest {
       final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
          command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
-      final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
+      final String classname = "TestCommand5Command";
       Mockito.when(mockPromptService.prompt(Mockito.eq(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY),
          Mockito.any(), Mockito.any())).thenReturn(command);
       runCommand();
@@ -258,6 +258,8 @@ public class CreateJellyFishCommandCommandTest {
                .anyMatch(line -> line.contains(projectName)));
       Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedPackage, expectedClassname + ".java");
       Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
+      Path actualPath = outputDir.resolve(expectedPath).toRealPath();
+      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
       Assert.assertTrue("resources folder was not created",
          outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
       Assert.assertTrue("test folder was not created",
