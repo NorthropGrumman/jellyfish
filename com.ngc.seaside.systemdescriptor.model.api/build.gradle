@@ -1,5 +1,5 @@
 dependencies {
-   compile 'javax.json:javax.json-api:1.1'
+   compile "org.glassfish:javax.json:$glassfishJsonVersion"
 
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
