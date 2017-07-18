@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.api.traversal;
 
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -12,10 +13,25 @@ import javax.json.JsonArray;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
+/**
+ * Contains various model predicates that are often used with {@link Traversals#collectModels(ISystemDescriptor,
+ * Predicate)}.
+ */
 public class ModelPredicates {
 
+   /**
+    * The JSON key refereed in the metadata of a model to declare stereotypes.  The value is either a string or an
+    * array of strings.
+    */
    public final static String STEREOTYPE_MEMBER_NAME = "stereotypes";
 
+   /**
+    * Gets a predicate that only accepts a model that contains all the given stereotypes.
+    *
+    * @param stereotype  the stereotype that the model must contain
+    * @param stereotypes the optional stereotypes the model must contain
+    * @return a predicate that only accepts a model that contains all the given stereotypes
+    */
    public static Predicate<IModel> withAllStereotypes(String stereotype, String... stereotypes) {
       if (stereotype == null) {
          throw new NullPointerException("stereotype may not be null!");
@@ -28,6 +44,12 @@ public class ModelPredicates {
       return withAllStereotypes(collection);
    }
 
+   /**
+    * Gets a predicate that only accepts a model that contains all the given stereotypes.
+    *
+    * @param stereotypes the stereotypes the model must contain
+    * @return a predicate that only accepts a model that contains all the given stereotypes.
+    */
    public static Predicate<IModel> withAllStereotypes(Collection<String> stereotypes) {
       if (stereotypes == null) {
          throw new NullPointerException("stereotypes may not be null!");
@@ -35,6 +57,13 @@ public class ModelPredicates {
       return m -> containsAllStereotypes(m, stereotypes);
    }
 
+   /**
+    * Gets a predicate that only accepts a model that contains any of the given stereotypes.
+    *
+    * @param stereotype  the stereotype that the model must contain
+    * @param stereotypes the optional stereotypes the model may contain
+    * @return a predicate that only accepts a model that contains any of the given stereotypes
+    */
    public static Predicate<IModel> withAnyStereotype(String stereotype, String... stereotypes) {
       if (stereotype == null) {
          throw new NullPointerException("stereotype may not be null!");
@@ -47,6 +76,12 @@ public class ModelPredicates {
       return withAnyStereotype(collection);
    }
 
+   /**
+    * Gets a predicate that only accepts a model that contains any of the given stereotypes.
+    *
+    * @param stereotypes the stereotypes the model may contain
+    * @return a predicate that only accepts a model that contains any of the given stereotypes
+    */
    public static Predicate<IModel> withAnyStereotype(Collection<String> stereotypes) {
       if (stereotypes == null) {
          throw new NullPointerException("stereotypes may not be null!");
