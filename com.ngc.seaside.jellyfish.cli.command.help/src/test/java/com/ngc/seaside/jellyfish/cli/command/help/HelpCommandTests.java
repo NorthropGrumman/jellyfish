@@ -103,11 +103,10 @@ public class HelpCommandTests {
       Assert.assertTrue(output.contains("param2"));
       Assert.assertTrue(output.contains("param3"));
       Assert.assertTrue(output.contains("param4"));
-      //TODO BP: Uncomment when getter bug is fixed in DefaultParameter for getDescription()
-//      Assert.assertTrue(output.contains("Description 1"));
-//      Assert.assertTrue(output.contains("Description 2"));
-//      Assert.assertTrue(output.contains("Description 3"));
-//      Assert.assertTrue(output.contains("Description 4"));
+      Assert.assertTrue(output.contains("Description 1"));
+      Assert.assertTrue(output.contains("Description 2"));
+      Assert.assertTrue(output.contains("Description 3"));
+      Assert.assertTrue(output.contains("Description 4"));
    }
 
    @Test
@@ -133,14 +132,13 @@ public class HelpCommandTests {
       Assert.assertTrue(output.contains("param2"));
       Assert.assertTrue(output.contains("param3"));
       Assert.assertTrue(output.contains("param4"));
-      //TODO BP: Uncomment when getter bug is fixed in DefaultParameter for getDescription()
-//      Assert.assertTrue(output.contains("Description 1.1"));
-//      Assert.assertTrue(output.contains("Description 2.1"));
-//      Assert.assertTrue(output.contains("Description 3.1"));
-//      Assert.assertTrue(output.contains("Description 4.1"));
-//      Assert.assertFalse(output.contains("Description 1.2"));
-//      Assert.assertFalse(output.contains("Description 2.2"));
-//      Assert.assertFalse(output.contains("Description 3.2"));
+      Assert.assertTrue(output.contains("Description 1.1"));
+      Assert.assertTrue(output.contains("Description 2.1"));
+      Assert.assertTrue(output.contains("Description 3.1"));
+      Assert.assertTrue(output.contains("Description 4.1"));
+      Assert.assertFalse(output.contains("Description 1.2"));
+      Assert.assertFalse(output.contains("Description 2.2"));
+      Assert.assertFalse(output.contains("Description 3.2"));
    }
 
    @After

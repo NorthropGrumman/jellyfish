@@ -82,6 +82,17 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    @Override
+   public IJellyFishCommand getCommand(String commandName) {
+      IJellyFishCommand command = commandMap.get(commandName);
+      if (command == null) {
+         logService.error(getClass(), "Unable to find command '%s'", commandName);
+         return null;
+      } else {
+         return command;
+      }
+   }
+
+   @Override
    public void addCommand(IJellyFishCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);

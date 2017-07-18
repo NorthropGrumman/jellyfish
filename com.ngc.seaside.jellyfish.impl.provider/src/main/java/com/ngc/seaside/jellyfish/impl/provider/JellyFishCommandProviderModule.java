@@ -61,6 +61,11 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
    }
 
    @Override
+   public IJellyFishCommand getCommand(String commandName) {
+      return delegate.getCommand(commandName);
+   }
+
+   @Override
    public void addCommand(IJellyFishCommand command) {
       delegate.addCommand(command);
 
