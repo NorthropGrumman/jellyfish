@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
  *
  * This service is intended to be used in a Guice module and is not an OSGi DS managed component.
  */
-public class Log4LogService implements ILogService {
+public class Log4jLogService implements ILogService {
 
    @Override
    public void debug(Class<?> arg0, Object arg1) {
