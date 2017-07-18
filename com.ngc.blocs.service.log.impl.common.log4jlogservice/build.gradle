@@ -1,0 +1,4 @@
+dependencies {
+   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
+   compile "log4j:log4j:$log4jVersion"
+}
