@@ -57,6 +57,13 @@
          unpack="false"/>
 
    <plugin
+         id="com.ngc.seaside.service.log.impl.common.log4jlogservice"
+         download-size="0"
+         install-size="0"
+         version="${osgiVersion}"
+         unpack="false"/>
+
+   <plugin
          id="com.ngc.seaside.systemdescriptor.model.api"
          download-size="0"
          install-size="0"

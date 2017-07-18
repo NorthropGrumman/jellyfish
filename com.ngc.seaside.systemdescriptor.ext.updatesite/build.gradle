@@ -63,6 +63,7 @@ dependencies {
 
    sdPlugins project(':systemdescriptor.model.impl.xtext')
    sdPlugins project(':systemdescriptor.service.impl.xtext')
+   sdPlugins project(':service.log.impl.common.log4jlogservice')
 
    sdPlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    sdPlugins "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
