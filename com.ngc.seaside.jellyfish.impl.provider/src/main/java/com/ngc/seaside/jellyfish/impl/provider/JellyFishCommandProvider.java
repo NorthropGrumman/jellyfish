@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.impl.provider;
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.IBootstrapCommandProvider;
+import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -77,8 +77,20 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir", false)));
+      DefaultUsage usage = new DefaultUsage("JellyFish Description",
+         Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
       return usage;
+   }
+
+   @Override
+   public IJellyFishCommand getCommand(String commandName) {
+      IJellyFishCommand command = commandMap.get(commandName);
+      if (command == null) {
+         logService.error(getClass(), "Unable to find command '%s'", commandName);
+         return null;
+      } else {
+         return command;
+      }
    }
 
    @Override
@@ -128,7 +140,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          }
       }
 
-      IParameterCollection collection = parameterService.parseParameters(getUsage(), Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+      IParameterCollection collection = parameterService
+               .parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
       IJellyFishCommandOptions jellyFishCommandOptions = convert(collection);
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
@@ -230,7 +243,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       Path path;
       if (inputDir == null) {
          path = Paths.get(System.getProperty("user.dir"));
-      }else {
+      } else {
          path = Paths.get(inputDir.getValue());
       }
 

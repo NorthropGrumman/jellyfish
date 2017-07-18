@@ -23,9 +23,12 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-// Copies all templates to distribution zip.
-applicationDistribution.from('src/main/resources/') {
-    into 'resources'
+applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) { 
+	into 'resources/templates'
+}
+
+applicationDistribution.from('src/main/resources') { 
+	into 'resources'
 }
 
 // Provide the app home directory has a system property.
