@@ -19,10 +19,6 @@ repositories {
 dependencies {
    compile project(':systemdescriptor')
    compile project(':systemdescriptor.ide')
-   compile project(':systemdescriptor.model.api')
-   compile project(':systemdescriptor.service.api')
-   
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion" 
 
    compile name: 'org.eclipse.core.resources_3.11.1.v20161107-2032'
    compile name: 'org.eclipse.equinox.common_3.8.0.v20160509-1230'

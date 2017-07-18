@@ -18,10 +18,6 @@ import org.gradle.api.ProjectConfigurationException
 
 ext {
    	xtextVersion = '2.10.0'
-   	guavaVersion = '21.0'
-    guiceVersion = '3.0'
-    blocsCoreVersion = '2.1'
-    glassfishJsonVersion = '1.1'
    	
    	eclipseVersion = 'eclipse-dsl-neon-2-win32-x86_64'
    	
@@ -62,14 +58,6 @@ subprojects {
 	   // Don't apply any parent plugins.
 	} else if(name == 'systemdescriptor.updatesite') {
 	   // Don't apply any parent plugins.
-	} else if(name == 'systemdescriptor.model.api'
-	   || name == 'systemdescriptor.service.api'
-	   || name == 'systemdescriptor.model.impl.basic') {
-	   apply plugin: 'com.ngc.seaside.parent'
-	   ext {
-          junitVersion = '4.12'
-          mockitoVersion = '2.7.14'
-       }
 	} else {
 	    // Apply XText plugins.
 	    apply plugin: 'java'
@@ -81,10 +69,7 @@ subprojects {
 	}
 	
 	if(name != 'systemdescriptor.feature'
-	    && name != 'systemdescriptor.updatesite'
-		&& name != 'systemdescriptor.model.api'
-		&& name != 'systemdescriptor.service.api'
-		&& name != 'systemdescriptor.model.impl.basic') {
+	    && name != 'systemdescriptor.updatesite') {
 		
 		sourceCompatibility = '1.8'
 		targetCompatibility = '1.8'
