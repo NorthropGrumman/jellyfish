@@ -14,6 +14,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -21,6 +22,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -75,9 +77,12 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(parameters.getAllParameters());
 
+      final String commandName;
       if (!parameters.containsParameter(COMMAND_NAME_PROPERTY)) {
-         String commandName = promptService.prompt(COMMAND_NAME_PROPERTY, null, null);
+         commandName = promptService.prompt(COMMAND_NAME_PROPERTY, null, null);
          collection.addParameter(new DefaultParameter(COMMAND_NAME_PROPERTY).setValue(commandName));
+      } else {
+         commandName = parameters.getParameter(COMMAND_NAME_PROPERTY).getValue();
       }
       if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY)) {
          collection.addParameter(new DefaultParameter(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
@@ -95,19 +100,19 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
          collection.addParameter(new DefaultParameter(PACKAGE_PROPERTY).setValue(groupName + '.' + artifactName));
       }
       if (!parameters.containsParameter(CLASSNAME_PROPERTY)) {
-         StringBuilder className = new StringBuilder();
-         String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getValue();
-         for (int n = 0; n < commandName.length(); n++) {
-            if (!Character.isJavaIdentifierPart(commandName.charAt(n))) {
-               if (n + 1 < commandName.length()) {
-                  className.append(Character.toUpperCase(commandName.charAt(n + 1)));
-                  n++;
-               }
-            } else {
-               className.append(Character.toUpperCase(commandName.charAt(n)));
-            }
+         String classname = commandName;
+         if (classname.toLowerCase().endsWith("-command")) {
+            classname = classname.substring(0, classname.length() - "-command".length());
          }
-         collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(className.toString()));
+         classname = WordUtils.capitalize(classname).replace("-", "") + "Command";
+         collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(classname));
+      }
+
+      Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getValue());
+      if (Files.isDirectory(outputDirectory.resolve("com.ngc.seaside.jellyfish.api"))) {
+         collection.addParameter(new DefaultParameter("withApi").setValue("true"));
+      } else {
+         collection.addParameter(new DefaultParameter("withApi").setValue("false"));
       }
 
       try {
@@ -133,9 +138,9 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
       } else {
          clean = false;
       }
-      Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getValue());
 
       templateService.unpack("JellyFishCommand", collection, outputDirectory, clean);
+      logService.info(CreateJellyFishCommand.class, "%s project successfully created", commandName);
    }
 
    /**
