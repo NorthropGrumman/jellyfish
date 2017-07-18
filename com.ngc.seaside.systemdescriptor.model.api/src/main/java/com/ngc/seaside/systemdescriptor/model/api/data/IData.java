@@ -5,6 +5,8 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
+import java.util.Optional;
+
 /**
  * Represents a data type.  Operations that change the state of this object may throw
  * {@code UnsupportedOperationException}s if the object is immutable.
@@ -25,6 +27,22 @@ public interface IData extends INamedChild<IPackage> {
     * @return this data type
     */
    IData setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the super data type that this data type extends.  If this data type does not extend another data type the
+    * returned optional is empty.
+    *
+    * @return an optional that only contains a value if this data type extends another data type
+    */
+   Optional<IData> getSuperDataType();
+
+   /**
+    * Sets the data type that this type extends.
+    *
+    * @param superDataType the data type that this type extends.
+    * @return this data type
+    */
+   IData setSuperDataType(IData superDataType);
 
    /**
     * Gets the data fields declared within this data type.  The fields are listed in the order they were declared.
