@@ -54,7 +54,7 @@ public class DefaultParameter implements IParameter {
 
    @Override
    public String getDescription() {
-      return value;
+      return description;
    }
 
    public DefaultParameter setDescription(String description) {

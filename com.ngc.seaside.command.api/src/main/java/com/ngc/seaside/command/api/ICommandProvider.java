@@ -17,6 +17,14 @@ public interface ICommandProvider<T extends ICommand>  {
     * @return the provider's and its commands usage.
     */
    IUsage getUsage();
+   
+   /**
+    * Get the command.
+    * 
+    * @param commandName the command name.
+    * @return the command
+    */
+   T getCommand(String commandName);
 
    /**
     * Add a command to this provider.
