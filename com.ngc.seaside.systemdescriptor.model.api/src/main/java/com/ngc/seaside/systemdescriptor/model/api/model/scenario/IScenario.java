@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.scenario;
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collection;
@@ -10,6 +11,21 @@ import java.util.Collection;
  * object may throw {@code UnsupportedOperationException}s if the object is immutable.
  */
 public interface IScenario extends INamedChild<IModel> {
+
+   /**
+    * Gets the metadata associated with this scenario.
+    *
+    * @return the metadata associated with this scenario
+    */
+   IMetadata getMetadata();
+
+   /**
+    * Sets the metadata associated with this scenario.
+    *
+    * @param metadata the metadata associated with this scenario
+    * @return this scenario
+    */
+   IScenario setMetadata(IMetadata metadata);
 
    /**
     * Gets the "given" steps of this scenario which are effectively pre conditions for the scenario.  Keywords for these

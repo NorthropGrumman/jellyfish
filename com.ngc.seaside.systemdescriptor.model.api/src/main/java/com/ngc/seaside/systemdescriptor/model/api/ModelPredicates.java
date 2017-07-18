@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.api;
+package com.ngc.seaside.systemdescriptor.model.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 

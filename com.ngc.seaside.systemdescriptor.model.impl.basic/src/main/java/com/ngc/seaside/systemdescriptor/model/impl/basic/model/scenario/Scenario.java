@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
@@ -20,6 +21,7 @@ public class Scenario implements IScenario {
 
    private final String name;
    private IModel parent;
+   private IMetadata metadata;
    private ArrayList<IScenarioStep> givens;
    private ArrayList<IScenarioStep> whens;
    private ArrayList<IScenarioStep> thens;
@@ -41,6 +43,17 @@ public class Scenario implements IScenario {
    @Override
    public IModel getParent() {
       return parent;
+   }
+
+   @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public IScenario setMetadata(IMetadata metadata) {
+      this.metadata = metadata;
+      return this;
    }
 
    @Override
@@ -135,6 +148,7 @@ public class Scenario implements IScenario {
       Scenario s = (Scenario) o;
       return Objects.equals(name, s.name) &&
              parent == s.parent &&
+             Objects.equals(metadata, s.metadata) &&
              Objects.equals(givens, s.givens) &&
              Objects.equals(whens, s.whens) &&
              Objects.equals(thens, s.thens);
@@ -142,7 +156,7 @@ public class Scenario implements IScenario {
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, System.identityHashCode(parent), givens, whens, thens);
+      return Objects.hash(name, System.identityHashCode(parent), metadata, givens, whens, thens);
    }
 
    @Override
@@ -150,6 +164,7 @@ public class Scenario implements IScenario {
       return "Scenario[" +
              "name='" + name + '\'' +
              ", parent=" + (parent == null ? "null" : parent.getName()) +
+             ", metadata=" + metadata +
              ", givens=" + givens +
              ", whens=" + whens +
              ", thens=" + thens +
