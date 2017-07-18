@@ -37,7 +37,8 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    private static final IUsage USAGE = createUsage();
 
    private static final Pattern JAVA_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*");
-   private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+   private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
+            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
    public static final String OUTPUT_DIR_PROPERTY = "outputDirectory";
    public static final String GROUP_ID_PROPERTY = "groupId";
@@ -86,7 +87,8 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
       final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getValue();
 
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
-         collection.addParameter(new DefaultParameter(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
+         collection.addParameter(
+            new DefaultParameter(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
       }
       final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getValue());
       try {
@@ -109,7 +111,8 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
       if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
          String artifact = collection.getParameter(COMMAND_NAME_PROPERTY).getValue().replace("-", "").toLowerCase();
-         collection.addParameter(new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
+         collection.addParameter(
+            new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
       }
       final String artifact = collection.getParameter(ARTIFACT_ID_PROPERTY).getValue();
 
@@ -217,13 +220,26 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Creates a new JellyFish Command project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
-         new DefaultParameter(CLASSNAME_PROPERTY).setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
-         new DefaultParameter(COMMAND_NAME_PROPERTY).setDescription("The name of the command. This should use hyphens and lower case letters. i.e.  my-class").setRequired(false),
-         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The default package for the classname to reside, usually a combination of the groupId.artifactId").setRequired(false),
-         new DefaultParameter(OUTPUT_DIR_PROPERTY).setDescription("The directory to generate the command project").setRequired(false), new DefaultParameter(CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the command project (if it already exists), before generating the command project again").setRequired(false));
+         new DefaultParameter(CLASSNAME_PROPERTY)
+                  .setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
+         new DefaultParameter(COMMAND_NAME_PROPERTY)
+                  .setDescription(
+                     "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
+                  .setRequired(false),
+         new DefaultParameter(GROUP_ID_PROPERTY)
+                  .setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
+         new DefaultParameter(ARTIFACT_ID_PROPERTY)
+                  .setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false),
+         new DefaultParameter(PACKAGE_PROPERTY)
+                  .setDescription(
+                     "The default package for the classname to reside, usually a combination of the groupId.artifactId")
+                  .setRequired(false),
+         new DefaultParameter(OUTPUT_DIR_PROPERTY).setDescription("The directory to generate the command project")
+                  .setRequired(false),
+         new DefaultParameter(CLEAN_PROPERTY)
+                  .setDescription(
+                     "If true, recursively deletes the command project (if it already exists), before generating the command project again")
+                  .setRequired(false));
    }
 
 }

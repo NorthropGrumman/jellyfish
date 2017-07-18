@@ -30,7 +30,8 @@ public final class HelpCommand implements IJellyFishCommand {
    public static final String COMMAND_NAME = "help";
    private static final int LINE_WIDTH = 80;
    private static final String INDENT = "   ";
-   private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help", new DefaultParameter("verbose").setDescription("Prints the help of all of the known commands").setRequired(false),
+   private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help",
+      new DefaultParameter("verbose").setDescription("Prints the help of all of the known commands").setRequired(false),
       new DefaultParameter("command").setDescription("Command to print help").setRequired(false));
 
    private ILogService logService;
@@ -112,7 +113,8 @@ public final class HelpCommand implements IJellyFishCommand {
             verbose = false;
             break;
          default:
-            throw new IllegalArgumentException("Invalid value for verbose: " + verboseParameter.getValue() + ". Expected true or false");
+            throw new IllegalArgumentException(
+               "Invalid value for verbose: " + verboseParameter.getValue() + ". Expected true or false");
          }
       }
 
@@ -169,16 +171,21 @@ public final class HelpCommand implements IJellyFishCommand {
       if (command == null) {
          builder.append(commandName + " command not found\n");
       } else {
-         StringTable<IParameter> parameterTable = getParameterTable(parameterIndent, command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
+         StringTable<IParameter> parameterTable = getParameterTable(parameterIndent,
+            command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
          if (!command.getUsage().getAllParameters().contains("inputDir")) {
-            parameterTable.getModel().addItem(new DefaultParameter("inputDir").setDescription("Directory containing the system descriptor project"));
+            parameterTable.getModel().addItem(
+               new DefaultParameter("inputDir").setDescription("Directory containing the system descriptor project"));
          }
-         StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent, command.getUsage().getRequiredParameters());
+         StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent,
+            command.getUsage().getRequiredParameters());
          if (inUsage) {
             StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
             builder.append(table).append('\n');
          } else {
-            String parameterUsage = command.getUsage().getAllParameters().stream().map(p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
+            String parameterUsage = command.getUsage().getAllParameters().stream()
+                     .map(
+                        p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
                      .collect(Collectors.joining(" "));
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
@@ -206,7 +213,8 @@ public final class HelpCommand implements IJellyFishCommand {
     */
    private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements) {
       int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
-      return getTable(columnSpace, elements, new JellyFishCommandFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
+      return getTable(columnSpace, elements,
+         new JellyFishCommandFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
    }
 
    /**
@@ -217,7 +225,9 @@ public final class HelpCommand implements IJellyFishCommand {
     * @return a properly-formatted StringTable for printing IParameters
     */
    private StringTable<IParameter> getParameterTable(String columnSpace, Collection<IParameter> elements) {
-      int maxNameWidth = Math.max("inputDir".length(), commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream()).mapToInt(p -> p.getName().length()).max().orElse(0));
+      int maxNameWidth = Math.max("inputDir".length(),
+         commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream())
+                  .mapToInt(p -> p.getName().length()).max().orElse(0));
       return getTable(columnSpace, elements, new ParameterFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
    }
 

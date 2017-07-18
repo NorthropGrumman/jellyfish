@@ -77,7 +77,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      DefaultUsage usage = new DefaultUsage("JellyFish Description", Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
+      DefaultUsage usage = new DefaultUsage("JellyFish Description",
+         Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
       return usage;
    }
 
@@ -139,7 +140,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          }
       }
 
-      IParameterCollection collection = parameterService.parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+      IParameterCollection collection = parameterService
+               .parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
       IJellyFishCommandOptions jellyFishCommandOptions = convert(collection);
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);

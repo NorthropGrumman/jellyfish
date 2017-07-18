@@ -13,7 +13,8 @@ public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishComm
    private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
 
    @Inject
-   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, IPromptUserService promptService, ITemplateService templateService) {
+   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, IPromptUserService promptService,
+            ITemplateService templateService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);

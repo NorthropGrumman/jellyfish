@@ -24,14 +24,23 @@ public class HelpCommandTests {
    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
    private PrintStreamLogService logger = new PrintStreamLogService(new PrintStream(stream));
 
-   private IUsage mockUsage1 = new DefaultUsage("Usage 1", new DefaultParameter("param1").setDescription("Description 1.1").setRequired(true),
-      new DefaultParameter("param2").setDescription("Description 2.1").setRequired(true), new DefaultParameter("param3").setDescription("Description 3.1").setRequired(false),
+   private IUsage mockUsage1 = new DefaultUsage("Usage 1",
+      new DefaultParameter("param1").setDescription("Description 1.1").setRequired(true),
+      new DefaultParameter("param2").setDescription("Description 2.1").setRequired(true),
+      new DefaultParameter("param3").setDescription("Description 3.1").setRequired(false),
       new DefaultParameter("param4").setDescription("Description 4.1").setRequired(false));
 
    private IUsage mockUsage2 = new DefaultUsage("Usage 2 ja;skldg jasd g;kjsgd ;jasd gklj",
-      new DefaultParameter("param1asdgasdgawe").setDescription("Description 1.2 asdjf iosdj f;klsjad f;jklasd f;klasjg a;weijaweio gj").setRequired(true),
-      new DefaultParameter("param2").setDescription("Description 2.2 asdgas;kl gjs;kldj g;klsdgj ;klsdjg ;asdgj aiweg;jaw g;klwej ;ljkwekl jagwklj weagjk awekl jawe").setRequired(true),
-      new DefaultParameter("param3").setDescription("Description 3.2 ajga;s kdj;kljsd ga;klsjdg ;klj sg").setRequired(false), new DefaultParameter("param4").setRequired(false));
+      new DefaultParameter("param1asdgasdgawe")
+               .setDescription("Description 1.2 asdjf iosdj f;klsjad f;jklasd f;klasjg a;weijaweio gj")
+               .setRequired(true),
+      new DefaultParameter("param2")
+               .setDescription(
+                  "Description 2.2 asdgas;kl gjs;kldj g;klsdgj ;klsdjg ;asdgj aiweg;jaw g;klwej ;ljkwekl jagwklj weagjk awekl jawe")
+               .setRequired(true),
+      new DefaultParameter("param3").setDescription("Description 3.2 ajga;s kdj;kljsd ga;klsjdg ;klj sg")
+               .setRequired(false),
+      new DefaultParameter("param4").setRequired(false));
 
    @Before
    public void before() {
