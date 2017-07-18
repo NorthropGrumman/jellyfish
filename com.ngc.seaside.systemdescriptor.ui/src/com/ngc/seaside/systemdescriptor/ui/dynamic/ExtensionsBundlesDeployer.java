@@ -13,8 +13,37 @@ import org.osgi.framework.BundleException;
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.ui.internal.SystemdescriptorActivator;
 
+/**
+ * This is a simple class that will install bundles in a certain directory into
+ * Eclipse. The directory name is configured with the system property
+ * {@code com.ngc.seaside.jellyfish.extraBundles}. This should point to a
+ * directory that contains bundle JAR files that should be installed when
+ * Eclipse starts.
+ * 
+ * <p/>
+ * 
+ * This is useful when developing the Eclipse product and running Eclipse with
+ * JellyFish within Eclipse. This can be used to include any JellyFish extension
+ * bundles when debugging Eclipse. For example, if you
+ * 
+ * <ol>
+ * <li>clone the jellyfish-systemdescriptor-ext repo to the location
+ * C:\projects\ceacide\jellyfish-systemdescriptor-ext</li>
+ * <li>run {@code gradle build}</li>
+ * <li>Set the value
+ * {@code -Dcom.ngc.seaside.jellyfish.extraBundles=C:\projects\ceacide\jellyfish-systemdescriptor-ext\com.ngc.seaside.systemdescriptor.ext.updatesite\build\\updatesite\plugins}
+ * as a VM argument inside the Eclipse configuration
+ * </ol>
+ * 
+ * then Eclipse will start with the extension bundles installed.
+ *
+ */
 public class ExtensionsBundlesDeployer {
 
+	/**
+	 * The name of the system property that points to a directary that contains
+	 * extra bundles to deploy when starting Eclipse.
+	 */
 	private final static String BUNDLE_DIRECTORY_PROPERY_NAME = "com.ngc.seaside.jellyfish.extraBundles";
 	private final static Logger LOGGER = Logger.getLogger(ExtensionsBundlesDeployer.class);
 
