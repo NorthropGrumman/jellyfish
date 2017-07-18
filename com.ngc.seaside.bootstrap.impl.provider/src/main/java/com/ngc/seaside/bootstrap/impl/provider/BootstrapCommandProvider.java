@@ -122,8 +122,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    /**
     * Sets log service.
     *
-    * @param ref
-    *           the ref
+    * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
@@ -140,8 +139,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    /**
     * Set the bootstrap templateContent service.
     *
-    * @param ref
-    *           the service
+    * @param ref the service
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
@@ -158,8 +156,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    /**
     * Set the parameter service.
     *
-    * @param ref
-    *           the service
+    * @param ref the service
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeParameterService")
    public void setParameterService(IParameterService ref) {
@@ -190,8 +187,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    /**
     * Add the command.
     *
-    * @param command
-    *           the command to add.
+    * @param command the command to add.
     */
    protected void doAddCommand(IBootstrapCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
@@ -204,8 +200,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
    /**
     * Remove the command.
     *
-    * @param command
-    *           the command to remove.
+    * @param command the command to remove.
     */
    protected void doRemoveCommand(IBootstrapCommand command) {
       Preconditions.checkNotNull(command, "Command is null");
@@ -220,11 +215,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * to the fact that you can have a command that doesn't have a
     * templateContent.
     *
-    * @param userInputParameters
-    *           the parameters that the user input on the command line
-    * @param templateParameters
-    *           the parameters that were fulfilled by the
-    *           templateContent.properties file in the templateContent
+    * @param userInputParameters the parameters that the user input on the command line
+    * @param templateParameters the parameters that were fulfilled by the templateContent.properties file in the templateContent
     * @return the bootstrap command options. Never null.
     */
    protected IBootstrapCommandOptions createBootstrapCommandOptions(IParameterCollection userInputParameters, IParameterCollection templateParameters) {
@@ -246,10 +238,8 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * Unpack the templateContent if it exists. If not, just return an empty
     * collection of parameters.
     *
-    * @param command
-    *           the command.
-    * @param userSuppliedParameters
-    *           the parameters the user passed in. These should overwrite any
+    * @param command the command.
+    * @param userSuppliedParameters the parameters the user passed in. These should overwrite any
     *           properties that exists in the templateContent.properties.
     *           meaning, if they pass in these parameters they should not be
     *           prompted!
@@ -286,8 +276,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * for creating the templateContent zip. This is actually done for us using
     * the correct build tools.
     *
-    * @param command
-    *           the command in which to create the prefix
+    * @param command the command in which to create the prefix
     * @return the String representation of the command's package.
     */
    protected String getCommandTemplatePrefix(IBootstrapCommand command) {
@@ -298,8 +287,7 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
     * Convert the templateContent output to a parameter collection. This
     * includes the templateFinalOutputDir.
     *
-    * @param output
-    *           the templateContent service's output
+    * @param output the templateContent service's output
     * @return the collection of parameters.
     */
    protected IParameterCollection convertParameters(ITemplateOutput output, Path outputPath) {
