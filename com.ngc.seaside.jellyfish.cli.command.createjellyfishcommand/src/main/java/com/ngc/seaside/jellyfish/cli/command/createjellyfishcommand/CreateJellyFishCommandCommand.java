@@ -125,7 +125,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
       }
 
       if (!collection.containsParameter(CLASSNAME_PROPERTY)) {
-         String classname = WordUtils.capitalize(commandName).replaceAll("[^a-zA-Z0-9_$]", "") + "Command";
+         String classname = WordUtils.capitalize(commandName, '-').replaceAll("[^a-zA-Z0-9_$]", "") + "Command";
          collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(classname));
       }
       final String classname = collection.getParameter(CLASSNAME_PROPERTY).getValue();
