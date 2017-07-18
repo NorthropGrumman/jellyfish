@@ -19,8 +19,7 @@ Require-Bundle: com.ngc.seaside.systemdescriptor,
  org.eclipse.xtend.lib;resolution:=optional,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.jdt.core
-Import-Package: org.apache.log4j,
- com.ngc.blocs.service.log.api
+Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.ngc.seaside.systemdescriptor.ui.contentassist,
  com.ngc.seaside.systemdescriptor.ui.internal,
