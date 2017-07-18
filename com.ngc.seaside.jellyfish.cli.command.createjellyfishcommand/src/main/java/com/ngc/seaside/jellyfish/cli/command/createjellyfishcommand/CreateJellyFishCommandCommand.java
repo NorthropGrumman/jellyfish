@@ -27,10 +27,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
+ * 
  */
 @Component(service = IJellyFishCommand.class)
-public class CreateJellyFishCommand implements IJellyFishCommand {
+public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
    public static final String NAME = "create-jellyfish-command";
    public static final IUsage USAGE = createUsage();
@@ -79,7 +79,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
 
       final String commandName;
       if (!parameters.containsParameter(COMMAND_NAME_PROPERTY)) {
-         commandName = promptService.prompt(COMMAND_NAME_PROPERTY, null, null);
+         commandName = promptService.prompt(COMMAND_NAME_PROPERTY, "", null);
          collection.addParameter(new DefaultParameter(COMMAND_NAME_PROPERTY).setValue(commandName));
       } else {
          commandName = parameters.getParameter(COMMAND_NAME_PROPERTY).getValue();
@@ -100,11 +100,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
          collection.addParameter(new DefaultParameter(PACKAGE_PROPERTY).setValue(groupName + '.' + artifactName));
       }
       if (!parameters.containsParameter(CLASSNAME_PROPERTY)) {
-         String classname = commandName;
-         if (classname.toLowerCase().endsWith("-command")) {
-            classname = classname.substring(0, classname.length() - "-command".length());
-         }
-         classname = WordUtils.capitalize(classname).replace("-", "") + "Command";
+         String classname = WordUtils.capitalize(commandName).replace("-", "") + "Command";
          collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(classname));
       }
 
@@ -140,7 +136,7 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
       }
 
       templateService.unpack("JellyFishCommand", collection, outputDirectory, clean);
-      logService.info(CreateJellyFishCommand.class, "%s project successfully created", commandName);
+      logService.info(CreateJellyFishCommandCommand.class, "%s project successfully created", commandName);
    }
 
    /**
@@ -201,15 +197,14 @@ public class CreateJellyFishCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-         "Create a new JellyFish Command project. " + "This requires that a settings.gradle file be present in the output directory. "
-            + "It also requires that the command API version be set in the parent build.gradle.",
+         "Creates a new JellyFish Command project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
          new DefaultParameter(CLASSNAME_PROPERTY).setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
          new DefaultParameter(COMMAND_NAME_PROPERTY).setDescription("The name of the command. This should use hyphens and lower case letters. i.e.  my-class").setRequired(false),
-         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The groupId. This is usually similar to com.ngc.myprojectname.").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The artifactId. This is usually the lowercase version of the classname.").setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The default package for the classname to reside. This is usually a combination of the groupId.artifactId.").setRequired(false),
-         new DefaultParameter(OUTPUT_DIR_PROPERTY).setDescription("The directory in which the bundle has been created.").setRequired(false), new DefaultParameter(CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the command project (if it already exists), before generating the command project again.").setRequired(false));
+         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
+         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false),
+         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The default package for the classname to reside, usually a combination of the groupId.artifactId").setRequired(false),
+         new DefaultParameter(OUTPUT_DIR_PROPERTY).setDescription("The directory to generate the command project").setRequired(false), new DefaultParameter(CLEAN_PROPERTY)
+                  .setDescription("If true, recursively deletes the command project (if it already exists), before generating the command project again").setRequired(false));
    }
 
 }

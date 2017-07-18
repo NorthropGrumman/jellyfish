@@ -8,12 +8,12 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
-public class CreateJellyFishCommandGuiceWrapper implements IJellyFishCommand {
+public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishCommand {
 
-   private final CreateJellyFishCommand delegate = new CreateJellyFishCommand();
+   private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
 
    @Inject
-   public CreateJellyFishCommandGuiceWrapper(ILogService logService, IPromptUserService promptService, ITemplateService templateService) {
+   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, IPromptUserService promptService, ITemplateService templateService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);

@@ -35,7 +35,7 @@ import java.nio.file.Paths;
 
 public class CreateJellyFishCommandTest {
 
-   private CreateJellyFishCommand cmd = new CreateJellyFishCommand();
+   private CreateJellyFishCommandCommand cmd = new CreateJellyFishCommandCommand();
 
    private PrintStreamLogService logger = new PrintStreamLogService();
 
@@ -57,11 +57,11 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command = "test-command-1";
-      final String group = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
       final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command);
       checkCommandOutput(classname, group, artifact, pkg);
    }
 
@@ -71,10 +71,10 @@ public class CreateJellyFishCommandTest {
 
       final String command = "test-command-2";
       final String group = "com.ngc.test";
-      final String artifact = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
       final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommand.GROUP_ID_PROPERTY, group);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommandCommand.GROUP_ID_PROPERTY, group);
       checkCommandOutput(classname, group, artifact, pkg);
    }
 
@@ -83,11 +83,11 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command = "test-command-3";
-      final String group = CreateJellyFishCommand.DEFAULT_GROUP_ID;
+      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
       final String artifact = "test.artifact.id";
       final String pkg = group + '.' + artifact;
       final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommand.ARTIFACT_ID_PROPERTY, artifact);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommandCommand.ARTIFACT_ID_PROPERTY, artifact);
       checkCommandOutput(classname, group, artifact, pkg);
    }
 
@@ -96,11 +96,11 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command = "test-command-4";
-      final String group = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
       final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommand.PACKAGE_PROPERTY, pkg);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommandCommand.PACKAGE_PROPERTY, pkg);
       checkCommandOutput(classname, group, artifact, pkg);
    }
 
@@ -109,11 +109,11 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command = "test-command-5";
-      final String group = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
       final String classname = WordUtils.capitalize(command, '-').replace("-", "") + "Command";
-      Mockito.when(mockPromptService.prompt(Mockito.eq(CreateJellyFishCommand.COMMAND_NAME_PROPERTY), Mockito.any(), Mockito.any())).thenReturn(command);
+      Mockito.when(mockPromptService.prompt(Mockito.eq(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY), Mockito.any(), Mockito.any())).thenReturn(command);
       runCommand();
       checkCommandOutput(classname, group, artifact, pkg);
    }
@@ -123,18 +123,18 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command = "test-command-6";
-      final String group = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
       final String pkg = group + '.' + artifact;
       final String classname = "TestName";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommand.CLASSNAME_PROPERTY, classname);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname);
       checkCommandOutput(classname, group, artifact, pkg);
    }
 
    @Test(expected = Exception.class)
    public void testCommandWithoutSettings() throws IOException {
       final String command = "test-command-7";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command);
    }
 
    @Test
@@ -142,17 +142,17 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command1 = "test-command-8";
-      final String group1 = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact1 = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
+      final String group1 = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact1 = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
       final String pkg1 = group1 + '.' + artifact1;
 
       final String command2 = "test-command-9";
-      final String group2 = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact2 = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command2.replace("-", "").toLowerCase());
+      final String group2 = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact2 = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command2.replace("-", "").toLowerCase());
       final String pkg2 = group2 + '.' + artifact2;
 
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command1);
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command2);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command1);
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command2);
 
       Assert.assertTrue(Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg1)));
       Assert.assertTrue(Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg2)));
@@ -164,13 +164,13 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command1 = "test-command-8";
-      final String group1 = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact1 = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
+      final String group1 = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact1 = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
       final String pkg1 = group1 + '.' + artifact1;
       final String classname1 = "Test1";
       final String classname2 = "Test2";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommand.CLASSNAME_PROPERTY, classname1, CreateJellyFishCommand.CLEAN_PROPERTY, "false");
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommand.CLASSNAME_PROPERTY, classname2, CreateJellyFishCommand.CLEAN_PROPERTY, "false");
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname1, CreateJellyFishCommandCommand.CLEAN_PROPERTY, "false");
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname2, CreateJellyFishCommandCommand.CLEAN_PROPERTY, "false");
       checkCommandOutput(classname1, group1, artifact1, pkg1);
       checkCommandOutput(classname2, group1, artifact1, pkg1);
    }
@@ -180,13 +180,13 @@ public class CreateJellyFishCommandTest {
       createSettings();
 
       final String command1 = "test-command-8";
-      final String group1 = CreateJellyFishCommand.DEFAULT_GROUP_ID;
-      final String artifact1 = String.format(CreateJellyFishCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
+      final String group1 = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
+      final String artifact1 = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT, command1.replace("-", "").toLowerCase());
       final String pkg1 = group1 + '.' + artifact1;
       final String classname1 = "Test1";
       final String classname2 = "Test2";
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommand.CLASSNAME_PROPERTY, classname1, CreateJellyFishCommand.CLEAN_PROPERTY, "true");
-      runCommand(CreateJellyFishCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommand.CLASSNAME_PROPERTY, classname2, CreateJellyFishCommand.CLEAN_PROPERTY, "true");
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname1, CreateJellyFishCommandCommand.CLEAN_PROPERTY, "true");
+      runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command1, CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname2, CreateJellyFishCommandCommand.CLEAN_PROPERTY, "true");
       try {
          checkCommandOutput(classname1, group1, artifact1, pkg1);
          Assert.fail("file was not cleaned");
@@ -203,7 +203,7 @@ public class CreateJellyFishCommandTest {
          collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
+      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);
