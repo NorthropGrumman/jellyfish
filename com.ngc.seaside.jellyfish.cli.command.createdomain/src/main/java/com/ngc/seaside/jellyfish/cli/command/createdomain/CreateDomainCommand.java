@@ -100,6 +100,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
             logService.error(CreateDomainCommand.class, "No model files were found");
             throw new CommandException("No model files were found");
          }
+         if (models.stream().allMatch(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty())) {
+            logService.error(CreateDomainCommand.class, "No model files with inputs/outputs were found");
+            throw new CommandException("No model files with inputs/outputs were found");
+         }
+         
 
          final String groupIdFormat;
          if (parameters.containsParameter(GROUP_ID_PROPERTY)) {

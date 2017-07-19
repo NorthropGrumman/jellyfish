@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
@@ -61,6 +62,30 @@ public class CreateDomainCommandTest {
       Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
+   @Test(expected = CommandException.class)
+   public void testNoModelsWithData() throws IOException {
+      Path sdDir = Paths.get("src", "test", "sd");
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
+      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).filter(sd -> {
+         try {
+            String contents = new String(Files.readAllBytes(sd));
+            return !contents.contains("model");
+         } catch (IOException e) {
+            return false;
+         }
+      }).collect(Collectors.toSet());
+      sdFiles = new HashSet<>(sdFiles);
+      sdFiles.add(sdDir.resolve(Paths.get("com", "ngc", "seaside", "test1", "Model2.sd")));
+      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
+      IParsingResult result = sdService.parseFiles(sdFiles);
+      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
+      ISystemDescriptor sd = result.getSystemDescriptor();
+      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
+      
+      runCommand(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+   }
+   
    @Test(expected = CommandException.class)
    public void testNoModels() throws IOException {
       Path sdDir = Paths.get("src", "test", "sd");
