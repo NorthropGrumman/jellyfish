@@ -5,12 +5,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
@@ -323,6 +323,37 @@ public class WrappedSystemDescriptorIT {
       assertEquals("link target not correct!",
                    wrapped.findModel("clocks.models", "Alarm").get().getInputs().getByName("alarmTimes").get(),
                    dataLink.getTarget());
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testDoesCreateWrappedDescriptorWithDataInheritance() throws Throwable {
+      resourceOf("clocks/datatypes/Time.sd");
+      Resource goTimeResource = resourceOf("clocks/datatypes/GoTime.sd");
+      resourceOf("clocks/models/Timer.sd");
+      resourceOf("clocks/models/ClockDisplay.sd");
+      resourceOf("clocks/models/Speaker.sd");
+      resourceOf("clocks/models/Alarm.sd");
+      resourceOf("clocks/AlarmClock.sd");
+
+      // This is how you get the parsing result from an XText resource.  The result has the errors.
+      IParseResult result = ((XtextResource) goTimeResource).getParseResult();
+      assertFalse("should not have errors!",
+                  result.hasSyntaxErrors());
+
+      Package p = (Package) goTimeResource.getContents().get(0);
+      wrapped = new WrappedSystemDescriptor(p);
+
+      Optional<IData> data = wrapped.findData("clocks.datatypes", "GoTime");
+      assertTrue("did not find data!",
+                 data.isPresent());
+
+      Optional<IData> superType = data.get().getSuperDataType();
+      assertTrue("data super type not set!",
+                 superType.isPresent());
+      assertEquals("superType fully qualified name is not correct!",
+                   "clocks.datatypes.Time",
+                   superType.get().getFullyQualifiedName());
    }
 
    @After
