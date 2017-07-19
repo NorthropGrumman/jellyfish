@@ -73,10 +73,6 @@ public class CreateDomainCommandTest {
       checkDomainContents(model1, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model1, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Path model2 = outputDir.resolve("com.ngc.seaside.test1.model2.domainmodel");
-      Assert.assertTrue("Cannot find model " + model2, Files.isDirectory(model2));
-      checkDomainFiles(model2);
-
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
       checkVelocity(model3);
@@ -102,7 +98,7 @@ public class CreateDomainCommandTest {
       checkDomainContents(model5, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model5, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Assert.assertEquals(5, Files.list(outputDir).count());
+      Assert.assertEquals(4, Files.list(outputDir).count());
    }
 
    @Test
@@ -121,10 +117,6 @@ public class CreateDomainCommandTest {
       checkDomainContents(model1, "com.ngc.seaside.test2", 3, 4, 6, 7);
       checkDomainContents(model1, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model1, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
-
-      Path model2 = outputDir.resolve(groupId + ".model2.domainmodel");
-      Assert.assertTrue("Cannot find model " + model2, Files.isDirectory(model2));
-      checkDomainFiles(model2);
 
       Path model3 = outputDir.resolve(groupId + ".model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
@@ -151,7 +143,7 @@ public class CreateDomainCommandTest {
       checkDomainContents(model5, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model5, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Assert.assertEquals(5, Files.list(outputDir).count());
+      Assert.assertEquals(4, Files.list(outputDir).count());
    }
 
    @Test
@@ -170,10 +162,6 @@ public class CreateDomainCommandTest {
       checkDomainContents(model1, "com.ngc.seaside.test2", 3, 4, 6, 7);
       checkDomainContents(model1, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model1, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
-
-      Path model2 = outputDir.resolve("com.ngc.seaside.test1.model2." + suffix);
-      Assert.assertTrue("Cannot find model " + model2, Files.isDirectory(model2));
-      checkDomainFiles(model2);
 
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3." + suffix);
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
@@ -200,7 +188,7 @@ public class CreateDomainCommandTest {
       checkDomainContents(model5, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model5, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Assert.assertEquals(5, Files.list(outputDir).count());
+      Assert.assertEquals(4, Files.list(outputDir).count());
    }
 
    @Test
@@ -282,10 +270,6 @@ public class CreateDomainCommandTest {
       checkDomainContents(model1, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model1, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Path model2 = outputDir.resolve("com.ngc.seaside.test1.model2.domainmodel");
-      Assert.assertTrue("Cannot find model " + model2, Files.isDirectory(model2));
-      checkDomainFiles(model2);
-
       Path model5 = outputDir.resolve("com.ngc.seaside.test2.test4.model5.domainmodel");
       Assert.assertTrue("Cannot find model " + model5, Files.isDirectory(model5));
       checkVelocity(model5);
@@ -294,7 +278,7 @@ public class CreateDomainCommandTest {
       checkDomainContents(model5, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
       checkDomainContents(model5, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
 
-      Assert.assertEquals(3, Files.list(outputDir).count());
+      Assert.assertEquals(2, Files.list(outputDir).count());
    }
 
    @Test
