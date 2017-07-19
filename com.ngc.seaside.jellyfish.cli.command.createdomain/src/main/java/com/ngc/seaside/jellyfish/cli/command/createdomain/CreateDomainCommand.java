@@ -22,6 +22,11 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -30,13 +35,16 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,97 +90,98 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-         IParameterCollection parameters = commandOptions.getParameters();
+      IParameterCollection parameters = commandOptions.getParameters();
 
-         final Set<IModel> models = getModels(commandOptions);
-         final Predicate<IModel> modelFilter = getModelFilter(parameters);
+      final Set<IModel> models = getModels(commandOptions);
+      final Predicate<IModel> modelFilter = getModelFilter(parameters);
 
-         models.removeIf(modelFilter.negate());
-         if (models.isEmpty()) {
-            logService.error(CreateDomainCommand.class, "No model files were found");
-            throw new CommandException("No model files were found");
+      models.removeIf(modelFilter.negate());
+      if (models.isEmpty()) {
+         logService.error(CreateDomainCommand.class, "No model files were found");
+         throw new CommandException("No model files were found");
+      }
+      models.removeIf(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty());
+      if (models.isEmpty()) {
+         logService.error(CreateDomainCommand.class, "No model files with inputs/outputs were found");
+         throw new CommandException("No model files with inputs/outputs were found");
+      }
+
+      final String groupIdFormat;
+      if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
+         groupIdFormat = parameters.getParameter(GROUP_ID_PROPERTY).getValue();
+      } else {
+         groupIdFormat = "%s";
+      }
+
+      final String artifactIdFormat;
+      if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         artifactIdFormat = parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue();
+      } else {
+         artifactIdFormat = "%s";
+      }
+
+      final String packageFormat;
+      if (parameters.containsParameter(PACKAGE_PROPERTY)) {
+         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
+            throw new CommandException(
+               "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY + " is set");
          }
-         models.removeIf(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty());
-         if (models.isEmpty()) {
-            logService.error(CreateDomainCommand.class, "No model files with inputs/outputs were found");
-            throw new CommandException("No model files with inputs/outputs were found");
-         }
-
-         final String groupIdFormat;
-         if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
-            groupIdFormat = parameters.getParameter(GROUP_ID_PROPERTY).getValue();
-         } else {
-            groupIdFormat = "%s";
-         }
-
-         final String artifactIdFormat;
-         if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-            artifactIdFormat = parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue();
-         } else {
-            artifactIdFormat = "%s";
-         }
-
-         final String packageFormat;
-         if (parameters.containsParameter(PACKAGE_PROPERTY)) {
-            if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-               throw new CommandException("Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if "
-                  + PACKAGE_PROPERTY + " is set");
-            }
-            packageFormat = parameters.getParameter(PACKAGE_PROPERTY).getValue();
-         } else {
-            if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-               String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue().trim();
-               if (suffix.isEmpty() || suffix.startsWith(".")) {
-                  packageFormat = "%s.%s" + suffix;
-               } else {
-                  packageFormat = "%s.%s." + suffix;
-               }
+         packageFormat = parameters.getParameter(PACKAGE_PROPERTY).getValue();
+      } else {
+         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
+            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue().trim();
+            if (suffix.isEmpty() || suffix.startsWith(".")) {
+               packageFormat = "%s.%s" + suffix;
             } else {
-               packageFormat = "%s.%s.domainmodel";
+               packageFormat = "%s.%s." + suffix;
             }
+         } else {
+            packageFormat = "%s.%s.domainmodel";
          }
+      }
 
-         final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
-         if (!Files.isRegularFile(domainTemplateFile)) {
-            throw new CommandException(domainTemplateFile + " is invalid");
-         }
+      final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
+      if (!Files.isRegularFile(domainTemplateFile)) {
+         throw new CommandException(domainTemplateFile + " is invalid");
+      }
 
-         final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
+      final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
+      try {
+         Files.createDirectories(outputDir);
+      } catch (IOException e) {
+         logService.error(CreateDomainCommand.class, e);
+         throw new CommandException(e);
+      }
+
+      for (IModel model : models) {
+
+         final String groupId = String.format(groupIdFormat, model.getParent().getName());
+         final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
+
+         final String pkg = String.format(packageFormat, groupId, artifactId);
+         final Path projectDir = outputDir.resolve(pkg);
+         final Set<IData> data = getDataFromModel(model);
+
+         // Group data by their sd package
+         Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
+
          try {
-            Files.createDirectories(outputDir);
-         } catch (IOException e) {
+            Files.createDirectories(projectDir);
+            createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
+            createDomainTemplate(projectDir, domainTemplateFile);
+         } catch (Exception e) {
             logService.error(CreateDomainCommand.class, e);
             throw new CommandException(e);
          }
 
-         for (IModel model : models) {
 
-            final String groupId = String.format(groupIdFormat, model.getParent().getName());
-            final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
-
-            final String pkg = String.format(packageFormat, groupId, artifactId);
-            final Path projectDir = outputDir.resolve(pkg);
-            final Set<IData> data = getDataFromModel(model);
-
-            try {
-               Files.createDirectories(projectDir);
-               createGradleBuild(projectDir);
-               createDomainTemplate(projectDir, domainTemplateFile);
-            } catch (IOException e) {
-               logService.error(CreateDomainCommand.class, e);
-               throw new CommandException(e);
-            }
-
-            // Group data by their sd package
-            Map<String, List<IData>> map = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
-
-            map.forEach((sdPackage, dataList) -> {
-               Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
-               generateDomain(xmlFile, dataList, pkg);
-            });
-         }
+         mappedData.forEach((sdPackage, dataList) -> {
+            Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
+            generateDomain(xmlFile, dataList, pkg);
+         });
+      }
    }
-   
+
    /**
     * Returns a predicate for filtering models based on the {@link #STEREOTYPES_PROPERTY} and {@link #IGNORE_STEREOTYPES_PROPERTY}.
     * 
@@ -253,26 +262,36 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return data;
    }
 
-   private void createGradleBuild(Path projectDir) throws IOException {
-      Files.createDirectories(projectDir);
-      try {
-         Files.createFile(projectDir.resolve("build.gradle"));
-      } catch (FileAlreadyExistsException e) {
-         // ignore
+   private void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages) throws Exception {
+      VelocityEngine engine = new VelocityEngine();
+      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+      engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+      engine.setProperty("runtime.references.strict", true);
+      engine.init();
+      Template template = engine.getTemplate("templates/build.gradle.vm");
+      VelocityContext context = new VelocityContext();
+      context.put("velocityFile", domainTemplateFile.getFileName());
+      context.put("packages", packages);
+      try (OutputStream out = Files.newOutputStream(projectDir.resolve("build.gradle")); OutputStreamWriter writer = new OutputStreamWriter(out)) {
+         template.merge(context, writer);
       }
    }
 
    /**
+    * 
     * Copies the domain template to the output velocity folder
     * 
     * @param projectDir directory of project
     * @param domainTemplateFile domain template file
+    * @return the path to the new file
     * @throws IOException
     */
-   private void createDomainTemplate(Path projectDir, Path domainTemplateFile) throws IOException {
+   private Path createDomainTemplate(Path projectDir, Path domainTemplateFile) throws IOException {
       Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Files.createDirectories(velocityDir);
-      Files.copy(domainTemplateFile, velocityDir.resolve(domainTemplateFile.getFileName()));
+      Path newFile = velocityDir.resolve(domainTemplateFile.getFileName());
+      Files.copy(domainTemplateFile, newFile);
+      return newFile;
    }
 
    /**

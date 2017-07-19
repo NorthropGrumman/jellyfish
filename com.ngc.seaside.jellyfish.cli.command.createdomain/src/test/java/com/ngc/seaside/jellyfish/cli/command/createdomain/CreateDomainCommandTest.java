@@ -31,9 +31,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -81,11 +79,11 @@ public class CreateDomainCommandTest {
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
-      
+
       runCommand(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
    }
-   
+
    @Test(expected = CommandException.class)
    public void testNoModels() throws IOException {
       Path sdDir = Paths.get("src", "test", "sd");
@@ -103,7 +101,7 @@ public class CreateDomainCommandTest {
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
-      
+
       runCommand(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
    }
@@ -115,6 +113,7 @@ public class CreateDomainCommandTest {
 
       Path model1 = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
       Assert.assertTrue("Cannot find model " + model1, Files.isDirectory(model1));
+      checkGradleBuild(model1, "com.ngc.seaside.test1.model1.domainmodel");
       checkVelocity(model1);
       checkDomainFiles(model1, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -125,6 +124,7 @@ public class CreateDomainCommandTest {
 
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
+      checkGradleBuild(model3, "com.ngc.seaside.test2.model3.domainmodel");
       checkVelocity(model3);
       checkDomainFiles(model3, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
       checkDomainContents(model3, "com.ngc.seaside.test1", 1, 2, 0, 5);
@@ -132,6 +132,7 @@ public class CreateDomainCommandTest {
 
       Path model4 = outputDir.resolve("com.ngc.seaside.test1.test3.model4.domainmodel");
       Assert.assertTrue("Cannot find model " + model4, Files.isDirectory(model4));
+      checkGradleBuild(model4, "com.ngc.seaside.test1.test3.model4.domainmodel");
       checkVelocity(model4);
       checkDomainFiles(model4, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -142,6 +143,7 @@ public class CreateDomainCommandTest {
 
       Path model5 = outputDir.resolve("com.ngc.seaside.test2.test4.model5.domainmodel");
       Assert.assertTrue("Cannot find model " + model5, Files.isDirectory(model5));
+      checkGradleBuild(model5, "com.ngc.seaside.test2.test4.model5.domainmodel");
       checkVelocity(model5);
       checkDomainFiles(model5, "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3", "com.ngc.seaside.test2.test4");
       checkDomainContents(model5, "com.ngc.seaside.test2", 3, 4, 6, 7);
@@ -160,6 +162,7 @@ public class CreateDomainCommandTest {
 
       Path model1 = outputDir.resolve(groupId + ".model1.domainmodel");
       Assert.assertTrue("Cannot find model " + model1, Files.isDirectory(model1));
+      checkGradleBuild(model1, groupId + ".model1.domainmodel");
       checkVelocity(model1);
       checkDomainFiles(model1, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -170,6 +173,7 @@ public class CreateDomainCommandTest {
 
       Path model3 = outputDir.resolve(groupId + ".model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
+      checkGradleBuild(model3, groupId + ".model3.domainmodel");
       checkVelocity(model3);
       checkDomainFiles(model3, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
       checkDomainContents(model3, "com.ngc.seaside.test1", 1, 2, 0, 5);
@@ -177,6 +181,7 @@ public class CreateDomainCommandTest {
 
       Path model4 = outputDir.resolve(groupId + ".model4.domainmodel");
       Assert.assertTrue("Cannot find model " + model4, Files.isDirectory(model4));
+      checkGradleBuild(model4, groupId + ".model4.domainmodel");
       checkVelocity(model4);
       checkDomainFiles(model4, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -187,6 +192,7 @@ public class CreateDomainCommandTest {
 
       Path model5 = outputDir.resolve(groupId + ".model5.domainmodel");
       Assert.assertTrue("Cannot find model " + model5, Files.isDirectory(model5));
+      checkGradleBuild(model5, groupId + ".model5.domainmodel");
       checkVelocity(model5);
       checkDomainFiles(model5, "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3", "com.ngc.seaside.test2.test4");
       checkDomainContents(model5, "com.ngc.seaside.test2", 3, 4, 6, 7);
@@ -205,6 +211,7 @@ public class CreateDomainCommandTest {
 
       Path model1 = outputDir.resolve("com.ngc.seaside.test1.model1." + suffix);
       Assert.assertTrue("Cannot find model " + model1, Files.isDirectory(model1));
+      checkGradleBuild(model1, "com.ngc.seaside.test1.model1." + suffix);
       checkVelocity(model1);
       checkDomainFiles(model1, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -215,6 +222,7 @@ public class CreateDomainCommandTest {
 
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3." + suffix);
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
+      checkGradleBuild(model3, "com.ngc.seaside.test2.model3." + suffix);
       checkVelocity(model3);
       checkDomainFiles(model3, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
       checkDomainContents(model3, "com.ngc.seaside.test1", 1, 2, 0, 5);
@@ -222,6 +230,7 @@ public class CreateDomainCommandTest {
 
       Path model4 = outputDir.resolve("com.ngc.seaside.test1.test3.model4." + suffix);
       Assert.assertTrue("Cannot find model " + model4, Files.isDirectory(model4));
+      checkGradleBuild(model4, "com.ngc.seaside.test1.test3.model4." + suffix);
       checkVelocity(model4);
       checkDomainFiles(model4, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -232,6 +241,7 @@ public class CreateDomainCommandTest {
 
       Path model5 = outputDir.resolve("com.ngc.seaside.test2.test4.model5." + suffix);
       Assert.assertTrue("Cannot find model " + model5, Files.isDirectory(model5));
+      checkGradleBuild(model5, "com.ngc.seaside.test2.test4.model5." + suffix);
       checkVelocity(model5);
       checkDomainFiles(model5, "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3", "com.ngc.seaside.test2.test4");
       checkDomainContents(model5, "com.ngc.seaside.test2", 3, 4, 6, 7);
@@ -250,6 +260,7 @@ public class CreateDomainCommandTest {
 
       Path model1 = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
       Assert.assertTrue("Cannot find model " + model1, Files.isDirectory(model1));
+      checkGradleBuild(model1, "com.ngc.seaside.test1.model1.domainmodel");
       checkVelocity(model1);
       checkDomainFiles(model1, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -271,6 +282,7 @@ public class CreateDomainCommandTest {
 
       Path model1 = outputDir.resolve("com.ngc.seaside.test1." + artifact + ".domainmodel");
       Assert.assertTrue("Cannot find model " + model1, Files.isDirectory(model1));
+      checkGradleBuild(model1, "com.ngc.seaside.test1." + artifact + ".domainmodel");
       checkVelocity(model1);
       checkDomainFiles(model1, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -340,6 +352,7 @@ public class CreateDomainCommandTest {
 
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
+      checkGradleBuild(model3, "com.ngc.seaside.test2.model3.domainmodel");
       checkVelocity(model3);
       checkDomainFiles(model3, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
       checkDomainContents(model3, "com.ngc.seaside.test1", 1, 2, 0, 5);
@@ -347,6 +360,7 @@ public class CreateDomainCommandTest {
 
       Path model4 = outputDir.resolve("com.ngc.seaside.test1.test3.model4.domainmodel");
       Assert.assertTrue("Cannot find model " + model4, Files.isDirectory(model4));
+      checkGradleBuild(model4, "com.ngc.seaside.test1.test3.model4.domainmodel");
       checkVelocity(model4);
       checkDomainFiles(model4, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
          "com.ngc.seaside.test2.test4");
@@ -362,10 +376,21 @@ public class CreateDomainCommandTest {
       return projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
    }
 
+   private void checkGradleBuild(Path projectDir, String... exportPackages) throws IOException {
+      Path buildFile = projectDir.resolve("build.gradle");
+      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
+      String contents = new String(Files.readAllBytes(buildFile));
+      Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
+      for (String export : exportPackages) {
+         Assert.assertTrue("Expected \"" + export + "\" in build.gradle", contents.contains(export));
+      }
+   }
+
    private void checkVelocity(Path projectDir) {
       Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Assert.assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
-      Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(), Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
+      Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
+         Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
    }
 
    private void checkDomainFiles(Path projectDir, String... filenames) throws IOException {

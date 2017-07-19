@@ -16,6 +16,7 @@ dependencies {
     compile "commons-io:commons-io:$commonsIOVersion"
     
     compile "commons-lang:commons-lang:$commonsLangVersion"
+    compile "org.apache.velocity:velocity:$velocityVersion"
     
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
