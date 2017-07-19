@@ -2,12 +2,14 @@ dependencies {
 
     compile project(":jellyfish.api")
 
+
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
     compile "com.ngc.blocs:service.api:$blocsVersion"
+	compile "com.ngc.blocs:domain.impl.common.domaingenerator:$blocsVersion"
     
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "org.osgi:osgi.enterprise:$osgiVersion"
@@ -17,6 +19,14 @@ dependencies {
     
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+	
+	testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
+    testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
+    testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
+    testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
+    testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
+    testCompile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
     
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"

@@ -1,0 +1,24 @@
+package com.ngc.seaside.test2.test4
+
+import com.ngc.seaside.test1.Data1
+import com.ngc.seaside.test1.Data2
+import com.ngc.seaside.test2.Data3
+import com.ngc.seaside.test2.Data4
+import com.ngc.seaside.test1.test3.Data5
+import com.ngc.seaside.test2.test4.Data6
+
+
+model Model5 {
+	
+	metadata {
+		"stereotypes": ["a1", "a3"]
+	}
+	
+	output {
+		Data3 data3
+		Data4 data4
+		Data5 data5
+		Data6 Data6
+	}
+	
+}
