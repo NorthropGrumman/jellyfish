@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.ServiceLoader;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JellyFishCommandProviderModuleTest {
+public class JellyFishCommandProviderModuleIT {
 
    private JellyFishCommandProviderModule module;
 
