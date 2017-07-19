@@ -144,10 +144,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          }
 
          for (IModel model : models) {
-            String groupId = String.format(groupIdFormat, model.getParent().getName());
-            String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
-            String pkg = String.format(packageFormat, groupId, artifactId);
-
+            // Find all data associated with the model's inputs and outputs
             Set<IData> data = new HashSet<>();
             Queue<IData> newData = new ArrayDeque<>();
             Streams.concat(model.getInputs().stream().map(IDataReferenceField::getType),
@@ -163,7 +160,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
                   }
                }
             }
-            Path projectDir = outputDir.resolve(pkg);
+            
+            // Don't generate anything for a model without inputs/outputs
+            if (data.isEmpty()) {
+               continue;
+            }
+            
+            final String groupId = String.format(groupIdFormat, model.getParent().getName());
+            final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
+            final String pkg = String.format(packageFormat, groupId, artifactId);
+            final Path projectDir = outputDir.resolve(pkg);
+            
             createGradleBuild(projectDir);
             createVelocity(projectDir, null);
             Map<String, List<IData>> map = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
