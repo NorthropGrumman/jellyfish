@@ -96,6 +96,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
             }
             models = sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).collect(Collectors.toSet());
          }
+         if (models.isEmpty()) {
+            logService.error(CreateDomainCommand.class, "No model files were found");
+            throw new CommandException("No model files were found");
+         }
 
          final String groupIdFormat;
          if (parameters.containsParameter(GROUP_ID_PROPERTY)) {

@@ -7,6 +7,7 @@ import com.google.inject.Module;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -30,6 +31,8 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,6 +59,28 @@ public class CreateDomainCommandTest {
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
+   }
+
+   @Test(expected = CommandException.class)
+   public void testNoModels() throws IOException {
+      Path sdDir = Paths.get("src", "test", "sd");
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
+      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).filter(sd -> {
+         try {
+            String contents = new String(Files.readAllBytes(sd));
+            return !contents.contains("model");
+         } catch (IOException e) {
+            return false;
+         }
+      }).collect(Collectors.toSet());
+      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
+      IParsingResult result = sdService.parseFiles(sdFiles);
+      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
+      ISystemDescriptor sd = result.getSystemDescriptor();
+      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
+      
+      runCommand(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
    }
 
    @Test
