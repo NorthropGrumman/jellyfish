@@ -18,6 +18,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -34,20 +35,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateDomainCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
+   private static final String METADATA_STEREOTYPES = "stereotypes";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -79,12 +87,30 @@ public class CreateDomainCommand implements IJellyFishCommand {
          ISystemDescriptor sd = commandOptions.getSystemDescriptor();
          IParameterCollection parameters = commandOptions.getParameters();
 
-         final Set<IModel> models;
+         final Predicate<IModel> stereotypeFilter;
+         if (parameters.containsParameter(STEREOTYPES_PROPERTY)) {
+            List<String> stereotypes = Arrays
+                     .asList(parameters.getParameter(STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
+            stereotypeFilter = CreateDomainCommand.withAnyStereotype(stereotypes);
+         } else {
+            stereotypeFilter = __ -> true;
+         }
+         final Predicate<IModel> ignoreFilter;
+         if (parameters.containsParameter(IGNORE_STEREOTYPES_PROPERTY)) {
+            List<String> ignored = Arrays
+                     .asList(parameters.getParameter(IGNORE_STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
+            ignoreFilter = CreateDomainCommand.withAnyStereotype(ignored).negate();
+         } else {
+            ignoreFilter = __ -> true;
+         }
+         final Predicate<IModel> modelFilter = stereotypeFilter.and(ignoreFilter);
+
+         final Set<IModel> models = new HashSet<>();
          if (parameters.containsParameter(MODEL_PROPERTY)) {
             String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
             IModel model = sd.findModel(modelName)
                      .orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-            models = Collections.singleton(model);
+            models.add(model);
          } else {
             if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
                throw new CommandException(
@@ -94,17 +120,18 @@ public class CreateDomainCommand implements IJellyFishCommand {
                throw new CommandException(
                   "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + PACKAGE_PROPERTY);
             }
-            models = sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).collect(Collectors.toSet());
+            sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).forEach(models::add);
          }
+         models.removeIf(modelFilter.negate());
          if (models.isEmpty()) {
             logService.error(CreateDomainCommand.class, "No model files were found");
             throw new CommandException("No model files were found");
          }
-         if (models.stream().allMatch(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty())) {
+         models.removeIf(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty());
+         if (models.isEmpty()) {
             logService.error(CreateDomainCommand.class, "No model files with inputs/outputs were found");
             throw new CommandException("No model files with inputs/outputs were found");
          }
-         
 
          final String groupIdFormat;
          if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
@@ -160,17 +187,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
                   }
                }
             }
-            
-            // Don't generate anything for a model without inputs/outputs
-            if (data.isEmpty()) {
-               continue;
-            }
-            
+
             final String groupId = String.format(groupIdFormat, model.getParent().getName());
             final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
             final String pkg = String.format(packageFormat, groupId, artifactId);
             final Path projectDir = outputDir.resolve(pkg);
-            
+
             createGradleBuild(projectDir);
             createVelocity(projectDir, null);
             Map<String, List<IData>> map = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
@@ -193,7 +215,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          // ignore
       }
    }
-   
+
    private void createVelocity(Path projectDir, Path velocityFile) throws IOException {
       Path velocity = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Files.createDirectories(velocity);
@@ -327,6 +349,32 @@ public class CreateDomainCommand implements IJellyFishCommand {
                   .setDescription(
                      "Comma-separated string of the stereotypes in which the domain should only be generated")
                   .setRequired(false));
+   }
+   
+   private static Predicate<IModel> withAnyStereotype(Collection<String> stereotypes) {
+      // TODO replace with ModelPredicates.withAnyStereotype when implemented
+      return model -> {
+         IMetadata metadata = model.getMetadata();
+         if (metadata != null) {
+            JsonObject json = metadata.getJson();
+            if (json != null) {
+               JsonValue value = json.get(METADATA_STEREOTYPES);
+               if (value instanceof JsonString) {
+                  return stereotypes.contains(((JsonString) value).getString());
+               } else if (value instanceof JsonArray) {
+                  Object[] values = ((JsonArray) value).toArray();
+                  for (Object val : values) {
+                     if (val instanceof JsonString) {
+                        if (stereotypes.contains(((JsonString) val).getString())) {
+                           return true;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         return false;
+      };
    }
 
 }

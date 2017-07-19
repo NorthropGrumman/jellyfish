@@ -336,7 +336,7 @@ public class CreateDomainCommandTest {
       final String stereotypes = "a1, a2, a9";
       runCommand(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.STEREOTYPES_PROPERTY, stereotypes);
+         CreateDomainCommand.IGNORE_STEREOTYPES_PROPERTY, stereotypes);
 
       Path model3 = outputDir.resolve("com.ngc.seaside.test2.model3.domainmodel");
       Assert.assertTrue("Cannot find model " + model3, Files.isDirectory(model3));
