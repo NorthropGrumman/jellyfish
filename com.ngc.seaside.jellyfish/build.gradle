@@ -17,6 +17,7 @@ dependencies {
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 	testCompile "junit:junit:$junitVersion"
