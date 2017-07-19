@@ -21,6 +21,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDecl
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import java.util.Optional;
+
 /**
  * Adapts a {@link Data} instance to {@link IData}.
  *
@@ -54,6 +56,20 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
    }
 
    @Override
+   public Optional<IData> getSuperDataType() {
+      Data superType = wrapped.getSuperclass();
+      return superType == null ? Optional.empty() : Optional.of(resolver.getWrapperFor(superType));
+   }
+
+   @Override
+   public IData setSuperDataType(IData superDataType) {
+      Preconditions.checkNotNull(superDataType, "superDataType may not be null!");
+      Preconditions.checkArgument(superDataType.getParent() != null, "data must be contained within a package");
+      wrapped.setSuperclass(findXtextData(superDataType.getName(), superDataType.getParent().getName()));
+      return this;
+   }
+
+   @Override
    public INamedChildCollection<IData, IDataField> getFields() {
       return fields;
    }
@@ -80,14 +96,48 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
    public static Data toXTextData(IWrapperResolver wrapperResolver, IData data) {
       Preconditions.checkNotNull(data, "data may not be null!");
       Preconditions.checkNotNull(wrapperResolver, "wrapperResolver may not be null!");
+      IData superType = data.getSuperDataType().orElse(null);
       Data d = SystemDescriptorFactory.eINSTANCE.createData();
       d.setName(data.getName());
       d.setMetadata(WrappedMetadata.toXtext(data.getMetadata()));
+      d.setSuperclass(superType == null ? null : doFindXtextData(wrapperResolver,
+                                                                 superType.getName(),
+                                                                 superType.getParent().getName()));
       data.getFields()
             .stream()
             .map(f -> toXtextDataFieldDeclaration(wrapperResolver, f))
             .forEach(d.getFields()::add);
       return d;
+   }
+
+   /**
+    * Finds the XText {@code Data} object with the given name and package.
+    *
+    * @param name        the name of the of type
+    * @param packageName the name of the package that contains the type
+    * @return the XText type
+    * @throws IllegalStateException if the XText type could not be found
+    */
+   private Data findXtextData(String name, String packageName) {
+      return doFindXtextData(resolver, name, packageName);
+   }
+
+   /**
+    * Finds the XText {@code Data} object with the given name and package.
+    *
+    * @param resolver    the resolver that can locate XText data objects
+    * @param name        the name of the of type
+    * @param packageName the name of the package that contains the type
+    * @return the XText type
+    * @throws IllegalStateException if the XText type could not be found
+    */
+   private static Data doFindXtextData(IWrapperResolver resolver, String name, String packageName) {
+      return resolver.findXTextData(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
+            "Could not find XText type for data type '%s' in package '%s'!"
+            + "  Make sure the IData object is added to"
+            + " a package within the ISystemDescriptor before adding a reference to it!",
+            name,
+            packageName)));
    }
 
    private static DataFieldDeclaration toXtextDataFieldDeclaration(IWrapperResolver wrapperResolver,
