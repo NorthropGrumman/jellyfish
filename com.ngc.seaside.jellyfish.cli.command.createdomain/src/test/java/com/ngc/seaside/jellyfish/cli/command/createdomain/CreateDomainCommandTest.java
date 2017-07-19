@@ -17,6 +17,8 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +50,7 @@ public class CreateDomainCommandTest {
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
+      outputDir.toFile().deleteOnExit();
       velocityPath = Paths.get("src", "test", "resources", "service-domain-source.vm").toAbsolutePath();
 
       Path sdDir = Paths.get("src", "test", "sd");
