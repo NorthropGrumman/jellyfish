@@ -168,6 +168,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
             logService.error(CreateDomainCommand.class, e);
             throw new CommandException(e);
          }
+         
+         final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
+         if (!Files.isRegularFile(domainTemplateFile)) {
+            throw new CommandException(domainTemplateFile + " is invalid");
+         }
 
          for (IModel model : models) {
             // Find all data associated with the model's inputs and outputs
@@ -193,7 +198,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
             final Path projectDir = outputDir.resolve(pkg);
 
             createGradleBuild(projectDir);
-            createVelocity(projectDir, null);
+            createDomainTemplate(projectDir, domainTemplateFile);
             Map<String, List<IData>> map = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
             map.forEach((k, v) -> {
                Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", k + ".xml"));
@@ -215,9 +220,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
       }
    }
 
-   private void createVelocity(Path projectDir, Path velocityFile) throws IOException {
-      Path velocity = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
-      Files.createDirectories(velocity);
+   private void createDomainTemplate(Path projectDir, Path velocityFile) throws IOException {
+      Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
+      Files.createDirectories(velocityDir);
+      Files.copy(velocityFile, velocityDir.resolve(velocityFile.getFileName()));
    }
 
    /**

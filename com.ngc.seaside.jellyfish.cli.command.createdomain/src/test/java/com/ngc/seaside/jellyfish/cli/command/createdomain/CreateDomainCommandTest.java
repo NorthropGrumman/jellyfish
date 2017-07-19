@@ -365,6 +365,7 @@ public class CreateDomainCommandTest {
    private void checkVelocity(Path projectDir) {
       Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Assert.assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
+      Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(), Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
    }
 
    private void checkDomainFiles(Path projectDir, String... filenames) throws IOException {
