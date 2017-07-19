@@ -82,45 +82,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      try {
-         ISystemDescriptor sd = commandOptions.getSystemDescriptor();
          IParameterCollection parameters = commandOptions.getParameters();
 
-         final Predicate<IModel> stereotypeFilter;
-         if (parameters.containsParameter(STEREOTYPES_PROPERTY)) {
-            List<String> stereotypes = Arrays
-                     .asList(parameters.getParameter(STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
-            stereotypeFilter = CreateDomainCommand.withAnyStereotype(stereotypes);
-         } else {
-            stereotypeFilter = __ -> true;
-         }
-         final Predicate<IModel> ignoreFilter;
-         if (parameters.containsParameter(IGNORE_STEREOTYPES_PROPERTY)) {
-            List<String> ignored = Arrays
-                     .asList(parameters.getParameter(IGNORE_STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
-            ignoreFilter = CreateDomainCommand.withAnyStereotype(ignored).negate();
-         } else {
-            ignoreFilter = __ -> true;
-         }
-         final Predicate<IModel> modelFilter = stereotypeFilter.and(ignoreFilter);
+         final Set<IModel> models = getModels(commandOptions);
+         final Predicate<IModel> modelFilter = getModelFilter(parameters);
 
-         final Set<IModel> models = new HashSet<>();
-         if (parameters.containsParameter(MODEL_PROPERTY)) {
-            String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
-            IModel model = sd.findModel(modelName)
-                     .orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-            models.add(model);
-         } else {
-            if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-               throw new CommandException(
-                  "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + ARTIFACT_ID_PROPERTY);
-            }
-            if (parameters.containsParameter(PACKAGE_PROPERTY)) {
-               throw new CommandException(
-                  "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + PACKAGE_PROPERTY);
-            }
-            sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).forEach(models::add);
-         }
          models.removeIf(modelFilter.negate());
          if (models.isEmpty()) {
             logService.error(CreateDomainCommand.class, "No model files were found");
@@ -155,10 +121,20 @@ public class CreateDomainCommand implements IJellyFishCommand {
             packageFormat = parameters.getParameter(PACKAGE_PROPERTY).getValue();
          } else {
             if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-               packageFormat = "%s.%s." + parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue();
+               String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue().trim();
+               if (suffix.isEmpty() || suffix.startsWith(".")) {
+                  packageFormat = "%s.%s" + suffix;
+               } else {
+                  packageFormat = "%s.%s." + suffix;
+               }
             } else {
                packageFormat = "%s.%s.domainmodel";
             }
+         }
+
+         final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
+         if (!Files.isRegularFile(domainTemplateFile)) {
+            throw new CommandException(domainTemplateFile + " is invalid");
          }
 
          final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
@@ -168,47 +144,113 @@ public class CreateDomainCommand implements IJellyFishCommand {
             logService.error(CreateDomainCommand.class, e);
             throw new CommandException(e);
          }
-         
-         final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
-         if (!Files.isRegularFile(domainTemplateFile)) {
-            throw new CommandException(domainTemplateFile + " is invalid");
-         }
 
          for (IModel model : models) {
-            // Find all data associated with the model's inputs and outputs
-            Set<IData> data = new HashSet<>();
-            Queue<IData> newData = new ArrayDeque<>();
-            Streams.concat(model.getInputs().stream().map(IDataReferenceField::getType),
-               model.getOutputs().stream().map(IDataReferenceField::getType)).forEach(newData::add);
-            while (!newData.isEmpty()) {
-               IData d = newData.poll();
-               if (!data.add(d)) {
-                  continue;
-               }
-               for (IDataField field : d.getFields()) {
-                  if (field.getType() == DataTypes.DATA) {
-                     newData.add(field.getReferencedDataType());
-                  }
-               }
-            }
 
             final String groupId = String.format(groupIdFormat, model.getParent().getName());
             final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
+
             final String pkg = String.format(packageFormat, groupId, artifactId);
             final Path projectDir = outputDir.resolve(pkg);
+            final Set<IData> data = getDataFromModel(model);
 
-            createGradleBuild(projectDir);
-            createDomainTemplate(projectDir, domainTemplateFile);
+            try {
+               Files.createDirectories(projectDir);
+               createGradleBuild(projectDir);
+               createDomainTemplate(projectDir, domainTemplateFile);
+            } catch (IOException e) {
+               logService.error(CreateDomainCommand.class, e);
+               throw new CommandException(e);
+            }
+
+            // Group data by their sd package
             Map<String, List<IData>> map = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
-            map.forEach((k, v) -> {
-               Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", k + ".xml"));
-               run(outputDir, v, groupId, artifactId, pkg, xmlFile);
+
+            map.forEach((sdPackage, dataList) -> {
+               Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
+               generateDomain(xmlFile, dataList, pkg);
             });
          }
-      } catch (IOException e) {
-         logService.error(CreateDomainCommand.class, e);
-         throw new CommandException(e);
+   }
+   
+   /**
+    * Returns a predicate for filtering models based on the {@link #STEREOTYPES_PROPERTY} and {@link #IGNORE_STEREOTYPES_PROPERTY}.
+    * 
+    * @param parameters command parameters
+    * @return a predicate for filtering models
+    */
+   private static Predicate<IModel> getModelFilter(IParameterCollection parameters) {
+      final Predicate<IModel> stereotypeFilter;
+      if (parameters.containsParameter(STEREOTYPES_PROPERTY)) {
+         List<String> stereotypes = Arrays
+                  .asList(parameters.getParameter(STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
+         stereotypeFilter = CreateDomainCommand.withAnyStereotype(stereotypes);
+      } else {
+         stereotypeFilter = __ -> true;
       }
+      final Predicate<IModel> ignoreFilter;
+      if (parameters.containsParameter(IGNORE_STEREOTYPES_PROPERTY)) {
+         List<String> ignored = Arrays
+                  .asList(parameters.getParameter(IGNORE_STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
+         ignoreFilter = CreateDomainCommand.withAnyStereotype(ignored).negate();
+      } else {
+         ignoreFilter = __ -> true;
+      }
+      return stereotypeFilter.and(ignoreFilter);
+   }
+
+   /**
+    * Returns the models from the system descriptor in the command options. If the {@link #MODEL_PROPERTY} is set, then this will return just that model.
+    * 
+    * @param commandOptions command options
+    * @return the models in the system descriptor
+    */
+   private static Set<IModel> getModels(IJellyFishCommandOptions commandOptions) {
+      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+      IParameterCollection parameters = commandOptions.getParameters();
+
+      final Set<IModel> models = new HashSet<>();
+      if (parameters.containsParameter(MODEL_PROPERTY)) {
+         String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
+         IModel model = sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
+         models.add(model);
+      } else {
+         if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+            throw new CommandException(
+               "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + ARTIFACT_ID_PROPERTY);
+         }
+         if (parameters.containsParameter(PACKAGE_PROPERTY)) {
+            throw new CommandException(
+               "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + PACKAGE_PROPERTY);
+         }
+         sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).forEach(models::add);
+      }
+      return models;
+   }
+
+   /**
+    * Returns all IData associated with the given model. This includes inputs, outputs, and any nested IData objects in IData fields.
+    * 
+    * @param model model
+    * @return all IData associated with the model inputs and outputs
+    */
+   private static Set<IData> getDataFromModel(IModel model) {
+      Set<IData> data = new HashSet<>();
+      Queue<IData> newData = new ArrayDeque<>();
+      Streams.concat(model.getInputs().stream().map(IDataReferenceField::getType),
+         model.getOutputs().stream().map(IDataReferenceField::getType)).forEach(newData::add);
+      while (!newData.isEmpty()) {
+         IData d = newData.poll();
+         if (!data.add(d)) {
+            continue;
+         }
+         for (IDataField field : d.getFields()) {
+            if (field.getType() == DataTypes.DATA) {
+               newData.add(field.getReferencedDataType());
+            }
+         }
+      }
+      return data;
    }
 
    private void createGradleBuild(Path projectDir) throws IOException {
@@ -220,63 +262,30 @@ public class CreateDomainCommand implements IJellyFishCommand {
       }
    }
 
-   private void createDomainTemplate(Path projectDir, Path velocityFile) throws IOException {
+   /**
+    * Copies the domain template to the output velocity folder
+    * 
+    * @param projectDir directory of project
+    * @param domainTemplateFile domain template file
+    * @throws IOException
+    */
+   private void createDomainTemplate(Path projectDir, Path domainTemplateFile) throws IOException {
       Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Files.createDirectories(velocityDir);
-      Files.copy(velocityFile, velocityDir.resolve(velocityFile.getFileName()));
+      Files.copy(domainTemplateFile, velocityDir.resolve(domainTemplateFile.getFileName()));
    }
 
    /**
+    * Generates the Blocs domain xml file with the given data and package.
     * 
-    * @param data collection of data with the same package
-    * @param groupId
-    * @param artifactId
-    * @param pkg
+    * @param xmlFile output xml file
+    * @param data collection of data
+    * @param pkg package of domain data classes
     */
-   private void run(Path outputDir, Collection<IData> data, String groupId, String artifactId, String pkg,
-            Path xmlFile) {
+   private void generateDomain(Path xmlFile, Collection<IData> data, String pkg) {
       Tdomain domain = new Tdomain();
-      for (IData d : data) {
-         Tobject object = new Tobject();
-         object.setClazz(pkg + '.' + d.getName());
-         for (IDataField field : d.getFields()) {
-            Tproperty property = new Tproperty();
-            property.setAbstract(false);
-            property.setName(field.getName());
-            switch (field.getCardinality()) {
-            case MANY:
-               property.setMultiple(true);
-               break;
-            case SINGLE:
-               property.setMultiple(false);
-               break;
-            default:
-               throw new IllegalStateException("Unknown cardinality: " + field.getCardinality());
-            }
-            switch (field.getType()) {
-            case BOOLEAN:
-               property.setType("boolean");
-               break;
-            case DATA:
-               IData ref = field.getReferencedDataType();
-               property.setType(pkg + '.' + ref.getName());
-               break;
-            case FLOAT:
-               property.setType("float");
-               break;
-            case INT:
-               property.setType("int");
-               break;
-            case STRING:
-               property.setType("String");
-               break;
-            default:
-               throw new IllegalStateException("Unknown field type: " + field.getType());
-            }
-            object.getProperty().add(property);
-         }
-         domain.getObject().add(object);
-      }
+
+      data.forEach(d -> domain.getObject().add(convert(d, pkg)));
 
       ObjectFactory factory = new ObjectFactory();
       try {
@@ -286,6 +295,64 @@ public class CreateDomainCommand implements IJellyFishCommand {
          logService.error(CreateDomainCommand.class, e);
          throw new CommandException(e);
       }
+   }
+
+   /**
+    * Converts the IData to a Tobject.
+    * 
+    * @param data IData
+    * @param pkg package of domain classes
+    * @return domain object
+    */
+   private static Tobject convert(IData data, String pkg) {
+      Tobject object = new Tobject();
+      object.setClazz(pkg + '.' + data.getName());
+      data.getFields().forEach(field -> object.getProperty().add(convert(field, pkg)));
+      return object;
+   }
+
+   /**
+    * Converts the IDataField to a Tproperty.
+    * 
+    * @param field IDataField
+    * @param pkg package of domain class
+    * @return domain property
+    */
+   private static Tproperty convert(IDataField field, String pkg) {
+      Tproperty property = new Tproperty();
+      property.setAbstract(false);
+      property.setName(field.getName());
+      switch (field.getCardinality()) {
+      case MANY:
+         property.setMultiple(true);
+         break;
+      case SINGLE:
+         property.setMultiple(false);
+         break;
+      default:
+         throw new IllegalStateException("Unknown cardinality: " + field.getCardinality());
+      }
+      switch (field.getType()) {
+      case BOOLEAN:
+         property.setType("boolean");
+         break;
+      case DATA:
+         IData ref = field.getReferencedDataType();
+         property.setType(pkg + '.' + ref.getName());
+         break;
+      case FLOAT:
+         property.setType("float");
+         break;
+      case INT:
+         property.setType("int");
+         break;
+      case STRING:
+         property.setType("String");
+         break;
+      default:
+         throw new IllegalStateException("Unknown field type: " + field.getType());
+      }
+      return property;
    }
 
    @Activate
@@ -351,7 +418,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
                      "Comma-separated string of the stereotypes in which the domain should only be generated")
                   .setRequired(false));
    }
-   
+
    private static Predicate<IModel> withAnyStereotype(Collection<String> stereotypes) {
       // TODO replace with ModelPredicates.withAnyStereotype when implemented
       return model -> {
