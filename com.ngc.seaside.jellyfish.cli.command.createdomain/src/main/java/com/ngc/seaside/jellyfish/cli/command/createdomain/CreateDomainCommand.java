@@ -65,7 +65,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
-   public static final String USE_MODEL_STRUCTURE_PROPERTY = "useModelStructure";
    public static final String IGNORE_STEREOTYPES_PROPERTY = "ignoreStereoTypes";
    public static final String STEREOTYPES_PROPERTY = "stereoTypes";
 
@@ -336,10 +335,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter(MODEL_PROPERTY)
                   .setDescription(
                      "The fully qualified path to the system descriptor model. If set it would only generate the input and output data for that model")
-                  .setRequired(false),
-         new DefaultParameter(USE_MODEL_STRUCTURE_PROPERTY)
-                  .setDescription(
-                     "If true, the system descriptor model's structural decomposition is used when outputting the domain model project")
                   .setRequired(false),
          new DefaultParameter(IGNORE_STEREOTYPES_PROPERTY)
                   .setDescription(
