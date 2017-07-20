@@ -351,7 +351,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the path to the new file
     * @throws CommandException if an error occurred when copying the template file
     */
-   private Path createDomainTemplate(Path projectDir, Path domainTemplateFile) {
+   private static Path createDomainTemplate(Path projectDir, Path domainTemplateFile) {
       Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       try {
          Files.createDirectories(velocityDir);
