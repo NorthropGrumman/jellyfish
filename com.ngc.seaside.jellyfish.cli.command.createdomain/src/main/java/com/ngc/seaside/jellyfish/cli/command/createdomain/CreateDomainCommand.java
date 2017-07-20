@@ -18,7 +18,6 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -43,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -51,20 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateDomainCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
-   private static final String METADATA_STEREOTYPES = "stereotypes";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -74,8 +65,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
-   public static final String IGNORE_STEREOTYPES_PROPERTY = "ignoreStereoTypes";
-   public static final String STEREOTYPES_PROPERTY = "stereoTypes";
    public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
@@ -90,10 +79,74 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return USAGE;
    }
 
+   @Activate
+   public void activate() {
+      logService.trace(getClass(), "Activated");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      logService.trace(getClass(), "Deactivated");
+   }
+
+   /**
+    * Sets log service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   /**
+    * Remove log service.
+    */
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      IParameterCollection parameters = commandOptions.getParameters();
+      final IParameterCollection parameters = commandOptions.getParameters();
+      final IModel model = evaluateModelParameter(commandOptions);
+      final String groupId = evaluateGroupId(parameters, model);
+      final String artifactId = evaluateArtifactId(parameters, model);
+      final String pkg = evaluatePackage(parameters, groupId, artifactId);
+      final Path domainTemplateFile = evaluteDomainTemplateFile(parameters);
+      final boolean clean = evaluateCleanParameter(parameters);
+      final Set<IData> data = getDataFromModel(model);
+      if (data.isEmpty()) {
+         logService.warn(CreateDomainCommand.class, "No input/output data for model " + model.getFullyQualifiedName());
+         return;
+      }
 
+      final Path projectDir = evaluteProjectDirectory(parameters, pkg);
+
+      if (clean) {
+         FileUtils.deleteQuietly(projectDir.toFile());
+      }
+
+      createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
+      createDomainTemplate(projectDir, domainTemplateFile);
+
+      // Group data by their sd package
+      Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
+
+      mappedData.forEach((sdPackage, dataList) -> {
+         Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
+         generateDomain(xmlFile, dataList, pkg);
+      });
+   }
+
+   /**
+    * Returns the value of the {@link #CLEAN_PROPERTY} if it was set, false otherwise.
+    * 
+    * @param parameters command parameters
+    * @return the value of the {@link #CLEAN_PROPERTY}
+    * @throws CommandException if the value is invalid
+    */
+   private static boolean evaluateCleanParameter(IParameterCollection parameters) {
       final boolean clean;
       if (parameters.containsParameter(CLEAN_PROPERTY)) {
          String value = parameters.getParameter(CLEAN_PROPERTY).getValue();
@@ -110,55 +163,100 @@ public class CreateDomainCommand implements IJellyFishCommand {
       } else {
          clean = false;
       }
-      
-      final Set<IModel> models = getModels(commandOptions);
-      final Predicate<IModel> modelFilter = getModelFilter(parameters);
+      return clean;
+   }
 
-      models.removeIf(modelFilter.negate());
-      if (models.isEmpty()) {
-         logService.error(CreateDomainCommand.class, "No model files were found");
-         throw new CommandException("No model files were found");
+   /**
+    * Returns the {@link IModel} associated with the value of the {@link #MODEL_PROPERTY}.
+    * 
+    * @param commandOptions command options
+    * @return the {@link IModel}
+    * @throws CommandException if the model name is invalid or missing
+    */
+   private static IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
+      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+      IParameterCollection parameters = commandOptions.getParameters();
+      if (parameters.containsParameter(MODEL_PROPERTY)) {
+         String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
+         return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
+      } else {
+         throw new CommandException("Missing required parameter: " + MODEL_PROPERTY);
       }
-      models.removeIf(model -> model.getInputs().isEmpty() && model.getOutputs().isEmpty());
-      if (models.isEmpty()) {
-         logService.error(CreateDomainCommand.class, "No model files with inputs/outputs were found");
-         throw new CommandException("No model files with inputs/outputs were found");
-      }
+   }
 
-      final String groupIdFormat;
+   /**
+    * Returns the groupId for the domain project.
+    * 
+    * @param parameters command parameters
+    * @param model domain model
+    * @return the groupId for the domain project
+    */
+   private static String evaluateGroupId(IParameterCollection parameters, IModel model) {
+      final String groupId;
       if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         groupIdFormat = parameters.getParameter(GROUP_ID_PROPERTY).getValue();
+         groupId = parameters.getParameter(GROUP_ID_PROPERTY).getValue();
       } else {
-         groupIdFormat = "%s";
+         groupId = model.getParent().getName();
       }
+      return groupId;
+   }
 
-      final String artifactIdFormat;
+   /**
+    * Returns the artifactId for the domain project.
+    * 
+    * @param parameters command parameters
+    * @param model domain model
+    * @return the artifactId for the domain project
+    */
+   private static String evaluateArtifactId(IParameterCollection parameters, IModel model) {
+      final String artifactId;
       if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactIdFormat = parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue();
+         artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue();
       } else {
-         artifactIdFormat = "%s";
+         artifactId = model.getName().toLowerCase();
       }
+      return artifactId;
+   }
 
-      final String packageFormat;
+   /**
+    * Returns the package for the domain project.
+    * 
+    * @param parameters command parameters
+    * @param groupId domain groupId
+    * @param artifactId domain artifactId
+    * @return the package for the domain project
+    */
+   private static String evaluatePackage(IParameterCollection parameters, String groupId, String artifactId) {
+      final String pkg;
       if (parameters.containsParameter(PACKAGE_PROPERTY)) {
          if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
             throw new CommandException(
                "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY + " is set");
          }
-         packageFormat = parameters.getParameter(PACKAGE_PROPERTY).getValue();
+         pkg = parameters.getParameter(PACKAGE_PROPERTY).getValue();
       } else {
          if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
             String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue().trim();
             if (suffix.isEmpty() || suffix.startsWith(".")) {
-               packageFormat = "%s.%s" + suffix;
+               pkg = groupId + '.' + artifactId + suffix;
             } else {
-               packageFormat = "%s.%s." + suffix;
+               pkg = groupId + '.' + artifactId + '.' + suffix;
             }
          } else {
-            packageFormat = "%s.%s.domainmodel";
+            pkg = groupId + '.' + artifactId + ".domainmodel";
          }
       }
+      return pkg;
+   }
 
+   /**
+    * Returns the path to the domain template file.
+    * 
+    * @param parameters command parameters
+    * @return the path to the domain template file
+    * @throws CommandException if the file does not exist
+    */
+   private static Path evaluteDomainTemplateFile(IParameterCollection parameters) {
       if (!parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
          throw new CommandException("Missing required parameter: " + DOMAIN_TEMPLATE_FILE_PROPERTY);
       }
@@ -166,103 +264,29 @@ public class CreateDomainCommand implements IJellyFishCommand {
       if (!Files.isRegularFile(domainTemplateFile)) {
          throw new CommandException(domainTemplateFile + " is invalid");
       }
+      return domainTemplateFile;
+   }
 
+   /**
+    * Creates and returns the path to the domain project directory.
+    * 
+    * @param parameters command parameters
+    * @param pkg domain package
+    * @return the path to the domain project directory
+    * @throws CommandException if an error occurred in creating the project directory
+    */
+   private static Path evaluteProjectDirectory(IParameterCollection parameters, String pkg) {
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          throw new CommandException("Missing required parameter: " + OUTPUT_DIRECTORY_PROPERTY);
       }
       final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
+      final Path projectDir = outputDir.resolve(pkg);
       try {
-         Files.createDirectories(outputDir);
+         Files.createDirectories(projectDir);
       } catch (IOException e) {
-         logService.error(CreateDomainCommand.class, e);
          throw new CommandException(e);
       }
-
-      for (IModel model : models) {
-
-         final String groupId = String.format(groupIdFormat, model.getParent().getName());
-         final String artifactId = String.format(artifactIdFormat, model.getName().toLowerCase());
-
-         final String pkg = String.format(packageFormat, groupId, artifactId);
-         final Path projectDir = outputDir.resolve(pkg);
-         final Set<IData> data = getDataFromModel(model);
-
-         // Group data by their sd package
-         Map<String, List<IData>> mappedData = data.stream()
-                  .collect(Collectors.groupingBy(d -> d.getParent().getName()));
-
-         if (clean) {
-            FileUtils.deleteQuietly(projectDir.toFile());
-         }
-         try {
-            Files.createDirectories(projectDir);
-            createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
-            createDomainTemplate(projectDir, domainTemplateFile);
-         } catch (Exception e) {
-            logService.error(CreateDomainCommand.class, e);
-            throw new CommandException(e);
-         }
-
-         mappedData.forEach((sdPackage, dataList) -> {
-            Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
-            generateDomain(xmlFile, dataList, pkg);
-         });
-      }
-   }
-
-   /**
-    * Returns a predicate for filtering models based on the {@link #STEREOTYPES_PROPERTY} and {@link #IGNORE_STEREOTYPES_PROPERTY}.
-    * 
-    * @param parameters command parameters
-    * @return a predicate for filtering models
-    */
-   private static Predicate<IModel> getModelFilter(IParameterCollection parameters) {
-      final Predicate<IModel> stereotypeFilter;
-      if (parameters.containsParameter(STEREOTYPES_PROPERTY)) {
-         List<String> stereotypes = Arrays
-                  .asList(parameters.getParameter(STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
-         stereotypeFilter = CreateDomainCommand.withAnyStereotype(stereotypes);
-      } else {
-         stereotypeFilter = __ -> true;
-      }
-      final Predicate<IModel> ignoreFilter;
-      if (parameters.containsParameter(IGNORE_STEREOTYPES_PROPERTY)) {
-         List<String> ignored = Arrays
-                  .asList(parameters.getParameter(IGNORE_STEREOTYPES_PROPERTY).getValue().split("\\s*,\\s*"));
-         ignoreFilter = CreateDomainCommand.withAnyStereotype(ignored).negate();
-      } else {
-         ignoreFilter = __ -> true;
-      }
-      return stereotypeFilter.and(ignoreFilter);
-   }
-
-   /**
-    * Returns the models from the system descriptor in the command options. If the {@link #MODEL_PROPERTY} is set, then this will return just that model.
-    * 
-    * @param commandOptions command options
-    * @return the models in the system descriptor
-    */
-   private static Set<IModel> getModels(IJellyFishCommandOptions commandOptions) {
-      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
-      IParameterCollection parameters = commandOptions.getParameters();
-
-      final Set<IModel> models = new HashSet<>();
-      if (parameters.containsParameter(MODEL_PROPERTY)) {
-         String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
-         IModel model = sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-         models.add(model);
-      } else {
-         if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-            throw new CommandException(
-               "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + ARTIFACT_ID_PROPERTY);
-         }
-         if (parameters.containsParameter(PACKAGE_PROPERTY)) {
-            throw new CommandException(
-               "Invalid parameter: " + MODEL_PROPERTY + " must be set when using " + PACKAGE_PROPERTY);
-         }
-         sd.getPackages().stream().flatMap(pkg -> pkg.getModels().stream()).forEach(models::add);
-      }
-      return models;
+      return projectDir;
    }
 
    /**
@@ -290,8 +314,15 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return data;
    }
 
-   private void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages)
-      throws Exception {
+   /**
+    * Creates the build.gradle file for the domain project
+    * 
+    * @param projectDir path project directory
+    * @param domainTemplateFile path to domain template file
+    * @param packages collection of packages to export
+    * @throws CommandException if an error occurred generating the build.gradle file
+    */
+   private static void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages) {
       VelocityEngine engine = new VelocityEngine();
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
       engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -304,24 +335,29 @@ public class CreateDomainCommand implements IJellyFishCommand {
       try (OutputStream out = Files.newOutputStream(projectDir.resolve("build.gradle"));
                OutputStreamWriter writer = new OutputStreamWriter(out)) {
          template.merge(context, writer);
+      } catch (IOException e) {
+         throw new CommandException(e);
       }
    }
 
    /**
-    * 
-    * Copies the domain template to the output velocity folder
+    * Copies the domain template file to the output velocity folder.
     * 
     * @param projectDir directory of project
     * @param domainTemplateFile domain template file
     * @return the path to the new file
-    * @throws IOException
+    * @throws CommandException if an error occurred when copying the template file
     */
-   private Path createDomainTemplate(Path projectDir, Path domainTemplateFile) throws IOException {
+   private Path createDomainTemplate(Path projectDir, Path domainTemplateFile) {
       Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
-      Files.createDirectories(velocityDir);
-      Path newFile = velocityDir.resolve(domainTemplateFile.getFileName());
-      Files.copy(domainTemplateFile, newFile, StandardCopyOption.REPLACE_EXISTING);
-      return newFile;
+      try {
+         Files.createDirectories(velocityDir);
+         Path newFile = velocityDir.resolve(domainTemplateFile.getFileName());
+         Files.copy(domainTemplateFile, newFile, StandardCopyOption.REPLACE_EXISTING);
+         return newFile;
+      } catch (IOException e) {
+         throw new CommandException(e);
+      }
    }
 
    /**
@@ -330,8 +366,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param xmlFile output xml file
     * @param data collection of data
     * @param pkg package of domain data classes
+    * @throws CommandException if an error occurred when creating the xml file
     */
-   private void generateDomain(Path xmlFile, Collection<IData> data, String pkg) {
+   private static void generateDomain(Path xmlFile, Collection<IData> data, String pkg) {
       Tdomain domain = new Tdomain();
 
       data.forEach(d -> domain.getObject().add(convert(d, pkg)));
@@ -341,7 +378,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
          Files.createDirectories(xmlFile.getParent());
          JAXBUtilities.write(xmlFile.toFile(), factory.createDomain(domain));
       } catch (IOException e) {
-         logService.error(CreateDomainCommand.class, e);
          throw new CommandException(e);
       }
    }
@@ -404,33 +440,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return property;
    }
 
-   @Activate
-   public void activate() {
-      logService.trace(getClass(), "Activated");
-   }
-
-   @Deactivate
-   public void deactivate() {
-      logService.trace(getClass(), "Deactivated");
-   }
-
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
    /**
     * Create the usage for this command.
     *
@@ -457,46 +466,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter(MODEL_PROPERTY)
                   .setDescription(
                      "The fully qualified path to the system descriptor model. If set it would only generate the input and output data for that model")
-                  .setRequired(false),
-         new DefaultParameter(IGNORE_STEREOTYPES_PROPERTY)
-                  .setDescription(
-                     "Comma-separated string of the stereotypes to ignore when generating the domain model (e.g. \"virtual, system\")")
-                  .setRequired(false),
-         new DefaultParameter(STEREOTYPES_PROPERTY)
-                  .setDescription(
-                     "Comma-separated string of the stereotypes in which the domain should only be generated")
-                  .setRequired(false),
+                  .setRequired(true),
          new DefaultParameter(CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain projects (if they already exist), before generating the them again")
                   .setRequired(false));
-
-   }
-
-   private static Predicate<IModel> withAnyStereotype(Collection<String> stereotypes) {
-      // TODO replace with ModelPredicates.withAnyStereotype when implemented
-      return model -> {
-         IMetadata metadata = model.getMetadata();
-         if (metadata != null) {
-            JsonObject json = metadata.getJson();
-            if (json != null) {
-               JsonValue value = json.get(METADATA_STEREOTYPES);
-               if (value instanceof JsonString) {
-                  return stereotypes.contains(((JsonString) value).getString());
-               } else if (value instanceof JsonArray) {
-                  Object[] values = ((JsonArray) value).toArray();
-                  for (Object val : values) {
-                     if (val instanceof JsonString) {
-                        if (stereotypes.contains(((JsonString) val).getString())) {
-                           return true;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         return false;
-      };
    }
 
 }
