@@ -124,20 +124,19 @@ public class CreateDomainCommand implements IJellyFishCommand {
          return;
       }
 
-      final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
+      // Group data by their sd package
+      Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
       final Set<String> domainPackages;
       if (useModelStructure) {
-         domainPackages = data.stream().map(d -> d.getParent().getName()).collect(Collectors.toSet());
+         domainPackages = mappedData.keySet();
       } else {
          domainPackages = Collections.singleton(pkg);
       }
 
+      final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
       createGradleBuild(projectDir, domainTemplateFile, domainPackages);
       createDomainTemplate(projectDir, domainTemplateFile);
-
-      // Group data by their sd package
-      Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
