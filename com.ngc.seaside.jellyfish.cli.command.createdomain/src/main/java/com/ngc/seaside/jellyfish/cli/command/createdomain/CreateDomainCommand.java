@@ -134,6 +134,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
          generateDomain(xmlFile, dataList, pkg);
       });
+      logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
 
    /**
