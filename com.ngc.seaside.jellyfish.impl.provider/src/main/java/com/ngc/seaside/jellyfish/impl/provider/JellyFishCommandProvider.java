@@ -5,7 +5,11 @@ import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
@@ -20,7 +24,6 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
-import org.eclipse.xtext.parser.ParseException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -47,6 +50,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IBootstrapCommandProvider bootstrapCommandProvider;
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
+   private ITemplateService templateService;
    private HelpCommand helpCommand;
 
    /**
@@ -78,7 +82,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    @Override
    public IUsage getUsage() {
       DefaultUsage usage = new DefaultUsage("JellyFish Description",
-         Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
+                                            Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
       return usage;
    }
 
@@ -146,11 +150,83 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
 
-      if (command == null) {
-         logService.warn(getClass(), "Unknown command: %s", validatedArgs[0]);
-      } else {
-         command.run(jellyFishCommandOptions);
+      IParameterCollection templateParameters = unpackTemplate(command, collection);
+      //IBootstrapCommandOptions options = createBootstrapCommandOptions(parameters, templateParameters);
+
+      command.run(jellyFishCommandOptions);
+   }
+
+   /**
+    * Unpack the templateContent if it exists. If not, just return an empty
+    * collection of parameters.
+    *
+    * @param command the command.
+    * @param userSuppliedParameters the parameters the user passed in. These should overwrite any
+    *           properties that exists in the templateContent.properties.
+    *           meaning, if they pass in these parameters they should not be
+    *           prompted!
+    * @return the parameters that were required to be input for usage within
+    *         the templateContent.
+    */
+   protected IParameterCollection unpackTemplate(IJellyFishCommand command, IParameterCollection userSuppliedParameters) {
+      String templatePrefix = getCommandTemplatePrefix(command);
+      /**
+       * Unpack the templateContent
+       */
+      if (templateService.templateExists(templatePrefix)) {
+         try {
+            Path outputPath = Paths.get(".");
+            if (userSuppliedParameters.containsParameter("outputDir")) {
+               outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getValue());
+            }
+
+            logService.trace(getClass(), "Unpacking templateContent for '%s' to '%s'", userSuppliedParameters, outputPath);
+            ITemplateOutput
+                     templateOutput = templateService.unpack(templatePrefix, userSuppliedParameters, outputPath, false);
+
+            return convertParameters(templateOutput, outputPath);
+         } catch (TemplateServiceException e) {
+            logService.error(getClass(), e, "Unable to unpack the templateContent for command'%s'. Aborting", command);
+         }
       }
+      return null;
+   }
+
+   /**
+    * Convert the templateContent output to a parameter collection. This
+    * includes the templateFinalOutputDir.
+    *
+    * @param output the templateContent service's output
+    * @return the collection of parameters.
+    */
+   protected IParameterCollection convertParameters(ITemplateOutput output, Path outputPath) {
+      IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
+
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      DefaultParameter outputDir = new DefaultParameter("outputDirectory").setValue(outputPath.toString());
+      DefaultParameter templateOutputDir = new DefaultParameter("templateFinalOutputDirectory").setValue(output.getOutputPath().toString());
+      collection.addParameter(outputDir);
+      collection.addParameter(templateOutputDir);
+
+      for (IParameter templateParameter : templateParameters.getAllParameters()) {
+         collection.addParameter(templateParameter);
+      }
+
+      return collection;
+   }
+
+   /**
+    * Return the prefix used in order to look the command's templateContent up
+    * within the templates resource directory. Currently this assumes that the
+    * naming convention for the command's package includes the same name used
+    * for creating the templateContent zip. This is actually done for us using
+    * the correct build tools.
+    *
+    * @param command the command in which to create the prefix
+    * @return the String representation of the command's package.
+    */
+   protected String getCommandTemplatePrefix(IJellyFishCommand command) {
+      return command.getClass().getPackage().getName();
    }
 
    /**
@@ -238,6 +314,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @return the JellyFish command options
     */
    private IJellyFishCommandOptions convert(IParameterCollection output) {
+
       DefaultJellyFishCommandOptions def = new DefaultJellyFishCommandOptions();
       IParameter inputDir = output.getParameter("inputDir");
       Path path;
@@ -264,7 +341,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * This method uses the {@link ISystemDescriptorService} to parse the provided project.
     * If errors occur, a {@link ParsingException} is thrown along with a list of issues.
-    * 
+    *
     * @param path system descriptor project path
     * @return the system descriptor
     */
@@ -280,7 +357,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * This method looks up the {@link IJellyFishCommand} corresponding with the given
     * string.
-    * 
+    *
     * @param cmd the string representation of a JellyFish command
     * @return the JellyFish command
     */
