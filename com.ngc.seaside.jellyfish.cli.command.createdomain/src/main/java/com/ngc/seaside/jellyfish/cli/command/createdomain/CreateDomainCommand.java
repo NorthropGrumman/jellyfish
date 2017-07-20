@@ -139,11 +139,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
          }
       }
 
+      if (!parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
+         throw new CommandException("Missing required parameter: " + DOMAIN_TEMPLATE_FILE_PROPERTY);
+      }
       final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
       if (!Files.isRegularFile(domainTemplateFile)) {
          throw new CommandException(domainTemplateFile + " is invalid");
       }
 
+      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+         throw new CommandException("Missing required parameter: " + OUTPUT_DIRECTORY_PROPERTY);
+      }
       final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
       try {
          Files.createDirectories(outputDir);
