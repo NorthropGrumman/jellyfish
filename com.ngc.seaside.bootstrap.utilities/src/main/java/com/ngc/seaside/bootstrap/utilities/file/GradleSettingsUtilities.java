@@ -2,6 +2,8 @@ package com.ngc.seaside.bootstrap.utilities.file;
 
 import com.ngc.seaside.command.api.IParameterCollection;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -48,6 +50,15 @@ public class GradleSettingsUtilities {
                                  bundleName,
                                  parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue()));
 
+         try {
+            String contents = new String(Files.readAllBytes(settings));
+            if (lines.stream().allMatch(contents::contains)) {
+               return;
+            }
+         } catch (IOException e) {
+            // add project if file can't be read
+         }
+         
          FileUtilities.addLinesToFile(settings, lines);
       } else {
          throw new FileUtilitiesException(
