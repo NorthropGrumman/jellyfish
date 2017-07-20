@@ -115,17 +115,14 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
       final Path domainTemplateFile = evaluteDomainTemplateFile(parameters);
       final boolean clean = evaluateCleanParameter(parameters);
+      
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
          logService.warn(CreateDomainCommand.class, "No input/output data for model " + model.getFullyQualifiedName());
          return;
       }
 
-      final Path projectDir = evaluteProjectDirectory(parameters, pkg);
-
-      if (clean) {
-         FileUtils.deleteQuietly(projectDir.toFile());
-      }
+      final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
 
       createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
       createDomainTemplate(projectDir, domainTemplateFile);
@@ -272,16 +269,21 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * 
     * @param parameters command parameters
     * @param pkg domain package
+    * @param clean whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
-   private static Path evaluteProjectDirectory(IParameterCollection parameters, String pkg) {
+   private static Path evaluteProjectDirectory(IParameterCollection parameters, String pkg, boolean clean) {
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          throw new CommandException("Missing required parameter: " + OUTPUT_DIRECTORY_PROPERTY);
       }
       final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
       final Path projectDir = outputDir.resolve(pkg);
       try {
+         Files.createDirectories(outputDir);
+         if (clean) {
+            FileUtils.deleteQuietly(projectDir.toFile());
+         }
          Files.createDirectories(projectDir);
       } catch (IOException e) {
          throw new CommandException(e);
