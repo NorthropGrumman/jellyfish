@@ -51,20 +51,42 @@ public class CreateJellyFishGradleProjectCommandTest {
       cmd.setTemplateService(injector.getInstance(ITemplateService.class));
    }
 
-//   @Test
-//   public void testCommand() throws IOException {
-//      createSettings();
-//
-//      final String command = "test-command-1";
-//      final String group = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
-//      final String artifact = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT,
-//         command.replace("-", "").toLowerCase());
-//      final String pkg = group + '.' + artifact;
-//      final String classname = "TestCommand1Command";
-//      runCommand(CreateJellyFishGradleProjectCommand.COMMAND_NAME_PROPERTY, command);
-//      checkCommandOutput(classname, group, artifact, pkg);
-//   }
-//
+   @Test
+   public void testCommand() throws IOException {
+      final String group = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
+      
+      final String projectSimpleName = "test-project-1";
+      final String artifact = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
+
+      final String projectName = group + "." + artifact;  
+      final String version = "1.0";
+      
+      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+ 		     CreateJellyFishGradleProjectCommand.ARTIFACT_ID_PROPERTY, artifact,
+		     CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version);
+      checkCommandOutput(projectName, group, artifact, version);
+   }
+
+   private void checkCommandOutput(String expectedProjectName, String expectedGroupId, String expectedArtifactId, String expectedVersion)
+      throws IOException {
+	  // Check project directory
+      Assert.assertTrue("project directory not created", Files.isDirectory(outputDir.resolve(expectedProjectName)));
+      
+      // Check gradle files existence
+      Assert.assertTrue("gradlew was not created",               outputDir.resolve(Paths.get(expectedProjectName, "gradlew")).toFile().exists());
+      Assert.assertTrue("gradlew.bat was not created",           outputDir.resolve(Paths.get(expectedProjectName, "gradlew.bat")).toFile().exists());
+      Assert.assertTrue("build.gradle was not created",          outputDir.resolve(Paths.get(expectedProjectName, "build.gradle")).toFile().exists());
+      Assert.assertTrue("settings.gradle was not created",       outputDir.resolve(Paths.get(expectedProjectName, "settings.gradle")).toFile().exists());
+      
+      // Check gradle wrapper files existence
+      Assert.assertTrue("gradle-wrapper.jar not created",        outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.jar")).toFile().exists());
+      Assert.assertTrue("gradle-wrapper.properties not created", outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.properties")).toFile().exists());
+
+      // Check gradle files content
+      Assert.assertTrue("build.gradle content is incorrect", false);
+      Assert.assertTrue("settings.gradle content is incorrect", false);
+   }
+
 //   @Test
 //   public void testCommandWithGroup() throws IOException {
 //      createSettings();
@@ -218,54 +240,21 @@ public class CreateJellyFishGradleProjectCommandTest {
 //      checkCommandOutput(classname2, group1, artifact1, pkg1);
 //   }
 //
-//   private void runCommand(String... keyValues) throws IOException {
-//      IJellyFishCommandOptions mockOptions = Mockito.mock(IJellyFishCommandOptions.class);
-//      DefaultParameterCollection collection = new DefaultParameterCollection();
-//
-//      for (int n = 0; n < keyValues.length; n += 2) {
-//         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
-//      }
-//
-//      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishGradleProjectCommand.OUTPUT_DIR_PROPERTY)
-//               .setValue(outputDir.toString());
-//      collection.addParameter(outputDirectory);
-//
-//      Mockito.when(mockOptions.getParameters()).thenReturn(collection);
-//
-//      cmd.run(mockOptions);
-//
-//   }
-//
-//   private void createSettings() throws IOException {
-//      try {
-//         Files.createFile(outputDir.resolve("settings.gradle"));
-//      } catch (FileAlreadyExistsException e) {
-//         // ignore
-//      }
-//   }
-//
-//   private void checkCommandOutput(String expectedClassname, String expectedGroupId, String expectedArtifactId,
-//            String expectedPackage)
-//      throws IOException {
-//      String projectName = expectedGroupId + '.' + expectedArtifactId;
-//      if (expectedPackage == null) {
-//         expectedPackage = projectName;
-//      }
-//      expectedPackage = expectedPackage.replace('.', File.separatorChar);
-//
-//      Assert.assertTrue("settings.gradle not updated", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
-//               .anyMatch(line -> line.contains(projectName)));
-//      Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedPackage, expectedClassname + ".java");
-//      Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
-//      Path actualPath = outputDir.resolve(expectedPath).toRealPath();
-//      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
-//      Assert.assertTrue("resources folder was not created",
-//         outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
-//      Assert.assertTrue("test folder was not created",
-//         outputDir.resolve(Paths.get(projectName, "src", "test", "java")).toFile().exists());
-//      Assert.assertTrue("build.gradle was not created",
-//         outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
-//   }
+   private void runCommand(String... keyValues) throws IOException {
+      IJellyFishCommandOptions mockOptions = Mockito.mock(IJellyFishCommandOptions.class);
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+
+      for (int n = 0; n < keyValues.length; n += 2) {
+         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+      }
+
+      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishGradleProjectCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
+      collection.addParameter(outputDirectory);
+
+      Mockito.when(mockOptions.getParameters()).thenReturn(collection);
+
+      cmd.run(mockOptions);
+   }
 //
 //   @After
 //   public void cleanup() throws IOException {
