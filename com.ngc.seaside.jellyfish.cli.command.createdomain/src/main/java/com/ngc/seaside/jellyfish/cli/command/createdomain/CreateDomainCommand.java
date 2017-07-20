@@ -22,6 +22,8 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -40,6 +42,7 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,6 +77,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String MODEL_PROPERTY = "model";
    public static final String IGNORE_STEREOTYPES_PROPERTY = "ignoreStereoTypes";
    public static final String STEREOTYPES_PROPERTY = "stereoTypes";
+   public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
 
@@ -91,6 +95,23 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       IParameterCollection parameters = commandOptions.getParameters();
 
+      final boolean clean;
+      if (parameters.containsParameter(CLEAN_PROPERTY)) {
+         String value = parameters.getParameter(CLEAN_PROPERTY).getValue();
+         switch (value.toLowerCase()) {
+         case "true":
+            clean = true;
+            break;
+         case "false":
+            clean = false;
+            break;
+         default:
+            throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+         }
+      } else {
+         clean = false;
+      }
+      
       final Set<IModel> models = getModels(commandOptions);
       final Predicate<IModel> modelFilter = getModelFilter(parameters);
 
@@ -168,8 +189,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
          final Set<IData> data = getDataFromModel(model);
 
          // Group data by their sd package
-         Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
+         Map<String, List<IData>> mappedData = data.stream()
+                  .collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
+         if (clean) {
+            FileUtils.deleteQuietly(projectDir.toFile());
+         }
          try {
             Files.createDirectories(projectDir);
             createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
@@ -178,7 +203,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
             logService.error(CreateDomainCommand.class, e);
             throw new CommandException(e);
          }
-
 
          mappedData.forEach((sdPackage, dataList) -> {
             Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
@@ -267,7 +291,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return data;
    }
 
-   private void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages) throws Exception {
+   private void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages)
+      throws Exception {
       VelocityEngine engine = new VelocityEngine();
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
       engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -277,7 +302,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
       VelocityContext context = new VelocityContext();
       context.put("velocityFile", domainTemplateFile.getFileName());
       context.put("packages", packages);
-      try (OutputStream out = Files.newOutputStream(projectDir.resolve("build.gradle")); OutputStreamWriter writer = new OutputStreamWriter(out)) {
+      try (OutputStream out = Files.newOutputStream(projectDir.resolve("build.gradle"));
+               OutputStreamWriter writer = new OutputStreamWriter(out)) {
          template.merge(context, writer);
       }
    }
@@ -295,7 +321,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       Path velocityDir = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Files.createDirectories(velocityDir);
       Path newFile = velocityDir.resolve(domainTemplateFile.getFileName());
-      Files.copy(domainTemplateFile, newFile);
+      Files.copy(domainTemplateFile, newFile, StandardCopyOption.REPLACE_EXISTING);
       return newFile;
    }
 
@@ -440,7 +466,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter(STEREOTYPES_PROPERTY)
                   .setDescription(
                      "Comma-separated string of the stereotypes in which the domain should only be generated")
+                  .setRequired(false),
+         new DefaultParameter(CLEAN_PROPERTY)
+                  .setDescription(
+                     "If true, recursively deletes the domain projects (if they already exist), before generating the them again")
                   .setRequired(false));
+
    }
 
    private static Predicate<IModel> withAnyStereotype(Collection<String> stereotypes) {
