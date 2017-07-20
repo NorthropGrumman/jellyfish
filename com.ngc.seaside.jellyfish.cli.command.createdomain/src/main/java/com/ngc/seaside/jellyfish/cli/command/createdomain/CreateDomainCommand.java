@@ -7,6 +7,7 @@ import com.ngc.blocs.domain.impl.common.generated.Tobject;
 import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -69,6 +70,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
+   private IPromptUserService promptService;
 
    @Override
    public String getName() {
@@ -107,6 +109,23 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setLogService(null);
    }
 
+   /**
+    * Sets prompt user service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
+   public void setPromptService(IPromptUserService ref) {
+      this.promptService = ref;
+   }
+
+   /**
+    * Remove prompt service.
+    */
+   public void removePromptService(IPromptUserService ref) {
+      setPromptService(null);
+   }
+
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
@@ -143,7 +162,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          final String domainPackage = useModelStructure ? sdPackage : pkg;
          generateDomain(xmlFile, dataList, domainPackage);
       });
-      
+
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
 
@@ -183,15 +202,16 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the {@link IModel}
     * @throws CommandException if the model name is invalid or missing
     */
-   private static IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
+   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
+      final String modelName;
       if (parameters.containsParameter(MODEL_PROPERTY)) {
-         String modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
-         return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
+         modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
       } else {
-         throw new CommandException("Missing required parameter: " + MODEL_PROPERTY);
+         modelName = promptService.prompt(MODEL_PROPERTY, null, null);
       }
+      return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 
    /**
@@ -266,11 +286,14 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the path to the domain template file
     * @throws CommandException if the file does not exist
     */
-   private static Path evaluteDomainTemplateFile(IParameterCollection parameters) {
-      if (!parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
-         throw new CommandException("Missing required parameter: " + DOMAIN_TEMPLATE_FILE_PROPERTY);
+   private Path evaluteDomainTemplateFile(IParameterCollection parameters) {
+      final Path domainTemplateFile;
+      if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
+         domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
+      } else {
+         String input = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
+         domainTemplateFile = Paths.get(input);
       }
-      final Path domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
       if (!Files.isRegularFile(domainTemplateFile)) {
          throw new CommandException(domainTemplateFile + " is invalid");
       }
@@ -286,11 +309,15 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
-   private static Path evaluteProjectDirectory(IParameterCollection parameters, String pkg, boolean clean) {
-      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         throw new CommandException("Missing required parameter: " + OUTPUT_DIRECTORY_PROPERTY);
+   private Path evaluteProjectDirectory(IParameterCollection parameters, String pkg, boolean clean) {
+      final Path outputDir;
+
+      if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+         outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
+      } else {
+         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
+         outputDir = Paths.get(input);
       }
-      final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
       final Path projectDir = outputDir.resolve(pkg);
       try {
          Files.createDirectories(outputDir);
