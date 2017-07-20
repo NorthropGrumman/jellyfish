@@ -6,7 +6,7 @@ generateDomain {
 }
 
 dependencies {
-   compile "com.ngc.blocs:service.api:${D}blocsVersion"
+   compile "com.ngc.blocs:service.api:${D}blocsDomainVersion"
 }
 
 jar {
