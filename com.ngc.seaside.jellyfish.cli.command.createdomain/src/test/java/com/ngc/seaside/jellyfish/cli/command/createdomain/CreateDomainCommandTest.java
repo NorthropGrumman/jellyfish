@@ -65,9 +65,9 @@ public class CreateDomainCommandTest {
          CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domainmodel");
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -78,7 +78,7 @@ public class CreateDomainCommandTest {
          CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertFalse("Directory should not be created: " + projectDir, Files.isDirectory(projectDir));
    }
 
@@ -90,9 +90,9 @@ public class CreateDomainCommandTest {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
          CreateDomainCommand.GROUP_ID_PROPERTY, groupId);
 
-      Path projectDir = outputDir.resolve(groupId + ".model1.domainmodel");
+      Path projectDir = outputDir.resolve(groupId + ".model1.domain");
       Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, groupId + ".model1.domainmodel");
+      checkGradleBuild(projectDir, groupId + ".model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -120,9 +120,9 @@ public class CreateDomainCommandTest {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
          CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifact);
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact + ".domainmodel");
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact + ".domain");
       Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1." + artifact + ".domainmodel");
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1." + artifact + ".domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -148,13 +148,13 @@ public class CreateDomainCommandTest {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
          CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true");
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
-   
+
    private void checkGradleBuild(Path projectDir, String... exportPackages) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));

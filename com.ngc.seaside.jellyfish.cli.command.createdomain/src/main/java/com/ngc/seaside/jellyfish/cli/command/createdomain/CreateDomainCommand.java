@@ -56,6 +56,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
+   private static final String DEFAULT_PACKAGE_SUFFIX = "domain";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -253,7 +254,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
                pkg = groupId + '.' + artifactId + '.' + suffix;
             }
          } else {
-            pkg = groupId + '.' + artifactId + ".domainmodel";
+            pkg = groupId + '.' + artifactId + '.' + DEFAULT_PACKAGE_SUFFIX;
          }
       }
       return pkg;
