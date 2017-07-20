@@ -115,7 +115,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
       final Path domainTemplateFile = evaluteDomainTemplateFile(parameters);
       final boolean clean = evaluateCleanParameter(parameters);
-      
+
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
          logService.warn(CreateDomainCommand.class, "No input/output data for model " + model.getFullyQualifiedName());
@@ -451,27 +451,19 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
          new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
          new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
-         new DefaultParameter(VERSION_PROPERTY)
-                  .setDescription(
-                     "The project's artifactId (this argument may only be used if the model argument is set)")
-                  .setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY)
-                  .setDescription(
-                     "The project's default package (this argument may only be used if the model argument is set)")
-                  .setRequired(false),
+         new DefaultParameter(VERSION_PROPERTY).setDescription("The project's artifactId").setRequired(false),
+         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
          new DefaultParameter(PACKAGE_SUFFIX_PROPERTY)
                   .setDescription("A string to append to the end of the generated package name").setRequired(false),
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the file(s)")
+         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
                   .setRequired(true),
          new DefaultParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
                   .setRequired(true),
-         new DefaultParameter(MODEL_PROPERTY)
-                  .setDescription(
-                     "The fully qualified path to the system descriptor model. If set it would only generate the input and output data for that model")
+         new DefaultParameter(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
                   .setRequired(true),
          new DefaultParameter(CLEAN_PROPERTY)
                   .setDescription(
-                     "If true, recursively deletes the domain projects (if they already exist), before generating the them again")
+                     "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                   .setRequired(false));
    }
 
