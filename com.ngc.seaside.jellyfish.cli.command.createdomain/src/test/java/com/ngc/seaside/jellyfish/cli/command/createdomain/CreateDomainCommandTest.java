@@ -141,6 +141,20 @@ public class CreateDomainCommandTest {
       checkDomain(projectDir);
    }
 
+   @Test
+   public void testCommandUseModelStructure() throws IOException {
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+         CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true");
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domainmodel");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3");
+      checkVelocity(projectDir);
+      checkDomain(projectDir);
+   }
+   
    private void checkGradleBuild(Path projectDir, String... exportPackages) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
@@ -160,12 +174,10 @@ public class CreateDomainCommandTest {
 
    private void checkDomain(Path projectDir) throws IOException {
       Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
-      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3",
-         "com.ngc.seaside.test2.test4");
+      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3");
       checkDomainContents(domainDir, "com.ngc.seaside.test1", 1, 2, 0, 5);
       checkDomainContents(domainDir, "com.ngc.seaside.test2", 3, 4, 6, 7);
       checkDomainContents(domainDir, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
-      checkDomainContents(domainDir, "com.ngc.seaside.test2.test4", 6, 6, 9, 9);
    }
 
    private void checkDomainFiles(Path domainDir, String... filenames) throws IOException {

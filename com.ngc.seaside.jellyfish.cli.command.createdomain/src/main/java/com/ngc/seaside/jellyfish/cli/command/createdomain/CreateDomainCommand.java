@@ -64,6 +64,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
+   public static final String USE_MODEL_STRUCTURE_PROPERTY = "useModelStructure";
    public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
@@ -113,7 +114,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final String artifactId = evaluateArtifactId(parameters, model);
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
       final Path domainTemplateFile = evaluteDomainTemplateFile(parameters);
-      final boolean clean = evaluateCleanParameter(parameters);
+      final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
+      final boolean useModelStructure = evaluateBooleanParameter(parameters, USE_MODEL_STRUCTURE_PROPERTY);
 
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
@@ -123,44 +125,55 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
 
-      createGradleBuild(projectDir, domainTemplateFile, Collections.singleton(pkg));
+      final Set<String> domainPackages;
+      if (useModelStructure) {
+         domainPackages = data.stream().map(d -> d.getParent().getName()).collect(Collectors.toSet());
+      } else {
+         domainPackages = Collections.singleton(pkg);
+      }
+
+      createGradleBuild(projectDir, domainTemplateFile, domainPackages);
       createDomainTemplate(projectDir, domainTemplateFile);
 
       // Group data by their sd package
       Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
       mappedData.forEach((sdPackage, dataList) -> {
-         Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
-         generateDomain(xmlFile, dataList, pkg);
+         final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
+         final String domainPackage = useModelStructure ? sdPackage : pkg;
+         generateDomain(xmlFile, dataList, domainPackage);
       });
+      
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
 
    /**
-    * Returns the value of the {@link #CLEAN_PROPERTY} if it was set, false otherwise.
+    * Returns the boolean value of the given parameter if it was set, false otherwise.
     * 
     * @param parameters command parameters
-    * @return the value of the {@link #CLEAN_PROPERTY}
+    * @param parameter name of parameter
+    * @return the boolean value of the parameter
     * @throws CommandException if the value is invalid
     */
-   private static boolean evaluateCleanParameter(IParameterCollection parameters) {
-      final boolean clean;
-      if (parameters.containsParameter(CLEAN_PROPERTY)) {
-         String value = parameters.getParameter(CLEAN_PROPERTY).getValue();
+   private static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
+      final boolean booleanValue;
+      if (parameters.containsParameter(parameter)) {
+         String value = parameters.getParameter(parameter).getValue();
          switch (value.toLowerCase()) {
          case "true":
-            clean = true;
+            booleanValue = true;
             break;
          case "false":
-            clean = false;
+            booleanValue = false;
             break;
          default:
-            throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+            throw new CommandException(
+               "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
          }
       } else {
-         clean = false;
+         booleanValue = false;
       }
-      return clean;
+      return booleanValue;
    }
 
    /**
@@ -324,7 +337,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param packages collection of packages to export
     * @throws CommandException if an error occurred generating the build.gradle file
     */
-   private static void createGradleBuild(Path projectDir, Path domainTemplateFile, Collection<String> packages) {
+   private static void createGradleBuild(Path projectDir, Path domainTemplateFile, Set<String> packages) {
       VelocityEngine engine = new VelocityEngine();
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
       engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -463,6 +476,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter(CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                  .setRequired(false),
+         new DefaultParameter(USE_MODEL_STRUCTURE_PROPERTY)
+                  .setDescription(
+                     "If true, uses the System Descriptor package structure for the generated domain package structure")
                   .setRequired(false));
    }
 
