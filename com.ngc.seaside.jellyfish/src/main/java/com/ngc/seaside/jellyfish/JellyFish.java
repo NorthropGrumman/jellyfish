@@ -1,8 +1,14 @@
 package com.ngc.seaside.jellyfish;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
+import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
@@ -12,12 +18,14 @@ import java.util.ServiceLoader;
 
 public class JellyFish {
 
+   private JellyFishCommandProviderModule jellyFishCommandProvider;
+   private ProxyJellyFishCommandProvider proxyJellyFishCommandProvider = new ProxyJellyFishCommandProvider();
+
    /**
     * Main to run the JellyFish application..
-    * 
-    * @param args
-    *           the program arguments. The first argument should always be the name of the command in which to run
-    *           followed by a list of parameters for that command.
+    *
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
+    *             followed by a list of parameters for that command.
     */
    public static void main(String[] args) {
       try {
@@ -29,22 +37,24 @@ public class JellyFish {
 
    /**
     * Run the JellyFish application
-    * 
-    * @param args
-    *           the program arguments. The first argument should always be the name of the command in which to run
-    *           followed by a list of parameters for that command.
+    *
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
+    *             followed by a list of parameters for that command.
     */
    public static void run(String[] args) {
-      Injector injector = getInjector();
-      JellyFishCommandProviderModule provider = injector.getInstance(JellyFishCommandProviderModule.class);
+      new JellyFish().doRun(args);
+   }
 
-      provider.run(args);
+   private void doRun(String[] args) {
+      Injector injector = getInjector();
+      jellyFishCommandProvider = injector.getInstance(JellyFishCommandProviderModule.class);
+      jellyFishCommandProvider.run(args);
    }
 
    /**
     * @return the Guice injector
     */
-   private static Injector getInjector() {
+   private Injector getInjector() {
       return Guice.createInjector(getModules());
    }
 
@@ -55,9 +65,10 @@ public class JellyFish {
     *
     * @return A collection of modules or an empty collection.
     */
-   private static Collection<Module> getModules() {
+   private Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishServiceModule());
+      modules.add(proxyJellyFishCommandProvider);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
          // TODO log this
          System.out.println(String.format("%s", dynamicModule.getClass()));
@@ -70,5 +81,43 @@ public class JellyFish {
       modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       return modules;
+   }
+
+   private class ProxyJellyFishCommandProvider extends AbstractModule implements IJellyFishCommandProvider {
+
+      @Override
+      public void run(String command, IJellyFishCommandOptions commandOptions) {
+         jellyFishCommandProvider.run(command, commandOptions);
+      }
+
+      @Override
+      public IUsage getUsage() {
+         return jellyFishCommandProvider.getUsage();
+      }
+
+      @Override
+      public IJellyFishCommand getCommand(String commandName) {
+         return jellyFishCommandProvider.getCommand(commandName);
+      }
+
+      @Override
+      public void addCommand(IJellyFishCommand command) {
+         jellyFishCommandProvider.addCommand(command);
+      }
+
+      @Override
+      public void removeCommand(IJellyFishCommand command) {
+         jellyFishCommandProvider.removeCommand(command);
+      }
+
+      @Override
+      public void run(String[] arguments) {
+         jellyFishCommandProvider.run(arguments);
+      }
+
+      @Override
+      protected void configure() {
+         bind(IJellyFishCommandProvider.class).toInstance(this);
+      }
    }
 }

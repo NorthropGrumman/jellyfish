@@ -2,16 +2,19 @@ package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
@@ -43,13 +46,20 @@ public class JellyFishCommandProviderModule extends AbstractModule implements IJ
          @Override
          public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
             // this Component requires that the activate method be called.
-            encounter.register((InjectionListener<I>) i -> delegate.activate());
+            encounter.register(
+                  (InjectionListener<I>) injectee -> ((JellyFishCommandProviderModule) injectee).delegate.activate());
          }
       });
    }
 
+   @Override
    public void run(String[] args) {
       delegate.run(args);
+   }
+
+   @Override
+   public void run(String command, IJellyFishCommandOptions commandOptions) {
+      delegate.run(command, commandOptions);
    }
 
    @Override

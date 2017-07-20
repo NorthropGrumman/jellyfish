@@ -9,4 +9,5 @@ import com.ngc.seaside.command.api.ICommandProvider;
  */
 public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommand> {
 
+   void run(String command, IJellyFishCommandOptions commandOptions);
 }

@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
@@ -14,6 +15,7 @@ import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+// TODO TH: the help command should not be imported into this project.
 import com.ngc.seaside.jellyfish.cli.command.help.HelpCommand;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -78,7 +80,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    @Override
    public IUsage getUsage() {
       DefaultUsage usage = new DefaultUsage("JellyFish Description",
-         Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
+                                            Collections
+                                                  .singletonList(new DefaultParameter("inputDir").setRequired(false)));
       return usage;
    }
 
@@ -134,14 +137,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          throw new IllegalArgumentException("No command provided");
       } else {
          if (arguments.length == 1) {
-            validatedArgs = new String[] { arguments[0], "-DinputDir=" + System.getProperty("user.dir") };
+            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
          } else {
             validatedArgs = arguments;
          }
       }
 
       IParameterCollection collection = parameterService
-               .parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+            .parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
       IJellyFishCommandOptions jellyFishCommandOptions = convert(collection);
 
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
@@ -153,11 +156,20 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       }
    }
 
+   @Override
+   public void run(String command, IJellyFishCommandOptions commandOptions) {
+      Preconditions.checkNotNull(command, "command may not be null!");
+      Preconditions.checkArgument(!command.trim().isEmpty(), "command may not be empty!");
+      Preconditions.checkNotNull(commandOptions, "commandOptions may not be null!");
+      IJellyFishCommand c = lookupCommand(command);
+      Preconditions.checkArgument(c != null, "could not find command named %s!", command);
+      c.run(commandOptions);
+   }
+
    /**
     * Sets log service.
     *
-    * @param ref
-    *           the ref
+    * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
@@ -174,8 +186,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Set the IBootstrapCommandProvider.
     *
-    * @param ref
-    *           the ref
+    * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIBootstrapCommandProvider")
    public void setIBootstrapCommandProvider(IBootstrapCommandProvider ref) {
@@ -192,8 +203,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Set the IParameterService.
     *
-    * @param ref
-    *           the ref
+    * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeIParameterService")
    public void setIParameterService(IParameterService ref) {
@@ -210,8 +220,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Set the ISystemDescriptorService.
     *
-    * @param ref
-    *           the ref
+    * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeISystemDescriptorService")
    public void setISystemDescriptorService(ISystemDescriptorService ref) {
@@ -264,7 +273,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * This method uses the {@link ISystemDescriptorService} to parse the provided project.
     * If errors occur, a {@link ParsingException} is thrown along with a list of issues.
-    * 
+    *
     * @param path system descriptor project path
     * @return the system descriptor
     */
@@ -280,7 +289,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * This method looks up the {@link IJellyFishCommand} corresponding with the given
     * string.
-    * 
+    *
     * @param cmd the string representation of a JellyFish command
     * @return the JellyFish command
     */
