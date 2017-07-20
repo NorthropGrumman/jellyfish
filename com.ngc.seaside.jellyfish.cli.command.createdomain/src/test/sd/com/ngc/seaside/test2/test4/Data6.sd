@@ -1,5 +1,0 @@
-package com.ngc.seaside.test2.test4
-
-data Data6 {
-	int field9
-}

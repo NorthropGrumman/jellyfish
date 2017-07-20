@@ -5,7 +5,6 @@ import com.ngc.seaside.test1.Data2
 import com.ngc.seaside.test2.Data3
 import com.ngc.seaside.test2.Data4
 import com.ngc.seaside.test1.test3.Data5
-import com.ngc.seaside.test2.test4.Data6
 
 model Model1 {
 	
@@ -22,7 +21,6 @@ model Model1 {
 	output {
 		Data2 data2
 		Data4 data4
-		Data6 data6
 	}
 	
 }
