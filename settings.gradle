@@ -19,3 +19,6 @@ project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.g
 
 include 'com.ngc.seaside.jellyfish.cli.command.createdomain'
 project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish.cli.command.createdomain'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages'
+project(':com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages').name = 'jellyfish.cli.command.createprotocolbuffermessages'
