@@ -11,6 +11,9 @@ import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -19,7 +22,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,131 +47,162 @@ public class CreateJavaServiceConnectorCommandTest {
    }
 
    /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the required parameter outputDirectory to the project.
+   * This test tests that the CreateJavaServiceConnectorCommand does run with
+   * minimal parameters and is ultimately the base test.
    */
    @Test
-   public void testRequiredParamOutputDirectoryApplied() {
-      // TODO Auto-generated method stub
+   public void testCommand() throws IOException {
+      createSettings();
+
+      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1"};
+
+      final String outputDir = "test";
+      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String artifact = "testmodel.model";
+      final String bundle = group + '.' + artifact;
+      final String model = "TestCommand1Command";
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
+      checkCommandOutput(outputDir, model, group, artifact, bundle);
    }
 
    /*
-   * This test tests that the CreateJavaServiceConnectorCommand prompts
-   * the user if the required parameter outputDirectory is empty.
-   */
-   @Test
-   public void testRequiredParamOutputDirectoryPromptOnEmptyInput() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand does not
-   * prompt the user if the required parameter outputDirectory is empty,
-   * but set in the jellyfish.properties file.
-   */
-   @Test
-   public void testRequiredParamOutputDirectoryNoPromptOnEmptyInputWithJellyfishPropertySet() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the optional parameter groupId to the project.
-   */
-   @Test
-   public void testOptionalParamGroupIdIsApplied() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the default value if the optional parameter groupId is not set.
-   * Default value: package in the model
-   */
-   @Test
-   public void testOptionalParamGroupIdNoInputDefaults() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the optional parameter artifactId to the project.
-   */
-   @Test
-   public void testOptionalParamArtifactIdIsApplied() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the default value if the optional parameter artifactId is not set.
-   * Default value: $modelName.connector
-   */
-   @Test
-   public void testOptionalParamArtifactIdNoInputDefaults() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-    * This test tests that the CreateJavaServiceConnectorCommand applies
-    * the optional parameter useModelStructure to the project.
+    * This test tests that the CreateJavaServiceConnectorCommand does run with
+    * optional parameters and that they do have an impact on the generated project.
     */
    @Test
-   public void testOptionalParamUseModelStructureIsApplied() {
-      // TODO Auto-generated method stub
+   public void testCommandWithOptionalParameters() throws IOException {
+      createSettings();
+
+      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
+                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+
+      final String outputDir = "test";
+      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String artifact = "testmodel.model";
+      final String bundle = group + '.' + artifact;
+      final String model = "TestCommand1Command";
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
+      checkCommandOutput(outputDir, model, group, artifact, bundle);
    }
 
    /*
-   * This test tests that the CreateJavaServiceConnectorCommand applies
-   * the default value if the optional parameter useModelStructure is not set.
-   * Default value: false
-   */
-   @Test
-   public void testOptionalParamUseModelStructureNoInputDefaults() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-    * This test tests that the CreateJavaServiceConnectorCommand applies
-    * the optional parameter ignoreStereoTypes to the project.
+    * This test tests that the CreateJavaServiceConnectorCommand does prompt
+    * the user to enter values if the required parameters aren't set.
     */
    @Test
-   public void testOptionalParamIgnoreStereoTypesStructureIsApplied() {
-      // TODO Auto-generated method stub
+   public void testCommandDoesPromptWithoutRequiredParameters() throws IOException {
+      createSettings();
+
+      String parameters1 = {CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
+                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+
+      String parameters2 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
+                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+
+      String parameters3 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                            CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
+                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+
+      final String outputDir = "test";
+      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String artifact = "testmodel.model";
+      final String bundle = group + '.' + artifact;
+      final String model = "TestCommand1Command";
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters1);
+      //TODO Check if prompt occurs
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters2);
+      //TODO Check if prompt occurs
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters3);
+      //TODO Check if prompt occurs
+      checkCommandOutput(outputDir, model, group, artifact, bundle);
    }
 
    /*
-    * This test tests that the CreateJavaServiceConnectorCommand applies
-    * the optional parameter stereoTypes to the project.
+    * This test tests that the CreateJavaServiceConnectorCommand does not prompt
+    * the user to enter values if the required parameters aren't set, but are in
+    * the jellyfish.properties file.
     */
    @Test
-   public void testOptionalParamStereoTypesStructureIsApplied() {
-      // TODO Auto-generated method stub
-   }
+   public void testCommandDoesNotPromptWithJellyfishProperties() throws IOException {
+      createSettings();
 
+      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1"};
 
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand creates
-   * the bundle directory's name based on a combination of the groupId and
-   * artifactId $(groupId.artifactId).
-   */
-   @Test
-   public void testBundleDirectoryNameIsCombinationGroupIdAndArtifactId() {
-      // TODO Auto-generated method stub
-   }
-
-   /*
-   * This test tests that the CreateJavaServiceConnectorCommand generates
-   * a gradle build file that has the necessary blocs bundles
-   */
-   @Test
-   public void testGradleFileContainsNecessaryBlocsFiles() {
-      // TODO Auto-generated method stub
+      final String outputDir = "test";
+      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String artifact = "testmodel.model";
+      final String bundle = group + '.' + artifact;
+      final String model = "TestCommand1Command";
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
+      checkCommandOutput(outputDir, model, group, artifact, bundle);
    }
 
    @After
    public void cleanup() throws IOException {
       FileUtils.deleteQuietly(outputDir.toFile());
+   }
+
+   private void runCommand(String... keyValues) throws IOException {
+      IJellyFishCommandOptions mockOptions = Mockito.mock(IJellyFishCommandOptions.class);
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+
+      for (int n = 0; n < keyValues.length; n += 2) {
+         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+      }
+
+      DefaultParameter outputDirectory = new DefaultParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIR_PROPERTY)
+            .setValue(outputDir.toString());
+      collection.addParameter(outputDirectory);
+
+      Mockito.when(mockOptions.getParameters()).thenReturn(collection);
+
+      cmd.run(mockOptions);
+
+   }
+
+   private void createSettings() throws IOException {
+      try {
+         Files.createFile(outputDir.resolve("settings.gradle"));
+      } catch (FileAlreadyExistsException e) {
+         // ignore
+      }
+   }
+
+   private void checkCommandOutput(String expectedOutputDir, String expectedModelName, String expectedGroupId, String expectedArtifactId,
+                                   String expectedBundle)
+         throws IOException {
+      String projectName = expectedGroupId + '.' + expectedArtifactId;
+      if (expectedBundle == null) {
+         expectedBundle = projectName;
+      }
+      expectedBundle = expectedBundle.replace('.', File.separatorChar);
+
+      Assert.assertTrue("settings.gradle not updated", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
+            .anyMatch(line -> line.contains(projectName)));
+      Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedBundle, expectedModelName + ".java");
+      Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
+      Path actualPath = outputDir.resolve(expectedPath).toRealPath();
+      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
+      Assert.assertTrue("resources folder was not created",
+                        outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
+      Assert.assertTrue("test folder was not created",
+                        outputDir.resolve(Paths.get(projectName, "src", "test", "java")).toFile().exists());
+      Assert.assertTrue("build.gradle was not created",
+                        outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
+
+      //TODO Check bundle name is ${groupId}.${artifactId}
+      //TODO Check Gradle file contains all necessary blocs files
+      //TODO Check expectedOutputDir
+      //TODO Check expectedModelName
+      //TODO Check expectedGroupId
+      //TODO Check expectedArtifactId
    }
 
    private static Injector injector = Guice.createInjector(new AbstractModule() {
