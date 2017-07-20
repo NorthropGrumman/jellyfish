@@ -91,6 +91,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Scenario">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="given" eType="#//GivenDeclaration"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="when" eType="#//WhenDeclaration"
