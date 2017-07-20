@@ -59,7 +59,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String VERSION_PROPERTY = "version";
    public static final String PACKAGE_PROPERTY = "package";
    public static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
@@ -452,7 +451,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
          new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
          new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
-         new DefaultParameter(VERSION_PROPERTY).setDescription("The project's artifactId").setRequired(false),
          new DefaultParameter(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
          new DefaultParameter(PACKAGE_SUFFIX_PROPERTY)
                   .setDescription("A string to append to the end of the generated package name").setRequired(false),
