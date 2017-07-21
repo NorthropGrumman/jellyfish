@@ -29,7 +29,7 @@ public class CreateProtocolbufferMessagesCommandTest {
 
    @Test
    public void testCommand() {
-      // TODO Auto-generated method stub
+      
    }
    
    private static final Module LOG_SERVICE_MODULE = new AbstractModule() {
