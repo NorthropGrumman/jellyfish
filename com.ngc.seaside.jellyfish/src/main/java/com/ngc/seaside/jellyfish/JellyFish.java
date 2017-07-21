@@ -3,7 +3,8 @@ package com.ngc.seaside.jellyfish;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderModule;
+
+import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderGuiceWrapper;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.util.ArrayList;
@@ -14,10 +15,9 @@ public class JellyFish {
 
    /**
     * Main to run the JellyFish application..
-    * 
-    * @param args
-    *           the program arguments. The first argument should always be the name of the command in which to run
-    *           followed by a list of parameters for that command.
+    *
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
+    *             followed by a list of parameters for that command.
     */
    public static void main(String[] args) {
       try {
@@ -29,15 +29,13 @@ public class JellyFish {
 
    /**
     * Run the JellyFish application
-    * 
-    * @param args
-    *           the program arguments. The first argument should always be the name of the command in which to run
-    *           followed by a list of parameters for that command.
+    *
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
+    *             followed by a list of parameters for that command.
     */
    public static void run(String[] args) {
       Injector injector = getInjector();
-      JellyFishCommandProviderModule provider = injector.getInstance(JellyFishCommandProviderModule.class);
-
+      JellyFishCommandProviderGuiceWrapper provider = injector.getInstance(JellyFishCommandProviderGuiceWrapper.class);
       provider.run(args);
    }
 
