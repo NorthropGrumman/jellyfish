@@ -22,8 +22,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,11 +41,15 @@ public class CreateJavaServiceConnectorCommandTest {
 
    private Path outputDir;
 
+   private String propertyModelName;
+
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
+      propertyModelName = "models.testModelsProp";
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
+      cmd.setTemplateService(injector.getInstance(ITemplateService.class));
    }
 
    /*
@@ -52,18 +58,15 @@ public class CreateJavaServiceConnectorCommandTest {
    */
    @Test
    public void testCommand() throws IOException {
-      createSettings();
+      createProperties();
+
+      final String model = "models.testModels";
 
       String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1"};
+                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model};
 
-      final String outputDir = "test";
-      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
-      final String artifact = "testmodel.model";
-      final String bundle = group + '.' + artifact;
-      final String model = "TestCommand1Command";
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
-      checkCommandOutput(outputDir, model, group, artifact, bundle);
+      checkCommandOutput(model, null, null);
    }
 
    /*
@@ -72,20 +75,19 @@ public class CreateJavaServiceConnectorCommandTest {
     */
    @Test
    public void testCommandWithOptionalParameters() throws IOException {
-      createSettings();
+      createProperties();
+
+      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String artifact = "testArtifact.connector";
+      final String model = "models.testModels";
 
       String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
-                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
+                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
 
-      final String outputDir = "test";
-      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
-      final String artifact = "testmodel.model";
-      final String bundle = group + '.' + artifact;
-      final String model = "TestCommand1Command";
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
-      checkCommandOutput(outputDir, model, group, artifact, bundle);
+      checkCommandOutput(model, group, artifact);
    }
 
    /*
@@ -94,33 +96,38 @@ public class CreateJavaServiceConnectorCommandTest {
     */
    @Test
    public void testCommandDoesPromptWithoutRequiredParameters() throws IOException {
-      createSettings();
+      createProperties();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
 
-      String parameters1 = {CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
-                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+      final String group = "com.ngc.seaside";
+      final String artifact = "testmodel.model";
+      final String model = "TestCommand1Command";
+
+      String parameters1 = {CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
+                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
 
       String parameters2 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
-                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
+                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
 
       String parameters3 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                            CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, "com.ngc.seaside.test1.Model1",
-                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, "com.ngc.seaside.test1.Model1"};
+                            CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
+                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
 
-      final String outputDir = "test";
-      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
-      final String artifact = "testmodel.model";
-      final String bundle = group + '.' + artifact;
-      final String model = "TestCommand1Command";
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters1);
-      //TODO Check if prompt occurs
+      outputStream.flush();
+      Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
+      outputStream.reset();
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters2);
-      //TODO Check if prompt occurs
+      outputStream.flush();
+      Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
+      outputStream.reset();
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters3);
-      //TODO Check if prompt occurs
-      checkCommandOutput(outputDir, model, group, artifact, bundle);
+      checkCommandOutput(model, group, artifact);
    }
 
    /*
@@ -130,18 +137,19 @@ public class CreateJavaServiceConnectorCommandTest {
     */
    @Test
    public void testCommandDoesNotPromptWithJellyfishProperties() throws IOException {
-      createSettings();
+      createProperties();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      PrintStream ps = new PrintStream(outputStream);
+      System.setOut(ps);
 
-      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1"};
+      String parameters = "";
 
-      final String outputDir = "test";
-      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
-      final String artifact = "testmodel.model";
-      final String bundle = group + '.' + artifact;
-      final String model = "TestCommand1Command";
       runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
-      checkCommandOutput(outputDir, model, group, artifact, bundle);
+      outputStream.flush();
+      Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
+      Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
+      outputStream.reset();
+      checkCommandOutput(propertyModelName, null, null);
    }
 
    @After
@@ -167,42 +175,63 @@ public class CreateJavaServiceConnectorCommandTest {
 
    }
 
-   private void createSettings() throws IOException {
+   private void createProperties() throws IOException {
+      String jellyfishProperties = ("outputDir="+outputDir.toString()+"\n" +
+                                    "model="+propertyModelName);
       try {
-         Files.createFile(outputDir.resolve("settings.gradle"));
+         Path propertiesFile = Files.createFile(outputDir.resolve("src/main/resources/jellyfish.properties"));
+         Files.write(propertiesFile, jellyfishProperties.getBytes());
       } catch (FileAlreadyExistsException e) {
          // ignore
       }
    }
 
-   private void checkCommandOutput(String expectedOutputDir, String expectedModelName, String expectedGroupId, String expectedArtifactId,
-                                   String expectedBundle)
+   private void checkCommandOutput(String expectedModelName, String expectedGroupId, String expectedArtifactId)
          throws IOException {
-      String projectName = expectedGroupId + '.' + expectedArtifactId;
-      if (expectedBundle == null) {
-         expectedBundle = projectName;
-      }
-      expectedBundle = expectedBundle.replace('.', File.separatorChar);
+      String expectedBundle = expectedGroupId + '.' + expectedArtifactId;
+      String directoryTreeExpectedBundleName = expectedBundle.replace('.', File.separatorChar);
+      String expectedJavaFileModelName = expectedModelName.replaceAll("\\.","") + ".java";
+      Path bundlePath = Paths.get(expectedBundle, "src", "main", "java", directoryTreeExpectedBundleName);
+      Path expectedJavaModelFilePath = Paths.get(expectedBundle, "src", "main", "java", directoryTreeExpectedBundleName, expectedArtifactId + ".java");
 
-      Assert.assertTrue("settings.gradle not updated", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
-            .anyMatch(line -> line.contains(projectName)));
-      Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedBundle, expectedModelName + ".java");
-      Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
-      Path actualPath = outputDir.resolve(expectedPath).toRealPath();
-      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
-      Assert.assertTrue("resources folder was not created",
-                        outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
-      Assert.assertTrue("test folder was not created",
-                        outputDir.resolve(Paths.get(projectName, "src", "test", "java")).toFile().exists());
+      //Checks that the outputDirectory is correctly created
+      Assert.assertTrue("Output Directory does not exist", outputDir.toFile().exists());
+      Assert.assertTrue("Output Directory is not a directory", outputDir.toFile().isDirectory());
+
+      //Checks the basic structure of the output directory
+      Assert.assertTrue("Project folder was not created",
+                        outputDir.resolve(Paths.get(expectedBundle)).toFile().exists());
       Assert.assertTrue("build.gradle was not created",
-                        outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
+                        outputDir.resolve(Paths.get(expectedBundle, "build.gradle")).toFile().exists());
+      Assert.assertTrue("Src/Main/Java folder was not created",
+                        outputDir.resolve(Paths.get(expectedBundle, "src", "main", "java" )).toFile().exists());
+      Assert.assertTrue("Bundle was not created: " + bundlePath.toString(),
+                        outputDir.resolve(bundlePath).toFile().exists());
 
-      //TODO Check bundle name is ${groupId}.${artifactId}
-      //TODO Check Gradle file contains all necessary blocs files
-      //TODO Check expectedOutputDir
-      //TODO Check expectedModelName
-      //TODO Check expectedGroupId
-      //TODO Check expectedArtifactId
+      String actualBundle = outputDir.resolve(bundlePath).getFileName().toString();
+      String[] actualArtifactId = actualBundle.split(expectedGroupId);
+      String[] actualGroupId = actualBundle.split(expectedArtifactId);
+      //Check that the artifactId is correct, and assuming it has a leading '.'
+      Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualArtifactId.length+"\'strings instead of 1", actualArtifactId.length == 1);
+      Assert.assertEquals("Expected groupId does not match the actual artifactId", '.' + expectedArtifactId, actualArtifactId[0]);
+      //Check that the groupId is correct, and assuming it has a trailing '.'
+      Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualGroupId.length+"\'strings instead of 1", actualGroupId.length == 1)
+      Assert.assertEquals("Expected groupId does not match the actual groupId", expectedGroupId + '.', actualGroupId[0]);
+
+      //Check that the modelName is correct
+      Assert.assertTrue("Java model file was expected but not found " +expectedJavaModelFilePath.toString(), expectedJavaModelFilePath.toFile().exists() );
+      Assert.assertEquals("Generated model java file names doesn't match expected result " + expectedJavaFileModelName, expectedJavaModelFilePath.toFile().getName());
+
+      //Check that the gradle file contains all necessary blocs files
+      Assert.assertTrue("build.gradle does not contain blocs service api", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
+            .anyMatch(line -> line.contains("\"com.ngc.blocs:service.api:$blocsCoreVersion\"")));
+      Assert.assertTrue("build.gradle does not contain blocs test utilities", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
+            .anyMatch(line -> line.contains("\"com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion\"")));
+      Assert.assertTrue("build.gradle does not contain osgi core", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
+            .anyMatch(line -> line.contains("\"org.osgi:osgi.core:$osgiVersion\"")));
+      Assert.assertTrue("build.gradle does not contain osgi enterprise", Files.readAllLines(outputDir.resolve("settings.gradle")).stream()
+            .anyMatch(line -> line.contains("\"org.osgi:osgi.enterprise:$osgiVersion\"")));
+
    }
 
    private static Injector injector = Guice.createInjector(new AbstractModule() {
@@ -213,10 +242,10 @@ public class CreateJavaServiceConnectorCommandTest {
 
          bind(IResourceService.class).toInstance(resourceService);
          bind(ILogService.class).to(PrintStreamLogService.class);
-//         bind(IParameterService.class).to(ParameterServiceGuiceWrapper.class);
-//         bind(IPromptUserService.class).to(PromptUserServiceGuiceWrapper.class);
-//         bind(ITemplateService.class).to(TemplateServiceGuiceWrapper.class);
-//         bind(IPropertyService.class).to(PropertyServiceGuiceWrapper.class);
+         bind(IParameterService.class).to(ParameterServiceGuiceWrapper.class);
+         bind(IPromptUserService.class).to(PromptUserServiceGuiceWrapper.class);
+         bind(ITemplateService.class).to(TemplateServiceGuiceWrapper.class);
+         bind(IPropertyService.class).to(PropertyServiceGuiceWrapper.class);
       }
    });
    
