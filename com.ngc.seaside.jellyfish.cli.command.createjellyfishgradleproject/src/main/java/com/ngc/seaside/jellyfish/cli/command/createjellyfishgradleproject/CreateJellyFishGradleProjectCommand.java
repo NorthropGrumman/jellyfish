@@ -79,8 +79,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
         if (!collection.containsParameter(PROJECT_NAME_PROPERTY)) {
             String projectName = promptService.prompt(PROJECT_NAME_PROPERTY, "", null);
             collection.addParameter(new DefaultParameter(PROJECT_NAME_PROPERTY).setValue(projectName));
-        }
-         
+        }         
         final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getValue();
         
         if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
@@ -100,8 +99,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
         }
         
         if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
-             String artifact = promptService.prompt(ARTIFACT_ID_PROPERTY, "", null);
-             collection.addParameter(new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(artifact));
+            String group    = collection.getParameter(GROUP_ID_PROPERTY).getValue().toLowerCase();
+            String artifact = collection.getParameter(PROJECT_NAME_PROPERTY).getValue().toLowerCase().replace(group, "");
+            collection.addParameter(new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(artifact));
         }
 
         if (!collection.containsParameter(VERSION_PROPERTY)) {
@@ -126,7 +126,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 	        clean = false;
         }
         
-        templateService.unpack("JellyFishGradleProject", collection, projectDirectory, clean);
+//        templateService.unpack("JellyFishGradleProject", collection, projectDirectory, clean);
         
         logService.info(CreateJellyFishGradleProjectCommand.class, "%s project successfully created", projectName);
     }

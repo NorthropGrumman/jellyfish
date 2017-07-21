@@ -1,4 +1,6 @@
 
+apply plugin: 'com.ngc.seaside.command'
+
 dependencies {
 
     compile project(":jellyfish.api")
@@ -26,3 +28,5 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
+
+// add task here to do the help

@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class CreateJellyFishGradleProjectCommandTest {
 
@@ -51,83 +52,56 @@ public class CreateJellyFishGradleProjectCommandTest {
       cmd.setTemplateService(injector.getInstance(ITemplateService.class));
    }
 
-   @Test
-   public void testCommand() throws IOException {
-      final String group = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
-      
-      final String projectSimpleName = "test-project-1";
-      final String artifact = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
-
-      final String projectName = group + "." + artifact;  
-      final String version = "1.0";
-      
-      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
- 		     CreateJellyFishGradleProjectCommand.ARTIFACT_ID_PROPERTY, artifact,
-		     CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version);
-      checkCommandOutput(projectName, group, artifact, version);
-   }
-
-   private void checkCommandOutput(String expectedProjectName, String expectedGroupId, String expectedArtifactId, String expectedVersion)
-      throws IOException {
-	  // Check project directory
-      Assert.assertTrue("project directory not created", Files.isDirectory(outputDir.resolve(expectedProjectName)));
-      
-      // Check gradle files existence
-      Assert.assertTrue("gradlew was not created",               outputDir.resolve(Paths.get(expectedProjectName, "gradlew")).toFile().exists());
-      Assert.assertTrue("gradlew.bat was not created",           outputDir.resolve(Paths.get(expectedProjectName, "gradlew.bat")).toFile().exists());
-      Assert.assertTrue("build.gradle was not created",          outputDir.resolve(Paths.get(expectedProjectName, "build.gradle")).toFile().exists());
-      Assert.assertTrue("settings.gradle was not created",       outputDir.resolve(Paths.get(expectedProjectName, "settings.gradle")).toFile().exists());
-      
-      // Check gradle wrapper files existence
-      Assert.assertTrue("gradle-wrapper.jar not created",        outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.jar")).toFile().exists());
-      Assert.assertTrue("gradle-wrapper.properties not created", outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.properties")).toFile().exists());
-
-      // Check gradle files content
-      Assert.assertTrue("build.gradle content is incorrect", false);
-      Assert.assertTrue("settings.gradle content is incorrect", false);
-   }
+//   @Test
+//   public void testCommand() throws IOException {
+//      final String projectSimpleName = "test-project-1";
+//      final String group             = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
+//      final String artifact          = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
+//      final String projectName       = group + "." + artifact;  
+//      final String version           = "1.0";
+//      
+//      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+//		         CreateJellyFishGradleProjectCommand.VERSION_PROPERTY,      version);
+//      checkCommandOutput(projectName, group, artifact, version);
+//   }
 
 //   @Test
 //   public void testCommandWithGroup() throws IOException {
-//      createSettings();
+//	  final String projectSimpleName = "test-project-2";
+//      final String group             = "com.ngc.test";
+//      final String artifact          = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
+//      final String projectName       = group + '.' + artifact;
+//      final String version           = "1.0";
 //
-//      final String command = "test-command-2";
-//      final String group = "com.ngc.test";
-//      final String artifact = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT,
-//         command.replace("-", "").toLowerCase());
-//      final String pkg = group + '.' + artifact;
-//      final String classname = "TestCommand2Command";
-//      runCommand(CreateJellyFishGradleProjectCommand.COMMAND_NAME_PROPERTY, command,
-//         CreateJellyFishGradleProjectCommand.GROUP_ID_PROPERTY, group);
-//      checkCommandOutput(classname, group, artifact, pkg);
+//      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+//		         CreateJellyFishGradleProjectCommand.GROUP_ID_PROPERTY,     group,
+//		         CreateJellyFishGradleProjectCommand.VERSION_PROPERTY,      version);
+//      checkCommandOutput(projectName, group, artifact, version);
 //   }
 //
 //   @Test
 //   public void testCommandWithArtifact() throws IOException {
-//      createSettings();
+//	  final String projectSimpleName = "test-project-2";
+//      final String group             = "com.ngc.test";
+//      final String artifact          = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
+//      final String projectName       = group + '.' + artifact;
+//      final String version           = "1.0";
 //
-//      final String command = "test-command-3";
-//      final String group = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
-//      final String artifact = "test.artifact.id";
-//      final String pkg = group + '.' + artifact;
-//      final String classname = "TestCommand3Command";
-//      runCommand(CreateJellyFishGradleProjectCommand.COMMAND_NAME_PROPERTY, command,
-//         CreateJellyFishGradleProjectCommand.ARTIFACT_ID_PROPERTY, artifact);
-//      checkCommandOutput(classname, group, artifact, pkg);
+//      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+//		         CreateJellyFishGradleProjectCommand.ARTIFACT_ID_PROPERTY,  artifact,
+//		         CreateJellyFishGradleProjectCommand.VERSION_PROPERTY,      version);
+//      checkCommandOutput(projectName, group, artifact, version);
 //   }
-//
+
 //   @Test
 //   public void testCommandPackage() throws IOException {
-//      createSettings();
+//      final String command     = "test-command-4";
+//      final String group       = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
+//      final String artifact    = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, command.replace("-", "").toLowerCase());
+//      final String projectName = group + '.' + artifact;
+//      final String version           = "1.0";
 //
-//      final String command = "test-command-4";
-//      final String group = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
-//      final String artifact = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT,
-//         command.replace("-", "").toLowerCase());
-//      final String pkg = group + '.' + artifact;
-//      final String classname = "TestCommand4Command";
-//      runCommand(CreateJellyFishGradleProjectCommand.COMMAND_NAME_PROPERTY, command,
-//         CreateJellyFishGradleProjectCommand.PACKAGE_PROPERTY, pkg);
+//      runCommand(CreateJellyFishGradleProjectCommand.COMMAND_NAME_PROPERTY, command, CreateJellyFishGradleProjectCommand.PACKAGE_PROPERTY, pkg);
 //      checkCommandOutput(classname, group, artifact, pkg);
 //   }
 //
@@ -255,11 +229,41 @@ public class CreateJellyFishGradleProjectCommandTest {
 
       cmd.run(mockOptions);
    }
-//
-//   @After
-//   public void cleanup() throws IOException {
-//      FileUtils.deleteQuietly(outputDir.toFile());
-//   }
+
+   private void checkCommandOutput(String expectedProjectName, String expectedGroupId, String expectedArtifactId, String expectedVersion)
+      throws IOException {
+	  // Check project directory
+      Assert.assertTrue("project directory not created", Files.isDirectory(outputDir.resolve(expectedProjectName)));
+      
+      // Check gradle files existence
+      Assert.assertTrue("gradlew was not found",               outputDir.resolve(Paths.get(expectedProjectName, "gradlew")).toFile().exists());
+      Assert.assertTrue("gradlew.bat was not found",           outputDir.resolve(Paths.get(expectedProjectName, "gradlew.bat")).toFile().exists());
+      Assert.assertTrue("build.gradle was not found",          outputDir.resolve(Paths.get(expectedProjectName, "build.gradle")).toFile().exists());
+      Assert.assertTrue("settings.gradle was not found",       outputDir.resolve(Paths.get(expectedProjectName, "settings.gradle")).toFile().exists());
+      
+      // Check gradle wrapper files existence
+      Assert.assertTrue("gradle-wrapper.jar not found",        outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.jar")).toFile().exists());
+      Assert.assertTrue("gradle-wrapper.properties not found", outputDir.resolve(Paths.get(expectedProjectName, "gradle", "wrapper", "gradle-wrapper.properties")).toFile().exists());
+
+      // Check build.gradle file content
+      Path buildFilePath = outputDir.resolve(Paths.get(expectedProjectName, "build.gradle"));
+      List<String> buildFileContent = Files.readAllLines(buildFilePath);
+      String versionStringToMatch = "version = '" + expectedVersion + "'";
+      boolean versionMatch = buildFileContent.stream().anyMatch(line -> line.contains(versionStringToMatch));
+      Assert.assertTrue("build.gradle version is incorrect", versionMatch);
+      
+      // Check settings.gradle content
+      Path settingsFilePath = outputDir.resolve(Paths.get(expectedProjectName, "settings.gradle"));
+      List<String> settingsFileContent = Files.readAllLines(settingsFilePath);
+      String projectNameToMatch = "rootProject.name = '" + expectedProjectName + "'";
+      boolean projectNameMatch = settingsFileContent.stream().anyMatch(line -> line.contains(projectNameToMatch));
+      Assert.assertTrue("settings.gradle root project name is incorrect", projectNameMatch);
+   }
+   
+   @After
+   public void cleanup() throws IOException {
+      FileUtils.deleteQuietly(outputDir.toFile());
+   }
 
    private static Injector injector = Guice.createInjector(new AbstractModule() {
       @Override
