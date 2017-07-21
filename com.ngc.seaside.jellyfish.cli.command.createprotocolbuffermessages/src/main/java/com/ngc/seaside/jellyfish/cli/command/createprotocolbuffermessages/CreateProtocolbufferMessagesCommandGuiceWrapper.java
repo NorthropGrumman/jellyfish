@@ -18,8 +18,7 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
    
    @Inject
    public void setDomainCommand(CreateDomainCommandGuiceWrapper command) {
-      System.out.println(command);
-      command.run(null);
+      delegate.setDomainCommand(command);
    }
    
    @Override

@@ -6,6 +6,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommandGuiceWrapper;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -23,6 +24,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public static final String EXAMPLE_PROPERTY = "example";
 
    private ILogService logService;
+   CreateDomainCommandGuiceWrapper domainCommand;
    private IJellyFishCommand createDomain;
 
    @Override
@@ -34,10 +36,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public IUsage getUsage() {
       return USAGE;
    }
+   
+   public void setDomainCommand(CreateDomainCommandGuiceWrapper command) {
+      domainCommand = command;   
+   }
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      // TODO Auto-generated method stub
+      domainCommand.run(commandOptions);
    }
    
    @Activate
@@ -76,5 +82,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of create-protocolbuffer-messages command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
+
+
 
 }
