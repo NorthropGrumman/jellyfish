@@ -1,0 +1,14 @@
+#set( $D = '$' )
+
+apply plugin: 'com.ngc.seaside.distribution'
+
+seasideDistribution {
+    buildDir = 'build'
+    distributionName = "${D}{groupId}.${D}{project.name}-${D}{version}"
+    distributionDir = "build/distribution/${group}.${project.name}-${version}"
+    distributionDestDir = 'build/distribution/'
+}
+
+dependencies {
+    
+}

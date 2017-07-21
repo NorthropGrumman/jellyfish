@@ -82,15 +82,15 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
       if (!collection.containsParameter(COMMAND_NAME_PROPERTY)) {
          String commandName = promptService.prompt(COMMAND_NAME_PROPERTY, "", null);
-         collection.addParameter(new DefaultParameter(COMMAND_NAME_PROPERTY).setValue(commandName));
+         collection.addParameter(new DefaultParameter<>(COMMAND_NAME_PROPERTY, commandName));
       }
-      final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getValue();
+      final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getStringValue();
 
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
          collection.addParameter(
-            new DefaultParameter(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
+            new DefaultParameter<>(OUTPUT_DIR_PROPERTY, Paths.get(".").toAbsolutePath().toString()));
       }
-      final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getValue());
+      final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
       try {
          Files.createDirectories(outputDirectory);
       } catch (IOException e) {
@@ -99,36 +99,38 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
       }
 
       if (Files.isDirectory(outputDirectory.resolve("com.ngc.seaside.jellyfish.api"))) {
-         collection.addParameter(new DefaultParameter("withApi").setValue("true"));
+         collection.addParameter(new DefaultParameter<>("withApi", "true"));
       } else {
-         collection.addParameter(new DefaultParameter("withApi").setValue("false"));
+         collection.addParameter(new DefaultParameter<>("withApi", "false"));
       }
 
       if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
-         collection.addParameter(new DefaultParameter(GROUP_ID_PROPERTY).setValue(DEFAULT_GROUP_ID));
+         collection.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, DEFAULT_GROUP_ID));
       }
-      final String group = collection.getParameter(GROUP_ID_PROPERTY).getValue();
+      final String group = collection.getParameter(GROUP_ID_PROPERTY).getStringValue();
 
       if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         String artifact = collection.getParameter(COMMAND_NAME_PROPERTY).getValue().replace("-", "").toLowerCase();
+         String artifact = collection.getParameter(COMMAND_NAME_PROPERTY)
+               .getStringValue()
+               .replace("-", "").toLowerCase();
          collection.addParameter(
-            new DefaultParameter(ARTIFACT_ID_PROPERTY).setValue(String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
+            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
       }
-      final String artifact = collection.getParameter(ARTIFACT_ID_PROPERTY).getValue();
+      final String artifact = collection.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
 
       if (!collection.containsParameter(PACKAGE_PROPERTY)) {
-         collection.addParameter(new DefaultParameter(PACKAGE_PROPERTY).setValue(group + '.' + artifact));
+         collection.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, group + '.' + artifact));
       }
-      String pkg = collection.getParameter(PACKAGE_PROPERTY).getValue();
+      String pkg = collection.getParameter(PACKAGE_PROPERTY).getStringValue();
       if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
          throw new CommandException("Invalid package name: " + pkg);
       }
 
       if (!collection.containsParameter(CLASSNAME_PROPERTY)) {
          String classname = WordUtils.capitalize(commandName, '-').replaceAll("[^a-zA-Z0-9_$]", "") + "Command";
-         collection.addParameter(new DefaultParameter(CLASSNAME_PROPERTY).setValue(classname));
+         collection.addParameter(new DefaultParameter<>(CLASSNAME_PROPERTY, classname));
       }
-      final String classname = collection.getParameter(CLASSNAME_PROPERTY).getValue();
+      final String classname = collection.getParameter(CLASSNAME_PROPERTY).getStringValue();
       if (!JAVA_IDENTIFIER.matcher(classname).matches()) {
          throw new CommandException("Invalid classname for command " + commandName + ": " + classname);
       }
@@ -142,7 +144,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
       final boolean clean;
       if (collection.containsParameter(CLEAN_PROPERTY)) {
-         String value = collection.getParameter(CLEAN_PROPERTY).getValue();
+         String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
          switch (value.toLowerCase()) {
          case "true":
             clean = true;
