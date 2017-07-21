@@ -6,6 +6,7 @@ dependencies {
 	compile project(":jellyfish.cli.command.validate")
 	compile project(":jellyfish.cli.command.createjellyfishcommand")
 	compile project(":jellyfish.cli.command.createdomain")
+	compile project(":jellyfish.cli.command.createprotocolbuffermessages")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

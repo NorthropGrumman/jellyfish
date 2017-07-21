@@ -6,7 +6,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommandGuiceWrapper;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -24,8 +24,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public static final String EXAMPLE_PROPERTY = "example";
 
    private ILogService logService;
-   CreateDomainCommandGuiceWrapper domainCommand;
-   private IJellyFishCommand createDomain;
+   private IJellyFishCommandProvider jellyfishCommandProvider;
 
    @Override
    public String getName() {
@@ -36,14 +35,11 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public IUsage getUsage() {
       return USAGE;
    }
-   
-   public void setDomainCommand(CreateDomainCommandGuiceWrapper command) {
-      domainCommand = command;   
-   }
+ 
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      domainCommand.run(commandOptions);
+      jellyfishCommandProvider.run("create-domain", commandOptions);
    }
    
    @Activate
@@ -72,7 +68,24 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-
+   
+   /**
+    * Sets the JellyFish Command Provider
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeJellyFishCommandProvider")
+   public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+      this.jellyfishCommandProvider = ref;
+   }
+   
+   /**
+    * Remove the JellyFish Command Provider
+    */
+   public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+      setJellyFishCommandProvider(null);
+   }
+   
    /**
     * Create the usage for this command.
     *
@@ -82,7 +95,4 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of create-protocolbuffer-messages command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
-
-
-
 }

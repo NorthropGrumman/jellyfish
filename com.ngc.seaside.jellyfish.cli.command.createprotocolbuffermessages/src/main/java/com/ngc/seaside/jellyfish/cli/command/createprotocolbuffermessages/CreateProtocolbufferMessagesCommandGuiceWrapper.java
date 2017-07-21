@@ -5,22 +5,19 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommandGuiceWrapper;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 
 public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFishCommand {
-   
+
    private final CreateProtocolbufferMessagesCommand delegate = new CreateProtocolbufferMessagesCommand();
 
    @Inject
-   public CreateProtocolbufferMessagesCommandGuiceWrapper(ILogService logService) {
+   public CreateProtocolbufferMessagesCommandGuiceWrapper(ILogService logService,
+            IJellyFishCommandProvider jellyfishCommandProvider) {
       delegate.setLogService(logService);
+      delegate.setJellyFishCommandProvider(jellyfishCommandProvider);
    }
-   
-   @Inject
-   public void setDomainCommand(CreateDomainCommandGuiceWrapper command) {
-      delegate.setDomainCommand(command);
-   }
-   
+
    @Override
    public String getName() {
       return delegate.getName();

@@ -7,29 +7,61 @@ import com.google.inject.Module;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.command.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 public class CreateProtocolbufferMessagesCommandTest {
 
-   private CreateProtocolbufferMessagesCommandGuiceWrapper cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
+   private IJellyFishCommand cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
+   
+   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
+   private IParameter<String> parameter = Mockito.mock(IParameter.class);
 
    private PrintStreamLogService logger = new PrintStreamLogService();
 
    @Before
-   public void setup() {
+   public void setup() throws IOException{
+      Path sdDir = Paths.get("src", "test", "sd");
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
+      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
+      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
+      IParsingResult result = sdService.parseFiles(sdFiles);
+      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
+      ISystemDescriptor sd = result.getSystemDescriptor();
+      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
    public void testCommand() {
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameter(parameter);
       
+      Mockito.when(options.getParameters()).thenReturn(collection);
+      
+      cmd.run(options);
    }
    
    private static final Module LOG_SERVICE_MODULE = new AbstractModule() {
