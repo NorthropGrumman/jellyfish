@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static junit.framework.TestCase.assertEquals;
@@ -69,8 +70,8 @@ public class BootstrapCommandProviderTest {
       when(command.getName()).thenReturn("create-java-bundle");
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      collection.addParameter(new DefaultParameter("outputDir").setValue("//does//not//matter//"));
-      when(parameterService.parseParameters(Arrays.asList("-DoutputDir=//does//not//matter//")))
+      collection.addParameter(new DefaultParameter<>("outputDir", "//does//not//matter//"));
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=//does//not//matter//")))
                .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
