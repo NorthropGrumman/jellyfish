@@ -49,7 +49,7 @@ public class CreateJavaServiceConnectorCommandTest {
       propertyModelName = "models.testModelsProp";
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
-      cmd.setTemplateService(injector.getInstance(ITemplateService.class));
+      //cmd.setTemplateService(injector.getInstance(ITemplateService.class));
    }
 
    /*
@@ -62,11 +62,10 @@ public class CreateJavaServiceConnectorCommandTest {
 
       final String model = "models.testModels";
 
-      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model};
-
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
-      checkCommandOutput(model, null, null);
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY,
+                 CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model);
+      checkCommandOutput(model, CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID, CreateJavaServiceConnectorCommand.DEFAULT_ARTIFACT_ID);
    }
 
    /*
@@ -77,16 +76,16 @@ public class CreateJavaServiceConnectorCommandTest {
    public void testCommandWithOptionalParameters() throws IOException {
       createProperties();
 
-      final String group = CreateJavaServiceConnectorCommand.DEFAULT_GROUP_ID;
+      final String group = "com.ngc.seaside";
       final String artifact = "testArtifact.connector";
       final String model = "models.testModels";
 
-      String parameters = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                           CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
-                           CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
-                           CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY,
+                 CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
+                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
 
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
       checkCommandOutput(model, group, artifact);
    }
 
@@ -105,28 +104,25 @@ public class CreateJavaServiceConnectorCommandTest {
       final String artifact = "testmodel.model";
       final String model = "TestCommand1Command";
 
-      String parameters1 = {CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
-                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
-                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
-
-      String parameters2 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
-                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
-
-      String parameters3 = {CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                            CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
-                            CreateJavaServiceConnectorCommand.GROUPID_PROPERTY, group,
-                            CreateJavaServiceConnectorCommand.ARTIFACT_PROPERTY, artifact};
-
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters1);
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY,
+                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
+                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
       outputStream.flush();
       Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
       outputStream.reset();
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters2);
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY,
+                 CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
+                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
       outputStream.flush();
       Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
       outputStream.reset();
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters3);
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY,
+                 CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
+                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
+                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
       checkCommandOutput(model, group, artifact);
    }
 
@@ -142,9 +138,7 @@ public class CreateJavaServiceConnectorCommandTest {
       PrintStream ps = new PrintStream(outputStream);
       System.setOut(ps);
 
-      String parameters = "";
-
-      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, parameters);
+      runCommand(CreateJavaServiceConnectorCommand.COMMAND_NAME_PROPERTY, "");
       outputStream.flush();
       Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
       Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
@@ -165,7 +159,7 @@ public class CreateJavaServiceConnectorCommandTest {
          collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIR_PROPERTY)
+      DefaultParameter outputDirectory = new DefaultParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
             .setValue(outputDir.toString());
       collection.addParameter(outputDirectory);
 
@@ -215,7 +209,7 @@ public class CreateJavaServiceConnectorCommandTest {
       Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualArtifactId.length+"\'strings instead of 1", actualArtifactId.length == 1);
       Assert.assertEquals("Expected groupId does not match the actual artifactId", '.' + expectedArtifactId, actualArtifactId[0]);
       //Check that the groupId is correct, and assuming it has a trailing '.'
-      Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualGroupId.length+"\'strings instead of 1", actualGroupId.length == 1)
+      Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualGroupId.length+"\'strings instead of 1", actualGroupId.length == 1);
       Assert.assertEquals("Expected groupId does not match the actual groupId", expectedGroupId + '.', actualGroupId[0]);
 
       //Check that the modelName is correct

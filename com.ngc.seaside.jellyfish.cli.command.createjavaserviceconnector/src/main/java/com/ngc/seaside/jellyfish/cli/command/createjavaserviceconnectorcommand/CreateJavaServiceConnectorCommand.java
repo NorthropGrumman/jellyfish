@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnectorcommand;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -21,7 +22,11 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-service-connector";
    private static final IUsage USAGE = createUsage();
 
-   public static final String EXAMPLE_PROPERTY = "example";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
+   public static final String MODEL_PROPERTY = "model";
+   public static final String GROUP_ID_PROPERTY = "groupId";
+   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   public static final String COMMAND_NAME_PROPERTY = "commandName";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -38,6 +43,9 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameters(commandOptions.getParameters().getAllParameters());
+
       // TODO Auto-generated method stub
    }
    
@@ -91,8 +99,15 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      // TODO Auto-generated method stub
-      return new DefaultUsage("Description of create-java-service-connector command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
+      return new DefaultUsage(
+            "Creates a new JellyFish Service Connector project.",
+            new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("The directory to generate the command project")
+                  .setRequired(false),
+            new DefaultParameter(MODEL_PROPERTY).setDescription("The fully qualified name of the model to generate connectors for")
+                  .setRequired(false),
+            new DefaultParameter(GROUP_ID_PROPERTY)
+                  .setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
+            new DefaultParameter(ARTIFACT_ID_PROPERTY)
+                  .setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false));
    }
-
 }
