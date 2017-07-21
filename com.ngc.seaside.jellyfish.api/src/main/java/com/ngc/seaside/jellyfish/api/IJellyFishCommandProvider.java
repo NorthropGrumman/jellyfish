@@ -13,7 +13,7 @@ public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCo
 
    /**
     * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith(IJellyFishCommandOptions,
-    * Collection) mergeWith) to easily manage options.
+    * Collection) mergeWith} to easily manage options.
     *
     * @param command        the name of the command to run
     * @param commandOptions the options to run the command with
