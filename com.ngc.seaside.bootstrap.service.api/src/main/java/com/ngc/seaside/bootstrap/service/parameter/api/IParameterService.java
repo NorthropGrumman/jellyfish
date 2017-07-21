@@ -30,7 +30,7 @@ public interface IParameterService {
     * @param parameters the map of key value pairs.
     * @return the collection.
     */
-   IParameterCollection parseParameters(Map<String, String> parameters);
+   IParameterCollection parseParameters(Map<String, ?> parameters);
 
    /**
     * Determine if the usage is satisfied by the given collection. This means that all the required
