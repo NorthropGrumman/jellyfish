@@ -1,0 +1,52 @@
+## Get list of super types
+#set ($dataTypes = [$data])
+#foreach ($i in [0..100000])
+#if (${dataTypes[0].getSuperDataType().isPresent()})
+#set ($discard = $dataTypes.add(0, ${dataTypes[0].getSuperDataType().get()}))
+#else
+#break
+#end
+#end
+## Get list of all fields
+#set ($fields = [])
+#foreach ($dataType in $dataTypes)
+#foreach ($field in ${dataType.getFields()})
+#set ($discard = $fields.add($field))
+#end
+#end
+syntax = "proto3";
+
+package ${data.getParent().getName()};
+
+option java_multiple_files = true;
+
+#foreach ($field in $fields)
+#if (${field.getType()} == "DATA")
+#set ($reference = ${field.getReferencedDataType()})
+import "${reference.getFullyQualifiedName().replace('.', '/')}.proto";
+#end
+#end
+#if ($reference)
+
+#end
+message ${data.getName()} {
+#foreach ($field in $fields)
+#if (${field.getType()} == "BOOLEAN")
+#set ($type = "bool")
+#elseif (${field.getType()} == "FLOAT")
+#set ($type = "float")
+#elseif (${field.getType()} == "INT")
+#set ($type = "sint32")
+#elseif (${field.getType()} == "STRING")
+#set ($type = "string")
+#elseif (${field.getType()} == "DATA")
+#set ($type = ${field.getReferencedDataType().getFullyQualifiedName()})
+#end
+#if (${field.getCardinality()} == "MANY")
+#set ($cardinality = "repeated ")
+#elseif (${field.getCardinality()} == "SINGLE")
+#set ($cardinality = "")
+#end
+   ${cardinality}$type ${field.getName()} = $foreach.count;
+#end
+}
