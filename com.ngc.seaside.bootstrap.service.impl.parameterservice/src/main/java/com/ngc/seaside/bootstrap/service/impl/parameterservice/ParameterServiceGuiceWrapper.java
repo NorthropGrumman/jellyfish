@@ -33,7 +33,7 @@ public class ParameterServiceGuiceWrapper implements IParameterService {
    }
 
    @Override
-   public IParameterCollection parseParameters(Map<String, String> parameters) {
+   public IParameterCollection parseParameters(Map<String, ?> parameters) {
       return delegate.parseParameters(parameters);
    }
 

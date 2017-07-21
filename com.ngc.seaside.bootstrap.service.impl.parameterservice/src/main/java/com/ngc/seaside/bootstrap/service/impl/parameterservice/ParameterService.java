@@ -57,7 +57,7 @@ public class ParameterService implements IParameterService {
             //take everything after the equals for the value
             String value = eachParameterArg.split("=")[VALUE_INDEX].trim();
 
-            parameterCollection.addParameter(new DefaultParameter(name).setValue(value));
+            parameterCollection.addParameter(new DefaultParameter<>(name, value));
          } else {
             logService.warn(getClass(), "Unable to parse parameter '%s'", eachParameterArg);
          }
@@ -66,15 +66,14 @@ public class ParameterService implements IParameterService {
    }
 
    @Override
-   public IParameterCollection parseParameters(Map<String, String> parameters) {
+   public IParameterCollection parseParameters(Map<String, ?> parameters) {
       //if they are empty, we will just return an empty collection. but a null parameter being passed in might
       //not be the intended outcome.
       Preconditions.checkNotNull(parameters, "The input parameters must not be null.");
 
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
-      for(Map.Entry<String, String> entry : parameters.entrySet()) {
-         parameterCollection.addParameter(new DefaultParameter(
-                  entry.getKey()).setValue(entry.getValue()));
+      for(Map.Entry<String, ?> entry : parameters.entrySet()) {
+         parameterCollection.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
       }
 
       return parameterCollection;
