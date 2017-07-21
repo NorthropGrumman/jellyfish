@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -25,7 +24,6 @@ import static org.mockito.Mockito.when;
 
 public class CreateJavaDistributionCommandTest {
    private CreateJavaDistributionCommand fixture = new CreateJavaDistributionCommand();
-   private ILogService logService;
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
@@ -33,9 +31,6 @@ public class CreateJavaDistributionCommandTest {
 
    @Before
    public void setup() throws IOException {
-      // Setup test resources
-      logService = new PrintStreamLogService();
-
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
@@ -46,7 +41,7 @@ public class CreateJavaDistributionCommandTest {
       when(model.getName()).thenReturn("Model");
 
       // Setup class under test
-      fixture.setLogService(logService);
+      fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
    }
 
@@ -96,10 +91,8 @@ public class CreateJavaDistributionCommandTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
       }
-
-      DefaultParameterCollection test = mock(DefaultParameterCollection.class);
 
       when(options.getParameters()).thenReturn(collection);
       fixture.run(options);
