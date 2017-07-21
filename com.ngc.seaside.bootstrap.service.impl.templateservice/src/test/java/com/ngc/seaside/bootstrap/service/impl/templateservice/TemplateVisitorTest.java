@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,12 +36,13 @@ public class TemplateVisitorTest {
    public void setup() throws IOException, URISyntaxException {
       templateIgnoreComponent = mock(TemplateIgnoreComponent.class);
 
-      Map<String, String> parameterAndValues = new LinkedHashMap<>();
+      Map<String, Object> parameterAndValues = new LinkedHashMap<>();
       parameterAndValues.put("classname", "MyClass");
       parameterAndValues.put("groupId", "com.ngc.seaside");
       parameterAndValues.put("artifactId", "mybundle");
       parameterAndValues.put("commandName", "my-bundle");
       parameterAndValues.put("package", "com.ngc.seaside.mybundle");
+      parameterAndValues.put("pojo", new TestablePojo("Bob", "Smith"));
 
       File outputDirectory = testFolder.newFolder("output");
       outputFolder = Paths.get(outputDirectory.getAbsolutePath());
@@ -51,7 +51,6 @@ public class TemplateVisitorTest {
       Path visitorResourcePath = Paths.get(visitorResourceURL.toURI());
 
       inputFolder = Paths.get(visitorResourcePath.toString(), "templateContent");
-
 
       fixture = new TemplateVisitor(parameterAndValues,
                                     inputFolder,

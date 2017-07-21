@@ -48,7 +48,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
     *                                again
     * @param templateIgnoreComponent used to check files that should be copied instead of evaluated by velocity.
     */
-   public TemplateVisitor(Map<String, String> parametersAndValues,
+   public TemplateVisitor(Map<String, ?> parametersAndValues,
                           Path inputFolder,
                           Path outputFolder,
                           boolean clean,
@@ -61,7 +61,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       engine.setProperty("runtime.references.strict", true);
       engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
                          "org.apache.velocity.runtime.log.NullLogSystem");
-      for (Map.Entry<String, String> entry : parametersAndValues.entrySet()) {
+      for (Map.Entry<String, ?> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
       context.put("Template", TemplateVisitor.class);

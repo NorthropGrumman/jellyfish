@@ -8,6 +8,7 @@ import com.ngc.seaside.bootstrap.service.property.api.IProperties;
 import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.junit.After;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
+@SuppressWarnings("unchecked")
 public class TemplateServiceTest {
 
    private ILogService logService;
@@ -46,7 +48,7 @@ public class TemplateServiceTest {
    private IPromptUserService promptUserService;
    private IPropertyService propertyService;
 
-   private TemplateService delegate;
+   private TemplateService templateService;
 
    @Rule
    public TemporaryFolder testFolder = new TemporaryFolder();
@@ -65,20 +67,20 @@ public class TemplateServiceTest {
       promptUserService = mock(IPromptUserService.class);
       propertyService = mock(IPropertyService.class);
 
-      delegate = new TemplateService();
-      delegate.setLogService(logService);
-      delegate.setResourceService(resourceService);
-      delegate.setPromptUserService(promptUserService);
-      delegate.setPropertyService(propertyService);
-      delegate.activate();
+      templateService = new TemplateService();
+      templateService.setLogService(logService);
+      templateService.setResourceService(resourceService);
+      templateService.setPromptUserService(promptUserService);
+      templateService.setPropertyService(propertyService);
+      templateService.activate();
    }
 
    @After
    public void shutdown() {
-      delegate.deactivate();
-      delegate.removeLogService(logService);
-      delegate.removePromptUserService(promptUserService);
-      delegate.removeResourceService(resourceService);
+      templateService.deactivate();
+      templateService.removeLogService(logService);
+      templateService.removePromptUserService(promptUserService);
+      templateService.removeResourceService(resourceService);
    }
 
    /**
@@ -86,10 +88,10 @@ public class TemplateServiceTest {
     */
    @Test
    public void testTemplateExists() {
-      assertFalse(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalid"));
-      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
-      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
-      assertTrue(delegate.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
+      assertFalse(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalid"));
+      assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
+      assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
+      assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
    }
 
    /**
@@ -117,12 +119,12 @@ public class TemplateServiceTest {
       when(promptUserService.prompt(
                parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
 
-      IParameterCollection collection = mock(IParameterCollection.class);
-      when(collection.containsParameter("classname")).thenReturn(true);
-      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyUserClass"));
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameter(new DefaultParameter<>("classname").setValue("MyUserClass"));
+      collection.addParameter(new DefaultParameter<>("pojo", new TestablePojo("Bob", "Smith")));
 
-      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.example",
-                      collection, Paths.get(outputDirectory.getAbsolutePath()), false);
+      templateService.unpack("com.ngc.seaside.bootstrap.command.impl.example",
+                             collection, Paths.get(outputDirectory.getAbsolutePath()), false);
 
       //verify that the prompt service isn't called for the default parameter that we passed in for classname!
       verify(promptUserService, times(4))
@@ -150,10 +152,10 @@ public class TemplateServiceTest {
       when(promptUserService.prompt(anyString(), anyString(), any())).thenReturn("value");
 
       try {
-         delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofile",
-                         collection,
-                         Paths.get(outputDirectory.getAbsolutePath()),
-                         false);
+         templateService.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofile",
+                                collection,
+                                Paths.get(outputDirectory.getAbsolutePath()),
+                                false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofile");
@@ -162,10 +164,10 @@ public class TemplateServiceTest {
       }
 
       try {
-         delegate.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofolder",
-                         collection,
-                         Paths.get(outputDirectory.getAbsolutePath()),
-                         false);
+         templateService.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofolder",
+                                collection,
+                                Paths.get(outputDirectory.getAbsolutePath()),
+                                false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
                       "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");
@@ -207,8 +209,8 @@ public class TemplateServiceTest {
       when(collection.getParameter("package")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside.mybundle"));
 
 
-      delegate.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",
-                      collection, Paths.get(outputDirectory.getAbsolutePath()), false);
+      templateService.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",
+                             collection, Paths.get(outputDirectory.getAbsolutePath()), false);
 
       //verify that the prompt service isn't called for the default parameter that we passed in for classname!
       verify(promptUserService, never()).prompt(anyString(), anyString(), any());

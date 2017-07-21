@@ -9,6 +9,7 @@ import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
@@ -146,8 +147,10 @@ public class TemplateService implements ITemplateService {
    }
 
    @Override
-   public ITemplateOutput unpack(
-            String templateName, IParameterCollection parameters, Path outputDirectory, boolean clean)
+   public ITemplateOutput unpack(String templateName,
+                                 IParameterCollection parameters,
+                                 Path outputDirectory,
+                                 boolean clean)
             throws TemplateServiceException {
       ZipFile zipFile = null;
       ITemplateOutput output;
@@ -180,8 +183,7 @@ public class TemplateService implements ITemplateService {
             throw new TemplateServiceException(message);
          }
 
-         TemplateIgnoreComponent
-                  templateIgnoreComponent =
+         TemplateIgnoreComponent templateIgnoreComponent =
                   new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER, logService);
          templateIgnoreComponent.parse();
 
@@ -227,9 +229,9 @@ public class TemplateService implements ITemplateService {
                propertyService.load(templateFolder.resolve(TEMPLATE_PROPERTIES));
 
       // For each parameter query the user for its value if that property isn't already in the parameters collection.
-      Map<String, String> parametersAndValues = new HashMap<>();
+      Map<String, Object> parametersAndValues = new HashMap<>();
       for (String parameter : parametersAndDefaults.getKeys()) {
-         String value;
+         Object value;
          if (parameters.containsParameter(parameter)) {
             //if the value is already passed in by the user, don't ask them for it again.
             value = parameters.getParameter(parameter).getValue();
@@ -239,12 +241,17 @@ public class TemplateService implements ITemplateService {
          }
 
          if (!parametersAndDefaults.get(parameter).equals(value)) {
-            parametersAndDefaults.put(parameter, value);
+            parametersAndDefaults.put(parameter, value.toString());
             parametersAndDefaults.evaluate();
          }
 
          parametersAndValues.put(parameter, value);
       }
+
+      // Insert any remaining parameters into the map so they are available to Velocity.
+      // If the parameter is not already in the map, it must have not been referenced in the property value.
+      // Even if that is the case, we still want to provide it.
+      parameters.getAllParameters().forEach(p -> parametersAndValues.putIfAbsent(p.getName(), p.getValue()));
 
       TemplateVisitor visitor = new TemplateVisitor(parametersAndValues,
                                                     templateFolder.resolve(TEMPLATE_FOLDER),

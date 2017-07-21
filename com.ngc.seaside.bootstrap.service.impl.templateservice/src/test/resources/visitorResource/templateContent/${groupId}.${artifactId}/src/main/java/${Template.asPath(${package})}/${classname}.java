@@ -24,6 +24,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @Component(service = IBootstrapCommand.class)
 public class ${classname} implements IBootstrapCommand {
 
+   private static final String FIRSTNAME = "${pojo.firstName}";
+   private static final String LASTNAME = "${pojo.lastName}";
+
    private static final String NAME = "${commandName}";
    private static final IUsage USAGE = createUsage();
 
