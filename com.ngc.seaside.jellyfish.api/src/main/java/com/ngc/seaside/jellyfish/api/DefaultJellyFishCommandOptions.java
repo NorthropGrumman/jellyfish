@@ -49,6 +49,17 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
       return Objects.hash(super.hashCode(), systemDescriptor);
    }
 
+   /**
+    * Returns an {@code IJellyFishCommandOptions} with all the same parameters and system descriptor as the provided
+    * options but includes the additional parameters as well.  If a parameter in the original options has the same name
+    * as an additional parameter supplied as input to this method, the parameter in teh original options is replaced
+    * with the new parameter.
+    *
+    * @param options    the options that contains a system descriptor and parameters
+    * @param parameter  an additional parameter to include in the result
+    * @param parameters optional parameters to include in the result
+    * @return a {@code IJellyFishCommandOptions} with additional parameters.
+    */
    public static IJellyFishCommandOptions mergeWith(IJellyFishCommandOptions options,
                                                     IParameter parameter,
                                                     IParameter... parameters) {
@@ -63,6 +74,16 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
       return mergeWith(options, params);
    }
 
+   /**
+    * Returns an {@code IJellyFishCommandOptions} with all the same parameters and system descriptor as the provided
+    * options but includes the additional parameters as well.  If a parameter in the original options has the same name
+    * as an additional parameter supplied as input to this method, the parameter in teh original options is replaced
+    * with the new parameter.
+    *
+    * @param options    the options that contains a system descriptor and parameters
+    * @param parameters additional parameters to include in the result
+    * @return a {@code IJellyFishCommandOptions} with additional parameters.
+    */
    public static IJellyFishCommandOptions mergeWith(IJellyFishCommandOptions options,
                                                     Collection<IParameter> parameters) {
       if (options == null) {
@@ -88,6 +109,6 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
    }
 
    private static boolean doesContainParameterNamed(String name, Collection<IParameter> parameters) {
-      return parameters.stream().anyMatch(p -> p.getName().equals(name));
+      return parameters.stream().noneMatch(p -> p.getName().equals(name));
    }
 }
