@@ -27,15 +27,15 @@ import java.util.stream.Collectors;
 public class DefaultUsage implements IUsage {
 
    private String description;
-   private List<IParameter> allParameters = new ArrayList<>();
-   private List<IParameter> requiredParameters = new ArrayList<>();
+   private List<IParameter<?>> allParameters = new ArrayList<>();
+   private List<IParameter<?>> requiredParameters = new ArrayList<>();
 
    /**
     * Constructor.
     *
     * @param parameters Array of parameters without any brackets. Can be null.
     */
-   public DefaultUsage(String description, IParameter... parameters) {
+   public DefaultUsage(String description, IParameter<?>... parameters) {
       this.description = description;
       if (parameters != null) {
          this.allParameters = Arrays.asList(parameters);
@@ -49,7 +49,7 @@ public class DefaultUsage implements IUsage {
     *
     * @param parameters List of parameters. Can be null.
     */
-   public DefaultUsage(String description, List<IParameter> parameters) {
+   public DefaultUsage(String description, List<IParameter<?>> parameters) {
       if (parameters != null) {
          this.allParameters = parameters;
          requiredParameters.addAll(this.allParameters.stream().filter(IParameter::isRequired)
@@ -65,12 +65,12 @@ public class DefaultUsage implements IUsage {
    }
 
    @Override
-   public List<IParameter> getAllParameters() {
+   public List<IParameter<?>> getAllParameters() {
       return allParameters;
    }
 
    @Override
-   public List<IParameter> getRequiredParameters() {
+   public List<IParameter<?>> getRequiredParameters() {
       return requiredParameters;
    }
 

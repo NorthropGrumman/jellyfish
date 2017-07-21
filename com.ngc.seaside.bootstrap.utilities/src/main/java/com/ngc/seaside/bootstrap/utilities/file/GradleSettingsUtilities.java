@@ -34,7 +34,7 @@ public class GradleSettingsUtilities {
       if (parameters.containsParameter(OUTPUT_DIR_PROPERTY) &&
           parameters.containsParameter(GROUP_ID_PROPERTY) &&
           parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getValue());
+         Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
          Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
 
          String bundleName = String.format("%s.%s",

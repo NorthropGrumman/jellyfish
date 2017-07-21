@@ -32,7 +32,7 @@ public interface IParameterCollection {
     * @param parameterName the name of the parameter.
     * @return The parameter by the given name or null if the parameter was not found.
     */
-   IParameter getParameter(String parameterName);
+   IParameter<?> getParameter(String parameterName);
 
    /**
     * Get an list of the parameters in the order in which the user entered them.
@@ -40,7 +40,7 @@ public interface IParameterCollection {
     *
     * @return the list of parameters.
     */
-   List<IParameter> getAllParameters();
+   List<IParameter<?>> getAllParameters();
 
    /**
     * This method will allow you to get the parameters mapped by the parameter's name.
@@ -51,5 +51,5 @@ public interface IParameterCollection {
     * @see #getParameter(String)
     * @see #getAllParameters()
     */
-   Map<String, IParameter> getParameterMap();
+   Map<String, IParameter<?>> getParameterMap();
 }
