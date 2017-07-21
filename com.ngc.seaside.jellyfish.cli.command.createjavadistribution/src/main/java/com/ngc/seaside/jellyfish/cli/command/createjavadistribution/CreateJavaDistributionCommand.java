@@ -32,8 +32,9 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String MODEL_PROPERTY = "model";
-   public static final String CLASSNAME_PROPERTY = "classname";
+   public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
    public static final String CLEAN_PROPERTY = "clean";
+
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
    private ILogService logService;
@@ -91,7 +92,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
       } else {
-         artifactId = model.getName().toLowerCase() + "distribution";
+         artifactId = model.getName().toLowerCase() + DEFAULT_PACKAGE_SUFFIX;
       }
       return artifactId;
    }
@@ -125,6 +126,19 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       return booleanValue;
    }
 
+   /**
+    * Returns the package for the domain project.
+    *
+    * @param groupId    domain groupId
+    * @param artifactId domain artifactId
+    * @return the package for the domain project
+    */
+   private static String getPackageName(String groupId, String artifactId) {
+      final String pkg;
+      pkg = groupId + '.' + artifactId + '.' + DEFAULT_PACKAGE_SUFFIX;
+      return pkg;
+   }
+
    @Override
    public String getName() {
       return NAME;
@@ -139,10 +153,12 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       IParameterCollection parameters = commandOptions.getParameters();
       final IModel model = getModelProperty(commandOptions, parameters);
+      final String modelName = model.getName();
       final String groupId = getGroupIdProperty(parameters, model);
       final String artifactId = getArtifactIdProperty(parameters, model);
       final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
-      //final Path outputDir = getOutputDirectoryProperty(parameters, model, clean);
+      final String packageName = getPackageName(groupId, artifactId);
+      final Path outputDir = getOutputDirectoryProperty(parameters, packageName, clean);
 
    }
 
@@ -197,7 +213,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     * @return the {@link IModel}
     * @throws CommandException if the model name is invalid or missing
     */
-   IModel getModelProperty(IJellyFishCommandOptions commandOptions, IParameterCollection parameters) {
+   private IModel getModelProperty(IJellyFishCommandOptions commandOptions, IParameterCollection parameters) {
       ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
       final String modelName;
       if (parameters.containsParameter(MODEL_PROPERTY)) {
