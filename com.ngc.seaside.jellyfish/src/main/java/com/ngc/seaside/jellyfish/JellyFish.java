@@ -11,7 +11,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderModule;
+import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProviderGuiceWrapper;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class JellyFish {
    private void doRun(String[] args) {
       Injector injector = getInjector();
       // Note the module itself is an implementation of IJellyFishCommandProvider.
-      jellyFishCommandProvider = injector.getInstance(JellyFishCommandProviderModule.class);
+      jellyFishCommandProvider = injector.getInstance(JellyFishCommandProviderGuiceWrapper.class);
       jellyFishCommandProvider.run(args);
    }
 
