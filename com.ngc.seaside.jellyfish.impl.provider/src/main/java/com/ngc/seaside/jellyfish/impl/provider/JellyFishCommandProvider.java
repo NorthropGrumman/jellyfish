@@ -18,6 +18,7 @@ import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+// TODO TH: the help command should not be imported into this project.
 import com.ngc.seaside.jellyfish.cli.command.help.HelpCommand;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -115,7 +116,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          throw new IllegalArgumentException("No command provided");
       } else {
          if (arguments.length == 1) {
-            validatedArgs = new String[] { arguments[0], "-DinputDir=" + System.getProperty("user.dir") };
+            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
          } else {
             validatedArgs = arguments;
          }
@@ -123,8 +124,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       String commandName = validatedArgs[0];
       logService.trace(getClass(), "Running command '%s'", commandName);
-      IJellyFishCommand command = lookupCommand(validatedArgs[0]);
 
+      IJellyFishCommand command = lookupCommand(validatedArgs[0]);
       if (command == null) {
          logService.error(getClass(), "Unable to find command '%s'", commandName);
          return;
@@ -137,6 +138,16 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IJellyFishCommandOptions jellyFishCommandOptions = createCommandOptions(userInputParameters, templateParameters);
 
       command.run(jellyFishCommandOptions);
+   }
+
+   @Override
+   public void run(String command, IJellyFishCommandOptions commandOptions) {
+      Preconditions.checkNotNull(command, "command may not be null!");
+      Preconditions.checkArgument(!command.trim().isEmpty(), "command may not be empty!");
+      Preconditions.checkNotNull(commandOptions, "commandOptions may not be null!");
+      IJellyFishCommand c = lookupCommand(command);
+      Preconditions.checkArgument(c != null, "could not find command named %s!", command);
+      c.run(commandOptions);
    }
 
    /**
