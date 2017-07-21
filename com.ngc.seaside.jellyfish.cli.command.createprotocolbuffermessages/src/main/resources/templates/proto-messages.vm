@@ -1,52 +1,41 @@
-## Get list of super types
-#set ($dataTypes = [$data])
-#foreach ($i in [0..100000])
-#if (${dataTypes[0].getSuperDataType().isPresent()})
-#set ($discard = $dataTypes.add(0, ${dataTypes[0].getSuperDataType().get()}))
-#else
-#break
-#end
-#end
-## Get list of all fields
-#set ($fields = [])
-#foreach ($dataType in $dataTypes)
-#foreach ($field in ${dataType.getFields()})
-#set ($discard = $fields.add($field))
-#end
-#end
 syntax = "proto3";
 
-package ${data.getParent().getName()};
+package $domain.packagename;
 
 option java_multiple_files = true;
 
-#foreach ($field in $fields)
-#if (${field.getType()} == "DATA")
-#set ($reference = ${field.getReferencedDataType()})
-import "${reference.getFullyQualifiedName().replace('.', '/')}.proto";
+#foreach ($import in $domain.superClassImports)
+import "${import.replace('.', '/')}.proto";
 #end
+#foreach ($import in $domain.imports)
+import "${import.replace('.', '/')}.proto";
 #end
-#if ($reference)
+#if ($import)
 
 #end
-message ${data.getName()} {
-#foreach ($field in $fields)
-#if (${field.getType()} == "BOOLEAN")
+message $domain.classname {
+#set ($properties = [])
+#set ($discard = $properties.addAll($domain.superClassProperties))
+#set ($discard = $properties.addAll($domain.properties))
+#set ($index = 1)
+#foreach ($property in $properties)
+#if ($property.type == "boolean")
 #set ($type = "bool")
-#elseif (${field.getType()} == "FLOAT")
+#elseif ($property.type == "float")
 #set ($type = "float")
-#elseif (${field.getType()} == "INT")
+#elseif ($property.type == "int")
 #set ($type = "sint32")
-#elseif (${field.getType()} == "STRING")
+#elseif ($property.type == "String")
 #set ($type = "string")
-#elseif (${field.getType()} == "DATA")
-#set ($type = ${field.getReferencedDataType().getFullyQualifiedName()})
+#else
+#set ($type = $property.type)
 #end
-#if (${field.getCardinality()} == "MANY")
+#if ($property.multiple)
 #set ($cardinality = "repeated ")
-#elseif (${field.getCardinality()} == "SINGLE")
+#else
 #set ($cardinality = "")
 #end
-   ${cardinality}$type ${field.getName()} = $foreach.count;
+   ${cardinality}$type $property.name = $index;
+#set ($index = $index + 1)
 #end
 }
