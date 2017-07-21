@@ -303,7 +303,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          try {
             Path outputPath = Paths.get(".");
             if (userSuppliedParameters.containsParameter("outputDir")) {
-               outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getValue());
+               outputPath = Paths.get(userSuppliedParameters.getParameter("outputDir").getStringValue());
             }
 
             logService.trace(getClass(),
@@ -333,9 +333,9 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter("outputDirectory").setValue(outputPath.toString());
-      DefaultParameter templateOutputDir = new DefaultParameter("templateFinalOutputDirectory")
-               .setValue(output.getOutputPath().toString());
+      DefaultParameter outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
+      DefaultParameter templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
+                                                                  output.getOutputPath().toString());
       collection.addParameter(outputDir);
       collection.addParameter(templateOutputDir);
 
@@ -392,7 +392,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       if (inputDir == null) {
          path = Paths.get(System.getProperty("user.dir"));
       } else {
-         path = Paths.get(inputDir.getValue());
+         path = Paths.get(inputDir.getStringValue());
       }
 
       try {
