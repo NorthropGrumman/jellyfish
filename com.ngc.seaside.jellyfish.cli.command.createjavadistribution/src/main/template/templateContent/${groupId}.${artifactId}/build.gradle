@@ -10,10 +10,10 @@ seasideDistribution {
 }
 
 dependencies {
-   bundles project(":${modelname}.events")
-   bundles project(":${modelname}.domain")
-   bundles project(":${modelname}.connector")
-   bundles project(":${modelname}.config")
-   bundles project(":${modelname}.base")
-   bundles project(":${modelname}")
+   bundles project(":${modelname.toLowerCase()}.events")
+   bundles project(":${modelname.toLowerCase()}.domain")
+   bundles project(":${modelname.toLowerCase()}.connector")
+   bundles project(":${modelname.toLowerCase()}.config")
+   bundles project(":${modelname.toLowerCase()}.base")
+   bundles project(":${modelname.toLowerCase()}")
 }

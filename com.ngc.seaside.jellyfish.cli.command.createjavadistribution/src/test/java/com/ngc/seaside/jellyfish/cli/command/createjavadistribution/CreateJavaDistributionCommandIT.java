@@ -104,8 +104,9 @@ public class CreateJavaDistributionCommandIT {
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
-      when(model.getParent().getName()).thenReturn("com.ngc.seaside");
+      when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
       when(model.getName()).thenReturn("Model");
+      when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
 
       fixture.setLogService(injector.getInstance(ILogService.class));
       fixture.setPromptService(promptUserService);
@@ -149,12 +150,12 @@ public class CreateJavaDistributionCommandIT {
       String contents = new String(Files.readAllBytes(buildFile));
 
       // Verify that model is injected
-      Assert.assertTrue(contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]"));
-      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]");
+      Assert.assertTrue(contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
+      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]");
       int endLength = contents.length();
       String contents2 = contents.substring(startLength, endLength);
-      Assert.assertTrue(contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]"));
-      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getName() + ".log\""));
+      Assert.assertTrue(contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
+      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {
@@ -180,11 +181,11 @@ public class CreateJavaDistributionCommandIT {
 
       // Verify dependencies block
       Assert.assertTrue(contents.contains("dependencies {"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".events\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".domain\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".connector\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".base\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + "\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".events\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".domain\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".connector\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".base\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + "\")"));
    }
 
    private void createSettings() throws IOException {
