@@ -44,7 +44,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
-            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+         .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
@@ -57,18 +57,18 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage("Generate the gradle distribution project for a Java application",
                               new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID")
-                                       .setRequired(false),
+                                    .setRequired(false),
                               new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's artifact ID")
-                                       .setRequired(false),
+                                    .setRequired(false),
                               new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                       .setDescription("Base directory in which to output the project")
-                                       .setRequired(true),
+                                    .setDescription("Base directory in which to output the project")
+                                    .setRequired(true),
                               new DefaultParameter(MODEL_PROPERTY)
-                                       .setDescription("The fully qualified path to the system descriptor model")
-                                       .setRequired(true),
+                                    .setDescription("The fully qualified path to the system descriptor model")
+                                    .setRequired(true),
                               new DefaultParameter(CLEAN_PROPERTY).setDescription(
-                                       "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                       .setRequired(false)
+                                    "If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                                    .setRequired(false)
       );
    }
 
@@ -85,14 +85,14 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       if (parameters.containsParameter(parameter)) {
          String value = parameters.getParameter(parameter).getStringValue();
          switch (value.toLowerCase()) {
-         case "true":
-            booleanValue = true;
-            break;
-         case "false":
-            booleanValue = false;
-            break;
-         default:
-            throw new CommandException(
+            case "true":
+               booleanValue = true;
+               break;
+            case "false":
+               booleanValue = false;
+               break;
+            default:
+               throw new CommandException(
                      "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
          }
       } else {
@@ -124,13 +124,13 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
       String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       final IModel model = systemDescriptor.findModel(modelId)
-               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+            .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
       parameters.addParameter(new DefaultParameter<>(CLASSNAME_PROPERTY, model.getName()));
 
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          parameters.addParameter(
-                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY, model.getName().toLowerCase() + DEFAULT_PACKAGE_SUFFIX));
+               new DefaultParameter<>(ARTIFACT_ID_PROPERTY, model.getName().toLowerCase() + DEFAULT_PACKAGE_SUFFIX));
       }
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
@@ -159,12 +159,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       }
       final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
 
-      try {
-         GradleSettingsUtilities.addProject(parameters);
-      } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
-      }
+      doAddProject(parameters);
 
       templateService.unpack("JellyFishJavaDistribution", parameters, outputDirectory, clean);
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
@@ -230,5 +225,15 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     */
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
+   }
+
+
+   protected void doAddProject(IParameterCollection parameters) {
+      try {
+         GradleSettingsUtilities.addProject(parameters);
+      } catch (FileUtilitiesException e) {
+         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
+         throw new CommandException(e);
+      }
    }
 }

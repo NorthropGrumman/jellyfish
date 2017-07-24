@@ -5,6 +5,7 @@ import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -26,13 +27,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CreateJavaDistributionCommandTest {
+
    @Rule
    public final ExpectedException exception = ExpectedException.none();
-   private CreateJavaDistributionCommand fixture = new CreateJavaDistributionCommand();
+   private CreateJavaDistributionCommand fixture;
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private IModel model = mock(Model.class);
+
+   private IParameterCollection addProjectParameters;
 
    @Before
    public void setup() throws IOException {
@@ -46,6 +50,12 @@ public class CreateJavaDistributionCommandTest {
       when(model.getName()).thenReturn("Model");
 
       // Setup class under test
+      fixture = new CreateJavaDistributionCommand() {
+         @Override
+         protected void doAddProject(IParameterCollection parameters) {
+            addProjectParameters = parameters;
+         }
+      };
       fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
    }
@@ -53,7 +63,7 @@ public class CreateJavaDistributionCommandTest {
    @Test
    public void testCommandWithoutOptionalParams() {
       // We expect an exception to be thrown because we use a mock path
-      exception.expect(CommandException.class);
+      //exception.expect(CommandException.class);
       runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path");
 
@@ -61,6 +71,7 @@ public class CreateJavaDistributionCommandTest {
       verify(options, times(1)).getSystemDescriptor();
       verify(model, times(2)).getName();
       verify(model, times(2)).getParent();
+      // TODO: verify parameters.
    }
 
    @Test
@@ -80,9 +91,9 @@ public class CreateJavaDistributionCommandTest {
    public void testCommandWithoutRequiredParams() {
 
       when(promptUserService.prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
-               .thenReturn("/just/a/mock/path");
+            .thenReturn("/just/a/mock/path");
       when(promptUserService.prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null))
-               .thenReturn("com.ngc.seaside.test.Model");
+            .thenReturn("com.ngc.seaside.test.Model");
       when(model.getName()).thenReturn("Model");
 
       // We expect an exception to be thrown because we use a mock path
