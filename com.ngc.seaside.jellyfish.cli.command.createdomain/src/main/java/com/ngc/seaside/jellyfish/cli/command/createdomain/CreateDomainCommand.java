@@ -489,22 +489,22 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
-         new DefaultParameter(PACKAGE_SUFFIX_PROPERTY)
+         new DefaultParameter<String>(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
+         new DefaultParameter<String>(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
+         new DefaultParameter<String>(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
+         new DefaultParameter<String>(PACKAGE_SUFFIX_PROPERTY)
                   .setDescription("A string to append to the end of the generated package name").setRequired(false),
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
+         new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
                   .setRequired(true),
-         new DefaultParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
+         new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
                   .setRequired(true),
-         new DefaultParameter(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
+         new DefaultParameter<String>(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
                   .setRequired(true),
-         new DefaultParameter(CLEAN_PROPERTY)
+         new DefaultParameter<String>(CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                   .setRequired(false),
-         new DefaultParameter(USE_MODEL_STRUCTURE_PROPERTY)
+         new DefaultParameter<String>(USE_MODEL_STRUCTURE_PROPERTY)
                   .setDescription(
                      "If true, uses the System Descriptor package structure for the generated domain package structure")
                   .setRequired(false));

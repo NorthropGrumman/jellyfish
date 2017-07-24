@@ -211,7 +211,7 @@ public class CreateDomainCommandTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
       Mockito.when(options.getParameters()).thenReturn(collection);
