@@ -77,10 +77,10 @@ public class CreateJavaDistributionCommandIT {
       // Setup test resources
       Properties props = System.getProperties();
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
-      Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
-      outputDir = Files.createDirectories(outputDirectory);
-      //outputDir =  Files.createTempDirectory(null);
-      //outputDir.toFile().deleteOnExit();
+      //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
+      //outputDir = Files.createDirectories(outputDirectory);
+      outputDir =  Files.createTempDirectory(null);
+      outputDir.toFile().deleteOnExit();
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
