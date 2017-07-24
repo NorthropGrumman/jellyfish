@@ -57,6 +57,7 @@ public class CreateJavaDistributionCommandIT {
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
+   private MockedTemplateService mockedTemplateService;
    private IModel model = mock(Model.class);
    private Path outputDir;
 
@@ -81,12 +82,19 @@ public class CreateJavaDistributionCommandIT {
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
       // Comment the two lines below if you wish to use a known output directory
-      outputDir =  Files.createTempDirectory(null);
+      outputDir = Files.createTempDirectory(null);
       outputDir.toFile().deleteOnExit();
 
       // Uncomment the lines below if you wish to view the output directory
       //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
       //outputDir = Files.createDirectories(outputDirectory);
+
+      // Use the testable template service.
+      mockedTemplateService = new MockedTemplateService()
+            .useRealPropertyService()
+            .useDefaultUserValues(true)
+            .setTemplateDirectory(CreateJavaDistributionCommand.class.getPackage().getName(),
+                                  Paths.get("src/main/template"));
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
@@ -99,7 +107,7 @@ public class CreateJavaDistributionCommandIT {
 
       fixture.setLogService(injector.getInstance(ILogService.class));
       fixture.setPromptService(promptUserService);
-      fixture.setTemplateService(injector.getInstance(ITemplateService.class));
+      fixture.setTemplateService(mockedTemplateService);
 
    }
 
@@ -165,7 +173,7 @@ public class CreateJavaDistributionCommandIT {
       Assert.assertTrue(contents.contains("buildDir = 'build'"));
       Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
       Assert.assertTrue(
-               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
+            contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
       Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
 
       // Verify dependencies block

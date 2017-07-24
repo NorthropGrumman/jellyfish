@@ -172,7 +172,10 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       doAddProject(parameters);
 
-      templateService.unpack("JellyFishJavaDistribution", parameters, outputDirectory, clean);
+      templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(),
+                             parameters,
+                             outputDirectory,
+                             clean);
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
                       model.getName());
    }

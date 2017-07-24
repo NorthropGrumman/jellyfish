@@ -1,3 +1,5 @@
+apply plugin: 'com.ngc.seaside.command'
+
 dependencies {
 
     compile project(":jellyfish.api")
