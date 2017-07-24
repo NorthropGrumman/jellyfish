@@ -4,7 +4,6 @@
 *.war
 
 # generated files
-bin/
 gen/
 
 # Eclipse files
@@ -24,7 +23,6 @@ out/
 .gradletasknamecache
 .gradle/
 build/
-bin/
 # Avoid ignoring Gradle wrapper jar file
 !gradle-wrapper.jar
 
@@ -32,3 +30,4 @@ bin/
 
 *.log
 *.log.*
+.gitignore
