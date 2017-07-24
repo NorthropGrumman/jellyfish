@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -68,6 +68,21 @@ public class CreateDomainCommandTest {
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
+      checkVelocity(projectDir);
+      checkDomain(projectDir);
+   }
+   
+   @Test
+   public void testWithExtensionCommand() throws IOException {
+      final String extension = "asidgoajsdig";
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+         CreateDomainCommand.EXTENSION_PROPERTY, extension);
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, extension, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -155,13 +170,13 @@ public class CreateDomainCommandTest {
       checkDomain(projectDir);
    }
 
-   private void checkGradleBuild(Path projectDir, String... exportPackages) throws IOException {
+   private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
       String contents = new String(Files.readAllBytes(buildFile));
       Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
-      for (String export : exportPackages) {
-         Assert.assertTrue("Expected \"" + export + "\" in build.gradle", contents.contains(export));
+      for (String content : fileContents) {
+         Assert.assertTrue("Expected \"" + content + "\" in build.gradle", contents.contains(content));
       }
    }
 
@@ -219,20 +234,23 @@ public class CreateDomainCommandTest {
       cmd.run(options);
    }
 
-   private static final Module LOG_SERVICE_MODULE = new AbstractModule() {
+   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
+
+         IResourceService mockResource = Mockito.mock(IResourceService.class);
+         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
+
+         bind(IResourceService.class).toInstance(mockResource);
       }
    };
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.add(LOG_SERVICE_MODULE);
+      modules.add(TEST_SERVICE_MODULE);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof LogServiceModule)) {
-            modules.add(dynamicModule);
-         }
+         modules.add(dynamicModule);
       }
 
       modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
