@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
@@ -76,20 +77,67 @@ public class CreateJavaDistributionCommandIT {
       return modules;
    }
 
+   /**
+    * @param folder must be a folder.
+    */
+   public static String printDirectoryTree(File folder) {
+      if (!folder.isDirectory()) {
+         throw new IllegalArgumentException("folder is not a Directory");
+      }
+      int indent = 0;
+      StringBuilder sb = new StringBuilder();
+      printDirectoryTree(folder, indent, sb);
+      return sb.toString();
+   }
+
+   private static void printDirectoryTree(File folder, int indent,
+                                          StringBuilder sb) {
+      if (!folder.isDirectory()) {
+         throw new IllegalArgumentException("folder is not a Directory");
+      }
+      sb.append(getIndentString(indent));
+      sb.append("+--");
+      sb.append(folder.getName());
+      sb.append("/");
+      sb.append("\n");
+      for (File file : folder.listFiles()) {
+         if (file.isDirectory()) {
+            printDirectoryTree(file, indent + 1, sb);
+         } else {
+            printFile(file, indent + 1, sb);
+         }
+      }
+
+   }
+
+   private static void printFile(File file, int indent, StringBuilder sb) {
+      sb.append(getIndentString(indent));
+      sb.append("+--");
+      sb.append(file.getName());
+      sb.append("\n");
+   }
+
+   private static String getIndentString(int indent) {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < indent; i++) {
+         sb.append("|  ");
+      }
+      return sb.toString();
+   }
+
    @Before
    public void setup() throws IOException {
       // Setup test resources
       Properties props = System.getProperties();
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
-      // Comment the two lines below if you wish to use a known output directory
-      //outputDir = Files.createTempDirectory(null);
-      //outputDir.toFile().deleteOnExit();
+      // Comment the two lines below if you wish to use a known output directory.
+      outputDir = Files.createTempDirectory(null);
+      outputDir.toFile().deleteOnExit();
 
       // Uncomment the lines below if you wish to view the output directory
       //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
-      Path outputDirectory = Paths.get("build/test-template");
-      outputDir = Files.createDirectories(outputDirectory);
+      //outputDir = Files.createDirectories(outputDirectory);
 
       // Use the testable template service.
       mockedTemplateService = new MockedTemplateService()
@@ -123,6 +171,7 @@ public class CreateJavaDistributionCommandIT {
 
       Mockito.verify(options, Mockito.times(1)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
+      System.out.println(printDirectoryTree(outputDir.toFile()));
       checkGradleBuild(outputDir);
       checkLogContents(outputDir);
    }
