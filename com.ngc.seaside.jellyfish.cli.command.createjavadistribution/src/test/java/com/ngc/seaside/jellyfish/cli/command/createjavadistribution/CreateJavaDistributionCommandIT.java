@@ -83,12 +83,13 @@ public class CreateJavaDistributionCommandIT {
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
       // Comment the two lines below if you wish to use a known output directory
-      outputDir = Files.createTempDirectory(null);
-      outputDir.toFile().deleteOnExit();
+      //outputDir = Files.createTempDirectory(null);
+      //outputDir.toFile().deleteOnExit();
 
       // Uncomment the lines below if you wish to view the output directory
       //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
-      //outputDir = Files.createDirectories(outputDirectory);
+      Path outputDirectory = Paths.get("build/test-template");
+      outputDir = Files.createDirectories(outputDirectory);
 
       // Use the testable template service.
       mockedTemplateService = new MockedTemplateService()
