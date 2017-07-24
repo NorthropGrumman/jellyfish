@@ -2,8 +2,12 @@ package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
@@ -12,7 +16,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -24,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
@@ -32,13 +36,18 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String MODEL_PROPERTY = "model";
+   public static final String CLASSNAME_PROPERTY = "classname";
+   public static final String PACKAGE_PROPERTY = "package";
    public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
    public static final String CLEAN_PROPERTY = "clean";
 
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
+   private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
+            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
    private ILogService logService;
    private IPromptUserService promptService;
+   private ITemplateService templateService;
 
    /**
     * Create the usage for this command.
@@ -61,40 +70,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
                                        "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                                        .setRequired(false)
       );
-   }
-
-   /**
-    * Returns the groupId for the domain project.
-    *
-    * @param parameters command parameters
-    * @param model      domain model
-    * @return the groupId for the domain project
-    */
-   private static String getGroupIdProperty(IParameterCollection parameters, IModel model) {
-      final String groupId;
-      if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
-      } else {
-         groupId = model.getParent().getName();
-      }
-      return groupId;
-   }
-
-   /**
-    * Returns the artifactId for the domain project.
-    *
-    * @param parameters command parameters
-    * @param model      domain model
-    * @return the artifactId for the domain project
-    */
-   private static String getArtifactIdProperty(IParameterCollection parameters, IModel model) {
-      final String artifactId;
-      if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase() + DEFAULT_PACKAGE_SUFFIX;
-      }
-      return artifactId;
    }
 
    /**
@@ -126,19 +101,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       return booleanValue;
    }
 
-   /**
-    * Returns the package for the domain project.
-    *
-    * @param groupId    domain groupId
-    * @param artifactId domain artifactId
-    * @return the package for the domain project
-    */
-   private static String getPackageName(String groupId, String artifactId) {
-      final String pkg;
-      pkg = groupId + '.' + artifactId + '.' + DEFAULT_PACKAGE_SUFFIX;
-      return pkg;
-   }
-
    @Override
    public String getName() {
       return NAME;
@@ -151,15 +113,62 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      IParameterCollection parameters = commandOptions.getParameters();
-      final IModel model = getModelProperty(commandOptions, parameters);
-      final String modelName = model.getName();
-      final String groupId = getGroupIdProperty(parameters, model);
-      final String artifactId = getArtifactIdProperty(parameters, model);
-      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
-      final String packageName = getPackageName(groupId, artifactId);
-      final Path outputDir = getOutputDirectoryProperty(parameters, packageName, clean);
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
+      if (!parameters.containsParameter(MODEL_PROPERTY)) {
+         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
+      }
+
+      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
+      String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
+      final IModel model = systemDescriptor.findModel(modelId)
+               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+
+      parameters.addParameter(new DefaultParameter<>(CLASSNAME_PROPERTY, model.getName()));
+
+      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         parameters.addParameter(
+                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY, model.getName().toLowerCase() + DEFAULT_PACKAGE_SUFFIX));
+      }
+      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
+      }
+      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaDistributionCommand.class, e);
+         throw new CommandException(e);
+      }
+
+      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
+      }
+
+      final String group = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
+      final String artifact = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      if (!parameters.containsParameter(PACKAGE_PROPERTY)) {
+         parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, group + '.' + artifact));
+      }
+      String pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
+      if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
+         throw new CommandException("Invalid package name: " + pkg);
+      }
+      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
+
+      try {
+         GradleSettingsUtilities.addProject(parameters);
+      } catch (FileUtilitiesException e) {
+         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
+         throw new CommandException(e);
+      }
+
+      templateService.unpack("JellyFishJavaDistribution", parameters, outputDirectory, clean);
+      logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
+                      model.getName());
    }
 
    @Activate
@@ -190,6 +199,23 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    }
 
    /**
+    * Sets template service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   /**
+    * Remove template service.
+    */
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
+   /**
     * Sets prompt user service.
     *
     * @param ref the ref
@@ -204,55 +230,5 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     */
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
-   }
-
-   /**
-    * Returns the {@link IModel} associated with the value of the {@link #MODEL_PROPERTY}.
-    *
-    * @param commandOptions command options
-    * @return the {@link IModel}
-    * @throws CommandException if the model name is invalid or missing
-    */
-   private IModel getModelProperty(IJellyFishCommandOptions commandOptions, IParameterCollection parameters) {
-      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
-      final String modelName;
-      if (parameters.containsParameter(MODEL_PROPERTY)) {
-         modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-      } else {
-         modelName = promptService.prompt(MODEL_PROPERTY, null, null);
-      }
-      return systemDescriptor.findModel(modelName)
-               .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
-   }
-
-   /**
-    * Creates and returns the path to the domain project directory.
-    *
-    * @param parameters command parameters
-    * @param pkg        domain package
-    * @param clean      whether or not to delete the contents of the directory
-    * @return the path to the domain project directory
-    * @throws CommandException if an error occurred in creating the project directory
-    */
-   private Path getOutputDirectoryProperty(IParameterCollection parameters, String pkg, boolean clean) {
-      final Path outputDir;
-
-      if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      } else {
-         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         outputDir = Paths.get(input);
-      }
-      final Path projectDir = outputDir.resolve(pkg);
-      try {
-         Files.createDirectories(outputDir);
-         if (clean) {
-            FileUtils.deleteQuietly(projectDir.toFile());
-         }
-         Files.createDirectories(projectDir);
-      } catch (IOException e) {
-         throw new CommandException(e);
-      }
-      return projectDir;
    }
 }
