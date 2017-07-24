@@ -11,8 +11,11 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Performs traversals on system descriptors.
@@ -51,6 +54,33 @@ public class Traversals {
       }
 
       return Optional.ofNullable(ctx.getResult());
+   }
+
+   /**
+    * Collects all models that are referenced from the given {@code SystemDescriptor} that match the provided {@code
+    * Predicate}.  Common predicates are available at {@link ModelPredicates}.
+    *
+    * @param descriptor the descriptor
+    * @param predicate  the predicate used to accept models
+    * @return a collection of all models contained in the descriptor that have been accepted by the predicate
+    */
+   public static Collection<IModel> collectModels(ISystemDescriptor descriptor, Predicate<IModel> predicate) {
+      if (descriptor == null) {
+         throw new NullPointerException("descriptor may not be null!");
+      }
+      if (predicate == null) {
+         throw new NullPointerException("predicate may not be null!");
+      }
+
+      Collection<IModel> acceptedModels = new ArrayList<>();
+      for (IPackage p : descriptor.getPackages()) {
+         for (IModel model : p.getModels()) {
+            if (predicate.test(model)) {
+               acceptedModels.add(model);
+            }
+         }
+      }
+      return acceptedModels;
    }
 
    /**
