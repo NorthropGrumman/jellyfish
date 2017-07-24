@@ -7,13 +7,15 @@ import com.google.inject.Module;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommandGuiceWrapper;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
+import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,8 +28,7 @@ import java.util.ServiceLoader;
 public class CreateProtocolbufferMessagesCommandTest {
    
    private IJellyFishCommand cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
-
-   
+  
    private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
    private IParameter<String> parameter = Mockito.mock(IParameter.class);
 
@@ -35,21 +36,31 @@ public class CreateProtocolbufferMessagesCommandTest {
 
    @Before
    public void setup() throws IOException{
-//      Path sdDir = Paths.get("src", "test", "sd");
-//      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
-//      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
-//      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
-//      IParsingResult result = sdService.parseFiles(sdFiles);
-//      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
-//      ISystemDescriptor sd = result.getSystemDescriptor();
-//      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
    public void testCommand() {
       
-      //TODO Should we even inject the IJellyFishCommandProvider class or just mock it?
+     
+     //Testing that I can call hardcoded help command 
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameter parameter = new DefaultParameter("verbose").setRequired(false);
+      parameter.setValue("true");
+      parameters.addParameter(parameter);
+      Mockito.when(options.getParameters()).thenReturn(parameters);
       
+      cmd.run(options);
+   }
+   
+   private void runCommand(String... keyValues) {
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+
+      for (int n = 0; n + 1 < keyValues.length; n += 2) {
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
+      }
+
+      Mockito.when(options.getParameters()).thenReturn(collection);
+
       cmd.run(options);
    }
    
