@@ -52,18 +52,18 @@ public class CreateJellyFishGradleProjectCommandTest {
       cmd.setTemplateService(injector.getInstance(ITemplateService.class));
    }
 
-//   @Test
-//   public void testCommand() throws IOException {
-//      final String projectSimpleName = "test-project-1";
-//      final String group             = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
-//      final String artifact          = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
-//      final String projectName       = group + "." + artifact;  
-//      final String version           = "1.0";
-//      
-//      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
-//		         CreateJellyFishGradleProjectCommand.VERSION_PROPERTY,      version);
-//      checkCommandOutput(projectName, group, artifact, version);
-//   }
+   @Test
+   public void testCommand() throws IOException {
+      final String projectSimpleName = "test-project-1";
+      final String group             = CreateJellyFishGradleProjectCommand.DEFAULT_GROUP_ID;
+      final String artifact          = String.format(CreateJellyFishGradleProjectCommand.DEFAULT_ARTIFACT_ID_FORMAT, projectSimpleName.replace("-", "").toLowerCase());
+      final String projectName       = group + "." + artifact;  
+      final String version           = "1.0";
+      
+      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+		         CreateJellyFishGradleProjectCommand.VERSION_PROPERTY,      version);
+      checkCommandOutput(projectName, group, artifact, version);
+   }
 
 //   @Test
 //   public void testCommandWithGroup() throws IOException {
@@ -219,10 +219,10 @@ public class CreateJellyFishGradleProjectCommandTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishGradleProjectCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
+	  DefaultParameter<String> outputDirectory = new DefaultParameter<>(CreateJellyFishGradleProjectCommand.OUTPUT_DIR_PROPERTY).setValue(outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);

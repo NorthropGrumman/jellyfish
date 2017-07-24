@@ -29,4 +29,4 @@ dependencies {
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
 
-// add task here to do the help
+// add task here to do the help to show that we can put call commands from here to do things like generate transient projects
