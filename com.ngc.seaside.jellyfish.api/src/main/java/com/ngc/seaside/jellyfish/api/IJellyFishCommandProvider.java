@@ -2,6 +2,8 @@ package com.ngc.seaside.jellyfish.api;
 
 import com.ngc.seaside.command.api.ICommandProvider;
 
+import java.util.Collection;
+
 /**
  * The JellyFish command provider interface will provide JellyFish commands and allow access to those
  * commands via calls to this interface. The run method will parse the input parameters but will not validate the
@@ -9,4 +11,12 @@ import com.ngc.seaside.command.api.ICommandProvider;
  */
 public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommand> {
 
+   /**
+    * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith(IJellyFishCommandOptions,
+    * Collection) mergeWith} to easily manage options.
+    *
+    * @param command        the name of the command to run
+    * @param commandOptions the options to run the command with
+    */
+   void run(String command, IJellyFishCommandOptions commandOptions);
 }

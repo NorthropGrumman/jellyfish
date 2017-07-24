@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
@@ -40,7 +41,7 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Adds a command to the help
-    * 
+    *
     * @param command command to be added
     */
    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.STATIC, unbind = "removeCommand")
@@ -51,7 +52,7 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Removes a command from the help
-    * 
+    *
     * @param command command to be removed
     */
    public void removeCommand(IJellyFishCommand command) {
@@ -105,7 +106,7 @@ public final class HelpCommand implements IJellyFishCommand {
       if (verboseParameter == null) {
          verbose = false;
       } else {
-         switch (verboseParameter.getValue()) {
+         switch (verboseParameter.getStringValue()) {
          case "true":
             verbose = true;
             break;
@@ -124,7 +125,7 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Prints the help to the log service.
-    * 
+    *
     * @param commandParameter command to be printed or null if the generic help is to be printed
     * @param verbose whether or not to print each command's help along with the overall usage
     */
@@ -133,14 +134,14 @@ public final class HelpCommand implements IJellyFishCommand {
       if (commandParameter == null) {
          writeUsage(builder, verbose);
       } else {
-         writeCommandHelp(builder, false, commandParameter.getValue());
+         writeCommandHelp(builder, false, commandParameter.getStringValue());
       }
       logService.info(getClass(), builder.toString());
    }
 
    /**
     * Writes the usage for the JellyFish cli.
-    * 
+    *
     * @param builder StringBuilder to write to
     * @param verbose whether or not to print each command's help along with the overall usage
     */
@@ -159,7 +160,7 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Writes the help for the given command.
-    * 
+    *
     * @param builder StringBuilder to write to
     * @param inUsage if writing the help command within the usage
     * @param commandName name of command
@@ -171,13 +172,17 @@ public final class HelpCommand implements IJellyFishCommand {
       if (command == null) {
          builder.append(commandName + " command not found\n");
       } else {
-         StringTable<IParameter> parameterTable = getParameterTable(parameterIndent,
-            command.getUsage().getAllParameters().stream().filter(p -> !p.isRequired()).collect(Collectors.toList()));
+         StringTable<IParameter<?>> parameterTable = getParameterTable(
+               parameterIndent,
+               command.getUsage().getAllParameters()
+                     .stream()
+                     .filter(p -> !p.isRequired())
+                     .collect(Collectors.toList()));
          if (!command.getUsage().getAllParameters().contains("inputDir")) {
             parameterTable.getModel().addItem(
                new DefaultParameter("inputDir").setDescription("Directory containing the system descriptor project"));
          }
-         StringTable<IParameter> requiredParameterTable = getParameterTable(parameterIndent,
+         StringTable<IParameter<?>> requiredParameterTable = getParameterTable(parameterIndent,
             command.getUsage().getRequiredParameters());
          if (inUsage) {
             StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
@@ -206,7 +211,7 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Returns the properly-formatted StringTable for printing IJellyFishCommands.
-    * 
+    *
     * @param columnSpace String to be printed between columns
     * @param elements commands to be added to the table
     * @return a properly-formatted StringTable for printing IJellyFishCommands
@@ -219,21 +224,25 @@ public final class HelpCommand implements IJellyFishCommand {
 
    /**
     * Returns the properly-formatted StringTable for printing IParameters.
-    * 
+    *
     * @param columnSpace String to be printed between columns
     * @param elements parameters to be added to the table
     * @return a properly-formatted StringTable for printing IParameters
     */
-   private StringTable<IParameter> getParameterTable(String columnSpace, Collection<IParameter> elements) {
+   private StringTable<IParameter<?>> getParameterTable(String columnSpace, Collection<IParameter<?>> elements) {
       int maxNameWidth = Math.max("inputDir".length(),
-         commands.values().stream().flatMap(i -> i.getUsage().getAllParameters().stream())
-                  .mapToInt(p -> p.getName().length()).max().orElse(0));
+                                  commands.values()
+                                        .stream()
+                                        .flatMap(i -> i.getUsage().getAllParameters().stream())
+                                        .mapToInt(p -> p.getName().length())
+                                        .max()
+                                        .orElse(0));
       return getTable(columnSpace, elements, new ParameterFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
    }
 
    /**
     * Returns the properly-formatted StringTable
-    * 
+    *
     * @param columnSpace String to be printed between columns
     * @param elements elements to be added to the table
     * @param format instance of the ITableFormat

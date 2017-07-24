@@ -224,11 +224,11 @@ public class CreateJellyFishCommandCommandTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY)
-               .setValue(outputDir.toString());
+      DefaultParameter outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
+                                                                outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);
