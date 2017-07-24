@@ -8,8 +8,10 @@ import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
@@ -23,11 +25,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -36,8 +33,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,6 +58,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String PACKAGE_PROPERTY = "package";
    public static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
+   public static final String EXTENSION_PROPERTY = "extension";
+   public static final String BUILD_GRADLE_TEMPLATE_PROPERTY = "buildGradleTemplate";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
@@ -71,6 +68,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    private ILogService logService;
    private IPromptUserService promptService;
+   private ITemplateService templateService;
 
    @Override
    public String getName() {
@@ -126,6 +124,23 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setPromptService(null);
    }
 
+   /**
+    * Sets template service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   /**
+    * Remove template service.
+    */
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
@@ -154,13 +169,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
       }
 
       final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
-      createGradleBuild(projectDir, domainTemplateFile, domainPackages);
+      createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
 
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
          final String domainPackage = useModelStructure ? sdPackage : pkg;
-         generateDomain(xmlFile, dataList, domainPackage);
+         generateDomainXml(xmlFile, dataList, domainPackage);
       });
 
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
@@ -360,26 +375,31 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Creates the build.gradle file for the domain project
     * 
     * @param projectDir path project directory
+    * @param commandOptions the command options used to run the command
     * @param domainTemplateFile path to domain template file
     * @param packages collection of packages to export
     * @throws CommandException if an error occurred generating the build.gradle file
     */
-   private static void createGradleBuild(Path projectDir, Path domainTemplateFile, Set<String> packages) {
-      VelocityEngine engine = new VelocityEngine();
-      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-      engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-      engine.setProperty("runtime.references.strict", true);
-      engine.init();
-      Template template = engine.getTemplate("templates/build.gradle.vm");
-      VelocityContext context = new VelocityContext();
-      context.put("velocityFile", domainTemplateFile.getFileName());
-      context.put("packages", packages);
-      try (OutputStream out = Files.newOutputStream(projectDir.resolve("build.gradle"));
-               OutputStreamWriter writer = new OutputStreamWriter(out)) {
-         template.merge(context, writer);
-      } catch (IOException e) {
-         throw new CommandException(e);
+   private void createGradleBuild(Path projectDir, IJellyFishCommandOptions commandOptions, Path domainTemplateFile,
+            Set<String> packages, boolean clean) {
+
+      String extension = "java";
+      if (commandOptions.getParameters().containsParameter(EXTENSION_PROPERTY)) {
+         extension = commandOptions.getParameters().getParameter(EXTENSION_PROPERTY).getStringValue();
       }
+
+      String template = "DomainBuildGradle";
+      if (commandOptions.getParameters().containsParameter(BUILD_GRADLE_TEMPLATE_PROPERTY)) {
+         template = commandOptions.getParameters().getParameter(BUILD_GRADLE_TEMPLATE_PROPERTY).getStringValue();
+      }
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("options", commandOptions));
+      parameters.addParameter(new DefaultParameter<>("velocityFile", domainTemplateFile.getFileName()));
+      parameters.addParameter(new DefaultParameter<>("packages", packages));
+      parameters.addParameter(new DefaultParameter<>(EXTENSION_PROPERTY, extension));
+
+      templateService.unpack(template, parameters, projectDir, clean);
    }
 
    /**
@@ -410,7 +430,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param pkg package of domain data classes
     * @throws CommandException if an error occurred when creating the xml file
     */
-   private static void generateDomain(Path xmlFile, Collection<IData> data, String pkg) {
+   private static void generateDomainXml(Path xmlFile, Collection<IData> data, String pkg) {
       Tdomain domain = new Tdomain();
 
       data.forEach(d -> domain.getObject().add(convert(d, pkg)));
@@ -491,15 +511,16 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
          new DefaultParameter<String>(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
          new DefaultParameter<String>(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
-         new DefaultParameter<String>(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
+         new DefaultParameter<String>(PACKAGE_PROPERTY).setDescription("The project's default package")
+                  .setRequired(false),
          new DefaultParameter<String>(PACKAGE_SUFFIX_PROPERTY)
                   .setDescription("A string to append to the end of the generated package name").setRequired(false),
-         new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
-                  .setRequired(true),
+         new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
+                  .setDescription("Base directory in which to output the project").setRequired(true),
          new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
                   .setRequired(true),
-         new DefaultParameter<String>(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
-                  .setRequired(true),
+         new DefaultParameter<String>(MODEL_PROPERTY)
+                  .setDescription("The fully qualified path to the system descriptor model").setRequired(true),
          new DefaultParameter<String>(CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain project (if it already exists), before generating the it again")
@@ -507,6 +528,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter<String>(USE_MODEL_STRUCTURE_PROPERTY)
                   .setDescription(
                      "If true, uses the System Descriptor package structure for the generated domain package structure")
+                  .setRequired(false),
+         new DefaultParameter<String>(EXTENSION_PROPERTY).setDescription("The extension of the generated domain files")
+                  .setRequired(false),
+         new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
+                  .setDescription("Name of template used to generate the domain projects build.gradle")
                   .setRequired(false));
    }
 
