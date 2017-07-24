@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicecommand;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
@@ -23,6 +24,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    public static final String EXAMPLE_PROPERTY = "example";
 
    private ILogService logService;
+   private IPromptUserService promptUserService;
 
    @Override
    public String getName() {
@@ -75,6 +77,21 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of create-java-service command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
+   /**
+    * Sets prompt service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
+   public void setPromptService(IPromptUserService ref) {
+      this.promptUserService = ref;
+   }
 
+   /**
+    * Remove log service.
+    */
+   public void removePromptService(IPromptUserService ref) {
+      setPromptService(null);
+   }
 
 }

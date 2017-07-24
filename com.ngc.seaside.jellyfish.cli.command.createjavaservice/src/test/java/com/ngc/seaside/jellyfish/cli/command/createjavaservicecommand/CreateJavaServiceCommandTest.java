@@ -61,7 +61,7 @@ public class CreateJavaServiceCommandTest {
       };
       fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
-      fixture.setTemplateService(templateService);
+      //fixture.setTemplateService(templateService);
    }
 
    @Test
