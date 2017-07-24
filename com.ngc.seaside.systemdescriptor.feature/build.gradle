@@ -1,3 +1,5 @@
+import com.ngc.seaside.gradle.plugins.util.Versions
+
 ext {
    buildDir = 'build'
 }
@@ -12,25 +14,13 @@ task clean() {
    }
 }
 
-task copyBuildProperties(type: Copy) {
-   from '.', { include('build.properties') }
-   destinationDir = file("$buildDir/tmp")
-}
-
 task copyAndFilterFeatureFile(type: Copy) {
-   from '.', { include('feature.xml') }
+   from 'src/main/resources', { include('feature.xml') }
+   expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"))
    destinationDir = file("$buildDir/tmp")
-   
-   filter { String line ->
-      if (line.trim().equals('version="1.0.0.qualifier"')) {
-         def formattedVersion = "$project.version".replace('-', '.')
-         line = "version=\"$formattedVersion\"" 
-      }
-      return line
-   }
 }
 
-task createJar(type: Zip, dependsOn: [copyBuildProperties, copyAndFilterFeatureFile]) {
+task createJar(type: Zip, dependsOn: copyAndFilterFeatureFile) {
    from "$buildDir/tmp"
    destinationDir = file("$buildDir")
    archiveName = "${project.group}.${project.name}-${project.version}.jar"

@@ -1,3 +1,6 @@
+import com.ngc.seaside.gradle.plugins.util.EclipsePlugins
+import com.ngc.seaside.gradle.plugins.util.Versions
+
 ext {
    buildDir = 'build'
 }
@@ -10,9 +13,17 @@ repositories {
 }
 
 configurations {
+   // Add feature files to this configuration.
    features
    
    // note that plugins is reserved
+   
+   // Add gradle built custom JellyFish bundles to this configuration.
+   sdPlugins {
+      transitive = false
+   }
+   
+   // Add Eclipse plugins to this configuration.
    eclipsePlugins {
       transitive = false
    }
@@ -21,9 +32,9 @@ configurations {
 dependencies {
    features project(path: ':systemdescriptor.feature', configuration: 'feature')
    
-   eclipsePlugins project(':systemdescriptor')
-   eclipsePlugins project(':systemdescriptor.ide')
-   eclipsePlugins project(':systemdescriptor.ui')
+   sdPlugins project(':systemdescriptor')
+   sdPlugins project(':systemdescriptor.ide')
+   sdPlugins project(':systemdescriptor.ui')
    
    eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
    eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
@@ -65,38 +76,35 @@ task clean() {
 task copyFeatures(type: Copy) {
    from configurations.features
    into { "$buildDir/updatesite/features" }
-   
+
    // We have to rename the feature JARs built with Gradle to make the naming
    // convention expected by Eclipse or the feature won't install correctly.
-   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
-   if ("$project.version".endsWith("SNAPSHOT")) {
-      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
-   } else {
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
+   rename { String name ->
+      EclipsePlugins.makeEclipseCompliantJarFileName(name)
    }
 }
 
-task copyPlugins(type: Copy) {
+task copySdPlugins(type: Copy) {
+   from configurations.sdPlugins {
+      rename { String name ->
+         // We have to rename the feature JARs built with Gradle to make the naming
+         // convention expected by Eclipse or the feature won't install correctly.
+         // For these dependencies, we need to prefix the group ID to the filename.
+         def artifacts = configurations.sdPlugins.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         "${artifact.moduleVersion.id.group}.${artifact.name}_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task copyEclipsePlugins(type: Copy) {
    from configurations.eclipsePlugins
    into { "$buildDir/updatesite/plugins" }
-   
-   // We have to rename the feature JARs built with Gradle to make the naming
-   // convention expected by Eclipse or the feature won't install correctly.
-   // If this is a SNAPSHOT build, make sure the SNAPSHOT part is formatted as a qualifier.
-   if ("$project.version".endsWith("SNAPSHOT")) {
-      // Reqex is: (fully.qualified.name)-(majorVersionNumber.minorVersionNumber(.optionalPatchNumber))-SNAPSHOT.jar
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.SNAPSHOT.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?)-SNAPSHOT.jar', '$1_$2.SNAPSHOT.jar'
-   } else {
-      // Will become: fully.qualified.name_majorVersionNumber.minorVersionNumber.optionalPatchNumber.jar
-      rename '(.+)-(\\d+\\.\\d+(\\.\\d+)?).jar', '$1_$2.jar'
-   }
 }
 
-task createMetadata(dependsOn: [copyFeatures, copyPlugins]) {
+task createMetadata(dependsOn: [copyFeatures, copySdPlugins, copyEclipsePlugins]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.

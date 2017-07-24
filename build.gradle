@@ -1,12 +1,16 @@
+// Use Nexus to retrieve additional Gradle plugins used by the build.
 buildscript {
 	repositories {
 		mavenLocal()
+		
         maven {
             url nexusConsolidated
         }
 	}
 	dependencies {
 		classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+		classpath 'com.ngc.seaside:gradle.plugins:1.4.3'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
 	}
 }
 
@@ -38,11 +42,11 @@ ext {
 
 allprojects {
 	group = 'com.ngc.seaside'
-	version = '0.5.2-SNAPSHOT'
+	version = '0.6-SNAPSHOT'
 }
 
 subprojects {
-	if(name.equals('systemdescriptor.ui')) {
+	if(name == 'systemdescriptor.ui') {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
 	   apply plugin: 'java'
@@ -50,9 +54,9 @@ subprojects {
 	   apply plugin: 'idea'
 	   apply plugin: 'maven'
 	   apply plugin: 'org.xtext.xtend'
-	} else if(name.equals('systemdescriptor.feature')) {
+	} else if(name == 'systemdescriptor.feature') {
 	   // Don't apply any parent plugins.
-	} else if(name.equals('systemdescriptor.updatesite')) {
+	} else if(name == 'systemdescriptor.updatesite') {
 	   // Don't apply any parent plugins.
 	} else {
 	    // Apply XText plugins.
@@ -64,7 +68,9 @@ subprojects {
 		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
 	
-	if(!name.equals('systemdescriptor.feature') && !name.equals('systemdescriptor.updatesite')) {		
+	if(name != 'systemdescriptor.feature'
+	    && name != 'systemdescriptor.updatesite') {
+		
 		sourceCompatibility = '1.8'
 		targetCompatibility = '1.8'
 		

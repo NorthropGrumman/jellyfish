@@ -2,7 +2,7 @@
 <feature
       id="com.ngc.seaside.systemdescriptor.feature"
       label="JellyFish SystemDescriptor DSL"
-      version="1.0.0.qualifier"
+      version="${osgiVersion}"
       provider-name="Northrop Grumman Corporation">
 
    <description url="http://www.systemdescriptor.seaside.ngc.com/description">
@@ -265,7 +265,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-
 
 </feature>

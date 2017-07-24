@@ -299,6 +299,7 @@ Step
 Scenario
 	: 'scenario' name=UnqualifiedName '{'
 		(
+			metadata=Metadata?
 			given=GivenDeclaration?
 		 	when=WhenDeclaration
 		 	then=ThenDeclaration

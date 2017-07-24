@@ -1,3 +1,5 @@
+import com.ngc.seaside.gradle.plugins.util.Versions
+
 sourceSets {
    main {
       java {
@@ -46,7 +48,7 @@ jar {
          // Replace the version with the version from the gradle build.
          eachEntry {
             if(getKey().equals('Bundle-Version')) {
-               setValue("$version".replace('-', '.'))
+               setValue(Versions.makeOsgiCompliantVersion("$version"))
             }
          }
       }
@@ -54,3 +56,10 @@ jar {
    // Include 'plugin.xml'
    from('.', { include('plugin.xml') }) 
 }
+
+task copyDependencies(type: Copy) {
+   from configurations.compile
+   into { "$buildDir/dependencies" }  
+}
+
+build.dependsOn(copyDependencies)

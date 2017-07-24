@@ -1,3 +1,5 @@
+import com.ngc.seaside.gradle.plugins.util.Versions
+
 dependencies {
 	compile project(':systemdescriptor')
 	compile "org.eclipse.xtext:org.eclipse.xtext.ide:${xtextVersion}"
@@ -13,7 +15,7 @@ jar {
          // Replace the version with the version from the gradle build.
          eachEntry {
             if(getKey().equals('Bundle-Version')) {
-               setValue("$version".replace('-', '.'))
+               setValue(Versions.makeOsgiCompliantVersion("$version"))
             }
          }
       }
