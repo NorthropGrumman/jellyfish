@@ -25,6 +25,7 @@ dependencies {
     testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    testCompile project(":jellyfish.impl.provider")
     
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
