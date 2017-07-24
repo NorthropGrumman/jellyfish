@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
@@ -55,6 +56,7 @@ public class WrappedInputDataReferenceField
       Preconditions.checkNotNull(field, "field may not be null!");
       InputDeclaration d = SystemDescriptorFactory.eINSTANCE.createInputDeclaration();
       d.setName(field.getName());
+      d.setMetadata(WrappedMetadata.toXtextJson(field.getMetadata()));
       d.setCardinality(ConversionUtil.convertCardinalityToXtext(field.getCardinality()));
       d.setType(doFindXtextData(resolver, field.getType().getName(), field.getType().getParent().getName()));
       return d;

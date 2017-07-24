@@ -9,23 +9,32 @@ buildscript {
    }
 
    dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:1.1'
+      classpath 'com.ngc.seaside:gradle.plugins:1.4.3'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
    }
 }
 
 subprojects {
-   apply plugin: 'com.ngc.seaside.parent'
+   // Do not make the feature and update site projects Java projects.
+   if(name != 'systemdescriptor.ext.feature'
+      && name != 'systemdescriptor.ext.updatesite') {
+      apply plugin: 'com.ngc.seaside.parent'
+   }
 
    group 'com.ngc.seaside'
-   version '1.2-SNAPSHOT'
+   version '1.3-SNAPSHOT'
 
    ext {
-      jellyfishApiVersion = "1.2-SNAPSHOT"
-      jellyfishDslVersion = "0.4.1-SNAPSHOT"
+      jellyfishDslVersion = '0.6-SNAPSHOT'
+      jellyfishApiVersion = '1.2-SNAPSHOT'
       guavaVersion = '21.0'
       guiceVersion = '3.0'
       blocsCoreVersion = '2.1'
+      glassfishJsonVersion = '1.1'
+      emfVersion = '2.12.0'
+      xtextVersion = '2.10.0'
+      log4jVersion = '1.2.17'
+
       junitVersion = '4.12'
       mockitoVersion = '2.7.14'
    }

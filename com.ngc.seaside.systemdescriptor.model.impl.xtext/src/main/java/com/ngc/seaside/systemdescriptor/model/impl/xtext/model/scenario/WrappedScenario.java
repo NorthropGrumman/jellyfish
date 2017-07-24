@@ -1,11 +1,15 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingAutoWrappingCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
@@ -22,12 +26,14 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
 
    // Thread safety note: Absolutely no part of this implementation is thread safe.
 
+   private IMetadata metadata;
    private Collection<IScenarioStep> givens;
    private Collection<IScenarioStep> whens;
    private Collection<IScenarioStep> thens;
 
    public WrappedScenario(IWrapperResolver resolver, Scenario wrapped) {
       super(resolver, wrapped);
+      this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
 
       // This next code looks terrible because we have to handle two cases when dealing with scenarios:
       // 1) The first case is easy.  The scenario has existing given, when, etc steps.  This means that
@@ -95,6 +101,19 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
    }
 
    @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public IScenario setMetadata(IMetadata metadata) {
+      Preconditions.checkNotNull(metadata, "metadata may not be null!");
+      this.metadata = metadata;
+      wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
+      return this;
+   }
+
+   @Override
    public Collection<IScenarioStep> getGivens() {
       return givens;
    }
@@ -122,6 +141,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
    public static Scenario toXtextScenario(IScenario scenario) {
       Scenario s = SystemDescriptorFactory.eINSTANCE.createScenario();
       s.setName(scenario.getName());
+      s.setMetadata(WrappedMetadata.toXtext(scenario.getMetadata()));
       s.setGiven(SystemDescriptorFactory.eINSTANCE.createGivenDeclaration());
       s.setWhen(SystemDescriptorFactory.eINSTANCE.createWhenDeclaration());
       s.setThen(SystemDescriptorFactory.eINSTANCE.createThenDeclaration());

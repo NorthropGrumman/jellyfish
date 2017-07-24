@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,6 +67,8 @@ public class WrappedScenarioTest extends AbstractWrappedXtextTest {
       assertEquals("parent not correct!",
                    parent,
                    wrappedScenario.getParent());
+      assertNotNull("metadata not set!",
+                    wrappedScenario.getMetadata());
 
       IScenarioStep step = wrappedScenario.getGivens().iterator().next();
       assertEquals("given step keyword not correct!",

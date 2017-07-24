@@ -1,0 +1,5 @@
+package clocks.datatypes
+
+data GoTime : clocks.datatypes.Time {
+  int timeToGo
+}

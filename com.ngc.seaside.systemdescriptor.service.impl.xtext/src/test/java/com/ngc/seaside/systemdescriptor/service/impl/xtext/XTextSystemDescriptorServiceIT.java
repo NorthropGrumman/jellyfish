@@ -8,6 +8,9 @@ import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -27,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -52,7 +56,7 @@ public class XTextSystemDescriptorServiceIT {
 
       service = InjectorTestFactory.getSharedInstance().getInstance(ISystemDescriptorService.class);
    }
-   
+
    @Test
    public void testDoesParseProject() throws Throwable {
       IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
@@ -64,12 +68,36 @@ public class XTextSystemDescriptorServiceIT {
    public void testDoesProgrammaticallyRegisterValidators() throws Throwable {
       service.addValidator(validator);
       try {
-         IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));         
+         IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
          assertFalse("validator should have triggered issues!",
                      result.isSuccessful());
       } finally {
          service.removeValidator(validator);
       }
+   }
+
+   @Test
+   public void testDoesCollectionModelsByStereotypes() throws Throwable {
+      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      assertTrue("did not parse project!",
+                 result.isSuccessful());
+
+      Collection<IModel> systems = Traversals.collectModels(result.getSystemDescriptor(),
+                                                            ModelPredicates.withAnyStereotype("system"));
+      assertTrue("did not find AlarmClock system!",
+                 systems.contains(result.getSystemDescriptor().findModel("clocks.AlarmClock").get()));
+      assertEquals("contains extra model objects that don't have the system annotation!",
+                   1,
+                   systems.size());
+
+      Collection<IModel> everythingButSystems = Traversals.collectModels(
+            result.getSystemDescriptor(),
+            ModelPredicates.withAnyStereotype("system").negate());
+      assertFalse("AlarmClock system should not be in the result",
+                  everythingButSystems.contains(result.getSystemDescriptor().findModel("clocks.AlarmClock").get()));
+      assertEquals("did not find all results!",
+                   4,
+                   everythingButSystems.size());
    }
 
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"

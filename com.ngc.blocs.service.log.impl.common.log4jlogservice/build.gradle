@@ -1,0 +1,11 @@
+dependencies {
+   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
+   compile "log4j:log4j:$log4jVersion"
+   compile "com.google.inject:guice:$guiceVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.blocs.service.log.impl.common.log4jlogservice.module')
+   }
+}

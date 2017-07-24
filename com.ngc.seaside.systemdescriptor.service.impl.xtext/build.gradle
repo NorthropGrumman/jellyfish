@@ -6,9 +6,9 @@ dependencies {
    compile "com.google.guava:guava:$guavaVersion"
    compile "com.google.inject:guice:$guiceVersion"
    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
+   compile "org.eclipse.xtext:org.eclipse.xtext:$xtextVersion"
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile 'org.glassfish:javax.json:1.1'
+   compile "org.glassfish:javax.json:$glassfishJsonVersion"
 
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
@@ -22,9 +22,4 @@ jar {
       attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext.module',
                  'Import-Package': '!org.eclipse.xtext.util, *')
    }
-}
-
-task copyDependencies(type: Copy) {
-   into "$buildDir/dependencies"
-   from configurations.runtime
 }
