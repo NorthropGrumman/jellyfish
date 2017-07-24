@@ -21,6 +21,7 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
     compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
 
+    testCompile project(":jellyfish.cli.command.testutils")
     testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
