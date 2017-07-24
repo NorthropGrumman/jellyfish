@@ -10,7 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JellyFishTest {
+public class JellyFishIT {
 
    private String previousNgFwHome;
 

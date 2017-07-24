@@ -177,7 +177,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
       final boolean booleanValue;
       if (parameters.containsParameter(parameter)) {
-         String value = parameters.getParameter(parameter).getValue();
+         String value = parameters.getParameter(parameter).getStringValue();
          switch (value.toLowerCase()) {
          case "true":
             booleanValue = true;
@@ -207,7 +207,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       IParameterCollection parameters = commandOptions.getParameters();
       final String modelName;
       if (parameters.containsParameter(MODEL_PROPERTY)) {
-         modelName = parameters.getParameter(MODEL_PROPERTY).getValue();
+         modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       } else {
          modelName = promptService.prompt(MODEL_PROPERTY, null, null);
       }
@@ -224,7 +224,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static String evaluateGroupId(IParameterCollection parameters, IModel model) {
       final String groupId;
       if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         groupId = parameters.getParameter(GROUP_ID_PROPERTY).getValue();
+         groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
       } else {
          groupId = model.getParent().getName();
       }
@@ -241,7 +241,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static String evaluateArtifactId(IParameterCollection parameters, IModel model) {
       final String artifactId;
       if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue();
+         artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
       } else {
          artifactId = model.getName().toLowerCase();
       }
@@ -263,10 +263,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
             throw new CommandException(
                "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY + " is set");
          }
-         pkg = parameters.getParameter(PACKAGE_PROPERTY).getValue();
+         pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
       } else {
          if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getValue().trim();
+            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
             if (suffix.isEmpty() || suffix.startsWith(".")) {
                pkg = groupId + '.' + artifactId + suffix;
             } else {
@@ -289,7 +289,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private Path evaluteDomainTemplateFile(IParameterCollection parameters) {
       final Path domainTemplateFile;
       if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
-         domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getValue());
+         domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getStringValue());
       } else {
          String input = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
          domainTemplateFile = Paths.get(input);
@@ -313,7 +313,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path outputDir;
 
       if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getValue());
+         outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
       } else {
          String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
          outputDir = Paths.get(input);
@@ -489,22 +489,22 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
-         new DefaultParameter(PACKAGE_SUFFIX_PROPERTY)
+         new DefaultParameter<String>(GROUP_ID_PROPERTY).setDescription("The project's group ID").setRequired(false),
+         new DefaultParameter<String>(ARTIFACT_ID_PROPERTY).setDescription("The project's version").setRequired(false),
+         new DefaultParameter<String>(PACKAGE_PROPERTY).setDescription("The project's default package").setRequired(false),
+         new DefaultParameter<String>(PACKAGE_SUFFIX_PROPERTY)
                   .setDescription("A string to append to the end of the generated package name").setRequired(false),
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
+         new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY).setDescription("Base directory in which to output the project")
                   .setRequired(true),
-         new DefaultParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
+         new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
                   .setRequired(true),
-         new DefaultParameter(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
+         new DefaultParameter<String>(MODEL_PROPERTY).setDescription("The fully qualified path to the system descriptor model")
                   .setRequired(true),
-         new DefaultParameter(CLEAN_PROPERTY)
+         new DefaultParameter<String>(CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                   .setRequired(false),
-         new DefaultParameter(USE_MODEL_STRUCTURE_PROPERTY)
+         new DefaultParameter<String>(USE_MODEL_STRUCTURE_PROPERTY)
                   .setDescription(
                      "If true, uses the System Descriptor package structure for the generated domain package structure")
                   .setRequired(false));
