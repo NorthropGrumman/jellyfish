@@ -10,6 +10,13 @@ dependencies {
 
     compile project(":jellyfish.impl.provider")
 
+
+    compile project(":jellyfish.cli.command.samplecommand")
+    commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
+
+
+
+
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -23,7 +30,7 @@ dependencies {
     compile "commons-lang:commons-lang:$commonsLangVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-	testCompile "junit:junit:$junitVersion"
+	 testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 	
 	compile project(":jellyfish.cli.command.createjellyfishgradleproject")
@@ -62,18 +69,18 @@ task copyCommandTemplate(type: Copy) {
     }
     into "${buildDir}/distributions/${project.name}-${project.version}/resources/templates"
 }
- 
-/** 
- * Unzip the distribution created by the application plugin to make it easier when 
- * developing the CLI. 
- */ 
-task unzipDistribution( type: Copy , dependsOn: copyCommandTemplate) { 
-    def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip") 
-    def outputDir = file("${buildDir}/distributions/") 
 
-    from zipTree(zipFile) 
-    into outputDir 
-} 
+/**
+ * Unzip the distribution created by the application plugin to make it easier when
+ * developing the CLI.
+ */
+task unzipDistribution( type: Copy , dependsOn: copyCommandTemplate) {
+    def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
+    def outputDir = file("${buildDir}/distributions/")
 
-install.dependsOn unzipDistribution 
-build.dependsOn unzipDistribution 
+    from zipTree(zipFile)
+    into outputDir
+}
+
+install.dependsOn unzipDistribution
+build.dependsOn unzipDistribution

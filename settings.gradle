@@ -18,3 +18,7 @@ project(':com.ngc.seaside.jellyfish.cli.command.help').name = 'jellyfish.cli.com
 project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand').name = 'jellyfish.cli.command.createjellyfishcommand'
 project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject').name = 'jellyfish.cli.command.createjellyfishgradleproject'
 project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.gradle.plugins'
+
+
+include 'com.ngc.seaside.jellyfish.cli.command.samplecommand'
+project(':com.ngc.seaside.jellyfish.cli.command.samplecommand').name = 'jellyfish.cli.command.samplecommand'
