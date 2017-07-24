@@ -1,15 +1,16 @@
 dependencies {
-   compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
-   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishDSLVersion"
+    compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
+    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {
-   manifest {
-      // Bnd instructions to export the api package.
-      attributes('Export-Package': 'com.ngc.seaside.jellyfish.api.*')
-   }
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.jellyfish.api.*')
+    }
 }
 

@@ -23,6 +23,9 @@ subprojects {
     version = '1.0.1-SNAPSHOT'
 
     ext {
+        jellyfishAPIVersion = '1.2-SNAPSHOT'
+        jellyfishEXTVersion = '1.3-SNAPSHOT'
+        bootstrapCommandsVersion = '1.1'
         jellyfishDSLVersion = '1.1'
         bootstrapApiVersion = '1.4'
         bootstrapVersion = '1.4'

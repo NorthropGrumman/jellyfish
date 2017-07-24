@@ -83,7 +83,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    @Override
    public IUsage getUsage() {
       return new DefaultUsage("JellyFish Description",
-                              Collections.singletonList(new DefaultParameter("inputDir").setRequired(false)));
+                              Collections.singletonList(new DefaultParameter<>("inputDir").setRequired(false)));
    }
 
    @Override

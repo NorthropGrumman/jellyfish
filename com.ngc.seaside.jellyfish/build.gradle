@@ -10,12 +10,11 @@ dependencies {
 
     compile project(":jellyfish.impl.provider")
 
-
     compile project(":jellyfish.cli.command.samplecommand")
     commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
 
-
-
+    compile project(":jellyfish.cli.command.createjavadistribution")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
@@ -28,15 +27,16 @@ dependencies {
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 	 testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) { 
-	into 'resources/templates'
-}
+//applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) {
+//	into 'resources/templates'
+//}
 
 applicationDistribution.from('src/main/resources') { 
 	into 'resources'
