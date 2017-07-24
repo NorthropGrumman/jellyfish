@@ -38,7 +38,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String MODEL_PROPERTY = "model";
-   public static final String CLASSNAME_PROPERTY = "classname";
+   public static final String MODELNAME_PROPERTY = "modelname";
    public static final String PACKAGE_PROPERTY = "package";
    public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
    public static final String CLEAN_PROPERTY = "clean";
@@ -120,6 +120,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
+      // Resolve model properties
       if (!parameters.containsParameter(MODEL_PROPERTY)) {
          String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
          parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
@@ -130,13 +131,9 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       final IModel model = systemDescriptor.findModel(modelId)
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
-      parameters.addParameter(new DefaultParameter<>(CLASSNAME_PROPERTY, model.getName()));
+      parameters.addParameter(new DefaultParameter<>(MODELNAME_PROPERTY, model.getName()));
 
-      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         parameters.addParameter(
-                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY,
-                                         model.getName().toLowerCase() + '.' + DEFAULT_PACKAGE_SUFFIX));
-      }
+      // Resolve output directory
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
@@ -149,20 +146,30 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
 
+      // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
          parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
       }
 
+      // Resolve artifactId
+      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         parameters.addParameter(
+                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY,
+                                         model.getName().toLowerCase() + '.' + DEFAULT_PACKAGE_SUFFIX));
+      }
+
+      // Resolve clean property
+      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
+
+      // Assign package name
       final String group = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
       final String artifact = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      if (!parameters.containsParameter(PACKAGE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, group + '.' + artifact));
-      }
+      parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, group + '.' + artifact));
       String pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
       if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
          throw new CommandException("Invalid package name: " + pkg);
       }
-      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
+
       doAddProject(parameters);
 
       templateService.unpack("JellyFishJavaDistribution", parameters, outputDirectory, clean);
