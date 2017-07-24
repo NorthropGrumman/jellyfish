@@ -2,7 +2,6 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario;
 
 import com.google.common.base.Preconditions;
 
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -34,9 +33,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
 
    public WrappedScenario(IWrapperResolver resolver, Scenario wrapped) {
       super(resolver, wrapped);
-
-      // TODO TH: enable this once the DSL is updated.
-      // this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
+      this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
 
       // This next code looks terrible because we have to handle two cases when dealing with scenarios:
       // 1) The first case is easy.  The scenario has existing given, when, etc steps.  This means that
@@ -112,8 +109,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
    public IScenario setMetadata(IMetadata metadata) {
       Preconditions.checkNotNull(metadata, "metadata may not be null!");
       this.metadata = metadata;
-      // TODO TH: enable this once the DSL is updated.
-      // wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
+      wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
       return this;
    }
 
@@ -145,8 +141,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
    public static Scenario toXtextScenario(IScenario scenario) {
       Scenario s = SystemDescriptorFactory.eINSTANCE.createScenario();
       s.setName(scenario.getName());
-      // TODO TH: enable this when the DSL is updated.
-      // s.setMetadata(WrappedMetadata.toXtextJson(scenario.getMetadata()));
+      s.setMetadata(WrappedMetadata.toXtext(scenario.getMetadata()));
       s.setGiven(SystemDescriptorFactory.eINSTANCE.createGivenDeclaration());
       s.setWhen(SystemDescriptorFactory.eINSTANCE.createWhenDeclaration());
       s.setThen(SystemDescriptorFactory.eINSTANCE.createThenDeclaration());
