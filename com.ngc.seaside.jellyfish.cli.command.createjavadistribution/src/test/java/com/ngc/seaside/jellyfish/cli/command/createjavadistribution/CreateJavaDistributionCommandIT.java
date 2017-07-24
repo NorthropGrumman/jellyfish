@@ -28,15 +28,17 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -106,6 +108,8 @@ public class CreateJavaDistributionCommandIT {
 
       Mockito.verify(options, Mockito.times(1)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
+      checkGradleBuild(outputDir);
+      checkLogContents(outputDir);
    }
 
    private void runCommand(String... keyValues) {
@@ -120,30 +124,53 @@ public class CreateJavaDistributionCommandIT {
       fixture.run(options);
    }
 
-   private void checkLogContents(Path resourcesDir, String filename, int startData, int endData, int startField,
-                                 int endField)
-            throws IOException {
-      Path file = resourcesDir.resolve(filename);
-      String text = new String(Files.readAllBytes(file));
-      for (int n = startData; n <= endData; n++) {
-         Assert.assertTrue("Couldn't find Data" + n + " in " + file, text.contains("Data" + n));
-      }
-      Assert.assertFalse(Pattern.compile("Data[^" + startData + "-" + endData + "]").matcher(text).find());
+   private void checkLogContents(Path projectDir) throws IOException {
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**log4j.xml");
+      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
-      for (int n = startField; n <= endField; n++) {
-         Assert.assertTrue("Couldn't find field" + n + " in " + file, text.contains("field" + n));
-      }
-      Assert.assertFalse(Pattern.compile("field[^" + startField + "-" + endField + "]").matcher(text).find());
+      // There should only be one log4j.xml file generated
+      Assert.assertTrue(gradleFiles.size() == 1);
+      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(buildFile));
+      String contents = new String(Files.readAllBytes(buildFile));
+
+      // Verify that model is injected
+      Assert.assertTrue(contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]"));
+      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]");
+      int endLength = contents.length();
+      String contents2 = contents.substring(startLength, endLength);
+      Assert.assertTrue(contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getName() + "]"));
+      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getName() + ".log\""));
    }
 
-   private void checkGradleBuild(Path projectDir, String... exportPackages) throws IOException {
-      Path buildFile = projectDir.resolve("build.gradle");
+   private void checkGradleBuild(Path projectDir) throws IOException {
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**build.gradle");
+      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+
+      // There should only be one build.gradle generated
+      Assert.assertTrue(gradleFiles.size() == 1);
+      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
       String contents = new String(Files.readAllBytes(buildFile));
-      //Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
-      for (String export : exportPackages) {
-         Assert.assertTrue("Expected \"" + export + "\" in build.gradle", contents.contains(export));
-      }
+
+      // Verify apply block
+      Assert.assertTrue(contents.contains("apply plugin: 'com.ngc.seaside.distribution'"));
+
+      //Verify seaside distribution block
+      Assert.assertTrue(contents.contains("seasideDistribution {"));
+      Assert.assertTrue(contents.contains("buildDir = 'build'"));
+      Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
+      Assert.assertTrue(
+               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
+      Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
+
+      // Verify dependencies block
+      Assert.assertTrue(contents.contains("dependencies {"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".events\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".domain\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".connector\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + ".base\")"));
+      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName() + "\")"));
    }
 
    private void createSettings() throws IOException {

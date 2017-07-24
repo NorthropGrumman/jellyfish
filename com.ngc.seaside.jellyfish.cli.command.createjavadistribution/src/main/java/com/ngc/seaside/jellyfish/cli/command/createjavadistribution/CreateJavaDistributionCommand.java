@@ -55,10 +55,12 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      return new DefaultUsage("Generate the gradle distribution project for a Java application",
-                              new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The project's group ID")
+      return new DefaultUsage("Generates the gradle distribution project for a Java application",
+                              new DefaultParameter(GROUP_ID_PROPERTY)
+                                       .setDescription("The project's group ID. (default: the package in the model)")
                                        .setRequired(false),
-                              new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The project's artifact ID")
+                              new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription(
+                                       "The project's artifact ID. (default: model name in lowercase + '.distribution')")
                                        .setRequired(false),
                               new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
                                        .setDescription("Base directory in which to output the project")
