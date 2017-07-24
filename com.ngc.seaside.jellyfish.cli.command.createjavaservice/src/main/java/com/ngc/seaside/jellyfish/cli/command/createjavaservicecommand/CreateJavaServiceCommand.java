@@ -76,4 +76,5 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       return new DefaultUsage("Description of create-java-service command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
 
+
 }

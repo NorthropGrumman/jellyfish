@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -19,7 +20,6 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
