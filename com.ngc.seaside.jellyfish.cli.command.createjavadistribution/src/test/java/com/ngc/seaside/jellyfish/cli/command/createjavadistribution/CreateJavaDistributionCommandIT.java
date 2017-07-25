@@ -57,7 +57,7 @@ public class CreateJavaDistributionCommandIT {
    private static final Injector injector = Guice.createInjector(getModules());
    private CreateJavaDistributionCommand fixture = new CreateJavaDistributionCommand();
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
-   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
+   private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private MockedTemplateService mockedTemplateService;
    private IModel model = mock(Model.class);
