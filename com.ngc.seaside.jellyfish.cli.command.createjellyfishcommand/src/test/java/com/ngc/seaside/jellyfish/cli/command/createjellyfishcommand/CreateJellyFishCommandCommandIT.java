@@ -218,7 +218,7 @@ public class CreateJellyFishCommandCommandIT {
          collection.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
+      DefaultParameter<String> outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
          outputDir.toString());
       collection.addParameter(outputDirectory);
 
