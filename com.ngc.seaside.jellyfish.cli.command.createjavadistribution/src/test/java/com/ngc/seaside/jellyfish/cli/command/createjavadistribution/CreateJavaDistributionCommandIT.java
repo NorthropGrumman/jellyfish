@@ -136,7 +136,7 @@ public class CreateJavaDistributionCommandIT {
       outputDir.toFile().deleteOnExit();
 
       // Uncomment the lines below if you wish to view the output directory
-      //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
+      //Path outputDirectory = Paths.get("build/test-template");
       //outputDir = Files.createDirectories(outputDirectory);
 
       // Use the testable template service.

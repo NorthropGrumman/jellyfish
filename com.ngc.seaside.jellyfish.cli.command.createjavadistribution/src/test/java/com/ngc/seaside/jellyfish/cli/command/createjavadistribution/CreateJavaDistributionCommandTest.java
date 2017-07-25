@@ -162,19 +162,18 @@ public class CreateJavaDistributionCommandTest {
       when(options.getParameters()).thenReturn(collection);
 
       // Setup mock template service
-      when(templateService.unpack("JellyFishJavaDistribution", collection, Paths.get("/just/a/mock/path"), false))
-               .thenReturn(
-                        new ITemplateOutput() {
-                           @Override
-                           public Map<String, ?> getProperties() {
-                              return collection.getParameterMap();
-                           }
+      when(templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(), collection,
+                                  Paths.get("/just/a/mock/path"), false)).thenReturn(new ITemplateOutput() {
+         @Override
+         public Map<String, ?> getProperties() {
+            return collection.getParameterMap();
+         }
 
-                           @Override
-                           public Path getOutputPath() {
-                              return Paths.get("/just/a/mock/path");
-                           }
-                        });
+         @Override
+         public Path getOutputPath() {
+            return Paths.get("/just/a/mock/path");
+         }
+      });
       fixture.run(options);
    }
 }
