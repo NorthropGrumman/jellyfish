@@ -34,6 +34,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -173,6 +174,29 @@ public class CreateDomainCommandIT {
       checkDomain(projectDir);
    }
 
+   @Test
+   public void testCommandWithSettingsDotGradle() throws IOException, FileUtilitiesException {
+      Files.copy(Paths.get("src", "test", "resources", "settings.gradle"),
+                 outputDir.resolve("settings.gradle"));
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+                 "com.ngc.seaside.test1.Model1",
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+                 outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+                 velocityPath.toString(),
+                 CreateDomainCommand.GROUP_ID_PROPERTY,
+                 "com.ngc.seaside",
+                 CreateDomainCommand.ARTIFACT_ID_PROPERTY,
+                 "test1.model1");
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
+      checkVelocity(projectDir);
+      checkDomain(projectDir);
+      checkSettingsDoGradle(projectDir);
+   }
+
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
@@ -223,6 +247,15 @@ public class CreateDomainCommandIT {
          Assert.assertTrue("Couldn't find field" + n + " in " + file, text.contains("field" + n));
       }
       Assert.assertFalse(Pattern.compile("field[^" + startField + "-" + endField + "]").matcher(text).find());
+   }
+
+   private void checkSettingsDoGradle(Path projectDir) throws IOException {
+      Path settingsFile = projectDir.getParent().resolve("settings.gradle");
+      List<String> lines = Files.readAllLines(settingsFile);
+      Assert.assertTrue("settings.gradle is missing 'include' for project!",
+                        lines.contains("include 'com.ngc.seaside.test1.model1'"));
+      Assert.assertTrue("settings.gradle does not set name on included project!",
+                        lines.contains("project(':com.ngc.seaside.test1.model1').name = 'test1.model1'"));
    }
 
    private void runCommand(String... keyValues) {

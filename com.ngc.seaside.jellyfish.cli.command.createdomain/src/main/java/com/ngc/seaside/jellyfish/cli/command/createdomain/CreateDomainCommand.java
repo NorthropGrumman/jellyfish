@@ -9,6 +9,8 @@ import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -53,6 +55,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
    private static final String DEFAULT_PACKAGE_SUFFIX = "domain";
+   private static final String SETTINGS_FILE_NAME = "settings.gradle";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -178,7 +181,35 @@ public class CreateDomainCommand implements IJellyFishCommand {
          generateDomainXml(xmlFile, dataList, domainPackage);
       });
 
+      updateSettingsDotGradle(parameters, groupId, artifactId);
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
+   }
+
+   /**
+    * Adds the newly generated project to a settings.gradle file in the output directory if that file exists.  If that
+    * file does not exists, does nothing.
+    *
+    * @param parameters the parameters
+    * @param groupId the group ID
+    * @param artifactId teh artifact ID
+    */
+   private void updateSettingsDotGradle(IParameterCollection parameters, String groupId, String artifactId) {
+      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
+      if(settings.toFile().exists()) {
+         try {
+            DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+            updatedParameters.addParameters(parameters.getAllParameters());
+            updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
+            updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+            GradleSettingsUtilities.addProject(updatedParameters);
+            logService.debug(CreateDomainCommand.class, "Updated settings.gradle.");
+         } catch (FileUtilitiesException e) {
+            logService.error(CreateDomainCommand.class, "Failed to update settings.gradle!", e);
+         }
+      } else {
+         logService.debug(CreateDomainCommand.class, "settings.gradle not found.");
+      }
    }
 
    /**
