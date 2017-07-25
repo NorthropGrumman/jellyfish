@@ -44,9 +44,13 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       final IParameterCollection parameters = commandOptions.getParameters();
 
       // jellyfishCommandProvider.run("create-domain", commandOptions);
+      //TODO override package suffix
 
       jellyfishCommandProvider.run("create-domain",
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
+            new DefaultParameter<String>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, "proto-messages.vm"),
+            new DefaultParameter<String>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
+            new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).setValue("messages"),
             new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue("proto"),
             new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
                      .setValue(CreateProtocolbufferMessagesCommand.class.getPackage().getName())));

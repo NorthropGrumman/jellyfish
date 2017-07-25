@@ -44,9 +44,9 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-//applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) {
-//	into 'resources/templates'
-//}
+applicationDistribution.from(project(':jellyfish.cli.command.createprotocolbuffermessages').file('src/main/resources/proto-messages.vm')) {
+	into 'resources'
+}
 
 applicationDistribution.from('src/main/resources') { 
 	into 'resources'
