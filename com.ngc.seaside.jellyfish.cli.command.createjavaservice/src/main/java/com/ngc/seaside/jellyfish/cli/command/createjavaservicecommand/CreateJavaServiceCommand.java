@@ -115,11 +115,8 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
       }
       final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaServiceCommand.class, e);
-      }
+
+      doCreateDirectories(outputDirectory);
 
       // Resolve base
       if (!parameters.containsParameter(GENERATE_BASE_PROPERTY)) {
@@ -144,13 +141,13 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       }
 
       doAddProject(parameters);
-//
-//      templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
-//                             parameters,
-//                             outputDirectory,
-//                             clean);
-//      logService.info(CreateJavaServiceCommand.class, "%s service project successfully created",
-//                      model.getName());
+
+      templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
+                             parameters,
+                             outputDirectory,
+                             clean);
+      logService.info(CreateJavaServiceCommand.class, "%s service project successfully created",
+                      model.getName());
    }
 
    @Activate
@@ -193,6 +190,23 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+
+   /**
+    * Sets template service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   /**
+    * Remove template service.
+    */
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
    }
 
    /**
@@ -240,6 +254,14 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          booleanValue = false;
       }
       return booleanValue;
+   }
+   protected void doCreateDirectories(Path outputDirectory) {
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaServiceCommand.class, e);
+         throw new CommandException(e);
+      }
    }
 
 }
