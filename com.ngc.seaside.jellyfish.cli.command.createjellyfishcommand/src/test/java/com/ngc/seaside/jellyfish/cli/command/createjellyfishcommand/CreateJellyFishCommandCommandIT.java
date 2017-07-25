@@ -1,27 +1,16 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.impl.parameterservice.ParameterServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.promptuserservice.PromptUserServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.propertyservice.PropertyServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.junit.After;
+import org.gradle.tooling.BuildException;
+import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,13 +37,12 @@ public class CreateJellyFishCommandCommandIT {
 
    @Before
    public void setup() throws IOException {
-      mockedTemplateService = new MockedTemplateService()
-            .useRealPropertyService()
-            .useDefaultUserValues(true)
-            .setTemplateDirectory(CreateJellyFishCommandCommand.class.getPackage().getName(),
-                                  Paths.get("src/main/template"));
+      mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+               .setTemplateDirectory(CreateJellyFishCommandCommand.class.getPackage().getName(),
+                  Paths.get("src/main/template"));
 
       outputDir = Files.createTempDirectory(null);
+      outputDir.toFile().deleteOnExit();
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockedTemplateService);
@@ -72,6 +60,7 @@ public class CreateJellyFishCommandCommandIT {
       final String classname = "TestCommand1Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command);
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -87,6 +76,7 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.GROUP_ID_PROPERTY, group);
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -101,6 +91,7 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.ARTIFACT_ID_PROPERTY, artifact);
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -116,6 +107,7 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.PACKAGE_PROPERTY, pkg);
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -132,6 +124,7 @@ public class CreateJellyFishCommandCommandIT {
          Mockito.any(), Mockito.any())).thenReturn(command);
       runCommand();
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -147,6 +140,7 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname);
       checkCommandOutput(classname, group, artifact, pkg);
+      checkBuild(group + '.' + artifact);
    }
 
    @Test(expected = Exception.class)
@@ -179,6 +173,7 @@ public class CreateJellyFishCommandCommandIT {
       Assert.assertTrue(
          Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg2)));
 
+      checkBuild(group1 + '.' + artifact1, group2 + '.' + artifact2);
    }
 
    @Test
@@ -236,7 +231,7 @@ public class CreateJellyFishCommandCommandIT {
       }
 
       DefaultParameter outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
-                                                                outputDir.toString());
+         outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);
@@ -267,7 +262,8 @@ public class CreateJellyFishCommandCommandIT {
       Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedPackage, expectedClassname + ".java");
       Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
       Path actualPath = outputDir.resolve(expectedPath).toRealPath();
-      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
+      Assert.assertEquals("Filename was not capitalized correctly",
+         outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
       Assert.assertTrue("resources folder was not created",
          outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
       Assert.assertTrue("test folder was not created",
@@ -276,24 +272,24 @@ public class CreateJellyFishCommandCommandIT {
          outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
    }
 
-   @After
-   public void cleanup() throws IOException {
-      FileUtils.deleteQuietly(outputDir.toFile());
-   }
+   private void checkBuild(String... projectName) throws IOException {
+      Files.copy(Paths.get("..", "build.gradle"), outputDir.resolve("build.gradle"));
 
-   private static Injector injector = Guice.createInjector(new AbstractModule() {
-      @Override
-      protected void configure() {
-         IResourceService resourceService = Mockito.mock(IResourceService.class);
-         Mockito.when(resourceService.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
+      String gradleHome = System.getenv("GRADLE_HOME");
+      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
 
-         bind(IResourceService.class).toInstance(resourceService);
-         bind(ILogService.class).to(PrintStreamLogService.class);
-         bind(IParameterService.class).to(ParameterServiceGuiceWrapper.class);
-         bind(IPromptUserService.class).to(PromptUserServiceGuiceWrapper.class);
-         bind(ITemplateService.class).to(TemplateServiceGuiceWrapper.class);
-         bind(IPropertyService.class).to(PropertyServiceGuiceWrapper.class);
+      final ProjectConnection connection = GradleConnector.newConnector()
+               .useInstallation(Paths.get(gradleHome).toFile()).forProjectDirectory(outputDir.toFile()).connect();
+
+      try {
+         BuildLauncher launcher = connection.newBuild().setColorOutput(false).setStandardError(System.err)
+                  .setStandardOutput(System.out).forTasks("build");
+         launcher.run();
+      } catch (BuildException e) {
+         throw new AssertionError("Gradle failed to build generated project (see standard error for details)", e);
+      } finally {
+         connection.close();
       }
-   });
+   }
 
 }
