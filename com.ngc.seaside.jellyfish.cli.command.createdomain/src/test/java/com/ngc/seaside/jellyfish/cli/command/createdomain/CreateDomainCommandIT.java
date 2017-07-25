@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -65,8 +64,9 @@ public class CreateDomainCommandIT {
 
    @Test
    public void testCommand() throws IOException, FileUtilitiesException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1", CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.toString(), CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
@@ -229,7 +229,7 @@ public class CreateDomainCommandIT {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
       }
 
       Mockito.when(options.getParameters()).thenReturn(collection);
@@ -244,14 +244,9 @@ public class CreateDomainCommandIT {
          MockedTemplateService mockedTemplateService = new MockedTemplateService();
          mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
                   .setTemplateDirectory(CreateDomainCommand.class.getPackage().getName(),
-                     Paths.get("src/main/template"));
+                     Paths.get("src", "main", "template"));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
-
-         IResourceService mockResource = Mockito.mock(IResourceService.class);
-         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
-
-         bind(IResourceService.class).toInstance(mockResource);
       }
    };
 
