@@ -7,10 +7,6 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
-import org.gradle.tooling.BuildException;
-import org.gradle.tooling.BuildLauncher;
-import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ProjectConnection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +56,6 @@ public class CreateJellyFishCommandCommandIT {
       final String classname = "TestCommand1Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command);
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -76,7 +71,6 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.GROUP_ID_PROPERTY, group);
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -91,7 +85,6 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.ARTIFACT_ID_PROPERTY, artifact);
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -107,7 +100,6 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.PACKAGE_PROPERTY, pkg);
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -124,7 +116,6 @@ public class CreateJellyFishCommandCommandIT {
          Mockito.any(), Mockito.any())).thenReturn(command);
       runCommand();
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test
@@ -140,7 +131,6 @@ public class CreateJellyFishCommandCommandIT {
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.CLASSNAME_PROPERTY, classname);
       checkCommandOutput(classname, group, artifact, pkg);
-      checkBuild(group + '.' + artifact);
    }
 
    @Test(expected = Exception.class)
@@ -172,8 +162,6 @@ public class CreateJellyFishCommandCommandIT {
          Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg1)));
       Assert.assertTrue(
          Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg2)));
-
-      checkBuild(group1 + '.' + artifact1, group2 + '.' + artifact2);
    }
 
    @Test
@@ -270,26 +258,6 @@ public class CreateJellyFishCommandCommandIT {
          outputDir.resolve(Paths.get(projectName, "src", "test", "java")).toFile().exists());
       Assert.assertTrue("build.gradle was not created",
          outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
-   }
-
-   private void checkBuild(String... projectName) throws IOException {
-      Files.copy(Paths.get("..", "build.gradle"), outputDir.resolve("build.gradle"));
-
-      String gradleHome = System.getenv("GRADLE_HOME");
-      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
-
-      final ProjectConnection connection = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile()).forProjectDirectory(outputDir.toFile()).connect();
-
-      try {
-         BuildLauncher launcher = connection.newBuild().setColorOutput(false).setStandardError(System.err)
-                  .setStandardOutput(System.out).forTasks("build");
-         launcher.run();
-      } catch (BuildException e) {
-         throw new AssertionError("Gradle failed to build generated project (see standard error for details)", e);
-      } finally {
-         connection.close();
-      }
    }
 
 }
