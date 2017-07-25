@@ -38,20 +38,21 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public IUsage getUsage() {
       return USAGE;
    }
- 
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
-      
-      //jellyfishCommandProvider.run("create-domain", commandOptions);
-      
-      jellyfishCommandProvider.run("create-domain", DefaultJellyFishCommandOptions.mergeWith(commandOptions,
-         new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue("proto"),
-         new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY).setValue("ProtoBufferMsgsBuildGradle")));
+
+      // jellyfishCommandProvider.run("create-domain", commandOptions);
+
+      jellyfishCommandProvider.run("create-domain",
+         DefaultJellyFishCommandOptions.mergeWith(commandOptions,
+            new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue("proto"),
+            new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
+                     .setValue(CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
 
    }
-   
+
    @Activate
    public void activate() {
       logService.trace(getClass(), "Activated");
@@ -78,7 +79,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-   
+
    /**
     * Sets the JellyFish Command Provider
     *
@@ -88,14 +89,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       this.jellyfishCommandProvider = ref;
    }
-   
+
    /**
     * Remove the JellyFish Command Provider
     */
    public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       setJellyFishCommandProvider(null);
    }
-   
+
    /**
     * Create the usage for this command.
     *
@@ -103,6 +104,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       // TODO Auto-generated method stub
-      return new DefaultUsage("Description of create-protocolbuffer-messages command", new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
+      return new DefaultUsage("Description of create-protocolbuffer-messages command",
+         new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
 }
