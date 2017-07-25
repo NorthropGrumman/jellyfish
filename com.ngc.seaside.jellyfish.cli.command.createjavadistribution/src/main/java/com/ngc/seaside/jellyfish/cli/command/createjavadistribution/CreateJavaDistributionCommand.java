@@ -13,7 +13,6 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -29,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
-
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
@@ -139,12 +137,8 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
       }
       final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaDistributionCommand.class, e);
-         throw new CommandException(e);
-      }
+
+      doCreateDirectories(outputDirectory);
 
       // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
@@ -249,4 +243,14 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
    }
+
+   protected void doCreateDirectories(Path outputDirectory) {
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaDistributionCommand.class, e);
+         throw new CommandException(e);
+      }
+   }
 }
+
