@@ -57,9 +57,8 @@ public class CreateJavaDistributionCommandIT {
    private static final Injector injector = Guice.createInjector(getModules());
    private CreateJavaDistributionCommand fixture = new CreateJavaDistributionCommand();
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
-   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
+   private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
-   private MockedTemplateService mockedTemplateService;
    private IModel model = mock(Model.class);
    private Path outputDir;
 
@@ -80,7 +79,7 @@ public class CreateJavaDistributionCommandIT {
    /**
     * @param folder must be a folder.
     */
-   public static String printDirectoryTree(File folder) {
+   private static String printDirectoryTree(File folder) {
       if (!folder.isDirectory()) {
          throw new IllegalArgumentException("folder is not a Directory");
       }
@@ -100,6 +99,7 @@ public class CreateJavaDistributionCommandIT {
       sb.append(folder.getName());
       sb.append("/");
       sb.append("\n");
+
       for (File file : folder.listFiles()) {
          if (file.isDirectory()) {
             printDirectoryTree(file, indent + 1, sb);
@@ -136,15 +136,15 @@ public class CreateJavaDistributionCommandIT {
       outputDir.toFile().deleteOnExit();
 
       // Uncomment the lines below if you wish to view the output directory
-      //Path outputDirectory = Paths.get("C:\\Users\\J57467\\Downloads\\test");
+      //Path outputDirectory = Paths.get("build/test-template");
       //outputDir = Files.createDirectories(outputDirectory);
 
       // Use the testable template service.
-      mockedTemplateService = new MockedTemplateService()
-            .useRealPropertyService()
-            .useDefaultUserValues(true)
-            .setTemplateDirectory(CreateJavaDistributionCommand.class.getPackage().getName(),
-                                  Paths.get("src/main/template"));
+      MockedTemplateService mockedTemplateService = new MockedTemplateService()
+               .useRealPropertyService()
+               .useDefaultUserValues(true)
+               .setTemplateDirectory(CreateJavaDistributionCommand.class.getPackage().getName(),
+                                     Paths.get("src/main/template"));
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
@@ -199,11 +199,13 @@ public class CreateJavaDistributionCommandIT {
       String contents = new String(Files.readAllBytes(buildFile));
 
       // Verify that model is injected
-      Assert.assertTrue(contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
+      Assert.assertTrue(
+               contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
       int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]");
       int endLength = contents.length();
       String contents2 = contents.substring(startLength, endLength);
-      Assert.assertTrue(contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
+      Assert.assertTrue(
+               contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
       Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
    }
 
@@ -225,7 +227,7 @@ public class CreateJavaDistributionCommandIT {
       Assert.assertTrue(contents.contains("buildDir = 'build'"));
       Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
       Assert.assertTrue(
-            contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
+               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
       Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
 
       // Verify dependencies block
