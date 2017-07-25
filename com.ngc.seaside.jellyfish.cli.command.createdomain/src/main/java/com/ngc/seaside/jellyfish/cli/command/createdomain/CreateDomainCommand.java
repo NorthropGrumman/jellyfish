@@ -388,7 +388,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          extension = commandOptions.getParameters().getParameter(EXTENSION_PROPERTY).getStringValue();
       }
 
-      String template = "DomainBuildGradle";
+      String template = CreateDomainCommand.class.getPackage().getName();
       if (commandOptions.getParameters().containsParameter(BUILD_GRADLE_TEMPLATE_PROPERTY)) {
          template = commandOptions.getParameters().getParameter(BUILD_GRADLE_TEMPLATE_PROPERTY).getStringValue();
       }

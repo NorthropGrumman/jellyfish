@@ -159,7 +159,10 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
          clean = false;
       }
 
-      templateService.unpack("JellyFishCommand", collection, outputDirectory, clean);
+      templateService.unpack(CreateJellyFishCommandCommand.class.getPackage().getName(),
+                             collection,
+                             outputDirectory,
+                             clean);
       logService.info(CreateJellyFishCommandCommand.class, "%s project successfully created", commandName);
    }
 

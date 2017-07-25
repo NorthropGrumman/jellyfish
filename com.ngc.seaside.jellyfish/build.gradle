@@ -10,12 +10,14 @@ dependencies {
 
     compile project(":jellyfish.impl.provider")
 
-
     compile project(":jellyfish.cli.command.samplecommand")
     commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
 
+    compile project(":jellyfish.cli.command.createjavadistribution")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
 
-
+    compile project(":jellyfish.cli.command.createjellyfishcommand")
+    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
@@ -35,9 +37,9 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) { 
-	into 'resources/templates'
-}
+//applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) {
+//	into 'resources/templates'
+//}
 
 applicationDistribution.from('src/main/resources') { 
 	into 'resources'

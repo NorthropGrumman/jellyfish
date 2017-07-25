@@ -39,18 +39,27 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
   public static final String NAME = ${domain.classname}.class.getName();
 
 #foreach ($property in $domain.properties)
+#if( $property.type == "int" )
+#set ($type = "Integer")
+#elseif( $property.type == "float" )
+#set ($type = "Float")
+#elseif( $property.type == "boolean" )
+#set ($type = "Boolean")
+#else
+#set ($type = $property.type)
+#end
 #if(!$property.abstraction)
 #if(! $property.value)
 #if(! $property.multiple)
   private $property.shortType $property.name;
 #else##is multiple
-  private List<$property.shortType> $property.name;
+  private List<$type> $property.name;
 #end##end multiple
 #else##has a value
 #if(! $property.multiple)
   private $property.shortType $property.name = $property.value;
 #else##is multiple
-  private List<$property.shortType> $property.name = $property.value;
+  private List<$type> $property.name = $property.value;
 #end##is multiple
 #end##has value
 #end##is abstraction
@@ -81,11 +90,11 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
 #else
 #if(! $property.abstraction)
   //@Override
-  public List<$property.shortType> get${property.methodString}() {
+  public List<$type> get${property.methodString}() {
     return $property.name;
   }
 
-  public ${domain.classname} set$property.getMethodString()(List<$property.shortType> $property.name) {
+  public ${domain.classname} set$property.getMethodString()(List<$type> $property.name) {
     this.$property.name = $property.name;
     return this;
   }
