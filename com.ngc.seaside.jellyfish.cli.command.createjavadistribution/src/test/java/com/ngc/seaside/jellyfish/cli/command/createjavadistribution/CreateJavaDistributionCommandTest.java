@@ -38,7 +38,7 @@ public class CreateJavaDistributionCommandTest {
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
    private IModel model = mock(Model.class);
-
+   private Path createDirectoriesPath;
    private IParameterCollection addProjectParameters;
 
    @Before
@@ -58,7 +58,13 @@ public class CreateJavaDistributionCommandTest {
          protected void doAddProject(IParameterCollection parameters) {
             addProjectParameters = parameters;
          }
+
+         @Override
+         protected void doCreateDirectories(Path outputDirectory) {
+            createDirectoriesPath = outputDirectory;
+         }
       };
+
       fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
@@ -88,6 +94,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals(model.getParent().getName(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
    }
 
    @Test
@@ -115,6 +123,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
    }
 
    @Test
@@ -149,6 +159,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals("com.ngc.seaside",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
 
    }
 
@@ -162,19 +174,18 @@ public class CreateJavaDistributionCommandTest {
       when(options.getParameters()).thenReturn(collection);
 
       // Setup mock template service
-      when(templateService.unpack("JellyFishJavaDistribution", collection, Paths.get("/just/a/mock/path"), false))
-               .thenReturn(
-                        new ITemplateOutput() {
-                           @Override
-                           public Map<String, ?> getProperties() {
-                              return collection.getParameterMap();
-                           }
+      when(templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(), collection,
+                                  Paths.get("/just/a/mock/path"), false)).thenReturn(new ITemplateOutput() {
+         @Override
+         public Map<String, ?> getProperties() {
+            return collection.getParameterMap();
+         }
 
-                           @Override
-                           public Path getOutputPath() {
-                              return Paths.get("/just/a/mock/path");
-                           }
-                        });
+         @Override
+         public Path getOutputPath() {
+            return Paths.get("/just/a/mock/path");
+         }
+      });
       fixture.run(options);
    }
 }
