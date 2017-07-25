@@ -2,9 +2,22 @@ apply plugin: 'application'
 
 mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
 
+configurations {
+    commandTemplate
+}
+
 dependencies {
 
     compile project(":jellyfish.impl.provider")
+
+    compile project(":jellyfish.cli.command.samplecommand")
+    commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavadistribution")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjellyfishcommand")
+    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
@@ -17,15 +30,16 @@ dependencies {
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-	testCompile "junit:junit:$junitVersion"
+	 testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) { 
-	into 'resources/templates'
-}
+//applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) {
+//	into 'resources/templates'
+//}
 
 applicationDistribution.from('src/main/resources') { 
 	into 'resources'
@@ -41,3 +55,32 @@ startScripts {
         windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
     }
 }
+
+/**
+ * Copy the archive to the distribution directory and rename it to contain the groupId prefix.
+ */
+task copyCommandTemplate(type: Copy) {
+    from configurations.commandTemplate {
+        rename { name ->
+            def artifacts = configurations.commandTemplate.resolvedConfiguration.resolvedArtifacts
+            def artifact = artifacts.find { it.file.name == name }
+            "${artifact.moduleVersion.id.group}.${artifact.name}-${artifact.moduleVersion.id.version}-${artifact.classifier}.${artifact.extension}"
+        }
+    }
+    into "${buildDir}/distributions/${project.name}-${project.version}/resources/templates"
+}
+
+/**
+ * Unzip the distribution created by the application plugin to make it easier when
+ * developing the CLI.
+ */
+task unzipDistribution( type: Copy , dependsOn: copyCommandTemplate) {
+    def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
+    def outputDir = file("${buildDir}/distributions/")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+install.dependsOn unzipDistribution
+build.dependsOn unzipDistribution
