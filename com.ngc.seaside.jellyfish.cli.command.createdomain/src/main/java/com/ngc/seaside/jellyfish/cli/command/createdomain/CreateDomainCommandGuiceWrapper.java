@@ -7,7 +7,9 @@ import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 
+@JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
 
    private final CreateDomainCommand delegate = new CreateDomainCommand();
