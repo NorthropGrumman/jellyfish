@@ -137,12 +137,8 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
       }
       final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaDistributionCommand.class, e);
-         throw new CommandException(e);
-      }
+
+      doCreateDirectories(outputDirectory);
 
       // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
@@ -247,4 +243,14 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
    }
+
+   protected void doCreateDirectories(Path outputDirectory) {
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaDistributionCommand.class, e);
+         throw new CommandException(e);
+      }
+   }
 }
+

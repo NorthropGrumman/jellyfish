@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class CreateJavaDistributionCommandTest {
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
    private IModel model = mock(Model.class);
-
+   private Path createDirectoriesPath;
    private IParameterCollection addProjectParameters;
 
    @Before
@@ -58,7 +59,13 @@ public class CreateJavaDistributionCommandTest {
          protected void doAddProject(IParameterCollection parameters) {
             addProjectParameters = parameters;
          }
+
+         @Override
+         protected void doCreateDirectories(Path outputDirectory) {
+           createDirectoriesPath = outputDirectory;
+         }
       };
+
       fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
