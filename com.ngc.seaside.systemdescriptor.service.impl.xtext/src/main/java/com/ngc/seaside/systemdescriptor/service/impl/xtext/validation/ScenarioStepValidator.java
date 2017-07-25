@@ -29,6 +29,8 @@ public class ScenarioStepValidator extends AbstractSystemDescriptorValidator {
       String keyword = step.getKeyword();
       boolean hasHandler;
 
+      // TODO TH: update this so the user gets a better error message if they use a verb in the wrong tense.
+
       if (SystemDescriptors.isGivenStep(step)) {
          hasHandler = service.getScenarioStepHandlers()
                             .stream()

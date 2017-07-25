@@ -13,6 +13,7 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.AskStepHandler;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.CompleteStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
@@ -84,6 +85,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       bind(ReceiveStepHandler.class).in(Singleton.class);
       bind(AskStepHandler.class).in(Singleton.class);
       bind(PublishStepHandler.class).in(Singleton.class);
+      bind(CompleteStepHandler.class).in(Singleton.class);
 
       Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
             binder(),
@@ -91,6 +93,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       handlers.addBinding().to(ReceiveStepHandler.class);
       handlers.addBinding().to(AskStepHandler.class);
       handlers.addBinding().to(PublishStepHandler.class);
+      handlers.addBinding().to(CompleteStepHandler.class);
 
       // These handlers are also validators.
       Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
@@ -99,6 +102,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       validators.addBinding().to(PublishStepHandler.class);
       validators.addBinding().to(ReceiveStepHandler.class);
       validators.addBinding().to(AskStepHandler.class);
+      validators.addBinding().to(CompleteStepHandler.class);
    }
 
    /**
@@ -119,7 +123,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
                                                                   ValidationDelegate.class,
                                                                   XTextSystemDescriptorService.StepsHolder.class);
       } catch (NoSuchMethodException e) {
-         // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
+         // This shouldn't happen unless the XTextSystemDescriptorService is refactored to have different constructors.
          throw new RuntimeException(e.getMessage(), e);
       }
    }
@@ -132,7 +136,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
                                                                   ValidationDelegate.class,
                                                                   XTextSystemDescriptorService.StepsHolder.class);
       } catch (NoSuchMethodException e) {
-         // This shouldn't happen unless the XTextSystemDescriptorService is refactor to have different constructors.
+         // This shouldn't happen unless the XTextSystemDescriptorService is refactored to have different constructors.
          throw new RuntimeException(e.getMessage(), e);
       }
    }
