@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class CreateJavaDistributionCommandTest {
 
          @Override
          protected void doCreateDirectories(Path outputDirectory) {
-           createDirectoriesPath = outputDirectory;
+            createDirectoriesPath = outputDirectory;
          }
       };
 
@@ -95,6 +94,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals(model.getParent().getName(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
    }
 
    @Test
@@ -122,6 +123,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
    }
 
    @Test
@@ -156,6 +159,8 @@ public class CreateJavaDistributionCommandTest {
       Assert.assertEquals("com.ngc.seaside",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
 
    }
 
