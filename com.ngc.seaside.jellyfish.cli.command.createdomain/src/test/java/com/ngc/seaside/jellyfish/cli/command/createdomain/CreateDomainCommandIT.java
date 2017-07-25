@@ -7,10 +7,13 @@ import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -34,7 +37,7 @@ import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class CreateDomainCommandTest {
+public class CreateDomainCommandIT {
 
    private IJellyFishCommand cmd = injector.getInstance(CreateDomainCommandGuiceWrapper.class);
 
@@ -71,7 +74,7 @@ public class CreateDomainCommandTest {
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
-   
+
    @Test
    public void testWithExtensionCommand() throws IOException {
       final String extension = "asidgoajsdig";
@@ -238,6 +241,12 @@ public class CreateDomainCommandTest {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
+         MockedTemplateService mockedTemplateService = new MockedTemplateService();
+         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+                  .setTemplateDirectory(CreateDomainCommand.class.getPackage().getName(),
+                     Paths.get("src/main/template"));
+
+         bind(ITemplateService.class).toInstance(mockedTemplateService);
 
          IResourceService mockResource = Mockito.mock(IResourceService.class);
          Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
@@ -250,7 +259,9 @@ public class CreateDomainCommandTest {
       Collection<Module> modules = new ArrayList<>();
       modules.add(TEST_SERVICE_MODULE);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         modules.add(dynamicModule);
+         if (!(dynamicModule instanceof TemplateServiceGuiceModule)) {
+            modules.add(dynamicModule);
+         }
       }
 
       modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
