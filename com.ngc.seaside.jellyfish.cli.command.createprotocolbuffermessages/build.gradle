@@ -20,7 +20,6 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
     
     testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"

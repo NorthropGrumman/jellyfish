@@ -3,10 +3,13 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
+import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -39,7 +42,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      jellyfishCommandProvider.run("create-domain", commandOptions);
+      final IParameterCollection parameters = commandOptions.getParameters();
+      
+      //jellyfishCommandProvider.run("create-domain", commandOptions);
+      
+      jellyfishCommandProvider.run("create-domain", DefaultJellyFishCommandOptions.mergeWith(commandOptions,
+         new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue("proto"),
+         new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY).setValue("ProtoBufferMsgsBuildGradle")));
+
    }
    
    @Activate
