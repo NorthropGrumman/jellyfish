@@ -55,7 +55,7 @@ public class CreateDomainCommandIT {
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
-     // outputDir.toFile().deleteOnExit();
+      outputDir.toFile().deleteOnExit();
       velocityPath = Paths.get("src", "test", "resources", "service-domain-source.vm").toAbsolutePath();
 
       Path sdDir = Paths.get("src", "test", "sd");
@@ -73,16 +73,15 @@ public class CreateDomainCommandIT {
       final String model = "com.ngc.seaside.test1.Model1";
       final String groupId = model.substring(0, model.lastIndexOf('.'));
       final String artifactId = model.substring(model.lastIndexOf('.') + 1).toLowerCase() + ".domain";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, model,
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, model, CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.toString(), CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
-      checkBuild(groupId, artifactId);
+      checkBuild(groupId, artifactId, "Data1", "Data2", "Data3", "Data4");
    }
 
    @Test
@@ -247,7 +246,9 @@ public class CreateDomainCommandIT {
       cmd.run(options);
    }
 
-   private void checkBuild(String groupId, String artifactId) throws IOException, FileUtilitiesException {
+   private void checkBuild(String groupId, String artifactId, String... names)
+      throws IOException, FileUtilitiesException {
+      String projectName = groupId + '.' + artifactId;
       Files.createFile(outputDir.resolve("settings.gradle"));
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir));
@@ -268,6 +269,11 @@ public class CreateDomainCommandIT {
          throw new AssertionError("Gradle failed to build generated project (see standard error for details)", e);
       } finally {
          connection.close();
+      }
+
+      for (String name : names) {
+         Assert.assertTrue("Could not find generated " + name + ".java",
+            Files.walk(outputDir.resolve(projectName)).anyMatch(p -> p.endsWith(name + ".java")));
       }
    }
 
