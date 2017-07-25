@@ -10,7 +10,6 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -21,10 +20,6 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import org.gradle.tooling.BuildException;
-import org.gradle.tooling.BuildLauncher;
-import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ProjectConnection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,10 +65,7 @@ public class CreateDomainCommandIT {
 
    @Test
    public void testCommand() throws IOException, FileUtilitiesException {
-      final String model = "com.ngc.seaside.test1.Model1";
-      final String groupId = model.substring(0, model.lastIndexOf('.'));
-      final String artifactId = model.substring(model.lastIndexOf('.') + 1).toLowerCase() + ".domain";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, model, CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1", CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
          outputDir.toString(), CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
@@ -81,7 +73,6 @@ public class CreateDomainCommandIT {
       checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
-      checkBuild(groupId, artifactId, "Data1", "Data2", "Data3", "Data4");
    }
 
    @Test
@@ -244,37 +235,6 @@ public class CreateDomainCommandIT {
       Mockito.when(options.getParameters()).thenReturn(collection);
 
       cmd.run(options);
-   }
-
-   private void checkBuild(String groupId, String artifactId, String... names)
-      throws IOException, FileUtilitiesException {
-      String projectName = groupId + '.' + artifactId;
-      Files.createFile(outputDir.resolve("settings.gradle"));
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir));
-      parameters.addParameter(new DefaultParameter<>(CreateDomainCommand.GROUP_ID_PROPERTY, groupId));
-      parameters.addParameter(new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId));
-      GradleSettingsUtilities.addProject(parameters);
-      Files.copy(Paths.get("..", "build.gradle"), outputDir.resolve("build.gradle"));
-
-      String gradleHome = System.getenv("GRADLE_HOME");
-      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
-      final ProjectConnection connection = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile()).forProjectDirectory(outputDir.toFile()).connect();
-      try {
-         BuildLauncher launcher = connection.newBuild().setColorOutput(false).setStandardError(System.err)
-                  .setStandardOutput(System.out).forTasks("build");
-         launcher.run();
-      } catch (BuildException e) {
-         throw new AssertionError("Gradle failed to build generated project (see standard error for details)", e);
-      } finally {
-         connection.close();
-      }
-
-      for (String name : names) {
-         Assert.assertTrue("Could not find generated " + name + ".java",
-            Files.walk(outputDir.resolve(projectName)).anyMatch(p -> p.endsWith(name + ".java")));
-      }
    }
 
    private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
