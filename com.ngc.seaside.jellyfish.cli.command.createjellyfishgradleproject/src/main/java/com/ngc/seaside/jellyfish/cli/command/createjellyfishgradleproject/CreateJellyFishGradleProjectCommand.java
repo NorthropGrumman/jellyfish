@@ -24,11 +24,13 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.CreateJellyFishGradleProjectCommand;
 
 /**
  * 
  */
+@JellyFishCommandConfiguration(autoTemplateProcessing = false)
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     private static final String NAME = "create-jellyfish-gradle-project";
@@ -100,7 +102,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
         
         if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
             String group    = collection.getParameter(GROUP_ID_PROPERTY).getStringValue().toLowerCase();
-            String artifact = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue().toLowerCase().replace(group, "");
+            String artifact = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue().toLowerCase().replace(group + ".", "");
             collection.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY).setValue(artifact));
         }
 
@@ -109,26 +111,27 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
         }
         
-//        final boolean clean;
-//        if (collection.containsParameter(CLEAN_PROPERTY)) {
-//	        String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
-//	        switch (value.toLowerCase()) {
-//		        case "true":
-//		            clean = true;
-//		            break;
-//		        case "false":
-//		            clean = false;
-//		            break;
-//		        default:
-//		       	    throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
-//	        }
-//        } else {
-//	        clean = false;
-//        }
+        final boolean clean;
+        if (collection.containsParameter(CLEAN_PROPERTY)) {
+	        String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
+	        switch (value.toLowerCase()) {
+		        case "true":
+		            clean = true;
+		            break;
+		        case "false":
+		            clean = false;
+		            break;
+		        default:
+		       	    throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+	        }
+        } else {
+	        clean = false;
+        }
         
-//        templateService.unpack("JellyFishGradleProject", collection, projectDirectory, clean);
+        String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName(); 
+        templateService.unpack(templateName, collection, projectDirectory, clean);
         
-        logService.info(CreateJellyFishGradleProjectCommand.class, "%s project successfully created", projectName);
+        logService.info(getClass(), "%s project successfully created", projectName);
     }
 
     /**

@@ -34,7 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class CreateJellyFishGradleProjectCommandTest {
+public class CreateJellyFishGradleProjectCommandIT {
 
    private CreateJellyFishGradleProjectCommand cmd = new CreateJellyFishGradleProjectCommand();
 
