@@ -1,0 +1,6 @@
+# List all files that should be ignored by post-processing template engine
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
+.gitignore

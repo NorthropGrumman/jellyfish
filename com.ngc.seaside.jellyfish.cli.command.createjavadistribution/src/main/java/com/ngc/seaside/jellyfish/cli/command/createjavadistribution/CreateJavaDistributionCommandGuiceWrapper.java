@@ -1,6 +1,7 @@
-package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
+package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -10,16 +11,18 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
-public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishCommand {
+public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishCommand {
 
-   private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
+   private final CreateJavaDistributionCommand delegate = new CreateJavaDistributionCommand();
 
    @Inject
-   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, IPromptUserService promptService,
-            ITemplateService templateService) {
+   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService,
+                                                    IPromptUserService promptUserService,
+                                                    ITemplateService templateService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptService);
+      delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
+      delegate.activate();
    }
 
    @Override
