@@ -11,9 +11,10 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -61,41 +62,38 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      DefaultParameterCollection collection = new DefaultParameterCollection();
-      collection.addParameters(commandOptions.getParameters().getAllParameters());
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
-      if (!collection.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
 
-         String outputDir = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, "", null);
-         collection.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
+         String outputDir = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
       }
-      final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      System.out.println("Output dir :"  + outputDirectory);
-      if (!collection.containsParameter(MODEL_PROPERTY)) {
+      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
-         String modelId = promptService.prompt(MODEL_PROPERTY, "", null);
-         collection.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
+      if (!parameters.containsParameter(MODEL_PROPERTY)) {
+
+         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
       }
-
-      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
-      String modelId = collection.getParameter(MODEL_PROPERTY).getStringValue();
-      final IModel model = systemDescriptor.findModel(modelId)
+      String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
+      final IModel model = commandOptions.getSystemDescriptor().findModel(modelId)
             .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
-      collection.addParameter(new DefaultParameter<>(CLASS_NAME_PROPERTY, model.getName().concat("Connector")));
-      System.out.println("Model Name :"  + model.getName().concat("Connector"));
 
-      if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
-         collection.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
+      parameters.addParameter(new DefaultParameter<>(CLASS_NAME_PROPERTY, model.getName().concat("Connector")));
+
+      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
       }
-      final String groupId = collection.getParameter(GROUP_ID_PROPERTY).getStringValue();
-      System.out.println("Group Id :"  + groupId);
-      if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      final String groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
+
+      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          String artifact = model.getName().toLowerCase().concat(".connector");
-         collection.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifact));
+         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifact));
       }
-      final String artifactId = collection.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      System.out.println("Artifact Id :"  + artifactId);
-      collection.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, groupId + "." + artifactId));
+      final String artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, groupId + "." + artifactId));
 
       try {
          Files.createDirectories(outputDirectory);
@@ -105,8 +103,8 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
       }
 
       final boolean clean;
-      if (collection.containsParameter(CLEAN_PROPERTY)) {
-         String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
+      if (parameters.containsParameter(CLEAN_PROPERTY)) {
+         String value = parameters.getParameter(CLEAN_PROPERTY).getStringValue();
          switch (value.toLowerCase()) {
             case "true":
                clean = true;
@@ -121,8 +119,19 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
          clean = false;
       }
 
-      templateService.unpack("JellyFishJavaServiceConnector", collection, outputDirectory, clean);
+      doAddProject(parameters);
+
+      templateService.unpack("JellyFishJavaServiceConnector", parameters, outputDirectory, clean);
       logService.info(CreateJavaServiceConnectorCommand.class, "%s project successfully created", modelId);
+   }
+
+   protected void doAddProject(IParameterCollection parameters) {
+      try {
+         GradleSettingsUtilities.addProject(parameters);
+      } catch (FileUtilitiesException e) {
+         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
+         throw new CommandException(e);
+      }
    }
    
    @Activate

@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnectorcommand;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -24,23 +24,21 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import org.apache.commons.io.FileUtils;
 
+import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,12 +55,10 @@ public class CreateJavaServiceConnectorCommandIT {
 
    private Path outputDir;
 
-   private String propertyModelName;
-
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
-      propertyModelName = "models.testModelsProp";
+      createSettings();
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(injector.getInstance(ITemplateService.class));
@@ -82,7 +78,7 @@ public class CreateJavaServiceConnectorCommandIT {
    * minimal parameters and is ultimately the base test.
    */
    @Test
-   public void testCommand() throws IOException {
+   public void testCommandWithoutOptionalParameters() throws IOException {
       final String model = "com.ngc.seaside.test.TestService";
       final String expectedGroupId = "com.ngc.seaside.test";
       final String expectedArtifactId = "testservice.connector";
@@ -115,60 +111,6 @@ public class CreateJavaServiceConnectorCommandIT {
       checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
    }
 
-   /*
-    * This test tests that the CreateJavaServiceConnectorCommand does prompt
-    * the user to enter values if the required parameters aren't set.
-    */
-   @Test
-   public void testCommandDoesPromptWithoutRequiredParameters() throws IOException {
-      createProperties();
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      PrintStream ps = new PrintStream(outputStream);
-      System.setOut(ps);
-
-      final String group = "com.ngc.seaside";
-      final String artifact = "testmodel.model";
-      final String model = "TestCommand1Command";
-
-      runCommand(CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
-                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
-                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
-      outputStream.flush();
-      Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
-      outputStream.reset();
-      runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
-                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
-      outputStream.flush();
-      Assert.assertEquals("Expected prompt for empty required parameter didn't match","Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
-      outputStream.reset();
-      runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
-                 CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
-                 CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
-      checkCommandOutput(group, artifact, "");
-   }
-
-   /*
-    * This test tests that the CreateJavaServiceConnectorCommand does not prompt
-    * the user to enter values if the required parameters aren't set, but are in
-    * the jellyfish.properties file.
-    */
-   @Test
-   public void testCommandDoesNotPromptWithJellyfishProperties() throws IOException {
-      createProperties();
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      PrintStream ps = new PrintStream(outputStream);
-      System.setOut(ps);
-
-      runCommand("");
-      outputStream.flush();
-      Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputStream.toString());
-      Assert.assertNotEquals("No output expected!", "Enter value for " + CreateJavaServiceConnectorCommand.MODEL_PROPERTY, outputStream.toString());
-      outputStream.reset();
-      //checkCommandOutput(null, null, null, "");
-   }
-
    @After
    public void cleanup() throws IOException {
      FileUtils.deleteQuietly(outputDir.toFile());
@@ -178,10 +120,10 @@ public class CreateJavaServiceConnectorCommandIT {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
+      DefaultParameter outputDirectory = new DefaultParameter<String>(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
             .setValue(outputDir.toString());
       collection.addParameter(outputDirectory);
 
@@ -189,18 +131,6 @@ public class CreateJavaServiceConnectorCommandIT {
 
       cmd.run(options);
 
-   }
-
-   private void createProperties() throws IOException {
-      String jellyfishProperties = ("outputDir="+outputDir.toString()+"\n" +
-                                    "model="+propertyModelName);
-
-      try {
-         Path propertiesFile = Files.createFile(outputDir.resolve("src/main/resources/jellyfish.properties"));
-         Files.write(propertiesFile, jellyfishProperties.getBytes());
-      } catch (FileAlreadyExistsException e) {
-         // ignore
-      }
    }
 
    private void checkCommandOutput(String expectedGroupId, String expectedArtifactId, String expectedClassName)
@@ -227,9 +157,10 @@ public class CreateJavaServiceConnectorCommandIT {
                         outputDir.resolve(bundlePath).toFile().exists());
 
       Path actualBundle = outputDir.resolve(expectedBundle).toAbsolutePath();
+      String actualBundleName = actualBundle.getFileName().toString();
       Assert.assertTrue("Actual bundle doesn't exist! " + actualBundle.toString(), actualBundle.toFile().exists());
-      String[] actualArtifactId = actualBundle.getFileName().toString().split(expectedGroupId);
-      String[] actualGroupId = actualBundle.getFileName().toString().split(expectedArtifactId);
+      String[] actualArtifactId = actualBundleName.split(expectedGroupId);
+      String[] actualGroupId = actualBundleName.split(expectedArtifactId);
       //Check that the artifactId is correct, and assuming it has a leading '.'
       Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualArtifactId.length+"\'strings instead of 2", actualArtifactId.length == 2);
       Assert.assertEquals("Expected groupId does not match the actual artifactId", '.' + expectedArtifactId, actualArtifactId[1]);
@@ -251,6 +182,18 @@ public class CreateJavaServiceConnectorCommandIT {
       Assert.assertTrue("build.gradle does not contain osgi enterprise", Files.readAllLines(expectedGradleBuildFile).stream()
             .anyMatch(line -> line.contains("\"org.osgi:osgi.enterprise:$osgiVersion\"")));
 
+      //Check that the settings.gradle file contains the project
+      String contents = new String(Files.readAllBytes(outputDir.resolve("settings.gradle")));
+      Assert.assertTrue("Project is not included in settings.gradle",contents.contains("include \'"+actualBundleName+"\'"));
+      Assert.assertTrue("Project is not named in settings.gradle",contents.contains("project(\':" + actualBundleName + "\').name = \'" + expectedArtifactId + "\'"));
+   }
+
+   private void createSettings() throws IOException {
+      try {
+         Files.createFile(outputDir.resolve("settings.gradle"));
+      } catch (FileAlreadyExistsException e) {
+         // ignore
+      }
    }
 
    private static Injector injector = Guice.createInjector(new AbstractModule() {

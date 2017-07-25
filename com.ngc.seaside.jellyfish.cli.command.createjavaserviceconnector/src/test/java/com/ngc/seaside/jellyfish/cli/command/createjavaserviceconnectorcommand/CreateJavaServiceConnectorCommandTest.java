@@ -38,8 +38,7 @@ public class CreateJavaServiceConnectorCommandTest {
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
    private IModel model = mock(Model.class);
-
-   private IParameterCollection addProjectParameters;
+   private IParameterCollection parameters;
 
    @Before
    public void setup() throws IOException {
@@ -53,7 +52,12 @@ public class CreateJavaServiceConnectorCommandTest {
       when(model.getName()).thenReturn("Model");
 
       // Setup class under test
-      cmd = new CreateJavaServiceConnectorCommand();
+      cmd = new CreateJavaServiceConnectorCommand() {
+         @Override
+         protected void doAddProject(IParameterCollection params) {
+            parameters = params;
+         }
+      };
       cmd.setLogService(new PrintStreamLogService());
       cmd.setPromptService(promptUserService);
       cmd.setTemplateService(templateService);
@@ -67,21 +71,15 @@ public class CreateJavaServiceConnectorCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(3)).getName();
+      verify(model, times(2)).getName();
       verify(model, times(2)).getParent();
 
       // Verify passed values
       Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
                                 .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                .getStringValue());
-      Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY)
-                                .getStringValue());
-      Assert.assertEquals(model.getParent().getName(),
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
                                 .getStringValue());
    }
 
@@ -95,21 +93,22 @@ public class CreateJavaServiceConnectorCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
+      verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
 
       // Verify passed values
       Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
                                 .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY)
-            .getStringValue());
+      Assert.assertEquals("model",
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY)
+                                 .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY)
-                                .getStringValue());
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY)
+                                 .getStringValue());
    }
 
    @Test
@@ -133,16 +132,19 @@ public class CreateJavaServiceConnectorCommandTest {
 
       // Verify passed values
       Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                .getStringValue()
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY)
+                                    .getStringValue()
       );
       Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.MODEL_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY)
-            .getStringValue());
+
+      Assert.assertEquals("test",
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY)
+                                 .getStringValue());
+
       Assert.assertEquals("com.ngc.seaside",
-                          addProjectParameters.getParameter(CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY)
+                          parameters.getParameter(CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY)
                                 .getStringValue());
 
    }
