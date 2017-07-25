@@ -27,6 +27,6 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    
+    testCompile project(":jellyfish.cli.command.testutils")
 }
-
-// add task here to do the help to show that we can put call commands from here to do things like generate transient projects

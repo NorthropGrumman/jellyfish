@@ -30,7 +30,6 @@ import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.Create
 /**
  * 
  */
-@JellyFishCommandConfiguration(autoTemplateProcessing = false)
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     private static final String NAME = "create-jellyfish-gradle-project";
@@ -40,14 +39,13 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 //    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
     public static final String OUTPUT_DIR_PROPERTY = "outputDirectory";
+    public static final String ROOT_PROJECT_NAME_PROPERTY = "rootProjectName";
     public static final String PROJECT_NAME_PROPERTY = "projectName";
     public static final String GROUP_ID_PROPERTY = "groupId";
-    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
     public static final String VERSION_PROPERTY = "version";
     public static final String CLEAN_PROPERTY = "clean";
 
-    static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
-    static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
+    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
     private ILogService logService;
     private IPromptUserService promptService;
@@ -77,16 +75,23 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     public void run(IJellyFishCommandOptions commandOptions) {
         DefaultParameterCollection collection = new DefaultParameterCollection();
         collection.addParameters(commandOptions.getParameters().getAllParameters());
-        
-        if (!collection.containsParameter(PROJECT_NAME_PROPERTY)) {
-            String projectName = promptService.prompt(PROJECT_NAME_PROPERTY, "", null);
-            collection.addParameter(new DefaultParameter<>(PROJECT_NAME_PROPERTY).setValue(projectName));
-        }         
-        final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
-        
+
+        // Ensure OUTPUT_DIR_PROPERTY parameter is set
         if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
             collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
         }         
+        
+        // Ensure ROOT_PROJECT_NAME_PROPERTY parameter is set
+        if (!collection.containsParameter(ROOT_PROJECT_NAME_PROPERTY)) {
+            String rootProjectName = promptService.prompt(ROOT_PROJECT_NAME_PROPERTY, "my-project", null);
+            collection.addParameter(new DefaultParameter<>(ROOT_PROJECT_NAME_PROPERTY).setValue(rootProjectName));
+        }        
+
+        // Ensure PROJECT_NAME_PROPERTY parameter is set
+        final String projectName = collection.getParameter(ROOT_PROJECT_NAME_PROPERTY).getStringValue().replace("-", "").toLowerCase();
+        collection.addParameter(new DefaultParameter<>(PROJECT_NAME_PROPERTY).setValue(projectName));
+
+        // Create project directory
         final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
         final Path projectDirectory = outputDirectory.resolve(projectName);
         try {
@@ -95,22 +100,19 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             logService.error(CreateJellyFishGradleProjectCommand.class, e);
             throw new CommandException(e);
         }
-        
+
+        // Ensure GROUP_ID_PROPERTY parameter is set
         if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
             collection.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY).setValue(DEFAULT_GROUP_ID));
         }
-        
-        if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
-            String group    = collection.getParameter(GROUP_ID_PROPERTY).getStringValue().toLowerCase();
-            String artifact = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue().toLowerCase().replace(group + ".", "");
-            collection.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY).setValue(artifact));
-        }
 
+        // Ensure VERSION_PROPERTY parameter is set
         if (!collection.containsParameter(VERSION_PROPERTY)) {
-            String version = promptService.prompt(VERSION_PROPERTY, "", null);
+            String version = promptService.prompt(VERSION_PROPERTY, "1.0-SNAPSHOT", null);
             collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
         }
-        
+
+        // Ensure CLEAN_PROPERTY parameter is set
         final boolean clean;
         if (collection.containsParameter(CLEAN_PROPERTY)) {
 	        String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
@@ -197,15 +199,13 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
         return new DefaultUsage(
                 "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
                 new DefaultParameter<>(OUTPUT_DIR_PROPERTY)
-                        .setDescription("The directory to generate the Gradle project in").setRequired(false),
-                new DefaultParameter<>(PROJECT_NAME_PROPERTY)
-                        .setDescription("The name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
+                        .setDescription("The directory to generate the Gradle project in")
+                        .setRequired(false),
+                new DefaultParameter<>(ROOT_PROJECT_NAME_PROPERTY)
+                        .setDescription("The root name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
                         .setRequired(false),
                 new DefaultParameter<>(GROUP_ID_PROPERTY)
-                        .setDescription("The groupId. This is usually similar to com.ngc.myprojectname")
-                        .setRequired(false),
-                new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
-                        .setDescription("The artifactId, usually the lowercase version of the classname")
+                        .setDescription("The groupId. This is usually similar to com.ngc.seaside")
                         .setRequired(false),
                 new DefaultParameter<>(VERSION_PROPERTY)
                         .setDescription("The version to use for the Gradle project")
