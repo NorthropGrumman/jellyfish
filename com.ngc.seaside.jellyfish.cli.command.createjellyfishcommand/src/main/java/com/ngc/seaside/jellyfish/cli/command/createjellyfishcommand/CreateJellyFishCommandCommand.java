@@ -222,6 +222,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
     *
     * @return the usage.
     */
+   @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Creates a new JellyFish Command project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
