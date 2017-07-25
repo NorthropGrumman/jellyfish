@@ -18,6 +18,7 @@ import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -33,7 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class CreateJellyFishCommandCommandTest {
+public class CreateJellyFishCommandCommandIT {
 
    private CreateJellyFishCommandCommand cmd = new CreateJellyFishCommandCommand();
 
@@ -41,15 +42,22 @@ public class CreateJellyFishCommandCommandTest {
 
    private IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
 
+   private MockedTemplateService mockedTemplateService;
+
    private Path outputDir;
 
    @Before
    public void setup() throws IOException {
+      mockedTemplateService = new MockedTemplateService()
+            .useRealPropertyService()
+            .useDefaultUserValues(true)
+            .setTemplateDirectory(CreateJellyFishCommandCommand.class.getPackage().getName(),
+                                  Paths.get("src/main/template"));
+
       outputDir = Files.createTempDirectory(null);
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
-      cmd.setTemplateService(injector.getInstance(ITemplateService.class));
-
+      cmd.setTemplateService(mockedTemplateService);
    }
 
    @Test

@@ -8,6 +8,7 @@ include 'com.ngc.seaside.jellyfish.cli.command.validate'
 include 'com.ngc.seaside.jellyfish.cli.command.help'
 include 'com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand'
 include 'com.ngc.seaside.jellyfish.cli.gradle.plugins'
+include 'com.ngc.seaside.jellyfish.cli.command.testutils'
 
 project(':com.ngc.seaside.jellyfish.api').name = 'jellyfish.api'
 project(':com.ngc.seaside.jellyfish').name = 'jellyfish'
@@ -16,6 +17,7 @@ project(':com.ngc.seaside.jellyfish.cli.command.validate').name = 'jellyfish.cli
 project(':com.ngc.seaside.jellyfish.cli.command.help').name = 'jellyfish.cli.command.help'
 project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand').name = 'jellyfish.cli.command.createjellyfishcommand'
 project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.gradle.plugins'
+project(':com.ngc.seaside.jellyfish.cli.command.testutils').name = 'jellyfish.cli.command.testutils'
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
