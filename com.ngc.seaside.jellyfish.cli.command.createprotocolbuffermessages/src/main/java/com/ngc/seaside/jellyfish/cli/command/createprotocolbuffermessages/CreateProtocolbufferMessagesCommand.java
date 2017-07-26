@@ -167,9 +167,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
          new DefaultParameter<String>(CreateDomainCommand.CLEAN_PROPERTY)
                   .setDescription(
                      "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                  .setRequired(false),
-         new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
-                  .setDescription("Name of template used to generate the domain projects build.gradle")
                   .setRequired(false));
    }
 }
