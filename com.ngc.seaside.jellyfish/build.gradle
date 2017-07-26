@@ -17,6 +17,9 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjellyfishcommand")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
+    
+    compile project(":jellyfish.cli.command.createdomain")
+    commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
