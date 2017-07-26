@@ -5,6 +5,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import com.ngc.blocs.guice.module.LogServiceModule;
+import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -236,14 +238,14 @@ public class CreateJavaServiceCommandIT {
          MockedTemplateService mockedTemplateService = new MockedTemplateService();
          mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
                   .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
-                                        Paths.get("src", "main", "template"));
+                                        Paths.get("src/main/template"));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
 
-         IResourceService resourceService = Mockito.mock(IResourceService.class);
-         Mockito.when(resourceService.getResourceRootPath()).thenReturn(Paths.get("src", "test", "resources"));
+         IResourceService mockResource = Mockito.mock(IResourceService.class);
+         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
 
-         bind(IResourceService.class).toInstance(resourceService);
+         bind(IResourceService.class).toInstance(mockResource);
       }
    };
 
@@ -251,7 +253,8 @@ public class CreateJavaServiceCommandIT {
       Collection<Module> modules = new ArrayList<>();
       modules.add(TEST_SERVICE_MODULE);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof TemplateServiceGuiceModule)) {
+         if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
+             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
             modules.add(dynamicModule);
          }
       }
