@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
@@ -22,9 +23,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-protocolbuffer-messages";
+   private static final String CREATE_DOMAIN_COMMAND = "create-domain";
+   private static final String TEMPLATE_FILE = "proto-messages.vm";
+   private static final String DEFAULT_PACKAGE_SUFFIX = "messages";
+   private static final String DEFAULT_EXT_PROPERTY = "proto";
    private static final IUsage USAGE = createUsage();
-
-   public static final String EXAMPLE_PROPERTY = "example";
 
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
@@ -42,19 +45,16 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
+      final String pkgSuffix = evaluatePackageSuffix(parameters);
 
-      // jellyfishCommandProvider.run("create-domain", commandOptions);
-      //TODO override package suffix
-
-      jellyfishCommandProvider.run("create-domain",
+      jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
-            new DefaultParameter<String>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, "proto-messages.vm"),
+            new DefaultParameter<String>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, TEMPLATE_FILE),
             new DefaultParameter<String>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
-            new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).setValue("messages"),
-            new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue("proto"),
+            new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).setValue(pkgSuffix),
+            new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue(DEFAULT_EXT_PROPERTY),
             new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
                      .setValue(CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
-
    }
 
    @Activate
@@ -102,13 +102,46 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    }
 
    /**
+    * Returns the package for the domain project.
+    * 
+    * @param parameters command parameters
+    * @param groupId domain groupId
+    * @param artifactId domain artifactId
+    * @return the package for the domain project
+    */
+   private static String evaluatePackageSuffix(IParameterCollection parameters) {
+      String pkgSuffix = DEFAULT_PACKAGE_SUFFIX;
+      if (parameters.containsParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)) {
+         pkgSuffix = parameters.getParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
+      }
+      return pkgSuffix;
+   }
+
+   /**
     * Create the usage for this command.
     *
     * @return the usage.
     */
    private static IUsage createUsage() {
-      // TODO Auto-generated method stub
-      return new DefaultUsage("Description of create-protocolbuffer-messages command",
-         new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
+      return new DefaultUsage("Generate a gradle project that can generate the protocol buffer message bundle.",
+         new DefaultParameter<String>(CreateDomainCommand.GROUP_ID_PROPERTY).setDescription("The project's group ID")
+                  .setRequired(false),
+         new DefaultParameter<String>(CreateDomainCommand.ARTIFACT_ID_PROPERTY).setDescription("The project's version")
+                  .setRequired(false),
+         new DefaultParameter<String>(CreateDomainCommand.PACKAGE_PROPERTY)
+                  .setDescription("The project's default package").setRequired(false),
+         new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)
+                  .setDescription("A string to append to the end of the generated package name").setRequired(false),
+         new DefaultParameter<String>(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY)
+                  .setDescription("Base directory in which to output the project").setRequired(true),
+         new DefaultParameter<String>(CreateDomainCommand.MODEL_PROPERTY)
+                  .setDescription("The fully qualified path to the system descriptor model").setRequired(true),
+         new DefaultParameter<String>(CreateDomainCommand.CLEAN_PROPERTY)
+                  .setDescription(
+                     "If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                  .setRequired(false),
+         new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
+                  .setDescription("Name of template used to generate the domain projects build.gradle")
+                  .setRequired(false));
    }
 }
