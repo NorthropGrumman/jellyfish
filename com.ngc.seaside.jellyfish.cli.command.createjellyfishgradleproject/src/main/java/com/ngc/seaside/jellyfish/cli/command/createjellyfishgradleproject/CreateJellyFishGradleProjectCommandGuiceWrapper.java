@@ -9,7 +9,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 
-@JellyFishCommandConfiguration(autoTemplateProcessing = false)
+@JellyFishCommandConfiguration(autoTemplateProcessing = false, requireValidSystemDescriptor = false)
 public class CreateJellyFishGradleProjectCommandGuiceWrapper implements IJellyFishCommand {
 
    private final CreateJellyFishGradleProjectCommand delegate = new CreateJellyFishGradleProjectCommand();
