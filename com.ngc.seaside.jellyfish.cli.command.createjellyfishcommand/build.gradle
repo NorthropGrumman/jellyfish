@@ -20,9 +20,6 @@ dependencies {
     testCompile project(":jellyfish.cli.command.testutils")
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
