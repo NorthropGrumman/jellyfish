@@ -23,6 +23,9 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaevents")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
     
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
@@ -41,10 +44,6 @@ dependencies {
 	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
-
-//applicationDistribution.from(project(':jellyfish.cli.command.createjellyfishcommand').file('src/main/resources/templates')) {
-//	into 'resources/templates'
-//}
 
 applicationDistribution.from('src/main/resources') { 
 	into 'resources'
