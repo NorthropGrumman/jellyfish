@@ -172,7 +172,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       if (generateDelegate) {
          parameters.addParameter(new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME,
                                                         parameters.getParameter(MODELNAME_PROPERTY).getStringValue()
-                                                        + "Delegate"));
+                                                        + "GuiceWrapper"));
       }
 
       boolean generateBase = Boolean.parseBoolean(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
