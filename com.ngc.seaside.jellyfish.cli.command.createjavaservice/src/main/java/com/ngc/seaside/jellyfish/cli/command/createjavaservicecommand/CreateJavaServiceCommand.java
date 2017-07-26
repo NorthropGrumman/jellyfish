@@ -34,8 +34,11 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
+
    public static final String MODEL_PROPERTY = "model";
    public static final String MODELNAME_PROPERTY = "modelname";
+   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
+
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
 
    public static final boolean DEFAULT_BASE_PROPERTY = true;
@@ -121,6 +124,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       final IModel model = systemDescriptor.findModel(modelId)
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
+      parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
       parameters.addParameter(new DefaultParameter<>(MODELNAME_PROPERTY, model.getName()));
 
       // Resolve groupId
@@ -164,14 +168,14 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          throw new CommandException("Invalid package name: " + pkg);
       }
 
-      boolean generateDelegate = Boolean.valueOf(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
+      boolean generateDelegate = Boolean.parseBoolean(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
       if (generateDelegate) {
          parameters.addParameter(new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME,
                                                         parameters.getParameter(MODELNAME_PROPERTY).getStringValue()
                                                         + "Delegate"));
       }
 
-      boolean generateBase = Boolean.valueOf(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
+      boolean generateBase = Boolean.parseBoolean(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
       if (generateBase) {
          parameters.addParameter(new DefaultParameter<>(GENERATED_BASE_DIRECTORY,
                                                         parameters.getParameter(PACKAGE_PROPERTY).getStringValue()
@@ -179,7 +183,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       }
 
       doAddProject(parameters);
-
 
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
