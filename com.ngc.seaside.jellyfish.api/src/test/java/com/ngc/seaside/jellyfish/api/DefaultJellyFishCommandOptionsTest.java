@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.api;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultJellyFishCommandOptionsTest {
@@ -20,15 +22,20 @@ public class DefaultJellyFishCommandOptionsTest {
    private DefaultJellyFishCommandOptions options;
 
    @Mock
+   private IParsingResult parsingResult;
+
+   @Mock
    private ISystemDescriptor systemDescriptor;
 
    @Before
    public void setup() throws Throwable {
+      when(parsingResult.getSystemDescriptor()).thenReturn(systemDescriptor);
+
       parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter("param1").setValue("foo"));
+      parameters.addParameter(new DefaultParameter<>("param1", "foo"));
 
       options = new DefaultJellyFishCommandOptions();
-      options.setSystemDescriptor(systemDescriptor);
+      options.setParsingResult(parsingResult);
       options.setParameters(parameters);
    }
 
@@ -36,14 +43,17 @@ public class DefaultJellyFishCommandOptionsTest {
    public void testDoesMergeOptions() throws Throwable {
       IJellyFishCommandOptions merged = DefaultJellyFishCommandOptions.mergeWith(
             options,
-            new DefaultParameter("param2").setValue("bar"));
+            new DefaultParameter<>("param2", "bar"));
       assertEquals("system descriptor not set!",
                    systemDescriptor,
                    merged.getSystemDescriptor());
-      assertEquals("did not include existing param",
+      assertEquals("parsing result not set!",
+                   parsingResult,
+                   merged.getParsingResult());
+      assertEquals("did not include existing param!",
                    "foo",
                    merged.getParameters().getParameter("param1").getValue());
-      assertEquals("did not add param",
+      assertEquals("did not add param!",
                    "bar",
                    merged.getParameters().getParameter("param2").getValue());
    }
@@ -52,8 +62,8 @@ public class DefaultJellyFishCommandOptionsTest {
    public void testDoesMergeAndOverrideOptions() throws Throwable {
       IJellyFishCommandOptions merged = DefaultJellyFishCommandOptions.mergeWith(
             options,
-            new DefaultParameter("param1").setValue("bar"));
-      assertEquals("did not replace existing param",
+            new DefaultParameter<>("param1", "bar"));
+      assertEquals("did not replace existing param!",
                    "bar",
                    merged.getParameters().getParameter("param1").getValue());
    }

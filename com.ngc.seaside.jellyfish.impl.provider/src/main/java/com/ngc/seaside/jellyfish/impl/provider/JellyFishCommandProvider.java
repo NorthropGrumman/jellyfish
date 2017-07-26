@@ -8,6 +8,7 @@ import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -24,6 +25,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -133,15 +135,17 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          return;
       }
 
-      IParameterCollection userInputParameters = parameterService
-            .parseParameters(Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+      IParameterCollection userInputParameters = parameterService.parseParameters(
+            Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
 
       IParameterCollection templateParameters = null;
       if (isCommandConfiguredForTemplateService(command)) {
          templateParameters = unpackTemplate(command, userInputParameters);
       }
 
-      IJellyFishCommandOptions jellyFishCommandOptions = createCommandOptions(userInputParameters, templateParameters);
+      IJellyFishCommandOptions jellyFishCommandOptions = createCommandOptions(userInputParameters,
+                                                                              templateParameters,
+                                                                              command);
       command.run(jellyFishCommandOptions);
    }
 
@@ -376,10 +380,12 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @param userInputParameters the parameters that the user input on the command line
     * @param templateParameters  the parameters that were fulfilled by the templateContent.properties file in the
     *                            templateContent
+    * @param command             the command to execute
     * @return the JellyFish command options
     */
-   private IJellyFishCommandOptions createCommandOptions(
-         IParameterCollection userInputParameters, IParameterCollection templateParameters) {
+   private IJellyFishCommandOptions createCommandOptions(IParameterCollection userInputParameters,
+                                                         IParameterCollection templateParameters,
+                                                         IJellyFishCommand command) {
 
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
 
@@ -399,17 +405,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       } else {
          path = Paths.get(inputDir.getStringValue());
       }
-
-      try {
-         if (!path.toFile().isDirectory()) {
-            throw new IllegalArgumentException(
-                  String.format("Unable to use %s as it does not exist as a directory", path));
-         }
-         options.setSystemDescriptor(getSystemDescriptor(path));
-      } catch (IllegalArgumentException | ParsingException e) {
-         logService.warn(getClass(), e.getMessage());
-         options.setSystemDescriptor(null);
-      }
+      options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
       return options;
    }
 
@@ -417,16 +413,29 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * This method uses the {@link ISystemDescriptorService} to parse the provided project.
     * If errors occur, a {@link ParsingException} is thrown along with a list of issues.
     *
-    * @param path system descriptor project path
-    * @return the system descriptor
+    * @param path                      system descriptor project path
+    * @param isValidDescriptorRequired if true and they system descriptor is invalid, a {@code CommandException} is
+    *                                  thrown
+    * @return the results of parsing
     */
-   private ISystemDescriptor getSystemDescriptor(Path path) {
-      IParsingResult result = sdService.parseProject(path);
-      if (!result.isSuccessful()) {
-         result.getIssues().forEach(issue -> logService.error(this.getClass(), issue));
-         throw new ParsingException("Error occurred parsing project");
+   private IParsingResult getParsingResult(Path path, boolean isValidDescriptorRequired) {
+      IParsingResult result = null;
+      boolean isValid = path.toFile().isDirectory();
+      if (!isValid && isValidDescriptorRequired) {
+         throw new CommandException(String.format("%s either does not exists or is not a directory!", path));
+      } else if (isValid) {
+         result = sdService.parseProject(path);
+         // Always log errors.
+         result.getIssues()
+               .stream()
+               .filter(issue -> issue.getSeverity() == Severity.ERROR)
+               .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
+         isValid = result.isSuccessful();
+         if (!isValid && isValidDescriptorRequired) {
+            throw new CommandException("Command requires a valid SystemDescriptor but errors were encountered!");
+         }
       }
-      return result.getSystemDescriptor();
+      return result;
    }
 
    /**
@@ -443,5 +452,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private static boolean isCommandConfiguredForTemplateService(IJellyFishCommand command) {
       JellyFishCommandConfiguration config = command.getClass().getAnnotation(JellyFishCommandConfiguration.class);
       return config == null || config.autoTemplateProcessing();
+   }
+
+   private static boolean doesCommandRequireValidSystemDescriptor(IJellyFishCommand command) {
+      JellyFishCommandConfiguration config = command.getClass().getAnnotation(JellyFishCommandConfiguration.class);
+      return config == null || config.requireValidSystemDescriptor();
    }
 }

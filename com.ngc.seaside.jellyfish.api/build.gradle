@@ -1,6 +1,7 @@
 dependencies {
     compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
     compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
 
     testCompile "junit:junit:$junitVersion"

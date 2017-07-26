@@ -6,6 +6,7 @@ import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
@@ -30,6 +31,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -51,7 +53,7 @@ public class JellyFishCommandProviderTest {
    private IParameterService parameterService;
    private ISystemDescriptorService systemDescriptorService;
 
-   private JellyFishCommandProvider fixture;
+   private JellyFishCommandProvider provider;
 
    @Before
    public void setup() {
@@ -60,7 +62,7 @@ public class JellyFishCommandProviderTest {
       parameterService = mock(IParameterService.class);
       systemDescriptorService = mock(ISystemDescriptorService.class);
 
-      fixture = new JellyFishCommandProvider() {
+      provider = new JellyFishCommandProvider() {
          /**
           * The Bootstrap command provider uses the package name from the class in order to look up the templateContent.
           * Therefore, it is necessary to return our own value since we can't mock the final method getClass
@@ -71,21 +73,21 @@ public class JellyFishCommandProviderTest {
          }
       };
 
-      fixture.setLogService(logService);
-      fixture.setTemplateService(templateService);
-      fixture.setParameterService(parameterService);
-      fixture.setSystemDescriptorService(systemDescriptorService);
+      provider.setLogService(logService);
+      provider.setTemplateService(templateService);
+      provider.setParameterService(parameterService);
+      provider.setSystemDescriptorService(systemDescriptorService);
 
-      fixture.activate();
+      provider.activate();
    }
 
    @After
    public void after() {
-      fixture.deactivate();
-      fixture.removeLogService(logService);
-      fixture.removeParameterService(parameterService);
-      fixture.removeSystemDescriptorService(systemDescriptorService);
-      fixture.removeTemplateService(templateService);
+      provider.deactivate();
+      provider.removeLogService(logService);
+      provider.removeParameterService(parameterService);
+      provider.removeSystemDescriptorService(systemDescriptorService);
+      provider.removeTemplateService(templateService);
    }
 
    @Test
@@ -94,16 +96,16 @@ public class JellyFishCommandProviderTest {
       final String name = "create-java-bundle";
       when(command.getName()).thenReturn(name);
 
-      fixture.addCommand(command);
+      provider.addCommand(command);
 
-      IJellyFishCommand createJavaBundleCommand = fixture.getCommand(name);
+      IJellyFishCommand createJavaBundleCommand = provider.getCommand(name);
 
       assertNotNull(createJavaBundleCommand);
       assertEquals(name, createJavaBundleCommand.getName());
 
-      fixture.removeCommand(command);
+      provider.removeCommand(command);
 
-      assertNull(fixture.getCommand(name));
+      assertNull(provider.getCommand(name));
    }
 
    @Test
@@ -111,19 +113,23 @@ public class JellyFishCommandProviderTest {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
 
+      Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      collection.addParameter(new DefaultParameter<>("outputDir", "//does//not//matter//"));
-      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=//does//not//matter//")))
+      collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
+
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
       when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
             .thenReturn(true);
-      ITemplateOutput output = new DefaultTemplateOutput().setOutputPath(Paths.get("."))
+      ITemplateOutput output = new DefaultTemplateOutput()
+            .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
       when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
                                   collection,
-                                  Paths.get("//does//not//matter//"), false)).thenReturn(output);
+                                  outputDir,
+                                  false)).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -131,8 +137,8 @@ public class JellyFishCommandProviderTest {
       when(result.getSystemDescriptor()).thenReturn(null);
       when(systemDescriptorService.parseProject(any())).thenReturn(result);
 
-      fixture.addCommand(command);
-      fixture.run(new String[]{"create-java-bundle", "-DoutputDir=//does//not//matter//"});
+      provider.addCommand(command);
+      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -152,9 +158,10 @@ public class JellyFishCommandProviderTest {
       IJellyFishCommand command = mock(NoTemplateJfCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
 
+      Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      collection.addParameter(new DefaultParameter<>("outputDir", "//does//not//matter//"));
-      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=//does//not//matter//")))
+      collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -164,8 +171,8 @@ public class JellyFishCommandProviderTest {
       when(result.getSystemDescriptor()).thenReturn(null);
       when(systemDescriptorService.parseProject(any())).thenReturn(result);
 
-      fixture.addCommand(command);
-      fixture.run(new String[]{"create-java-bundle", "-DoutputDir=//does//not//matter//"});
+      provider.addCommand(command);
+      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -185,8 +192,95 @@ public class JellyFishCommandProviderTest {
                                               anyBoolean());
    }
 
+   @Test
+   public void testDoesNotRunCommandIfSystemDescriptorIsInvalid() {
+      IJellyFishCommand command = mock(IJellyFishCommand.class);
+      when(command.getName()).thenReturn("create-java-bundle");
+
+      Path outputDir = Paths.get(".");
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
+
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
+            .thenReturn(collection);
+      when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
+
+      when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
+            .thenReturn(true);
+      ITemplateOutput output = new DefaultTemplateOutput()
+            .setOutputPath(outputDir)
+            .setProperties(new HashMap<>());
+      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
+                                  collection,
+                                  outputDir,
+                                  false)).thenReturn(output);
+
+      //we aren't testing the system descriptor service, just that it actually gets called
+      IParsingResult result = mock(IParsingResult.class);
+      when(result.isSuccessful()).thenReturn(false);
+      when(systemDescriptorService.parseProject(any())).thenReturn(result);
+
+      provider.addCommand(command);
+      try {
+         provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
+         fail("did not throw CommandException if command requires valid SystemDescriptor");
+      } catch (CommandException e) {
+         // Expected.
+      }
+      verify(command, never()).run(any());
+   }
+
+   @Test
+   public void testDoesRunCommandIfCommandAllowsForInvalidSystemDescriptor() {
+      IJellyFishCommand command = mock(ToleratingInvalidSdJfCommand.class);
+      when(command.getName()).thenReturn("create-java-bundle");
+
+      Path outputDir = Paths.get(".");
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
+
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
+            .thenReturn(collection);
+      when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
+
+      when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
+            .thenReturn(true);
+      ITemplateOutput output = new DefaultTemplateOutput()
+            .setOutputPath(outputDir)
+            .setProperties(new HashMap<>());
+      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
+                                  collection,
+                                  outputDir,
+                                  false)).thenReturn(output);
+
+      //we aren't testing the system descriptor service, just that it actually gets called
+      IParsingResult result = mock(IParsingResult.class);
+      when(result.isSuccessful()).thenReturn(false);
+      when(result.getSystemDescriptor()).thenReturn(null);
+      when(systemDescriptorService.parseProject(any())).thenReturn(result);
+
+      provider.addCommand(command);
+      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
+
+      ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
+      verify(command).run(optionsCapture.capture());
+
+      IJellyFishCommandOptions options = optionsCapture.getValue();
+      assertNotNull("The options must not be null", options);
+
+      //we set it to null above, ensure it really is null
+      assertEquals(null, options.getSystemDescriptor());
+      assertTrue(options.getParameters().containsParameter("outputDirectory"));
+      assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
+   }
+
    @JellyFishCommandConfiguration(autoTemplateProcessing = false)
-   public static interface NoTemplateJfCommand extends IJellyFishCommand {
+   public interface NoTemplateJfCommand extends IJellyFishCommand {
+
+   }
+
+   @JellyFishCommandConfiguration(requireValidSystemDescriptor = false)
+   public interface ToleratingInvalidSdJfCommand extends IJellyFishCommand {
 
    }
 }
