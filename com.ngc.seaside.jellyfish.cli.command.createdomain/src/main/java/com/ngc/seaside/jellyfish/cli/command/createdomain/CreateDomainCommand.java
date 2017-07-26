@@ -7,7 +7,6 @@ import com.ngc.blocs.domain.impl.common.generated.Tobject;
 import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
@@ -73,7 +72,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
-   private IResourceService resourceService;
 
    @Override
    public String getName() {
@@ -144,23 +142,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
-   }
-
-   /**
-    * Sets resource service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeResourceService")
-   public void setResourceService(IResourceService ref) {
-      this.resourceService = ref;
-   }
-
-   /**
-    * Remove resource service.
-    */
-   public void removeResourceService(IResourceService ref) {
-      setResourceService(null);
    }
 
    @Override
@@ -352,17 +333,14 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @throws CommandException if the file does not exist
     */
    private Path evaluteDomainTemplateFile(IParameterCollection parameters) {
-      Path domainTemplateFile;
-      String templateFilename;
+      final Path domainTemplateFile;
+      final String templateFilename;
       if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
          templateFilename = parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getStringValue();
       } else {
          templateFilename = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
       }
       domainTemplateFile = Paths.get(templateFilename);
-      if (!Files.isRegularFile(domainTemplateFile)) {
-         domainTemplateFile = resourceService.getResourceRootPath().resolve(templateFilename);
-      }
 
       if (!Files.isRegularFile(domainTemplateFile)) {
          throw new CommandException(templateFilename + " is invalid");

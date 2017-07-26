@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -77,19 +76,6 @@ public class CreateDomainCommandIT {
       checkDomain(projectDir);
    }
    
-   @Test
-   public void testCommandWithResourceDomainTemplateFile() throws IOException, FileUtilitiesException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.getFileName().toString());
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-
    @Test
    public void testWithExtensionCommand() throws IOException {
       final String extension = "asidgoajsdig";
@@ -294,11 +280,6 @@ public class CreateDomainCommandIT {
                      Paths.get("src", "main", "template"));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
-         
-         IResourceService resourceService = Mockito.mock(IResourceService.class);
-         Mockito.when(resourceService.getResourceRootPath()).thenReturn(Paths.get("src", "test", "resources"));
-
-         bind(IResourceService.class).toInstance(resourceService);
       }
    };
 
