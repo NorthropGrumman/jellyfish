@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
@@ -123,7 +122,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      return new DefaultUsage("Generate a gradle project that can generate the protocol buffer message bundle.",
+      return new DefaultUsage(
+         "Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
          new DefaultParameter<String>(CreateDomainCommand.GROUP_ID_PROPERTY).setDescription("The project's group ID")
                   .setRequired(false),
          new DefaultParameter<String>(CreateDomainCommand.ARTIFACT_ID_PROPERTY).setDescription("The project's version")
