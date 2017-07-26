@@ -22,7 +22,7 @@ public class ${modelname}Test {
    private IEventService eventService;
 
    @Before
-   public void before() throws Throwable {
+   public void setup() throws Throwable {
       service = new ${modelname}();
       service.setLogService(logService);
       service.setEventService(eventService);
@@ -35,7 +35,7 @@ public class ${modelname}Test {
    }
 
    @After
-   public void after() throws Throwable {
+   public void cleanup() throws Throwable {
       service.deactivate();
    }
 }

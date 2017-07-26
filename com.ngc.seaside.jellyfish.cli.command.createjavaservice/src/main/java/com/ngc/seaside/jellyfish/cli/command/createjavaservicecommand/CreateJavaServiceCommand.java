@@ -37,11 +37,16 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    public static final String MODEL_PROPERTY = "model";
    public static final String MODELNAME_PROPERTY = "modelname";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String GENERATE_BASE_PROPERTY = "generateBase";
+
    public static final boolean DEFAULT_BASE_PROPERTY = true;
-   public static final String GENERATE_DELEGATE_PROPERTY = "generateDelegate";
+   public static final String GENERATE_BASE_PROPERTY = "generateBase";
+   public static final String GENERATED_BASE_DIRECTORY = "generatedBaseDirectory";
+
    public static final boolean DEFAULT_DELEGATE_PROPERTY = true;
-   public static final String GENERATE_DELEGATE_DIRECTORY = "generateBaseDirectory";
+   public static final String GENERATE_DELEGATE_PROPERTY = "generateDelegate";
+   public static final String GENERATED_DELEGATE_CLASSNAME = "generatedDelegateClassname";
+
+
    public static final String PACKAGE_PROPERTY = "package";
    public static final String CLEAN_PROPERTY = "clean";
 
@@ -160,9 +165,15 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       }
 
       boolean generateDelegate = Boolean.valueOf(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
+      if (generateDelegate) {
+         parameters.addParameter(new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME,
+                                                        parameters.getParameter(MODELNAME_PROPERTY).getStringValue()
+                                                        + "Delegate"));
+      }
+
       boolean generateBase = Boolean.valueOf(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
       if (generateBase) {
-         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_DIRECTORY,
+         parameters.addParameter(new DefaultParameter<>(GENERATED_BASE_DIRECTORY,
                                                         parameters.getParameter(PACKAGE_PROPERTY).getStringValue()
                                                         + ".base"));
       }
