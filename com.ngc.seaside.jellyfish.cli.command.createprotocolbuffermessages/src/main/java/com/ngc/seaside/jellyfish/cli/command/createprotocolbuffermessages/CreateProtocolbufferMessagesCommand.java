@@ -21,6 +21,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.nio.file.Path;
 
+/**
+ * This command generates the message IDL and gradle project structure that will
+ * produce the protocol buffer message bundle.
+ * 
+ * @author bperkins
+ */
 @Component(service = IJellyFishCommand.class)
 public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
@@ -49,9 +55,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
       final String pkgSuffix = evaluatePackageSuffix(parameters);
-
       final Path domainTemplate = resourceService.getResourceRootPath().resolve(TEMPLATE_FILE);
-      
+
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<Path>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
@@ -105,7 +110,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       setJellyFishCommandProvider(null);
    }
-   
+
    /**
     * Sets the resource service
     *

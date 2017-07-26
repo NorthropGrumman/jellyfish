@@ -9,6 +9,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 
+/**
+ * Wrap the service using Guice Injection
+ */
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -36,5 +39,4 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
    public void run(IJellyFishCommandOptions commandOptions) {
       delegate.run(commandOptions);
    }
-
 }
