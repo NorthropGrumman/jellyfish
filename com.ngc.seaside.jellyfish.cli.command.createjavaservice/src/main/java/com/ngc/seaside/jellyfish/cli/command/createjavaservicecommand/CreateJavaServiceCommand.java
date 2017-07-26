@@ -32,22 +32,23 @@ import java.util.regex.Pattern;
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceCommand implements IJellyFishCommand {
 
-
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String MODEL_PROPERTY = "model";
    public static final String MODELNAME_PROPERTY = "modelname";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
-   public static final String GENERATE_BASE_PROPERTY = "base";
-   public static final String GENERATE_DELEGATE_PROPERTY = "delegate";
+   public static final String GENERATE_BASE_PROPERTY = "generateBase";
+   public static final boolean DEFAULT_BASE_PROPERTY = true;
+   public static final String GENERATE_DELEGATE_PROPERTY = "generateDelegate";
+   public static final boolean DEFAULT_DELEGATE_PROPERTY = true;
+   public static final String GENERATE_DELEGATE_DIRECTORY = "generateBaseDirectory";
    public static final String PACKAGE_PROPERTY = "package";
    public static final String CLEAN_PROPERTY = "clean";
 
    private static final String NAME = "create-java-service";
    private static final IUsage USAGE = createUsage();
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
-         .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
@@ -55,32 +56,52 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the service for a Java application",
                               new DefaultParameter(GROUP_ID_PROPERTY).setDescription
-                                    ("The project's group ID. (default: the package in the model)")
-                                    .setRequired(false),
+                                       ("The project's group ID. (default: the package in the model)")
+                                       .setRequired(false),
                               new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription
-                                    ("The project's artifact Id. (default: the model name in lowercase + '.distribution')")
-                                    .setRequired(false),
+                                       ("The project's artifact Id. (default: the model name in lowercase + '.distribution')")
+                                       .setRequired(false),
                               new DefaultParameter(MODEL_PROPERTY).setDescription
-                                    ("The fully qualified path to the model.")
-                                    .setRequired(true),
+                                       ("The fully qualified path to the model.")
+                                       .setRequired(true),
                               new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription
-                                    ("Base directory in which to output the project")
-                                    .setRequired(true),
+                                       ("Base directory in which to output the project")
+                                       .setRequired(true),
                               new DefaultParameter(GENERATE_BASE_PROPERTY).setDescription
-                                    ("This will allow you to generate the abstraction layer for the project")
-                                    .setRequired(false),
+                                       ("This will allow you to generate the abstraction layer for the project")
+                                       .setRequired(false),
                               new DefaultParameter(GENERATE_DELEGATE_PROPERTY).setDescription
-                                    ("This is the class that the developer will edit")
-                                    .setRequired(false),
+                                       ("This is the class that the developer will edit")
+                                       .setRequired(false),
                               new DefaultParameter(CLEAN_PROPERTY).setDescription
-                                    ("If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                    .setRequired(false)
+                                       ("If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                                       .setRequired(false)
       );
+   }
+
+   private static boolean getCleanProperty(IParameterCollection parameters, String parameter) {
+      final boolean booleanValue;
+      if (parameters.containsParameter(parameter)) {
+         String value = parameters.getParameter(parameter).getStringValue();
+         switch (value.toLowerCase()) {
+         case "true":
+            booleanValue = true;
+            break;
+         case "false":
+            booleanValue = false;
+            break;
+         default:
+            throw new CommandException(
+                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
+         }
+      } else {
+         booleanValue = false;
+      }
+      return booleanValue;
    }
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      // TODO Auto-generated method stub
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
@@ -93,7 +114,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
       String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       final IModel model = systemDescriptor.findModel(modelId)
-            .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
       parameters.addParameter(new DefaultParameter<>(MODELNAME_PROPERTY, model.getName()));
 
@@ -104,9 +125,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       // Resolve artifactId
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         parameters.addParameter(
-               new DefaultParameter<>(ARTIFACT_ID_PROPERTY,
-                                      model.getName().toLowerCase() + '.' + DEFAULT_PACKAGE_SUFFIX));
+         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, model.getName().toLowerCase()));
 
       }
       // Resolve outputDirectory
@@ -120,12 +139,12 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       // Resolve base
       if (!parameters.containsParameter(GENERATE_BASE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<String>(GENERATE_BASE_PROPERTY, "true"));
+         parameters.addParameter(new DefaultParameter<>(GENERATE_BASE_PROPERTY, DEFAULT_BASE_PROPERTY));
       }
 
       // Resolve delegate
       if (!parameters.containsParameter(GENERATE_DELEGATE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<String>(GENERATE_DELEGATE_PROPERTY, "true"));
+         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_PROPERTY, DEFAULT_DELEGATE_PROPERTY));
       }
 
       // Resolve clean property
@@ -138,6 +157,14 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       String pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
       if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
          throw new CommandException("Invalid package name: " + pkg);
+      }
+
+      boolean generateDelegate = Boolean.valueOf(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
+      boolean generateBase = Boolean.valueOf(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
+      if (generateBase) {
+         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_DIRECTORY,
+                                                        parameters.getParameter(PACKAGE_PROPERTY).getStringValue()
+                                                        + ".base"));
       }
 
       doAddProject(parameters);
@@ -235,26 +262,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       }
    }
 
-   private static boolean getCleanProperty(IParameterCollection parameters, String parameter) {
-      final boolean booleanValue;
-      if (parameters.containsParameter(parameter)) {
-         String value = parameters.getParameter(parameter).getStringValue();
-         switch (value.toLowerCase()) {
-            case "true":
-               booleanValue = true;
-               break;
-            case "false":
-               booleanValue = false;
-               break;
-            default:
-               throw new CommandException(
-                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
-         }
-      } else {
-         booleanValue = false;
-      }
-      return booleanValue;
-   }
    protected void doCreateDirectories(Path outputDirectory) {
       try {
          Files.createDirectories(outputDirectory);

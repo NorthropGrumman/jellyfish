@@ -1,13 +1,15 @@
+#set( $D = '$' )
+
 dependencies {
-   compile project(':engagementtrackpriorityservice.events')
-   compile project(':engagementtrackpriorityservice.base')
+   compile project(":${modelname.toLowerCase()}.events")
+   compile project(":${modelname.toLowerCase()}.base")
 
-   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "com.google.guava:guava:$guavaVersion"
+   compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
+   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
+   compile "org.osgi:osgi.core:${D}osgiVersion"
+   compile "org.osgi:osgi.enterprise:${D}osgiVersion"
+   compile "com.google.guava:guava:${D}guavaVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testCompile "junit:junit:${D}junitVersion"
+   testCompile "org.mockito:mockito-core:${D}mockitoVersion"
 }

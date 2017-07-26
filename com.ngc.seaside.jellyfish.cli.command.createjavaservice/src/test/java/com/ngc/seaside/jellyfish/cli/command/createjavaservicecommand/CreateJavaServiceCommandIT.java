@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservicecommand;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateJavaDistributionCommandIT {
+public class CreateJavaServiceCommandIT {
 
    private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
       @Override
@@ -55,7 +55,7 @@ public class CreateJavaDistributionCommandIT {
       }
    };
    private static final Injector injector = Guice.createInjector(getModules());
-   private CreateJavaDistributionCommand cmd = new CreateJavaDistributionCommand();
+   private CreateJavaServiceCommand cmd = new CreateJavaServiceCommand();
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
@@ -143,7 +143,7 @@ public class CreateJavaDistributionCommandIT {
       MockedTemplateService mockedTemplateService = new MockedTemplateService()
                .useRealPropertyService()
                .useDefaultUserValues(true)
-               .setTemplateDirectory(CreateJavaDistributionCommand.class.getPackage().getName(),
+               .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
                                      Paths.get("src/main/template"));
 
       // Setup mock system descriptor
@@ -166,14 +166,16 @@ public class CreateJavaDistributionCommandIT {
    public void testCommand() throws IOException {
       createSettings();
 
-      runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
-                 CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
+      runCommand(CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
+                 CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
       Mockito.verify(options, Mockito.times(1)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
-      System.out.println(printDirectoryTree(outputDir.toFile()));
-      checkGradleBuild(outputDir);
-      checkLogContents(outputDir);
+
+      printOutputFolderStructure(outputDir);
+
+      //checkGradleBuild(outputDir);
+      //checkLogContents(outputDir);
    }
 
    private void runCommand(String... keyValues) {
@@ -207,6 +209,10 @@ public class CreateJavaDistributionCommandIT {
       Assert.assertTrue(
                contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
       Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
+   }
+
+   private void printOutputFolderStructure(Path outputDir) {
+      System.out.println(printDirectoryTree(outputDir.toFile()));
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {

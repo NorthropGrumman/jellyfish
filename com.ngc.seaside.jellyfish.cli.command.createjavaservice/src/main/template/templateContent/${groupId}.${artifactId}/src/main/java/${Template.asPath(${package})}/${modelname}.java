@@ -1,4 +1,4 @@
-package com.ngc.seaside.threateval.engagementtrackpriorityservice.impl;
+package ${package};
 
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
@@ -7,9 +7,11 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.seaside.service.fault.api.ServiceInputFaultException;
 import com.ngc.seaside.threateval.engagementplanning.events.TrackEngagementStatus;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl.AbstractEngagementTrackPriorityService;
+import ${groupId}.${artifactId}.api.I${modelname};
+import ${groupId}.${artifactId}.base.impl.Abstract${modelname};
 import com.ngc.seaside.threateval.events.TrackPriority;
+
+
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -18,28 +20,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = {IEngagementTrackPriorityService.class, IServiceModule.class}, immediate = true)
-public class EngagementTrackPriorityService extends AbstractEngagementTrackPriorityService {
-
-   @Override
-   public TrackPriority calculateTrackPriority(TrackEngagementStatus trackEngagementStatus)
-         throws ServiceFaultException {
-      logService.debug(getClass(), "Computing track priority.");
-      if (trackEngagementStatus.getProbabilityOfKill() < 0 || trackEngagementStatus.getProbabilityOfKill() > 1) {
-         throw new ServiceInputFaultException(
-               this,
-               trackEngagementStatus,
-               String.format("got an invalid probabilityOfKill %f for track %d in an TrackEngagementStatus event!",
-                             trackEngagementStatus.getProbabilityOfKill(),
-                             trackEngagementStatus.getTrackId()));
-      }
-
-      logService.debug(getClass(), "Track priority computed.");
-      return new TrackPriority()
-            .setTrackId(trackEngagementStatus.getTrackId())
-            .setPriority(1.0f - trackEngagementStatus.getProbabilityOfKill())
-            .setSourceId(NAME);
-   }
+@Component(service = {${modelname}.class, IServiceModule.class}, immediate = true)
+public class ${modelname} extends Abstract${modelname} {
 
    @Activate
    public void activate() {

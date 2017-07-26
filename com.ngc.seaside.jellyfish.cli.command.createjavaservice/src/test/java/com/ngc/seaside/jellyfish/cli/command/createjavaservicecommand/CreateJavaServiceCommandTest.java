@@ -84,22 +84,22 @@ public class CreateJavaServiceCommandTest {
       // Verify passed values
       Assert.assertEquals("com.ngc.seaside.test.Model",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                .getStringValue());
-      Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
+                                   .getStringValue());
+      Assert.assertEquals(model.getName().toLowerCase(),
                           addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals(model.getParent().getName(),
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
    }
@@ -123,22 +123,22 @@ public class CreateJavaServiceCommandTest {
       // Verify passed values
       Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("false",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test.Model",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
-            .getStringValue());
+               .getStringValue());
 
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
    }
@@ -148,9 +148,9 @@ public class CreateJavaServiceCommandTest {
 
       // Mock behaviors
       when(promptUserService.prompt(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
-            .thenReturn("/just/a/mock/path");
+               .thenReturn("/just/a/mock/path");
       when(promptUserService.prompt(CreateJavaServiceCommand.MODEL_PROPERTY, null, null))
-            .thenReturn("com.ngc.seaside.test.Model");
+               .thenReturn("com.ngc.seaside.test.Model");
       when(model.getName()).thenReturn("Model");
 
       runCommand(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY, "test",
@@ -167,21 +167,21 @@ public class CreateJavaServiceCommandTest {
       // Verify passed values
       Assert.assertEquals("false",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test.Model",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
-            .getStringValue());
+               .getStringValue());
       Assert.assertEquals("com.ngc.seaside",
                           addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
-                                .getStringValue());
+                                   .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
 
@@ -198,18 +198,18 @@ public class CreateJavaServiceCommandTest {
 
       // Setup mock template service
       when(templateService.unpack("JellyFishJavaService", collection, Paths.get("/just/a/mock/path"), false))
-            .thenReturn(
-                  new ITemplateOutput() {
-                     @Override
-                     public Map<String, ?> getProperties() {
-                        return collection.getParameterMap();
-                     }
+               .thenReturn(
+                        new ITemplateOutput() {
+                           @Override
+                           public Map<String, ?> getProperties() {
+                              return collection.getParameterMap();
+                           }
 
-                     @Override
-                     public Path getOutputPath() {
-                        return Paths.get("/just/a/mock/path");
-                     }
-                  });
+                           @Override
+                           public Path getOutputPath() {
+                              return Paths.get("/just/a/mock/path");
+                           }
+                        });
       cmd.run(options);
    }
 
