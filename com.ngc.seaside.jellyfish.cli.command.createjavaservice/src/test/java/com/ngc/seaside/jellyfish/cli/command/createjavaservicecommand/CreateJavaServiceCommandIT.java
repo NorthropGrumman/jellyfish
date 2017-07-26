@@ -19,7 +19,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -180,7 +182,17 @@ public class CreateJavaServiceCommandIT {
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
 
       printOutputFolderStructure(outputDir);
-      model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getName()));
+
+      model.getScenarios().forEach(iScenario -> {
+         System.out.println("SCENARIO:" + iScenario.getWhens().toString());
+          iScenario.getWhens().forEach( iScenarioStep -> iScenarioStep.getParameters().forEach(s -> {
+             System.out.println(s);
+             System.out.println( model.getInputs().getByName(s).get().getType().getName());
+             //System.out.println(iScenarioStep.);
+          }));
+
+      });
+      model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getThens().toString()));
 
       //checkGradleBuild(outputDir);
       //checkLogContents(outputDir);

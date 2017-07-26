@@ -196,17 +196,12 @@ public class CreateJavaDistributionCommandIT {
       Assert.assertTrue(gradleFiles.size() == 1);
       Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
       Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
+      String actualContents = new String(Files.readAllBytes(buildFile));
 
-      // Verify that model is injected
-      Assert.assertTrue(
-               contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]");
-      int endLength = contents.length();
-      String contents2 = contents.substring(startLength, endLength);
-      Assert.assertTrue(
-               contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/log4j.xml.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {
@@ -215,28 +210,14 @@ public class CreateJavaDistributionCommandIT {
 
       // There should only be one build.gradle generated
       Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
+      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      // Verify apply block
-      Assert.assertTrue(contents.contains("apply plugin: 'com.ngc.seaside.distribution'"));
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/build.gradle.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
 
-      //Verify seaside distribution block
-      Assert.assertTrue(contents.contains("seasideDistribution {"));
-      Assert.assertTrue(contents.contains("buildDir = 'build'"));
-      Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
-      Assert.assertTrue(
-               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
-      Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
-
-      // Verify dependencies block
-      Assert.assertTrue(contents.contains("dependencies {"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".events\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".domain\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".connector\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".base\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + "\")"));
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void createSettings() throws IOException {
