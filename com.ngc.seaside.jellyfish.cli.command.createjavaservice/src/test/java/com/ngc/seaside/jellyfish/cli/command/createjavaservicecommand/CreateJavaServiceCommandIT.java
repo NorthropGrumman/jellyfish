@@ -212,7 +212,10 @@ public class CreateJavaServiceCommandIT {
    }
 
    private void printOutputFolderStructure(Path outputDir) {
-      System.out.println(printDirectoryTree(outputDir.toFile()));
+      String ouputFolderTree = printDirectoryTree(outputDir.toFile());
+      Assert.assertTrue(ouputFolderTree.contains(model.getName()+ ".java"));
+      Assert.assertTrue(ouputFolderTree.contains(model.getName()+ "Test.java"));
+      System.out.println(ouputFolderTree);
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {
