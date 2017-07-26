@@ -19,4 +19,9 @@ public @interface JellyFishCommandConfiguration {
     */
    boolean autoTemplateProcessing() default true;
 
+   /**
+    * If true, the command provider will invoke the associated command even if the System Descriptor contains parsing
+    * errors.
+    */
+   boolean requireValidSystemDescriptor() default true;
 }

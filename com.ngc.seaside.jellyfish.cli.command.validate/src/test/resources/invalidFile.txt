@@ -1,0 +1,9 @@
+This
+is
+line
+4 with some kind of error
+and
+this
+is
+not
+printed

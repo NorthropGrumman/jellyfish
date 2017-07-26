@@ -71,6 +71,7 @@ public class ${classname} implements IJellyFishCommand {
     *
     * @return the usage.
     */
+   @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of ${commandName} command", 

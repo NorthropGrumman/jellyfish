@@ -7,8 +7,11 @@ import com.ngc.blocs.domain.impl.common.generated.Tobject;
 import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -53,6 +56,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
    private static final String DEFAULT_PACKAGE_SUFFIX = "domain";
+   private static final String SETTINGS_FILE_NAME = "settings.gradle";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -69,6 +73,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
+   private IResourceService resourceService;
 
    @Override
    public String getName() {
@@ -141,6 +146,23 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setTemplateService(null);
    }
 
+   /**
+    * Sets resource service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeResourceService")
+   public void setResourceService(IResourceService ref) {
+      this.resourceService = ref;
+   }
+
+   /**
+    * Remove resource service.
+    */
+   public void removeResourceService(IResourceService ref) {
+      setResourceService(null);
+   }
+
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
@@ -168,7 +190,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
          domainPackages = Collections.singleton(pkg);
       }
 
-      final Path projectDir = evaluteProjectDirectory(parameters, pkg, clean);
+      final Path outputDir = evaluteOutputDirectory(parameters);
+      final Path projectDir = evaluteProjectDirectory(outputDir, pkg, clean);
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
 
@@ -178,7 +201,34 @@ public class CreateDomainCommand implements IJellyFishCommand {
          generateDomainXml(xmlFile, dataList, domainPackage);
       });
 
+      updateSettingsDotGradle(outputDir, groupId, artifactId);
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
+   }
+
+   /**
+    * Adds the newly generated project to a settings.gradle file in the output directory if that file exists. If that
+    * file does not exists, does nothing.
+    *
+    * @param outputDirectory the output directory
+    * @param groupId the group ID
+    * @param artifactId the artifact ID
+    */
+   private void updateSettingsDotGradle(Path outputDirectory, String groupId, String artifactId) {
+      Path settings = outputDirectory.resolve(SETTINGS_FILE_NAME);
+      if (settings.toFile().exists()) {
+         try {
+            DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+            updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+            updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
+            updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+            GradleSettingsUtilities.addProject(updatedParameters);
+            logService.debug(CreateDomainCommand.class, "Updated settings.gradle.");
+         } catch (FileUtilitiesException e) {
+            logService.error(CreateDomainCommand.class, "Failed to update settings.gradle!", e);
+         }
+      } else {
+         logService.debug(CreateDomainCommand.class, "settings.gradle not found.");
+      }
    }
 
    /**
@@ -302,29 +352,32 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @throws CommandException if the file does not exist
     */
    private Path evaluteDomainTemplateFile(IParameterCollection parameters) {
-      final Path domainTemplateFile;
+      Path domainTemplateFile;
+      String templateFilename;
       if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
-         domainTemplateFile = Paths.get(parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getStringValue());
+         templateFilename = parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getStringValue();
       } else {
-         String input = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
-         domainTemplateFile = Paths.get(input);
+         templateFilename = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
       }
+      domainTemplateFile = Paths.get(templateFilename);
       if (!Files.isRegularFile(domainTemplateFile)) {
-         throw new CommandException(domainTemplateFile + " is invalid");
+         domainTemplateFile = resourceService.getResourceRootPath().resolve(templateFilename);
+      }
+
+      if (!Files.isRegularFile(domainTemplateFile)) {
+         throw new CommandException(templateFilename + " is invalid");
       }
       return domainTemplateFile;
    }
 
    /**
-    * Creates and returns the path to the domain project directory.
+    * Creates and returns the path to the output directory.
     * 
     * @param parameters command parameters
-    * @param pkg domain package
-    * @param clean whether or not to delete the contents of the directory
-    * @return the path to the domain project directory
+    * @return the path to the output directory
     * @throws CommandException if an error occurred in creating the project directory
     */
-   private Path evaluteProjectDirectory(IParameterCollection parameters, String pkg, boolean clean) {
+   private Path evaluteOutputDirectory(IParameterCollection parameters) {
       final Path outputDir;
 
       if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
@@ -333,6 +386,19 @@ public class CreateDomainCommand implements IJellyFishCommand {
          String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
          outputDir = Paths.get(input);
       }
+      return outputDir;
+   }
+
+   /**
+    * Creates and returns the path to the domain project directory.
+    * 
+    * @param outputDir output directory
+    * @param pkg domain package
+    * @param clean whether or not to delete the contents of the directory
+    * @return the path to the domain project directory
+    * @throws CommandException if an error occurred in creating the project directory
+    */
+   private Path evaluteProjectDirectory(Path outputDir, String pkg, boolean clean) {
       final Path projectDir = outputDir.resolve(pkg);
       try {
          Files.createDirectories(outputDir);
