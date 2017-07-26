@@ -59,7 +59,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
                                        ("The project's group ID. (default: the package in the model)")
                                        .setRequired(false),
                               new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription
-                                       ("The project's artifact Id. (default: the model name in lowercase + '.distribution')")
+                                       ("The project's artifact Id. (default: the model name in lowercase)")
                                        .setRequired(false),
                               new DefaultParameter(MODEL_PROPERTY).setDescription
                                        ("The fully qualified path to the model.")
@@ -169,6 +169,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       doAddProject(parameters);
 
+      System.out.println(parameters);
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
                              outputDirectory,

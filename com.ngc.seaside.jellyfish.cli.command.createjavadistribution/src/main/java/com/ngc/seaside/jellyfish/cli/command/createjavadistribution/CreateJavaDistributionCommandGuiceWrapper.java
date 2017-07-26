@@ -16,8 +16,7 @@ public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishComm
    private final CreateJavaDistributionCommand delegate = new CreateJavaDistributionCommand();
 
    @Inject
-   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService,
-                                                    IPromptUserService promptUserService,
+   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService, IPromptUserService promptUserService,
                                                     ITemplateService templateService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);

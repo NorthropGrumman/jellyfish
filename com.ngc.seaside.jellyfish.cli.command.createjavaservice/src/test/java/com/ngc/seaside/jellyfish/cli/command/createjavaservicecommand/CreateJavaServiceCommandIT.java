@@ -5,21 +5,21 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import org.junit.Assert;
@@ -37,44 +37,19 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CreateJavaServiceCommandIT {
 
-   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
-      @Override
-      protected void configure() {
-         bind(ILogService.class).to(PrintStreamLogService.class);
-         bind(ITemplateService.class).to(TemplateServiceGuiceWrapper.class);
-      }
-   };
-   private static final Injector injector = Guice.createInjector(getModules());
-   private CreateJavaServiceCommand cmd = new CreateJavaServiceCommand();
-   private IPromptUserService promptUserService = mock(IPromptUserService.class);
+   private IJellyFishCommand cmd = injector.getInstance(CreateJavaServiceCommandGuiceWrapper.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
-   private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
-   private IModel model = mock(Model.class);
+   private IModel model;
    private Path outputDir;
 
-   private static Collection<Module> getModules() {
-      Collection<Module> modules = new ArrayList<>();
-      modules.add(TEST_SERVICE_MODULE);
-      for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof LogServiceModule)) {
-            modules.add(dynamicModule);
-         }
-      }
-
-      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
-      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      return modules;
-   }
 
    /**
     * @param folder must be a folder.
@@ -147,18 +122,16 @@ public class CreateJavaServiceCommandIT {
                                      Paths.get("src/main/template"));
 
       // Setup mock system descriptor
-      when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
-      when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
-
-      // Setup mock model
-      when(model.getParent()).thenReturn(mock(IPackage.class));
-      when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
-      when(model.getName()).thenReturn("Model");
-      when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
-
-      cmd.setLogService(injector.getInstance(ILogService.class));
-      cmd.setPromptService(promptUserService);
-      cmd.setTemplateService(mockedTemplateService);
+      Path sdDir = Paths.get("src", "test", "sd");
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
+      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
+      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
+      IParsingResult result = sdService.parseFiles(sdFiles);
+      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
+      ISystemDescriptor sd = result.getSystemDescriptor();
+      String modelId = "com.ngc.seaside.test1.Model1";
+      model = sd.findModel(modelId).orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
 
    }
 
@@ -166,7 +139,7 @@ public class CreateJavaServiceCommandIT {
    public void testCommand() throws IOException {
       createSettings();
 
-      runCommand(CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
+      runCommand(CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
                  CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
       Mockito.verify(options, Mockito.times(1)).getParameters();
@@ -213,8 +186,8 @@ public class CreateJavaServiceCommandIT {
 
    private void printOutputFolderStructure(Path outputDir) {
       String ouputFolderTree = printDirectoryTree(outputDir.toFile());
-      Assert.assertTrue(ouputFolderTree.contains(model.getName()+ ".java"));
-      Assert.assertTrue(ouputFolderTree.contains(model.getName()+ "Test.java"));
+      Assert.assertTrue(ouputFolderTree.contains(model.getName() + ".java"));
+      Assert.assertTrue(ouputFolderTree.contains(model.getName() + "Test.java"));
       System.out.println(ouputFolderTree);
    }
 
@@ -255,4 +228,38 @@ public class CreateJavaServiceCommandIT {
          // ignore
       }
    }
+
+   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
+      @Override
+      protected void configure() {
+         bind(ILogService.class).to(PrintStreamLogService.class);
+         MockedTemplateService mockedTemplateService = new MockedTemplateService();
+         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+                  .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
+                                        Paths.get("src", "main", "template"));
+
+         bind(ITemplateService.class).toInstance(mockedTemplateService);
+
+         IResourceService resourceService = Mockito.mock(IResourceService.class);
+         Mockito.when(resourceService.getResourceRootPath()).thenReturn(Paths.get("src", "test", "resources"));
+
+         bind(IResourceService.class).toInstance(resourceService);
+      }
+   };
+
+   private static Collection<Module> getModules() {
+      Collection<Module> modules = new ArrayList<>();
+      modules.add(TEST_SERVICE_MODULE);
+      for (Module dynamicModule : ServiceLoader.load(Module.class)) {
+         if (!(dynamicModule instanceof TemplateServiceGuiceModule)) {
+            modules.add(dynamicModule);
+         }
+      }
+
+      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
+      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      return modules;
+   }
+
+   private static final Injector injector = Guice.createInjector(getModules());
 }
