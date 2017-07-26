@@ -1,5 +1,5 @@
 /**
- * ${rootProjectName}
+ * ${projectName}
  */
 
 import com.ngc.seaside.jellyfish.cli.gradle.plugins.JellyFishCliCommandTask
@@ -44,7 +44,7 @@ subprojects {
 }
 
 // Sample command - replace this with a transient project generator task
-task helpCommand(type: JellyFishCliCommandTask) {
+task help(type: JellyFishCliCommandTask) {
     command = 'help'           
     inputDir = './src/main/sd'   
     

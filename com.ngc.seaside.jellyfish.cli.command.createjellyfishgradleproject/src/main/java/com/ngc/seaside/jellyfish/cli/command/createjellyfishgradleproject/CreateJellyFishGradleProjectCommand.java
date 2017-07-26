@@ -35,11 +35,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     private static final String NAME = "create-jellyfish-gradle-project";
     private static final IUsage USAGE = createUsage();
 
-//    private static final Pattern JAVA_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*");
-//    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
-
     public static final String OUTPUT_DIR_PROPERTY = "outputDirectory";
-    public static final String ROOT_PROJECT_NAME_PROPERTY = "rootProjectName";
     public static final String PROJECT_NAME_PROPERTY = "projectName";
     public static final String GROUP_ID_PROPERTY = "groupId";
     public static final String VERSION_PROPERTY = "version";
@@ -78,18 +74,17 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
         // Ensure OUTPUT_DIR_PROPERTY parameter is set
         if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
-            collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY).setValue(Paths.get(".").toAbsolutePath().toString()));
+            collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY)
+                                          .setValue(Paths.get(".").toAbsolutePath().toString()));
         }         
         
-        // Ensure ROOT_PROJECT_NAME_PROPERTY parameter is set
-        if (!collection.containsParameter(ROOT_PROJECT_NAME_PROPERTY)) {
-            String rootProjectName = promptService.prompt(ROOT_PROJECT_NAME_PROPERTY, "my-project", null);
-            collection.addParameter(new DefaultParameter<>(ROOT_PROJECT_NAME_PROPERTY).setValue(rootProjectName));
-        }        
-
         // Ensure PROJECT_NAME_PROPERTY parameter is set
-        final String projectName = collection.getParameter(ROOT_PROJECT_NAME_PROPERTY).getStringValue().replace("-", "").toLowerCase();
-        collection.addParameter(new DefaultParameter<>(PROJECT_NAME_PROPERTY).setValue(projectName));
+        if (!collection.containsParameter(PROJECT_NAME_PROPERTY)) {
+            String projectName = promptService.prompt(PROJECT_NAME_PROPERTY, "my-project", null);
+            collection.addParameter(new DefaultParameter<>(PROJECT_NAME_PROPERTY).setValue(projectName));
+        }
+
+        final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
 
         // Create project directory
         final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
@@ -201,8 +196,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
                 new DefaultParameter<>(OUTPUT_DIR_PROPERTY)
                         .setDescription("The directory to generate the Gradle project in")
                         .setRequired(false),
-                new DefaultParameter<>(ROOT_PROJECT_NAME_PROPERTY)
-                        .setDescription("The root name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
+                new DefaultParameter<>(PROJECT_NAME_PROPERTY)
+                        .setDescription("The name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
                         .setRequired(false),
                 new DefaultParameter<>(GROUP_ID_PROPERTY)
                         .setDescription("The groupId. This is usually similar to com.ngc.seaside")
