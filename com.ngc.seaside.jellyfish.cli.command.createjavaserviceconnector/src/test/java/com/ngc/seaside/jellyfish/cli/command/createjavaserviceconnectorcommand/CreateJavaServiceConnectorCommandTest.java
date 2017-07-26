@@ -172,6 +172,7 @@ public class CreateJavaServiceConnectorCommandTest {
                         return Paths.get("/just/a/mock/path");
                      }
                   });
+
       cmd.run(options);
    }
 }

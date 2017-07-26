@@ -48,10 +48,11 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
 import java.util.ServiceLoader;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.mockito.Mockito;
@@ -61,16 +62,14 @@ import static org.mockito.Mockito.when;
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceConnectorCommandIT {
 
-   private IJellyFishCommand cmd = injector.getInstance(CreateJavaServiceConnectorCommand.class);
+   private IJellyFishCommand cmd = injector.getInstance(CreateJavaServiceConnectorCommandGuiceWrapper.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
-
 
    private Path outputDir;
 
    @Before
    public void setup() throws IOException {
-      outputDir = Files.createTempDirectory(null);
-      outputDir.toFile().deleteOnExit();
+      outputDir = Files.createDirectories(Paths.get("build/test-template"));
 
       Path sdDir = Paths.get("src", "test", "sd");
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
@@ -90,14 +89,21 @@ public class CreateJavaServiceConnectorCommandIT {
    */
    @Test
    public void testCommandWithoutOptionalParameters() throws IOException {
-      final String model = "com.ngc.seaside.test1.threateval.EngagementTrackPriorityService";
-      final String expectedGroupId = "com.ngc.seaside.test1.threateval";
+      final String model = "com.ngc.seaside.threateval.EngagementTrackPriorityService";
+      final String expectedGroupId = "com.ngc.seaside.threateval";
       final String expectedArtifactId = "engagementtrackpriorityservice.connector";
       final String expectedClassName = "EngagementTrackPriorityServiceConnector";
 
       runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model);
+                 CreateJavaServiceConnectorCommand.MODEL_NAME_PROPERTY, model);
       checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
+      Path expectedFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnector.java");
+      Path actualFile = Paths.get(outputDir.toAbsolutePath().toString(),expectedGroupId + '.' + expectedArtifactId, "src", "main", "java", (expectedGroupId + '.' + expectedArtifactId).replace('.', File.separatorChar), expectedClassName + ".java");
+      //checkOutputAgainstExpectedFile(expectedFile ,actualFile);
+
+      expectedFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnectorTest.java");
+      actualFile = Paths.get(outputDir.toAbsolutePath().toString(),expectedGroupId + '.' + expectedArtifactId, "src", "test", "java", (expectedGroupId + '.' + expectedArtifactId).replace('.', File.separatorChar), expectedClassName + "Test.java");
+      checkOutputAgainstExpectedFile(expectedFile ,actualFile);
    }
 
    /*
@@ -122,9 +128,24 @@ public class CreateJavaServiceConnectorCommandIT {
       checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
    }
 
-   @After
-   public void cleanup() throws IOException {
-     FileUtils.deleteQuietly(outputDir.toFile());
+   private void checkOutputAgainstExpectedFile(Path expectedFile, Path actualFile) throws IOException {
+      Assert.assertTrue("expectedFile does not exist " + expectedFile.toAbsolutePath().toString(), expectedFile.toFile().exists());
+      Assert.assertTrue("actualFile does not exist " + actualFile.toAbsolutePath().toString(), actualFile.toFile().exists());
+
+      List<String> expectedLines = Files.readAllLines(expectedFile);
+      expectedLines.replaceAll(String::trim);
+      List<String> actualLines = Files.readAllLines(actualFile);
+      actualLines.replaceAll(String::trim);
+
+      for (int i = 0; i < expectedLines.size(); i++){
+         String expectedLine = expectedLines.get(i);
+         if(!actualLines.contains(expectedLine)){
+            //If the assertTrue were to fail, let's use a more descriptive error message...
+            Assert.assertEquals("actualFile does not contain line from expectedFile. Line number " + (i+1), expectedLine, actualLines.get(i));
+         } else {
+            Assert.assertTrue("actualFile does not contain line from expectedFile ", actualLines.contains(expectedLine));
+         }
+      }
    }
 
    private void runCommand(String... keyValues) throws IOException {
@@ -164,6 +185,7 @@ public class CreateJavaServiceConnectorCommandIT {
                         outputDir.resolve(bundlePath).toFile().exists());
 
       Path actualBundle = outputDir.resolve(expectedBundle).toAbsolutePath();
+      System.out.println(actualBundle.toString());
       String actualBundleName = actualBundle.getFileName().toString();
       Assert.assertTrue("Actual bundle doesn't exist! " + actualBundle.toString(), actualBundle.toFile().exists());
       String[] actualArtifactId = actualBundleName.split(expectedGroupId);
@@ -207,11 +229,9 @@ public class CreateJavaServiceConnectorCommandIT {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService mockedTemplateService = new MockedTemplateService();
-         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+         MockedTemplateService mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
                .setTemplateDirectory(CreateJavaServiceConnectorCommand.class.getPackage().getName(),
                                      Paths.get("src", "main", "template"));
-
          bind(ITemplateService.class).toInstance(mockedTemplateService);
       }
    };

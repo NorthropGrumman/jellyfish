@@ -21,6 +21,7 @@ public class CreateJavaServiceConnectorCommandGuiceWrapper implements IJellyFish
       delegate.setLogService(logService);
       delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
+      delegate.activate();
    }
 
    @Override
