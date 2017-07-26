@@ -41,8 +41,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO TH: the help command should not be imported into this project.
-
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
  */
@@ -424,16 +422,28 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       if (!isValid && isValidDescriptorRequired) {
          throw new CommandException(String.format("%s either does not exists or is not a directory!", path));
       } else if (isValid) {
-         result = sdService.parseProject(path);
-         // Always log errors.
-         result.getIssues()
-               .stream()
-               .filter(issue -> issue.getSeverity() == Severity.ERROR)
-               .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
+         result = doParseProject(path);
          isValid = result.isSuccessful();
          if (!isValid && isValidDescriptorRequired) {
+            result.getIssues()
+                  .stream()
+                  .filter(issue -> issue.getSeverity() == Severity.ERROR)
+                  .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
             throw new CommandException("Command requires a valid SystemDescriptor but errors were encountered!");
          }
+      }
+      return result;
+   }
+
+   /**
+    * Invokes the service to parse the project, converting any parsing exception to a {@link FailedParsingResult}.
+    */
+   private IParsingResult doParseProject(Path path) {
+      IParsingResult result;
+      try {
+         result = sdService.parseProject(path);
+      } catch (ParsingException | IllegalArgumentException e) {
+         result = FailedParsingResult.fromException(e);
       }
       return result;
    }
