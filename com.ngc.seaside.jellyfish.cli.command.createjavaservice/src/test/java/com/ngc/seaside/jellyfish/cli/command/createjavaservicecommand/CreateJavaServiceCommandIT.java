@@ -181,7 +181,7 @@ public class CreateJavaServiceCommandIT {
 
       printOutputFolderStructure(outputDir);
       model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getName()));
-sat
+
       //checkGradleBuild(outputDir);
       //checkLogContents(outputDir);
    }
