@@ -47,11 +47,28 @@ import static org.mockito.Mockito.mock;
 
 public class CreateJavaServiceCommandIT {
 
+   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
+      @Override
+      protected void configure() {
+         bind(ILogService.class).to(PrintStreamLogService.class);
+         MockedTemplateService mockedTemplateService = new MockedTemplateService();
+         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+                  .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
+                                        Paths.get("src/main/template"));
+
+         bind(ITemplateService.class).toInstance(mockedTemplateService);
+
+         IResourceService mockResource = Mockito.mock(IResourceService.class);
+         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
+
+         bind(IResourceService.class).toInstance(mockResource);
+      }
+   };
+   private static final Injector injector = Guice.createInjector(getModules());
    private IJellyFishCommand cmd = injector.getInstance(CreateJavaServiceCommandGuiceWrapper.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private IModel model;
    private Path outputDir;
-
 
    /**
     * @param folder must be a folder.
@@ -102,6 +119,21 @@ public class CreateJavaServiceCommandIT {
       return sb.toString();
    }
 
+   private static Collection<Module> getModules() {
+      Collection<Module> modules = new ArrayList<>();
+      modules.add(TEST_SERVICE_MODULE);
+      for (Module dynamicModule : ServiceLoader.load(Module.class)) {
+         if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
+             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
+            modules.add(dynamicModule);
+         }
+      }
+
+      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
+      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      return modules;
+   }
+
    @Before
    public void setup() throws IOException {
       // Setup test resources
@@ -148,7 +180,8 @@ public class CreateJavaServiceCommandIT {
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
 
       printOutputFolderStructure(outputDir);
-
+      model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getName()));
+sat
       //checkGradleBuild(outputDir);
       //checkLogContents(outputDir);
    }
@@ -230,39 +263,4 @@ public class CreateJavaServiceCommandIT {
          // ignore
       }
    }
-
-   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
-      @Override
-      protected void configure() {
-         bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService mockedTemplateService = new MockedTemplateService();
-         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
-                  .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
-                                        Paths.get("src/main/template"));
-
-         bind(ITemplateService.class).toInstance(mockedTemplateService);
-
-         IResourceService mockResource = Mockito.mock(IResourceService.class);
-         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
-
-         bind(IResourceService.class).toInstance(mockResource);
-      }
-   };
-
-   private static Collection<Module> getModules() {
-      Collection<Module> modules = new ArrayList<>();
-      modules.add(TEST_SERVICE_MODULE);
-      for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
-             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
-            modules.add(dynamicModule);
-         }
-      }
-
-      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
-      modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      return modules;
-   }
-
-   private static final Injector injector = Guice.createInjector(getModules());
 }

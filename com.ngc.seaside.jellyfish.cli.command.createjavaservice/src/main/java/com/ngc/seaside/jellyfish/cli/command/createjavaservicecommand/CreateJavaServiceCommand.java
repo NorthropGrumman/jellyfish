@@ -169,7 +169,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       doAddProject(parameters);
 
-      System.out.println(parameters);
+
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
                              outputDirectory,

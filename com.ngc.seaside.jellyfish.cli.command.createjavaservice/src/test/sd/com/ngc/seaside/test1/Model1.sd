@@ -22,4 +22,13 @@ model Model1 {
 		Data2 data2
 		Data4 data4
 	}
+
+	scenario scenarioBehavior {
+        metadata {
+    	    "see": {"url": "foobar" }
+    	}
+    	when receiving data1
+    	then willPublish data2
+    	and willBeCompleted within 500 milliseconds
+    }
 }
