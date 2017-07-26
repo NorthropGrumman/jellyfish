@@ -1,0 +1,53 @@
+/**
+ * ${projectName}
+ */
+
+import com.ngc.seaside.jellyfish.cli.gradle.plugins.JellyFishCliCommandTask
+ 
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+   dependencies {
+      classpath 'com.ngc.seaside:gradle.plugins:1.1'
+      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.0'
+   }
+}
+
+subprojects {
+    apply plugin: 'com.ngc.seaside.parent'
+
+    group = '${groupId}'
+    version = '${version}'
+
+    ext {
+        jellyfishDSLVersion = '1.1'
+        bootstrapApiVersion = '1.3'
+        bootstrapVersion = '1.3'
+        bootstrapCommandsVersion = '1.1'
+        blocsVersion = '2.1'
+        guiceVersion = '4.1.0'
+        osgiVersion =  '6.0.0'
+        guavaVersion = '21.0'
+        commonsIOVersion = '2.5'
+        commonsLangVersion = '2.6'
+        commonsLang3Version = '3.5'
+        junitVersion = '4.12'
+        mockitoVersion = '2.7.14'
+    }
+}
+
+// Sample command - replace this with a transient project generator task
+task help(type: JellyFishCliCommandTask) {
+    command = 'help'           
+    inputDir = './src/main/sd'   
+    
+    // This can be configured here. Command line use "--args <args>" will discard these.
+    args = 'verbose=true'
+}
