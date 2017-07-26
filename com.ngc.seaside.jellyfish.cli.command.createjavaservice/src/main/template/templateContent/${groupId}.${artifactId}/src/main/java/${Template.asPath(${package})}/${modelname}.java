@@ -12,8 +12,6 @@ import ${groupId}.${artifactId}.api.I${modelname};
 import ${groupId}.${artifactId}.base.impl.Abstract${modelname};
 import com.ngc.seaside.threateval.events.TrackPriority;
 
-
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -21,10 +19,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = {I${modelname}.class, IServiceModule.class}, immediate = true)
-public class ${modelname} extends Abstract${modelname} {
 
-   @Activate
+// @Component(service = {I${modelname}.class, IServiceModule.class}, immediate = true)
+@Inject
+public class ${modelname}Delegate extends Abstract${modelname} {
+      ITemplateService templateService) {
+      delegate.setLogService(logService);
+      delegate.setPromptService(promptUserService);
+      delegate.setTemplateService(templateService);
+      delegate.activate()
+
+@Activate
    public void activate() {
       super.activate();
    }
@@ -67,4 +72,5 @@ public class ${modelname} extends Abstract${modelname} {
    public void removeFaultManagementService(IFaultManagementService ref) {
       super.removeFaultManagementService(ref);
    }
+
 }
