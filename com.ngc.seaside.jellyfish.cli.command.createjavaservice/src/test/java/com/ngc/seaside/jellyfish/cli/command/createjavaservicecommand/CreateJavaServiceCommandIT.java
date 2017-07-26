@@ -19,9 +19,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -185,11 +183,11 @@ public class CreateJavaServiceCommandIT {
 
       model.getScenarios().forEach(iScenario -> {
          System.out.println("SCENARIO:" + iScenario.getWhens().toString());
-          iScenario.getWhens().forEach( iScenarioStep -> iScenarioStep.getParameters().forEach(s -> {
-             System.out.println(s);
-             System.out.println( model.getInputs().getByName(s).get().getType().getName());
-             //System.out.println(iScenarioStep.);
-          }));
+         iScenario.getWhens().forEach(iScenarioStep -> iScenarioStep.getParameters().forEach(s -> {
+            System.out.println(s);
+            System.out.println(model.getInputs().getByName(s).get().getType().getName());
+            //System.out.println(iScenarioStep.);
+         }));
 
       });
       model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getThens().toString()));
@@ -210,32 +208,27 @@ public class CreateJavaServiceCommandIT {
       cmd.run(options);
    }
 
-   private void checkLogContents(Path projectDir) throws IOException {
-      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**log4j.xml");
-      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
-
-      // There should only be one log4j.xml file generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
-
-      // Verify that model is injected
-      Assert.assertTrue(
-               contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]");
-      int endLength = contents.length();
-      String contents2 = contents.substring(startLength, endLength);
-      Assert.assertTrue(
-               contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
-   }
-
    private void printOutputFolderStructure(Path outputDir) {
       String ouputFolderTree = printDirectoryTree(outputDir.toFile());
       Assert.assertTrue(ouputFolderTree.contains(model.getName() + ".java"));
       Assert.assertTrue(ouputFolderTree.contains(model.getName() + "Test.java"));
       System.out.println(ouputFolderTree);
+   }
+
+   private void checkJavaServiceDelegatContents(Path projectDir) throws IOException {
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**" + model.getName() + "GuiceWrapper.java");
+      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+
+      // There should only be one log4j.xml file generated
+      Assert.assertTrue(gradleFiles.size() == 1);
+      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue(model.getName() + "GuiceWrapper.java is missing", Files.isRegularFile(buildFile));
+      String actualContents = new String(Files.readAllBytes(buildFile));
+
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/" + model.getName() + "GuiceWrapper.java.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {
@@ -244,28 +237,14 @@ public class CreateJavaServiceCommandIT {
 
       // There should only be one build.gradle generated
       Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
+      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      // Verify apply block
-      Assert.assertTrue(contents.contains("apply plugin: 'com.ngc.seaside.distribution'"));
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/build.gradle.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
 
-      //Verify seaside distribution block
-      Assert.assertTrue(contents.contains("seasideDistribution {"));
-      Assert.assertTrue(contents.contains("buildDir = 'build'"));
-      Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
-      Assert.assertTrue(
-               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
-      Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
-
-      // Verify dependencies block
-      Assert.assertTrue(contents.contains("dependencies {"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".events\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".domain\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".connector\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".base\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + "\")"));
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void createSettings() throws IOException {
