@@ -2,36 +2,60 @@ package com.ngc.seaside.jellyfish.cli.command.validate;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Paths;
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ValidateCommandTests {
 
-   private ValidateCommand cmd = new ValidateCommand();
-   
-   private PrintStreamLogService logger = new PrintStreamLogService();
-   
-   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
-   
-   private ISystemDescriptor sd = Mockito.mock(ISystemDescriptor.class);
-   
+   private ValidateCommand command = new ValidateCommand();
+
+   private PrintStreamLogService logService = new PrintStreamLogService();
+
+   @Mock
+   private IJellyFishCommandOptions options;
+
+   @Mock
+   private IParsingResult parsingResult;
+
    @Before
    public void before() {
-      cmd.setLogService(logger);
+      when(options.getParsingResult()).thenReturn(parsingResult);
+      command.setLogService(logService);
    }
-   
+
    @Test
-   public void testNonNullSystemDescriptor() {
-      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
-      cmd.run(options);
+   public void testValidateValidResult() {
+      when(parsingResult.isSuccessful()).thenReturn(true);
+      command.run(options);
    }
-   
-   @Test(expected = Exception.class)
-   public void testNullSystemDescriptor() {
-      cmd.run(options);
+
+   @Test
+   public void testValidateInvalidResult() {
+      IParsingIssue issue = mock(IParsingIssue.class);
+      when(issue.getSeverity()).thenReturn(Severity.ERROR);
+      when(issue.getMessage()).thenReturn("some error message");
+      when(issue.getLineNumber()).thenReturn(4);
+      when(issue.getColumn()).thenReturn(3);
+      when(issue.getOffendingFile()).thenReturn(Paths.get("src", "test", "resources", "invalidFile.txt"));
+
+      when(parsingResult.isSuccessful()).thenReturn(false);
+      when(parsingResult.getIssues()).thenReturn(Collections.singletonList(issue));
+
+      command.run(options);
    }
-   
+
 }
