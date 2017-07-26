@@ -12,8 +12,6 @@ package ${package};
       import ${groupId}.${artifactId}.base.impl.Abstract${modelname};
       import com.ngc.seaside.threateval.events.TrackPriority;
 
-
-
       import org.osgi.service.component.annotations.Activate;
       import org.osgi.service.component.annotations.Component;
       import org.osgi.service.component.annotations.Deactivate;
@@ -21,50 +19,16 @@ package ${package};
       import org.osgi.service.component.annotations.ReferenceCardinality;
       import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = {I${modelname}.class, IServiceModule.class}, immediate = true)
-public class ${modelname} extends Abstract${modelname} {
+//@Component(service = {I${modelname}.class, IServiceModule.class}, immediate = true)
+public class ${generatedDelegateClassname} extends Abstract${modelname}{
 
-@Activate
-public void activate() {
-      super.activate();
-      }
+   private final ${modelname} delegate = new ${modelname}();
 
-@Deactivate
-public void deactivate() {
-      super.deactivate();
-      }
-
-@Override
-@Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-public void setLogService(ILogService ref) {
-      super.setLogService(ref);
-      }
-
-@Override
-public void removeLogService(ILogService ref) {
-      super.removeLogService(ref);
-      }
-
-@Override
-@Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-      }
-
-@Override
-public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
-      }
-
-@Override
-@Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-public void setFaultManagementService(IFaultManagementService ref) {
-      super.setFaultManagementService(ref);
-      }
-
-@Override
-@Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-public void removeFaultManagementService(IFaultManagementService ref) {
-      super.removeFaultManagementService(ref);
-      }
-      }
+   @Inject
+   public ${generatedDelegateClassname}(ILogService logService, IEventService eventService, IFaultManagementService faultManagementService){
+         delegate.setLogService(logService);
+         delegate.setEventService(eventService);
+         delegate.setFaultManagementService(faultManagementService);
+         delegate.activate();
+   }
+}
