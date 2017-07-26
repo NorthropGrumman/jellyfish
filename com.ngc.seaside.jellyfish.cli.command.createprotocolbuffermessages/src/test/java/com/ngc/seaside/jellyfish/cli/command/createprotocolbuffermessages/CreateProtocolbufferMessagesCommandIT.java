@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
-public class CreateProtocolbufferMessagesCommandTest {
+public class CreateProtocolbufferMessagesCommandIT {
 
    private IJellyFishCommand cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
 
