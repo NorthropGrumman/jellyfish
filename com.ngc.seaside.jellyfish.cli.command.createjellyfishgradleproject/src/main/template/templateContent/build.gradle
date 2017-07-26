@@ -44,7 +44,7 @@ subprojects {
 }
 
 // Sample command - replace this with a transient project generator task
-task help(type: JellyFishCliCommandTask) {
+task sdHelp(type: JellyFishCliCommandTask) {
     command = 'help'           
     inputDir = './src/main/sd'   
     
