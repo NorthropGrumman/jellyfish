@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
@@ -18,6 +19,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Path;
+
 @Component(service = IJellyFishCommand.class)
 public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
@@ -30,6 +33,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
+   private IResourceService resourceService;
 
    @Override
    public String getName() {
@@ -46,9 +50,11 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       final IParameterCollection parameters = commandOptions.getParameters();
       final String pkgSuffix = evaluatePackageSuffix(parameters);
 
+      final Path domainTemplate = resourceService.getResourceRootPath().resolve(TEMPLATE_FILE);
+      
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
-            new DefaultParameter<String>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, TEMPLATE_FILE),
+            new DefaultParameter<Path>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
             new DefaultParameter<String>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
             new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).setValue(pkgSuffix),
             new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue(DEFAULT_EXT_PROPERTY),
@@ -98,6 +104,23 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     */
    public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       setJellyFishCommandProvider(null);
+   }
+   
+   /**
+    * Sets the resource service
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeResourceService")
+   public void setResourceService(IResourceService ref) {
+      this.resourceService = ref;
+   }
+
+   /**
+    * Remove the resource service
+    */
+   public void removeResourceService(IResourceService ref) {
+      setResourceService(null);
    }
 
    /**
