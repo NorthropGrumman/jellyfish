@@ -21,8 +21,12 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject').n
 project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.gradle.plugins'
 project(':com.ngc.seaside.jellyfish.cli.command.testutils').name = 'jellyfish.cli.command.testutils'
 
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector').name = 'jellyfish.cli.command.createjavaserviceconnector'
+
 include 'com.ngc.seaside.jellyfish.cli.command.createdomain'
 project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish.cli.command.createdomain'
+
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
