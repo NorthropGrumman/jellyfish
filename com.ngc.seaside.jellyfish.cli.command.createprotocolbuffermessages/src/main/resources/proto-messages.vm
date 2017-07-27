@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package $domain.packagename;
+
+option java_multiple_files = true;
+
+#foreach ($import in $domain.superClassImports)
+import "${import.replace('.', '/')}.proto";
+#end
+#foreach ($import in $domain.imports)
+import "${import.replace('.', '/')}.proto";
+#end
+#if ($import)
+
+#end
+message $domain.classname {
+#set ($properties = [])
+#set ($discard = $properties.addAll($domain.superClassProperties))
+#set ($discard = $properties.addAll($domain.properties))
+#set ($index = 1)
+#foreach ($property in $properties)
+#if ($property.type == "boolean")
+#set ($type = "bool")
+#elseif ($property.type == "float")
+#set ($type = "float")
+#elseif ($property.type == "int")
+#set ($type = "sint32")
+#elseif ($property.type == "String")
+#set ($type = "string")
+#else
+#set ($type = $property.type)
+#end
+#if ($property.multiple)
+#set ($cardinality = "repeated ")
+#else
+#set ($cardinality = "")
+#end
+   ${cardinality}$type $property.name = $index;
+#set ($index = $index + 1)
+#end
+}
