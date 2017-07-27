@@ -10,19 +10,19 @@ import com.ngc.seaside.service.monitoring.api.SessionlessRequirementAwareRequest
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
-#foreach($field in $model.getInputs())
+#foreach($field in $modelObject.getInputs())
 import ${field.getType().getFullyQualifiedName()}Wrapper;
 #end
-#foreach($field in $model.getOutputs())
+#foreach($field in $modelObject.getOutputs())
 import ${field.getType().getFullyQualifiedName()}Wrapper;
 #end
-#foreach($field in $model.getInputs())
-import ${model.getParent().getName()}.${model.getName().toLowerCase()}.events.${field.getType().getName()};
+#foreach($field in $modelObject.getInputs())
+import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
 #end
-#foreach($field in $model.getOutputs())
-import ${model.getParent().getName()}.${model.getName().toLowerCase()}.events.${field.getType().getName()};
+#foreach($field in $modelObject.getOutputs())
+import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
 #end
-import ${model.getParent().getName()}.${model.getName().toLowerCase()}.transport.topic.${model.getName()}TransportTopics;
+import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.transport.topic.${modelObject.getName()}TransportTopics;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -45,13 +45,13 @@ public class ${javaClassName} {
    @SuppressWarnings("unchecked")
    @Activate
    public void activate() {
-      #foreach($field in $model.getInputs())
+      #foreach($field in $modelObject.getInputs())
       #set( $className = $field.getType().getName() )
       transportService.addReceiver(this::receive${className},
                                       ${javaClassName}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
 
       #end
-      #foreach($field in $model.getOutputs())
+      #foreach($field in $modelObject.getOutputs())
       #set( $className = $field.getType().getName() )
       eventService.addSubscriber(this::send${className},
                                     ${className}.TOPIC);
@@ -63,13 +63,13 @@ public class ${javaClassName} {
    @SuppressWarnings("unchecked")
    @Deactivate
    public void deactivate() {
-      #foreach($field in $model.getInputs())
+      #foreach($field in $modelObject.getInputs())
       #set( $className = $field.getType().getName() )
       transportService.removeReceiver(this::receive${className},
-                                      ${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+                                      ${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
 
       #end
-      #foreach($field in $model.getOutputs())
+      #foreach($field in $modelObject.getOutputs())
       #set( $className = $field.getType().getName() )
       eventService.removeSubscriber(this::send${className},
                                     ${className}.TOPIC);
@@ -105,13 +105,13 @@ public class ${javaClassName} {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-   #foreach($field in $model.getInputs())
+   #foreach($field in $modelObject.getInputs())
    #set( $className = $field.getType().getName() )
    #set( $fieldName = $field.getName() )
 
    private void receive${className}(ITransportObject transportObject,
-                                             ${model.getName()}TransportTopics transportTopic) {
-      preReceiveMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+                                             ${modelObject.getName()}TransportTopics transportTopic) {
+      preReceiveMessage(${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       try {
          ${className}Wrapper.${className} ${fieldName};
          try {
@@ -122,28 +122,28 @@ public class ${javaClassName} {
          }
          eventService.publish(convert(${fieldName}), ${className}.TOPIC);
       } finally {
-         postReceiveMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+         postReceiveMessage(${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       }
    }
    #end
-   #foreach($field in $model.getOutputs())
+   #foreach($field in $modelObject.getOutputs())
    #set( $className = $field.getType().getName() )
    #set( $fieldName = $field.getName() )
 
    private void send${className}(IEvent<${className}> event) {
-      preSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+      preSendMessage(${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       try {
          ${className} from = event.getSource();
          ${className}Wrapper.${className} to = convert(from);
          transportService.send(ITransportObject.withPayload(to.toByteArray()),
-                               ${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
-         postSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+                               ${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+         postSendMessage(${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       } finally {
-         postSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+         postSendMessage(${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       }
    }
    #end
-   #foreach($field in $model.getInputs())
+   #foreach($field in $modelObject.getInputs())
    #set( $className = $field.getType().getName() )
    #set( $fieldName = $field.getName() )
 
@@ -159,7 +159,7 @@ public class ${javaClassName} {
    }
    #end
 
-   #foreach($field in $model.getOutputs())
+   #foreach($field in $modelObject.getOutputs())
    #set( $className = $field.getType().getName() )
    #set( $fieldName = $field.getName() )
 
@@ -196,8 +196,8 @@ public class ${javaClassName} {
    private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
       Collection<String> requirements = Collections.emptyList();
 
-      switch((${model.getName()}TransportTopics) transportTopic){
-         #foreach($field in $model.getInputs())
+      switch((${modelObject.getName()}TransportTopics) transportTopic){
+         #foreach($field in $modelObject.getInputs())
          #set( $className = $field.getType().getName() )
          #set( $fieldName = $field.getName() )
 
@@ -209,7 +209,7 @@ public class ${javaClassName} {
             );
             break;
             #end
-         #foreach($field in $model.getOutputs())
+         #foreach($field in $modelObject.getOutputs())
          #set( $className = $field.getType().getName() )
          #set( $fieldName = $field.getName() )
 

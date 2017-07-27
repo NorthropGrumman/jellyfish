@@ -38,11 +38,11 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
    private static final IUsage USAGE = createUsage();
 
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_PROPERTY = "modelName";
+   public static final String MODEL_PROPERTY = "model";
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
 
-   public static final String MODEL_OBJECT_PROPERTY = "model";
+   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
    public static final String MODEL_REQUIREMENTS_PROPERTY = "modelRequirements";
    public static final String JAVA_CLASS_NAME_PROPERTY = "javaClassName";
    public static final String PACKAGE_PROPERTY = "package";
