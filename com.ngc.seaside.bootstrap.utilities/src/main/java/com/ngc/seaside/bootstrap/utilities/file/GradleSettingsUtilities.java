@@ -2,6 +2,8 @@ package com.ngc.seaside.bootstrap.utilities.file;
 
 import com.ngc.seaside.command.api.IParameterCollection;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,9 +33,13 @@ public class GradleSettingsUtilities {
     *                                parameters don't contain the necessary properties.
     */
    public static void addProject(IParameterCollection parameters) throws FileUtilitiesException {
-      if (parameters.containsParameter(OUTPUT_DIR_PROPERTY) &&
-          parameters.containsParameter(GROUP_ID_PROPERTY) &&
-          parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY) ||
+          !parameters.containsParameter(GROUP_ID_PROPERTY) ||
+          !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         throw new FileUtilitiesException(
+               String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
+                             OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
+      } else {
          Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
          Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
 
@@ -48,13 +54,17 @@ public class GradleSettingsUtilities {
                                  bundleName,
                                  parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue()));
 
-         FileUtilities.addLinesToFile(settings, lines);
-      } else {
-         throw new FileUtilitiesException(
-                  String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
-                                OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
+         boolean areLinesAlreadyInFile = false;
+         try {
+            String contents = new String(Files.readAllBytes(settings));
+            areLinesAlreadyInFile = lines.stream().allMatch(contents::contains);
+         } catch (IOException e) {
+            // Ignore exception, add project if file can't be read
+         }
+
+         if(!areLinesAlreadyInFile) {
+            FileUtilities.addLinesToFile(settings, lines);
+         }
       }
-
    }
-
 }
