@@ -21,12 +21,15 @@ dependencies {
     compile project(":jellyfish.cli.command.createdomain")
     commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
+ 	 compile project(":jellyfish.cli.command.createprotocolbuffermessages")
+    commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
+
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
-
+    
     compile project(":jellyfish.cli.command.createjavaevents")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
-    
+
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -41,8 +44,12 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-	testCompile "junit:junit:$junitVersion"
+	 testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+applicationDistribution.from(project(':jellyfish.cli.command.createprotocolbuffermessages').file('src/main/resources/proto-messages.vm')) {
+	into 'resources'
 }
 
 applicationDistribution.from('src/main/resources') { 
