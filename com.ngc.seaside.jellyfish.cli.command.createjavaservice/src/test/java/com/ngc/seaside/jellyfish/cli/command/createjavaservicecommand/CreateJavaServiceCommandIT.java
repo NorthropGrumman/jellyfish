@@ -176,19 +176,11 @@ public class CreateJavaServiceCommandIT {
       Mockito.verify(options, Mockito.times(1)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
 
+      // Verify tests
       printOutputFolderStructure(outputDir);
-
-      model.getScenarios().forEach(iScenario -> {
-         iScenario.getWhens().forEach(iScenarioStep -> iScenarioStep.getParameters().forEach(s -> {
-            System.out.println(s);
-            System.out.println(iScenarioStep.getKeyword());
-            System.out.println(model.getInputs().getByName(s).get().getType().getName());
-         }));
-      });
-
       checkGeneratedServiceFiles(outputDir);
       checkGeneratedServiceDelegateFile(outputDir);
-      //checkGeneratedBaseFiles(outputDir);
+      checkGeneratedBaseFiles(outputDir);
    }
 
    private void runCommand(String... keyValues) {
@@ -285,17 +277,61 @@ public class CreateJavaServiceCommandIT {
    }
 
    private void checkGeneratedBaseFiles(Path projectDir) throws IOException {
-      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**build.gradle");
-      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+      // Check build.gradle
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
+               "glob:**" + model.getParent() + "." + model.getName().toLowerCase() + ".base/build.gradle");
+      Collection<Path> file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
-      // There should only be one build.gradle generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
+      // There should only be one build.gradle file generated for the service bundle
+      Assert.assertEquals(1, file.size());
+      Path generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getParent() + "." + model.getName().toLowerCase() + ".base/build.gradle is missing",
+                        Files.isRegularFile(generatedFile));
       String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      Path expectedFile = Paths.get("src/test/resources/expectedfiles/build.gradle.expected");
+      Path expectedFile =
+               Paths.get("src/test/resources/expectedfiles/" + model.getName() + ".build.gradle.base.expected");
       String expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+
+      // Checked service api file
+      matcher = FileSystems.getDefault().getPathMatcher("glob:**I" + model.getName() + ".java");
+      file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+
+      // There should only be one service file generated for the service
+      Assert.assertEquals(1, file.size());
+      generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue("I"+model.getName() + ".java is missing", Files.isRegularFile(generatedFile));
+      actualContents = new String(Files.readAllBytes(generatedFile));
+      expectedFile = Paths.get("src/test/resources/expectedfiles/I" + model.getName() + ".java.expected");
+      expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+
+      // Checked Service transport topics file
+      matcher = FileSystems.getDefault().getPathMatcher("glob:**" + model.getName() + "TransportTopics.java");
+      file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+      // There should only be one test file generated for the service
+      Assert.assertEquals(1, file.size());
+      generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getName() + "TransportTopicsTest.java is missing", Files.isRegularFile(generatedFile));
+      actualContents = new String(Files.readAllBytes(generatedFile));
+      expectedFile = Paths.get("src/test/resources/expectedfiles/" + model.getName() + "TransportTopics.java.expected");
+      expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+
+      // Checked Service transport topics file
+      matcher = FileSystems.getDefault().getPathMatcher("glob:**Abstract" + model.getName() + ".java");
+      file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+      // There should only be one test file generated for the service
+      Assert.assertEquals(1, file.size());
+      generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue("Abstract"+model.getName() + ".java is missing", Files.isRegularFile(generatedFile));
+      actualContents = new String(Files.readAllBytes(generatedFile));
+      expectedFile = Paths.get("src/test/resources/expectedfiles/Abstract" + model.getName() + ".java.expected");
+      expectedContents = new String(Files.readAllBytes(expectedFile));
 
       Assert.assertEquals(expectedContents, actualContents);
    }

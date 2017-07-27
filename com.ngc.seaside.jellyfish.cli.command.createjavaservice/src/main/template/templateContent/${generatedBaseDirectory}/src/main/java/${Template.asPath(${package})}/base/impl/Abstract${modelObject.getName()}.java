@@ -1,5 +1,37 @@
 package ${package}.base.impl;
 
+##start processing each scenario
+#set ( $modelMethodList = [])
+#set ( $modelScenarioList = [])
+#foreach ( $iScenario in ${modelObject.getScenarios()} )
+#set ($dontCare = $modelScenarioList.add($iScenario))
+#set ( $modelReceiveList = [] )
+##start processing each when
+#foreach ( $iScenarioStep in $iScenario.getWhens() )
+#if ( $iScenarioStep.getKeyword() == "receiving" )
+#foreach ( $param in $iScenarioStep.getParameters() )
+#set ($dontCare = $modelReceiveList.add($param))
+#end
+#end
+#end
+##end processing each when
+##start processing each then
+#foreach ( $iScenarioStep in $iScenario.getThens() )
+#if ( $iScenarioStep.getKeyword() == "willPublish" )
+#set ( $output = $iScenarioStep.getParameters().get(0))
+#end
+#end
+##end processing then
+#if (! $modelReceiveList.isEmpty() )
+#set ($outputType = $modelObject.getOutputs().getByName($output).get().getType().getName())
+#set ($modelReceiveTypeList = [])
+#foreach ($input in $modelReceiveList)
+#set ($dontCare = $modelReceiveTypeList.add($modelObject.getInputs().getByName($input).get().getType().getName()))
+#end
+#set ($dontCare = $modelMethodList.add("$outputType $iScenario.getName() (#foreach ($input in $modelReceiveList)#set ($index = $modelReceiveList.indexOf($input))$modelReceiveTypeList.get($index) $input#if( $velocityHasNext ),#end#end) throws ServiceFaultException"))
+#end
+#end
+##end processing scenarios
 import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.api.IContext;
@@ -12,15 +44,19 @@ import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority;
+import ${package}.api.I$modelObject.getName();
+#foreach($field in $modelObject.getInputs())
+import ${package}.events.${field.getType().getName()};
+#end
+#foreach($field in $modelObject.getOutputs())
+import ${package}.events.${field.getType().getName()};
+#end
+#set ($DOT = ".")
 
 /**
- * Base class for engagement track priority service implementations.
+ * Base class for $modelObject.getName().replaceAll("((^[a-z]+)|([A-Z]{1}[a-z]+)|([A-Z]+(?=([A-Z][a-z])|($))))", "$1 ").toLowerCase() implementations.
  */
-public abstract class Abstract${modelObject.getName()} implements IServiceModule,
-                                                                        IEngagementTrackPriorityService {
+public abstract class Abstract${modelObject.getName()} implements IServiceModule, I$modelObject.getName() {
 
    public final static String NAME = "service:${model}";
 
@@ -39,15 +75,17 @@ public abstract class Abstract${modelObject.getName()} implements IServiceModule
 
    protected IFaultManagementService faultManagementService;
 
-   @Subscriber(TrackEngagementStatus.TOPIC_NAME)
-   public void receiveTrackEngagementStatus(IEvent<TrackEngagementStatus> event) {
+#foreach ($modelReceiver in $modelReceiveList)
+#set ( $index = $modelReceiveList.indexOf($modelReceiver))
+   @Subscriber(${modelReceiveTypeList.get($index)}${DOT}TOPIC_NAME)
+   public void receive$modelReceiveTypeList.get($index)(IEvent<$modelReceiveTypeList.get($index)> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
       try {
-         publishTrackPriority(calculateTrackPriority(event.getSource()));
+         publish$outputType($modelScenarioList.get($modelReceiveList.indexOf($modelReceiver)).getName()(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(
                getClass(),
-               "Invocation of '%s.calculateTrackPriority(TrackEngagementStatus)' generated fault, dispatching to fault"
+               "Invocation of '%s.calculate$outputType($modelReceiveTypeList.get($index))' generated fault, dispatching to fault"
                + " management service.",
                getClass().getName());
          faultManagementService.handleFault(fault);
@@ -55,6 +93,7 @@ public abstract class Abstract${modelObject.getName()} implements IServiceModule
       }
    }
 
+#end
    @Override
    public String getName() {
       return NAME;
@@ -117,15 +156,15 @@ public abstract class Abstract${modelObject.getName()} implements IServiceModule
    public void removeFaultManagementService(IFaultManagementService ref) {
       setFaultManagementService(null);
    }
+#set ($outputTypeLowercase = "$outputType.substring(0, 1).toLowerCase()$outputType.substring(1)")
 
    /**
-    * Publishes the given {@code TrackPriority} object.
+    * Publishes the given {@code $outputType} object.
     *
-    * @param trackPriority the {@code TrackPriority} to publish
+    * @param $outputTypeLowercase the {@code $outputType} to publish
     */
-   private void publishTrackPriority(TrackPriority trackPriority) {
-      Preconditions.checkNotNull(trackPriority, "trackPriority may not be null!");
-      eventService.publish(trackPriority,
-                           TrackPriority.TOPIC);
+   private void publish$outputType($outputType $outputTypeLowercase) {
+      Preconditions.checkNotNull($outputTypeLowercase, "$outputTypeLowercase may not be null!");
+      eventService.publish($outputTypeLowercase, ${outputType}${DOT}TOPIC);
    }
 }

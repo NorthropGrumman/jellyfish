@@ -11,4 +11,5 @@ import com.ngc.seaside.test1.model1.events.Data4;
 
 public interface IModel1 {
     Data2 scenarioBehavior (Data1 data1) throws ServiceFaultException;
+
 }

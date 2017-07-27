@@ -3,19 +3,16 @@ package ${package};
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
-
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.seaside.service.fault.api.ServiceInputFaultException;
-
 import ${groupId}.${artifactId}.api.I${modelObject.getName()};
 import ${groupId}.${artifactId}.base.impl.Abstract${modelObject.getName()};
-
 #foreach($field in $modelObject.getInputs())
-import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
+import ${package}.events.${field.getType().getName()};
 #end
 #foreach($field in $modelObject.getOutputs())
-import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
+import ${package}.events.${field.getType().getName()};
 #end
 
 import org.osgi.service.component.annotations.Activate;

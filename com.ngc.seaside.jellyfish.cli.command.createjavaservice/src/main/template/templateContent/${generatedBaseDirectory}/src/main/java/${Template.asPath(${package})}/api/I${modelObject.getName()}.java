@@ -3,10 +3,10 @@ package ${package}.api;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 
 #foreach($field in $modelObject.getInputs())
-import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
+import ${package}.events.${field.getType().getName()};
 #end
 #foreach($field in $modelObject.getOutputs())
-import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase()}.events.${field.getType().getName()};
+import ${package}.events.${field.getType().getName()};
 #end
 
 
