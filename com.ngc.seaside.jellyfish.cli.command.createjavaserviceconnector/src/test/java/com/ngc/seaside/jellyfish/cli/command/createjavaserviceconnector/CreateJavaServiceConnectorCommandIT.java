@@ -78,7 +78,7 @@ public class CreateJavaServiceConnectorCommandIT {
       final String expectedClassName = "EngagementTrackPriorityServiceConnector";
 
       runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model);
+                 "model", model);
       checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
 
       Path expectedConnectorFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnector.java");

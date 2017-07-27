@@ -48,7 +48,7 @@ public class ${javaClassName} {
       #foreach($field in $modelObject.getInputs())
       #set( $className = $field.getType().getName() )
       transportService.addReceiver(this::receive${className},
-                                      ${javaClassName}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+                                      ${modelObject.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
 
       #end
       #foreach($field in $modelObject.getOutputs())
