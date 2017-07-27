@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -100,6 +101,7 @@ public class CreateJavaDistributionCommandIT {
       sb.append("/");
       sb.append("\n");
 
+      Preconditions.checkNotNull(folder.listFiles());
       for (File file : folder.listFiles()) {
          if (file.isDirectory()) {
             printDirectoryTree(file, indent + 1, sb);
@@ -131,11 +133,6 @@ public class CreateJavaDistributionCommandIT {
       Properties props = System.getProperties();
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
-      // Comment the two lines below if you wish to use a known output directory.
-      //outputDir = Files.createTempDirectory(null);
-      //outputDir.toFile().deleteOnExit();
-
-      // Uncomment the lines below if you wish to view the output directory
       Path outputDirectory = Paths.get("build/test-template");
       outputDir = Files.createDirectories(outputDirectory);
 
@@ -193,10 +190,10 @@ public class CreateJavaDistributionCommandIT {
       Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
       // There should only be one log4j.xml file generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(buildFile));
-      String actualContents = new String(Files.readAllBytes(buildFile));
+      Assert.assertEquals(1,gradleFiles.size());
+      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
       Path expectedFile = Paths.get("src/test/resources/expectedfiles/log4j.xml.expected");
       String expectedContents = new String(Files.readAllBytes(expectedFile));
@@ -209,7 +206,7 @@ public class CreateJavaDistributionCommandIT {
       Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
       // There should only be one build.gradle generated
-      Assert.assertTrue(gradleFiles.size() == 1);
+      Assert.assertEquals(1,gradleFiles.size());
       Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
       Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
       String actualContents = new String(Files.readAllBytes(generatedFile));

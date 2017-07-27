@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +37,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
 
    public static final String MODEL_PROPERTY = "model";
-   public static final String MODELNAME_PROPERTY = "modelname";
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
 
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
@@ -49,7 +49,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    public static final String GENERATE_DELEGATE_PROPERTY = "generateDelegate";
    public static final String GENERATED_DELEGATE_CLASSNAME = "generatedDelegateClassname";
 
-
    public static final String PACKAGE_PROPERTY = "package";
    public static final String CLEAN_PROPERTY = "clean";
 
@@ -57,6 +56,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    private static final IUsage USAGE = createUsage();
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
             .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
@@ -125,7 +125,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
       parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
-      parameters.addParameter(new DefaultParameter<>(MODELNAME_PROPERTY, model.getName()));
 
       // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
@@ -146,16 +145,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       doCreateDirectories(outputDirectory);
 
-      // Resolve base
-      if (!parameters.containsParameter(GENERATE_BASE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GENERATE_BASE_PROPERTY, DEFAULT_BASE_PROPERTY));
-      }
-
-      // Resolve delegate
-      if (!parameters.containsParameter(GENERATE_DELEGATE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_PROPERTY, DEFAULT_DELEGATE_PROPERTY));
-      }
-
       // Resolve clean property
       final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
 
@@ -168,28 +157,70 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          throw new CommandException("Invalid package name: " + pkg);
       }
 
-      boolean generateDelegate = Boolean.parseBoolean(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
-      if (generateDelegate) {
-         parameters.addParameter(new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME,
-                                                        parameters.getParameter(MODELNAME_PROPERTY).getStringValue()
-                                                        + "GuiceWrapper"));
+      // Resolve base
+      if (!parameters.containsParameter(GENERATE_BASE_PROPERTY)) {
+         parameters.addParameter(new DefaultParameter<>(GENERATE_BASE_PROPERTY, DEFAULT_BASE_PROPERTY));
       }
 
       boolean generateBase = Boolean.parseBoolean(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
-      if (generateBase) {
-         parameters.addParameter(new DefaultParameter<>(GENERATED_BASE_DIRECTORY,
-                                                        parameters.getParameter(PACKAGE_PROPERTY).getStringValue()
-                                                        + ".base"));
+      parameters.addParameter(new DefaultParameter<>(GENERATED_BASE_DIRECTORY, pkg + ".base"));
+
+      // Resolve delegate
+      if (!parameters.containsParameter(GENERATE_DELEGATE_PROPERTY)) {
+         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_PROPERTY, DEFAULT_DELEGATE_PROPERTY));
       }
+
+      boolean generateDelegate =
+               Boolean.parseBoolean(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
+      parameters.addParameter(
+               new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME, model.getName() + "GuiceWrapper.java"));
 
       doAddProject(parameters);
 
+      // Check if there is already a base directory there to prevent from creating a side effect
+      File baseDirectory = Paths.get(outputDirectory + "/" + pkg + ".base").toFile();
+      boolean baseAlreadyExists = baseDirectory.exists();
+
+      // Check if there is already a base directory there to prevent from creating a side effect
+      String packagePath = pkg.replace(".", "/");
+      File
+               delegateFile =
+               Paths.get(outputDirectory + "/" + pkg + "/src/main/java/" + packagePath + "/" + model.getName()
+                         + "GuiceWrapper.java").toFile();
+      boolean delegateAlreadyExists = delegateFile.exists();
+
+      // Unpack the template
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
                              outputDirectory,
                              clean);
+
+      // Clean up
+      if (!generateBase && !baseAlreadyExists) {
+         deleteDir(baseDirectory);
+      }
+
+      if (!generateDelegate && !delegateAlreadyExists) {
+         deleteDir(delegateFile);
+      }
+
       logService.info(CreateJavaServiceCommand.class, "%s service project successfully created",
                       model.getName());
+   }
+
+   /**
+    * Helper method to delete folder/files
+    *
+    * @param file file/folder to delete
+    */
+   boolean deleteDir(File file) {
+      File[] contents = file.listFiles();
+      if (contents != null) {
+         for (File f : contents) {
+            deleteDir(f);
+         }
+      }
+      return file.delete();
    }
 
    @Activate

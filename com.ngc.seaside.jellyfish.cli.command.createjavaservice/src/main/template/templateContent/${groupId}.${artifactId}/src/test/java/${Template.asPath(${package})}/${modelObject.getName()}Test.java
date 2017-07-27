@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${modelname}Test {
+public class $modelObject.getName()Test {
 
-   private $modelname} service;
+   private $modelObject.getName() service;
 
    @Mock
    private ILogService logService;
@@ -22,20 +22,24 @@ public class ${modelname}Test {
    private IEventService eventService;
 
    @Before
-   public void before() throws Throwable {
-      service = new ${modelname}();
+   public void setup() throws Throwable {
+      service = new ${modelObject.getName()}();
       service.setLogService(logService);
       service.setEventService(eventService);
       service.activate();
    }
 
+#foreach ($method in $modelMethodList)
    @Test
-   public void testService() {
-      // TODO Auto-generated method stub
+   public $modelScenarioList.get($modelMethodList.indexOf($method)).getName()Test(){
+       // TODO Auto-generated method stub
+       throw new UnsupportedOperationException();
    }
 
+#end
+
    @After
-   public void after() throws Throwable {
+   public void cleanup() throws Throwable {
       service.deactivate();
    }
 }

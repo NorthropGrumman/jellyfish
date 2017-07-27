@@ -1,7 +1,7 @@
 #set( $D = '$' )
 
 dependencies {
-   compile project(":${modelname.toLowerCase()}.events")
+   compile project(":${modelObject.getName().toLowerCase()}.events")
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
@@ -17,6 +17,6 @@ dependencies {
 
 jar {
    manifest {
-      attributes("Export-Package": "${D}{groupId}.${D}{artifactId}.*")
+      attributes("Export-Package": "${groupId}.${artifactId}.*")
    }
 }

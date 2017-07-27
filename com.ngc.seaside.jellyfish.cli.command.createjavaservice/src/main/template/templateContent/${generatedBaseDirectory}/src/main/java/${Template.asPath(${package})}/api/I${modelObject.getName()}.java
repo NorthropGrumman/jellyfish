@@ -10,15 +10,18 @@ import ${modelObject.getParent().getName()}.${modelObject.getName().toLowerCase(
 #end
 
 
-public interface I${modelname} {
+public interface I${modelObject.getName()} {
 ##start processing each scenario
+#set ( $modelMethodList = [])
+#set ( $modelScenarioList = [])
 #foreach ( $iScenario in ${modelObject.getScenarios()} )
-#set ( $inputList = [] )
+#set ($dontCare = $modelScenarioList.add($iScenario))
+#set ( $modelReceiveList = [] )
 ##start processing each when
 #foreach ( $iScenarioStep in $iScenario.getWhens() )
 #if ( $iScenarioStep.getKeyword() == "receiving" )
 #foreach ( $param in $iScenarioStep.getParameters() )
-#set ($dontCare = $inputList.add($param))
+#set ($dontCare = $modelReceiveList.add($param))
 #end
 #end
 #end
@@ -30,16 +33,18 @@ public interface I${modelname} {
 #end
 #end
 ##end processing then
-#if (! $inputList.isEmpty() )
-#set ($inputSize = $inputList.size() - 1)
+#if (! $modelReceiveList.isEmpty() )
 #set ($outputType = $modelObject.getOutputs().getByName($output).get().getType().getName())
-#set ($inputTypeList = [])
-#foreach ($input in $inputList)
-#set ($dontCare = $inputTypeList.add($modelObject.getInputs().getByName($input).get().getType().getName()))
+#set ($modelReceiveTypeList = [])
+#foreach ($input in $modelReceiveList)
+#set ($dontCare = $modelReceiveTypeList.add($modelObject.getInputs().getByName($input).get().getType().getName()))
 #end
-   $outputType $iScenario.getName() (#foreach ($input in $inputList)#set ($index = $inputList.indexOf($input))$inputTypeList.get($index)#if ($index < $inputSize) $input,#else $input#end#end) throws ServiceFaultException;
+#set ($dontCare = $modelMethodList.add("$outputType $iScenario.getName() (#foreach ($input in $modelReceiveList)#set ($index = $modelReceiveList.indexOf($input))$modelReceiveTypeList.get($index) $input#if( $velocityHasNext ),#end#end) throws ServiceFaultException"))
 #end
-
 #end
 ##end processing scenarios
+#foreach ($method in $modelMethodList)
+    $method;
+
+#end
 }

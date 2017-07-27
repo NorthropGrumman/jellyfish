@@ -140,11 +140,6 @@ public class CreateJavaServiceCommandIT {
       Properties props = System.getProperties();
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
-      // Comment the two lines below if you wish to use a known output directory.
-      //outputDir = Files.createTempDirectory(null);
-      //outputDir.toFile().deleteOnExit();
-
-      // Uncomment the lines below if you wish to view the output directory
       Path outputDirectory = Paths.get("build/test-template");
       outputDir = Files.createDirectories(outputDirectory);
 
@@ -174,7 +169,9 @@ public class CreateJavaServiceCommandIT {
       createSettings();
 
       runCommand(CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                 CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
+                 CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()
+                // CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY, "false"
+                 );
 
       Mockito.verify(options, Mockito.times(1)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
@@ -189,8 +186,9 @@ public class CreateJavaServiceCommandIT {
          }));
       });
 
-      //checkGradleBuild(outputDir);
-      //checkLogContents(outputDir);
+      checkGeneratedServiceFiles(outputDir);
+      checkGeneratedServiceDelegateFile(outputDir);
+      //checkGeneratedBaseFiles(outputDir);
    }
 
    private void runCommand(String... keyValues) {
@@ -212,23 +210,81 @@ public class CreateJavaServiceCommandIT {
       System.out.println(ouputFolderTree);
    }
 
-   private void checkJavaServiceDelegatContents(Path projectDir) throws IOException {
+   private void checkGeneratedServiceDelegateFile(Path projectDir) throws IOException {
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**" + model.getName() + "GuiceWrapper.java");
-      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+      Collection<Path> file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
-      // There should only be one log4j.xml file generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue(model.getName() + "GuiceWrapper.java is missing", Files.isRegularFile(buildFile));
-      String actualContents = new String(Files.readAllBytes(buildFile));
+      // There should only be one wrapper file generated
+      Assert.assertEquals(1, file.size());
+      Path generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getName() + "GuiceWrapper.java is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      Path expectedFile = Paths.get("src/test/resources/expectedfiles/" + model.getName() + "GuiceWrapper.java.expected");
+      Path
+               expectedFile =
+               Paths.get("src/test/resources/expectedfiles/" + model.getName() + "GuiceWrapper.java.expected");
       String expectedContents = new String(Files.readAllBytes(expectedFile));
 
       Assert.assertEquals(expectedContents, actualContents);
    }
 
-   private void checkGradleBuild(Path projectDir) throws IOException {
+   private void checkGeneratedServiceFiles(Path projectDir) throws IOException {
+      // Check build.gradle
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
+               "glob:**" + model.getParent() + "." + model.getName().toLowerCase() + "/build.gradle");
+      Collection<Path> file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+
+      // There should only be one build.gradle file generated for the service bundle
+      Assert.assertEquals(1, file.size());
+      Path generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getParent() + "." + model.getName().toLowerCase() + "/build.gradle is missing",
+                        Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
+
+      Path expectedFile =
+               Paths.get("src/test/resources/expectedfiles/" + model.getName() + ".build.gradle.service.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+
+      // Checked Service file
+      matcher = FileSystems.getDefault().getPathMatcher("glob:**" + model.getName() + ".java");
+      file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+
+      // Filter out anything that is from base
+      ArrayList<Path> test = new ArrayList<>();
+      for (Path path : file) {
+         if (path.toAbsolutePath().toString().contains("base")) {
+            test.add(path);
+         }
+      }
+      file.removeAll(test);
+
+      // There should only be one service file generated for the service
+      Assert.assertEquals(1, file.size());
+      generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getName() + ".java is missing", Files.isRegularFile(generatedFile));
+      actualContents = new String(Files.readAllBytes(generatedFile));
+      expectedFile = Paths.get("src/test/resources/expectedfiles/" + model.getName() + ".java.expected");
+      expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+
+      // Checked Service test file
+      matcher = FileSystems.getDefault().getPathMatcher("glob:**" + model.getName() + "Test.java");
+      file = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
+      // There should only be one test file generated for the service
+      Assert.assertEquals(1, file.size());
+      generatedFile = Paths.get(file.toArray()[0].toString());
+      Assert.assertTrue(model.getName() + "Test.java is missing", Files.isRegularFile(generatedFile));
+      actualContents = new String(Files.readAllBytes(generatedFile));
+      expectedFile = Paths.get("src/test/resources/expectedfiles/" + model.getName() + "Test.java.expected");
+      expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
+   }
+
+   private void checkGeneratedBaseFiles(Path projectDir) throws IOException {
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**build.gradle");
       Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 

@@ -1,4 +1,4 @@
-package ${package};
+package com.ngc.seaside.test1.model1;
 
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${modelname}Test {
+public class Model1Test {
 
-   private $modelname} service;
+   private Model1 service;
 
    @Mock
    private ILogService logService;
@@ -23,16 +23,18 @@ public class ${modelname}Test {
 
    @Before
    public void setup() throws Throwable {
-      service = new ${modelname}();
+      service = new Model1();
       service.setLogService(logService);
       service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void testService() {
-      // TODO Auto-generated method stub
+   public scenarioBehaviorTest(){
+       // TODO Auto-generated method stub
+       throw new UnsupportedOperationException();
    }
+
 
    @After
    public void cleanup() throws Throwable {

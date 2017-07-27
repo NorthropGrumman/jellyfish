@@ -19,7 +19,7 @@ import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPri
 /**
  * Base class for engagement track priority service implementations.
  */
-public abstract class Abstract${modelname} implements IServiceModule,
+public abstract class Abstract${modelObject.getName()} implements IServiceModule,
                                                                         IEngagementTrackPriorityService {
 
    public final static String NAME = "service:${model}";
