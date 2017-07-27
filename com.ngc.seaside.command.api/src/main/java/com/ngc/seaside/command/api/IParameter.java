@@ -3,7 +3,7 @@ package com.ngc.seaside.command.api;
 /**
  * An input parameter to a command.
  */
-public interface IParameter {
+public interface IParameter<T> {
 
    /**
     * Get the description for this parameter.
@@ -24,7 +24,14 @@ public interface IParameter {
     *
     * @return the value of the parameter.
     */
-   String getValue();
+   T getValue();
+
+   /**
+    * Gets the string value of the parameter or an empty string if the value is {@code null}.
+    *
+    * @return the string value of the parameter or an empty string if the value is {@code null}
+    */
+   String getStringValue();
 
    /**
     * Determine if the parameter is required.

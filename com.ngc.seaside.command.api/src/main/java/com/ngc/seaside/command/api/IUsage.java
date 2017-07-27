@@ -20,12 +20,12 @@ public interface IUsage {
     *
     * @return the list of parameters.
     */
-   List<IParameter> getAllParameters();
+   List<IParameter<?>> getAllParameters();
 
    /**
     * Get the list of required parameters. The value names should not be in brackets.
     *
     * @return the list of required parameters.
     */
-   List<IParameter> getRequiredParameters();
+   List<IParameter<?>> getRequiredParameters();
 }

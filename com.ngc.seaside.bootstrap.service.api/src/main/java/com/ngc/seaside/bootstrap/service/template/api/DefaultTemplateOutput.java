@@ -10,15 +10,15 @@ import java.util.Objects;
  */
 public class DefaultTemplateOutput implements ITemplateOutput {
 
-   private Map<String, String> properties;
+   private Map<String, ?> properties;
    private Path outputPath;
 
    @Override
-   public Map<String, String> getProperties() {
+   public Map<String, ?> getProperties() {
       return properties;
    }
 
-   public DefaultTemplateOutput setProperties(Map<String, String> properties) {
+   public DefaultTemplateOutput setProperties(Map<String, ?> properties) {
       this.properties = properties;
       return this;
    }

@@ -20,15 +20,15 @@ import java.util.Objects;
  *
  * @author justan.provence@ngc.com
  */
-public class DefaultParameter implements IParameter {
+public class DefaultParameter<T> implements IParameter<T> {
 
    private String name;
-   private String value = "";
+   private T value;
    private String description = "";
    private boolean required;
 
    /**
-    * Constructor.
+    * Creates a new parameter with the given nam
     *
     * @param name the name of the parameter.
     */
@@ -36,6 +36,16 @@ public class DefaultParameter implements IParameter {
       this.name = name;
    }
 
+   /**
+    * Creates a new parameter with the given name and value.
+    *
+    * @param name  the name of the parameter
+    * @param value the value of the parameter
+    */
+   public DefaultParameter(String name, T value) {
+      this(name);
+      this.value = value;
+   }
 
    @Override
    public String getName() {
@@ -43,11 +53,16 @@ public class DefaultParameter implements IParameter {
    }
 
    @Override
-   public String getValue() {
+   public String getStringValue() {
+      return value == null ? "" : value.toString();
+   }
+
+   @Override
+   public T getValue() {
       return value;
    }
 
-   public DefaultParameter setValue(String value) {
+   public DefaultParameter setValue(T value) {
       this.value = value;
       return this;
    }

@@ -40,7 +40,7 @@ public class GradleSettingsUtilities {
                String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
                              OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
       } else {
-         Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getValue());
+         Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
          Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
 
          String bundleName = String.format("%s.%s",

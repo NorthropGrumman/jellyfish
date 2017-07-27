@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class DefaultParameterCollection implements IParameterCollection {
 
-   private Map<String, IParameter> parameterMap = new LinkedHashMap<>();
+   private Map<String, IParameter<?>> parameterMap = new LinkedHashMap<>();
 
    @Override
    public boolean isEmpty() {
@@ -30,12 +30,12 @@ public class DefaultParameterCollection implements IParameterCollection {
    }
 
    @Override
-   public List<IParameter> getAllParameters() {
+   public List<IParameter<?>> getAllParameters() {
       return new ArrayList<>(parameterMap.values());
    }
 
    @Override
-   public Map<String, IParameter> getParameterMap() {
+   public Map<String, IParameter<?>> getParameterMap() {
       return new LinkedHashMap<>(parameterMap);
    }
 
@@ -44,7 +44,7 @@ public class DefaultParameterCollection implements IParameterCollection {
     *
     * @param parameter the parameter to add.
     */
-   public void addParameter(IParameter parameter) {
+   public void addParameter(IParameter<?> parameter) {
       parameterMap.put(parameter.getName(), parameter);
    }
 
@@ -53,7 +53,7 @@ public class DefaultParameterCollection implements IParameterCollection {
     *
     * @param parameters the parameters to add.
     */
-   public void addParameters(List<IParameter> parameters) {
+   public void addParameters(List<IParameter<?>> parameters) {
       parameters.forEach(this::addParameter);
    }
 

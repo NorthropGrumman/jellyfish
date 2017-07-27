@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public interface ITemplateOutput {
 
-   Map<String, String> getProperties();
+   Map<String, ?> getProperties();
 
    Path getOutputPath();
 

@@ -28,6 +28,7 @@ public class GradleSettingsUtilitiesTest {
    @Rule
    public TemporaryFolder testFolder = new TemporaryFolder();
 
+   @SuppressWarnings("unchecked")
    @Test
    public void doesAddProject() throws IOException, FileUtilitiesException {
       IParameterCollection collection = mock(IParameterCollection.class);
@@ -55,6 +56,7 @@ public class GradleSettingsUtilitiesTest {
       assertTrue(lines.contains("project(':groupIdValue.artifactIdValue').name = 'artifactIdValue'"));
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testAddDuplicateProject() throws IOException, FileUtilitiesException {
       IParameterCollection collection = mock(IParameterCollection.class);
@@ -84,7 +86,7 @@ public class GradleSettingsUtilitiesTest {
    }
 
    private IParameter createParameter(String name, String value) {
-      return new DefaultParameter(name).setValue(value);
+      return new DefaultParameter<>(name, value);
    }
 
 }
