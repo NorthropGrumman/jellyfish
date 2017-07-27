@@ -5,12 +5,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-
-import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
-import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -20,24 +17,13 @@ import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,14 +36,11 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.io.FileUtils;
 import java.util.ServiceLoader;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceConnectorCommandIT {
@@ -95,15 +78,12 @@ public class CreateJavaServiceConnectorCommandIT {
       final String expectedClassName = "EngagementTrackPriorityServiceConnector";
 
       runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateJavaServiceConnectorCommand.MODEL_NAME_PROPERTY, model);
+                 CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model);
       checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
-      Path expectedFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnector.java");
-      Path actualFile = Paths.get(outputDir.toAbsolutePath().toString(),expectedGroupId + '.' + expectedArtifactId, "src", "main", "java", (expectedGroupId + '.' + expectedArtifactId).replace('.', File.separatorChar), expectedClassName + ".java");
-      //checkOutputAgainstExpectedFile(expectedFile ,actualFile);
 
-      expectedFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnectorTest.java");
-      actualFile = Paths.get(outputDir.toAbsolutePath().toString(),expectedGroupId + '.' + expectedArtifactId, "src", "test", "java", (expectedGroupId + '.' + expectedArtifactId).replace('.', File.separatorChar), expectedClassName + "Test.java");
-      checkOutputAgainstExpectedFile(expectedFile ,actualFile);
+      Path expectedConnectorFile = Paths.get("src", "test", "resources", "expectedfiles", "EngagementTrackPriorityServiceConnector.java");
+      Path actualConnectorFile = Paths.get(outputDir.toAbsolutePath().toString(),expectedGroupId + '.' + expectedArtifactId, "src", "main", "java", (expectedGroupId + '.' + expectedArtifactId).replace('.', File.separatorChar), expectedClassName + ".java");
+      checkOutputAgainstExpectedFile(expectedConnectorFile ,actualConnectorFile);
    }
 
    /*
@@ -112,20 +92,18 @@ public class CreateJavaServiceConnectorCommandIT {
     */
    @Test
    public void testCommandWithOptionalParameters() throws IOException {
-      final String model = "com.ngc.seaside.test.TestService";
-      final String group = "com.ngc.seaside.otherthing";
-      final String artifact = "TestServiceArtifact.connector";
+      final String model = "com.ngc.seaside.threateval.EngagementTrackPriorityService";
+      final String group = "com.ngc.seaside.threateval.test";
+      final String artifact = "engagementtrackpriorityservicetest.connector";
 
-      final String expectedGroupId = "com.ngc.seaside.otherthing";
-      final String expectedArtifactId = "TestServiceArtifact.connector";
-      final String expectedClassName = "TestServiceConnector";
+      final String expectedClassName = "EngagementTrackPriorityServiceConnector";
 
       runCommand(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
                  CreateJavaServiceConnectorCommand.MODEL_PROPERTY, model,
                  CreateJavaServiceConnectorCommand.GROUP_ID_PROPERTY, group,
                  CreateJavaServiceConnectorCommand.ARTIFACT_ID_PROPERTY, artifact);
 
-      checkCommandOutput(expectedGroupId, expectedArtifactId, expectedClassName);
+      checkCommandOutput(group, artifact, expectedClassName);
    }
 
    private void checkOutputAgainstExpectedFile(Path expectedFile, Path actualFile) throws IOException {
@@ -141,7 +119,8 @@ public class CreateJavaServiceConnectorCommandIT {
          String expectedLine = expectedLines.get(i);
          if(!actualLines.contains(expectedLine)){
             //If the assertTrue were to fail, let's use a more descriptive error message...
-            Assert.assertEquals("actualFile does not contain line from expectedFile. Line number " + (i+1), expectedLine, actualLines.get(i));
+            Assert.assertEquals("actualFile does not contain line from expectedFile. Expected line number "
+                                + (i+1) + " missing. May correlate to actual line", expectedLine, actualLines.get(i));
          } else {
             Assert.assertTrue("actualFile does not contain line from expectedFile ", actualLines.contains(expectedLine));
          }
@@ -161,33 +140,51 @@ public class CreateJavaServiceConnectorCommandIT {
 
    }
 
-   private void checkCommandOutput(String expectedGroupId, String expectedArtifactId, String expectedClassName)
-         throws IOException {
+   private void checkCommandOutput(String expectedGroupId, String expectedArtifactId, String expectedClassName) throws IOException {
       String expectedBundle = expectedGroupId + '.' + expectedArtifactId;
-      String directoryTreeExpectedBundleName = expectedBundle.replace('.', File.separatorChar);
-      String expectedJavaFileModelName = expectedClassName + ".java".trim();
-      Path bundlePath = Paths.get(expectedBundle, "src", "main", "java", directoryTreeExpectedBundleName);
-      Path expectedJavaModelFilePath = Paths.get(outputDir.toAbsolutePath().toString(),expectedBundle, "src", "main", "java", directoryTreeExpectedBundleName, expectedClassName + ".java");
-      Path expectedGradleBuildFile = Paths.get(outputDir.toAbsolutePath().toString(), expectedBundle, "build.gradle" );
+      String projectPathExpected = expectedBundle.replace('.', File.separatorChar);
 
+      Path actualBundle = outputDir.resolve(expectedBundle).toAbsolutePath();
+      Path packagePath  = Paths.get(actualBundle.toString(), "src", "main", "java", projectPathExpected);
+      Path expectedJavaModelFilePath = Paths.get(packagePath.toString(), expectedClassName + ".java");
+      Path expectedGradleBuildFile = Paths.get(actualBundle.toString(), "build.gradle" );
+
+      String expectedJavaFileModelName = expectedClassName + ".java".trim();
+      String actualBundleName = actualBundle.getFileName().toString();
+
+      verifyGeneratedProjectStructure(packagePath, expectedGradleBuildFile, actualBundle, expectedBundle);
+      verifyActualArtifactAndGroupId(expectedGroupId, expectedArtifactId, actualBundleName);
+      verifyActualModelName(expectedJavaModelFilePath, expectedJavaFileModelName);
+
+      checkGradleBuildFile(expectedGradleBuildFile);
+      checkGradleSettingsFile(expectedGradleBuildFile, expectedArtifactId, actualBundleName);
+   }
+
+   private void verifyGeneratedProjectStructure(Path projectPath, Path actualBundle, Path expectedGradleBuildFile, String expectedBundle){
       //Checks that the outputDirectory is correctly created
       Assert.assertTrue("Output Directory does not exist", outputDir.toFile().exists());
       Assert.assertTrue("Output Directory is not a directory", outputDir.toFile().isDirectory());
 
       //Checks the basic structure of the output directory
-      Assert.assertTrue("Project folder was not created " + outputDir.resolve(Paths.get(expectedBundle)).toString(),
-                        outputDir.resolve(Paths.get(expectedBundle)).toFile().exists());
+      Assert.assertTrue("Project folder was not created " + actualBundle.toString(),
+                        actualBundle.toFile().exists());
       Assert.assertTrue("build.gradle was not created",
-                        outputDir.resolve(Paths.get(expectedBundle, "build.gradle")).toFile().exists());
+                        expectedGradleBuildFile.toFile().exists());
       Assert.assertTrue("Src/Main/Java folder was not created",
                         outputDir.resolve(Paths.get(expectedBundle, "src", "main", "java" )).toFile().exists());
-      Assert.assertTrue("Bundle was not created: " + bundlePath.toString(),
-                        outputDir.resolve(bundlePath).toFile().exists());
+      Assert.assertTrue("Bundle was not created: " + projectPath.toString(),
+                        projectPath.toFile().exists());
 
-      Path actualBundle = outputDir.resolve(expectedBundle).toAbsolutePath();
-      System.out.println(actualBundle.toString());
-      String actualBundleName = actualBundle.getFileName().toString();
       Assert.assertTrue("Actual bundle doesn't exist! " + actualBundle.toString(), actualBundle.toFile().exists());
+   }
+
+   private void verifyActualModelName(Path expectedJavaModelFilePath, String expectedJavaFileModelName){
+      //Check that the modelName is correct
+      Assert.assertTrue("Java model file was expected but not found " + expectedJavaModelFilePath.toString(), expectedJavaModelFilePath.toFile().exists() );
+      Assert.assertEquals("Generated model java file names doesn't match expected result " + expectedJavaFileModelName,expectedJavaFileModelName, expectedJavaModelFilePath.toFile().getName().trim());
+   }
+
+   private void verifyActualArtifactAndGroupId(String expectedGroupId, String expectedArtifactId, String actualBundleName){
       String[] actualArtifactId = actualBundleName.split(expectedGroupId);
       String[] actualGroupId = actualBundleName.split(expectedArtifactId);
       //Check that the artifactId is correct, and assuming it has a leading '.'
@@ -197,20 +194,20 @@ public class CreateJavaServiceConnectorCommandIT {
       Assert.assertTrue("Actual artifactId is not correct. String split returned \'"+actualGroupId.length+"\'strings instead of 1", actualGroupId.length == 1);
       Assert.assertEquals("Expected groupId does not match the actual groupId", expectedGroupId + '.', actualGroupId[0]);
 
-      //Check that the modelName is correct
-      Assert.assertTrue("Java model file was expected but not found " + expectedJavaModelFilePath.toString(), expectedJavaModelFilePath.toFile().exists() );
-      Assert.assertEquals("Generated model java file names doesn't match expected result " + expectedJavaFileModelName,expectedJavaFileModelName, expectedJavaModelFilePath.toFile().getName().trim());
-
+   }
+   private void checkGradleBuildFile(Path gradleFile) throws IOException {
       //Check that the gradle file contains all necessary blocs files
-      Assert.assertTrue("build.gradle does not contain blocs service api", Files.readAllLines(expectedGradleBuildFile).stream()
+      Assert.assertTrue("build.gradle does not contain blocs service api", Files.readAllLines(gradleFile).stream()
             .anyMatch(line -> line.contains("\"com.ngc.blocs:service.api:$blocsCoreVersion\"")));
-      Assert.assertTrue("build.gradle does not contain blocs test utilities", Files.readAllLines(expectedGradleBuildFile).stream()
+      Assert.assertTrue("build.gradle does not contain blocs test utilities", Files.readAllLines(gradleFile).stream()
             .anyMatch(line -> line.contains("\"com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion\"")));
-      Assert.assertTrue("build.gradle does not contain osgi core", Files.readAllLines(expectedGradleBuildFile).stream()
+      Assert.assertTrue("build.gradle does not contain osgi core", Files.readAllLines(gradleFile).stream()
             .anyMatch(line -> line.contains("\"org.osgi:osgi.core:$osgiVersion\"")));
-      Assert.assertTrue("build.gradle does not contain osgi enterprise", Files.readAllLines(expectedGradleBuildFile).stream()
+      Assert.assertTrue("build.gradle does not contain osgi enterprise", Files.readAllLines(gradleFile).stream()
             .anyMatch(line -> line.contains("\"org.osgi:osgi.enterprise:$osgiVersion\"")));
+   }
 
+   private void checkGradleSettingsFile(Path gradleFile, String expectedArtifactId, String actualBundleName) throws IOException {
       //Check that the settings.gradle file contains the project
       String contents = new String(Files.readAllBytes(outputDir.resolve("settings.gradle")));
       Assert.assertTrue("Project is not included in settings.gradle",contents.contains("include \'"+actualBundleName+"\'"));
@@ -240,7 +237,7 @@ public class CreateJavaServiceConnectorCommandIT {
       Collection<Module> modules = new ArrayList<>();
       modules.add(TEST_SERVICE_MODULE);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof TemplateServiceGuiceModule || dynamicModule instanceof LogServiceModule)) {
+         if (!(dynamicModule instanceof TemplateServiceGuiceModule || dynamicModule instanceof PrintStreamLogService)) {
             modules.add(dynamicModule);
          }
       }

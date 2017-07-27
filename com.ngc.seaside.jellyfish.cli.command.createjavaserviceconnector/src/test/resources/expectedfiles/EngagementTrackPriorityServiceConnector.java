@@ -121,8 +121,11 @@ public class EngagementTrackPriorityServiceConnector {
    }
 
    private TrackPriorityWrapper.TrackPriority convert(TrackPriority from) {
-      return TrackPriorityWrapper.TrackPriority.newBuilder().setPriority(from.getPriority())
-            .setSourceId(from.getSourceId()).setTrackId(from.getTrackId()).build();
+      return TrackPriorityWrapper.TrackPriority.newBuilder()
+            .setPriority(from.getPriority())
+            .setSourceId(from.getSourceId())
+            .setTrackId(from.getTrackId())
+            .build();
    }
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
@@ -146,27 +149,25 @@ public class EngagementTrackPriorityServiceConnector {
 
    private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
       Collection<String> requirements = Collections.emptyList();
-      switch (transportTopic) {
-
-         case EngagementTrackPriorityServiceTransportTopics.trackEngagementStatus:
+      switch((EngagementTrackPriorityServiceTransportTopics) transportTopic){
+         case TRACK_ENGAGEMENT_STATUS:
             requirements = Arrays.asList(
                   "TE001.2",
-                  "TE001.4",
-                  );
+                  "TE001.4"
+            );
             break;
 
-         case EngagementTrackPriorityServiceTransportTopics.trackPriority:
+         case TRACK_PRIORITY:
             requirements = Arrays.asList(
                   "TE001.2",
-                  "TE001.4",
-                  );
+                  "TE001.4"
+            );
             break;
 
          default:
             //do nothing
             break;
       }
-
       return requirements;
    }
 }

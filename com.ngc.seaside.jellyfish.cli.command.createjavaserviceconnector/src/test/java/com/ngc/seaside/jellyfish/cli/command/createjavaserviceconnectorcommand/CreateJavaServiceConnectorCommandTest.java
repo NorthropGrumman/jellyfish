@@ -11,6 +11,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
@@ -24,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.json.JsonObject;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -50,6 +53,8 @@ public class CreateJavaServiceConnectorCommandTest {
       when(model.getParent()).thenReturn(mock(IPackage.class));
       when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
       when(model.getName()).thenReturn("Model");
+      when(model.getMetadata()).thenReturn(mock(IMetadata.class));
+      when(model.getMetadata().getJson()).thenReturn(mock(JsonObject.class));
 
       // Setup class under test
       cmd = new CreateJavaServiceConnectorCommand() {
@@ -70,7 +75,7 @@ public class CreateJavaServiceConnectorCommandTest {
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
-      verify(options, times(1)).getSystemDescriptor();
+      verify(options, times(2)).getSystemDescriptor();
       verify(model, times(2)).getName();
       verify(model, times(2)).getParent();
 
@@ -92,7 +97,7 @@ public class CreateJavaServiceConnectorCommandTest {
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
-      verify(options, times(1)).getSystemDescriptor();
+      verify(options, times(2)).getSystemDescriptor();
       verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
 
@@ -126,7 +131,7 @@ public class CreateJavaServiceConnectorCommandTest {
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
-      verify(options, times(1)).getSystemDescriptor();
+      verify(options, times(2)).getSystemDescriptor();
       verify(promptUserService, times(1)).prompt(CreateJavaServiceConnectorCommand.MODEL_PROPERTY, null, null);
       verify(promptUserService, times(1)).prompt(CreateJavaServiceConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
 
@@ -172,7 +177,6 @@ public class CreateJavaServiceConnectorCommandTest {
                         return Paths.get("/just/a/mock/path");
                      }
                   });
-
       cmd.run(options);
    }
 }

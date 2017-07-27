@@ -10,11 +10,8 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.command.api.IParameterCollection;
 
@@ -31,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import javax.json.JsonObject;
 import javax.json.JsonValue;
 
 
@@ -42,12 +38,13 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
    private static final IUsage USAGE = createUsage();
 
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_NAME_PROPERTY = "modelName";
-   public static final String MODEL_PROPERTY = "model";
-   public static final String MODEL_REQUIREMENTS_PROPERTY = "modelRequirements";;
-   public static final String JAVA_CLASS_NAME_PROPERTY = "javaClassName";
+   public static final String MODEL_PROPERTY = "modelName";
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
+
+   public static final String MODEL_OBJECT_PROPERTY = "model";
+   public static final String MODEL_REQUIREMENTS_PROPERTY = "modelRequirements";
+   public static final String JAVA_CLASS_NAME_PROPERTY = "javaClassName";
    public static final String PACKAGE_PROPERTY = "package";
    public static final String CLEAN_PROPERTY = "clean";
 
@@ -78,28 +75,33 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
       }
       final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
-      if (!parameters.containsParameter(MODEL_NAME_PROPERTY)) {
-
-         String modelId = promptService.prompt(MODEL_NAME_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(MODEL_NAME_PROPERTY, modelId));
-      }
-      final String modelId = parameters.getParameter(MODEL_NAME_PROPERTY).getStringValue();
-
       if (!parameters.containsParameter(MODEL_PROPERTY)) {
+
+         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
+      }
+      final String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
+
+      if (!parameters.containsParameter(MODEL_OBJECT_PROPERTY)) {
 
          IModel model = commandOptions.getSystemDescriptor().findModel(modelId)
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
-         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, model));
+         parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
       }
       final IModel model = commandOptions.getSystemDescriptor().findModel(modelId)
             .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
       if (!parameters.containsParameter(MODEL_REQUIREMENTS_PROPERTY)) {
-
          ArrayList<String> requirements = new ArrayList<String>();
          JsonValue value = model.getMetadata().getJson().get("satisfies");
-         for(JsonValue req : value.asJsonArray()) {
-            requirements.add(req.toString());
+         if(value != null){
+            for(JsonValue req : value.asJsonArray()) {
+               String reqString = req.toString();
+               if(value.asJsonArray().indexOf(req) <  value.asJsonArray().size()-1){
+                  reqString = reqString.concat(",");
+               }
+               requirements.add(reqString);
+            }
          }
 
          parameters.addParameter(new DefaultParameter<>(MODEL_REQUIREMENTS_PROPERTY, requirements));
@@ -229,7 +231,8 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
             "Creates a new JellyFish Service Connector project.",
             new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("The directory to generate the command project")
                   .setRequired(false),
-            new DefaultParameter(MODEL_PROPERTY).setDescription("The fully qualified name of the model to generate connectors for")
+            new DefaultParameter(
+                  MODEL_OBJECT_PROPERTY).setDescription("The fully qualified name of the model to generate connectors for")
                   .setRequired(false),
             new DefaultParameter(GROUP_ID_PROPERTY)
                   .setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),

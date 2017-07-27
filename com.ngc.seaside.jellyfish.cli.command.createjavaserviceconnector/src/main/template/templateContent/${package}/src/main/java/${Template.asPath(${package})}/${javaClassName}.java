@@ -48,13 +48,13 @@ public class ${javaClassName} {
       #foreach($field in $model.getInputs())
       #set( $className = $field.getType().getName() )
       transportService.addReceiver(this::receive${className},
-                                      ${model.getName()}TransportTopics.TRACK_ENGAGEMENT_STATUS); //TODO address .track_engagement_status
+                                      ${javaClassName}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
 
       #end
       #foreach($field in $model.getOutputs())
       #set( $className = $field.getType().getName() )
       eventService.addSubscriber(this::send${className},
-                                    ${className}.TOPIC); //TODO address .TOPIC
+                                    ${className}.TOPIC);
 
       #end
       logService.debug(getClass(), "Activated.");
@@ -66,13 +66,13 @@ public class ${javaClassName} {
       #foreach($field in $model.getInputs())
       #set( $className = $field.getType().getName() )
       transportService.removeReceiver(this::receive${className},
-                                      ${model.getName()}TransportTopics.TRACK_ENGAGEMENT_STATUS); //TODO address .track_engagement_status
+                                      ${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
 
       #end
       #foreach($field in $model.getOutputs())
       #set( $className = $field.getType().getName() )
       eventService.removeSubscriber(this::send${className},
-                                    ${className}.TOPIC); //TODO address .TOPIC
+                                    ${className}.TOPIC);
 
       #end
 
@@ -111,7 +111,7 @@ public class ${javaClassName} {
 
    private void receive${className}(ITransportObject transportObject,
                                              ${model.getName()}TransportTopics transportTopic) {
-      preReceiveMessage(${model.getName()}TransportTopics.TRACK_ENGAGEMENT_STATUS); //TODO handle transport topic type
+      preReceiveMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       try {
          ${className}Wrapper.${className} ${fieldName};
          try {
@@ -120,9 +120,9 @@ public class ${javaClassName} {
          } catch (InvalidProtocolBufferException e) {
             throw new IllegalStateException(e);
          }
-         eventService.publish(convert(${fieldName};), ${className}.TOPIC); //TODO handle transport topic type
+         eventService.publish(convert(${fieldName}), ${className}.TOPIC);
       } finally {
-         postReceiveMessage(${model.getName()}TransportTopics.TRACK_ENGAGEMENT_STATUS); //TODO handle transport topic type
+         postReceiveMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       }
    }
    #end
@@ -131,15 +131,15 @@ public class ${javaClassName} {
    #set( $fieldName = $field.getName() )
 
    private void send${className}(IEvent<${className}> event) {
-      preSendMessage(${model.getName()}TransportTopics.TRACK_PRIORITY);
+      preSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       try {
          ${className} from = event.getSource();
          ${className}Wrapper.${className} to = convert(from);
          transportService.send(ITransportObject.withPayload(to.toByteArray()),
-                               ${model.getName()}TransportTopics.TRACK_PRIORITY); //TODO handle transport topic type
-         postSendMessage(${model.getName()}TransportTopics.TRACK_PRIORITY); //TODO handle transport topic type
+                               ${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
+         postSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       } finally {
-         postSendMessage(${model.getName()}TransportTopics.TRACK_PRIORITY); //TODO handle transport topic type
+         postSendMessage(${model.getName()}TransportTopics.${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)});
       }
    }
    #end
@@ -164,14 +164,13 @@ public class ${javaClassName} {
    #set( $fieldName = $field.getName() )
 
    private ${className}Wrapper.${className} convert(${className} from) {
-      ${className} to = new ${className}();
+      return ${className}Wrapper.${className}.newBuilder()
       #foreach ($subField in $field.getType().getFields())
       #set( $fieldCapLetter = $subField.getName().substring(0, 1).toUpperCase())
       #set( $fieldNameTail =  $subField.getName().substring(1))
-      to.set${fieldCapLetter}${fieldNameTail}(from.get${fieldCapLetter}${fieldNameTail}());
+      .set${fieldCapLetter}${fieldNameTail}(from.get${fieldCapLetter}${fieldNameTail}())
       #end
-
-      return to;
+      .build();
    }
    #end
 
@@ -197,28 +196,27 @@ public class ${javaClassName} {
    private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
       Collection<String> requirements = Collections.emptyList();
 
-      switch(transportTopic){
+      switch((${model.getName()}TransportTopics) transportTopic){
          #foreach($field in $model.getInputs())
          #set( $className = $field.getType().getName() )
          #set( $fieldName = $field.getName() )
 
-         case ${model.getName()}TransportTopics.${fieldName}:
+         case ${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)}:
             requirements = Arrays.asList(
             #foreach($req in $modelRequirements)
-               ${req},
+               ${req}
             #end
             );
             break;
             #end
-
          #foreach($field in $model.getOutputs())
          #set( $className = $field.getType().getName() )
          #set( $fieldName = $field.getName() )
 
-         case ${model.getName()}TransportTopics.${fieldName}:
+         case ${className.replaceAll("([A-Z])", "_$1").toUpperCase().substring(1)}:
             requirements = Arrays.asList(
             #foreach($req in $modelRequirements)
-               ${req},
+               ${req}
             #end
             );
             break;
