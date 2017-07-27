@@ -78,7 +78,7 @@ public class CreateJavaServiceCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(3)).getName();
+      verify(model, times(4)).getName();
       verify(model, times(2)).getParent();
 
       // Verify passed values
@@ -117,7 +117,7 @@ public class CreateJavaServiceCommandTest {
 
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
+      verify(model, times(3)).getName();
       verify(model, times(1)).getParent();
 
       // Verify passed values

@@ -7,7 +7,6 @@ configurations {
 }
 
 dependencies {
-
     compile project(":jellyfish.impl.provider")
 
     compile project(":jellyfish.cli.command.samplecommand")
@@ -18,7 +17,13 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjellyfishcommand")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
+    
+    compile project(":jellyfish.cli.command.createdomain")
+    commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
+    compile project(":jellyfish.cli.command.createjellyfishgradleproject")
+    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
+    
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -33,7 +38,7 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-	 testCompile "junit:junit:$junitVersion"
+	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 

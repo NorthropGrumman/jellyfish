@@ -6,7 +6,7 @@ dependencies {
 #if (${withApi} == "true")
     compile project(":jellyfish.api")
 #else
-    compile "com.ngc.seaside:jellyfish.api:${D}jellyfishAPIVersion"
+    compile "com.ngc.seaside:jellyfish.api:${D}jellyfishCommandApiVersion"
 #end
 
     compile "com.google.inject:guice:${D}guiceVersion"

@@ -1,27 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.impl.parameterservice.ParameterServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.promptuserservice.PromptUserServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.propertyservice.PropertyServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,13 +35,12 @@ public class CreateJellyFishCommandCommandIT {
 
    @Before
    public void setup() throws IOException {
-      mockedTemplateService = new MockedTemplateService()
-            .useRealPropertyService()
-            .useDefaultUserValues(true)
-            .setTemplateDirectory(CreateJellyFishCommandCommand.class.getPackage().getName(),
-                                  Paths.get("src/main/template"));
+      mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
+               .setTemplateDirectory(CreateJellyFishCommandCommand.class.getPackage().getName(),
+                  Paths.get("src/main/template"));
 
       outputDir = Files.createTempDirectory(null);
+      outputDir.toFile().deleteOnExit();
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockedTemplateService);
@@ -178,7 +164,6 @@ public class CreateJellyFishCommandCommandIT {
          Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg1)));
       Assert.assertTrue(
          Files.readAllLines(outputDir.resolve("settings.gradle")).stream().anyMatch(line -> line.contains(pkg2)));
-
    }
 
    @Test
@@ -235,8 +220,8 @@ public class CreateJellyFishCommandCommandIT {
          collection.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
       }
 
-      DefaultParameter outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
-                                                                outputDir.toString());
+      DefaultParameter<String> outputDirectory = new DefaultParameter<>(CreateJellyFishCommandCommand.OUTPUT_DIR_PROPERTY,
+         outputDir.toString());
       collection.addParameter(outputDirectory);
 
       Mockito.when(mockOptions.getParameters()).thenReturn(collection);
@@ -267,7 +252,8 @@ public class CreateJellyFishCommandCommandIT {
       Path expectedPath = Paths.get(projectName, "src", "main", "java", expectedPackage, expectedClassname + ".java");
       Assert.assertTrue("command was not created: " + expectedPath, outputDir.resolve(expectedPath).toFile().exists());
       Path actualPath = outputDir.resolve(expectedPath).toRealPath();
-      Assert.assertEquals("Filename was not capitalized correctly", outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
+      Assert.assertEquals("Filename was not capitalized correctly",
+         outputDir.toRealPath().resolve(expectedPath).toString(), actualPath.toString());
       Assert.assertTrue("resources folder was not created",
          outputDir.resolve(Paths.get(projectName, "src", "main", "resources")).toFile().exists());
       Assert.assertTrue("test folder was not created",
@@ -275,25 +261,5 @@ public class CreateJellyFishCommandCommandIT {
       Assert.assertTrue("build.gradle was not created",
          outputDir.resolve(Paths.get(projectName, "build.gradle")).toFile().exists());
    }
-
-   @After
-   public void cleanup() throws IOException {
-      FileUtils.deleteQuietly(outputDir.toFile());
-   }
-
-   private static Injector injector = Guice.createInjector(new AbstractModule() {
-      @Override
-      protected void configure() {
-         IResourceService resourceService = Mockito.mock(IResourceService.class);
-         Mockito.when(resourceService.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
-
-         bind(IResourceService.class).toInstance(resourceService);
-         bind(ILogService.class).to(PrintStreamLogService.class);
-         bind(IParameterService.class).to(ParameterServiceGuiceWrapper.class);
-         bind(IPromptUserService.class).to(PromptUserServiceGuiceWrapper.class);
-         bind(ITemplateService.class).to(TemplateServiceGuiceWrapper.class);
-         bind(IPropertyService.class).to(PropertyServiceGuiceWrapper.class);
-      }
-   });
 
 }
