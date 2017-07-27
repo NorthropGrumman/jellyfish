@@ -7,7 +7,6 @@ configurations {
 }
 
 dependencies {
-
     compile project(":jellyfish.impl.provider")
 
     compile project(":jellyfish.cli.command.samplecommand")
@@ -22,9 +21,11 @@ dependencies {
     compile project(":jellyfish.cli.command.createdomain")
     commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
- 	compile project(":jellyfish.cli.command.createprotocolbuffermessages")
+ 	 compile project(":jellyfish.cli.command.createprotocolbuffermessages")
     commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
 
+    compile project(":jellyfish.cli.command.createjellyfishgradleproject")
+    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
