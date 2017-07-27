@@ -26,14 +26,36 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    private static final IUsage USAGE = createUsage();
+
+   /**
+    * The name of the default Velocity template.
+    */
    static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.java.vm";
+   /**
+    * The name of the default events package suffix.
+    */
    static final String DEFAULT_PACKAGE_SUFFIX = "events";
 
+   /**
+    * The property used by the create-domain command for the Velocity template file.
+    */
    static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
+   /**
+    * The name of the property used by the create-domain command to set the package suffix.
+    */
    static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
+   /**
+    * The name of the command that is invoked to create the actual project.
+    */
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
 
+   /**
+    * The name of the command.
+    */
    public static final String NAME = "create-java-events";
+   /**
+    * The name of the property that defines the event template file.
+    */
    public static final String EVENT_TEMPLATE_FILE_PROPERTY = "eventTemplateFile";
 
    private ILogService logService;
