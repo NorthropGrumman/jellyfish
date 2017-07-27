@@ -102,7 +102,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+         unbind = "removeJellyFishCommandProvider")
    public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       this.jellyFishCommandProvider = ref;
    }
