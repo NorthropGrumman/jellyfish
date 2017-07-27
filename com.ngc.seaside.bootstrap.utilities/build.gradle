@@ -2,7 +2,7 @@
 dependencies {
     compile project(":command.api")
     compile project(":bootstrap.api")
-    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "org.osgi:osgi.enterprise:$osgiVersion"
     compile "com.google.guava:guava:$guavaVersion"
