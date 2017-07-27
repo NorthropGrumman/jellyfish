@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnectorcommand;
+package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;

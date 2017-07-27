@@ -1,1 +1,1 @@
-com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnectorcommand.CreateJavaServiceConnectorCommandGuiceModule
+com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector.CreateJavaServiceConnectorCommandGuiceModule

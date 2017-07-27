@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnectorcommand;
+package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
