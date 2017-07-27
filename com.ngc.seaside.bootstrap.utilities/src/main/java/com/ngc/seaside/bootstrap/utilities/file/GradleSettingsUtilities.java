@@ -33,9 +33,13 @@ public class GradleSettingsUtilities {
     *                                parameters don't contain the necessary properties.
     */
    public static void addProject(IParameterCollection parameters) throws FileUtilitiesException {
-      if (parameters.containsParameter(OUTPUT_DIR_PROPERTY) &&
-          parameters.containsParameter(GROUP_ID_PROPERTY) &&
-          parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY) ||
+          !parameters.containsParameter(GROUP_ID_PROPERTY) ||
+          !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         throw new FileUtilitiesException(
+               String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
+                             OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
+      } else {
          Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getValue());
          Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
 
@@ -50,22 +54,17 @@ public class GradleSettingsUtilities {
                                  bundleName,
                                  parameters.getParameter(ARTIFACT_ID_PROPERTY).getValue()));
 
+         boolean areLinesAlreadyInFile = false;
          try {
             String contents = new String(Files.readAllBytes(settings));
-            if (lines.stream().allMatch(contents::contains)) {
-               return;
-            }
+            areLinesAlreadyInFile = lines.stream().allMatch(contents::contains);
          } catch (IOException e) {
-            // add project if file can't be read
+            // Ignore exception, add project if file can't be read
          }
-         
-         FileUtilities.addLinesToFile(settings, lines);
-      } else {
-         throw new FileUtilitiesException(
-                  String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
-                                OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
+
+         if(!areLinesAlreadyInFile) {
+            FileUtilities.addLinesToFile(settings, lines);
+         }
       }
-
    }
-
 }
