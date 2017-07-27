@@ -17,7 +17,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.parent'
 
     group = 'com.ngc.seaside'
-    version = '1.5-SNAPSHOT'
+    version = '1.5'
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
