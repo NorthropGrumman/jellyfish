@@ -194,8 +194,8 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
                   .setDescription("The fully qualified path to the system descriptor model")
                   .setRequired(true),
             new DefaultParameter<String>(CreateDomainCommand.CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the domain project (if it already exists), before"
-                                  + " generating the it again")
+                  .setDescription("If true, recursively deletes the events project (if it already exists), before"
+                                  + " generating it again")
                   .setRequired(false),
             new DefaultParameter<String>(EVENT_TEMPLATE_FILE_PROPERTY)
                   .setDescription("The velocity template file that will be included in the Gradle project.")
