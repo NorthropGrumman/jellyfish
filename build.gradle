@@ -37,6 +37,4 @@ subprojects {
         mockitoVersion = '2.7.14'
         guavaVersion = '22.0'
     }
-
-
 }
