@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicecommand;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.google.inject.Inject;
 

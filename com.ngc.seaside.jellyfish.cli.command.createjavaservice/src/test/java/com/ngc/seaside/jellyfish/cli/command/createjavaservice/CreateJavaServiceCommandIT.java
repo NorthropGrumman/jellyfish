@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicecommand;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -17,6 +17,8 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.CreateJavaServiceCommand;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.CreateJavaServiceCommandGuiceWrapper;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;

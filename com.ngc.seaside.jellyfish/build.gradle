@@ -24,6 +24,9 @@ dependencies {
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
     
+    compile project(":jellyfish.cli.command.createjavaservice")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
+    
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
