@@ -2,6 +2,8 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
+import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
@@ -115,8 +117,9 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       String eventTemplate = eventTemplateParameter == null ? null : eventTemplateParameter.getStringValue();
       if (eventTemplate == null) {
          // Unpack the velocity template to a temporary directory.
-         ITemporaryFileResource velocityTemplate = TemporaryFileResource.forJarResource(CreateJavaEventsCommand.class,
-                                                                                        EVENT_SOURCE_VELOCITY_TEMPLATE);
+         ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
+               CreateJavaEventsCommand.class,
+               EVENT_SOURCE_VELOCITY_TEMPLATE);
          resourceService.readResource(velocityTemplate);
          eventTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
       }

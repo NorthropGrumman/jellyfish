@@ -14,8 +14,8 @@ dependencies {
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
     
-    compile "com.ngc.seaside:bootstrap.utilities:$bootstrapVersion"
-    compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
+    compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
+    compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
 
     testCompile project(":jellyfish.cli.command.testutils")
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"

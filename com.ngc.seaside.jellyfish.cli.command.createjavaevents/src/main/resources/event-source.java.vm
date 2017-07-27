@@ -3,9 +3,6 @@
 *************************************************************************************************
 ************************* Copyright 2017 Northrop Grumman Corporation ***************************
 * Author: Generated
-*
-* Description: Threat Evaluation Engagement Track Priority Service
-*
 */
 package $domain.packagename;
 
