@@ -74,6 +74,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
+      issueUsageWarnings(commandOptions);
       String packageSuffix = evaluatePackageSuffix(commandOptions.getParameters());
       String eventTemplate = evaluateEventTemplate(commandOptions.getParameters());
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
@@ -133,6 +134,16 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       setJellyFishCommandProvider(null);
    }
 
+   private void issueUsageWarnings(IJellyFishCommandOptions commandOptions) {
+      // This command will set the value of the domainFile parameter itself, thereby overriding the value provided
+      // by the user.  We issue this warning in case the user gets confused.
+      if (commandOptions.getParameters().containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
+         logService.warn(CreateJavaEventsCommand.class,
+                         "The parameter '%s' has been set but it will be ignored; did you mean to use '%s' instead?",
+                         DOMAIN_TEMPLATE_FILE_PROPERTY,
+                         EVENT_TEMPLATE_FILE_PROPERTY);
+      }
+   }
 
    private String evaluateEventTemplate(IParameterCollection parameters) {
       IParameter<?> eventTemplateParameter = parameters.getParameter(EVENT_TEMPLATE_FILE_PROPERTY);
