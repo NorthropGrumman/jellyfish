@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    private static final IUsage USAGE = createUsage();
-   static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.vm";
+   static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.java.vm";
    static final String DEFAULT_PACKAGE_SUFFIX = "events";
 
    static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";

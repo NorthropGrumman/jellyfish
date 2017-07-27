@@ -12,11 +12,15 @@ import java.util.Objects;
 public class TemporaryFileResource implements ITemporaryFileResource {
 
    private final URL url;
+   private final String fileName;
    private Path temporaryFile;
 
-   public TemporaryFileResource(URL url) {
+   public TemporaryFileResource(URL url, String temporaryFileName) {
       Preconditions.checkNotNull(url, "url may not be null!");
+      Preconditions.checkNotNull(temporaryFileName, "temporaryFileName may not be null!");
+      Preconditions.checkArgument(!temporaryFileName.trim().isEmpty(), "temporaryFileName may not be empty!");
       this.url = url;
+      this.fileName = temporaryFileName;
    }
 
    @Override
@@ -35,8 +39,9 @@ public class TemporaryFileResource implements ITemporaryFileResource {
    public boolean read(InputStream stream) {
       boolean success = true;
       try {
-         temporaryFile = Files.createTempFile("blocs", "resource-service-temp-file");
-         temporaryFile.toFile().deleteOnExit();
+         Path tempDirectory = Files.createTempDirectory("blocs");
+         tempDirectory.toFile().deleteOnExit();
+         temporaryFile = tempDirectory.resolve(fileName);
          Files.copy(stream, temporaryFile);
       } catch (IOException e) {
          success = false;
@@ -66,10 +71,11 @@ public class TemporaryFileResource implements ITemporaryFileResource {
                                                        String resourceName) {
       Preconditions.checkNotNull(clazz, "clazz may not be null!");
       Preconditions.checkNotNull(resourceName, "resourceName may not be null!");
+      Preconditions.checkArgument(!resourceName.trim().isEmpty(), "resourceName may not be empty!");
       URL url = clazz.getClassLoader().getResource(resourceName);
       Preconditions.checkArgument(url != null, "%s could not be loaded by class loader %s!",
                                   resourceName,
                                   clazz.getClassLoader());
-      return new TemporaryFileResource(url);
+      return new TemporaryFileResource(url, resourceName);
    }
 }
