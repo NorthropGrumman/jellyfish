@@ -182,15 +182,12 @@ public class CreateJavaServiceCommandIT {
       printOutputFolderStructure(outputDir);
 
       model.getScenarios().forEach(iScenario -> {
-         System.out.println("SCENARIO:" + iScenario.getWhens().toString());
          iScenario.getWhens().forEach(iScenarioStep -> iScenarioStep.getParameters().forEach(s -> {
             System.out.println(s);
+            System.out.println(iScenarioStep.getKeyword());
             System.out.println(model.getInputs().getByName(s).get().getType().getName());
-            //System.out.println(iScenarioStep.);
          }));
-
       });
-      model.getScenarios().forEach(iScenario -> System.out.println("SCENARIO:" + iScenario.getThens().toString()));
 
       //checkGradleBuild(outputDir);
       //checkLogContents(outputDir);
