@@ -23,7 +23,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 public class Model1GuiceWrapper extends Abstract Model1 {
 
-    private final CreateJavaServiceCommand delegate = new CreateJavaServiceCommand();
+    private final Model1 delegate = new Model1();
 
     @Inject
     public Model1GuiceWrapper(ILogService logService, IEventService eventService, IFaultManagementService faultManagementService) {
