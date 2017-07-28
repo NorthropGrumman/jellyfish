@@ -62,6 +62,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       CommandInvocationContext ctx = buildContext(commandOptions);
       createJellyFishGradleProject(ctx);
+      createDomainProject(ctx);
    }
 
    @Activate
@@ -119,19 +120,27 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
             new DefaultParameter<>(PROJECT_NAME, ctx.projectName),
-            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.rootOutputDirectory)
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.rootOutputDirectory.getAbsolutePath())
       );
-      preRunCommand(ctx, CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME);
-      jellyFishCommandProvider.run(CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME, delegateOptions);
+      doRunCommand(CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME, delegateOptions);
    }
 
-   private void preRunCommand(CommandInvocationContext ctx, String commandName) {
+   private void createDomainProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_DOMAIN_COMMAND_NAME, delegateOptions);
+   }
+
+   private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
       logService.debug(CreateJavaServiceProjectCommand.class,
                        "--------------------------------------------------");
       logService.debug(CreateJavaServiceProjectCommand.class,
                        "Running %s", commandName);
       logService.debug(CreateJavaServiceProjectCommand.class,
                        "--------------------------------------------------");
+      jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, delegateOptions);
    }
 
    private CommandInvocationContext buildContext(IJellyFishCommandOptions commandOptions) {
