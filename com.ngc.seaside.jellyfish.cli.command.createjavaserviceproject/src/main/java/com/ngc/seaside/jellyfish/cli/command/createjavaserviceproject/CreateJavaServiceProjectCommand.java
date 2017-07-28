@@ -63,6 +63,9 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       CommandInvocationContext ctx = buildContext(commandOptions);
       createJellyFishGradleProject(ctx);
       createDomainProject(ctx);
+      createEventsProject(ctx);
+      createDistributionProject(ctx);
+      createJavaServiceConnectorProject(ctx);
    }
 
    @Activate
@@ -133,6 +136,30 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       doRunCommand(CREATE_DOMAIN_COMMAND_NAME, delegateOptions);
    }
 
+   private void createEventsProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
+   }
+
+   private void createDistributionProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_DISTRIBUTION_COMMAND_NAME, delegateOptions);
+   }
+
+   private void createJavaServiceConnectorProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME, delegateOptions);
+   }
+
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
       logService.debug(CreateJavaServiceProjectCommand.class,
                        "--------------------------------------------------");
@@ -140,7 +167,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                        "Running %s", commandName);
       logService.debug(CreateJavaServiceProjectCommand.class,
                        "--------------------------------------------------");
-      jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, delegateOptions);
+      jellyFishCommandProvider.run(commandName, delegateOptions);
    }
 
    private CommandInvocationContext buildContext(IJellyFishCommandOptions commandOptions) {
