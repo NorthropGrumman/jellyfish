@@ -11,6 +11,8 @@ public class TemplateDao {
    private String baseClassPackageName;
    private String interfaceName;
    private String interfacePackageName;
+   private String artifactId;
+   private String projectDirectoryName;
    private List<MethodDao> methods;
    private Set<String> imports;
 
@@ -50,6 +52,15 @@ public class TemplateDao {
       return this;
    }
 
+   public String getArtifactId() {
+      return artifactId;
+   }
+
+   public TemplateDao setArtifactId(String artifactId) {
+      this.artifactId = artifactId;
+      return this;
+   }
+
    public List<MethodDao> getMethods() {
       return methods;
    }
@@ -83,6 +94,15 @@ public class TemplateDao {
 
    public TemplateDao setInterfacePackageName(String interfacePackageName) {
       this.interfacePackageName = interfacePackageName;
+      return this;
+   }
+
+   public String getProjectDirectoryName() {
+      return projectDirectoryName;
+   }
+
+   public TemplateDao setProjectDirectoryName(String projectDirectoryName) {
+      this.projectDirectoryName = projectDirectoryName;
       return this;
    }
 }

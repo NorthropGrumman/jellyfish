@@ -11,6 +11,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDao;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -53,7 +54,11 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
 
+      TemplateDao dao = templateDaoFactory.newDao(model, packagez);
+      dao.setProjectDirectoryName(projectDir.getFileName().toString());
+
       DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dao", dao));
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
                              projectDir,
@@ -241,14 +246,14 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     *
     * @param file file/folder to delete
     */
-   private static boolean deleteDir(File file) {
+   private static void deleteDir(File file) {
       File[] contents = file.listFiles();
       if (contents != null) {
          for (File f : contents) {
             deleteDir(f);
          }
       }
-      return file.delete();
+      file.delete();
    }
 
    private static boolean evaluateBooleanParameter(IJellyFishCommandOptions options, String parameter) {

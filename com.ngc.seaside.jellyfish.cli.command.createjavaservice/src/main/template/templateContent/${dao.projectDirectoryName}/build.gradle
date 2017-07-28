@@ -1,8 +1,8 @@
 #set( $D = '$' )
 
 dependencies {
-   compile project(":${modelObject.getName().toLowerCase()}.events")
-   compile project(":${modelObject.getName().toLowerCase()}.base")
+   compile project(":${dao.artifactId}.events")
+   compile project(":${dao.artifactId}.base")
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"

@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
 
+import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
@@ -30,7 +31,7 @@ public class TemplateDaoFactoryTest {
 
    @Before
    public void setup() throws Throwable {
-      model = newModelForTesting(packagez);
+      model = newModelForTesting();
       factory = new TemplateDaoFactory();
    }
 
@@ -44,6 +45,9 @@ public class TemplateDaoFactoryTest {
       assertEquals("packageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.impl",
                    dao.getPackageName());
+      assertEquals("artifactId not correct!",
+                   "engagementtrackpriorityservice",
+                   dao.getArtifactId());
 
       assertEquals("baseClassName not correct!",
                    "AbstractEngagementTrackPriorityService",
@@ -99,7 +103,7 @@ public class TemplateDaoFactoryTest {
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority"));
    }
 
-   public static Model newModelForTesting(String packagez) {
+   public static Model newModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
 
@@ -120,6 +124,9 @@ public class TemplateDaoFactoryTest {
       model.addOutput(new DataReferenceField("trackPriority").setType(trackPriority));
       model.addScenario(calculateTrackPriority);
       calculateTrackPriority.setParent(model);
+
+      Package p = new Package("com.ngc.seaside.threateval");
+      p.addModel(model);
 
       return model;
    }

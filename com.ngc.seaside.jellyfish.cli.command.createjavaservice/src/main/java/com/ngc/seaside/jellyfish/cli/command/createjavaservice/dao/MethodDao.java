@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MethodDao {
 
@@ -9,6 +10,16 @@ public class MethodDao {
    private boolean returns;
    private ArgumentDao returnArgument;
    private List<ArgumentDao> arguments;
+
+   public String getReturnSnippet() {
+      return returns ? returnArgument.getArgumentClassName() : "void";
+   }
+
+   public String getArgumentsListSnippet() {
+      return arguments.stream()
+            .map(a -> a.getArgumentClassName() + " " + a.getArgumentName())
+            .collect(Collectors.joining(", "));
+   }
 
    public String getMethodName() {
       return methodName;

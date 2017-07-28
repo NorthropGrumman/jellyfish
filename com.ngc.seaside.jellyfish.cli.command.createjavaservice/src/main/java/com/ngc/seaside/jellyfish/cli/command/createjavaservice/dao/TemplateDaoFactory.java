@@ -31,7 +31,8 @@ public class TemplateDaoFactory implements ITemplateDaoFactory {
 
    private static void setClassInfo(TemplateDao dao, IModel model, String packagez) {
       dao.setPackageName(packagez + ".impl")
-            .setClassName(model.getName());
+            .setClassName(model.getName())
+            .setArtifactId(model.getName().toLowerCase());
    }
 
    private static void setBaseClassInfo(TemplateDao dao, IModel model, String packagez) {
