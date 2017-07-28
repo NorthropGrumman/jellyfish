@@ -37,3 +37,5 @@ project(':com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages').n
 include 'com.ngc.seaside.jellyfish.cli.command.samplecommand'
 project(':com.ngc.seaside.jellyfish.cli.command.samplecommand').name = 'jellyfish.cli.command.samplecommand'
 
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaevents'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaevents').name = 'jellyfish.cli.command.createjavaevents'

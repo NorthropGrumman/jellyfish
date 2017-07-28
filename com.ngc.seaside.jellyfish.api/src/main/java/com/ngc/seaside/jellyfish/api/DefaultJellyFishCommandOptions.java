@@ -5,6 +5,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,20 +17,26 @@ import java.util.Objects;
  */
 public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptions implements IJellyFishCommandOptions {
 
-   private ISystemDescriptor systemDescriptor;
+   private IParsingResult parsingResult;
+
+   @Override
+   public IParsingResult getParsingResult() {
+      return parsingResult;
+   }
+
+   public DefaultJellyFishCommandOptions setParsingResult(IParsingResult parsingResult) {
+      this.parsingResult = parsingResult;
+      return this;
+   }
 
    @Override
    public ISystemDescriptor getSystemDescriptor() {
-      return systemDescriptor;
-   }
-
-   public void setSystemDescriptor(ISystemDescriptor systemDescriptor) {
-      this.systemDescriptor = systemDescriptor;
+      return parsingResult.getSystemDescriptor();
    }
 
    @Override
    public String toString() {
-      return String.format("%s, systemDescriptor: %s", super.toString(), systemDescriptor);
+      return String.format("%s, parsingResult: %s", super.toString(), parsingResult);
    }
 
    @Override
@@ -41,12 +48,12 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
          return false;
       }
       IJellyFishCommandOptions that = (IJellyFishCommandOptions) obj;
-      return super.equals(obj) && Objects.equals(systemDescriptor, that.getSystemDescriptor());
+      return super.equals(obj) && Objects.equals(parsingResult, that.getParsingResult());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), systemDescriptor);
+      return Objects.hash(super.hashCode(), parsingResult);
    }
 
    /**
@@ -103,7 +110,7 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
             .forEach(mergedParams::addParameter);
 
       DefaultJellyFishCommandOptions mergedOptions = new DefaultJellyFishCommandOptions();
-      mergedOptions.setSystemDescriptor(options.getSystemDescriptor());
+      mergedOptions.setParsingResult(options.getParsingResult());
       mergedOptions.setParameters(mergedParams);
       return mergedOptions;
    }

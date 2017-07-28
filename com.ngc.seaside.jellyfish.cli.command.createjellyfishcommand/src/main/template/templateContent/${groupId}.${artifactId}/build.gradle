@@ -22,8 +22,8 @@ dependencies {
     
     compile "commons-lang:commons-lang:${D}commonsLangVersion"
     
-    compile "com.ngc.seaside:bootstrap.utilities:${D}bootstrapVersion"
-    compile "com.ngc.seaside:bootstrap.service.api:${D}bootstrapVersion"
+    compile "com.ngc.seaside:bootstrap.utilities:${D}bootstrapApiVersion"
+    compile "com.ngc.seaside:bootstrap.service.api:${D}bootstrapApiVersion"
     
     testCompile "junit:junit:${D}junitVersion"
     testCompile "org.mockito:mockito-core:${D}mockitoVersion"

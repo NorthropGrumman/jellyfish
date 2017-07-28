@@ -25,6 +25,7 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDes
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -62,13 +63,13 @@ public class CreateProtocolbufferMessagesCommandIT {
       IParsingResult result = sdService.parseFiles(sdFiles);
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
+      Mockito.when(options.getParsingResult()).thenReturn(result);
       Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
 
    }
 
    @Test
    public void testCommand() throws IOException {
-
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
          CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());

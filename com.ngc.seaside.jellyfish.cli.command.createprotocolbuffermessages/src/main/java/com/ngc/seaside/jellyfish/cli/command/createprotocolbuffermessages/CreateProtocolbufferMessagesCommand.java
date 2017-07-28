@@ -24,7 +24,7 @@ import java.nio.file.Path;
 /**
  * This command generates the message IDL and gradle project structure that will
  * produce the protocol buffer message bundle.
- * 
+ *
  * @author bperkins
  */
 @Component(service = IJellyFishCommand.class)
@@ -59,12 +59,12 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
-            new DefaultParameter<Path>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
-            new DefaultParameter<String>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
-            new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).setValue(pkgSuffix),
-            new DefaultParameter<String>(CreateDomainCommand.EXTENSION_PROPERTY).setValue(DEFAULT_EXT_PROPERTY),
-            new DefaultParameter<String>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
-                     .setValue(CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
+            new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
+            new DefaultParameter<>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
+            new DefaultParameter<>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, pkgSuffix),
+            new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
+            new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
+                                         CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
    }
 
    @Activate
@@ -130,7 +130,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    /**
     * Returns the package for the domain project.
-    * 
+    *
     * @param parameters command parameters
     * @param groupId domain groupId
     * @param artifactId domain artifactId
