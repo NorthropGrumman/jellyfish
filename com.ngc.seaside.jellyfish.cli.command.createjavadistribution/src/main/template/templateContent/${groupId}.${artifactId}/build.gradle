@@ -4,7 +4,7 @@ apply plugin: 'com.ngc.seaside.distribution'
 
 seasideDistribution {
     buildDir = 'build'
-    distributionName = "${D}{groupId}.${D}{project.name}-${D}{version}"
+    distributionName = "${D}{group}.${D}{project.name}-${D}{version}"
     distributionDir = "build/distribution/${D}{group}.${D}{project.name}-${D}{version}"
     distributionDestDir = 'build/distribution/'
 }

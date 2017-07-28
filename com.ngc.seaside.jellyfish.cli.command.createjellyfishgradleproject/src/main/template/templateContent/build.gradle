@@ -14,14 +14,20 @@ buildscript {
     }
 
    dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:1.1'
+      classpath 'com.ngc.blocs:gradle.plugin:0.2'
+      classpath 'com.ngc.seaside:gradle.plugins:1.4.1'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.0'
    }
 }
 
 subprojects {
-    apply plugin: 'com.ngc.seaside.parent'
+
+   // Do not apply the parent plugin to the distribution project.
+   if(!name.endsWith('.distribution')
+       && !name.endsWith('.docker')) {
+      apply plugin: 'com.ngc.seaside.parent'
+    }
 
     group = '${groupId}'
     version = '${version}'
