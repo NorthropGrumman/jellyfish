@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -55,7 +56,7 @@ public class CreateJavaDistributionCommandIT {
       }
    };
    private static final Injector injector = Guice.createInjector(getModules());
-   private CreateJavaDistributionCommand fixture = new CreateJavaDistributionCommand();
+   private CreateJavaDistributionCommand cmd = new CreateJavaDistributionCommand();
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
@@ -100,6 +101,7 @@ public class CreateJavaDistributionCommandIT {
       sb.append("/");
       sb.append("\n");
 
+      Preconditions.checkNotNull(folder.listFiles());
       for (File file : folder.listFiles()) {
          if (file.isDirectory()) {
             printDirectoryTree(file, indent + 1, sb);
@@ -131,13 +133,8 @@ public class CreateJavaDistributionCommandIT {
       Properties props = System.getProperties();
       props.setProperty("NG_FW_HOME", Paths.get("src/main").toAbsolutePath().toString());
 
-      // Comment the two lines below if you wish to use a known output directory.
-      outputDir = Files.createTempDirectory(null);
-      outputDir.toFile().deleteOnExit();
-
-      // Uncomment the lines below if you wish to view the output directory
-      //Path outputDirectory = Paths.get("build/test-template");
-      //outputDir = Files.createDirectories(outputDirectory);
+      Path outputDirectory = Paths.get("build/test-template");
+      outputDir = Files.createDirectories(outputDirectory);
 
       // Use the testable template service.
       MockedTemplateService mockedTemplateService = new MockedTemplateService()
@@ -156,9 +153,9 @@ public class CreateJavaDistributionCommandIT {
       when(model.getName()).thenReturn("Model");
       when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
 
-      fixture.setLogService(injector.getInstance(ILogService.class));
-      fixture.setPromptService(promptUserService);
-      fixture.setTemplateService(mockedTemplateService);
+      cmd.setLogService(injector.getInstance(ILogService.class));
+      cmd.setPromptService(promptUserService);
+      cmd.setTemplateService(mockedTemplateService);
 
    }
 
@@ -185,7 +182,7 @@ public class CreateJavaDistributionCommandIT {
 
       Mockito.when(options.getParameters()).thenReturn(collection);
 
-      fixture.run(options);
+      cmd.run(options);
    }
 
    private void checkLogContents(Path projectDir) throws IOException {
@@ -193,20 +190,15 @@ public class CreateJavaDistributionCommandIT {
       Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
       // There should only be one log4j.xml file generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
+      Assert.assertEquals(1, gradleFiles.size());
+      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      // Verify that model is injected
-      Assert.assertTrue(
-               contents.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      int startLength = contents.indexOf("%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]");
-      int endLength = contents.length();
-      String contents2 = contents.substring(startLength, endLength);
-      Assert.assertTrue(
-               contents2.contains("value=\"%d{yyyy-MM-dd HH:mm:ss} [model:" + model.getFullyQualifiedName() + "]"));
-      Assert.assertTrue(contents2.contains("value=\"${NG_FW_HOME}/logs/" + model.getFullyQualifiedName() + ".log\""));
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/log4j.xml.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
+
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void checkGradleBuild(Path projectDir) throws IOException {
@@ -214,29 +206,15 @@ public class CreateJavaDistributionCommandIT {
       Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
 
       // There should only be one build.gradle generated
-      Assert.assertTrue(gradleFiles.size() == 1);
-      Path buildFile = Paths.get(gradleFiles.toArray()[0].toString());
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
+      Assert.assertEquals(1,gradleFiles.size());
+      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
+      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
+      String actualContents = new String(Files.readAllBytes(generatedFile));
 
-      // Verify apply block
-      Assert.assertTrue(contents.contains("apply plugin: 'com.ngc.seaside.distribution'"));
+      Path expectedFile = Paths.get("src/test/resources/expectedfiles/build.gradle.expected");
+      String expectedContents = new String(Files.readAllBytes(expectedFile));
 
-      //Verify seaside distribution block
-      Assert.assertTrue(contents.contains("seasideDistribution {"));
-      Assert.assertTrue(contents.contains("buildDir = 'build'"));
-      Assert.assertTrue(contents.contains("distributionName = \"${group}.${project.name}-${version}\""));
-      Assert.assertTrue(
-               contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
-      Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));
-
-      // Verify dependencies block
-      Assert.assertTrue(contents.contains("dependencies {"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".events\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".domain\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".connector\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + ".base\")"));
-      Assert.assertTrue(contents.contains("bundles project(\":" + model.getName().toLowerCase() + "\")"));
+      Assert.assertEquals(expectedContents, actualContents);
    }
 
    private void createSettings() throws IOException {

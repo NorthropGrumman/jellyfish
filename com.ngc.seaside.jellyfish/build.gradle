@@ -26,12 +26,15 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
-    
+
     compile project(":jellyfish.cli.command.createjavaevents")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjavaserviceconnector")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconnector", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaservice")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjavaserviceproject")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceproject", configuration: "commandTemplate")

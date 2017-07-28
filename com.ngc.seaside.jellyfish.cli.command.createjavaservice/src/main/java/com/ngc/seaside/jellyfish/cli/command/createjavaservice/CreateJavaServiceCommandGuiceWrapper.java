@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.google.inject.Inject;
 
@@ -11,13 +11,13 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
-public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishCommand {
+public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
 
-   private final CreateJavaDistributionCommand delegate = new CreateJavaDistributionCommand();
+   private final CreateJavaServiceCommand delegate = new CreateJavaServiceCommand();
 
    @Inject
-   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService, IPromptUserService promptUserService,
-                                                    ITemplateService templateService) {
+   public CreateJavaServiceCommandGuiceWrapper(ILogService logService, IPromptUserService promptUserService,
+                                               ITemplateService templateService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);

@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
@@ -9,6 +9,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.CreateJavaServiceCommand;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -30,16 +31,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CreateJavaDistributionCommandTest {
+public class CreateJavaServiceCommandTest {
 
-   private CreateJavaDistributionCommand fixture;
+   private CreateJavaServiceCommand cmd;
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
    private IModel model = mock(Model.class);
-   private Path createDirectoriesPath;
+
    private IParameterCollection addProjectParameters;
+   private Path createDirectoriesPath;
 
    @Before
    public void setup() throws IOException {
@@ -53,7 +55,7 @@ public class CreateJavaDistributionCommandTest {
       when(model.getName()).thenReturn("Model");
 
       // Setup class under test
-      fixture = new CreateJavaDistributionCommand() {
+      cmd = new CreateJavaServiceCommand() {
          @Override
          protected void doAddProject(IParameterCollection parameters) {
             addProjectParameters = parameters;
@@ -64,35 +66,40 @@ public class CreateJavaDistributionCommandTest {
             createDirectoriesPath = outputDirectory;
          }
       };
-
-      fixture.setLogService(new PrintStreamLogService());
-      fixture.setPromptService(promptUserService);
-      fixture.setTemplateService(templateService);
+      cmd.setLogService(new PrintStreamLogService());
+      cmd.setPromptService(promptUserService);
+      cmd.setTemplateService(templateService);
    }
 
    @Test
    public void testCommandWithoutOptionalParams() {
-      runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
-                 CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path");
+      runCommand(CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
+                 CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path");
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
+      verify(model, times(4)).getName();
       verify(model, times(2)).getParent();
 
       // Verify passed values
       Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
-      Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
+      Assert.assertEquals(model.getName().toLowerCase(),
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(model.getParent().getName(),
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("true",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("true",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
@@ -100,28 +107,38 @@ public class CreateJavaDistributionCommandTest {
 
    @Test
    public void testCommandWithOptionalParams() {
-      runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
-                 CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path",
-                 CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, "model",
-                 CreateJavaDistributionCommand.GROUP_ID_PROPERTY, "com.ngc.seaside.test");
+      runCommand(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY, "true",
+                 CreateJavaServiceCommand.GENERATE_BASE_PROPERTY, "false",
+                 CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path",
+                 CreateJavaServiceCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
+                 CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY, "model",
+                 CreateJavaServiceCommand.GROUP_ID_PROPERTY, "com.ngc.seaside.test");
 
       // Verify mocked behaviors
+
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(1)).getName();
+      verify(model, times(3)).getName();
       verify(model, times(1)).getParent();
 
       // Verify passed values
+      Assert.assertEquals("true",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("false",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
+                                   .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
-      Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
+      Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
                .getStringValue());
+
       Assert.assertEquals("com.ngc.seaside.test",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
@@ -131,33 +148,40 @@ public class CreateJavaDistributionCommandTest {
    public void testCommandWithoutRequiredParams() {
 
       // Mock behaviors
-      when(promptUserService.prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
+      when(promptUserService.prompt(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
                .thenReturn("/just/a/mock/path");
-      when(promptUserService.prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null))
+      when(promptUserService.prompt(CreateJavaServiceCommand.MODEL_PROPERTY, null, null))
                .thenReturn("com.ngc.seaside.test.Model");
       when(model.getName()).thenReturn("Model");
 
-      runCommand(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, "test",
-                 CreateJavaDistributionCommand.GROUP_ID_PROPERTY, "com.ngc.seaside");
+      runCommand(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY, "test",
+                 CreateJavaServiceCommand.GROUP_ID_PROPERTY, "com.ngc.seaside",
+                 CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY, "false",
+                 CreateJavaServiceCommand.GENERATE_BASE_PROPERTY, "true");
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null);
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
+      verify(promptUserService, times(1)).prompt(CreateJavaServiceCommand.MODEL_PROPERTY, null, null);
+      verify(promptUserService, times(1)).prompt(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
 
       // Verify passed values
-      Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                   .getStringValue()
-      );
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
+      Assert.assertEquals("false",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_DELEGATE_PROPERTY)
                                    .getStringValue());
-      Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
+      Assert.assertEquals("true",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GENERATE_BASE_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("/just/a/mock/path",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("com.ngc.seaside.test.Model",
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.MODEL_PROPERTY)
+                                   .getStringValue());
+      Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaServiceCommand.ARTIFACT_ID_PROPERTY)
                .getStringValue());
       Assert.assertEquals("com.ngc.seaside",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
+                          addProjectParameters.getParameter(CreateJavaServiceCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
@@ -174,18 +198,20 @@ public class CreateJavaDistributionCommandTest {
       when(options.getParameters()).thenReturn(collection);
 
       // Setup mock template service
-      when(templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(), collection,
-                                  Paths.get("/just/a/mock/path"), false)).thenReturn(new ITemplateOutput() {
-         @Override
-         public Map<String, ?> getProperties() {
-            return collection.getParameterMap();
-         }
+      when(templateService.unpack("JellyFishJavaService", collection, Paths.get("/just/a/mock/path"), false))
+               .thenReturn(
+                        new ITemplateOutput() {
+                           @Override
+                           public Map<String, ?> getProperties() {
+                              return collection.getParameterMap();
+                           }
 
-         @Override
-         public Path getOutputPath() {
-            return Paths.get("/just/a/mock/path");
-         }
-      });
-      fixture.run(options);
+                           @Override
+                           public Path getOutputPath() {
+                              return Paths.get("/just/a/mock/path");
+                           }
+                        });
+      cmd.run(options);
    }
+
 }

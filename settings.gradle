@@ -30,6 +30,8 @@ project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaservice'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaservice').name = 'jellyfish.cli.command.createjavaservice'
 
 include 'com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages'
 project(':com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages').name = 'jellyfish.cli.command.createprotocolbuffermessages'
