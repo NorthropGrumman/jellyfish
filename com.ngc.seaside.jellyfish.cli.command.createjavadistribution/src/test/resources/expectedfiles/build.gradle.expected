@@ -3,7 +3,7 @@ apply plugin: 'com.ngc.seaside.distribution'
 
 seasideDistribution {
     buildDir = 'build'
-    distributionName = "${groupId}.${project.name}-${version}"
+    distributionName = "${group}.${project.name}-${version}"
     distributionDir = "build/distribution/${group}.${project.name}-${version}"
     distributionDestDir = 'build/distribution/'
 }
