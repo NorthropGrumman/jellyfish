@@ -92,6 +92,24 @@ public class CreateJavaEventsCommandTest {
                    delegateOptions.getParameters()
                          .getParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY)
                          .getStringValue());
+
+      assertTrue("does not contain package suffix property!",
+                 delegateOptions.getParameters()
+                       .containsParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY));
+      assertEquals("package suffix default not correct!",
+                   CreateJavaEventsCommand.DEFAULT_PACKAGE_SUFFIX,
+                   delegateOptions.getParameters()
+                         .getParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY)
+                         .getStringValue());
+
+      assertTrue("does not contain build.gradle template property!",
+                 delegateOptions.getParameters()
+                       .containsParameter(CreateJavaEventsCommand.BUILD_GRADLE_TEMPLATE_PROPERTY));
+      assertEquals("build.gradle templatedefault not correct!",
+                   CreateJavaEventsCommand.class.getPackage().getName(),
+                   delegateOptions.getParameters()
+                         .getParameter(CreateJavaEventsCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
+                         .getStringValue());
    }
 
    @Test

@@ -38,6 +38,7 @@ subprojects {
         bootstrapVersion = '1.3'
         bootstrapCommandsVersion = '1.1'
         blocsCoreVersion = '2.1'
+        blocsDomainVersion = '2.1'
         guiceVersion = '4.1.0'
         osgiVersion =  '6.0.0'
         guavaVersion = '21.0'

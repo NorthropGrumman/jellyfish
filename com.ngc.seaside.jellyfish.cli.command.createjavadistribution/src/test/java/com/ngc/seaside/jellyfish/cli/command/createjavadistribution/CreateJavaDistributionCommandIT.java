@@ -225,7 +225,7 @@ public class CreateJavaDistributionCommandIT {
       //Verify seaside distribution block
       Assert.assertTrue(contents.contains("seasideDistribution {"));
       Assert.assertTrue(contents.contains("buildDir = 'build'"));
-      Assert.assertTrue(contents.contains("distributionName = \"${groupId}.${project.name}-${version}\""));
+      Assert.assertTrue(contents.contains("distributionName = \"${group}.${project.name}-${version}\""));
       Assert.assertTrue(
                contents.contains("distributionDir = \"build/distribution/${group}.${project.name}-${version}\""));
       Assert.assertTrue(contents.contains("distributionDestDir = 'build/distribution/'"));

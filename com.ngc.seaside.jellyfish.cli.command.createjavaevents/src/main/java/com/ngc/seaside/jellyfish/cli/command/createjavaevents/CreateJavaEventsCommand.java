@@ -45,6 +45,10 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
     */
    static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
    /**
+    * The name of the property used by the create-domain command to generate the build.gradle file.
+    */
+   static final String BUILD_GRADLE_TEMPLATE_PROPERTY = "buildGradleTemplate";
+   /**
     * The name of the command that is invoked to create the actual project.
     */
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
@@ -80,7 +84,9 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
             commandOptions,
             new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY, eventTemplate),
-            new DefaultParameter<>(PACKAGE_SUFFIX_PROPERTY, packageSuffix)));
+            new DefaultParameter<>(PACKAGE_SUFFIX_PROPERTY, packageSuffix),
+            new DefaultParameter<>(BUILD_GRADLE_TEMPLATE_PROPERTY,
+                                   CreateJavaEventsCommand.class.getPackage().getName())));
    }
 
    @Activate
