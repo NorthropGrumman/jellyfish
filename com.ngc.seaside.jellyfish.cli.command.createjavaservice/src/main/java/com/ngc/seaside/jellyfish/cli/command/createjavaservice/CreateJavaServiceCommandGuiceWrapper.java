@@ -9,6 +9,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
@@ -16,11 +17,14 @@ public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
    private final CreateJavaServiceCommand delegate = new CreateJavaServiceCommand();
 
    @Inject
-   public CreateJavaServiceCommandGuiceWrapper(ILogService logService, IPromptUserService promptUserService,
-                                               ITemplateService templateService) {
+   public CreateJavaServiceCommandGuiceWrapper(ILogService logService,
+                                               IPromptUserService promptUserService,
+                                               ITemplateService templateService,
+                                               ITemplateDaoFactory templateDaoFactory) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
+      delegate.setTemplateDaoFactory(templateDaoFactory);
       delegate.activate();
    }
 

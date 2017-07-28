@@ -16,8 +16,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class TemplateDaoFactory {
+public class TemplateDaoFactory implements ITemplateDaoFactory {
 
+   @Override
    public TemplateDao newDao(IModel model, String packagez) {
       TemplateDao dao = new TemplateDao();
       setClassInfo(dao, model, packagez);

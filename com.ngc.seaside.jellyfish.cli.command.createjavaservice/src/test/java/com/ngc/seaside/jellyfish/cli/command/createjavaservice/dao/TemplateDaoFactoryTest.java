@@ -30,27 +30,7 @@ public class TemplateDaoFactoryTest {
 
    @Before
    public void setup() throws Throwable {
-      Data trackEngagementStatus = new Data("TrackEngagementStatus");
-      Data trackPriority = new Data("TrackPriority");
-
-      Scenario calculateTrackPriority = new Scenario("calculateTrackPriority");
-
-      ScenarioStep step = new ScenarioStep();
-      step.setKeyword(ReceiveStepHandler.PRESENT.getVerb());
-      step.getParameters().add("trackEngagementStatus");
-      calculateTrackPriority.setWhens(listOf(step));
-
-      step = new ScenarioStep();
-      step.setKeyword(PublishStepHandler.FUTURE.getVerb());
-      step.getParameters().add("trackPriority");
-      calculateTrackPriority.setThens(listOf(step));
-
-      model = new Model("EngagementTrackPriorityService");
-      model.addInput(new DataReferenceField("trackEngagementStatus").setType(trackEngagementStatus));
-      model.addOutput(new DataReferenceField("trackPriority").setType(trackPriority));
-      model.addScenario(calculateTrackPriority);
-      calculateTrackPriority.setParent(model);
-
+      model = newModelForTesting(packagez);
       factory = new TemplateDaoFactory();
    }
 
@@ -117,6 +97,31 @@ public class TemplateDaoFactoryTest {
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus"));
       assertTrue("missing import", dao.getImports().contains(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority"));
+   }
+
+   public static Model newModelForTesting(String packagez) {
+      Data trackEngagementStatus = new Data("TrackEngagementStatus");
+      Data trackPriority = new Data("TrackPriority");
+
+      Scenario calculateTrackPriority = new Scenario("calculateTrackPriority");
+
+      ScenarioStep step = new ScenarioStep();
+      step.setKeyword(ReceiveStepHandler.PRESENT.getVerb());
+      step.getParameters().add("trackEngagementStatus");
+      calculateTrackPriority.setWhens(listOf(step));
+
+      step = new ScenarioStep();
+      step.setKeyword(PublishStepHandler.FUTURE.getVerb());
+      step.getParameters().add("trackPriority");
+      calculateTrackPriority.setThens(listOf(step));
+
+      Model model = new Model("EngagementTrackPriorityService");
+      model.addInput(new DataReferenceField("trackEngagementStatus").setType(trackEngagementStatus));
+      model.addOutput(new DataReferenceField("trackPriority").setType(trackPriority));
+      model.addScenario(calculateTrackPriority);
+      calculateTrackPriority.setParent(model);
+
+      return model;
    }
 
    private static <T> ArrayList<T> listOf(T... things) {

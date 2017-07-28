@@ -10,8 +10,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDao;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDaoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -24,7 +23,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Supplier;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceCommand implements IJellyFishCommand {
@@ -43,6 +41,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
+   private ITemplateDaoFactory templateDaoFactory;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -141,6 +140,17 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     */
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateDaoFactory")
+   public void setTemplateDaoFactory(ITemplateDaoFactory ref) {
+      this.templateDaoFactory = ref;
+   }
+
+   public void removeTemplateDaoFactory(ITemplateDaoFactory ref) {
+      setTemplateDaoFactory(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
