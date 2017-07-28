@@ -3,6 +3,8 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -63,6 +65,15 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
                              parameters,
                              outputDir,
                              clean);
+
+      try {
+         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
+         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+         GradleSettingsUtilities.tryAddProject(parameters);
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("failed to update settings.gradle!", e);
+      }
    }
 
    @Activate

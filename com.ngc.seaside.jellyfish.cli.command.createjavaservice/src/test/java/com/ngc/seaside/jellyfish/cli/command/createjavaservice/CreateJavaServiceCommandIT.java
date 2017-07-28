@@ -53,6 +53,8 @@ public class CreateJavaServiceCommandIT {
 
    @Before
    public void setup() throws Throwable {
+      outputDirectory.newFile("settings.gradle");
+
       templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
@@ -91,6 +93,11 @@ public class CreateJavaServiceCommandIT {
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
 
       assertFilesEquals(
+            "settings.gradle not correct!",
+            Paths.get("src", "test", "resources", "expectedfiles", "service-settings.gradle.expected"),
+            Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
+
+      assertFilesEquals(
             "service unit test not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-test.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
@@ -121,6 +128,11 @@ public class CreateJavaServiceCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
+
+      assertFilesEquals(
+            "settings.gradle not correct!",
+            Paths.get("src", "test", "resources", "expectedfiles", "service-settings.gradle.expected"),
+            Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
       assertFilesEquals(
             "service unit test not correct!",
