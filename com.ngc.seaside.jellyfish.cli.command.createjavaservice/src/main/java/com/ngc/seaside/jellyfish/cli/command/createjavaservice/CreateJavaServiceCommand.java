@@ -61,7 +61,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       parameters.addParameter(new DefaultParameter<>("dao", dao));
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
-                             projectDir,
+                             outputDir,
                              clean);
    }
 

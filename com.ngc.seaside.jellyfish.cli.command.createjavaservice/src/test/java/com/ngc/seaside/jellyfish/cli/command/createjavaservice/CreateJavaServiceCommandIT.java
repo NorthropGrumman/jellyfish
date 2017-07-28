@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
-import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -21,15 +19,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFilesEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -37,8 +30,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceCommandIT {
-
-   //private final static String OUTPUT_DIRECTORY_NAME = "build/tests/CreateJavaServiceCommandIT";
 
    private CreateJavaServiceCommand command;
 
@@ -97,7 +88,6 @@ public class CreateJavaServiceCommandIT {
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
 
       assertFilesEquals(
@@ -105,14 +95,12 @@ public class CreateJavaServiceCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-test.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java"));
 
       assertFilesEquals(
             "service not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityService.java"));
    }
@@ -132,14 +120,12 @@ public class CreateJavaServiceCommandIT {
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
 
       assertFilesEquals(
             "service unit test not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-test.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java"));
 
@@ -148,18 +134,6 @@ public class CreateJavaServiceCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityService.java"));
-   }
-
-   public static void assertFilesEquals(String message, Path expected, Path actual) throws IOException {
-      File expectedFile = expected.toFile();
-      File actualFile = actual.toFile();
-      Preconditions.checkArgument(expectedFile.isFile(), "expected file %s is not a file!", expected);
-      assertTrue("expected a file at " + actual,
-                 actualFile.isFile());
-      assertEquals(message,
-                   new String(Files.readAllBytes(expected)),
-                   new String(Files.readAllBytes(actual)));
    }
 }
