@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.command.api.IUsage;
@@ -19,10 +20,14 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
 
    @Inject
    public CreateProtocolbufferMessagesCommandGuiceWrapper(ILogService logService,
-            IJellyFishCommandProvider jellyfishCommandProvider, IResourceService resourceService) {
+                                                          IJellyFishCommandProvider jellyfishCommandProvider,
+                                                          IResourceService resourceService,
+                                                          IJellyFishCommandProvider provider) {
       delegate.setLogService(logService);
       delegate.setJellyFishCommandProvider(jellyfishCommandProvider);
       delegate.setResourceService(resourceService);
+      delegate.setJellyFishCommandProvider(provider);
+      delegate.activate();
    }
 
    @Override
