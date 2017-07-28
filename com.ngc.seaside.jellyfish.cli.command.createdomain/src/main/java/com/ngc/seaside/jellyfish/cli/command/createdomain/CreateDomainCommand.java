@@ -7,10 +7,13 @@ import com.ngc.blocs.domain.impl.common.generated.Tobject;
 import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
+import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
+import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -56,6 +59,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static final IUsage USAGE = createUsage();
    private static final String DEFAULT_PACKAGE_SUFFIX = "domain";
    private static final String SETTINGS_FILE_NAME = "settings.gradle";
+   static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -72,6 +76,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
+   private IResourceService resourceService;
 
    @Override
    public String getName() {
@@ -115,7 +120,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptService")
    public void setPromptService(IPromptUserService ref) {
       this.promptService = ref;
    }
@@ -132,7 +139,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -142,6 +151,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeResourceService")
+   public void setResourceService(IResourceService ref) {
+      this.resourceService = ref;
+   }
+
+   public void removeResourceService(IResourceService ref) {
+      setResourceService(null);
    }
 
    @Override
@@ -338,7 +358,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
       if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
          templateFilename = parameters.getParameter(DOMAIN_TEMPLATE_FILE_PROPERTY).getStringValue();
       } else {
-         templateFilename = promptService.prompt(DOMAIN_TEMPLATE_FILE_PROPERTY, null, null);
+         // Unpack the default velocity template to a temporary directory.
+         final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
+               CreateDomainCommand.class,
+               DEFAULT_DOMAIN_TEMPLATE_FILE);
+         resourceService.readResource(velocityTemplate);
+         templateFilename = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
       }
       domainTemplateFile = Paths.get(templateFilename);
 
@@ -562,7 +587,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
                   .setDescription("Base directory in which to output the project").setRequired(true),
          new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY).setDescription("The velocity template file")
-                  .setRequired(true),
+                  .setRequired(false),
          new DefaultParameter<String>(MODEL_PROPERTY)
                   .setDescription("The fully qualified path to the system descriptor model").setRequired(true),
          new DefaultParameter<String>(CLEAN_PROPERTY)
