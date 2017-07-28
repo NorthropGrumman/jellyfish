@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
 
 import java.util.List;
+import java.util.Set;
 
 public class TemplateDao {
 
@@ -8,7 +9,10 @@ public class TemplateDao {
    private String baseClassName;
    private String packageName;
    private String baseClassPackageName;
+   private String interfaceName;
+   private String interfacePackageName;
    private List<MethodDao> methods;
+   private Set<String> imports;
 
    public String getClassName() {
       return className;
@@ -50,7 +54,35 @@ public class TemplateDao {
       return methods;
    }
 
-   public void setMethods(List<MethodDao> methods) {
+   public TemplateDao setMethods(List<MethodDao> methods) {
       this.methods = methods;
+      return this;
+   }
+
+   public Set<String> getImports() {
+      return imports;
+   }
+
+   public TemplateDao setImports(Set<String> imports) {
+      this.imports = imports;
+      return this;
+   }
+
+   public String getInterfaceName() {
+      return interfaceName;
+   }
+
+   public TemplateDao setInterfaceName(String interfaceName) {
+      this.interfaceName = interfaceName;
+      return this;
+   }
+
+   public String getInterfacePackageName() {
+      return interfacePackageName;
+   }
+
+   public TemplateDao setInterfacePackageName(String interfacePackageName) {
+      this.interfacePackageName = interfacePackageName;
+      return this;
    }
 }

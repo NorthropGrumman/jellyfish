@@ -19,7 +19,12 @@ dependencies {
     
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapVersion"
+
+
+    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    compile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
     testCompile project(":jellyfish.cli.command.testutils")
     testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
