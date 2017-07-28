@@ -4,8 +4,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
@@ -274,12 +277,19 @@ public class CreateDomainCommandIT {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService mockedTemplateService = new MockedTemplateService();
-         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
-                  .setTemplateDirectory(CreateDomainCommand.class.getPackage().getName(),
-                     Paths.get("src", "main", "template"));
+         MockedTemplateService mockedTemplateService = new MockedTemplateService()
+               .useRealPropertyService()
+               .useDefaultUserValues(true)
+               .setTemplateDirectory(CreateDomainCommand.class.getPackage().getName(),
+                                     Paths.get("src", "main", "template"));
+
+         MockedResourceService resourceService = new MockedResourceService()
+               .onNextReadDrain(CreateDomainCommandIT.class
+                                      .getClassLoader()
+                                      .getResourceAsStream(CreateDomainCommand.DEFAULT_DOMAIN_TEMPLATE_FILE));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
+         bind(IResourceService.class).toInstance(resourceService);
       }
    };
 

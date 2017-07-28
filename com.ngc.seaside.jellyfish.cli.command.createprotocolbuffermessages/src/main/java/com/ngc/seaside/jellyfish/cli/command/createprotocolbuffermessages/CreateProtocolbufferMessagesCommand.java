@@ -2,8 +2,11 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
+import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
@@ -30,12 +33,12 @@ import java.nio.file.Path;
 @Component(service = IJellyFishCommand.class)
 public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
-   private static final String NAME = "create-protocolbuffer-messages";
-   private static final String CREATE_DOMAIN_COMMAND = "create-domain";
-   private static final String TEMPLATE_FILE = "proto-messages.vm";
-   private static final String DEFAULT_PACKAGE_SUFFIX = "messages";
-   private static final String DEFAULT_EXT_PROPERTY = "proto";
-   private static final IUsage USAGE = createUsage();
+   static final String NAME = "create-protocolbuffer-messages";
+   static final String CREATE_DOMAIN_COMMAND = "create-domain";
+   static final String TEMPLATE_FILE = "proto-messages.vm";
+   static final String DEFAULT_PACKAGE_SUFFIX = "messages";
+   static final String DEFAULT_EXT_PROPERTY = "proto";
+   static final IUsage USAGE = createUsage();
 
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
@@ -55,7 +58,13 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
       final String pkgSuffix = evaluatePackageSuffix(parameters);
-      final Path domainTemplate = resourceService.getResourceRootPath().resolve(TEMPLATE_FILE);
+
+      // Unpack the velocity template to a temporary directory.
+      final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
+            CreateProtocolbufferMessagesCommand.class,
+            TEMPLATE_FILE);
+      resourceService.readResource(velocityTemplate);
+      final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
@@ -132,8 +141,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     * Returns the package for the domain project.
     *
     * @param parameters command parameters
-    * @param groupId domain groupId
-    * @param artifactId domain artifactId
     * @return the package for the domain project
     */
    private static String evaluatePackageSuffix(IParameterCollection parameters) {
