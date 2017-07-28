@@ -182,8 +182,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                                                   null,
                                                   m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
-      // Find the actual model (it must be there or the input validator would not have passed).
-      ctx.model = commandOptions.getSystemDescriptor().findModel(ctx.modelName).get();
+      // Find the actual model.
+      ctx.model = commandOptions.getSystemDescriptor()
+            .findModel(ctx.modelName)
+            .orElseThrow(() -> new CommandException(String.format("model %s not found!", ctx.modelName)));
 
       // Get the directory that will contain the project directory.
       if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {

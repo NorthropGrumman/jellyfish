@@ -3,17 +3,13 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -24,203 +20,42 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceCommand implements IJellyFishCommand {
 
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   static final String GROUP_ID_PROPERTY = "groupId";
+   static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   static final String MODEL_PROPERTY = "model";
+   static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
+   static final String CLEAN_PROPERTY = "clean";
 
-   public static final String MODEL_PROPERTY = "model";
-   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
-
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-
-   public static final boolean DEFAULT_BASE_PROPERTY = true;
-   public static final String GENERATE_BASE_PROPERTY = "generateBase";
-   public static final String GENERATED_BASE_DIRECTORY = "generatedBaseDirectory";
-
-   public static final boolean DEFAULT_DELEGATE_PROPERTY = true;
-   public static final String GENERATE_DELEGATE_PROPERTY = "generateDelegate";
-   public static final String GENERATED_DELEGATE_CLASSNAME = "generatedDelegateClassname";
-
-   public static final String PACKAGE_PROPERTY = "package";
-   public static final String CLEAN_PROPERTY = "clean";
+   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
    private static final String NAME = "create-java-service";
    private static final IUsage USAGE = createUsage();
-   private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
-            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
 
-   private static IUsage createUsage() {
-      return new DefaultUsage("Generates the service for a Java application",
-                              new DefaultParameter(GROUP_ID_PROPERTY).setDescription
-                                       ("The project's group ID. (default: the package in the model)")
-                                       .setRequired(false),
-                              new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription
-                                       ("The project's artifact Id. (default: the model name in lowercase)")
-                                       .setRequired(false),
-                              new DefaultParameter(MODEL_PROPERTY).setDescription
-                                       ("The fully qualified path to the model.")
-                                       .setRequired(true),
-                              new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription
-                                       ("Base directory in which to output the project")
-                                       .setRequired(true),
-                              new DefaultParameter(GENERATE_BASE_PROPERTY).setDescription
-                                       ("This will allow you to generate the abstraction layer for the project")
-                                       .setRequired(false),
-                              new DefaultParameter(GENERATE_DELEGATE_PROPERTY).setDescription
-                                       ("This is the class that the developer will edit")
-                                       .setRequired(false),
-                              new DefaultParameter(CLEAN_PROPERTY).setDescription
-                                       ("If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                       .setRequired(false)
-      );
-   }
-
-   private static boolean getCleanProperty(IParameterCollection parameters, String parameter) {
-      final boolean booleanValue;
-      if (parameters.containsParameter(parameter)) {
-         String value = parameters.getParameter(parameter).getStringValue();
-         switch (value.toLowerCase()) {
-         case "true":
-            booleanValue = true;
-            break;
-         case "false":
-            booleanValue = false;
-            break;
-         default:
-            throw new CommandException(
-                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
-         }
-      } else {
-         booleanValue = false;
-      }
-      return booleanValue;
-   }
-
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
+      IModel model = evaluateModelParameter(commandOptions);
+      String groupId = evaluateGroupId(commandOptions, model);
+      String artifactId = evaluateArtifactId(commandOptions, model);
+      String packagez = evaluatePackage(commandOptions, groupId, artifactId);
+      boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
+      Path outputDir = evaluateOutputDirectory(commandOptions);
+      Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
+
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameters(commandOptions.getParameters().getAllParameters());
-
-      // Resolve model
-      if (!parameters.containsParameter(MODEL_PROPERTY)) {
-         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
-      }
-
-      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
-      String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-      final IModel model = systemDescriptor.findModel(modelId)
-               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
-
-      parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
-
-      // Resolve groupId
-      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
-      }
-
-      // Resolve artifactId
-      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, model.getName().toLowerCase()));
-
-      }
-      // Resolve outputDirectory
-      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
-      }
-      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-
-      doCreateDirectories(outputDirectory);
-
-      // Resolve clean property
-      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
-
-      // Assign package name
-      final String group = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
-      final String artifact = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, group + '.' + artifact));
-      String pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
-      if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
-         throw new CommandException("Invalid package name: " + pkg);
-      }
-
-      // Resolve base
-      if (!parameters.containsParameter(GENERATE_BASE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GENERATE_BASE_PROPERTY, DEFAULT_BASE_PROPERTY));
-      }
-
-      boolean generateBase = Boolean.parseBoolean(parameters.getParameter(GENERATE_BASE_PROPERTY).getStringValue());
-      parameters.addParameter(new DefaultParameter<>(GENERATED_BASE_DIRECTORY, pkg + ".base"));
-
-      // Resolve delegate
-      if (!parameters.containsParameter(GENERATE_DELEGATE_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GENERATE_DELEGATE_PROPERTY, DEFAULT_DELEGATE_PROPERTY));
-      }
-
-      boolean generateDelegate =
-               Boolean.parseBoolean(parameters.getParameter(GENERATE_DELEGATE_PROPERTY).getStringValue());
-      parameters.addParameter(
-               new DefaultParameter<>(GENERATED_DELEGATE_CLASSNAME, model.getName() + "GuiceWrapper.java"));
-
-      doAddProject(parameters);
-
-      // Check if there is already a base directory there to prevent from creating a side effect
-      File baseDirectory = Paths.get(outputDirectory + "/" + pkg + ".base").toFile();
-      boolean baseAlreadyExists = baseDirectory.exists();
-
-      // Check if there is already a base directory there to prevent from creating a side effect
-      String packagePath = pkg.replace(".", "/");
-      File
-               delegateFile =
-               Paths.get(outputDirectory + "/" + pkg + "/src/main/java/" + packagePath + "/" + model.getName()
-                         + "GuiceWrapper.java").toFile();
-      boolean delegateAlreadyExists = delegateFile.exists();
-
-      // Unpack the template
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
-                             outputDirectory,
+                             projectDir,
                              clean);
-
-      // Clean up
-      if (!generateBase && !baseAlreadyExists) {
-         deleteDir(baseDirectory);
-      }
-
-      if (!generateDelegate && !delegateAlreadyExists) {
-         deleteDir(delegateFile);
-      }
-
-      logService.info(CreateJavaServiceCommand.class, "%s service project successfully created",
-                      model.getName());
-   }
-
-   /**
-    * Helper method to delete folder/files
-    *
-    * @param file file/folder to delete
-    */
-   boolean deleteDir(File file) {
-      File[] contents = file.listFiles();
-      if (contents != null) {
-         for (File f : contents) {
-            deleteDir(f);
-         }
-      }
-      return file.delete();
    }
 
    @Activate
@@ -253,7 +88,9 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -270,7 +107,9 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -287,7 +126,9 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptService")
    public void setPromptService(IPromptUserService ref) {
       this.promptService = ref;
    }
@@ -299,22 +140,122 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       setPromptService(null);
    }
 
-   protected void doAddProject(IParameterCollection parameters) {
-      try {
-         GradleSettingsUtilities.addProject(parameters);
-      } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
+   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
+      // Get the fully qualified model name.
+      String modelName;
+      if (commandOptions.getParameters().containsParameter(MODEL_PROPERTY)) {
+         modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
+      } else {
+         modelName = promptService.prompt(MODEL_PROPERTY,
+                                          null,
+                                          m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
+      // Find the actual model.
+      return commandOptions.getSystemDescriptor()
+            .findModel(modelName)
+            .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
    }
 
-   protected void doCreateDirectories(Path outputDirectory) {
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaServiceCommand.class, e);
-         throw new CommandException(e);
+   private Path evaluateOutputDirectory(IJellyFishCommandOptions commandOptions) {
+      Path outputDirectory;
+      if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+         outputDirectory = Paths.get(commandOptions.getParameters()
+                                           .getParameter(OUTPUT_DIRECTORY_PROPERTY)
+                                           .getStringValue());
+      } else {
+         // Ask the user if needed.
+         outputDirectory = Paths.get(promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null));
       }
+      return outputDirectory;
    }
 
+   private static String evaluateGroupId(IJellyFishCommandOptions commandOptions, IModel model) {
+      String groupId;
+      if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
+         groupId = commandOptions.getParameters().getParameter(GROUP_ID_PROPERTY).getStringValue();
+      } else {
+         groupId = model.getParent().getName();
+      }
+      return groupId;
+   }
+
+   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model) {
+      String artifactId;
+      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
+         artifactId = commandOptions.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      } else {
+         artifactId = model.getName().toLowerCase();
+      }
+      return artifactId;
+   }
+
+   private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
+      return String.format("%s.%s", groupId, artifactId);
+   }
+
+   private static Path evaluateProjectDirectory(Path outputDir, String packagez, boolean clean) {
+      Path projectDir = outputDir.resolve(packagez);
+      File projectDirFile = projectDir.toFile();
+      if (clean && projectDirFile.exists() && projectDirFile.isDirectory()) {
+         deleteDir(projectDirFile);
+      }
+      return projectDir;
+   }
+
+   private static IUsage createUsage() {
+      return new DefaultUsage(
+            "Generates the service for a Java application",
+            new DefaultParameter(GROUP_ID_PROPERTY)
+                  .setDescription("The project's group ID. (default: the package in the model)")
+                  .setRequired(false),
+            new DefaultParameter(ARTIFACT_ID_PROPERTY)
+                  .setDescription("The project's artifact Id. (default: the model name in lowercase)")
+                  .setRequired(false),
+            new DefaultParameter(MODEL_PROPERTY)
+                  .setDescription("The fully qualified path to the model.")
+                  .setRequired(true),
+            new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
+                  .setDescription("Base directory in which to output the project")
+                  .setRequired(true),
+            new DefaultParameter(CLEAN_PROPERTY)
+                  .setDescription("If true, recursively deletes the domain project before generating the it again")
+                  .setRequired(false)
+      );
+   }
+
+   /**
+    * Helper method to delete folder/files
+    *
+    * @param file file/folder to delete
+    */
+   private static boolean deleteDir(File file) {
+      File[] contents = file.listFiles();
+      if (contents != null) {
+         for (File f : contents) {
+            deleteDir(f);
+         }
+      }
+      return file.delete();
+   }
+
+   private static boolean evaluateBooleanParameter(IJellyFishCommandOptions options, String parameter) {
+      final boolean booleanValue;
+      if (options.getParameters().containsParameter(parameter)) {
+         String value = options.getParameters().getParameter(parameter).getStringValue();
+         switch (value.toLowerCase()) {
+            case "true":
+               booleanValue = true;
+               break;
+            case "false":
+               booleanValue = false;
+               break;
+            default:
+               throw new CommandException(
+                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
+         }
+      } else {
+         booleanValue = false;
+      }
+      return booleanValue;
+   }
 }
