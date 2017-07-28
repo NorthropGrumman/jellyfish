@@ -22,7 +22,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ${dao.className} extends ${dao.baseClassName} {
 
 #foreach ($method in $dao.methods)
-   #if( ${method.override} ) @Override #end
+#if( ${method.override} )
+   @Override
+#end
    public ${method.returnSnippet} ${method.methodName}(${method.argumentsListSnippet}) {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");

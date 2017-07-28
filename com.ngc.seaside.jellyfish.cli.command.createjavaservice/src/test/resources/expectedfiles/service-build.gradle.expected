@@ -1,7 +1,7 @@
 
 dependencies {
-   compile project(":model1.events")
-   compile project(":model1.base")
+   compile project(":engagementtrackpriorityservice.events")
+   compile project(":engagementtrackpriorityservice.base")
 
    compile "com.ngc.seaside:service.api:$starfishCoreVersion"
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
