@@ -174,7 +174,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       CommandInvocationContext ctx = new CommandInvocationContext();
       ctx.originalCommandOptions = commandOptions;
 
-      // Get the fully qualified model nam.e
+      // Get the fully qualified model name.
       if (commandOptions.getParameters().containsParameter(MODEL_PROPERTY)) {
          ctx.modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       } else {
