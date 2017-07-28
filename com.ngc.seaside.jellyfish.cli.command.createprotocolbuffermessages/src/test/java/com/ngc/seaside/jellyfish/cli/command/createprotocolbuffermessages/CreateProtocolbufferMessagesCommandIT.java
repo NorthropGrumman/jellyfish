@@ -4,11 +4,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -25,8 +27,10 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDes
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -41,20 +45,32 @@ import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CreateProtocolbufferMessagesCommandIT {
 
-   private IJellyFishCommand cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
+   private IJellyFishCommand cmd;
 
-   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
-
+   private MockedResourceService resourceService;
    private Path outputDir;
    private Path velocityPath;
+
+   @Mock
+   private IJellyFishCommandOptions options;
 
    @Before
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
       outputDir.toFile().deleteOnExit();
       velocityPath = Paths.get("src", "test", "resources", "proto-messages.vm").toAbsolutePath();
+
+      resourceService = new MockedResourceService()
+            .onNextReadDrain(
+                  CreateProtocolbufferMessagesCommandIT.class
+                        .getClassLoader()
+                        .getResourceAsStream(CreateProtocolbufferMessagesCommand.TEMPLATE_FILE));
+
+      Injector injector = Guice.createInjector(getModules());
+      cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
 
       Path sdDir = Paths.get("src", "test", "sd");
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
@@ -64,8 +80,6 @@ public class CreateProtocolbufferMessagesCommandIT {
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       Mockito.when(options.getParsingResult()).thenReturn(result);
-      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
-
    }
 
    @Test
@@ -165,27 +179,25 @@ public class CreateProtocolbufferMessagesCommandIT {
       Assert.assertFalse(Pattern.compile("field[^" + startField + "-" + endField + "]").matcher(text).find());
    }
 
-   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
+   private final Module testServiceModule = new AbstractModule() {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService mockedTemplateService = new MockedTemplateService();
-         mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
-                  .setTemplateDirectory(CreateProtocolbufferMessagesCommand.class.getPackage().getName(),
+         MockedTemplateService  mockedTemplateService = new MockedTemplateService()
+               .useRealPropertyService()
+               .useDefaultUserValues(true)
+               .setTemplateDirectory(
+                     CreateProtocolbufferMessagesCommand.class.getPackage().getName(),
                      Paths.get("src/main/template"));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
-
-         IResourceService mockResource = Mockito.mock(IResourceService.class);
-         Mockito.when(mockResource.getResourceRootPath()).thenReturn(Paths.get("src", "main", "resources"));
-
-         bind(IResourceService.class).toInstance(mockResource);
+         bind(IResourceService.class).toInstance(resourceService);
       }
    };
 
-   private static Collection<Module> getModules() {
+   private Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.add(TEST_SERVICE_MODULE);
+      modules.add(testServiceModule);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
          if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
@@ -197,7 +209,5 @@ public class CreateProtocolbufferMessagesCommandIT {
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       return modules;
    }
-
-   private static final Injector injector = Guice.createInjector(getModules());
 
 }
