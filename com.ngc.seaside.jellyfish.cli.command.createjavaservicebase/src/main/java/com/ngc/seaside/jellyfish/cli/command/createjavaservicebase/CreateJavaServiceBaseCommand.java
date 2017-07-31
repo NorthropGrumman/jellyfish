@@ -13,7 +13,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceTemplateDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
@@ -63,14 +64,18 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
       String groupId = evaluateGroupId(commandOptions, model);
-      String artifactId = evaluateArtifactId(commandOptions, model);
+      String artifactIdWithoutSuffix = evaluateArtifactIdWithoutSuffix(commandOptions, model);
+      String artifactId = evaluateArtifactId(commandOptions, model, artifactIdWithoutSuffix);
       String packagez = evaluatePackage(commandOptions, groupId, artifactId);
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
+      String nonSuffixPackageName = String.format("%s.%s", groupId, artifactIdWithoutSuffix);
 
-      TemplateDto dto = templateDaoFactory.newDto(model, packagez);
+      BaseServiceTemplateDto dto = (BaseServiceTemplateDto) templateDaoFactory.newDto(model, packagez);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
+      dto.setNonSuffixPackageName(nonSuffixPackageName);
+      dto.setExportedPackages(Collections.singleton(nonSuffixPackageName + ".*"));
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -204,16 +209,21 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       return groupId;
    }
 
-   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model) {
-      // TODO TH: enable support for the artifact ID suffix.
+   private static String evaluateArtifactIdWithoutSuffix(IJellyFishCommandOptions commandOptions, IModel model) {
       String artifactId;
       if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
          artifactId = commandOptions.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
       } else {
          artifactId = model.getName().toLowerCase();
       }
-      artifactId += "." + DEFAULT_ARTIFACT_ID_SUFFIX;
       return artifactId;
+   }
+
+   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions,
+                                            IModel model,
+                                            String artifactIdWithoutSuffix) {
+      // TODO TH: enable support for the artifact ID suffix.
+      return artifactIdWithoutSuffix + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
    }
 
    private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {

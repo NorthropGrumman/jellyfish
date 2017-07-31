@@ -13,6 +13,7 @@ public class BaseServiceTemplateDto extends TemplateDto {
    private Set<String> transportTopics;
    private List<MethodDto> publishingMethods;
    private List<MethodDto> receivingMethods;
+   private String nonSuffixPackageName;
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -54,6 +55,15 @@ public class BaseServiceTemplateDto extends TemplateDto {
    public BaseServiceTemplateDto setReceivingMethods(
          List<MethodDto> receivingMethods) {
       this.receivingMethods = receivingMethods;
+      return this;
+   }
+
+   public String getNonSuffixPackageName() {
+      return nonSuffixPackageName;
+   }
+
+   public BaseServiceTemplateDto setNonSuffixPackageName(String nonSuffixPackageName) {
+      this.nonSuffixPackageName = nonSuffixPackageName;
       return this;
    }
 }

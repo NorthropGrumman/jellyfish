@@ -17,7 +17,6 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    @Override
    public TemplateDto newDto(IModel model, String packagez) {
       BaseServiceTemplateDto dto = (BaseServiceTemplateDto) super.newDto(model, packagez);
-      setExportedPackages(dto, model, packagez);
       setTransportTopics(dto, model, packagez);
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
@@ -29,13 +28,12 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       return new BaseServiceTemplateDto();
    }
 
-   private static void setExportedPackages(BaseServiceTemplateDto dto, IModel model, String packagez) {
-      dto.setExportedPackages(Collections.singleton("*"));
-   }
-
    private static void setTransportTopics(BaseServiceTemplateDto dto, IModel model, String packagez) {
       Set<String> topics = new TreeSet<>();
       for (MethodDto method : dto.getMethods()) {
+         if (method.isReturns()) {
+            topics.add(constantize(method.getReturnArgument().getArgumentClassName()));
+         }
          for (ArgumentDto arg : method.getArguments()) {
             topics.add(constantize(arg.getArgumentClassName()));
          }
@@ -62,8 +60,8 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    }
 
    private static void setReceiveMethods(BaseServiceTemplateDto dto,
-                                  IModel model,
-                                  String packagez) {
+                                         IModel model,
+                                         String packagez) {
       // TODO TH: this is a hacky way to figure out what to receive.
       List<MethodDto> methods = new ArrayList<>(dto.getMethods().size());
       for (MethodDto methodDto : dto.getMethods()) {
@@ -102,7 +100,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < chars.length; i++) {
          char c = chars[i];
-         if (i >= 0 && Character.isUpperCase(c)) {
+         if (i > 0 && Character.isUpperCase(c)) {
             sb.append("_");
          }
          sb.append(Character.toUpperCase(c));

@@ -12,6 +12,6 @@ dependencies {
 
 jar {
    manifest {
-      attributes('Export-Package': '*')
+      attributes('Export-Package': 'com.ngc.seaside.threateval.engagementtrackpriorityservice.*')
    }
 }
