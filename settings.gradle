@@ -44,3 +44,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaevents').name = 'jelly
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject').name = 'jellyfish.cli.command.createjavaserviceproject'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicebase'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicebase').name = 'jellyfish.cli.command.createjavaservicebase'
