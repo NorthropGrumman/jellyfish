@@ -1,6 +1,7 @@
 package com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
@@ -16,8 +17,8 @@ import com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagement
 import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus;
 import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority;
 
-public abstract class AbstractEngagementTrackPriorityService implements IServiceModule,
-                                                                        IEngagementTrackPriorityService {
+public abstract class AbstractEngagementTrackPriorityService
+   implements IServiceModule, IEngagementTrackPriorityService {
 
    public final static String NAME = "service:com.ngc.seaside.threateval.EngagementTrackPriorityService";
 
@@ -38,10 +39,9 @@ public abstract class AbstractEngagementTrackPriorityService implements IService
          publishTrackPriority(calculateTrackPriority(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(
-               getClass(),
-               "Invocation of '%s.calculateTrackPriority(TrackEngagementStatus)' generated fault, dispatching to fault"
-               + " management service.",
-               getClass().getName());
+            getClass(),
+            "Invocation of '%s.calculateTrackPriority(TrackEngagementStatus)' generated fault, dispatching to fault management service.",
+            getClass().getName());
          faultManagementService.handleFault(fault);
          // Consume exception.
       }

@@ -89,18 +89,31 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       // TODO TH: this is a hacky way to figure out what to receive.
       List<MethodDto> methods = new ArrayList<>(dto.getMethods().size());
       for (MethodDto methodDto : dto.getMethods()) {
-         // TODO TH: handle scenarios with multiple inputs.
-         ArgumentDto argument = methodDto.getArguments().get(0);
-         ArgumentDto eventArg = new ArgumentDto()
-               .setArgumentPackageName(argument.getArgumentPackageName())
-               .setArgumentName("event")
-               .setArgumentClassName(String.format("IEvent<%s>", argument.getArgumentClassName()));
-         MethodDto m = new MethodDto()
-               .setOverride(false)
-               .setReturns(false)
-               .setMethodName("receive" + argument.getArgumentClassName())
-               .setArguments(Collections.singletonList(eventArg));
-         methods.add(m);
+         if (methodDto.isReturns()) {
+            // TODO TH: handle scenarios with multiple inputs.
+            ArgumentDto argument = methodDto.getArguments().get(0);
+            ArgumentDto eventArg = new ArgumentDto()
+                  .setArgumentPackageName(argument.getArgumentPackageName())
+                  .setArgumentName("event")
+                  .setArgumentClassName(String.format("IEvent<%s>", argument.getArgumentClassName()));
+            ReceiveMethodDto m = new ReceiveMethodDto()
+                  .setEventSourceClassName(argument.getArgumentClassName())
+                  .setInterfaceMethod(methodDto)
+                  .setPublishMethod(
+                        dto.getPublishingMethods()
+                              .stream()
+                              .filter(q -> q.getMethodName().equals("publish" + methodDto.getReturnArgument()
+                                    .getArgumentClassName()))
+                              .findAny()
+                              .orElseThrow(() -> new IllegalStateException(
+                                    "couldn't find method for "
+                                    + methodDto.getReturnArgument().getArgumentClassName())));
+            m.setOverride(false)
+                  .setReturns(false)
+                  .setMethodName("receive" + argument.getArgumentClassName())
+                  .setArguments(Collections.singletonList(eventArg));
+            methods.add(m);
+         }
       }
       dto.setReceivingMethods(methods);
    }

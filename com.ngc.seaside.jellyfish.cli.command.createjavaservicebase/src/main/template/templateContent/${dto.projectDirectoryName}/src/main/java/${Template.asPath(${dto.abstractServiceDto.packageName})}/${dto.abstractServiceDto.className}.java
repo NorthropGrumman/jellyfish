@@ -2,7 +2,6 @@ package ${dto.abstractServiceDto.packageName};
 
 import com.google.common.base.Preconditions;
 
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
@@ -18,7 +17,8 @@ import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import ${i};
 #end
 
-public abstract class ${dto.abstractServiceDto.className} {
+public abstract class ${dto.abstractServiceDto.className}
+   implements IServiceModule, ${dto.serviceInterfaceDto.interfaceName} {
 
    public final static String NAME = "service:${dto.abstractServiceDto.modelName}";
 
@@ -33,16 +33,16 @@ public abstract class ${dto.abstractServiceDto.className} {
    protected IFaultManagementService faultManagementService;
 
 #foreach($method in $dto.receivingMethods)
-   @Subscriber(${method.arguments.get(0).argumentClassName}.TOPIC_NAME)
+   @Subscriber(${method.eventSourceClassName}.TOPIC_NAME)
    public void ${method.methodName}(${method.arguments.get(0).argumentClassName} ${method.arguments.get(0).argumentName}) {
       Preconditions.checkNotNull(${method.arguments.get(0).argumentName}, "${method.arguments.get(0).argumentName} may not be null!");
       try {
-         //publishTrackPriority(calculateTrackPriority(event.getSource()));
+         ${method.publishMethod.methodName}(${method.interfaceMethod.methodName}(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(
-         getClass(),
-         "Invocation of '%s.${method.methodName}(${method.arguments.get(0).argumentClassName})' generated fault, dispatching to fault management service.",
-         getClass().getName());
+            getClass(),
+            "Invocation of '%s.${method.interfaceMethod.methodName}(${method.eventSourceClassName})' generated fault, dispatching to fault management service.",
+            getClass().getName());
          faultManagementService.handleFault(fault);
          // Consume exception.
       }
