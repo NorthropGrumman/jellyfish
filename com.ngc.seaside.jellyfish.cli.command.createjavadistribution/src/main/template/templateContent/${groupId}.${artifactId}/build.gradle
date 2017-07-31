@@ -28,7 +28,7 @@ dependencies {
    bundles "com.ngc.seaside:monitor.impl.loggingmonitoringservice:${D}starfishCoreVersion"
    bundles "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
    bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:${D}transportServiceVersion"
-   bundles "com.ngc.seaside:threateval.engagementtrackpriorityservice.messages:${D}threatevalEngagementtrackpriorityserviceMessagesVersion"
+   bundles "com.ngc.seaside:threateval.engagementtrackpriorityservice.messages:1.0"
    bundles "com.ngc.seaside:service.transport.impl.topic.multicast:${D}multicastTransportVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.multicast:${D}multicastTransportVersion"
 
