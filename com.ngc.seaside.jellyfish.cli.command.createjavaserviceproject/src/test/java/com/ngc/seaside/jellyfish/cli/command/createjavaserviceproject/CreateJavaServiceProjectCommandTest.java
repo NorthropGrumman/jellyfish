@@ -140,7 +140,7 @@ public class CreateJavaServiceProjectCommandTest {
                                     any()))
             .thenReturn(modelName);
       when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTOY,
+                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
                                     null))
             .thenReturn(outputDirectoryName);
 

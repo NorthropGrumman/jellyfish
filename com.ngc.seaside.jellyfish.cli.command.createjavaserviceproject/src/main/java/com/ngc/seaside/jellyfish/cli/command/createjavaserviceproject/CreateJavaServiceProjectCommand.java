@@ -34,7 +34,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = "model";
    static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
 
-   static final String DEFAULT_OUTPUT_DIRECTOY = ".";
+   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
@@ -230,7 +230,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       } else {
          // Ask the user if needed.
          ctx.rootOutputDirectory = Paths.get(
-               promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTOY, null))
+               promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
                .toFile();
       }
 
