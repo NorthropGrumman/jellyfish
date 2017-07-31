@@ -18,6 +18,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    public TemplateDto newDto(IModel model, String packagez) {
       BaseServiceTemplateDto dto = (BaseServiceTemplateDto) super.newDto(model, packagez);
       setBaseInfo(dto, model, packagez);
+      setInterfaceInfo2(dto, model, packagez);
       setTransportTopics(dto, model, packagez);
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
@@ -33,6 +34,24 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       String basePackageName = String.format("%s.%s", model.getParent().getName(), model.getName().toLowerCase());
       dto.setBasePackageName(basePackageName)
             .setExportedPackages(Collections.singleton(basePackageName + ".*"));
+   }
+
+   private static void setInterfaceInfo2(BaseServiceTemplateDto dto, IModel model, String packagez) {
+      Set<String> imports = new TreeSet<>();
+      for (MethodDto method : dto.getMethods()) {
+         if (method.isReturns()) {
+            imports.add(dto.getBasePackageName() + ".events." + method.getReturnArgument().getArgumentClassName());
+         }
+         for (ArgumentDto arg : method.getArguments()) {
+            imports.add(dto.getBasePackageName() + ".events." + arg.getArgumentClassName());
+         }
+      }
+
+      ServiceInterfaceDto interfaceDto = new ServiceInterfaceDto()
+            .setPackageName(dto.getBasePackageName() + ".api")
+            .setInterfaceName("I" + dto.getClassName())
+            .setImports(imports);
+      dto.setServiceInterfaceDto(interfaceDto);
    }
 
    private static void setTransportTopics(BaseServiceTemplateDto dto, IModel model, String packagez) {

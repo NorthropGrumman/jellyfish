@@ -80,7 +80,7 @@ public class CreateJavaServiceBaseCommandIT {
    }
 
    @Test
-   @Ignore("not passing yet")
+   //@Ignore("not passing yet")
    public void testDoesGenerateServiceWithSuppliedCommands() throws Throwable {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
@@ -100,8 +100,8 @@ public class CreateJavaServiceBaseCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      Files.walk(outputDirectory.getRoot().toPath())
-            .forEach(p -> System.out.println(p.toFile().getAbsolutePath()));
+//      Files.walk(outputDirectory.getRoot().toPath())
+//            .forEach(p -> System.out.println(p.toFile().getAbsolutePath()));
 
       assertFilesEquals(
             "transport topics not correct!",

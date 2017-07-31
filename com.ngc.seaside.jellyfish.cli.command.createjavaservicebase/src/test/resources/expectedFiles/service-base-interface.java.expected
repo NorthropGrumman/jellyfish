@@ -7,5 +7,4 @@ import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPri
 public interface IEngagementTrackPriorityService {
 
    TrackPriority calculateTrackPriority(TrackEngagementStatus trackEngagementStatus) throws ServiceFaultException;
-
 }
