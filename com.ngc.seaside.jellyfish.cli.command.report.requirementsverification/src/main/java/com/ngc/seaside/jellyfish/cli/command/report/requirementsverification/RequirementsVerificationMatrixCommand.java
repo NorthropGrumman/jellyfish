@@ -17,12 +17,44 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
 
+   public static final String OUTPUT_FORMAT_PROPERTY = "outputFormat";
+   public static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "STDOUT_FORMAT";
+   public static final String OUTPUT_PROPERTY = "output";
+   public static final String DEFAULT_OUTPUT_PROPERTY = "STDOUT";
+   public static final String SCOPE_PROPERTY = "scope";
+   public static final String DEFAULT_SCOPE_PROPERTY = "model.metadata.stereotypes";
+   public static final String VALUES_PROPERTY = "values";
+   public static final String DEFAULT_VALUES_PROPERTY = "service";
+   public static final String OPERATOR_PROPERTY = "operator";
+   public static final String DEFAULT_OPERATOR_PROPERTY = "OR";
    private static final String NAME = "requirements-verification-matrix";
    private static final IUsage USAGE = createUsage();
-
-   public static final String EXAMPLE_PROPERTY = "example";
-
    private ILogService logService;
+
+   /**
+    * Create the usage for this command.
+    *
+    * @return the usage.
+    */
+   @SuppressWarnings("rawtypes")
+   private static IUsage createUsage() {
+      return new DefaultUsage("A JellyFish command that can generate a requirements verification matrix.",
+                              new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
+                                       "Allows the user to define the output format. The possible values are default and csv")
+                                       .setRequired(false),
+                              new DefaultParameter(OUTPUT_PROPERTY).setDescription(
+                                       "Allows the user to define the file where the output will be stored. Default: prints to stdout.")
+                                       .setRequired(false),
+                              new DefaultParameter(SCOPE_PROPERTY).setDescription(
+                                       "Allows the user to enter a keyword scope (metadata, input, output, etc..) Default: model.metadata.stereotypes")
+                                       .setRequired(false),
+                              new DefaultParameter(VALUES_PROPERTY).setDescription(
+                                       "The values in which to search as a comma separated string. Default: service")
+                                       .setRequired(false),
+                              new DefaultParameter(OPERATOR_PROPERTY).setDescription(
+                                       "AND, OR, NOT: determines if the items be AND'd together or OR'd together. Default: OR")
+                                       .setRequired(false));
+   }
 
    @Override
    public String getName() {
@@ -38,7 +70,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    public void run(IJellyFishCommandOptions commandOptions) {
       // TODO Auto-generated method stub
    }
-   
+
    @Activate
    public void activate() {
       logService.trace(getClass(), "Activated");
@@ -64,18 +96,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
-   }
-
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   @SuppressWarnings("rawtypes")
-   private static IUsage createUsage() {
-      // TODO Auto-generated method stub
-      return new DefaultUsage("Description of requirements-verification-matrix command", 
-         new DefaultParameter(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false));
    }
 
 }
