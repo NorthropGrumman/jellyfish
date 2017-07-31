@@ -8,6 +8,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,6 +28,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
+   private ITemplateDtoFactory templateDaoFactory;
 
    @Override
    public String getName() {
@@ -106,6 +108,17 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
     */
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateDaoFactory")
+   public void setTemplateDaoFactory(ITemplateDtoFactory ref) {
+      this.templateDaoFactory = ref;
+   }
+
+   public void removeTemplateDaoFactory(ITemplateDtoFactory ref) {
+      setTemplateDaoFactory(null);
    }
 
    /**
