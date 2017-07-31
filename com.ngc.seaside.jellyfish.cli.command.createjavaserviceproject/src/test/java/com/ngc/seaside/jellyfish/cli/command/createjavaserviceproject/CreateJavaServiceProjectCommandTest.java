@@ -119,6 +119,10 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceCommand(capture.getValue(), "my-project");
 
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceBaseCommand(capture.getValue(), "my-project");
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), "my-project");
@@ -156,6 +160,14 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateDistributionCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
+
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceBaseCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
@@ -190,13 +202,20 @@ public class CreateJavaServiceProjectCommandTest {
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
+
    private void verifyParametersForCreateServiceCommand(IJellyFishCommandOptions options,
-                                                          String projectName) {
+                                                        String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
 
+   private void verifyParametersForCreateServiceBaseCommand(IJellyFishCommandOptions options,
+                                                            String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
 
    private void verifyParametersForCreateConnectorCommand(IJellyFishCommandOptions options,
                                                           String projectName) {

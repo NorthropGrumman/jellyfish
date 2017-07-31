@@ -41,6 +41,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_EVENTS_COMMAND_NAME = "create-java-events";
    static final String CREATE_JAVA_DISTRIBUTION_COMMAND_NAME = "create-java-distribution";
    static final String CREATE_JAVA_SERVICE_COMMAND_NAME = "create-java-service";
+   static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME = "create-java-service-connector";
 
    public static final String NAME = "create-java-service-project";
@@ -69,6 +70,9 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
 
+      // TODO TH: put these in the generated-projects directory.
+      // Allow user to specific the name of the directory for generated projects.
+      createJavaServiceBaseProject(ctx);
       createJavaServiceConnectorProject(ctx);
    }
 
@@ -163,6 +167,15 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       );
       doRunCommand(CREATE_JAVA_SERVICE_COMMAND_NAME, delegateOptions);
    }
+
+   private void createJavaServiceBaseProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, delegateOptions);
+   }
+
 
    private void createJavaServiceConnectorProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
