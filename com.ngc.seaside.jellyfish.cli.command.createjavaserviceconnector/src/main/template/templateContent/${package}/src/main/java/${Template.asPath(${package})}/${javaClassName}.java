@@ -180,11 +180,11 @@ public class ${javaClassName} {
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }
 
-   private void postReceiveMessage(EngagementTrackPriorityServiceTransportTopics transportTopic) {
+   private void postReceiveMessage(${modelObject.getName()}TransportTopics transportTopic) {
       RequestThreadLocal.clear();
    }
 
-   private void preSendMessage(EngagementTrackPriorityServiceTransportTopics transportTopic) {
+   private void preSendMessage(${modelObject.getName()}TransportTopics transportTopic) {
       // Do nothing.
    }
 

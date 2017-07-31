@@ -9,7 +9,7 @@ dependencies {
    compile project(":${modelObject.getName().toLowerCase()}.base")
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-   compile "com.ngc.seaside:threateval.${modelObject.getName().toLowerCase()}.messages:${D}threatevalEngagementtrackpriorityserviceMessagesVersion"
+   compile "com.ngc.seaside:threateval.engagementtrackpriorityservice.messages:${D}threatevalEngagementtrackpriorityserviceMessagesVersion"
    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
 
    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
