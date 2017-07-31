@@ -1,4 +1,4 @@
-package ${dto.nonSuffixPackageName}.transport.topic;
+package ${dto.basePackageName}.transport.topic;
 
 import com.ngc.seaside.service.transport.api.ITransportTopic;
 

@@ -17,6 +17,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    @Override
    public TemplateDto newDto(IModel model, String packagez) {
       BaseServiceTemplateDto dto = (BaseServiceTemplateDto) super.newDto(model, packagez);
+      setBaseInfo(dto, model, packagez);
       setTransportTopics(dto, model, packagez);
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
@@ -26,6 +27,12 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    @Override
    protected TemplateDto createDto() {
       return new BaseServiceTemplateDto();
+   }
+
+   private static void setBaseInfo(BaseServiceTemplateDto dto, IModel model, String packagez) {
+      String basePackageName = String.format("%s.%s", model.getParent().getName(), model.getName().toLowerCase());
+      dto.setBasePackageName(basePackageName)
+            .setExportedPackages(Collections.singleton(basePackageName + ".*"));
    }
 
    private static void setTransportTopics(BaseServiceTemplateDto dto, IModel model, String packagez) {

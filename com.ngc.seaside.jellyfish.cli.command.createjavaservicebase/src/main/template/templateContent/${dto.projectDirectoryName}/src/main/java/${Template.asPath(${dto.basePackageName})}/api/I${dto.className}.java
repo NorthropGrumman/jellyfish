@@ -1,4 +1,4 @@
-package ${dto.nonSuffixPackageName}.api;
+package ${dto.basePackageName}.api;
 
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 

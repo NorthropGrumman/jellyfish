@@ -70,12 +70,12 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
-      String nonSuffixPackageName = String.format("%s.%s", groupId, artifactIdWithoutSuffix);
+      //String nonSuffixPackageName = String.format("%s.%s", groupId, artifactIdWithoutSuffix);
 
       BaseServiceTemplateDto dto = (BaseServiceTemplateDto) templateDaoFactory.newDto(model, packagez);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
-      dto.setNonSuffixPackageName(nonSuffixPackageName);
-      dto.setExportedPackages(Collections.singleton(nonSuffixPackageName + ".*"));
+      //dto.setBasePackageName(nonSuffixPackageName);
+      //dto.setExportedPackages(Collections.singleton(nonSuffixPackageName + ".*"));
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));

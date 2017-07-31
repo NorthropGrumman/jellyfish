@@ -13,7 +13,8 @@ public class BaseServiceTemplateDto extends TemplateDto {
    private Set<String> transportTopics;
    private List<MethodDto> publishingMethods;
    private List<MethodDto> receivingMethods;
-   private String nonSuffixPackageName;
+   private String basePackageName;
+   private ServiceInterfaceDto serviceInterfaceDto;
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -58,12 +59,22 @@ public class BaseServiceTemplateDto extends TemplateDto {
       return this;
    }
 
-   public String getNonSuffixPackageName() {
-      return nonSuffixPackageName;
+   public String getBasePackageName() {
+      return basePackageName;
    }
 
-   public BaseServiceTemplateDto setNonSuffixPackageName(String nonSuffixPackageName) {
-      this.nonSuffixPackageName = nonSuffixPackageName;
+   public BaseServiceTemplateDto setBasePackageName(String basePackageName) {
+      this.basePackageName = basePackageName;
+      return this;
+   }
+
+   public ServiceInterfaceDto getServiceInterfaceDto() {
+      return serviceInterfaceDto;
+   }
+
+   public BaseServiceTemplateDto setServiceInterfaceDto(
+         ServiceInterfaceDto serviceInterfaceDto) {
+      this.serviceInterfaceDto = serviceInterfaceDto;
       return this;
    }
 }
