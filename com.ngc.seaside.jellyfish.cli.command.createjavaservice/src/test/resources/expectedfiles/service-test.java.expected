@@ -32,7 +32,7 @@ public class EngagementTrackPriorityServiceTest {
    }
 
    @Test
-   public calculateTrackPriorityTest(){
+   public void calculateTrackPriorityTest(){
        // TODO Auto-generated method stub
        fail("not implemented");
    }
