@@ -119,11 +119,15 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceCommand(capture.getValue(), "my-project");
 
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceConfigCommand(capture.getValue(), "my-project");
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateServiceBaseCommand(capture.getValue(), "my-project");
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME),
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), "my-project");
    }
@@ -164,11 +168,15 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceConfigCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateServiceBaseCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME),
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
    }
@@ -219,6 +227,13 @@ public class CreateJavaServiceProjectCommandTest {
 
    private void verifyParametersForCreateConnectorCommand(IJellyFishCommandOptions options,
                                                           String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreateServiceConfigCommand(IJellyFishCommandOptions options,
+                                                              String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());

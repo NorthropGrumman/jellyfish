@@ -42,7 +42,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_DISTRIBUTION_COMMAND_NAME = "create-java-distribution";
    static final String CREATE_JAVA_SERVICE_COMMAND_NAME = "create-java-service";
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
-   static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME = "create-java-service-connector";
+   static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME = "create-java-service-connector";
+   static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
 
    public static final String NAME = "create-java-service-project";
 
@@ -69,6 +70,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       createEventsProject(ctx);
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
+      createJavaServiceConfigProject(ctx);
 
       // TODO TH: put these in the generated-projects directory.
       // Allow user to specific the name of the directory for generated projects.
@@ -168,6 +170,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       doRunCommand(CREATE_JAVA_SERVICE_COMMAND_NAME, delegateOptions);
    }
 
+   private void createJavaServiceConfigProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME, delegateOptions);
+   }
+
    private void createJavaServiceBaseProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
@@ -182,7 +192,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             ctx.standardCommandOptions,
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
-      doRunCommand(CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_ANME, delegateOptions);
+      doRunCommand(CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME, delegateOptions);
    }
 
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
