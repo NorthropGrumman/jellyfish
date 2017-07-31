@@ -26,7 +26,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
@@ -70,12 +69,9 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
-      //String nonSuffixPackageName = String.format("%s.%s", groupId, artifactIdWithoutSuffix);
 
       BaseServiceTemplateDto dto = (BaseServiceTemplateDto) templateDaoFactory.newDto(model, packagez);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
-      //dto.setBasePackageName(nonSuffixPackageName);
-      //dto.setExportedPackages(Collections.singleton(nonSuffixPackageName + ".*"));
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
