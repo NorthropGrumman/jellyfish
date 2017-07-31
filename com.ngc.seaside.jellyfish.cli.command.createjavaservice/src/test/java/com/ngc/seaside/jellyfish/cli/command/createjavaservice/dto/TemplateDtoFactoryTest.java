@@ -50,12 +50,14 @@ public class TemplateDtoFactoryTest {
                    "engagementtrackpriorityservice",
                    dto.getArtifactId());
 
+      assertNotNull("base class dto not set!",
+                    dto.getAbstractServiceDto());
       assertEquals("baseClassName not correct!",
                    "AbstractEngagementTrackPriorityService",
-                   dto.getBaseClassName());
+                   dto.getAbstractServiceDto().getClassName());
       assertEquals("baseClassPackageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
-                   dto.getBaseClassPackageName());
+                   dto.getAbstractServiceDto().getPackageName());
 
       assertNotNull("interface dto not set!",
                     dto.getServiceInterfaceDto());

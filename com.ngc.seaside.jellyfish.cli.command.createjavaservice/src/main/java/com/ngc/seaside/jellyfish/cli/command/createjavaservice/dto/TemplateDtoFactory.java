@@ -40,8 +40,9 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
    }
 
    private static void setBaseClassInfo(TemplateDto dto, IModel model, String packagez) {
-      dto.setBaseClassName("Abstract" + model.getName())
-            .setBaseClassPackageName(packagez + ".base.impl");
+      dto.setAbstractServiceDto(new AbstractServiceDto()
+                                      .setClassName("Abstract" + model.getName())
+                                      .setPackageName(packagez + ".base.impl"));
    }
 
    private static void setInterfaceInfo(TemplateDto dto, IModel model, String packagez) {
@@ -125,7 +126,9 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
 
    private static void setImports(TemplateDto dao, IModel model, String packagez) {
       Set<String> imports = new TreeSet<>();
-      imports.add(dao.getBaseClassPackageName() + "." + dao.getBaseClassName());
+      imports.add(dao.getAbstractServiceDto().getPackageName()
+                  + "."
+                  + dao.getAbstractServiceDto().getClassName());
       imports.add(dao.getServiceInterfaceDto().getPackageName()
                   + "."
                   + dao.getServiceInterfaceDto().getInterfaceName());

@@ -6,14 +6,13 @@ import java.util.Set;
 public class TemplateDto {
 
    private String className;
-   private String baseClassName;
    private String packageName;
-   private String baseClassPackageName;
    private String artifactId;
    private String projectDirectoryName;
    private List<MethodDto> methods;
    private Set<String> imports;
    private ServiceInterfaceDto serviceInterfaceDto;
+   private AbstractServiceDto abstractServiceDto;
 
    public String getClassName() {
       return className;
@@ -24,30 +23,12 @@ public class TemplateDto {
       return this;
    }
 
-   public String getBaseClassName() {
-      return baseClassName;
-   }
-
-   public TemplateDto setBaseClassName(String baseClassName) {
-      this.baseClassName = baseClassName;
-      return this;
-   }
-
    public String getPackageName() {
       return packageName;
    }
 
    public TemplateDto setPackageName(String packageName) {
       this.packageName = packageName;
-      return this;
-   }
-
-   public String getBaseClassPackageName() {
-      return baseClassPackageName;
-   }
-
-   public TemplateDto setBaseClassPackageName(String baseClassPackageName) {
-      this.baseClassPackageName = baseClassPackageName;
       return this;
    }
 
@@ -94,6 +75,16 @@ public class TemplateDto {
    public TemplateDto setServiceInterfaceDto(
          ServiceInterfaceDto serviceInterfaceDto) {
       this.serviceInterfaceDto = serviceInterfaceDto;
+      return this;
+   }
+
+   public AbstractServiceDto getAbstractServiceDto() {
+      return abstractServiceDto;
+   }
+
+   public TemplateDto setAbstractServiceDto(
+         AbstractServiceDto abstractServiceDto) {
+      this.abstractServiceDto = abstractServiceDto;
       return this;
    }
 }

@@ -80,7 +80,6 @@ public class CreateJavaServiceBaseCommandIT {
    }
 
    @Test
-   //@Ignore("not passing yet")
    public void testDoesGenerateServiceWithSuppliedCommands() throws Throwable {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
