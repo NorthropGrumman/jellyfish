@@ -25,8 +25,8 @@ public class GradleSettingsUtilities {
    }
 
    /**
-    * Attempt to add a Gradle project to the settings.gradle file if the file actually exists in the output directory.
-    * If this file does not exists, it does nothing.
+    * Attempt to add a Gradle project to the settings.gradle file if the file actually exists in the output directory, otherwise to the output directory's parent settings.gradle.
+    * If neither file exists, it does nothing.
     *
     * @see #addProject(IParameterCollection)
     */
@@ -39,10 +39,15 @@ public class GradleSettingsUtilities {
                              OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
       }
 
-      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
-      Path settings = Paths.get(outputDirectory.normalize().toString(), SETTINGS_FILE_NAME);
+      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue()).normalize();
+      Path settings = outputDirectory.resolve(SETTINGS_FILE_NAME);
       if (settings.toFile().isFile()) {
-         addProject(parameters);
+         addProject(parameters, settings);
+      } else {
+         settings = outputDirectory.getParent().resolve(SETTINGS_FILE_NAME);
+         if (settings.toFile().isFile()) {
+            addProject(parameters, settings);
+         }
       }
    }
 
