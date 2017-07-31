@@ -1,4 +1,9 @@
 #set( $D = '$' )
+
+ext {
+   threatevalEngagementtrackpriorityserviceMessagesVersion = '1.0'
+}
+
 dependencies {
    compile project(':engagementtrackpriorityservice.events')
    compile project(':engagementtrackpriorityservice.base')
