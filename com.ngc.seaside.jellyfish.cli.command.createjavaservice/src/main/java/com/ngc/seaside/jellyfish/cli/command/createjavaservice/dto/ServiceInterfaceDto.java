@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
 import java.util.Set;
 

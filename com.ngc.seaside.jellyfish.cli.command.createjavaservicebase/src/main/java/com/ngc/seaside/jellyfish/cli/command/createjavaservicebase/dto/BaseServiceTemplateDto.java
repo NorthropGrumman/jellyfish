@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.MethodDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceInterfaceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
 
 import java.util.List;

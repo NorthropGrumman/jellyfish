@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,12 +57,14 @@ public class TemplateDtoFactoryTest {
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
                    dto.getBaseClassPackageName());
 
+      assertNotNull("interface dto not set!",
+                    dto.getServiceInterfaceDto());
       assertEquals("interfaceName not correct!",
                    "IEngagementTrackPriorityService",
-                   dto.getInterfaceName());
+                   dto.getServiceInterfaceDto().getInterfaceName());
       assertEquals("interfacePackageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
-                   dto.getInterfacePackageName());
+                   dto.getServiceInterfaceDto().getPackageName());
 
       assertEquals("wrong number of methods!",
                    1,

@@ -18,7 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = ${dto.interfaceName}.class, IServiceModule.class}, immediate = true)
+@Component(service = ${dto.serviceInterfaceDto.interfaceName}.class, IServiceModule.class}, immediate = true)
 public class ${dto.className} extends ${dto.baseClassName} {
 
 #foreach ($method in $dto.methods)

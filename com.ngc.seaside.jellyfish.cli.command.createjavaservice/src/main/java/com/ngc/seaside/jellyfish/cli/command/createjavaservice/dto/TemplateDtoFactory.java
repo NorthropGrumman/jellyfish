@@ -45,8 +45,9 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
    }
 
    private static void setInterfaceInfo(TemplateDto dto, IModel model, String packagez) {
-      dto.setInterfaceName("I" + model.getName())
-            .setInterfacePackageName(packagez + ".api");
+      dto.setServiceInterfaceDto(new ServiceInterfaceDto()
+                                       .setInterfaceName("I" + model.getName())
+                                       .setPackageName(packagez + ".api"));
    }
 
    private static void setMethods(TemplateDto dto, IModel model, String packagez) {
@@ -125,7 +126,9 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
    private static void setImports(TemplateDto dao, IModel model, String packagez) {
       Set<String> imports = new TreeSet<>();
       imports.add(dao.getBaseClassPackageName() + "." + dao.getBaseClassName());
-      imports.add(dao.getInterfacePackageName() + "." + dao.getInterfaceName());
+      imports.add(dao.getServiceInterfaceDto().getPackageName()
+                  + "."
+                  + dao.getServiceInterfaceDto().getInterfaceName());
 
       for (MethodDto m : dao.getMethods()) {
          if (m.isReturns()) {

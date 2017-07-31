@@ -16,9 +16,10 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
 
    @Override
    public TemplateDto newDto(IModel model, String packagez) {
-      BaseServiceTemplateDto dto = (BaseServiceTemplateDto) super.newDto(model, packagez);
-      setBaseInfo(dto, model, packagez);
-      setInterfaceInfo2(dto, model, packagez);
+      String basePackageName = String.format("%s.%s", model.getParent().getName(), model.getName().toLowerCase());
+      BaseServiceTemplateDto dto = (BaseServiceTemplateDto) super.newDto(model, basePackageName);
+      setBaseInfo(dto, model, basePackageName);
+      setInterfaceImports(dto, model, packagez);
       setTransportTopics(dto, model, packagez);
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
@@ -30,13 +31,12 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       return new BaseServiceTemplateDto();
    }
 
-   private static void setBaseInfo(BaseServiceTemplateDto dto, IModel model, String packagez) {
-      String basePackageName = String.format("%s.%s", model.getParent().getName(), model.getName().toLowerCase());
+   private static void setBaseInfo(BaseServiceTemplateDto dto, IModel model, String basePackageName) {
       dto.setBasePackageName(basePackageName)
             .setExportedPackages(Collections.singleton(basePackageName + ".*"));
    }
 
-   private static void setInterfaceInfo2(BaseServiceTemplateDto dto, IModel model, String packagez) {
+   private static void setInterfaceImports(BaseServiceTemplateDto dto, IModel model, String packagez) {
       Set<String> imports = new TreeSet<>();
       for (MethodDto method : dto.getMethods()) {
          if (method.isReturns()) {
@@ -46,12 +46,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
             imports.add(dto.getBasePackageName() + ".events." + arg.getArgumentClassName());
          }
       }
-
-      ServiceInterfaceDto interfaceDto = new ServiceInterfaceDto()
-            .setPackageName(dto.getBasePackageName() + ".api")
-            .setInterfaceName("I" + dto.getClassName())
-            .setImports(imports);
-      dto.setServiceInterfaceDto(interfaceDto);
+      dto.getServiceInterfaceDto().setImports(imports);
    }
 
    private static void setTransportTopics(BaseServiceTemplateDto dto, IModel model, String packagez) {

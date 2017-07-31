@@ -9,12 +9,11 @@ public class TemplateDto {
    private String baseClassName;
    private String packageName;
    private String baseClassPackageName;
-   private String interfaceName;
-   private String interfacePackageName;
    private String artifactId;
    private String projectDirectoryName;
    private List<MethodDto> methods;
    private Set<String> imports;
+   private ServiceInterfaceDto serviceInterfaceDto;
 
    public String getClassName() {
       return className;
@@ -79,30 +78,22 @@ public class TemplateDto {
       return this;
    }
 
-   public String getInterfaceName() {
-      return interfaceName;
-   }
-
-   public TemplateDto setInterfaceName(String interfaceName) {
-      this.interfaceName = interfaceName;
-      return this;
-   }
-
-   public String getInterfacePackageName() {
-      return interfacePackageName;
-   }
-
-   public TemplateDto setInterfacePackageName(String interfacePackageName) {
-      this.interfacePackageName = interfacePackageName;
-      return this;
-   }
-
    public String getProjectDirectoryName() {
       return projectDirectoryName;
    }
 
    public TemplateDto setProjectDirectoryName(String projectDirectoryName) {
       this.projectDirectoryName = projectDirectoryName;
+      return this;
+   }
+
+   public ServiceInterfaceDto getServiceInterfaceDto() {
+      return serviceInterfaceDto;
+   }
+
+   public TemplateDto setServiceInterfaceDto(
+         ServiceInterfaceDto serviceInterfaceDto) {
+      this.serviceInterfaceDto = serviceInterfaceDto;
       return this;
    }
 }
