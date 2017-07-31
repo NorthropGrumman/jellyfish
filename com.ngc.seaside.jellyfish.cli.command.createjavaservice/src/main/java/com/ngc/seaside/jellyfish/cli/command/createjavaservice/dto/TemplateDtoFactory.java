@@ -20,13 +20,17 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
 
    @Override
    public TemplateDto newDto(IModel model, String packagez) {
-      TemplateDto dto = new TemplateDto();
+      TemplateDto dto = createDto();
       setClassInfo(dto, model, packagez);
       setBaseClassInfo(dto, model, packagez);
       setInterfaceInfo(dto, model, packagez);
       setMethods(dto, model, packagez);
       setImports(dto, model, packagez);
       return dto;
+   }
+
+   protected TemplateDto createDto() {
+      return new TemplateDto();
    }
 
    private static void setClassInfo(TemplateDto dto, IModel model, String packagez) {
