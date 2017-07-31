@@ -115,6 +115,13 @@ public class CreateJavaServiceBaseCommandIT {
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java"));
+
+      assertFilesEquals(
+            "base class not correct!",
+            Paths.get("src", "test", "resources", "expectedfiles", "service-base-class.java.expected"),
+            Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+                      "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                      "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java"));
    }
 
    @Test

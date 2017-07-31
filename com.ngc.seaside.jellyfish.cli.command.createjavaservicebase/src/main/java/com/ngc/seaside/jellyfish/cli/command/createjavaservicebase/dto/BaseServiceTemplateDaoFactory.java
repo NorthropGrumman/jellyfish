@@ -23,6 +23,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       setTransportTopics(dto, model, packagez);
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
+      setBaseClassInfoAndImports(dto, model, packagez);
       return dto;
    }
 
@@ -66,6 +67,8 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
                                          IModel model,
                                          String packagez) {
       // TODO TH: this is a hacky way to figure out what to publish.
+      // Use model output instead; however we need to have the scenario to understand *how* the service outputs the
+      // output.
       List<MethodDto> methods = new ArrayList<>(dto.getMethods().size());
       for (MethodDto methodDto : dto.getMethods()) {
          if (methodDto.isReturns()) {
@@ -102,19 +105,26 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       dto.setReceivingMethods(methods);
    }
 
-//
-//   private static MethodDto getPublishMethod(IScenario scenario, String packagez) {
-//      MethodDto dao;
-//      if (isReceivingAndPublishing(scenario)) {
-//         dao = getReceivingAndPublishingMethod(scenario, packagez);
-//      } else {
-//         // Should probably ignore this and not throw an exception.
-//         throw new IllegalArgumentException(String.format("scenario %s.%s contains no supported verbs!",
-//                                                          scenario.getParent().getFullyQualifiedName(),
-//                                                          scenario.getName()));
-//      }
-//      return dao;
-//   }
+   private static void setBaseClassInfoAndImports(BaseServiceTemplateDto dto, IModel model, String packagez) {
+      Set<String> imports = new TreeSet<>();
+      for (MethodDto receive : dto.getMethods()) {
+         // TODO TH: handle scenarios with multiple inputs.
+         ArgumentDto arg = receive.getArguments().get(0);
+         imports.add(String.format("%s.%s", arg.getArgumentPackageName(), arg.getArgumentClassName()));
+      }
+      for (MethodDto publish : dto.getPublishingMethods()) {
+         for (ArgumentDto arg : publish.getArguments()) {
+            imports.add(String.format("%s.%s", arg.getArgumentPackageName(), arg.getArgumentClassName()));
+         }
+      }
+      imports.add(String.format("%s.%s",
+                                dto.getServiceInterfaceDto().getPackageName(),
+                                dto.getServiceInterfaceDto().getInterfaceName()));
+
+      dto.getAbstractServiceDto()
+            .setModelName(model.getFullyQualifiedName())
+            .setImports(imports);
+   }
 
    private static String constantize(String value) {
       char[] chars = value.toCharArray();
