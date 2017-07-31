@@ -1,6 +1,6 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
-public class ArgumentDao {
+public class ArgumentDto {
 
    private String argumentName;
    private String argumentClassName;
@@ -10,7 +10,7 @@ public class ArgumentDao {
       return argumentName;
    }
 
-   public ArgumentDao setArgumentName(String argumentName) {
+   public ArgumentDto setArgumentName(String argumentName) {
       this.argumentName = argumentName;
       return this;
    }
@@ -19,7 +19,7 @@ public class ArgumentDao {
       return argumentClassName;
    }
 
-   public ArgumentDao setArgumentClassName(String argumentClassName) {
+   public ArgumentDto setArgumentClassName(String argumentClassName) {
       this.argumentClassName = argumentClassName;
       return this;
    }
@@ -28,7 +28,7 @@ public class ArgumentDao {
       return argumentPackageName;
    }
 
-   public ArgumentDao setArgumentPackageName(String argumentPackageName) {
+   public ArgumentDto setArgumentPackageName(String argumentPackageName) {
       this.argumentPackageName = argumentPackageName;
       return this;
    }

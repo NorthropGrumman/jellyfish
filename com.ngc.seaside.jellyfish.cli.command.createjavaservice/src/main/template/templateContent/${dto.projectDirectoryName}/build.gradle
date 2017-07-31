@@ -1,8 +1,8 @@
 #set( $D = '$' )
 
 dependencies {
-   compile project(":${dao.artifactId}.events")
-   compile project(":${dao.artifactId}.base")
+   compile project(":${dto.artifactId}.events")
+   compile project(":${dto.artifactId}.base")
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"

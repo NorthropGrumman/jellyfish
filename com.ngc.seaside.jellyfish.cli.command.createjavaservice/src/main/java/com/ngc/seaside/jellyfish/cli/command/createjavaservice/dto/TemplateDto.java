@@ -1,9 +1,9 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
 import java.util.List;
 import java.util.Set;
 
-public class TemplateDao {
+public class TemplateDto {
 
    private String className;
    private String baseClassName;
@@ -13,14 +13,14 @@ public class TemplateDao {
    private String interfacePackageName;
    private String artifactId;
    private String projectDirectoryName;
-   private List<MethodDao> methods;
+   private List<MethodDto> methods;
    private Set<String> imports;
 
    public String getClassName() {
       return className;
    }
 
-   public TemplateDao setClassName(String className) {
+   public TemplateDto setClassName(String className) {
       this.className = className;
       return this;
    }
@@ -29,7 +29,7 @@ public class TemplateDao {
       return baseClassName;
    }
 
-   public TemplateDao setBaseClassName(String baseClassName) {
+   public TemplateDto setBaseClassName(String baseClassName) {
       this.baseClassName = baseClassName;
       return this;
    }
@@ -38,7 +38,7 @@ public class TemplateDao {
       return packageName;
    }
 
-   public TemplateDao setPackageName(String packageName) {
+   public TemplateDto setPackageName(String packageName) {
       this.packageName = packageName;
       return this;
    }
@@ -47,7 +47,7 @@ public class TemplateDao {
       return baseClassPackageName;
    }
 
-   public TemplateDao setBaseClassPackageName(String baseClassPackageName) {
+   public TemplateDto setBaseClassPackageName(String baseClassPackageName) {
       this.baseClassPackageName = baseClassPackageName;
       return this;
    }
@@ -56,16 +56,16 @@ public class TemplateDao {
       return artifactId;
    }
 
-   public TemplateDao setArtifactId(String artifactId) {
+   public TemplateDto setArtifactId(String artifactId) {
       this.artifactId = artifactId;
       return this;
    }
 
-   public List<MethodDao> getMethods() {
+   public List<MethodDto> getMethods() {
       return methods;
    }
 
-   public TemplateDao setMethods(List<MethodDao> methods) {
+   public TemplateDto setMethods(List<MethodDto> methods) {
       this.methods = methods;
       return this;
    }
@@ -74,7 +74,7 @@ public class TemplateDao {
       return imports;
    }
 
-   public TemplateDao setImports(Set<String> imports) {
+   public TemplateDto setImports(Set<String> imports) {
       this.imports = imports;
       return this;
    }
@@ -83,7 +83,7 @@ public class TemplateDao {
       return interfaceName;
    }
 
-   public TemplateDao setInterfaceName(String interfaceName) {
+   public TemplateDto setInterfaceName(String interfaceName) {
       this.interfaceName = interfaceName;
       return this;
    }
@@ -92,7 +92,7 @@ public class TemplateDao {
       return interfacePackageName;
    }
 
-   public TemplateDao setInterfacePackageName(String interfacePackageName) {
+   public TemplateDto setInterfacePackageName(String interfacePackageName) {
       this.interfacePackageName = interfacePackageName;
       return this;
    }
@@ -101,7 +101,7 @@ public class TemplateDao {
       return projectDirectoryName;
    }
 
-   public TemplateDao setProjectDirectoryName(String projectDirectoryName) {
+   public TemplateDto setProjectDirectoryName(String projectDirectoryName) {
       this.projectDirectoryName = projectDirectoryName;
       return this;
    }

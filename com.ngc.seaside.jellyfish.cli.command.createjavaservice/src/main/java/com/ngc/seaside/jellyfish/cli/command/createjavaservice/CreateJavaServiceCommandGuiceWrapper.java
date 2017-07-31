@@ -9,7 +9,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
@@ -20,7 +20,7 @@ public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
    public CreateJavaServiceCommandGuiceWrapper(ILogService logService,
                                                IPromptUserService promptUserService,
                                                ITemplateService templateService,
-                                               ITemplateDaoFactory templateDaoFactory) {
+                                               ITemplateDtoFactory templateDaoFactory) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);

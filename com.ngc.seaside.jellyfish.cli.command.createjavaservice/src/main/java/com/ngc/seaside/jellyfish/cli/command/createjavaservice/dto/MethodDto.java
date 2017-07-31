@@ -1,15 +1,15 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MethodDao {
+public class MethodDto {
 
    private String methodName;
    private boolean override;
    private boolean returns;
-   private ArgumentDao returnArgument;
-   private List<ArgumentDao> arguments;
+   private ArgumentDto returnArgument;
+   private List<ArgumentDto> arguments;
 
    public String getReturnSnippet() {
       return returns ? returnArgument.getArgumentClassName() : "void";
@@ -25,7 +25,7 @@ public class MethodDao {
       return methodName;
    }
 
-   public MethodDao setMethodName(String methodName) {
+   public MethodDto setMethodName(String methodName) {
       this.methodName = methodName;
       return this;
    }
@@ -34,7 +34,7 @@ public class MethodDao {
       return override;
    }
 
-   public MethodDao setOverride(boolean override) {
+   public MethodDto setOverride(boolean override) {
       this.override = override;
       return this;
    }
@@ -43,25 +43,25 @@ public class MethodDao {
       return returns;
    }
 
-   public MethodDao setReturns(boolean returns) {
+   public MethodDto setReturns(boolean returns) {
       this.returns = returns;
       return this;
    }
 
-   public ArgumentDao getReturnArgument() {
+   public ArgumentDto getReturnArgument() {
       return returnArgument;
    }
 
-   public MethodDao setReturnArgument(ArgumentDao returnArgument) {
+   public MethodDto setReturnArgument(ArgumentDto returnArgument) {
       this.returnArgument = returnArgument;
       return this;
    }
 
-   public List<ArgumentDao> getArguments() {
+   public List<ArgumentDto> getArguments() {
       return arguments;
    }
 
-   public MethodDao setArguments(List<ArgumentDao> arguments) {
+   public MethodDto setArguments(List<ArgumentDto> arguments) {
       this.arguments = arguments;
       return this;
    }

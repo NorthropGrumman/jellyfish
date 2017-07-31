@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TemplateDaoFactoryTest {
+public class TemplateDtoFactoryTest {
 
-   private TemplateDaoFactory factory;
+   private TemplateDtoFactory factory;
 
    private Model model;
 
@@ -32,42 +32,42 @@ public class TemplateDaoFactoryTest {
    @Before
    public void setup() throws Throwable {
       model = newModelForTesting();
-      factory = new TemplateDaoFactory();
+      factory = new TemplateDtoFactory();
    }
 
    @Test
    public void testDoesCreateDao() throws Throwable {
-      TemplateDao dao = factory.newDao(model, packagez);
+      TemplateDto dto = factory.newDto(model, packagez);
 
       assertEquals("className not correct!",
                    "EngagementTrackPriorityService",
-                   dao.getClassName());
+                   dto.getClassName());
       assertEquals("packageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.impl",
-                   dao.getPackageName());
+                   dto.getPackageName());
       assertEquals("artifactId not correct!",
                    "engagementtrackpriorityservice",
-                   dao.getArtifactId());
+                   dto.getArtifactId());
 
       assertEquals("baseClassName not correct!",
                    "AbstractEngagementTrackPriorityService",
-                   dao.getBaseClassName());
+                   dto.getBaseClassName());
       assertEquals("baseClassPackageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
-                   dao.getBaseClassPackageName());
+                   dto.getBaseClassPackageName());
 
       assertEquals("interfaceName not correct!",
                    "IEngagementTrackPriorityService",
-                   dao.getInterfaceName());
+                   dto.getInterfaceName());
       assertEquals("interfacePackageName not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
-                   dao.getInterfacePackageName());
+                   dto.getInterfacePackageName());
 
       assertEquals("wrong number of methods!",
                    1,
-                   dao.getMethods().size());
+                   dto.getMethods().size());
 
-      MethodDao m = dao.getMethods().get(0);
+      MethodDto m = dto.getMethods().get(0);
       assertEquals("methodName not correct!",
                    "calculateTrackPriority",
                    m.getMethodName());
@@ -85,7 +85,7 @@ public class TemplateDaoFactoryTest {
       assertEquals("arguments count is incorrect for method!",
                    1,
                    m.getArguments().size());
-      ArgumentDao arg = m.getArguments().get(0);
+      ArgumentDto arg = m.getArguments().get(0);
       assertEquals("arg type not correct!",
                    "TrackEngagementStatus",
                    arg.getArgumentClassName());
@@ -93,13 +93,13 @@ public class TemplateDaoFactoryTest {
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events",
                    arg.getArgumentPackageName());
 
-      assertTrue("missing import", dao.getImports().contains(
+      assertTrue("missing import", dto.getImports().contains(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService"));
-      assertTrue("missing import", dao.getImports().contains(
+      assertTrue("missing import", dto.getImports().contains(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl.AbstractEngagementTrackPriorityService"));
-      assertTrue("missing import", dao.getImports().contains(
+      assertTrue("missing import", dto.getImports().contains(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus"));
-      assertTrue("missing import", dao.getImports().contains(
+      assertTrue("missing import", dto.getImports().contains(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority"));
    }
 

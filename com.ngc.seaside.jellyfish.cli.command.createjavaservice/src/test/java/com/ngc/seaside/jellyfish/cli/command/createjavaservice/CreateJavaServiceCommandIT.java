@@ -5,9 +5,9 @@ import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDaoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDaoFactoryTest;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDtoFactoryTest;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 
@@ -35,7 +35,7 @@ public class CreateJavaServiceCommandIT {
 
    private MockedTemplateService templateService;
 
-   private ITemplateDaoFactory templateDaoFactory;
+   private ITemplateDtoFactory templateDaoFactory;
 
    private DefaultParameterCollection parameters;
 
@@ -60,11 +60,11 @@ public class CreateJavaServiceCommandIT {
             .setTemplateDirectory(CreateJavaServiceCommand.class.getPackage().getName(),
                                   Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new TemplateDaoFactory();
+      templateDaoFactory = new TemplateDtoFactory();
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService"))
-            .thenReturn(Optional.of(TemplateDaoFactoryTest.newModelForTesting()));
+            .thenReturn(Optional.of(TemplateDtoFactoryTest.newModelForTesting()));
 
       parameters = new DefaultParameterCollection();
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);

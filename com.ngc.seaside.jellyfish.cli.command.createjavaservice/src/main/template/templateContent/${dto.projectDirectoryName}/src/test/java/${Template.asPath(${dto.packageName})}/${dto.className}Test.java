@@ -1,4 +1,4 @@
-package ${dao.packageName};
+package ${dto.packageName};
 
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -13,9 +13,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${dao.className}Test {
+public class ${dto.className}Test {
 
-   private ${dao.className} service;
+   private ${dto.className} service;
 
    @Mock
    private ILogService logService;
@@ -25,13 +25,13 @@ public class ${dao.className}Test {
 
    @Before
    public void setup() throws Throwable {
-      service = new ${dao.className}();
+      service = new ${dto.className}();
       service.setLogService(logService);
       service.setEventService(eventService);
       service.activate();
    }
 
-#foreach ($method in $dao.methods)
+#foreach ($method in $dto.methods)
    @Test
    public ${method.methodName}Test(){
        // TODO Auto-generated method stub

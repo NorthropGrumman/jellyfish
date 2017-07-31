@@ -1,4 +1,4 @@
-package ${dao.packageName};
+package ${dto.packageName};
 
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
@@ -7,7 +7,7 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.seaside.service.fault.api.ServiceInputFaultException;
 
-#foreach ($i in $dao.imports)
+#foreach ($i in $dto.imports)
 import ${i};
 #end
 
@@ -18,10 +18,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = ${dao.interfaceName}.class, IServiceModule.class}, immediate = true)
-public class ${dao.className} extends ${dao.baseClassName} {
+@Component(service = ${dto.interfaceName}.class, IServiceModule.class}, immediate = true)
+public class ${dto.className} extends ${dto.baseClassName} {
 
-#foreach ($method in $dao.methods)
+#foreach ($method in $dto.methods)
 #if( ${method.override} )
    @Override
 #end

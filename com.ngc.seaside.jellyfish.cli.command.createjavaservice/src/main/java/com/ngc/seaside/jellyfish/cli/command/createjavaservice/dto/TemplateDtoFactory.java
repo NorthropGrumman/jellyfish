@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
@@ -16,45 +16,45 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class TemplateDaoFactory implements ITemplateDaoFactory {
+public class TemplateDtoFactory implements ITemplateDtoFactory {
 
    @Override
-   public TemplateDao newDao(IModel model, String packagez) {
-      TemplateDao dao = new TemplateDao();
-      setClassInfo(dao, model, packagez);
-      setBaseClassInfo(dao, model, packagez);
-      setInterfaceInfo(dao, model, packagez);
-      setMethods(dao, model, packagez);
-      setImports(dao, model, packagez);
-      return dao;
+   public TemplateDto newDto(IModel model, String packagez) {
+      TemplateDto dto = new TemplateDto();
+      setClassInfo(dto, model, packagez);
+      setBaseClassInfo(dto, model, packagez);
+      setInterfaceInfo(dto, model, packagez);
+      setMethods(dto, model, packagez);
+      setImports(dto, model, packagez);
+      return dto;
    }
 
-   private static void setClassInfo(TemplateDao dao, IModel model, String packagez) {
-      dao.setPackageName(packagez + ".impl")
+   private static void setClassInfo(TemplateDto dto, IModel model, String packagez) {
+      dto.setPackageName(packagez + ".impl")
             .setClassName(model.getName())
             .setArtifactId(model.getName().toLowerCase());
    }
 
-   private static void setBaseClassInfo(TemplateDao dao, IModel model, String packagez) {
-      dao.setBaseClassName("Abstract" + model.getName())
+   private static void setBaseClassInfo(TemplateDto dto, IModel model, String packagez) {
+      dto.setBaseClassName("Abstract" + model.getName())
             .setBaseClassPackageName(packagez + ".base.impl");
    }
 
-   private static void setInterfaceInfo(TemplateDao dao, IModel model, String packagez) {
-      dao.setInterfaceName("I" + model.getName())
+   private static void setInterfaceInfo(TemplateDto dto, IModel model, String packagez) {
+      dto.setInterfaceName("I" + model.getName())
             .setInterfacePackageName(packagez + ".api");
    }
 
-   private static void setMethods(TemplateDao dao, IModel model, String packagez) {
-      List<MethodDao> methods = new ArrayList<>(model.getScenarios().size());
+   private static void setMethods(TemplateDto dto, IModel model, String packagez) {
+      List<MethodDto> methods = new ArrayList<>(model.getScenarios().size());
       for (IScenario scenario : model.getScenarios()) {
          methods.add(getMethod(scenario, packagez));
       }
-      dao.setMethods(methods);
+      dto.setMethods(methods);
    }
 
-   private static MethodDao getMethod(IScenario scenario, String packagez) {
-      MethodDao dao;
+   private static MethodDto getMethod(IScenario scenario, String packagez) {
+      MethodDto dao;
       if (isReceivingAndPublishing(scenario)) {
          dao = getReceivingAndPublishingMethod(scenario, packagez);
       } else {
@@ -76,8 +76,8 @@ public class TemplateDaoFactory implements ITemplateDaoFactory {
       return publishing && receiving;
    }
 
-   private static MethodDao getReceivingAndPublishingMethod(IScenario scenario, String packagez) {
-      MethodDao dao = new MethodDao()
+   private static MethodDto getReceivingAndPublishingMethod(IScenario scenario, String packagez) {
+      MethodDto dao = new MethodDto()
             .setOverride(true)
             .setMethodName(scenario.getName())
             .setReturns(true)
@@ -108,29 +108,29 @@ public class TemplateDaoFactory implements ITemplateDaoFactory {
       return dao;
    }
 
-   private static ArgumentDao getEventArgument(INamedChildCollection<IModel, IDataReferenceField> fields,
+   private static ArgumentDto getEventArgument(INamedChildCollection<IModel, IDataReferenceField> fields,
                                                String fieldName,
                                                String packagez) {
       IDataReferenceField field = fields.getByName(fieldName).get();
-      return new ArgumentDao()
+      return new ArgumentDto()
             .setArgumentName(field.getName())
             .setArgumentClassName(field.getType().getName())
             .setArgumentPackageName(packagez + ".events");
    }
 
-   private static void setImports(TemplateDao dao, IModel model, String packagez) {
+   private static void setImports(TemplateDto dao, IModel model, String packagez) {
       Set<String> imports = new TreeSet<>();
       imports.add(dao.getBaseClassPackageName() + "." + dao.getBaseClassName());
       imports.add(dao.getInterfacePackageName() + "." + dao.getInterfaceName());
 
-      for (MethodDao m : dao.getMethods()) {
+      for (MethodDto m : dao.getMethods()) {
          if (m.isReturns()) {
             imports.add(m.getReturnArgument().getArgumentPackageName()
                         + "."
                         + m.getReturnArgument().getArgumentClassName());
          }
 
-         for (ArgumentDao arg : m.getArguments()) {
+         for (ArgumentDto arg : m.getArguments()) {
             imports.add(arg.getArgumentPackageName()
                         + "."
                         + arg.getArgumentClassName());

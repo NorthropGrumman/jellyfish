@@ -12,8 +12,8 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.ITemplateDaoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dao.TemplateDao;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -44,7 +44,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
-   private ITemplateDaoFactory templateDaoFactory;
+   private ITemplateDtoFactory templateDaoFactory;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -56,11 +56,11 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
 
-      TemplateDao dao = templateDaoFactory.newDao(model, packagez);
-      dao.setProjectDirectoryName(projectDir.getFileName().toString());
+      TemplateDto dto = templateDaoFactory.newDto(model, packagez);
+      dto.setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>("dao", dao));
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
                              parameters,
                              outputDir,
@@ -161,11 +161,11 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          unbind = "removeTemplateDaoFactory")
-   public void setTemplateDaoFactory(ITemplateDaoFactory ref) {
+   public void setTemplateDaoFactory(ITemplateDtoFactory ref) {
       this.templateDaoFactory = ref;
    }
 
-   public void removeTemplateDaoFactory(ITemplateDaoFactory ref) {
+   public void removeTemplateDaoFactory(ITemplateDtoFactory ref) {
       setTemplateDaoFactory(null);
    }
 
