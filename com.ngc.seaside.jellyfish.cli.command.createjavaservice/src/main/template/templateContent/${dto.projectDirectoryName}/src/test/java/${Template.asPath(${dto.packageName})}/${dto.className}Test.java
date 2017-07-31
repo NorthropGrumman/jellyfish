@@ -33,7 +33,7 @@ public class ${dto.className}Test {
 
 #foreach ($method in $dto.methods)
    @Test
-   public ${method.methodName}Test(){
+   public void ${method.methodName}Test(){
        // TODO Auto-generated method stub
        fail("not implemented");
    }
