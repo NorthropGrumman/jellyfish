@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BaseServiceTemplateDto extends TemplateDto {
 
@@ -12,6 +13,11 @@ public class BaseServiceTemplateDto extends TemplateDto {
    private Set<String> transportTopics;
    private List<MethodDto> publishingMethods;
    private List<MethodDto> receivingMethods;
+
+   public String getExportedPackagesSnippet() {
+      return exportedPackages.stream()
+            .collect(Collectors.joining(", "));
+   }
 
    public Set<String> getExportedPackages() {
       return exportedPackages;

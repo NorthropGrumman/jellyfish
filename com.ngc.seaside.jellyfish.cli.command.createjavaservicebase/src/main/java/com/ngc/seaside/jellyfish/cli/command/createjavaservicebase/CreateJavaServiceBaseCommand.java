@@ -35,6 +35,9 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = "model";
    static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    static final String CLEAN_PROPERTY = "clean";
+   static final String ARTIFACT_ID_SUFFIX_PROPERTY = "artifactIdSuffix";
+
+   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "base";
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
@@ -202,12 +205,14 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    }
 
    private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model) {
+      // TODO TH: enable support for the artifact ID suffix.
       String artifactId;
       if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
          artifactId = commandOptions.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
       } else {
          artifactId = model.getName().toLowerCase();
       }
+      artifactId += "." + DEFAULT_ARTIFACT_ID_SUFFIX;
       return artifactId;
    }
 

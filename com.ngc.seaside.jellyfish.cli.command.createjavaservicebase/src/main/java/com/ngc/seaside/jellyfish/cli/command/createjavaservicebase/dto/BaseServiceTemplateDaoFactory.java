@@ -30,7 +30,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
    }
 
    private static void setExportedPackages(BaseServiceTemplateDto dto, IModel model, String packagez) {
-      dto.setExportedPackages(Collections.singleton(packagez + ".*"));
+      dto.setExportedPackages(Collections.singleton("*"));
    }
 
    private static void setTransportTopics(BaseServiceTemplateDto dto, IModel model, String packagez) {
@@ -61,7 +61,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       dto.setPublishingMethods(methods);
    }
 
-   private void setReceiveMethods(BaseServiceTemplateDto dto,
+   private static void setReceiveMethods(BaseServiceTemplateDto dto,
                                   IModel model,
                                   String packagez) {
       // TODO TH: this is a hacky way to figure out what to receive.
