@@ -1,7 +1,7 @@
 #set( $D = '$' )
 
 dependencies {
-   compile project(':engagementtrackpriorityservice.base')
+   compile project(':${dto.modelName.toLowerCase()}.base')
 
    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
