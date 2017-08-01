@@ -9,5 +9,6 @@ public enum DataTypes {
    FLOAT,
    STRING,
    BOOLEAN,
-   DATA
+   DATA,
+   ENUM
 }

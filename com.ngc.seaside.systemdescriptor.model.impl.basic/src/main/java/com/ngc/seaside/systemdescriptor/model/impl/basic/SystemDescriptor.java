@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Objects;
@@ -68,6 +69,28 @@ public class SystemDescriptor implements ISystemDescriptor {
       Optional<IPackage> p = packages.getByName(packageName);
       if (p.isPresent()) {
          return p.get().getData().getByName(name);
+      } else {
+         return Optional.empty();
+      }
+   }
+
+   @Override
+   public Optional<IEnumeration> findEnumeration(String fullyQualifiedName) {
+      int i = fullyQualifiedName.lastIndexOf(".");
+      if (i == -1) {
+         return Optional.empty();
+      }
+
+      String packageName = fullyQualifiedName.substring(0, i);
+      String enumName = fullyQualifiedName.substring(i + 1, fullyQualifiedName.length());
+      return findEnumeration(packageName, enumName);
+   }
+
+   @Override
+   public Optional<IEnumeration> findEnumeration(String packageName, String name) {
+      Optional<IPackage> p = packages.getByName(packageName);
+      if (p.isPresent()) {
+         return p.get().getEnumerations().getByName(name);
       } else {
          return Optional.empty();
       }

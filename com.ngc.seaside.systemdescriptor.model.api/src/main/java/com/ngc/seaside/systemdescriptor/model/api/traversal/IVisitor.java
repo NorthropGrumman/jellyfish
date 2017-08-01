@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -21,6 +22,14 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
  * @see ISystemDescriptor#traverse(IVisitor)
  */
 public interface IVisitor {
+
+   /**
+    * Invoked to visit an enumeration type.
+    * @param ctx the visitor context
+    * @param enumeration the enumeration
+    */
+   default void visitEnumeration(IVisitorContext ctx, IEnumeration enumeration) {
+   }
 
    /**
     * Invoked to visit a data field of a data object.

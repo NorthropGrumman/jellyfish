@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.validation.api;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -38,7 +39,15 @@ public class AbstractSystemDescriptorValidator implements ISystemDescriptorValid
          validateScenario((IValidationContext<IScenario>) context);
       } else if (o instanceof IScenarioStep) {
          validateStep((IValidationContext<IScenarioStep>) context);
+      } else if (o instanceof IEnumeration) {
+         validateEnumeration((IValidationContext<IEnumeration>) context);
       }
+   }
+
+   /**
+    * Invoked to validate an {@code IEnumeration}.  Default implementation does nothing.
+    */
+   private void validateEnumeration(IValidationContext<IEnumeration> context) {
    }
 
    /**

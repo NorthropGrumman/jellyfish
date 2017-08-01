@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -76,11 +77,15 @@ public class TraversalsTest {
    @Mock
    private IModelLink<IModelReferenceField> link;
 
+   @Mock
+   private IEnumeration enumeration;
+
    @Before
    public void setup() throws Throwable {
       when(descriptor.getPackages()).thenReturn(asCollection(p));
       when(p.getData()).thenReturn(asCollection(data));
       when(p.getModels()).thenReturn(asCollection(model1, model2));
+      when(p.getEnumerations()).thenReturn(asCollection(enumeration));
       when(data.getFields()).thenReturn(asCollection(dataField));
 
       when(model1.getInputs()).thenReturn(asCollection(input));
@@ -114,6 +119,7 @@ public class TraversalsTest {
       verify(visitor).visitModelReferenceFieldAsPart(any(), eq(part));
       verify(visitor).visitScenario(any(), eq(scenario));
       verify(visitor).visitLink(any(), eq(link));
+      verify(visitor).visitEnumeration(any(), eq(enumeration));
    }
 
    @Test
