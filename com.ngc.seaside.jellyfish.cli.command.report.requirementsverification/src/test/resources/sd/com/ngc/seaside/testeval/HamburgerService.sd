@@ -4,6 +4,10 @@ import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
 model HamburgerService {
+    metadata {
+        "stereotypes": ["service"]
+    }
+
 	input {
 		FooStatus fooStatus
 	}
@@ -14,9 +18,7 @@ model HamburgerService {
 	
 	scenario removeTheCheese {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" },
 			"description": "Removes the cheese from a hamburger service.",
-            "stereotypes": ["service"],
             "satisfies": ["SW004"]
 		}
 		when receiving fooStatus

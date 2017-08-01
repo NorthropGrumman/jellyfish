@@ -3,7 +3,8 @@ package com.ngc.seaside.testeval
 import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
-model McDonaldService {
+model McDonaldService2 {
+
 	input {
 		FooStatus fooStatus
 	}

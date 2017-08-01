@@ -4,6 +4,9 @@ import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
 model HotdogService {
+    metadata {
+        "stereotypes": ["service"]
+    }
 
 	input {
 		FooStatus fooStatus
@@ -16,7 +19,6 @@ model HotdogService {
 	scenario addKechup {
 		metadata {
             "description": "Adds ketchup to a hotdog service.",
-            "stereotypes": ["service"],
             "satisfies": ["SW002"]
         }
 		when receiving fooStatus
@@ -27,7 +29,6 @@ model HotdogService {
 	scenario addMustard {
         metadata {
             "description": "Adds mustard to a hotdog service.",
-            "stereotypes": ["service"],
             "satisfies": ["SW003"]
         }
     	when receiving fooStatus

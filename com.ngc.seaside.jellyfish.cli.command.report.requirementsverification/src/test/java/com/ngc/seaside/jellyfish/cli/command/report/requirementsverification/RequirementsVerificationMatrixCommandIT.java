@@ -65,7 +65,7 @@ public class RequirementsVerificationMatrixCommandIT {
       cmd.setLogService(logger);
 
       // Setup mock system descriptor
-      Path sdDir = Paths.get("src", "test", "sd");
+      Path sdDir = Paths.get("src", "test", "resources");
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
       Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
       ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);

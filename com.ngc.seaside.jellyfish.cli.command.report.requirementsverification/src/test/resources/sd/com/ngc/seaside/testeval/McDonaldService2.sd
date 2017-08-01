@@ -3,7 +3,11 @@ package com.ngc.seaside.testeval
 import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
-model FooBarService {
+model McDonaldService {
+    metadata {
+        "stereotypes": ["service"]
+    }
+
 	input {
 		FooStatus fooStatus
 	}
@@ -12,12 +16,9 @@ model FooBarService {
 		BarStatus barStatus
 	}	
 	
-	scenario handleFooBar {
+	scenario provideAverageService {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" },
-			"description": "Determines the foobar of a system.",
-            "stereotypes": ["system"],
-            "satisfies": ["SYS001"]
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" }
 		}
 		when receiving fooStatus
 		then willPublish barStatus

@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.json.JsonException;
+
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
 
@@ -174,6 +176,12 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          iPackage.getModels().forEach(iModel -> {
             System.out.println("MODEL:" + iModel.getMetadata().getJson());
 
+            try {
+               iModel.getMetadata().getJson().getValue("/dsds");
+            }
+            catch (JsonException ex) {
+
+            }
             iModel.getScenarios().forEach(scenario -> {
                System.out.println("SCENARIO:" + scenario.getMetadata().getJson());
 

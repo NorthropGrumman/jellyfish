@@ -3,7 +3,13 @@ package com.ngc.seaside.testeval
 import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
-model MilkShakeService {
+model BooService {
+	metadata {
+		"description": "Determines the BooNess of a service.",
+		"stereotypes": ["service"],
+		"satisfies": ["SW003", "SW002"]
+	}
+	
 	input {
 		FooStatus fooStatus
 	}
@@ -12,15 +18,13 @@ model MilkShakeService {
 		BarStatus barStatus
 	}	
 	
-	scenario melt {
+	scenario handleTooMuchBoo {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" },
-			"description": "Determines the melt status of a system.",
-            "stereotypes": ["service"],
             "satisfies": ["SW001"]
 		}
 		when receiving fooStatus
 		then willPublish barStatus
 		and willBeCompleted within 500 milliseconds
 	}
+	
 }
