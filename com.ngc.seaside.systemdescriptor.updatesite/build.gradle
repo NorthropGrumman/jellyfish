@@ -112,6 +112,7 @@ task createMetadata(dependsOn: [copyFeatures, copySdPlugins, copyEclipsePlugins]
 	   project.exec {
 	      commandLine(
 	         "$eclipseExe",
+	         '-vm', System.getProperty('java.home') + '/bin/javaw.exe',
 	         '-nosplash',
 	         '-application', 'org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher',
 	         '-compress',
