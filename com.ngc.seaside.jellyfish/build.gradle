@@ -21,7 +21,7 @@ dependencies {
     compile project(":jellyfish.cli.command.createdomain")
     commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
- 	 compile project(":jellyfish.cli.command.createprotocolbuffermessages")
+    compile project(":jellyfish.cli.command.createprotocolbuffermessages")
     commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
@@ -35,6 +35,18 @@ dependencies {
 
     compile project(":jellyfish.cli.command.report.requirementsverification")
     commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaservice")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaserviceproject")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceproject", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaservicebase")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaservicebase", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.createjavaserviceconfig")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconfig", configuration: "commandTemplate")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"

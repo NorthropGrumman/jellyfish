@@ -2,10 +2,14 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
 import org.junit.Before;
@@ -14,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,13 +46,22 @@ public class CreateJavaEventsCommandTest {
    @Mock
    private IJellyFishCommandProvider commandProvider;
 
+   @Mock
+   private IPromptUserService promptUserService;
+
    @Before
    public void setup() {
       IParsingResult result = mock(IParsingResult.class);
 
+      IModel model = mock(IModel.class);
+      when(model.getName()).thenReturn("Model");
+      ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+      when(systemDescriptor.findModel("my.Model")).thenReturn(Optional.of(model));
+
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);
       when(options.getParsingResult()).thenReturn(result);
+      when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
       resourceService = new MockedResourceService();
 
@@ -54,6 +69,7 @@ public class CreateJavaEventsCommandTest {
       command.setLogService(logService);
       command.setResourceService(resourceService);
       command.setJellyFishCommandProvider(commandProvider);
+      command.setPromptUserService(promptUserService);
       command.activate();
 
    }
@@ -86,38 +102,20 @@ public class CreateJavaEventsCommandTest {
 
       assertTrue("does not contain package suffix property!",
                  delegateOptions.getParameters()
-                       .containsParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY));
-      assertEquals("package suffix default not correct!",
-                   CreateJavaEventsCommand.DEFAULT_PACKAGE_SUFFIX,
+                       .containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY));
+      assertEquals("artifact ID default not correct!",
+                   "model.events",
                    delegateOptions.getParameters()
-                         .getParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY)
+                         .getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)
                          .getStringValue());
-   }
 
-   @Test
-   public void testDoesCommandAllowForCustomPackageSuffix() throws Throwable {
-      resourceService.onNextReadDrain(
-            CreateJavaEventsCommandTest.class
-                  .getClassLoader()
-                  .getResourceAsStream(CreateJavaEventsCommand.EVENT_SOURCE_VELOCITY_TEMPLATE));
-
-      parameters.addParameter(new DefaultParameter<>(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY,
-                                                     "my.suffix"));
-      parameters.addParameter(new DefaultParameter<>("model", "my.Model"));
-      command.run(options);
-
-      ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
-      verify(commandProvider).run(eq(CreateJavaEventsCommand.CREATE_DOMAIN_COMMAND_NAME),
-                                  optionsCapture.capture());
-
-      IJellyFishCommandOptions delegateOptions = optionsCapture.getValue();
-      assertTrue("does not contain package suffix property!",
+      assertTrue("does not contain build.gradle template property!",
                  delegateOptions.getParameters()
-                       .containsParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY));
-      assertEquals("package suffix default not correct!",
-                   "my.suffix",
+                       .containsParameter(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY));
+      assertEquals("build.gradle templatedefault not correct!",
+                   CreateJavaEventsCommand.class.getPackage().getName(),
                    delegateOptions.getParameters()
-                         .getParameter(CreateJavaEventsCommand.PACKAGE_SUFFIX_PROPERTY)
+                         .getParameter(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
                          .getStringValue());
    }
 

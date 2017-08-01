@@ -1,0 +1,16 @@
+package com.ngc.seaside.engagementplanning.datatype
+
+data TrackEngagementStatus {
+    metadata {
+    		"description": "Determines track priority of a SystemTrack based on planned, committed, and in-progress engagements.",
+    		"stereotypes": ["system"],
+    		"test": {
+    		"test2": "bota",
+    		"test3": {"valgon":"hordor"}
+    		},
+    		"satisfies": ["TE001.2", "TE001.4"]
+    	}
+	int trackId
+	int plannedEngagementCount
+	float probabilityOfKill
+}

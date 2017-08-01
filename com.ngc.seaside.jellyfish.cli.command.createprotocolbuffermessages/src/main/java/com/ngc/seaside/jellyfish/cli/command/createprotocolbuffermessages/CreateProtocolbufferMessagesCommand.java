@@ -2,8 +2,10 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
@@ -14,6 +16,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -36,13 +40,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    static final String NAME = "create-protocolbuffer-messages";
    static final String CREATE_DOMAIN_COMMAND = "create-domain";
    static final String TEMPLATE_FILE = "proto-messages.vm";
-   static final String DEFAULT_PACKAGE_SUFFIX = "messages";
+   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "messages";
    static final String DEFAULT_EXT_PROPERTY = "proto";
    static final IUsage USAGE = createUsage();
 
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
    private IResourceService resourceService;
+   private IPromptUserService promptUserService;
 
    @Override
    public String getName() {
@@ -56,8 +61,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      final IParameterCollection parameters = commandOptions.getParameters();
-      final String pkgSuffix = evaluatePackageSuffix(parameters);
+      final IModel model = evaluateModelParameter(commandOptions);
+      final String artifactId = evaluateArtifactId(commandOptions, model);
 
       // Unpack the velocity template to a temporary directory.
       final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
@@ -70,7 +75,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
             new DefaultParameter<>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
-            new DefaultParameter<>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, pkgSuffix),
+            new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                                          CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
@@ -137,18 +142,39 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   /**
-    * Returns the package for the domain project.
-    *
-    * @param parameters command parameters
-    * @return the package for the domain project
-    */
-   private static String evaluatePackageSuffix(IParameterCollection parameters) {
-      String pkgSuffix = DEFAULT_PACKAGE_SUFFIX;
-      if (parameters.containsParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)) {
-         pkgSuffix = parameters.getParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptUserService")
+   public void setPromptUserService(IPromptUserService ref) {
+      this.promptUserService = ref;
+   }
+
+   public void removePromptUserService(IPromptUserService ref) {
+      setPromptUserService(null);
+   }
+
+   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
+      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+      IParameterCollection parameters = commandOptions.getParameters();
+      final String modelName;
+      if (parameters.containsParameter(CreateDomainCommand.MODEL_PROPERTY)) {
+         modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
+      } else {
+         modelName = promptUserService.prompt(CreateDomainCommand.MODEL_PROPERTY,
+                                              null,
+                                              m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
-      return pkgSuffix;
+      return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
+   }
+
+   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
+      final String artifactId;
+      if (options.getParameters().containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)) {
+         artifactId = options.getParameters().getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY).getStringValue();
+      } else {
+         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
+      }
+      return artifactId;
    }
 
    /**

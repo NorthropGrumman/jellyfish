@@ -80,13 +80,14 @@ public class CreateProtocolbufferMessagesCommandIT {
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       Mockito.when(options.getParsingResult()).thenReturn(result);
+      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
    public void testCommand() throws IOException {
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
@@ -98,19 +99,19 @@ public class CreateProtocolbufferMessagesCommandIT {
    @Test
    public void testExtensionOverride() throws IOException {
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, "asdf");
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+                 CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, "asdf");
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.asdf");
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
    }
 
    @Test
    public void testGradleBuildForProtoBufferItems() throws IOException {
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
@@ -141,7 +142,7 @@ public class CreateProtocolbufferMessagesCommandIT {
       Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       Assert.assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
       Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
-         Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
+                        Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
    }
 
    private void checkDomain(Path projectDir) throws IOException {
@@ -164,8 +165,8 @@ public class CreateProtocolbufferMessagesCommandIT {
    }
 
    private void checkDomainContents(Path domainDir, String filename, int startData, int endData, int startField,
-            int endField)
-      throws IOException {
+                                    int endField)
+         throws IOException {
       Path file = domainDir.resolve(filename + ".xml");
       String text = new String(Files.readAllBytes(file));
       for (int n = startData; n <= endData; n++) {
@@ -183,7 +184,7 @@ public class CreateProtocolbufferMessagesCommandIT {
       @Override
       protected void configure() {
          bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService  mockedTemplateService = new MockedTemplateService()
+         MockedTemplateService mockedTemplateService = new MockedTemplateService()
                .useRealPropertyService()
                .useDefaultUserValues(true)
                .setTemplateDirectory(
@@ -200,7 +201,7 @@ public class CreateProtocolbufferMessagesCommandIT {
       modules.add(testServiceModule);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
          if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
-            && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
+             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
             modules.add(dynamicModule);
          }
       }

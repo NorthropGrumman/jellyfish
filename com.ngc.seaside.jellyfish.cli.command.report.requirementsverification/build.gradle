@@ -6,6 +6,8 @@ dependencies {
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+
+    compile "commons-beanutils:commons-beanutils:$beanUtilsVersion"
     
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
@@ -19,6 +21,7 @@ dependencies {
     
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"

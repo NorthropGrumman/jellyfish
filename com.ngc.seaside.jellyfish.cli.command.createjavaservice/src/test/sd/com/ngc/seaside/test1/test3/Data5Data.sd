@@ -1,0 +1,5 @@
+package com.ngc.seaside.test1.test3
+
+data Data5Data {
+	int field8
+}

@@ -8,4 +8,5 @@ dependencies {
    compile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
    compile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
    compile "org.mockito:mockito-core:$mockitoVersion"
+   compile "junit:junit:$junitVersion"
 }

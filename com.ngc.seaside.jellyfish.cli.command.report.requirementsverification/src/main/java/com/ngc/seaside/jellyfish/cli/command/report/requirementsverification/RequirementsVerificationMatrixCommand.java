@@ -1,12 +1,18 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.utilities.console.api.DefaultTableModel;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
+import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -14,11 +20,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
 
    public static final String OUTPUT_FORMAT_PROPERTY = "outputFormat";
-   public static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "STDOUT_FORMAT";
+   public static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "DEFAULT";
    public static final String OUTPUT_PROPERTY = "output";
    public static final String DEFAULT_OUTPUT_PROPERTY = "STDOUT";
    public static final String SCOPE_PROPERTY = "scope";
@@ -56,6 +68,73 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
                                        .setRequired(false));
    }
 
+   /**
+    * Retrieve the output format property value based on user input. Default is a table formatted string.
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   private static String evaluateOutputFormat(IJellyFishCommandOptions commandOptions) {
+      String outputFormat = DEFAULT_OUTPUT_FORMAT_PROPERTY;
+      if (commandOptions.getParameters().containsParameter(OUTPUT_FORMAT_PROPERTY)) {
+         String helper = commandOptions.getParameters().getParameter(OUTPUT_FORMAT_PROPERTY).getStringValue();
+         outputFormat = (helper.equalsIgnoreCase("CSV")) ? helper.toUpperCase() : DEFAULT_OUTPUT_FORMAT_PROPERTY;
+      }
+      return outputFormat;
+   }
+
+   /**
+    * Retrieve the output property value based on user input. Default is standard output
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   private static String evaluateOutput(IJellyFishCommandOptions commandOptions) {
+      String output = DEFAULT_OUTPUT_PROPERTY;
+      if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
+         output = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
+      }
+      return output;
+   }
+
+   /**
+    * Retrieve the scope property value based on user input. Default is: "model.metadata.stereotypes"
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   private static String evaluateScope(IJellyFishCommandOptions commandOptions) {
+      String scope = DEFAULT_SCOPE_PROPERTY;
+      if (commandOptions.getParameters().containsParameter(SCOPE_PROPERTY)) {
+         scope = commandOptions.getParameters().getParameter(SCOPE_PROPERTY).getStringValue();
+      }
+      return scope;
+   }
+
+   /**
+    * Retrieve the values property value based on user input. Default is: "service"
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   private static String evaluateValues(IJellyFishCommandOptions commandOptions) {
+      String values = DEFAULT_VALUES_PROPERTY;
+      if (commandOptions.getParameters().containsParameter(VALUES_PROPERTY)) {
+         values = commandOptions.getParameters().getParameter(VALUES_PROPERTY).getStringValue();
+      }
+      return values;
+   }
+
+   /**
+    * Retrieve the operator property value based on user input. Default is: "OR"
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   private static String evaluateOperator(IJellyFishCommandOptions commandOptions) {
+      String operator = DEFAULT_OPERATOR_PROPERTY;
+      if (commandOptions.getParameters().containsParameter(OPERATOR_PROPERTY)) {
+         String helper = commandOptions.getParameters().getParameter(OPERATOR_PROPERTY).getStringValue().toUpperCase();
+         operator = (helper.equalsIgnoreCase("AND") || helper.equalsIgnoreCase("NOT")) ? helper : operator;
+      }
+      return operator;
+   }
+
    @Override
    public String getName() {
       return NAME;
@@ -68,7 +147,87 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      // TODO Auto-generated method stub
+      String outputFormat = evaluateOutputFormat(commandOptions);
+      String output = evaluateOutput(commandOptions);
+      String scope = evaluateScope(commandOptions);
+      String values = evaluateValues(commandOptions);
+      String operator = evaluateOperator(commandOptions);
+
+      Collection<IModel> models = searchModels(commandOptions, values, operator);
+      models.forEach(model -> {
+         try {
+            System.out.println(PropertyUtils.getProperty(model, "metadata.json.stereotypes"));
+         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+         } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+         }
+      });
+
+      //StringTable
+//      new DefaultTableModel<>();
+//
+//      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+//      sd.getPackages().forEach(iPackage -> {
+//         iPackage.getData().forEach(iData -> {
+//            System.out.println("DATA:" + iData.getMetadata().getJson());
+//            System.out.println("TEST" + iData.getMetadata().getJson().asJsonObject().getValue("/test/test3"));
+//         });
+//         iPackage.getModels().forEach(iModel -> {
+//            System.out.println("MODEL:" + iModel.getMetadata().getJson());
+//
+//            iModel.getInputs().forEach(input -> {
+//
+//               System.out.println("INPUT:" + input.getMetadata().getJson());
+//            });
+//
+//            iModel.getOutputs().forEach(anOutput -> {
+//               System.out.println("OUTPUT:" + anOutput.getMetadata().getJson());
+//            });
+//
+//            iModel.getScenarios().forEach(scenario -> {
+//               System.out.println("SCENARIO:" + scenario.getMetadata().getJson());
+//
+//            });
+//         });
+//      });
+
+   }
+
+   /**
+    * Returns a collection of models that matches the search criteria
+    * @param commandOptions Jellyfish command options containing system descriptor
+    * @param values         the values in which to search
+    * @param operator       the operator to apply to search
+    */
+   private Collection<IModel> searchModels(IJellyFishCommandOptions commandOptions, String values, String operator) {
+      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+
+      switch (operator) {
+      case "AND":
+         return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
+      case "NOT":
+         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
+      default: // OR
+         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
+      }
+   }
+
+   /**
+    *
+    * @param values
+    * @return
+    */
+   private Collection<String> valuesToCollection(String values) {
+      List<String> valueCollection = new ArrayList<>();
+      if (values.contains(",")) {
+         valueCollection.addAll(Arrays.asList(values.split(",")));
+      } else {
+         valueCollection.add(values);
+      }
+      return valueCollection;
    }
 
    @Activate
@@ -97,5 +256,4 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-
 }
