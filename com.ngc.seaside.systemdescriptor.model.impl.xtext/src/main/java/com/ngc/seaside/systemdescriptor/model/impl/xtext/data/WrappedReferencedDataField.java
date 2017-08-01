@@ -5,17 +5,21 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * Adapts a {@link ReferencedDataFieldDeclaration} instance to an {@link IDataField}.
+ * Adapts a {@link ReferencedDataModelFieldDeclaration} that references other data types instance to an {@link
+ * IDataField}.
  *
  * This class is not threadsafe.
  */
-public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataFieldDeclaration>
+public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataModelFieldDeclaration>
       implements IDataField {
 
    // Note the "implements IDataField" is redundant since the base class implements the interface as well.  But this
@@ -24,13 +28,15 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
    // getInterfaces() only returns the interfaces declared by the class directly and not the interfaces of the sub-
    // class.
 
-   public WrappedReferencedDataField(IWrapperResolver resolver, ReferencedDataFieldDeclaration wrapped) {
+   public WrappedReferencedDataField(IWrapperResolver resolver, ReferencedDataModelFieldDeclaration wrapped) {
       super(resolver, wrapped);
+      Preconditions.checkArgument(wrapped.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.DATA,
+                                  "can only wrap a data type!");
    }
 
    @Override
    public DataTypes getType() {
-      return DataTypes.DATA; // Only other data can be referenced, not primitive data types.
+      return DataTypes.DATA; // Only other data can be referenced, not primitive types or enums.
    }
 
    @Override
@@ -38,39 +44,53 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkArgument(type == DataTypes.DATA,
                                   "the type of this field must be another data type, it cannot be changed to reference"
-                                  + " primitives!");
+                                  + " primitives or enums!");
       // We don't actually have to do anything here.
       return this;
    }
 
    @Override
    public IData getReferencedDataType() {
-      return resolver.getWrapperFor(wrapped.getData());
+      // Cast is safe because we only allow construction of this type for wrapping data.
+      return resolver.getWrapperFor((Data) wrapped.getDataModel());
    }
 
    @Override
    public IDataField setReferencedDataType(IData data) {
       Preconditions.checkNotNull(data, "data may not be null!");
-      wrapped.setData(resolver.findXTextData(data.getName(), data.getParent().getName()).get());
+      wrapped.setDataModel(resolver.findXTextData(data.getName(), data.getParent().getName()).get());
       return this;
    }
 
+   @Override
+   public IEnumeration getReferencedEnumeration() {
+      return null; // This type can only reference data.
+   }
+
+   @Override
+   public IDataField setReferencedEnumeration(IEnumeration enumeration) {
+      throw new IllegalStateException("the type of this field must be another data type, it cannot be changed to"
+                                      + " reference enumerations!");
+   }
+
    /**
-    * Creates a new {@code ReferencedDataFieldDeclaration} that is equivalent
+    * Creates a new {@code ReferencedDataModelFieldDeclaration} that is equivalent
     * to the given data ref. Changes to the {@code IReferencedDataField} are
-    * not reflected in the returned {@code ReferencedDataFieldDeclaration}
+    * not reflected in the returned {@code ReferencedDataModelFieldDeclaration}
     * after construction.
     */
-   public static ReferencedDataFieldDeclaration toXtext(IWrapperResolver resolver,
-                                                        IDataField dataRef) {
+   public static ReferencedDataModelFieldDeclaration toXtext(IWrapperResolver resolver,
+                                                             IDataField dataRef) {
       Preconditions.checkNotNull(dataRef, "dataRef may not be null!");
       Preconditions.checkArgument(
             dataRef.getType() == DataTypes.DATA,
-            "cannot create a ReferencedDataFieldDeclaration for an IDataField that references a primitive type!");
-      ReferencedDataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createReferencedDataFieldDeclaration();
+            "cannot create a ReferencedDataModelFieldDeclaration for an IDataField that references a primitive type"
+            + " or enum!");
+      ReferencedDataModelFieldDeclaration x =
+            SystemDescriptorFactory.eINSTANCE.createReferencedDataModelFieldDeclaration();
       x.setName(dataRef.getName());
-      x.setData(resolver.findXTextData(dataRef.getReferencedDataType().getName(),
-                                       dataRef.getReferencedDataType().getParent().getName()).get());
+      x.setDataModel(resolver.findXTextData(dataRef.getReferencedDataType().getName(),
+                                            dataRef.getReferencedDataType().getParent().getName()).get());
       x.setCardinality(ConversionUtil.convertCardinalityToXtext(dataRef.getCardinality()));
       return x;
    }

@@ -6,14 +6,17 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedData;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.WrappedModel;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -34,6 +37,7 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
    private final Collection<Package> wrapped = new ArrayList<>();
    private final NamedChildCollection<IPackage, IData> data = new NamedChildCollection<>();
    private final NamedChildCollection<IPackage, IModel> models = new NamedChildCollection<>();
+   private final NamedChildCollection<IPackage, IEnumeration> enumerations = new NamedChildCollection<>();
 
    private final ISystemDescriptor descriptor;
    private final String packageName;
@@ -60,6 +64,11 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
    @Override
    public INamedChildCollection<IPackage, IModel> getModels() {
       return models;
+   }
+
+   @Override
+   public INamedChildCollection<IPackage, IEnumeration> getEnumerations() {
+      return enumerations;
    }
 
    @Override
@@ -98,6 +107,9 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
                break;
             case SystemDescriptorPackage.MODEL:
                doAddModel((Model) element);
+               break;
+            case SystemDescriptorPackage.ENUMERATION:
+               doAddEnumeration((Enumeration) element);
                break;
             default:
                throw new UnrecognizedXtextTypeException(element);
@@ -147,6 +159,14 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
          newPackage.setElement(WrappedModel.toXtextModel(resolver, model));
          packages.add(newPackage);
       }
+
+      for (IEnumeration enumeration : p.getEnumerations()) {
+         Package newPackage = SystemDescriptorFactory.eINSTANCE.createPackage();
+         newPackage.setName(p.getName());
+         newPackage.setElement(WrappedEnumeration.toXTextEnumeration(resolver, enumeration));
+         packages.add(newPackage);
+      }
+
       return packages;
    }
 
@@ -156,5 +176,9 @@ public class WrappedPackage implements IPackage, IUnwrappableCollection<Package>
 
    private void doAddModel(Model element) {
       models.add(new WrappedModel(resolver, element));
+   }
+
+   private void doAddEnumeration(Enumeration enumeration) {
+      enumerations.add(new WrappedEnumeration(resolver, enumeration));
    }
 }

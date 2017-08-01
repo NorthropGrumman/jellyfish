@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
@@ -98,6 +99,35 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
          data = p.get().getData().getByName(name);
       }
       return data;
+   }
+
+   @Override
+   public Optional<IEnumeration> findEnumeration(String fullyQualifiedName) {
+      Preconditions.checkNotNull(fullyQualifiedName, "fullyQualifiedName may not be null!");
+      Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
+      int namePosition = fullyQualifiedName.lastIndexOf('.');
+      Preconditions.checkArgument(namePosition > 0
+                                  && namePosition < fullyQualifiedName.length() - 1,
+                                  "expected a fully qualified name of the form <packageName>.<enumName> but got '%s'!",
+                                  fullyQualifiedName);
+      String packageName = fullyQualifiedName.substring(0, namePosition);
+      String enumName = fullyQualifiedName.substring(namePosition + 1);
+      return findEnumeration(packageName, enumName);
+   }
+
+   @Override
+   public Optional<IEnumeration> findEnumeration(String packageName, String name) {
+      Preconditions.checkNotNull(packageName, "packageName may not be null!");
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkArgument(!packageName.trim().isEmpty(), "packageName may not be empty!");
+      Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+
+      Optional<IEnumeration> enumeration = Optional.empty();
+      Optional<IPackage> p = packages.getByName(packageName);
+      if (p.isPresent()) {
+         enumeration = p.get().getEnumerations().getByName(name);
+      }
+      return enumeration;
    }
 
    /**
