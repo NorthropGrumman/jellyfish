@@ -215,11 +215,18 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       return artifactId;
    }
 
-   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions,
-                                            IModel model,
-                                            String artifactIdWithoutSuffix) {
-      // TODO TH: enable support for the artifact ID suffix.
-      return artifactIdWithoutSuffix + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
+   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model,
+            String artifactIdWithoutSuffix) {
+      String artifactIdSuffix;
+      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_SUFFIX_PROPERTY)) {
+         artifactIdSuffix = commandOptions.getParameters().getParameter(ARTIFACT_ID_SUFFIX_PROPERTY).getStringValue();
+         if (!artifactIdSuffix.isEmpty() && !artifactIdSuffix.startsWith(".")) {
+            artifactIdSuffix = '.' + artifactIdSuffix;
+         }
+      } else {
+         artifactIdSuffix = '.' + DEFAULT_ARTIFACT_ID_SUFFIX;
+      }
+      return artifactIdWithoutSuffix + artifactIdSuffix;
    }
 
    private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
@@ -238,19 +245,19 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage(
             "Generates the base abstract service for a Java application",
-            new DefaultParameter(GROUP_ID_PROPERTY)
+            new DefaultParameter<>(GROUP_ID_PROPERTY)
                   .setDescription("The project's group ID. (default: the package in the model)")
                   .setRequired(false),
-            new DefaultParameter(ARTIFACT_ID_PROPERTY)
+            new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
                   .setDescription("The project's artifact Id. (default: the model name in lowercase)")
                   .setRequired(false),
-            new DefaultParameter(MODEL_PROPERTY)
+            new DefaultParameter<>(MODEL_PROPERTY)
                   .setDescription("The fully qualified path to the model.")
                   .setRequired(true),
-            new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY)
                   .setDescription("Base directory in which to output the project")
                   .setRequired(true),
-            new DefaultParameter(CLEAN_PROPERTY)
+            new DefaultParameter<>(CLEAN_PROPERTY)
                   .setDescription("If true, recursively deletes the project before generating the it again")
                   .setRequired(false)
       );
