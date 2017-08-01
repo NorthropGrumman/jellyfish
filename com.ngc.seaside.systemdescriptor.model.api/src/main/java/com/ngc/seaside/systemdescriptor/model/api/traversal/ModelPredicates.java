@@ -94,6 +94,7 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
+         // TODO: (REMOVE THESE COMMENTS BEFORE FINAL CHECK IN)
          // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
          // Without this, model not containing the
          // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
@@ -126,6 +127,7 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
+         // TODO: (REMOVE THESE COMMENTS BEFORE FINAL CHECK IN)
          // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
          // Without this, model not containing the
          // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
