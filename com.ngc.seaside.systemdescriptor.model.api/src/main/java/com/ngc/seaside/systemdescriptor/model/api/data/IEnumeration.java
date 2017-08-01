@@ -4,7 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Represents a set of discrete values that are referenced in data.
@@ -32,7 +32,7 @@ public interface IEnumeration extends INamedChild<IPackage> {
     *
     * @return the values in the order they are declared
     */
-   List<String> getValues();
+   Collection<String> getValues();
 
    /**
     * Gets the fully qualified name of this enumeration type.  The fully qualified name is the name of the parent

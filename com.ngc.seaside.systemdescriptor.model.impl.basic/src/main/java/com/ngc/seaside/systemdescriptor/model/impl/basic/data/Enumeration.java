@@ -48,7 +48,7 @@ public class Enumeration implements IEnumeration {
    }
 
    @Override
-   public List<String> getValues() {
+   public Collection<String> getValues() {
       return values;
    }
 
