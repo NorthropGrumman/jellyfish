@@ -203,9 +203,12 @@ public class SystemDescriptorsTest {
    public void testDoesDetermineIfDataFieldIsForPrimitiveType() throws Throwable {
       when(dataField.getType())
             .thenReturn(DataTypes.INT)
-            .thenReturn(DataTypes.DATA);
+            .thenReturn(DataTypes.DATA)
+            .thenReturn(DataTypes.ENUM);
       assertTrue("field should be a primitive data field!",
                  SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
+      assertFalse("field should not be a primitive data field!",
+                  SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
       assertFalse("field should not be a primitive data field!",
                   SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
    }
