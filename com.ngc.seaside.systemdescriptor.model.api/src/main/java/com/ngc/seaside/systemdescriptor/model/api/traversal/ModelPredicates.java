@@ -21,8 +21,8 @@ import javax.json.JsonValue;
 public class ModelPredicates {
 
    /**
-    * The JSON key refereed in the metadata of a model to declare stereotypes.  The value is either a string or an
-    * array of strings.
+    * The JSON key refereed in the metadata of a model to declare stereotypes.  The value is either a string or an array
+    * of strings.
     */
    public final static String STEREOTYPE_MEMBER_NAME = "stereotypes";
 
@@ -99,7 +99,7 @@ public class ModelPredicates {
          // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
          JsonValue value = null;
          try {
-            value = metadata.getJson().getJsonObject("/" + STEREOTYPE_MEMBER_NAME);
+            value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
             // Tolerate either a single value or an array of values.
             switch (value.getValueType()) {
             case ARRAY:
