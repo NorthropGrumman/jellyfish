@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 import javax.json.JsonArray;
+import javax.json.JsonException;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
@@ -93,9 +94,14 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
-         // Tolerate either a single value or an array of values.
-         switch (value.getValueType()) {
+         // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
+         // Without this, model not containing the
+         // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
+         JsonValue value = null;
+         try {
+            value = metadata.getJson().getJsonObject("/" + STEREOTYPE_MEMBER_NAME);
+            // Tolerate either a single value or an array of values.
+            switch (value.getValueType()) {
             case ARRAY:
                accept = false;
                JsonArray array = (JsonArray) value;
@@ -106,7 +112,12 @@ public class ModelPredicates {
             case STRING:
                accept = stereotypes.contains(((JsonString) value).getString());
                break;
+            }
+         } catch (JsonException ex) {
+            // The model does not contain any stereotypes
+            accept = false;
          }
+         /// END FIX
       }
       return accept;
    }
@@ -115,9 +126,14 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
-         // Tolerate either a single value or an array of values.
-         switch (value.getValueType()) {
+         // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
+         // Without this, model not containing the
+         // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
+         JsonValue value = null;
+         try {
+            value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
+            // Tolerate either a single value or an array of values.
+            switch (value.getValueType()) {
             case ARRAY:
                Collection<String> missingStereotypes = new ArrayList<>(stereotypes);
                JsonArray array = (JsonArray) value;
@@ -129,7 +145,11 @@ public class ModelPredicates {
             case STRING:
                accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
                break;
+            }
+         } catch (JsonException ex) {
+            accept = false;
          }
+         /// END FIX
       }
       return accept;
    }
