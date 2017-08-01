@@ -93,6 +93,17 @@ Import
 	: 'import' importedNamespace=[Element|QualifiedName]
 	;
 
+// ------------------------------
+// ---- Enum related objects ----
+// ------------------------------
+
+/*
+ * Defines a value field of an enumeration.
+ */
+EnumerationValueDeclaration
+	: value=UnqualifiedName
+	  metadata=JsonObject? ','?
+	;
 
 // ------------------------------
 // ---- Data related objects ----
@@ -120,12 +131,11 @@ PrimitiveDataFieldDeclaration
 	;
 
 /*
- * A referenced data field declaration consists of a data type and unqualified name.
- * It may also contain optional metadata.
+ * A referenced data field declaration is used to reference another data model type.
  */	
-ReferencedDataFieldDeclaration
+ReferencedDataModelFieldDeclaration
 	: cardinality=Cardinality?
-	  data=[Data|UnqualifiedName] 
+	  dataModel=[DataModel|UnqualifiedName]
 	  name=UnqualifiedName
 	  metadata=JsonObject?
 	;
@@ -136,7 +146,7 @@ ReferencedDataFieldDeclaration
  */
 DataFieldDeclaration
 	: PrimitiveDataFieldDeclaration
-	| ReferencedDataFieldDeclaration
+	| ReferencedDataModelFieldDeclaration
 	;
 
 // -------------------------------
@@ -356,10 +366,21 @@ Links
 // ------------------------------
 // ---- Basic model elements ----
 // ------------------------------
+
+/*
+ * Declares an object of an enumeration; this is a type of object that 
+ * contains discreet values.
+ */
+Enumeration
+	: 'enum' name=UnqualifiedName '{'
+		metadata=Metadata?
+		values+=EnumerationValueDeclaration*
+	  '}'	
+	;	
 	
 /*
- * Declares an object of data type; a type of object that contains attributes
- * of metadata and optional members.
+ * Declares an object of a data type; this is a type of object that contains
+ * attributes of metadata and optional members.
  */
 Data
 	: 'data' name=UnqualifiedName (':' superclass=[Data|QualifiedName])? '{'
@@ -369,8 +390,16 @@ Data
 	;
 
 /*
- * Declares an object of model type; a type of object that contains attributes
- * of metadata and optional requires, input, output, and scenario attributes.
+ * Serves as the base type for all data related objects.
+ */
+DataModel
+	: Data
+	| Enumeration
+	;
+
+/*
+ * Declares an object of a model type; this is a type of object that contains
+ * attributes of metadata and optional requires, input, output, and scenario attributes.
  */
 Model
 	: 'model' name=UnqualifiedName '{'
@@ -389,7 +418,7 @@ Model
  * may either be data or a model.
  */
 Element
-	: Data
+	: DataModel
 	| Model
 	;
 
