@@ -1,0 +1,37 @@
+package com.ngc.seaside.testeval
+
+import com.ngc.seaside.testeval.datatype.FooStatus
+import com.ngc.seaside.testeval.datatype.BarStatus
+
+model HotdogService {
+
+	input {
+		FooStatus fooStatus
+	}
+	
+	output {
+		BarStatus barStatus
+	}	
+	
+	scenario addKechup {
+		metadata {
+            "description": "Adds ketchup to a hotdog service.",
+            "stereotypes": ["service"],
+            "satisfies": ["SW002"]
+        }
+		when receiving fooStatus
+		then willPublish barStatus
+		and willBeCompleted within 500 milliseconds
+	}
+
+	scenario addMustard {
+        metadata {
+            "description": "Adds mustard to a hotdog service.",
+            "stereotypes": ["service"],
+            "satisfies": ["SW003"]
+        }
+    	when receiving fooStatus
+    	then willPublish barStatus
+    	and willBeCompleted within 500 milliseconds
+    }
+}

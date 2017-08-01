@@ -1,0 +1,26 @@
+package com.ngc.seaside.testeval
+
+import com.ngc.seaside.testeval.datatype.FooStatus
+import com.ngc.seaside.testeval.datatype.BarStatus
+
+model FooBarService {
+	input {
+		FooStatus fooStatus
+	}
+	
+	output {
+		BarStatus barStatus
+	}	
+	
+	scenario handleFooBar {
+		metadata {
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" },
+			"description": "Determines the foobar of a system.",
+            "stereotypes": ["system"],
+            "satisfies": ["SYS001"]
+		}
+		when receiving fooStatus
+		then willPublish barStatus
+		and willBeCompleted within 500 milliseconds
+	}
+}

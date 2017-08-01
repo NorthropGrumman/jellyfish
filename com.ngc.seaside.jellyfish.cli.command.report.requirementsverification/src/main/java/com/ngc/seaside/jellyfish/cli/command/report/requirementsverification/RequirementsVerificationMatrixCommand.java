@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.utilities.console.api.DefaultTableModel;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
@@ -12,7 +11,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -20,7 +18,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -154,50 +151,40 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String operator = evaluateOperator(commandOptions);
 
       Collection<IModel> models = searchModels(commandOptions, values, operator);
-      models.forEach(model -> {
-         try {
-            System.out.println(PropertyUtils.getProperty(model, "metadata.json.stereotypes"));
-         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-         } catch (InvocationTargetException e) {
-            e.printStackTrace();
-         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-         }
-      });
+
+     // models.forEach(model -> {
+         //model.getScenarios().getByName("b").orElse(null);
+
+//         try {
+         //System.out.println(PropertyUtils.getProperty(model, "inputs.byName(trackEngagementStatus).get.metadata.json.stereotypes").toString().contains("service"));
+         //System.out.println(PropertyUtils.(model).toString());
+//         } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//         } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//         } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//         }
+     // });
 
       //StringTable
 //      new DefaultTableModel<>();
 //
-//      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
-//      sd.getPackages().forEach(iPackage -> {
-//         iPackage.getData().forEach(iData -> {
-//            System.out.println("DATA:" + iData.getMetadata().getJson());
-//            System.out.println("TEST" + iData.getMetadata().getJson().asJsonObject().getValue("/test/test3"));
-//         });
-//         iPackage.getModels().forEach(iModel -> {
-//            System.out.println("MODEL:" + iModel.getMetadata().getJson());
-//
-//            iModel.getInputs().forEach(input -> {
-//
-//               System.out.println("INPUT:" + input.getMetadata().getJson());
-//            });
-//
-//            iModel.getOutputs().forEach(anOutput -> {
-//               System.out.println("OUTPUT:" + anOutput.getMetadata().getJson());
-//            });
-//
-//            iModel.getScenarios().forEach(scenario -> {
-//               System.out.println("SCENARIO:" + scenario.getMetadata().getJson());
-//
-//            });
-//         });
-//      });
+      commandOptions.getSystemDescriptor().getPackages().forEach(iPackage -> {
+         iPackage.getModels().forEach(iModel -> {
+            System.out.println("MODEL:" + iModel.getMetadata().getJson());
 
+            iModel.getScenarios().forEach(scenario -> {
+               System.out.println("SCENARIO:" + scenario.getMetadata().getJson());
+
+            });
+         });
+      });
    }
 
    /**
     * Returns a collection of models that matches the search criteria
+    *
     * @param commandOptions Jellyfish command options containing system descriptor
     * @param values         the values in which to search
     * @param operator       the operator to apply to search

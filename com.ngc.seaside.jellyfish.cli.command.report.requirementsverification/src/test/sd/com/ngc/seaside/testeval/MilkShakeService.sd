@@ -1,0 +1,26 @@
+package com.ngc.seaside.testeval
+
+import com.ngc.seaside.testeval.datatype.FooStatus
+import com.ngc.seaside.testeval.datatype.BarStatus
+
+model MilkShakeService {
+	input {
+		FooStatus fooStatus
+	}
+	
+	output {
+		BarStatus barStatus
+	}	
+	
+	scenario melt {
+		metadata {
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" },
+			"description": "Determines the melt status of a system.",
+            "stereotypes": ["service"],
+            "satisfies": ["SW001"]
+		}
+		when receiving fooStatus
+		then willPublish barStatus
+		and willBeCompleted within 500 milliseconds
+	}
+}

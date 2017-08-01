@@ -1,0 +1,5 @@
+"Req","FooService.calcuateFooness,"BooService.handleTooMuchBoo","HotdogSevice.addKechup","HotdogServide.addMustard","HamburgerService.removeTheCheese","HamburgerService.addBacon","MilkShakeService.melt"
+"SW001",,X,,,,,X
+"SW002",,X,X,,,,
+"SW003",X,X,,X,X,,
+"SW004",X,,,,,,
