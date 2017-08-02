@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.AbstractServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.MethodDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
@@ -8,9 +7,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDtoFa
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
