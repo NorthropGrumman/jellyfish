@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 import javax.json.JsonArray;
-import javax.json.JsonException;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
@@ -94,31 +93,21 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         // TODO: (REMOVE THESE COMMENTS BEFORE FINAL CHECK IN)
-         // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
-         // Without this, model not containing the
-         // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
-         JsonValue value = null;
-         try {
-            value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
-            // Tolerate either a single value or an array of values.
-            switch (value.getValueType()) {
-            case ARRAY:
-               accept = false;
-               JsonArray array = (JsonArray) value;
-               for (int i = 0; i < array.size() && !accept; i++) {
-                  accept = stereotypes.contains(array.getString(i));
-               }
-               break;
-            case STRING:
-               accept = stereotypes.contains(((JsonString) value).getString());
-               break;
-            }
-         } catch (JsonException ex) {
-            // The model does not contain any stereotypes
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, null);
+
+         // Tolerate either a single value or an array of values.
+         switch (value.getValueType()) {
+         case ARRAY:
             accept = false;
+            JsonArray array = (JsonArray) value;
+            for (int i = 0; i < array.size() && !accept; i++) {
+               accept = stereotypes.contains(array.getString(i));
+            }
+            break;
+         case STRING:
+            accept = stereotypes.contains(((JsonString) value).getString());
+            break;
          }
-         /// END FIX
       }
       return accept;
    }
@@ -127,31 +116,22 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         // TODO: (REMOVE THESE COMMENTS BEFORE FINAL CHECK IN)
-         // FIX FOR BEHAVIOR WHEN MISSING STEREOTYPE //
-         // Without this, model not containing the
-         // STEREOTYPE_MEMBER_NAME will cause an exception to be thrown
-         JsonValue value = null;
-         try {
-            value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
-            // Tolerate either a single value or an array of values.
-            switch (value.getValueType()) {
-            case ARRAY:
-               Collection<String> missingStereotypes = new ArrayList<>(stereotypes);
-               JsonArray array = (JsonArray) value;
-               for (int i = 0; i < array.size(); i++) {
-                  missingStereotypes.remove(array.getString(i));
-               }
-               accept = missingStereotypes.isEmpty();
-               break;
-            case STRING:
-               accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
-               break;
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, null);
+
+         // Tolerate either a single value or an array of values.
+         switch (value.getValueType()) {
+         case ARRAY:
+            Collection<String> missingStereotypes = new ArrayList<>(stereotypes);
+            JsonArray array = (JsonArray) value;
+            for (int i = 0; i < array.size(); i++) {
+               missingStereotypes.remove(array.getString(i));
             }
-         } catch (JsonException ex) {
-            accept = false;
+            accept = missingStereotypes.isEmpty();
+            break;
+         case STRING:
+            accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
+            break;
          }
-         /// END FIX
       }
       return accept;
    }
