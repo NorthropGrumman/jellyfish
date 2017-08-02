@@ -207,16 +207,18 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   private static void updateGradleDotSettings(Path outputDir,
-                                               String groupId,
-                                               String artifactId,
-                                               IParameterCollection originalParameters) {
+   private void updateGradleDotSettings(Path outputDir,
+                                        String groupId,
+                                        String artifactId,
+                                        IParameterCollection originalParameters) {
       DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
       updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
       updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
       updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
       try {
-         GradleSettingsUtilities.tryAddProject(updatedParameters);
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
       } catch (FileUtilitiesException e) {
          throw new CommandException("failed to update settings.gradle!", e);
       }
