@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.AbstractServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.MethodDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
@@ -7,7 +8,9 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDtoFa
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,6 +27,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
       setBaseClassInfoAndImports(dto, model, packagez);
+      setAbstractInfo(dto, model, basePackageName);
       return dto;
    }
 
@@ -137,6 +141,17 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       dto.getAbstractServiceDto()
             .setModelName(model.getFullyQualifiedName())
             .setImports(imports);
+   }
+   
+   private static void setAbstractInfo(BaseServiceTemplateDto dto, IModel model, String basePackageName) {
+      AbstractServiceDto abstractDto = new AbstractServiceDto();
+      abstractDto.setClassName("Abstract" + dto.getClassName());
+      abstractDto.setPackageName(basePackageName + ".base.impl");
+      abstractDto.setModelName(model.getParent().getName() + '.' + model.getName());
+      abstractDto.setImports(new LinkedHashSet<>(Arrays.asList(
+         dto.getServiceInterfaceDto().getPackageName() + '.' + dto.getServiceInterfaceDto().getInterfaceName(),
+         basePackageName + ".events.*")));
+      dto.setAbstractServiceDto(abstractDto);
    }
 
    private static String constantize(String value) {
