@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -127,8 +128,8 @@ public class GradleSettingsUtilitiesTest {
       assertEquals(3, lines.size());
 
       assertTrue(lines.contains(""));
-      assertTrue(lines.contains("include 'groupIdValue.artifactIdValue'"));
-      assertTrue(lines.contains("project(':groupIdValue.artifactIdValue').name = 'artifactIdValue'"));
+      assertTrue(lines.stream().collect(Collectors.joining("\n")), lines.contains("include 'output2/groupIdValue.artifactIdValue'"));
+      assertTrue(lines.contains("project(':output2/groupIdValue.artifactIdValue').name = 'artifactIdValue'"));
    }
 
    @SuppressWarnings("rawtypes")

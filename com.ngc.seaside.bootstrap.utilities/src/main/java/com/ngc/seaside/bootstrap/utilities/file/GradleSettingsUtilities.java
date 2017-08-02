@@ -1,5 +1,7 @@
 package com.ngc.seaside.bootstrap.utilities.file;
 
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import java.io.IOException;
@@ -28,9 +30,10 @@ public class GradleSettingsUtilities {
     * Attempt to add a Gradle project to the settings.gradle file if the file actually exists in the output directory, otherwise to the output directory's parent settings.gradle.
     * If neither file exists, it does nothing.
     *
+    * @return whether or not the project was added to a settings.gradle
     * @see #addProject(IParameterCollection)
     */
-   public static void tryAddProject(IParameterCollection parameters) throws FileUtilitiesException {
+   public static boolean tryAddProject(IParameterCollection parameters) throws FileUtilitiesException {
       if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY) ||
           !parameters.containsParameter(GROUP_ID_PROPERTY) ||
           !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
@@ -43,11 +46,18 @@ public class GradleSettingsUtilities {
       Path settings = outputDirectory.resolve(SETTINGS_FILE_NAME);
       if (settings.toFile().isFile()) {
          addProject(parameters, settings);
+         return true;
       } else {
          settings = outputDirectory.getParent().resolve(SETTINGS_FILE_NAME);
          if (settings.toFile().isFile()) {
-            addProject(parameters, settings);
+            DefaultParameterCollection newParameters = new DefaultParameterCollection();
+            newParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY,
+               outputDirectory.getFileName() + "/" + parameters.getParameter(GROUP_ID_PROPERTY).getStringValue()));
+            newParameters.addParameter(parameters.getParameter(ARTIFACT_ID_PROPERTY));
+            addProject(newParameters, settings);
+            return true;
          }
+         return false;
       }
    }
 
