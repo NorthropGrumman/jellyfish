@@ -7,6 +7,9 @@ import com.google.common.collect.TreeMultimap;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilities;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
@@ -173,8 +176,10 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          System.out.println("\nOUTPUT:\n" + report);
       } else {
          Path outputPath = Paths.get(output);
-         //if ()
-         printReportToFile(report, output);
+         if (!outputPath.isAbsolute()) {
+            outputPath = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(outputPath);
+         }
+         printReportToFile(outputPath, report);
          logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to location: %s",
                          Paths.get(output).toAbsolutePath().toString());
       }
@@ -187,13 +192,15 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    /**
     * Prints the verification matrix report to the file provided by the output
     *
-    * @param report verification matrix to be printed
-    * @param output file location for output
+    * @param outputPath file path to output
+    * @param report     verification matrix to be printed
     */
-   private void printReportToFile(String report, String output) {
-      //TODO: implement
-      //FileUtilities.addLinesToFile();
-
+   private void printReportToFile(Path outputPath, List<String> report) {
+      try {
+         FileUtilities.addLinesToFile(outputPath, report);
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("Unable to write to outputPath: " + outputPath.toString(), e);
+      }
    }
 
    /**
