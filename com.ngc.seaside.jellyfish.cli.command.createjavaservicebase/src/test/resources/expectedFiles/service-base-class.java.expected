@@ -14,8 +14,7 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 
 import com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority;
+import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.*;
 
 public abstract class AbstractEngagementTrackPriorityService
    implements IServiceModule, IEngagementTrackPriorityService {

@@ -10,7 +10,9 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepH
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,8 +24,8 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
    public TemplateDto newDto(IModel model, String packagez) {
       TemplateDto dto = createDto();
       setClassInfo(dto, model, packagez);
-      setBaseClassInfo(dto, model, packagez);
       setInterfaceInfo(dto, model, packagez);
+      setBaseClassInfo(dto, model, packagez);
       setMethods(dto, model, packagez);
       setImports(dto, model, packagez);
       return dto;
@@ -42,7 +44,10 @@ public class TemplateDtoFactory implements ITemplateDtoFactory {
    private static void setBaseClassInfo(TemplateDto dto, IModel model, String packagez) {
       dto.setAbstractServiceDto(new AbstractServiceDto()
                                       .setClassName("Abstract" + model.getName())
-                                      .setPackageName(packagez + ".base.impl"));
+                                      .setPackageName(packagez + ".base.impl")
+                                      .setImports(new LinkedHashSet<>(Arrays.asList(dto.getServiceInterfaceDto().getPackageName() + "."
+                                         + dto.getServiceInterfaceDto().getInterfaceName(), packagez + ".events.*")))
+                                      .setModelName(model.getParent().getName() + '.' + model.getName()));
    }
 
    private static void setInterfaceInfo(TemplateDto dto, IModel model, String packagez) {
