@@ -2,8 +2,10 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.store;
 
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
@@ -14,6 +16,14 @@ import java.util.Optional;
  * be used to find wrapped XText data directly.
  */
 public interface IWrapperResolver {
+
+   /**
+    * Finds the {@code IEnumeration} wrapper for the given XTest enum.
+    *
+    * @return the wrapper for the data (never {@code null})
+    * @throws IllegalStateException if no wrapper for the given enumeration could be found.
+    */
+   IEnumeration getWrapperFor(Enumeration enumeration);
 
    /**
     * Finds the {@code IData} wrapper for the given XTest data.
@@ -38,6 +48,12 @@ public interface IWrapperResolver {
     * @throws IllegalStateException if no wrapper for the given package could be found.
     */
    IPackage getWrapperFor(Package systemDescriptorPackage);
+
+   /**
+    * Attempts to find the XText {@link Enumeration} with the given name and package.  If no enum is found, an empty
+    * {@code Optional} is returned.
+    */
+   Optional<Enumeration> findXTextEnum(String name, String packageName);
 
    /**
     * Attempts to find the XText {@link Data} with the given name and package.  If no data is found, an empty {@code

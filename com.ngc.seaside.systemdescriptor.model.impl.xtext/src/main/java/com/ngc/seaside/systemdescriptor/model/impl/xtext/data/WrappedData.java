@@ -145,7 +145,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
          case DATA:
             return WrappedReferencedDataField.toXtext(wrapperResolver, field);
          case ENUM:
-            // TODO TH: implement this
+            return WrappedReferencedEnumField.toXtext(wrapperResolver, field);
          default:
             return WrappedPrimitiveDataField.toXtext(field);
       }
@@ -160,7 +160,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
             if (refField.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.DATA) {
                return new WrappedReferencedDataField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
             } else if (refField.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.ENUMERATION) {
-               // TODO TH: implement this.
+               return new WrappedReferencedEnumField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
             }
          default:
             throw new UnrecognizedXtextTypeException(field);

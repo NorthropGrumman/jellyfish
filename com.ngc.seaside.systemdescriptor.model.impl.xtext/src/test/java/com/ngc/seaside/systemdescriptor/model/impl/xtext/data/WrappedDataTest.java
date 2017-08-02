@@ -11,6 +11,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;

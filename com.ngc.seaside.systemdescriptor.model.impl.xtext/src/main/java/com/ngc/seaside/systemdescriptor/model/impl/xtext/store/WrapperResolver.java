@@ -5,9 +5,11 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
@@ -36,6 +38,12 @@ public class WrapperResolver implements IWrapperResolver {
    }
 
    @Override
+   public IEnumeration getWrapperFor(Enumeration enumeration) {
+      return systemDescriptor.findEnumeration(((Package) enumeration.eContainer()).getName(), enumeration.getName())
+            .orElseThrow(() -> new IllegalStateException("could not find IEnumeration wrapper for " + enumeration));
+   }
+
+   @Override
    public IData getWrapperFor(Data data) {
       Preconditions.checkNotNull(data, "data may not be null!");
       return systemDescriptor.findData(((Package) data.eContainer()).getName(), data.getName())
@@ -55,6 +63,24 @@ public class WrapperResolver implements IWrapperResolver {
       return systemDescriptor.getPackages().getByName(systemDescriptorPackage.getName())
             .orElseThrow(
                   () -> new IllegalStateException("could not find IPackage wrapper for " + systemDescriptorPackage));
+   }
+
+   @Override
+   public Optional<Enumeration> findXTextEnum(String name, String packageName) {
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+      Preconditions.checkNotNull(packageName, "packageName may not be null!");
+      Preconditions.checkArgument(!packageName.trim().isEmpty(), "packageName may not be empty!");
+
+      for (Package p : findXTextPackages(packageName)) {
+         Element element = p.getElement();
+         if (element.eClass().getClassifierID() == SystemDescriptorPackage.ENUMERATION
+             && element.getName().equals(name)) {
+            return Optional.of((Enumeration) element);
+         }
+      }
+
+      return Optional.empty();
    }
 
    @Override
