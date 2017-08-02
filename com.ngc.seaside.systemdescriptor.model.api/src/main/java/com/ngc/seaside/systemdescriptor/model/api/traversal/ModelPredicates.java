@@ -93,7 +93,7 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, null);
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, JsonValue.NULL);
 
          // Tolerate either a single value or an array of values.
          switch (value.getValueType()) {
@@ -119,7 +119,7 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, null);
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, JsonValue.NULL);
 
          // Tolerate either a single value or an array of values.
          switch (value.getValueType()) {
