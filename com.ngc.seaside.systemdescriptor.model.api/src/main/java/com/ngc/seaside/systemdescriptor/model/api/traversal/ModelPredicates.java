@@ -107,6 +107,9 @@ public class ModelPredicates {
          case STRING:
             accept = stereotypes.contains(((JsonString) value).getString());
             break;
+         default:
+            accept = false;
+            break;
          }
       }
       return accept;
@@ -130,6 +133,9 @@ public class ModelPredicates {
             break;
          case STRING:
             accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
+            break;
+         default:
+            accept = false;
             break;
          }
       }
