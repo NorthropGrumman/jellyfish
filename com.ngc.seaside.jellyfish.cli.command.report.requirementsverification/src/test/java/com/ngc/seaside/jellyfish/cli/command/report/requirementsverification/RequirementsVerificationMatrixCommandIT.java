@@ -106,7 +106,6 @@ public class RequirementsVerificationMatrixCommandIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      System.out.println("\nOUTPUT:\n" + table);
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(4, rows.size());
@@ -176,8 +175,6 @@ public class RequirementsVerificationMatrixCommandIT {
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
 
       cmd.run(jellyFishCommandOptions);
-
-      System.out.println("\nOUTPUT:\n" + table);
 
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
@@ -260,8 +257,6 @@ public class RequirementsVerificationMatrixCommandIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      System.out.println("\nOUTPUT:\n" + table);
-
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(0, rows.size());
@@ -278,8 +273,6 @@ public class RequirementsVerificationMatrixCommandIT {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY, "NOT"));
 
       cmd.run(jellyFishCommandOptions);
-
-      System.out.println("\nOUTPUT:\n" + table);
 
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();

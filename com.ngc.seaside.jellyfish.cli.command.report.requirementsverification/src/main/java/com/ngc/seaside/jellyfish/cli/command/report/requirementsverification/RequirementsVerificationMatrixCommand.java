@@ -169,9 +169,11 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       }
 
       if (output.equalsIgnoreCase(DEFAULT_OUTPUT_PROPERTY)) {
-         System.out.println(report);
          logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to console...");
+         System.out.println("\nOUTPUT:\n" + report);
       } else {
+         Path outputPath = Paths.get(output);
+         //if ()
          printReportToFile(report, output);
          logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to location: %s",
                          Paths.get(output).toAbsolutePath().toString());
