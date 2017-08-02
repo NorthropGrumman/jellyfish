@@ -33,8 +33,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String PROJECT_NAME = "projectName";
    static final String MODEL_PROPERTY = "model";
    static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
+   static final String GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY = "generatedProjectDirectoryName";
 
-   static final String DEFAULT_OUTPUT_DIRECTOY = ".";
+   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
+   static final String DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME = "generated-projects";
 
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
@@ -181,7 +183,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    private void createJavaServiceBaseProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
-            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.generatedDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, delegateOptions);
    }
@@ -190,7 +192,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    private void createJavaServiceConnectorProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
-            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.generatedDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME, delegateOptions);
    }
@@ -230,7 +232,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       } else {
          // Ask the user if needed.
          ctx.rootOutputDirectory = Paths.get(
-               promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTOY, null))
+               promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
                .toFile();
       }
 
@@ -261,6 +263,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       // This is the directory that will contain the actual projects.  Its ${outputDirectory}/${projectName}.
       ctx.projectDirectory = ctx.rootOutputDirectory.toPath().resolve(ctx.projectName).toFile();
 
+      final String generatedDirectory;
+      if (commandOptions.getParameters().containsParameter(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)) {
+         generatedDirectory = commandOptions.getParameters().getParameter(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY).getStringValue();
+      } else {
+         generatedDirectory = DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME;
+      }
+      ctx.generatedDirectory = ctx.projectDirectory.toPath().resolve(generatedDirectory).toFile();
+      
       // Build a set of standard options that will be used by all commands.  Note the actual output directories will be
       // different depending on each command.
       ctx.standardCommandOptions = DefaultJellyFishCommandOptions.mergeWith(
@@ -297,6 +307,9 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                   .setRequired(false),
             new DefaultParameter<String>(PACKAGE_PROPERTY)
                   .setDescription("The project's default package")
+                  .setRequired(false),
+            new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
+                  .setDescription("The project's folder for generated code")
                   .setRequired(false));
    }
 
@@ -307,6 +320,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
       File rootOutputDirectory;
       File projectDirectory;
+      File generatedDirectory;
 
       String projectName;
       String groupId;

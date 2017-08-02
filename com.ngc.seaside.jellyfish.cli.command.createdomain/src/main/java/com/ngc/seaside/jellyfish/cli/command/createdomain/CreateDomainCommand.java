@@ -95,7 +95,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final String groupId = evaluateGroupId(parameters, model);
       final String artifactId = evaluateArtifactId(parameters, model);
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
-      final Path domainTemplateFile = evaluteDomainTemplateFile(parameters);
+      final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useModelStructure = evaluateBooleanParameter(parameters, USE_MODEL_STRUCTURE_PROPERTY);
 
@@ -115,7 +115,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          domainPackages = Collections.singleton(pkg);
       }
 
-      final Path outputDir = evaluteOutputDirectory(parameters);
+      final Path outputDir = evaluateOutputDirectory(parameters);
       final Path projectDir = evaluateProjectDirectory(outputDir, groupId, artifactId, clean);
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
@@ -343,7 +343,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the path to the domain template file
     * @throws CommandException if the file does not exist
     */
-   private Path evaluteDomainTemplateFile(IParameterCollection parameters) {
+   private Path evaluateDomainTemplateFile(IParameterCollection parameters) {
       final Path domainTemplateFile;
       final String templateFilename;
       if (parameters.containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
@@ -371,7 +371,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the path to the output directory
     * @throws CommandException if an error occurred in creating the project directory
     */
-   private Path evaluteOutputDirectory(IParameterCollection parameters) {
+   private Path evaluateOutputDirectory(IParameterCollection parameters) {
       final Path outputDir;
 
       if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
