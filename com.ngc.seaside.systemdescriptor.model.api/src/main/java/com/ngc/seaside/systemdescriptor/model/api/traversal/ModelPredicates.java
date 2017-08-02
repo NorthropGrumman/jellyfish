@@ -20,8 +20,8 @@ import javax.json.JsonValue;
 public class ModelPredicates {
 
    /**
-    * The JSON key refereed in the metadata of a model to declare stereotypes.  The value is either a string or an
-    * array of strings.
+    * The JSON key refereed in the metadata of a model to declare stereotypes.  The value is either a string or an array
+    * of strings.
     */
    public final static String STEREOTYPE_MEMBER_NAME = "stereotypes";
 
@@ -93,19 +93,23 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, JsonValue.NULL);
+
          // Tolerate either a single value or an array of values.
          switch (value.getValueType()) {
-            case ARRAY:
-               accept = false;
-               JsonArray array = (JsonArray) value;
-               for (int i = 0; i < array.size() && !accept; i++) {
-                  accept = stereotypes.contains(array.getString(i));
-               }
-               break;
-            case STRING:
-               accept = stereotypes.contains(((JsonString) value).getString());
-               break;
+         case ARRAY:
+            accept = false;
+            JsonArray array = (JsonArray) value;
+            for (int i = 0; i < array.size() && !accept; i++) {
+               accept = stereotypes.contains(array.getString(i));
+            }
+            break;
+         case STRING:
+            accept = stereotypes.contains(((JsonString) value).getString());
+            break;
+         default:
+            accept = false;
+            break;
          }
       }
       return accept;
@@ -115,20 +119,24 @@ public class ModelPredicates {
       IMetadata metadata = model.getMetadata();
       boolean accept = metadata != null;
       if (accept) {
-         JsonValue value = metadata.getJson().getValue("/" + STEREOTYPE_MEMBER_NAME);
+         JsonValue value = metadata.getJson().getOrDefault(STEREOTYPE_MEMBER_NAME, JsonValue.NULL);
+
          // Tolerate either a single value or an array of values.
          switch (value.getValueType()) {
-            case ARRAY:
-               Collection<String> missingStereotypes = new ArrayList<>(stereotypes);
-               JsonArray array = (JsonArray) value;
-               for (int i = 0; i < array.size(); i++) {
-                  missingStereotypes.remove(array.getString(i));
-               }
-               accept = missingStereotypes.isEmpty();
-               break;
-            case STRING:
-               accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
-               break;
+         case ARRAY:
+            Collection<String> missingStereotypes = new ArrayList<>(stereotypes);
+            JsonArray array = (JsonArray) value;
+            for (int i = 0; i < array.size(); i++) {
+               missingStereotypes.remove(array.getString(i));
+            }
+            accept = missingStereotypes.isEmpty();
+            break;
+         case STRING:
+            accept = stereotypes.contains(((JsonString) value).getString()) && stereotypes.size() == 1;
+            break;
+         default:
+            accept = false;
+            break;
          }
       }
       return accept;
