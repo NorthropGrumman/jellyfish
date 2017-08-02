@@ -27,6 +27,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -51,8 +53,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "DEFAULT";
    static final String OUTPUT_PROPERTY = "output";
    static final String DEFAULT_OUTPUT_PROPERTY = "STDOUT";
-   static final String SCOPE_PROPERTY = "scope";
-   static final String DEFAULT_SCOPE_PROPERTY = "model.metadata.stereotypes";
    static final String VALUES_PROPERTY = "values";
    static final String DEFAULT_VALUES_PROPERTY = "service";
    static final String OPERATOR_PROPERTY = "operator";
@@ -72,11 +72,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
                                        "Allows the user to define the output format. The possible values are default and csv")
                                        .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                       "Allows the user to define the file where the output will be stored. Default: prints to stdout.")
-                                       .setRequired(false),
-                              new DefaultParameter(SCOPE_PROPERTY).setDescription(
-                                       "Allows the user to enter a keyword scope (metadata, input, output, etc..) Default: model.metadata.stereotypes")
-                                       .setRequired(false),
+                                       "Allows the user to define the file where the output will be stored. Default: prints to stdout."),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
                                        "The values in which to search as a comma separated string. Default: service")
                                        .setRequired(false),
@@ -165,11 +161,50 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       Map<String, Feature> features = getAllFeatures(commandOptions, models);
       Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
 
-      String report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, features.keySet()));
-      System.out.println(report);
+      String report = "";
+      if (outputFormat.equalsIgnoreCase("csv")) {
+         report = generateCsvVerificationMatrix(satisfiedRequirements, features.keySet());
+      } else {
+         report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, features.keySet()));
+      }
+
+      if (output.equalsIgnoreCase(DEFAULT_OUTPUT_PROPERTY)) {
+         System.out.println(report);
+         logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to console...");
+      } else {
+         printReportToFile(report, output);
+         logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to location: %s",
+                         Paths.get(output).toAbsolutePath().toString());
+      }
+
       logService.info(RequirementsVerificationMatrixCommand.class,
                       "%s requirements verification matrix successfully created", values);
 
+   }
+
+   /**
+    * Prints the verification matrix report to the file provided by the output
+    *
+    * @param report verification matrix to be printed
+    * @param output file location for output
+    */
+   private void printReportToFile(String report, String output) {
+      //TODO: implement
+      //FileUtilities.addLinesToFile();
+
+   }
+
+   /**
+    * Generates a comma delimited requirements verification matrix given a Collection of requirements and features
+    *
+    * @param requirements satisfied requirements
+    * @param features     satisfied features
+    * @return a {@link StringTable} containing verification matrix
+    */
+   private String generateCsvVerificationMatrix(Collection<Requirement> requirements, Set<String> features) {
+      //TODO: implement
+      StringBuilder sb = new StringBuilder();
+      return sb.toString();
    }
 
    /**

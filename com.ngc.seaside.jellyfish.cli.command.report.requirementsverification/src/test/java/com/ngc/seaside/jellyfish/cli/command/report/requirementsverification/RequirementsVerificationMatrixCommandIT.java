@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -48,7 +47,7 @@ public class RequirementsVerificationMatrixCommandIT {
    private DefaultParameterCollection parameters;
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
-   StringTable<Requirement> table;
+   private StringTable<Requirement> table;
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
@@ -94,15 +93,12 @@ public class RequirementsVerificationMatrixCommandIT {
       Mockito.when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(sd);
    }
 
-
    @Test
    public void testStringTableWithDefaultParams() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.SCOPE_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_SCOPE_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -110,7 +106,8 @@ public class RequirementsVerificationMatrixCommandIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify outputs
+      System.out.println("\nOUTPUT:\n" + table);
+      // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(4, rows.size());
       rows.forEach(row -> {
@@ -118,54 +115,174 @@ public class RequirementsVerificationMatrixCommandIT {
          assertEquals(10, row.getCells().size());
       });
 
+      // Validate First Requirement
+      MultiLineRow firstRow = rows.get(0);
+      assertEquals("", firstRow.getCells().get(1).getLine(0));
+      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("", firstRow.getCells().get(3).getLine(0));
+      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("", firstRow.getCells().get(5).getLine(0));
+      assertEquals("X", firstRow.getCells().get(6).getLine(0));
+      assertEquals("", firstRow.getCells().get(7).getLine(0));
+      assertEquals("", firstRow.getCells().get(8).getLine(0));
+      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+
+      // Validate Second Requirement
+      MultiLineRow secondRow = rows.get(1);
+      assertEquals("", secondRow.getCells().get(1).getLine(0));
+      assertEquals("", secondRow.getCells().get(2).getLine(0));
+      assertEquals("X", secondRow.getCells().get(3).getLine(0));
+      assertEquals("", secondRow.getCells().get(4).getLine(0));
+      assertEquals("", secondRow.getCells().get(5).getLine(0));
+      assertEquals("", secondRow.getCells().get(6).getLine(0));
+      assertEquals("", secondRow.getCells().get(7).getLine(0));
+      assertEquals("", secondRow.getCells().get(8).getLine(0));
+      assertEquals("X", secondRow.getCells().get(9).getLine(0));
+
+      // Validate Third Requirement
+      MultiLineRow thirdRow = rows.get(2);
+      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
+      assertEquals("", thirdRow.getCells().get(2).getLine(0));
+      assertEquals("", thirdRow.getCells().get(3).getLine(0));
+      assertEquals("", thirdRow.getCells().get(4).getLine(0));
+      assertEquals("", thirdRow.getCells().get(5).getLine(0));
+      assertEquals("", thirdRow.getCells().get(6).getLine(0));
+      assertEquals("", thirdRow.getCells().get(7).getLine(0));
+      assertEquals("", thirdRow.getCells().get(8).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
+
+      // Validate Fourth Requirement
+      MultiLineRow fourthRow = rows.get(3);
+      assertEquals("", fourthRow.getCells().get(1).getLine(0));
+      assertEquals("", fourthRow.getCells().get(2).getLine(0));
+      assertEquals("", fourthRow.getCells().get(3).getLine(0));
+      assertEquals("", fourthRow.getCells().get(4).getLine(0));
+      assertEquals("", fourthRow.getCells().get(5).getLine(0));
+      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
+      assertEquals("", fourthRow.getCells().get(7).getLine(0));
+      assertEquals("", fourthRow.getCells().get(8).getLine(0));
+      assertEquals("", fourthRow.getCells().get(9).getLine(0));
+   }
+
+   @Test
+   public void testStringTableWithAdditionalStereotype() {
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "service,system"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
+
+      cmd.run(jellyFishCommandOptions);
+
+      System.out.println("\nOUTPUT:\n" + table);
+
+      // Verify table structure
+      List<MultiLineRow> rows = table.getRows();
+      assertEquals(5, rows.size());
+      rows.forEach(row -> {
+         assertEquals(1, row.getNumberOfLines());
+         assertEquals(10, row.getCells().size());
+      });
+
       // First Requirement
       MultiLineRow firstRow = rows.get(0);
-      assertEquals("",firstRow.getCells().get(1).getLine(0));
-      assertEquals("X",firstRow.getCells().get(2).getLine(0));
-      assertEquals("",firstRow.getCells().get(3).getLine(0));
-      assertEquals("X",firstRow.getCells().get(4).getLine(0));
-      assertEquals("",firstRow.getCells().get(5).getLine(0));
-      assertEquals("X",firstRow.getCells().get(6).getLine(0));
-      assertEquals("",firstRow.getCells().get(7).getLine(0));
-      assertEquals("",firstRow.getCells().get(8).getLine(0));
-      assertEquals("X",firstRow.getCells().get(9).getLine(0));
+      assertEquals("", firstRow.getCells().get(1).getLine(0));
+      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("", firstRow.getCells().get(3).getLine(0));
+      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("", firstRow.getCells().get(5).getLine(0));
+      assertEquals("X", firstRow.getCells().get(6).getLine(0));
+      assertEquals("", firstRow.getCells().get(7).getLine(0));
+      assertEquals("", firstRow.getCells().get(8).getLine(0));
+      assertEquals("X", firstRow.getCells().get(9).getLine(0));
 
       // Second Requirement
       MultiLineRow secondRow = rows.get(1);
-      assertEquals("",secondRow.getCells().get(1).getLine(0));
-      assertEquals("",secondRow.getCells().get(2).getLine(0));
-      assertEquals("X",secondRow.getCells().get(3).getLine(0));
-      assertEquals("",secondRow.getCells().get(4).getLine(0));
-      assertEquals("",secondRow.getCells().get(5).getLine(0));
-      assertEquals("",secondRow.getCells().get(6).getLine(0));
-      assertEquals("",secondRow.getCells().get(7).getLine(0));
-      assertEquals("",secondRow.getCells().get(8).getLine(0));
-      assertEquals("X",secondRow.getCells().get(9).getLine(0));
+      assertEquals("", secondRow.getCells().get(1).getLine(0));
+      assertEquals("", secondRow.getCells().get(2).getLine(0));
+      assertEquals("X", secondRow.getCells().get(3).getLine(0));
+      assertEquals("", secondRow.getCells().get(4).getLine(0));
+      assertEquals("", secondRow.getCells().get(5).getLine(0));
+      assertEquals("", secondRow.getCells().get(6).getLine(0));
+      assertEquals("", secondRow.getCells().get(7).getLine(0));
+      assertEquals("", secondRow.getCells().get(8).getLine(0));
+      assertEquals("X", secondRow.getCells().get(9).getLine(0));
 
       // Third Requirement
       MultiLineRow thirdRow = rows.get(2);
-      assertEquals("X",thirdRow.getCells().get(1).getLine(0));
-      assertEquals("",thirdRow.getCells().get(2).getLine(0));
-      assertEquals("",thirdRow.getCells().get(3).getLine(0));
-      assertEquals("",thirdRow.getCells().get(4).getLine(0));
-      assertEquals("",thirdRow.getCells().get(5).getLine(0));
-      assertEquals("",thirdRow.getCells().get(6).getLine(0));
-      assertEquals("",thirdRow.getCells().get(7).getLine(0));
-      assertEquals("",thirdRow.getCells().get(8).getLine(0));
-      assertEquals("X",thirdRow.getCells().get(9).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
+      assertEquals("", thirdRow.getCells().get(2).getLine(0));
+      assertEquals("", thirdRow.getCells().get(3).getLine(0));
+      assertEquals("", thirdRow.getCells().get(4).getLine(0));
+      assertEquals("", thirdRow.getCells().get(5).getLine(0));
+      assertEquals("", thirdRow.getCells().get(6).getLine(0));
+      assertEquals("", thirdRow.getCells().get(7).getLine(0));
+      assertEquals("", thirdRow.getCells().get(8).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
 
       // Fourth Requirement
       MultiLineRow fourthRow = rows.get(3);
-      assertEquals("",fourthRow.getCells().get(1).getLine(0));
-      assertEquals("",fourthRow.getCells().get(2).getLine(0));
-      assertEquals("",fourthRow.getCells().get(3).getLine(0));
-      assertEquals("",fourthRow.getCells().get(4).getLine(0));
-      assertEquals("",fourthRow.getCells().get(5).getLine(0));
-      assertEquals("X",fourthRow.getCells().get(6).getLine(0));
-      assertEquals("",fourthRow.getCells().get(7).getLine(0));
-      assertEquals("",fourthRow.getCells().get(8).getLine(0));
-      assertEquals("",fourthRow.getCells().get(9).getLine(0));
+      assertEquals("", fourthRow.getCells().get(1).getLine(0));
+      assertEquals("", fourthRow.getCells().get(2).getLine(0));
+      assertEquals("", fourthRow.getCells().get(3).getLine(0));
+      assertEquals("", fourthRow.getCells().get(4).getLine(0));
+      assertEquals("", fourthRow.getCells().get(5).getLine(0));
+      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
+      assertEquals("", fourthRow.getCells().get(7).getLine(0));
+      assertEquals("", fourthRow.getCells().get(8).getLine(0));
+      assertEquals("", fourthRow.getCells().get(9).getLine(0));
 
+      // Fifth Requirement
+      MultiLineRow fifthRow = rows.get(4);
+      assertEquals("", fifthRow.getCells().get(1).getLine(0));
+      assertEquals("", fifthRow.getCells().get(2).getLine(0));
+      assertEquals("", fifthRow.getCells().get(3).getLine(0));
+      assertEquals("", fifthRow.getCells().get(4).getLine(0));
+      assertEquals("", fifthRow.getCells().get(5).getLine(0));
+      assertEquals("", fifthRow.getCells().get(6).getLine(0));
+      assertEquals("X", fifthRow.getCells().get(7).getLine(0));
+      assertEquals("", fifthRow.getCells().get(8).getLine(0));
+      assertEquals("", fifthRow.getCells().get(9).getLine(0));
+   }
 
+   @Test
+   public void testStringTableWithAbsentStereotype() {
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "model"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
+
+      cmd.run(jellyFishCommandOptions);
+
+      System.out.println("\nOUTPUT:\n" + table);
+
+      // Verify table structure
+      List<MultiLineRow> rows = table.getRows();
+      assertEquals(0, rows.size());
+   }
+
+   @Test
+   public void testStringTableWithoutDefaultStereotype() {
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY, "NOT"));
+
+      cmd.run(jellyFishCommandOptions);
+
+      System.out.println("\nOUTPUT:\n" + table);
+
+      // Verify table structure
+      List<MultiLineRow> rows = table.getRows();
+      assertEquals(1, rows.size());
    }
 }
