@@ -27,7 +27,6 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
       setPublishMethods(dto, model, packagez);
       setReceiveMethods(dto, model, packagez);
       setBaseClassInfoAndImports(dto, model, packagez);
-      setAbstractInfo(dto, model, basePackageName);
       return dto;
    }
 
@@ -143,17 +142,6 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
             .setImports(imports);
    }
    
-   private static void setAbstractInfo(BaseServiceTemplateDto dto, IModel model, String basePackageName) {
-      AbstractServiceDto abstractDto = new AbstractServiceDto();
-      abstractDto.setClassName("Abstract" + dto.getClassName());
-      abstractDto.setPackageName(basePackageName + ".base.impl");
-      abstractDto.setModelName(model.getParent().getName() + '.' + model.getName());
-      abstractDto.setImports(new LinkedHashSet<>(Arrays.asList(
-         dto.getServiceInterfaceDto().getPackageName() + '.' + dto.getServiceInterfaceDto().getInterfaceName(),
-         basePackageName + ".events.*")));
-      dto.setAbstractServiceDto(abstractDto);
-   }
-
    private static String constantize(String value) {
       char[] chars = value.toCharArray();
       StringBuilder sb = new StringBuilder();
