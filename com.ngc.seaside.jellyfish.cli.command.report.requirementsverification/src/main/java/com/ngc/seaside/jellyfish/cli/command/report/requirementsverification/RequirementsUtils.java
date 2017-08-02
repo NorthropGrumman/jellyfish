@@ -18,6 +18,13 @@ public class RequirementsUtils {
    private RequirementsUtils() {
    }
 
+   /**
+    * Retrieves all requirements from a given model
+    *
+    * @param model     model to search
+    * @param searchKey keyword to search (e.g. satisfies)
+    * @return the Collection of requirements found in the model
+    */
    public static Collection<String> getRequirementsFromModel(IModel model, String searchKey) {
       IMetadata metadata = model.getMetadata();
       TreeSet<String> requirements = new TreeSet<>(Collections.reverseOrder());
@@ -28,6 +35,13 @@ public class RequirementsUtils {
       return requirements;
    }
 
+   /**
+    * Retrieves all requirements from a given scenario
+    *
+    * @param scenario  model to search
+    * @param searchKey keyword to search (e.g. satisfies)
+    * @return the Collection of requirements found in the scenario
+    */
    public static Collection<String> getRequirementsFromScenario(IScenario scenario, String searchKey) {
       IMetadata metadata = scenario.getMetadata();
       TreeSet<String> requirements = new TreeSet<>(Collections.reverseOrder());
@@ -38,6 +52,13 @@ public class RequirementsUtils {
       return requirements;
    }
 
+   /**
+    * Retrieves all requirements from a given metadata
+    *
+    * @param metadata  model to search
+    * @param searchKey keyword to search (e.g. satisfies)
+    * @return the Collection of requirements found in the metadata
+    */
    public static TreeSet<String> getRequirementsFromMetadata(IMetadata metadata, String searchKey) {
       JsonValue value = metadata.getJson().getOrDefault(searchKey, JsonValue.NULL);
       TreeSet<String> requirements = new TreeSet<>(Collections.reverseOrder());
@@ -58,6 +79,17 @@ public class RequirementsUtils {
       return requirements;
    }
 
+   /**
+    * <p>Gets the String that is nested in between two Strings. Only the first match is returned.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An
+    * empty ("") open and close returns an empty string.</p>
+    *
+    * @param str   the String containing the substring, may be null
+    * @param open  the String before the substring, may be null
+    * @param close the String after the substring, may be null
+    * @return the substring, {@code null} if no match
+    */
    public static String substringBetween(final String str, final String open, final String close) {
       if (str == null || open == null || close == null) {
          return null;

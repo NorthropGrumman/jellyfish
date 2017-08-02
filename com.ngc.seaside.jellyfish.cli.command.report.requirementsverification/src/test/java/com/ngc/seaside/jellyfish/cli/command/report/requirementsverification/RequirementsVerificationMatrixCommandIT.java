@@ -7,7 +7,6 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineCell;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineRow;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -33,7 +32,6 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -48,9 +46,9 @@ public class RequirementsVerificationMatrixCommandIT {
    private static final Injector injector = Guice.createInjector(getModules());
    private RequirementsVerificationMatrixCommand cmd;
    private DefaultParameterCollection parameters;
-   StringTable<Requirement> table;
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
+   StringTable<Requirement> table;
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
@@ -71,21 +69,16 @@ public class RequirementsVerificationMatrixCommandIT {
       Mockito.when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
 
       // Setup class under test
-      cmd = new RequirementsVerificationMatrixCommand(){
+      cmd = new RequirementsVerificationMatrixCommand() {
          @Override
          protected Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
-            return Paths.get("src/test/resources/").toAbsolutePath().resolve("src/test/gherkin/");
+            return Paths.get("src/test/resources/").toAbsolutePath().resolve("src/test/gherkin");
          }
 
          @Override
-         protected StringTable<Requirement> createStringTable(Set<String> features) {
+         protected StringTable<Requirement> createStringTable(Collection<String> features) {
             table = super.createStringTable(features);
             return table;
-         }
-
-         @Override
-         protected String getGherkinPathPrefix() {
-            return "/src/test/gherkin/";
          }
       };
       cmd.setLogService(logger);
@@ -101,10 +94,6 @@ public class RequirementsVerificationMatrixCommandIT {
       Mockito.when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(sd);
    }
 
-//   @Test
-//   public void testCommandWithoutOptionalParams() {
-//
-//   }
 
    @Test
    public void testStringTableWithDefaultParams() {
@@ -124,10 +113,59 @@ public class RequirementsVerificationMatrixCommandIT {
       // Verify outputs
       List<MultiLineRow> rows = table.getRows();
       assertEquals(4, rows.size());
+      rows.forEach(row -> {
+         assertEquals(1, row.getNumberOfLines());
+         assertEquals(10, row.getCells().size());
+      });
+
+      // First Requirement
       MultiLineRow firstRow = rows.get(0);
-      assertEquals(1, firstRow.getNumberOfLines());
-      assertEquals(10, firstRow.getCells().size());
-//      MultiLineCell firstRowFirstCell = firstRow.getCells().get(0);
-//      assertEquals(3, firstRowFirstCell.getLines().size());
+      assertEquals("",firstRow.getCells().get(1).getLine(0));
+      assertEquals("X",firstRow.getCells().get(2).getLine(0));
+      assertEquals("",firstRow.getCells().get(3).getLine(0));
+      assertEquals("X",firstRow.getCells().get(4).getLine(0));
+      assertEquals("",firstRow.getCells().get(5).getLine(0));
+      assertEquals("X",firstRow.getCells().get(6).getLine(0));
+      assertEquals("",firstRow.getCells().get(7).getLine(0));
+      assertEquals("",firstRow.getCells().get(8).getLine(0));
+      assertEquals("X",firstRow.getCells().get(9).getLine(0));
+
+      // Second Requirement
+      MultiLineRow secondRow = rows.get(1);
+      assertEquals("",secondRow.getCells().get(1).getLine(0));
+      assertEquals("",secondRow.getCells().get(2).getLine(0));
+      assertEquals("X",secondRow.getCells().get(3).getLine(0));
+      assertEquals("",secondRow.getCells().get(4).getLine(0));
+      assertEquals("",secondRow.getCells().get(5).getLine(0));
+      assertEquals("",secondRow.getCells().get(6).getLine(0));
+      assertEquals("",secondRow.getCells().get(7).getLine(0));
+      assertEquals("",secondRow.getCells().get(8).getLine(0));
+      assertEquals("X",secondRow.getCells().get(9).getLine(0));
+
+      // Third Requirement
+      MultiLineRow thirdRow = rows.get(2);
+      assertEquals("X",thirdRow.getCells().get(1).getLine(0));
+      assertEquals("",thirdRow.getCells().get(2).getLine(0));
+      assertEquals("",thirdRow.getCells().get(3).getLine(0));
+      assertEquals("",thirdRow.getCells().get(4).getLine(0));
+      assertEquals("",thirdRow.getCells().get(5).getLine(0));
+      assertEquals("",thirdRow.getCells().get(6).getLine(0));
+      assertEquals("",thirdRow.getCells().get(7).getLine(0));
+      assertEquals("",thirdRow.getCells().get(8).getLine(0));
+      assertEquals("X",thirdRow.getCells().get(9).getLine(0));
+
+      // Fourth Requirement
+      MultiLineRow fourthRow = rows.get(3);
+      assertEquals("",fourthRow.getCells().get(1).getLine(0));
+      assertEquals("",fourthRow.getCells().get(2).getLine(0));
+      assertEquals("",fourthRow.getCells().get(3).getLine(0));
+      assertEquals("",fourthRow.getCells().get(4).getLine(0));
+      assertEquals("",fourthRow.getCells().get(5).getLine(0));
+      assertEquals("X",fourthRow.getCells().get(6).getLine(0));
+      assertEquals("",fourthRow.getCells().get(7).getLine(0));
+      assertEquals("",fourthRow.getCells().get(8).getLine(0));
+      assertEquals("",fourthRow.getCells().get(9).getLine(0));
+
+
    }
 }

@@ -24,19 +24,18 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
          return "Req";
       } else if (column < getColumnCount()) {
          return " ".concat((String) features.toArray()[column - 1]);
-      } else {
-         return "";
       }
+      return "";
    }
 
    @Override
    public ColumnSizePolicy getColumnSizePolicy(int column) {
       if (column == 0) {
-         return ColumnSizePolicy.MAX;
+         return ColumnSizePolicy.FIXED;
       } else if (column < getColumnCount()) {
          return ColumnSizePolicy.FIXED;
       } else {
-         return ColumnSizePolicy.MAX;
+         return ColumnSizePolicy.FIXED;
       }
    }
 
@@ -59,8 +58,6 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
          String feature = (String) features.toArray()[column - 1];
          if (object.getFeatures().contains(feature)) {
             return "X";
-         } else {
-            return "";
          }
       }
       return "";

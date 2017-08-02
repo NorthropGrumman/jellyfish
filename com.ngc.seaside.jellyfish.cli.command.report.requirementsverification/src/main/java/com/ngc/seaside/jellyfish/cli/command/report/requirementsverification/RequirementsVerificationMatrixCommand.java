@@ -34,13 +34,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
 
+   /**
+    * The JSON key refereed in the metadata of a model to declare requirements.  The value is either a string or an
+    * array of strings.
+    */
+   private static final String REQUIREMENTS_MEMBER_NAME = "satisfies";
+   private static final String NAME = "requirements-verification-matrix";
+   private static final String GHERKIN_URI = "src/test/gherkin";
    static final String OUTPUT_FORMAT_PROPERTY = "outputFormat";
    static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "DEFAULT";
    static final String OUTPUT_PROPERTY = "output";
@@ -50,16 +56,8 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    static final String VALUES_PROPERTY = "values";
    static final String DEFAULT_VALUES_PROPERTY = "service";
    static final String OPERATOR_PROPERTY = "operator";
-   static final String DEFAULT_OPERATOR_PROPERTY = "OR";
-   /**
-    * The JSON key refereed in the metadata of a model to declare requirements.  The value is either a string or an
-    * array of strings.
-    */
-   private static final String REQUIREMENTS_MEMBER_NAME = "satisfies";
-   private static final String NAME = "requirements-verification-matrix";
    private static final IUsage USAGE = createUsage();
-   private Path featureFilesDirectory;
-
+   static final String DEFAULT_OPERATOR_PROPERTY = "OR";
    private ILogService logService;
 
    /**
@@ -115,19 +113,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       return output;
    }
 
-//   /**
-//    * Retrieve the scope property value based on user input. Default is: "model.metadata.stereotypes"
-//    *
-//    * @param commandOptions Jellyfish command options containing user params
-//    */
-//   private static String evaluateScope(IJellyFishCommandOptions commandOptions) {
-//      String scope = DEFAULT_SCOPE_PROPERTY;
-//      if (commandOptions.getParameters().containsParameter(SCOPE_PROPERTY)) {
-//         scope = commandOptions.getParameters().getParameter(SCOPE_PROPERTY).getStringValue();
-//      }
-//      return scope;
-//   }
-
    /**
     * Retrieve the values property value based on user input. Default is: "service"
     *
@@ -166,14 +151,13 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    }
 
    protected Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
-      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(getGherkinPathPrefix());
+      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(GHERKIN_URI);
    }
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       String outputFormat = evaluateOutputFormat(commandOptions);
       String output = evaluateOutput(commandOptions);
-//      String scope = evaluateScope(commandOptions);
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
 
@@ -181,12 +165,22 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       Map<String, Feature> features = getAllFeatures(commandOptions, models);
       Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
 
-      String report = String.valueOf(generateOutputTable(satisfiedRequirements, features.keySet()));
+      String report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, features.keySet()));
       System.out.println(report);
+      logService.info(RequirementsVerificationMatrixCommand.class,
+                      "%s requirements verification matrix successfully created", values);
 
    }
 
-   private StringTable generateOutputTable(Collection<Requirement> requirements, Set<String> features) {
+   /**
+    * Generates a requirements verification matrix given a Collection of requirements and features
+    *
+    * @param requirements satisfied requirements
+    * @param features     satisfied features
+    * @return a {@link StringTable} containing verification matrix
+    */
+   private StringTable generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+                                                         Collection<String> features) {
       StringTable<Requirement> stringTable = createStringTable(features);
 
       requirements.forEach(requirement -> stringTable.getModel().addItem(requirement));
@@ -199,19 +193,30 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       return stringTable;
    }
 
-   protected StringTable<Requirement> createStringTable(Set<String> features) {
-      return new StringTable<>(createTableFormmat(features));
+   /**
+    * Creates a {@link StringTable} for {@link Requirement} objects
+    *
+    * @param features features features to compare against each {@link Requirement}
+    */
+   protected StringTable<Requirement> createStringTable(Collection<String> features) {
+      return new StringTable<>(createTableFormat(features));
    }
 
-   protected ITableFormat<Requirement> createTableFormmat(Set<String> features) {
+   /**
+    * Creates a {@link ITableFormat} for {@link Requirement} objects
+    *
+    * @param features features features to compare against each {@link Requirement}
+    */
+   private ITableFormat<Requirement> createTableFormat(Collection<String> features) {
       return new RequirementItemFormat(features);
    }
 
    /**
+    * Verifies which feature files meets which requirement.
     *
-    * @param models
-    * @param featureMap
-    * @return
+    * @param models     models to search through for requirements
+    * @param featureMap features to look for
+    * @return returns a Collection of {@link Requirement}s
     */
    private Collection<Requirement> verifyRequirements(Collection<IModel> models, Map<String, Feature> featureMap) {
       TreeMultimap<String, String>
@@ -239,17 +244,24 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          }
       });
 
-      return collectVerifiedRequirements(requirementsMap);
+      return createVerifiedRequirements(requirementsMap);
    }
 
-   private Collection<Requirement> collectVerifiedRequirements(Multimap<String, String> requirementsMap) {
-      TreeSet<Requirement> requirements = new TreeSet<>(Collections.reverseOrder());
+   /**
+    * This is a helper method that goes through a multimap of requirement to value(s) and creates a {@link Requirement}
+    * objects.
+    *
+    * @param requirementsMap a map where key = a requirement and value(s) = all features that that satisfy it
+    * @return returns a Collection of {@link Requirement}s
+    */
+   private Collection<Requirement> createVerifiedRequirements(Multimap<String, String> requirementsMap) {
+      TreeSet<Requirement> features = new TreeSet<>(Collections.reverseOrder());
       requirementsMap.keySet().forEach(requirement -> {
          Requirement helper = new Requirement(requirement);
          helper.addFeatures(requirementsMap.get(requirement));
-         requirements.add(helper);
+         features.add(helper);
       });
-      return requirements;
+      return features;
    }
 
    /**
@@ -273,15 +285,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    }
 
    /**
-    * Returns the configured GherkinPathPrefix
-    *
-    * @return string of gherkin path
-    */
-   protected String getGherkinPathPrefix() {
-      return "src/test/gherkin/";
-   }
-
-   /**
     * Converts comma delimited values to a collection
     */
    private Collection<String> valuesToCollection(String values) {
@@ -297,9 +300,10 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    /**
     * Retrieves a collection of features defined for a collection of system descriptor models
     *
-    * @param models collection of system descriptor models to be processed
+    * @param commandOptions Jellyfish command options containing system descriptor
+    * @param models         collection of system descriptor models to be processed
     */
-   private Map<String, Feature> getAllFeatures(IJellyFishCommandOptions options, Collection<IModel> models) {
+   private Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models) {
       HashSet<String> packages = new HashSet<>();
       TreeMap<String, Feature> features = new TreeMap<>(Collections.reverseOrder());
 
@@ -308,7 +312,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          if (packages.add(packagez)) {
             String modelPathURI = packagez.replace(".", "/");
 
-            File featureFilesRoot = getFeatureFilesDirectory(options).toAbsolutePath().resolve(modelPathURI).toFile();
+            File
+                     featureFilesRoot =
+                     getFeatureFilesDirectory(commandOptions).toAbsolutePath().resolve(modelPathURI).toFile();
 
             for (File file : featureFilesRoot.listFiles()) {
                if (file.isFile()) {
