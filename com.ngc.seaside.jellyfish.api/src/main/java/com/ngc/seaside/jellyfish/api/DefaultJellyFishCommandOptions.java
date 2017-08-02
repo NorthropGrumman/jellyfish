@@ -7,6 +7,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.Objects;
 public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptions implements IJellyFishCommandOptions {
 
    private IParsingResult parsingResult;
+   private Path systemDescriptorProjectPath;
 
    @Override
    public IParsingResult getParsingResult() {
@@ -32,6 +34,11 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
    @Override
    public ISystemDescriptor getSystemDescriptor() {
       return parsingResult.getSystemDescriptor();
+   }
+
+   @Override
+   public Path getSystemDescriptorProjectPath() {
+      return systemDescriptorProjectPath;
    }
 
    @Override
@@ -112,10 +119,15 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
       DefaultJellyFishCommandOptions mergedOptions = new DefaultJellyFishCommandOptions();
       mergedOptions.setParsingResult(options.getParsingResult());
       mergedOptions.setParameters(mergedParams);
+      mergedOptions.setSystemDescriptorProjectPath(options.getSystemDescriptorProjectPath());
       return mergedOptions;
    }
 
    private static boolean doesContainParameterNamed(String name, Collection<IParameter> parameters) {
       return parameters.stream().noneMatch(p -> p.getName().equals(name));
+   }
+
+   public void setSystemDescriptorProjectPath(Path path) {
+      this.systemDescriptorProjectPath = path;
    }
 }

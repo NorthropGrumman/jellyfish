@@ -1,15 +1,13 @@
-package com.ngc.seaside.testeval
+package com.ngc.seaside.testeval2
 
 import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus
 
-model BooService {
-	metadata {
-		"description": "Determines the BooNess of a service.",
-		"stereotypes": ["service"],
-		"satisfies": ["SW003", "SW002"]
-	}
-	
+model FooBarService {
+    metadata {
+        "stereotypes": ["system"]
+    }
+
 	input {
 		FooStatus fooStatus
 	}
@@ -18,13 +16,13 @@ model BooService {
 		BarStatus barStatus
 	}	
 	
-	scenario handleTooMuchBoo {
+	scenario handleFooBar {
 		metadata {
-            "satisfies": ["SW001"]
+			"description": "Determines the foobar of a system.",
+            "satisfies": ["SYS001"]
 		}
 		when receiving fooStatus
 		then willPublish barStatus
 		and willBeCompleted within 500 milliseconds
 	}
-	
 }

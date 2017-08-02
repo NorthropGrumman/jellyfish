@@ -7,8 +7,6 @@ dependencies {
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 
-    compile "commons-beanutils:commons-beanutils:$beanUtilsVersion"
-    
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
     compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
     compile "com.ngc.blocs:service.api:$blocsVersion"

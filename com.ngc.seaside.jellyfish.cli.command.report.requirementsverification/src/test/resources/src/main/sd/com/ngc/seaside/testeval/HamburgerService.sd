@@ -19,7 +19,7 @@ model HamburgerService {
 	scenario removeTheCheese {
 		metadata {
 			"description": "Removes the cheese from a hamburger service.",
-            "satisfies": ["SW004"]
+            "satisfies": ["SW003"]
 		}
 		when receiving fooStatus
 		then willPublish barStatus

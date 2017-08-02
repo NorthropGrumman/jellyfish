@@ -1,4 +1,4 @@
-package com.ngc.seaside.testeval
+package com.ngc.seaside.testeval2
 
 import com.ngc.seaside.testeval.datatype.FooStatus
 import com.ngc.seaside.testeval.datatype.BarStatus

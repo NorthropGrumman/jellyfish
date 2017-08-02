@@ -7,6 +7,9 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineCell;
+import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineRow;
+import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -30,16 +33,22 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequirementsVerificationMatrixCommandIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
-   private RequirementsVerificationMatrixCommand cmd = new RequirementsVerificationMatrixCommand();
+   private RequirementsVerificationMatrixCommand cmd;
    private DefaultParameterCollection parameters;
+   StringTable<Requirement> table;
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
 
@@ -62,6 +71,23 @@ public class RequirementsVerificationMatrixCommandIT {
       Mockito.when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
 
       // Setup class under test
+      cmd = new RequirementsVerificationMatrixCommand(){
+         @Override
+         protected Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
+            return Paths.get("src/test/resources/").toAbsolutePath().resolve("src/test/gherkin/");
+         }
+
+         @Override
+         protected StringTable<Requirement> createStringTable(Set<String> features) {
+            table = super.createStringTable(features);
+            return table;
+         }
+
+         @Override
+         protected String getGherkinPathPrefix() {
+            return "/src/test/gherkin/";
+         }
+      };
       cmd.setLogService(logger);
 
       // Setup mock system descriptor
@@ -81,7 +107,7 @@ public class RequirementsVerificationMatrixCommandIT {
 //   }
 
    @Test
-   public void testCommandWithOptionalParams() {
+   public void testStringTableWithDefaultParams() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
@@ -94,5 +120,14 @@ public class RequirementsVerificationMatrixCommandIT {
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
 
       cmd.run(jellyFishCommandOptions);
+
+      // Verify outputs
+      List<MultiLineRow> rows = table.getRows();
+      assertEquals(4, rows.size());
+      MultiLineRow firstRow = rows.get(0);
+      assertEquals(1, firstRow.getNumberOfLines());
+      assertEquals(10, firstRow.getCells().size());
+//      MultiLineCell firstRowFirstCell = firstRow.getCells().get(0);
+//      assertEquals(3, firstRowFirstCell.getLines().size());
    }
 }
