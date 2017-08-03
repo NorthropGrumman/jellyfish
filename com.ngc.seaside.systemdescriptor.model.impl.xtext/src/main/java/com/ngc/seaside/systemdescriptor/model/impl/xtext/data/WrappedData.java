@@ -156,12 +156,19 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
          case SystemDescriptorPackage.PRIMITIVE_DATA_FIELD_DECLARATION:
             return new WrappedPrimitiveDataField(wrapperResolver, (PrimitiveDataFieldDeclaration) field);
          case SystemDescriptorPackage.REFERENCED_DATA_MODEL_FIELD_DECLARATION:
-            ReferencedDataModelFieldDeclaration refField = (ReferencedDataModelFieldDeclaration) field;
-            if (refField.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.DATA) {
-               return new WrappedReferencedDataField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
-            } else if (refField.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.ENUMERATION) {
-               return new WrappedReferencedEnumField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
-            }
+            return toWrappedReferenceDataField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
+         default:
+            throw new UnrecognizedXtextTypeException(field);
+      }
+   }
+
+   private static IDataField toWrappedReferenceDataField(IWrapperResolver wrapperResolver,
+                                                         ReferencedDataModelFieldDeclaration field) {
+      switch (field.getDataModel().eClass().getClassifierID()) {
+         case SystemDescriptorPackage.DATA:
+            return new WrappedReferencedDataField(wrapperResolver, field);
+         case SystemDescriptorPackage.ENUMERATION:
+            return new WrappedReferencedEnumField(wrapperResolver, field);
          default:
             throw new UnrecognizedXtextTypeException(field);
       }

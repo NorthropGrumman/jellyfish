@@ -140,8 +140,11 @@ public class ValidationDelegateTest {
 
    @Test
    public void testDoesValidateReferencedDataField() throws Throwable {
+      Data referencedData = factory().createData();
+
       ReferencedDataModelFieldDeclaration source = factory().createReferencedDataModelFieldDeclaration();
       source.setName("myReferencedDataField");
+      source.setDataModel(referencedData);
       Data data = factory().createData();
       data.setName("MyData");
       data.getFields().add(source);
