@@ -28,7 +28,7 @@ subprojects {
         jellyfishEXTVersion = '1.3'
 
         bootstrapApiVersion = '1.6'
-        bootstrapVersion = '1.4'
+        bootstrapVersion = '1.4.1-SNAPSHOT'
         bootstrapCommandsVersion = '1.2'
 
         blocsVersion = '2.1'
