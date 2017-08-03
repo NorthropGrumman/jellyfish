@@ -14,8 +14,8 @@ import javax.json.JsonValue;
 
 import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
 
-public class RequirementsUtils {
-   private RequirementsUtils() {
+public class ModelUtils {
+   private ModelUtils() {
    }
 
    /**

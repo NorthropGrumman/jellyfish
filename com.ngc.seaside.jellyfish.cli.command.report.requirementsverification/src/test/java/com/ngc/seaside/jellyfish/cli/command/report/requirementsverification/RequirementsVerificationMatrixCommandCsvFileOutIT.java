@@ -7,7 +7,6 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineRow;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -36,13 +35,12 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RequirementsVerificationMatrixCommandFileOutputIT {
+public class RequirementsVerificationMatrixCommandCsvFileOutIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
@@ -51,6 +49,7 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
    private StringTable<Requirement> table;
+   private String csv;
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
@@ -75,6 +74,13 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
       // Setup class under test
       cmd = new RequirementsVerificationMatrixCommand() {
          @Override
+         protected String generateCsvVerificationMatrix(Collection<Requirement> requirements,
+                                                        Collection<String> features) {
+            csv = super.generateCsvVerificationMatrix(requirements, features);
+            return csv;
+         }
+
+         @Override
          protected StringTable<Requirement> createStringTable(Collection<String> features) {
             table = super.createStringTable(features);
             return table;
@@ -94,10 +100,10 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
    }
 
    @Test
-   public void testOutputWithAbsolutePathAndWithDefaultStereotypes() throws IOException {
-      Path outputDir = Paths.get("build/matrix-verification/tests/results/my/test/test1");
+   public void testCsvOutputWithAbsolutePathAndWithDefaultStereotypes() throws IOException {
+      Path outputDir = Paths.get("build/matrix-verification/tests/results/my/test/test1_csv");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     "Csv"));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
                                       outputDir.toAbsolutePath().toString()));
@@ -108,30 +114,27 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify table structure
-      List<MultiLineRow> rows = table.getRows();
-      assertEquals(4, rows.size());
-      rows.forEach(row -> {
-         assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
-      });
+      // Verify no tables were created
+      assertEquals(null, table);
 
-      // Verify output string
+      // Verify output file
       File result = Paths.get(outputDir.toAbsolutePath().toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = table.toString().replaceAll("([\\n\\r]+\\s)*$", "");
-      String actual = test.toString().replaceAll("([\\n\\r]+\\s)*$", "");
+      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      System.out.println(test);
+
+      // Uncomment to view files
+      Files.delete(outputDir);
    }
 
    @Test
-   public void estCsvOutputWithRelativePathAndWithDefaultStereotypes() throws IOException {
-      Path outputDir = Paths.get("src/main/sd/test/results/test2");
+   public void testCsvOutputWithRelativePathAndWithDefaultStereotypes() throws IOException {
+      Path outputDir = Paths.get("src/main/sd/test/results/test2_csv");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     "CSv"));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
@@ -141,30 +144,27 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify table structure
-      List<MultiLineRow> rows = table.getRows();
-      assertEquals(4, rows.size());
-      rows.forEach(row -> {
-         assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
-      });
+      // Verify no tables were created
+      assertEquals(null, table);
 
-      // Verify output string
+      // Verify output file
       File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = table.toString().replaceAll("([\\n\\r]+\\s)*$", "");
-      String actual = test.toString().replaceAll("([\\n\\r]+\\s)*$", "");
+      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      System.out.println(test);
+
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
    public void testCsvOutputWithRelativePathAndWithAdditionalStereotype() throws IOException {
-      Path outputDir = Paths.get("src/main/sd/test/results/a/test3.txt");
+      Path outputDir = Paths.get("src/main/sd/test/results/a/test3_csv.txt");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     "CSV"));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(
@@ -174,30 +174,27 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify table structure
-      List<MultiLineRow> rows = table.getRows();
-      assertEquals(5, rows.size());
-      rows.forEach(row -> {
-         assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
-      });
+      // Verify no tables were created
+      assertEquals(null, table);
 
-      // Verify output string
+      // Verify output file
       File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = table.toString().replaceAll("([\\n\\r]+\\s)*$", "");
-      String actual = test.toString().replaceAll("([\\n\\r]+\\s)*$", "");
+      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      System.out.println(test);
+
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
    public void testCsvOutputWithRelativePathAndWithAbsentStereotype() throws IOException {
-      Path outputDir = Paths.get("src/main/sd/test/results/test4");
+      Path outputDir = Paths.get("src/main/sd/test/results/test4_csv");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     "csv"));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "model"));
@@ -206,26 +203,27 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify table structure
-      List<MultiLineRow> rows = table.getRows();
-      assertEquals(0, rows.size());
+      // Verify no tables were created
+      assertEquals(null, table);
 
-      // Verify output string
+      // Verify output file
       File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = table.toString().replaceAll("([\\n\\r]+\\s)*$", "");
-      String actual = test.toString().replaceAll("([\\n\\r]+\\s)*$", "");
+      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      System.out.println(test);
+
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
    public void testCsvOutputWithRelavtivePathButWithoutDefaultStereotype() throws IOException {
-      Path outputDir = Paths.get("src/main/sd/test/results/test5");
+      Path outputDir = Paths.get("src/main/sd/test/results/test5_csv");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     "csv"));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
@@ -234,18 +232,19 @@ public class RequirementsVerificationMatrixCommandFileOutputIT {
 
       cmd.run(jellyFishCommandOptions);
 
-      // Verify table structure
-      List<MultiLineRow> rows = table.getRows();
-      assertEquals(1, rows.size());
+      // Verify no tables were created
+      assertEquals(null, table);
 
-      // Verify output string
+      // Verify output file
       File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = table.toString().replaceAll("([\\n\\r]+\\s)*$", "");
-      String actual = test.toString().replaceAll("([\\n\\r]+\\s)*$", "");
+      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      System.out.println(test);
+
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 }

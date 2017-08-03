@@ -61,6 +61,7 @@ public class Requirement implements Comparable {
     */
    public String createFeatureVerificationCsvString(Collection<String> features) {
       StringJoiner sj = new StringJoiner(",");
+
       sj.add("\"" + ID + "\"");
 
       features.forEach(feature ->{

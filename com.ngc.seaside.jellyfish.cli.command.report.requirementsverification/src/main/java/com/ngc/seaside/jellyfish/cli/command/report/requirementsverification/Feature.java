@@ -8,7 +8,7 @@ import java.util.TreeSet;
 /**
  * POJO for a feature
  */
-public class Feature implements Comparable{
+public class Feature implements Comparable {
    private String fileName;
    private String fullyQualifiedName;
    private String name;
@@ -73,6 +73,7 @@ public class Feature implements Comparable{
    void addRequirements(Collection<String> requirements) {
       requirements.forEach(this::addRequirement);
    }
+
    @Override
    public int hashCode() {
       return Objects.hash(fullyQualifiedName);
@@ -94,7 +95,7 @@ public class Feature implements Comparable{
    }
 
    @Override
-   public int compareTo(Object obj) throws ClassCastException {
+   public int compareTo(Object obj) {
       if (!(obj instanceof Feature)) {
          throw new ClassCastException("A Feature object expected.");
       }

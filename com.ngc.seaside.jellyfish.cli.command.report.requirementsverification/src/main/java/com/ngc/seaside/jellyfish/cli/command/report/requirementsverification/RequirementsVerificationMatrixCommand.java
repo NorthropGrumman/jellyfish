@@ -206,14 +206,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          parent.mkdirs();
       }
 
-//      if (!outputPath.toFile().exists()) {
-//         System.out.println("NOPE");
-//      }
-//      try {
-//         outputPath.toFile().createNewFile();
-//      } catch (IOException e) {
-//         e.printStackTrace();
-//      }
       List<String> test = new ArrayList<>();
       test.add(report);
       try {
@@ -233,21 +225,25 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param features     satisfied features
     * @return a {@link StringTable} containing verification matrix
     */
-   private String generateCsvVerificationMatrix(Collection<Requirement> requirements, Collection<String> features) {
-      String COMMA_SEPARATOR = ",";
+   protected String generateCsvVerificationMatrix(Collection<Requirement> requirements, Collection<String> features) {
+      String commaSeparator = ",";
 
       StringJoiner sj = new StringJoiner(",");
 
       StringBuilder sb = new StringBuilder();
 
       // Process header information
-      sb.append("\"Req\"").append(COMMA_SEPARATOR);
-      features.forEach(feature -> sj.add("\"" + feature + "\""));
-      sb.append(sj.toString()).append("\n");
+      if (!features.isEmpty()) {
+         sb.append("\"Req\"").append(commaSeparator);
+         features.forEach(feature -> sj.add("\"" + feature + "\""));
+         sb.append(sj.toString()).append("\n");
 
-      requirements.forEach(req -> sb.append(req.createFeatureVerificationCsvString(features)).append("\n"));
+         requirements.forEach(req -> sb.append(req.createFeatureVerificationCsvString(features)).append("\n"));
 
-      return sb.toString();
+         return sb.toString();
+      }
+
+      return "";
    }
 
    /**
@@ -311,11 +307,11 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
             // A feature file should be considered to verify a requirement:
             if (scenario != null) {
                // if the model that contains the scenario has a "satisfies" metadata file for some requirement
-               feature.addRequirements(RequirementsUtils.getRequirementsFromModel(model, REQUIREMENTS_MEMBER_NAME));
+               feature.addRequirements(ModelUtils.getRequirementsFromModel(model, REQUIREMENTS_MEMBER_NAME));
 
                // if the scenario in the model has a "satisfies" metadata field
                feature.addRequirements(
-                        RequirementsUtils.getRequirementsFromScenario(scenario, REQUIREMENTS_MEMBER_NAME));
+                        ModelUtils.getRequirementsFromScenario(scenario, REQUIREMENTS_MEMBER_NAME));
             }
             feature.getRequirements()
                      .forEach(requirement -> requirementsMap.put(requirement, feature.getFullyQualifiedName()));
@@ -396,8 +392,8 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
 
             for (File file : featureFilesRoot.listFiles()) {
                if (file.isFile()) {
-                  String qualifiedName = RequirementsUtils.substringBetween(file.getName(), "", ".feature");
-                  String name = RequirementsUtils.substringBetween(file.getName(), ".", ".");
+                  String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
+                  String name = ModelUtils.substringBetween(file.getName(), ".", ".");
                   features.put(qualifiedName, new Feature(qualifiedName, name));
                }
             }

@@ -17,6 +17,7 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +42,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RequirementsVerificationMatrixCommandIT {
+public class RequirementsVerificationMatrixCommandStdFileOutIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
@@ -91,11 +94,13 @@ public class RequirementsVerificationMatrixCommandIT {
    }
 
    @Test
-   public void testStringTableWithDefaultStereotypes() {
+   public void testOutputWithAbsolutePathAndWithDefaultStereotypes() throws IOException {
+      Path outputDir = Paths.get("build/matrix-verification/tests/results/my/test/test1_default");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
+                                      outputDir.toAbsolutePath().toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -111,61 +116,59 @@ public class RequirementsVerificationMatrixCommandIT {
          assertEquals(10, row.getCells().size());
       });
 
-      // Validate First Requirement
-      MultiLineRow firstRow = rows.get(0);
-      assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("X", firstRow.getCells().get(2).getLine(0));
-      assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("X", firstRow.getCells().get(4).getLine(0));
-      assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("X", firstRow.getCells().get(6).getLine(0));
-      assertEquals("", firstRow.getCells().get(7).getLine(0));
-      assertEquals("", firstRow.getCells().get(8).getLine(0));
-      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+      // Verify output string
+      File result = Paths.get(outputDir.toAbsolutePath().toString()).toFile();
+      String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      // Validate Second Requirement
-      MultiLineRow secondRow = rows.get(1);
-      assertEquals("", secondRow.getCells().get(1).getLine(0));
-      assertEquals("", secondRow.getCells().get(2).getLine(0));
-      assertEquals("X", secondRow.getCells().get(3).getLine(0));
-      assertEquals("", secondRow.getCells().get(4).getLine(0));
-      assertEquals("", secondRow.getCells().get(5).getLine(0));
-      assertEquals("", secondRow.getCells().get(6).getLine(0));
-      assertEquals("", secondRow.getCells().get(7).getLine(0));
-      assertEquals("", secondRow.getCells().get(8).getLine(0));
-      assertEquals("X", secondRow.getCells().get(9).getLine(0));
+      String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
-      // Validate Third Requirement
-      MultiLineRow thirdRow = rows.get(2);
-      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
-      assertEquals("", thirdRow.getCells().get(2).getLine(0));
-      assertEquals("", thirdRow.getCells().get(3).getLine(0));
-      assertEquals("", thirdRow.getCells().get(4).getLine(0));
-      assertEquals("", thirdRow.getCells().get(5).getLine(0));
-      assertEquals("", thirdRow.getCells().get(6).getLine(0));
-      assertEquals("", thirdRow.getCells().get(7).getLine(0));
-      assertEquals("", thirdRow.getCells().get(8).getLine(0));
-      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
-
-      // Validate Fourth Requirement
-      MultiLineRow fourthRow = rows.get(3);
-      assertEquals("", fourthRow.getCells().get(1).getLine(0));
-      assertEquals("", fourthRow.getCells().get(2).getLine(0));
-      assertEquals("", fourthRow.getCells().get(3).getLine(0));
-      assertEquals("", fourthRow.getCells().get(4).getLine(0));
-      assertEquals("", fourthRow.getCells().get(5).getLine(0));
-      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
-      assertEquals("", fourthRow.getCells().get(7).getLine(0));
-      assertEquals("", fourthRow.getCells().get(8).getLine(0));
-      assertEquals("", fourthRow.getCells().get(9).getLine(0));
+      assertEquals(expected, actual);
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
-   public void testStringTableWithAdditionalStereotype() {
+   public void testOutputWithRelativePathAndWithDefaultStereotypes() throws IOException {
+      Path outputDir = Paths.get("src/main/sd/test/results/test2_default");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
+
+      cmd.run(jellyFishCommandOptions);
+
+      // Verify table structure
+      List<MultiLineRow> rows = table.getRows();
+      assertEquals(4, rows.size());
+      rows.forEach(row -> {
+         assertEquals(1, row.getNumberOfLines());
+         assertEquals(10, row.getCells().size());
+      });
+
+      // Verify output string
+      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      String test = FileUtils.readFileToString(result, Charset.defaultCharset());
+
+      String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+
+      assertEquals(expected, actual);
+      // Uncomment to view files
+      Files.delete(result.toPath());
+   }
+
+   @Test
+   public void testOutputWithRelativePathAndWithAdditionalStereotype() throws IOException {
+      Path outputDir = Paths.get("src/main/sd/test/results/a/test3_default.txt");
+      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
+                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "service,system"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -181,73 +184,25 @@ public class RequirementsVerificationMatrixCommandIT {
          assertEquals(10, row.getCells().size());
       });
 
-      // First Requirement
-      MultiLineRow firstRow = rows.get(0);
-      assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("X", firstRow.getCells().get(2).getLine(0));
-      assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("X", firstRow.getCells().get(4).getLine(0));
-      assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("X", firstRow.getCells().get(6).getLine(0));
-      assertEquals("", firstRow.getCells().get(7).getLine(0));
-      assertEquals("", firstRow.getCells().get(8).getLine(0));
-      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+      // Verify output string
+      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      // Second Requirement
-      MultiLineRow secondRow = rows.get(1);
-      assertEquals("", secondRow.getCells().get(1).getLine(0));
-      assertEquals("", secondRow.getCells().get(2).getLine(0));
-      assertEquals("X", secondRow.getCells().get(3).getLine(0));
-      assertEquals("", secondRow.getCells().get(4).getLine(0));
-      assertEquals("", secondRow.getCells().get(5).getLine(0));
-      assertEquals("", secondRow.getCells().get(6).getLine(0));
-      assertEquals("", secondRow.getCells().get(7).getLine(0));
-      assertEquals("", secondRow.getCells().get(8).getLine(0));
-      assertEquals("X", secondRow.getCells().get(9).getLine(0));
+      String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
-      // Third Requirement
-      MultiLineRow thirdRow = rows.get(2);
-      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
-      assertEquals("", thirdRow.getCells().get(2).getLine(0));
-      assertEquals("", thirdRow.getCells().get(3).getLine(0));
-      assertEquals("", thirdRow.getCells().get(4).getLine(0));
-      assertEquals("", thirdRow.getCells().get(5).getLine(0));
-      assertEquals("", thirdRow.getCells().get(6).getLine(0));
-      assertEquals("", thirdRow.getCells().get(7).getLine(0));
-      assertEquals("", thirdRow.getCells().get(8).getLine(0));
-      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
-
-      // Fourth Requirement
-      MultiLineRow fourthRow = rows.get(3);
-      assertEquals("", fourthRow.getCells().get(1).getLine(0));
-      assertEquals("", fourthRow.getCells().get(2).getLine(0));
-      assertEquals("", fourthRow.getCells().get(3).getLine(0));
-      assertEquals("", fourthRow.getCells().get(4).getLine(0));
-      assertEquals("", fourthRow.getCells().get(5).getLine(0));
-      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
-      assertEquals("", fourthRow.getCells().get(7).getLine(0));
-      assertEquals("", fourthRow.getCells().get(8).getLine(0));
-      assertEquals("", fourthRow.getCells().get(9).getLine(0));
-
-      // Fifth Requirement
-      MultiLineRow fifthRow = rows.get(4);
-      assertEquals("", fifthRow.getCells().get(1).getLine(0));
-      assertEquals("", fifthRow.getCells().get(2).getLine(0));
-      assertEquals("", fifthRow.getCells().get(3).getLine(0));
-      assertEquals("", fifthRow.getCells().get(4).getLine(0));
-      assertEquals("", fifthRow.getCells().get(5).getLine(0));
-      assertEquals("", fifthRow.getCells().get(6).getLine(0));
-      assertEquals("X", fifthRow.getCells().get(7).getLine(0));
-      assertEquals("", fifthRow.getCells().get(8).getLine(0));
-      assertEquals("", fifthRow.getCells().get(9).getLine(0));
+      assertEquals(expected, actual);
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
-   public void testStringTableWithAbsentStereotype() {
+   public void testOutputWithRelativePathAndWithAbsentStereotype() throws IOException {
+      Path outputDir = Paths.get("src/main/sd/test/results/test4_default");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "model"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
@@ -257,14 +212,26 @@ public class RequirementsVerificationMatrixCommandIT {
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(0, rows.size());
+
+      // Verify output string
+      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      String test = FileUtils.readFileToString(result, Charset.defaultCharset());
+
+      String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+
+      assertEquals(expected, actual);
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 
    @Test
-   public void testStringTableWithoutDefaultStereotype() {
+   public void testOutputWithRelavtivePathButWithoutDefaultStereotype() throws IOException {
+      Path outputDir = Paths.get("src/main/sd/test/results/test5_default");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
+      parameters.addParameter(
+               new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY, outputDir.toString()));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY, "NOT"));
@@ -274,5 +241,16 @@ public class RequirementsVerificationMatrixCommandIT {
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(1, rows.size());
+
+      // Verify output string
+      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      String test = FileUtils.readFileToString(result, Charset.defaultCharset());
+
+      String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
+      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+
+      assertEquals(expected, actual);
+      // Uncomment to view files
+      Files.delete(result.toPath());
    }
 }
