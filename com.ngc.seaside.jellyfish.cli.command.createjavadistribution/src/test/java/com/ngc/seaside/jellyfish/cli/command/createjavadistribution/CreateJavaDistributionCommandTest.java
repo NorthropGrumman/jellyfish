@@ -78,7 +78,7 @@ public class CreateJavaDistributionCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(3)).getName();
+      verify(model, times(2)).getName();
       verify(model, times(2)).getParent();
 
       // Verify passed values
@@ -108,7 +108,7 @@ public class CreateJavaDistributionCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
+      verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
 
       // Verify passed values

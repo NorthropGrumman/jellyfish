@@ -63,7 +63,7 @@ public class JellyFish {
       // Add the proxy command provider module so that an IJellyFishCommandProvider can be resolved.
       //modules.add(proxyJellyFishCommandProvider);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         // Ignore the XTextSystemDescriptorServiceModule, we'll create the module below via forStandaloneUsage().  This
+         // Ignore the XTextSystemDescriptorServiceModule, we'll createStringTable the module below via forStandaloneUsage().  This
          // is because XTextSystemDescriptorServiceModule is registered as an Module and the service loader picks it up.
          // However, we need to build the module via forStandaloneUsage() to make sure the XText framework is
          // initialized correctly.

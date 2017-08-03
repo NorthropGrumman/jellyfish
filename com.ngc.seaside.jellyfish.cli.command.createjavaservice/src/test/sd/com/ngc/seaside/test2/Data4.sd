@@ -1,0 +1,8 @@
+package com.ngc.seaside.test2
+
+import com.ngc.seaside.test2.Data3
+
+data Data4 {
+	string field6
+	many Data3 field7
+}

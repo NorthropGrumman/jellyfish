@@ -1,0 +1,3 @@
+
+include 'com.ngc.seaside.threateval.engagementtrackpriorityservice.base'
+project(':com.ngc.seaside.threateval.engagementtrackpriorityservice.base').name = 'engagementtrackpriorityservice.base'

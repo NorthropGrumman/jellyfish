@@ -404,6 +404,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          path = Paths.get(inputDir.getStringValue());
       }
       options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
+      options.setSystemDescriptorProjectPath(path);
       return options;
    }
 

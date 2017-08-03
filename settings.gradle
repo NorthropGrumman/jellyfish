@@ -30,6 +30,8 @@ project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaservice'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaservice').name = 'jellyfish.cli.command.createjavaservice'
 
 include 'com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages'
 project(':com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages').name = 'jellyfish.cli.command.createprotocolbuffermessages'
@@ -39,3 +41,15 @@ project(':com.ngc.seaside.jellyfish.cli.command.samplecommand').name = 'jellyfis
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaevents'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaevents').name = 'jellyfish.cli.command.createjavaevents'
+
+include 'com.ngc.seaside.jellyfish.cli.command.report.requirementsverification'
+project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsverification').name = 'jellyfish.cli.command.report.requirementsverification'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject').name = 'jellyfish.cli.command.createjavaserviceproject'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicebase'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicebase').name = 'jellyfish.cli.command.createjavaservicebase'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig').name = 'jellyfish.cli.command.createjavaserviceconfig'
