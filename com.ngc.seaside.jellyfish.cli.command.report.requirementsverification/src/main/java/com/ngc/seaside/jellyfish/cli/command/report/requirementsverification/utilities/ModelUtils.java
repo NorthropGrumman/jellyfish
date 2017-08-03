@@ -106,7 +106,7 @@ public class ModelUtils {
     * @param close the String after the substring, may be null
     * @return the substring, {@code null} if no match
     */
-   public static String substringBetween(final String str, final String open, final String close) {
+   private static String substringBetween(final String str, final String open, final String close) {
       if (str == null || open == null || close == null) {
          return null;
       }
@@ -138,31 +138,30 @@ public class ModelUtils {
             String modelPathURI = packagez.replace(".", "/");
 
             File featureFilesRoot =
-                     getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI).toFile();
+                     getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI)
+                              .toFile();
 
             File[] files = featureFilesRoot.listFiles();
             if (files != null) {
                for (File file : files) {
-                  if (file.isFile()) {
                      String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
                      String name = ModelUtils.substringBetween(file.getName(), ".", ".");
                      features.put(qualifiedName, new Feature(qualifiedName, name));
-                  }
                }
             }
          }
       });
-
       return features;
    }
 
    /**
     * Resolves the feature files directory with the system descriptor location
+    *
     * @param commandOptions Jellyfish command options containing system descriptor
-    * @param uri location of feature files relative to the system descriptor
+    * @param uri            location of feature files relative to the system descriptor
     * @return resolved path to feature files directory
     */
-   public static Path getResolvedFeatureFilesDirectory(IJellyFishCommandOptions commandOptions, String uri) {
+   private static Path getResolvedFeatureFilesDirectory(IJellyFishCommandOptions commandOptions, String uri) {
       return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(uri);
    }
 
@@ -173,7 +172,8 @@ public class ModelUtils {
     * @param values         the values in which to search
     * @param operator       the operator to apply to search
     */
-   public static Collection<IModel> searchModels(IJellyFishCommandOptions commandOptions, String values, String operator) {
+   public static Collection<IModel> searchModels(IJellyFishCommandOptions commandOptions, String values,
+                                                 String operator) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
 
       switch (operator) {
