@@ -5,7 +5,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -13,11 +12,10 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.MatrixUtils;
+import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
-import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,21 +24,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
-import java.util.TreeMap;
 import java.util.TreeSet;
+
+import static com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils.getAllFeatures;
 
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
@@ -156,10 +148,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       return USAGE;
    }
 
-   private Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
-      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(GHERKIN_URI);
-   }
-
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       String outputFormat = evaluateOutputFormat(commandOptions);
@@ -167,7 +155,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
       Collection<IModel> models = searchModels(commandOptions, values, operator);
-      Map<String, Feature> features = getAllFeatures(commandOptions, models);
+      Map<String, Feature> features = getAllFeatures(commandOptions, models, GHERKIN_URI);
       Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
 
       String report;
@@ -180,14 +168,12 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       if (outputPath == null) {
 
          logService.info(getClass(), "Printing report to console...");
-         System.out.println("\nOUTPUT:\n" + report);
+         printVerificationConsole(report);
 
       } else {
          logService.info(getClass(), "Printing report to location: %s ...",
                          outputPath.toAbsolutePath().toString());
-
-         printReportToFile(outputPath, report);
-
+         printVerificationMatrixToFile(outputPath, report);
       }
 
       logService.info(getClass(), "%s requirements verification matrix successfully created", values);
@@ -197,27 +183,26 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    /**
     * Prints the verification matrix report to the file provided by the output
     *
+    * @param report verification matrix to be printed
+    */
+   private void printVerificationConsole(String report) {
+      MatrixUtils.printVerificationConsole(report);
+   }
+
+   /**
+    * Prints the verification matrix report to the file provided by the output
+    *
     * @param outputPath file path to output
     * @param report     verification matrix to be printed
     */
-   private void printReportToFile(Path outputPath, String report) {
-      File parent = outputPath.getParent().toAbsolutePath().toFile();
-      boolean parentFolderCreationSuccessful = true;
-      if (!parent.exists()) {
-         parentFolderCreationSuccessful = parent.mkdirs();
-      }
-
-      if (parentFolderCreationSuccessful) {
-         List<String> test = new ArrayList<>();
-         test.add(report);
-         try {
-            Files.write(outputPath, test);
-         } catch (IOException e) {
-            logService.error(getClass(), "Unable to write to the file specified by path %s",
-                             outputPath.toAbsolutePath().toString());
-            throw new CommandException(String.format("Unable to write to the file specified by path %s",
-                                                     outputPath.toAbsolutePath().toString()), e);
-         }
+   private void printVerificationMatrixToFile(Path outputPath, String report) {
+      try {
+         MatrixUtils.printVerificationMatrixToFile(outputPath, report);
+      } catch (IOException e) {
+         logService.error(getClass(), "Unable to write to the file specified by path %s",
+                          outputPath.toAbsolutePath().toString());
+         throw new CommandException(String.format("Unable to write to the file specified by path %s",
+                                                  outputPath.toAbsolutePath().toString()), e);
       }
    }
 
@@ -229,24 +214,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @return a {@link StringTable} containing verification matrix
     */
    protected String generateCsvVerificationMatrix(Collection<Requirement> requirements, Collection<String> features) {
-      String commaSeparator = ",";
-
-      StringJoiner sj = new StringJoiner(",");
-
-      StringBuilder sb = new StringBuilder();
-
-      // Process header information
-      if (!features.isEmpty()) {
-         sb.append("\"Req\"").append(commaSeparator);
-         features.forEach(feature -> sj.add("\"" + feature + "\""));
-         sb.append(sj.toString()).append("\n");
-
-         requirements.forEach(req -> sb.append(req.createFeatureVerificationCsvString(features)).append("\n"));
-
-         return sb.toString();
-      }
-
-      return "";
+      return MatrixUtils.generateCsvVerificationMatrix(requirements, features);
    }
 
    /**
@@ -258,34 +226,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    private StringTable generateDefaultVerificationMatrix(Collection<Requirement> requirements,
                                                          Collection<String> features) {
-      StringTable<Requirement> stringTable = createStringTable(features);
-
-      requirements.forEach(requirement -> stringTable.getModel().addItem(requirement));
-
-      stringTable.setRowSpacer("_");
-      stringTable.setColumnSpacer("|");
-
-      stringTable.setShowHeader(true);
-
-      return stringTable;
-   }
-
-   /**
-    * Creates a {@link StringTable} for {@link Requirement} objects
-    *
-    * @param features features features to compare against each {@link Requirement}
-    */
-   protected StringTable<Requirement> createStringTable(Collection<String> features) {
-      return new StringTable<>(createTableFormat(features));
-   }
-
-   /**
-    * Creates a {@link ITableFormat} for {@link Requirement} objects
-    *
-    * @param features features features to compare against each {@link Requirement}
-    */
-   private ITableFormat<Requirement> createTableFormat(Collection<String> features) {
-      return new RequirementItemFormat(features);
+      return MatrixUtils.generateDefaultVerificationMatrix(requirements, features);
    }
 
    /**
@@ -349,64 +290,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param operator       the operator to apply to search
     */
    private Collection<IModel> searchModels(IJellyFishCommandOptions commandOptions, String values, String operator) {
-      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
-
-      switch (operator) {
-      case "AND":
-         return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
-      case "NOT":
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
-      default: // OR
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
-      }
-   }
-
-   /**
-    * Converts comma delimited values to a collection
-    */
-   private Collection<String> valuesToCollection(String values) {
-      List<String> valueCollection = new ArrayList<>();
-      if (values.contains(",")) {
-         valueCollection.addAll(Arrays.asList(values.split(",")));
-      } else {
-         valueCollection.add(values);
-      }
-      return valueCollection;
-   }
-
-   /**
-    * Retrieves a collection of features defined for a collection of system descriptor models
-    *
-    * @param commandOptions Jellyfish command options containing system descriptor
-    * @param models         collection of system descriptor models to be processed
-    */
-   private Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models) {
-      HashSet<String> packages = new HashSet<>();
-      TreeMap<String, Feature> features = new TreeMap<>(Collections.reverseOrder());
-
-      models.forEach(model -> {
-         String packagez = model.getParent().getName();
-         if (packages.add(packagez)) {
-            String modelPathURI = packagez.replace(".", "/");
-
-            File
-                     featureFilesRoot =
-                     getFeatureFilesDirectory(commandOptions).toAbsolutePath().resolve(modelPathURI).toFile();
-
-            File[] files = featureFilesRoot.listFiles();
-            if (files != null) {
-               for (File file : files) {
-                  if (file.isFile()) {
-                     String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
-                     String name = ModelUtils.substringBetween(file.getName(), ".", ".");
-                     features.put(qualifiedName, new Feature(qualifiedName, name));
-                  }
-               }
-            }
-         }
-      });
-
-      return features;
+      return ModelUtils.searchModels(commandOptions, values, operator);
    }
 
    @Activate

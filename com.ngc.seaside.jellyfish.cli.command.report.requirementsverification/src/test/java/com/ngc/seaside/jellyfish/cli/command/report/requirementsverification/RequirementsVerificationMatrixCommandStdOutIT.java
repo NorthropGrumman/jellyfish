@@ -266,5 +266,22 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       // Verify table structure
       List<MultiLineRow> rows = table.getRows();
       assertEquals(1, rows.size());
+      rows.forEach(row -> {
+         assertEquals(1, row.getNumberOfLines());
+         assertEquals(10, row.getCells().size());
+      });
+
+      // First Requirement
+      MultiLineRow firstRow = rows.get(0);
+      assertEquals("", firstRow.getCells().get(1).getLine(0));
+      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("", firstRow.getCells().get(3).getLine(0));
+      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("", firstRow.getCells().get(5).getLine(0));
+      assertEquals("X", firstRow.getCells().get(6).getLine(0));
+      assertEquals("", firstRow.getCells().get(7).getLine(0));
+      assertEquals("", firstRow.getCells().get(8).getLine(0));
+      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+
    }
 }
