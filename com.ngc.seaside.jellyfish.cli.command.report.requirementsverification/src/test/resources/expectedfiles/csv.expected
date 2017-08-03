@@ -1,5 +1,5 @@
-"Req","MilkShakeService.melt","HotdogService.addMustard","HotdogService.addKechup","HamburgerService.removeTheCheese","HamburgerService.addBacon","FooService.calculateFooness","BotaService.calculateBotanamus","BooService.handleTooMuchBoo"
-"SW001",X,,,,,,,X
-"SW002",,,X,,,,,X
-"SW003",,X,,X,,X,,X
-"SE004",,,,,,X,,
+"Req","MilkShakeService.melt","HotdogService.addMustard","HotdogService.addKechup","HamburgerService.removeTheCheese","HamburgerService.addBacon","FooService.calculateFooness","FooBarService.handleFooBar","BotaService.calculateBotanamus","BooService.handleTooMuchBoo","AotaService.calculateBotanamus"
+"SW003",,X,,X,,X,,,X,
+"SW002",,,X,,,,,,X,
+"SW001",X,,,,,,,,X,
+"SE004",,,,,,X,,,,

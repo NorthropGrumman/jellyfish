@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
@@ -51,6 +52,26 @@ public class Requirement implements Comparable {
     */
    void addFeatures(Collection<String> features) {
       features.forEach(this::addFeature);
+   }
+
+   /**
+    * Creates a comma delimited features verification string
+    * @param features the features to be verified
+    * @return a comma delimited string of feature verification
+    */
+   public String createFeatureVerificationCsvString(Collection<String> features) {
+      StringJoiner sj = new StringJoiner(",");
+      sj.add("\"" + ID + "\"");
+
+      features.forEach(feature ->{
+         if (this.features.contains(feature)) {
+            sj.add("X");
+         }else {
+            sj.add("");
+         }
+      });
+
+      return sj.toString();
    }
 
    @Override

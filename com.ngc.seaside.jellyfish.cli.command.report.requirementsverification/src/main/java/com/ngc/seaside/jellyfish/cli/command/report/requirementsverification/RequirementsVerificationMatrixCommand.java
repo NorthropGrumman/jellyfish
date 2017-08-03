@@ -7,8 +7,6 @@ import com.google.common.collect.TreeMultimap;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilities;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -29,6 +27,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -61,6 +61,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    static final String OPERATOR_PROPERTY = "operator";
    private static final IUsage USAGE = createUsage();
    static final String DEFAULT_OPERATOR_PROPERTY = "OR";
+
    private ILogService logService;
 
    /**
@@ -103,12 +104,18 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param commandOptions Jellyfish command options containing user params
     */
-   private static String evaluateOutput(IJellyFishCommandOptions commandOptions) {
-      String output = DEFAULT_OUTPUT_PROPERTY;
+   private static Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
+      Path output = null;
       if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
-         output = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
-      }
+         String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
+         output = Paths.get(outputUri);
 
+         if (!output.isAbsolute()) {
+            output = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(outputUri);
+         }
+
+         return output.toAbsolutePath();
+      }
       return output;
    }
 
@@ -156,36 +163,34 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       String outputFormat = evaluateOutputFormat(commandOptions);
-      String output = evaluateOutput(commandOptions);
+      Path outputPath = evaluateOutput(commandOptions);
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
-
       Collection<IModel> models = searchModels(commandOptions, values, operator);
       Map<String, Feature> features = getAllFeatures(commandOptions, models);
       Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
 
-      String report = "";
+      String report;
       if (outputFormat.equalsIgnoreCase("csv")) {
          report = generateCsvVerificationMatrix(satisfiedRequirements, features.keySet());
       } else {
          report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, features.keySet()));
       }
 
-      if (output.equalsIgnoreCase(DEFAULT_OUTPUT_PROPERTY)) {
-         logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to console...");
+      if (outputPath == null) {
+
+         logService.info(getClass(), "Printing report to console...");
          System.out.println("\nOUTPUT:\n" + report);
+
       } else {
-         Path outputPath = Paths.get(output);
-         if (!outputPath.isAbsolute()) {
-            outputPath = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(outputPath);
-         }
+         logService.info(getClass(), "Printing report to location: %s ...",
+                         outputPath.toAbsolutePath().toString());
+
          printReportToFile(outputPath, report);
-         logService.info(RequirementsVerificationMatrixCommand.class, "Printing report to location: %s",
-                         Paths.get(output).toAbsolutePath().toString());
+
       }
 
-      logService.info(RequirementsVerificationMatrixCommand.class,
-                      "%s requirements verification matrix successfully created", values);
+      logService.info(getClass(), "%s requirements verification matrix successfully created", values);
 
    }
 
@@ -195,11 +200,29 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param outputPath file path to output
     * @param report     verification matrix to be printed
     */
-   private void printReportToFile(Path outputPath, List<String> report) {
+   private void printReportToFile(Path outputPath, String report) {
+      File parent = outputPath.getParent().toAbsolutePath().toFile();
+      if (!parent.exists()) {
+         parent.mkdirs();
+      }
+
+//      if (!outputPath.toFile().exists()) {
+//         System.out.println("NOPE");
+//      }
+//      try {
+//         outputPath.toFile().createNewFile();
+//      } catch (IOException e) {
+//         e.printStackTrace();
+//      }
+      List<String> test = new ArrayList<>();
+      test.add(report);
       try {
-         FileUtilities.addLinesToFile(outputPath, report);
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("Unable to write to outputPath: " + outputPath.toString(), e);
+         Files.write(outputPath, test);
+      } catch (IOException e) {
+         logService.error(getClass(), "Unable to write to the file specified by path %s",
+                          outputPath.toAbsolutePath().toString());
+         throw new CommandException(String.format("Unable to write to the file specified by path %s",
+                                                  outputPath.toAbsolutePath().toString()), e);
       }
    }
 
@@ -210,9 +233,20 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param features     satisfied features
     * @return a {@link StringTable} containing verification matrix
     */
-   private String generateCsvVerificationMatrix(Collection<Requirement> requirements, Set<String> features) {
-      //TODO: implement
+   private String generateCsvVerificationMatrix(Collection<Requirement> requirements, Collection<String> features) {
+      String COMMA_SEPARATOR = ",";
+
+      StringJoiner sj = new StringJoiner(",");
+
       StringBuilder sb = new StringBuilder();
+
+      // Process header information
+      sb.append("\"Req\"").append(COMMA_SEPARATOR);
+      features.forEach(feature -> sj.add("\"" + feature + "\""));
+      sb.append(sj.toString()).append("\n");
+
+      requirements.forEach(req -> sb.append(req.createFeatureVerificationCsvString(features)).append("\n"));
+
       return sb.toString();
    }
 
