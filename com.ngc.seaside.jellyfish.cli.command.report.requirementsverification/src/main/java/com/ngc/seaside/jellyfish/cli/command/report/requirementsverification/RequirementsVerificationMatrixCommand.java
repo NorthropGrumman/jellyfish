@@ -73,15 +73,15 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    private static IUsage createUsage() {
       return new DefaultUsage("Generates a requirements verification matrix for a given model stereotype.",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
-                                       "Allows the user to define the output format. The possible values are default and csv")
+                                       "Allows the user to define the output format. The possible values are default and csv.")
                                        .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
                                        "Allows the user to define the file where the output will be stored. Default: prints to stdout."),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
-                                       "The values in which to search as a comma separated string. Default: service")
+                                       "The values in which to search as a comma separated string. Default: service.")
                                        .setRequired(false),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
-                                       "AND, OR, NOT: determines if the items be AND'd together or OR'd together. Default: OR")
+                                       "AND, OR, NOT: determines if the items be AND'd together or OR'd together. Default: OR.")
                                        .setRequired(false));
    }
 
