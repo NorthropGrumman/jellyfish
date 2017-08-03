@@ -32,8 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeSet;
 
-import static com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils.getAllFeatures;
-
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
 
@@ -181,6 +179,18 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    }
 
    /**
+    * Retrieves a collection of features defined for a collection of system descriptor models
+    *
+    * @param commandOptions Jellyfish command options containing system descriptor
+    * @param models         collection of system descriptor models to be processed
+    * @param uri            location of feature files relative to the system descriptor
+    */
+   private Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models,
+                                               String uri) {
+      return ModelUtils.getAllFeatures(commandOptions, models, uri);
+   }
+
+   /**
     * Prints the verification matrix report to the file provided by the output
     *
     * @param report verification matrix to be printed
@@ -225,7 +235,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @return a {@link StringTable} containing verification matrix
     */
    protected StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
-                                                         Collection<String> features) {
+                                                                        Collection<String> features) {
       return MatrixUtils.generateDefaultVerificationMatrix(requirements, features);
    }
 

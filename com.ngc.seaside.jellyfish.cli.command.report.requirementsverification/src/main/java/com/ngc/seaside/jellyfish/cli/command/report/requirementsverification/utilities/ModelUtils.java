@@ -125,10 +125,10 @@ public class ModelUtils {
     *
     * @param commandOptions Jellyfish command options containing system descriptor
     * @param models         collection of system descriptor models to be processed
-    * @param URI            location of feature files relative to the system descriptor
+    * @param uri            location of feature files relative to the system descriptor
     */
    public static Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models,
-                                                     String URI) {
+                                                     String uri) {
       HashSet<String> packages = new HashSet<>();
       TreeMap<String, Feature> features = new TreeMap<>(Collections.reverseOrder());
 
@@ -138,7 +138,7 @@ public class ModelUtils {
             String modelPathURI = packagez.replace(".", "/");
 
             File featureFilesRoot =
-                     getResolvedFeatureFilesDirectory(commandOptions, URI).toAbsolutePath().resolve(modelPathURI).toFile();
+                     getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI).toFile();
 
             File[] files = featureFilesRoot.listFiles();
             if (files != null) {
@@ -159,11 +159,11 @@ public class ModelUtils {
    /**
     * Resolves the feature files directory with the system descriptor location
     * @param commandOptions Jellyfish command options containing system descriptor
-    * @param URI location of feature files relative to the system descriptor
+    * @param uri location of feature files relative to the system descriptor
     * @return resolved path to feature files directory
     */
-   public static Path getResolvedFeatureFilesDirectory(IJellyFishCommandOptions commandOptions, String URI) {
-      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(URI);
+   public static Path getResolvedFeatureFilesDirectory(IJellyFishCommandOptions commandOptions, String uri) {
+      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(uri);
    }
 
    /**
