@@ -29,8 +29,7 @@ import java.util.regex.Pattern;
 @Component(service = IParameterService.class)
 public class ParameterService implements IParameterService {
 
-   private static final String PATTERN =
-         "-D((?:\\\\.|[^=,]+)*)=(\"(?:\\\\.|[^\"\\\\]+)*\"|(?:\\\\.|[^,\"\\\\]+)*)";
+   private static final Pattern PATTERN = Pattern.compile("-D((?:\\\\.|[^=,]+)*)=(\\S+)");
    private static final int NAME_INDEX = 0;
    private static final int VALUE_INDEX = 1;
 
@@ -121,11 +120,6 @@ public class ParameterService implements IParameterService {
     * @param parameter the parameter.
     */
    private boolean isValidParameterFormat(String parameter) {
-      Pattern r = Pattern.compile(PATTERN);
-      Matcher m = r.matcher(parameter);
-
-      return m.matches();
+      return PATTERN.matcher(parameter).matches();
    }
-
-
 }
