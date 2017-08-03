@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.requirementsallocationmatrix;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -10,7 +12,7 @@ import java.util.TreeSet;
  */
 public class Requirement implements Comparable {
    private String ID;
-   private TreeSet<String> models = new TreeSet<>(Collections.reverseOrder());
+   private TreeSet<IModel> models = new TreeSet<>(Collections.reverseOrder());
 
    public Requirement(String name) {
       this.ID = name;
@@ -31,7 +33,7 @@ public class Requirement implements Comparable {
     *
     * @return models satisfying this requirement
     */
-   public TreeSet<String> getModels() {
+   public TreeSet<IModel> getModels() {
       return models;
    }
 
@@ -40,7 +42,7 @@ public class Requirement implements Comparable {
     *
     * @param model model to add
     */
-   void addModel(String model) {
+   void addModel(IModel model) {
       this.models.add(model);
    }
 
@@ -49,7 +51,7 @@ public class Requirement implements Comparable {
     *
     * @param models models to add to the requirement
     */
-   void addModels(Collection<String> models) {
+   void addModels(Collection<IModel> models) {
       models.forEach(this::addModel);
    }
 

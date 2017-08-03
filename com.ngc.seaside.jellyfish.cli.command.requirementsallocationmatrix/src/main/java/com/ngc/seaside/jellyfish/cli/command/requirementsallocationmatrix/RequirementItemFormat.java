@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.TreeSet;
 
 public class RequirementItemFormat implements ITableFormat<Requirement> {
-   private Collection<String> models = new TreeSet<>(Collections.reverseOrder());
+   private Collection<IModel> models = new TreeSet<>(Collections.reverseOrder());
 
-   public RequirementItemFormat(Collection<String> models) {
+   public RequirementItemFormat(Collection<IModel> models) {
       this.models = models;
    }
 
@@ -24,7 +24,8 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
       if (column == 0) {
          return "Req";
       } else if (column < getColumnCount()) {
-         return " ".concat((String) models.toArray()[column - 1]);
+         IModel model = (IModel) models.toArray()[column - 1];
+         return " ".concat(model.getName());
       }
       return "";
    }
@@ -56,7 +57,7 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
       if (column == 0) {
          return object.getID();
       } else if (column < getColumnCount()) {
-         String model = (String) models.toArray()[column - 1];
+         IModel model = (IModel) models.toArray()[column - 1];
          if (object.getModels().contains(model)) {
             return "X";
          }

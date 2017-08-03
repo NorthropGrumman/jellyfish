@@ -10,7 +10,7 @@ model ModelReqsInMetadataOfScenario {
   }
   
   input {
-      SomeData inputData    
+      SomeData inputData
   }
   
   output {
