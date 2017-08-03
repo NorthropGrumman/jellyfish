@@ -90,7 +90,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param commandOptions Jellyfish command options containing user params
     */
-   private static String evaluateOutputFormat(IJellyFishCommandOptions commandOptions) {
+   private String evaluateOutputFormat(IJellyFishCommandOptions commandOptions) {
       String outputFormat = DEFAULT_OUTPUT_FORMAT_PROPERTY;
       if (commandOptions.getParameters().containsParameter(OUTPUT_FORMAT_PROPERTY)) {
          String helper = commandOptions.getParameters().getParameter(OUTPUT_FORMAT_PROPERTY).getStringValue();
@@ -104,8 +104,8 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param commandOptions Jellyfish command options containing user params
     */
-   private static Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
-      Path output = null;
+   protected Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
+      Path output;
       if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
          String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
          output = Paths.get(outputUri);
@@ -115,8 +115,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          }
 
          return output.toAbsolutePath();
+      } else {
+         return null;
       }
-      return output;
    }
 
    /**
@@ -124,7 +125,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param commandOptions Jellyfish command options containing user params
     */
-   private static String evaluateValues(IJellyFishCommandOptions commandOptions) {
+   private String evaluateValues(IJellyFishCommandOptions commandOptions) {
       String values = DEFAULT_VALUES_PROPERTY;
       if (commandOptions.getParameters().containsParameter(VALUES_PROPERTY)) {
          values = commandOptions.getParameters().getParameter(VALUES_PROPERTY).getStringValue();
@@ -137,7 +138,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param commandOptions Jellyfish command options containing user params
     */
-   private static String evaluateOperator(IJellyFishCommandOptions commandOptions) {
+   private String evaluateOperator(IJellyFishCommandOptions commandOptions) {
       String operator = DEFAULT_OPERATOR_PROPERTY;
       if (commandOptions.getParameters().containsParameter(OPERATOR_PROPERTY)) {
          String helper = commandOptions.getParameters().getParameter(OPERATOR_PROPERTY).getStringValue().toUpperCase();
@@ -156,7 +157,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       return USAGE;
    }
 
-   protected Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
+   private Path getFeatureFilesDirectory(IJellyFishCommandOptions commandOptions) {
       return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(GHERKIN_URI);
    }
 
@@ -202,19 +203,22 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    private void printReportToFile(Path outputPath, String report) {
       File parent = outputPath.getParent().toAbsolutePath().toFile();
+      boolean parentFolderCreationSuccessful = true;
       if (!parent.exists()) {
-         parent.mkdirs();
+         parentFolderCreationSuccessful = parent.mkdirs();
       }
 
-      List<String> test = new ArrayList<>();
-      test.add(report);
-      try {
-         Files.write(outputPath, test);
-      } catch (IOException e) {
-         logService.error(getClass(), "Unable to write to the file specified by path %s",
-                          outputPath.toAbsolutePath().toString());
-         throw new CommandException(String.format("Unable to write to the file specified by path %s",
-                                                  outputPath.toAbsolutePath().toString()), e);
+      if (parentFolderCreationSuccessful) {
+         List<String> test = new ArrayList<>();
+         test.add(report);
+         try {
+            Files.write(outputPath, test);
+         } catch (IOException e) {
+            logService.error(getClass(), "Unable to write to the file specified by path %s",
+                             outputPath.toAbsolutePath().toString());
+            throw new CommandException(String.format("Unable to write to the file specified by path %s",
+                                                     outputPath.toAbsolutePath().toString()), e);
+         }
       }
    }
 
@@ -390,11 +394,14 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
                      featureFilesRoot =
                      getFeatureFilesDirectory(commandOptions).toAbsolutePath().resolve(modelPathURI).toFile();
 
-            for (File file : featureFilesRoot.listFiles()) {
-               if (file.isFile()) {
-                  String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
-                  String name = ModelUtils.substringBetween(file.getName(), ".", ".");
-                  features.put(qualifiedName, new Feature(qualifiedName, name));
+            File[] files = featureFilesRoot.listFiles();
+            if (files != null) {
+               for (File file : files) {
+                  if (file.isFile()) {
+                     String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
+                     String name = ModelUtils.substringBetween(file.getName(), ".", ".");
+                     features.put(qualifiedName, new Feature(qualifiedName, name));
+                  }
                }
             }
          }

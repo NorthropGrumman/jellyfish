@@ -44,6 +44,7 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
+   private static final String TESTFOLDER = "build/test/verification-matrix/results/";
    private RequirementsVerificationMatrixCommand cmd;
    private DefaultParameterCollection parameters;
    @Mock
@@ -74,6 +75,21 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       // Setup class under test
       cmd = new RequirementsVerificationMatrixCommand() {
          @Override
+         protected Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
+            Path output;
+            if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
+               String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
+               output = Paths.get(outputUri);
+               if (!output.isAbsolute()) {
+                  output = Paths.get("build/test/verification-matrix/results/").resolve(output.getFileName());
+               }
+               return output;
+            } else {
+               return null;
+            }
+         }
+
+         @Override
          protected String generateCsvVerificationMatrix(Collection<Requirement> requirements,
                                                         Collection<String> features) {
             csv = super.generateCsvVerificationMatrix(requirements, features);
@@ -101,7 +117,7 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
 
    @Test
    public void testCsvOutputWithAbsolutePathAndWithDefaultStereotypes() throws IOException {
-      Path outputDir = Paths.get("build/matrix-verification/tests/results/my/test/test1_csv");
+      Path outputDir = Paths.get("build/test/verification-matrix/results/my/test/test1_csv");
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      "Csv"));
       parameters.addParameter(
@@ -125,9 +141,6 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-
-      // Uncomment to view files
-      Files.delete(outputDir);
    }
 
    @Test
@@ -148,16 +161,13 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       assertEquals(null, table);
 
       // Verify output file
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-
-      // Uncomment to view files
-      Files.delete(result.toPath());
    }
 
    @Test
@@ -178,16 +188,13 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       assertEquals(null, table);
 
       // Verify output file
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-
-      // Uncomment to view files
-      Files.delete(result.toPath());
    }
 
    @Test
@@ -207,16 +214,13 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       assertEquals(null, table);
 
       // Verify output file
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-
-      // Uncomment to view files
-      Files.delete(result.toPath());
    }
 
    @Test
@@ -236,15 +240,12 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       assertEquals(null, table);
 
       // Verify output file
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-
-      // Uncomment to view files
-      Files.delete(result.toPath());
    }
 }

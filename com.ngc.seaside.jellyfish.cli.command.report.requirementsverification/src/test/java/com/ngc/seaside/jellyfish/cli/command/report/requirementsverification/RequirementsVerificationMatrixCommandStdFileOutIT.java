@@ -46,6 +46,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
+   private static final String TESTFOLDER = "build/test/verification-matrix/results/";
    private RequirementsVerificationMatrixCommand cmd;
    private DefaultParameterCollection parameters;
    @Mock
@@ -74,6 +75,21 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
 
       // Setup class under test
       cmd = new RequirementsVerificationMatrixCommand() {
+         @Override
+         protected Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
+            Path output;
+            if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
+               String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
+               output = Paths.get(outputUri);
+               if (!output.isAbsolute()) {
+                  output = Paths.get("build/test/verification-matrix/results/").resolve(output.getFileName());
+               }
+               return output;
+            } else {
+               return null;
+            }
+         }
+
          @Override
          protected StringTable<Requirement> createStringTable(Collection<String> features) {
             table = super.createStringTable(features);
@@ -151,7 +167,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       });
 
       // Verify output string
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
@@ -185,7 +201,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       });
 
       // Verify output string
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
@@ -214,7 +230,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       assertEquals(0, rows.size());
 
       // Verify output string
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
@@ -243,14 +259,12 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       assertEquals(1, rows.size());
 
       // Verify output string
-      File result = Paths.get("src/test/resources/" + outputDir.toString()).toFile();
+      File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
       String expected = table.toString().replaceAll("([\\n\\r]+\\s*)*$", "");
       String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
 
       assertEquals(expected, actual);
-      // Uncomment to view files
-      Files.delete(result.toPath());
    }
 }
