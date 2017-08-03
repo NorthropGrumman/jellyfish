@@ -45,6 +45,7 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
    private static final String TESTFOLDER = "build/test/verification-matrix/results/";
+   private static final String TESTREGEX = "([\\n\\r]+\\s*)*$";
    private RequirementsVerificationMatrixCommand cmd;
    private DefaultParameterCollection parameters;
    @Mock
@@ -137,8 +138,8 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       File result = Paths.get(outputDir.toAbsolutePath().toString()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
-      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String expected = csv.replaceAll(TESTREGEX, "");
+      String actual = test.replaceAll(TESTREGEX, "");
 
       assertEquals(expected, actual);
    }
@@ -164,8 +165,8 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
-      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String expected = csv.replaceAll(TESTREGEX, "");
+      String actual = test.replaceAll(TESTREGEX, "");
 
       assertEquals(expected, actual);
    }
@@ -191,8 +192,8 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
-      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String expected = csv.replaceAll(TESTREGEX, "");
+      String actual = test.replaceAll(TESTREGEX, "");
 
       assertEquals(expected, actual);
    }
@@ -217,8 +218,8 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
-      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String expected = csv.replaceAll(TESTREGEX, "");
+      String actual = test.replaceAll(TESTREGEX, "");
 
       assertEquals(expected, actual);
    }
@@ -243,8 +244,8 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
       File result = Paths.get(TESTFOLDER).resolve(outputDir.getFileName()).toFile();
       String test = FileUtils.readFileToString(result, Charset.defaultCharset());
 
-      String expected = csv.replaceAll("([\\n\\r]+\\s*)*$", "");
-      String actual = test.replaceAll("([\\n\\r]+\\s*)*$", "");
+      String expected = csv.replaceAll(TESTREGEX, "");
+      String actual = test.replaceAll(TESTREGEX, "");
 
       assertEquals(expected, actual);
    }

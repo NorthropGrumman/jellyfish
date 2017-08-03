@@ -55,7 +55,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    static final String OUTPUT_FORMAT_PROPERTY = "outputFormat";
    static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "DEFAULT";
    static final String OUTPUT_PROPERTY = "output";
-   static final String DEFAULT_OUTPUT_PROPERTY = "STDOUT";
    static final String VALUES_PROPERTY = "values";
    static final String DEFAULT_VALUES_PROPERTY = "service";
    static final String OPERATOR_PROPERTY = "operator";

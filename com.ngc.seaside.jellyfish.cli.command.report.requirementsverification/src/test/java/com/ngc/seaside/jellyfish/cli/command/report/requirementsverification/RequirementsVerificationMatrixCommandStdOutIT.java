@@ -94,8 +94,6 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    public void testStringTableWithDefaultStereotypes() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -164,8 +162,6 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    public void testStringTableWithAdditionalStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
       parameters.addParameter(
                new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "service,system"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -246,8 +242,6 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    public void testStringTableWithAbsentStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "model"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
@@ -263,8 +257,6 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    public void testStringTableWithoutDefaultStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
-      parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY, "NOT"));
