@@ -22,6 +22,7 @@ model FooService {
 		metadata {
 			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" }
 		}
+
 		when receiving fooStatus
 		then willPublish barStatus
 		and willBeCompleted within 500 milliseconds

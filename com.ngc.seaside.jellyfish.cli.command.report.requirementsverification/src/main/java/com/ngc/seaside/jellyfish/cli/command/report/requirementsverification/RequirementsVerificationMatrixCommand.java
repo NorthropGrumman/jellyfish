@@ -224,7 +224,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param features     satisfied features
     * @return a {@link StringTable} containing verification matrix
     */
-   private StringTable generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+   protected StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
                                                          Collection<String> features) {
       return MatrixUtils.generateDefaultVerificationMatrix(requirements, features);
    }

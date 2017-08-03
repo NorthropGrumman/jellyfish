@@ -28,7 +28,7 @@ public class MatrixUtils {
     * @param features     satisfied features
     * @return a {@link StringTable} containing verification matrix
     */
-   public static StringTable generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+   public static StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
                                                                Collection<String> features) {
       StringTable<Requirement> stringTable = createStringTable(features);
 

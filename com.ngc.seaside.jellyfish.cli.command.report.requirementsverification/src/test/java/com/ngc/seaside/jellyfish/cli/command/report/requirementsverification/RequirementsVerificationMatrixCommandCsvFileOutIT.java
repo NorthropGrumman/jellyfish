@@ -98,8 +98,9 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
          }
 
          @Override
-         protected StringTable<Requirement> createStringTable(Collection<String> features) {
-            table = super.createStringTable(features);
+         protected StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+                                                                              Collection<String> features) {
+            table = super.generateDefaultVerificationMatrix(requirements, features);
             return table;
          }
       };

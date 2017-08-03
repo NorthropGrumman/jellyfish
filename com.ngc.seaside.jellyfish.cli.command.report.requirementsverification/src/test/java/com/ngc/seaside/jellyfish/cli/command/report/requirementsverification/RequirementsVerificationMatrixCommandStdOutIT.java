@@ -72,8 +72,9 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       // Setup class under test
       cmd = new RequirementsVerificationMatrixCommand() {
          @Override
-         protected StringTable<Requirement> createStringTable(Collection<String> features) {
-            table = super.createStringTable(features);
+         protected StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+                                                                              Collection<String> features) {
+            table = super.generateDefaultVerificationMatrix(requirements, features);
             return table;
          }
       };
@@ -268,20 +269,17 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals(1, rows.size());
       rows.forEach(row -> {
          assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
+         assertEquals(8, row.getCells().size());
       });
 
       // First Requirement
       MultiLineRow firstRow = rows.get(0);
       assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("", firstRow.getCells().get(2).getLine(0));
       assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("", firstRow.getCells().get(4).getLine(0));
       assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("X", firstRow.getCells().get(6).getLine(0));
-      assertEquals("", firstRow.getCells().get(7).getLine(0));
-      assertEquals("", firstRow.getCells().get(8).getLine(0));
-      assertEquals("X", firstRow.getCells().get(9).getLine(0));
-
+      assertEquals("", firstRow.getCells().get(6).getLine(0));
+      assertEquals("X", firstRow.getCells().get(7).getLine(0));
    }
 }
