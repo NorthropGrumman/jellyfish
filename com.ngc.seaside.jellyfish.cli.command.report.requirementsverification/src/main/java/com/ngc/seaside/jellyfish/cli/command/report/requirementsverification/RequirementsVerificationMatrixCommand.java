@@ -71,7 +71,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
-      return new DefaultUsage("A JellyFish command that can generate a requirements verification matrix.",
+      return new DefaultUsage("Generates a requirements verification matrix for a given model stereotype.",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
                                        "Allows the user to define the output format. The possible values are default and csv")
                                        .setRequired(false),
