@@ -14,15 +14,13 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.junit.Before
 import com.google.inject.Provider
 import org.eclipse.xtext.resource.XtextResourceSet
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.xtext.diagnostics.Diagnostic
-import org.eclipse.xtext.diagnostics.Severity
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -100,13 +98,13 @@ class InheritTest {
 		equalityFieldsTest(A, B);
 	}
 	
-	def void equalityReferenceFieldsTest(ReferencedDataFieldDeclaration A, ReferencedDataFieldDeclaration B){
+	def void equalityReferenceFieldsTest(ReferencedDataModelFieldDeclaration A, ReferencedDataModelFieldDeclaration B){
 		//Tests that the two fields have the same data and all checks of equalityFieldsTest.
 		
 		assertEquals(
 			"Data does not match!",
-			A.data,
-			B.data
+			A.dataModel,
+			B.dataModel
 		)
 		
 		equalityFieldsTest(A, B);
@@ -481,8 +479,8 @@ class InheritTest {
 		var dataA = dataAResult.element as Data
 		var dataB = dataBResult.element as Data
 		
-		var dataAFieldValue = dataA.fields.get(0) as ReferencedDataFieldDeclaration
-		var dataBFieldValue = dataB.superclass.fields.get(0) as ReferencedDataFieldDeclaration	
+		var dataAFieldValue = dataA.fields.get(0) as ReferencedDataModelFieldDeclaration
+		var dataBFieldValue = dataB.superclass.fields.get(0) as ReferencedDataModelFieldDeclaration	
 		equalityReferenceFieldsTest(dataAFieldValue, dataBFieldValue); //A.val == B.val
 	}
 	

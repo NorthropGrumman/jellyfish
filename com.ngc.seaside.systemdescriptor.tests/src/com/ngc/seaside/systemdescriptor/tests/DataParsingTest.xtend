@@ -21,7 +21,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality
 
 @RunWith(XtextRunner)
@@ -331,13 +331,17 @@ class DataParsingTest {
 		)
 
 		var rawDateField = resultData.fields.get(0)
-		assertTrue(rawDateField instanceof ReferencedDataFieldDeclaration)		
-		var dateDateRef = rawDateField as ReferencedDataFieldDeclaration		
+		assertTrue(rawDateField instanceof ReferencedDataModelFieldDeclaration)		
+		var dateDateRef = rawDateField as ReferencedDataModelFieldDeclaration		
 		
+		assertTrue(
+			"dateDateRef's dataModel should be a Data instance!",
+			dateDateRef.dataModel instanceof Data
+		)
 		assertEquals(
 			"data type not correct!",
 			"Date",
-			dateDateRef.data.name
+			dateDateRef.dataModel.name
 		)
 		assertEquals(
 			"data ref name not correct!",
@@ -346,13 +350,17 @@ class DataParsingTest {
 		)	
 		
 		var rawTimeField = resultData.fields.get(1)
-		assertTrue(rawTimeField instanceof ReferencedDataFieldDeclaration)		
-		var timeDataRef = rawTimeField as ReferencedDataFieldDeclaration	
+		assertTrue(rawTimeField instanceof ReferencedDataModelFieldDeclaration)		
+		var timeDataRef = rawTimeField as ReferencedDataModelFieldDeclaration	
 			
+		assertTrue(
+			"timeDataRef's dataModel should be a Data instance!",
+			timeDataRef.dataModel instanceof Data
+		)
 		assertEquals(
 			"data type not correct!",
 			"Time",
-			timeDataRef.data.name
+			timeDataRef.dataModel.name
 		)
 		assertEquals(
 			"data ref name not correct!",
