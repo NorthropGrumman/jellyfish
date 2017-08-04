@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 /**
@@ -24,4 +25,12 @@ public interface IPackage extends INamedChild<ISystemDescriptor> {
     * @return a collection of all declared model types in this package
     */
    INamedChildCollection<IPackage, IModel> getModels();
+
+   /**
+    * Gets a collection of all declared enumeration types in this package.  The returned collection may not be
+    * modifiable if this object is immutable.
+    *
+    * @return a collection of all declared model types in this package
+    */
+   INamedChildCollection<IPackage, IEnumeration> getEnumerations();
 }

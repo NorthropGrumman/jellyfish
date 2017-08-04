@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -102,6 +103,13 @@ public class Traversals {
       for (Iterator<IModel> models = p.getModels().iterator(); models.hasNext() && !ctx.stopped; ) {
          doVisitModel(visitor, ctx, models.next());
       }
+      for (Iterator<IEnumeration> enums = p.getEnumerations().iterator(); enums.hasNext() && !ctx.stopped; ) {
+         doVisitEnumeration(visitor, ctx, enums.next());
+      }
+   }
+
+   private static void doVisitEnumeration(IVisitor visitor, VisitorContext ctx, IEnumeration enumeration) {
+      visitor.visitEnumeration(ctx, enumeration);
    }
 
    private static void doVisitData(IVisitor visitor, VisitorContext ctx, IData data) {

@@ -95,6 +95,6 @@ public class SystemDescriptors {
     * Returns true if the {@code IDataField} references a primitive type.
     */
    public static boolean isPrimitiveDataFieldDeclaration(IDataField field) {
-      return field.getType() != DataTypes.DATA;
+      return field.getType() != DataTypes.DATA && field.getType() != DataTypes.ENUM;
    }
 }

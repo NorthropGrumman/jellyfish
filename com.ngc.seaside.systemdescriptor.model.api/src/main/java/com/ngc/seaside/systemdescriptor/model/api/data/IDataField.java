@@ -6,8 +6,8 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
 /**
  * A field that is declared in an {@link IData} object.  A field has a {@link #getType() type}.  If the type is {@link
- * DataTypes#DATA}, the field's type references an {@link IData} object.  Otherwise, the type of the field is a
- * primitive type.
+ * DataTypes#DATA}, the field's type references an {@link IData} object.  If the type is {@link DataTypes#ENUM}, the
+ * field's type references an {@link IEnumeration} object. Otherwise, the type of the field is a primitive type.
  *
  * Operations that change the state of this object may throw {@code UnsupportedOperationException}s if the object is
  * immutable.
@@ -58,17 +58,34 @@ public interface IDataField extends INamedChild<IData> {
    IDataField setType(DataTypes type);
 
    /**
-    * Gets the data type this field is referencing
+    * Gets the data type this field is referencing.
     *
     * @return the data type this field is referencing
     */
    IData getReferencedDataType();
 
    /**
-    * Sets the data type this field is referencing.
+    * Sets the data type this field is referencing.  This value is only set if {@link #getType()} is {@link
+    * DataTypes#DATA}.
     *
-    * @param dataType the data tyep this field is referencing
+    * @param dataType the data type this field is referencing
     * @return the data type this field is referencing
     */
    IDataField setReferencedDataType(IData dataType);
+
+   /**
+    * Gets the enumeration type this field is referencing.  This value is only set if {@link #getType()} is {@link
+    * DataTypes#ENUM}.
+    *
+    * @return the enumeration type this field is referencing
+    */
+   IEnumeration getReferencedEnumeration();
+
+   /**
+    * Sets the enumeration type this field is referencing.
+    *
+    * @param enumeration the enumeration type this field is referencing
+    * @return the enumeration type this field is referencing
+    */
+   IDataField setReferencedEnumeration(IEnumeration enumeration);
 }

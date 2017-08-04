@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 
 import java.util.Objects;
@@ -21,6 +22,7 @@ public class DataField implements IDataField {
    protected IData parent;
    protected IMetadata metadata;
    protected IData referencedDataType;
+   protected IEnumeration referencedEnumeration;
    protected DataTypes type;
    protected FieldCardinality cardinality;
 
@@ -84,6 +86,17 @@ public class DataField implements IDataField {
       return this;
    }
 
+   @Override
+   public IEnumeration getReferencedEnumeration() {
+      return referencedEnumeration;
+   }
+
+   @Override
+   public IDataField setReferencedEnumeration(IEnumeration enumeration) {
+      this.referencedEnumeration = enumeration;
+      return this;
+   }
+
    public DataField setParent(IData parent) {
       this.parent = parent;
       return this;
@@ -102,18 +115,26 @@ public class DataField implements IDataField {
              && Objects.equals(metadata, dataField.metadata)
              && type == dataField.type
              && Objects.equals(referencedDataType, dataField.referencedDataType)
+             && Objects.equals(referencedEnumeration, dataField.referencedEnumeration)
              && cardinality == dataField.cardinality;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, System.identityHashCode(parent), metadata, type, referencedDataType, cardinality);
+      return Objects.hash(name,
+                          System.identityHashCode(parent),
+                          metadata,
+                          type,
+                          referencedDataType,
+                          referencedEnumeration,
+                          cardinality);
    }
 
    @Override
    public String toString() {
       return "DataField[" + "name='" + name + '\'' + ", parent=" + (parent == null ? "null" : parent.getName())
              + ", metadata=" + metadata + ", type=" + type + ", referencedDataType=" + referencedDataType
+             + ", referencedEnumeration=" + referencedEnumeration
              + ", cardinality='" + cardinality + ']';
    }
 }

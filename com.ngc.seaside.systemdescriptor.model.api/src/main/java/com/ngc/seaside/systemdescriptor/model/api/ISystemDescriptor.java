@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitor;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.IVisitorContext;
@@ -88,7 +89,7 @@ public interface ISystemDescriptor {
    /**
     * Gets the data type with the given fully qualified name
     *
-    * @param fullyQualifiedName the given fully qualified name of the model
+    * @param fullyQualifiedName the given fully qualified name of the data type
     * @return an optional that contains the data type or an empty optional of the data type was not found
     * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
     *                                  {@link IData#getFullyQualifiedName()}
@@ -104,4 +105,24 @@ public interface ISystemDescriptor {
     * @return an optional that contains the data type or an empty optional of the data type was not found
     */
    Optional<IData> findData(String packageName, String name);
+
+   /**
+    * Gets the enumeration type with the given fully qualified name
+    *
+    * @param fullyQualifiedName the given fully qualified name of the enumeration
+    * @return an optional that contains the enumeration or an empty optional of the enumeration was not found
+    * @throws IllegalArgumentException if the format of the fully qualified name does not match the format described in
+    *                                  {@link IEnumeration#getFullyQualifiedName()}
+    * @see IEnumeration#getFullyQualifiedName()
+    */
+   Optional<IEnumeration> findEnumeration(String fullyQualifiedName);
+
+   /**
+    * Gets the enumeration type with the given name which resides in the named packaged.
+    *
+    * @param packageName the name of the package that contains the enumeration
+    * @param name        the name of the enumeration
+    * @return an optional that contains the enumeration or an empty optional of the enumeration was not found
+    */
+   Optional<IEnumeration> findEnumeration(String packageName, String name);
 }
