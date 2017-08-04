@@ -19,14 +19,15 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataModel;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
@@ -129,29 +130,20 @@ public class ValidationDelegate implements IValidatorExtension {
             doValidation(ctx2);
             break;
          case SystemDescriptorPackage.PRIMITIVE_DATA_FIELD_DECLARATION:
-             String fieldName = ((PrimitiveDataFieldDeclaration) source).getName();
-             String dataName = ((Data) source.eContainer()).getName();
-             packageName = ((Package) source.eContainer().eContainer()).getName();
-             IValidationContext<IDataField> ctx3 = newContext(
-                   descriptor.findData(packageName, dataName).get()
-                         .getFields()
-                         .getByName(fieldName)
-                         .get(),
-                   helper);
-             doValidation(ctx3);
-             break;
-         case SystemDescriptorPackage.REFERENCED_DATA_FIELD_DECLARATION:
-             fieldName = ((ReferencedDataFieldDeclaration) source).getName();
-             dataName = ((Data) source.eContainer()).getName();
-             packageName = ((Package) source.eContainer().eContainer()).getName();
-             ctx3 = newContext(
-                   descriptor.findData(packageName, dataName).get()
-                         .getFields()
-                         .getByName(fieldName)
-                         .get(),
-                   helper);
-             doValidation(ctx3);
-             break;
+            String fieldName = ((PrimitiveDataFieldDeclaration) source).getName();
+            String dataName = ((Data) source.eContainer()).getName();
+            packageName = ((Package) source.eContainer().eContainer()).getName();
+            IValidationContext<IDataField> ctx3 = newContext(
+                  descriptor.findData(packageName, dataName).get()
+                        .getFields()
+                        .getByName(fieldName)
+                        .get(),
+                  helper);
+            doValidation(ctx3);
+            break;
+         case SystemDescriptorPackage.REFERENCED_DATA_MODEL_FIELD_DECLARATION:
+            validateReferenceDataField((ReferencedDataModelFieldDeclaration) source, helper, descriptor);
+            break;
          case SystemDescriptorPackage.MODEL:
             packageName = ((Package) source.eContainer()).getName();
             IValidationContext<IModel> ctx4 = newContext(
@@ -284,6 +276,32 @@ public class ValidationDelegate implements IValidatorExtension {
       // See registerSelf comments above.
       logService.trace(getClass(), "Unregistering self as a DSL validation extension.");
       validator.removeValidatorExtension(this);
+   }
+
+   private void validateReferenceDataField(ReferencedDataModelFieldDeclaration source,
+                                           ValidationHelper helper,
+                                           ISystemDescriptor descriptor) {
+      DataModel dataModel = source.getDataModel();
+      if (dataModel != null) {
+         switch (dataModel.eClass().getClassifierID()) {
+            case SystemDescriptorPackage.DATA:
+            case SystemDescriptorPackage.ENUMERATION:
+               String fieldName = source.getName();
+               String dataName = ((Data) source.eContainer()).getName();
+               String packageName = ((Package) source.eContainer().eContainer()).getName();
+               IValidationContext<?> ctx = newContext(
+                     descriptor.findData(packageName, dataName).get()
+                           .getFields()
+                           .getByName(fieldName)
+                           .get(),
+                     helper);
+               doValidation(ctx);
+            default:
+               // Do nothing, ignore this.  This means the field is not valid anyway and the default validation will
+               // indicate an error.  This can happen if the field is correct but the type of the field cannot be
+               // resolved.
+         }
+      }
    }
 
    private static Package findPackage(EObject source) {

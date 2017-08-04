@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -17,7 +16,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -38,7 +37,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
       this.fields = new WrappingNamedChildCollection<>(wrapped.getFields(),
                                                        f -> toWrappedDataField(resolver, f),
-                                                       f -> WrappedData.toXtextDataFieldDeclaration(resolver, f),
+                                                       f -> toXtextDataFieldDeclaration(resolver, f),
                                                        DataFieldDeclaration::getName);
    }
 
@@ -142,16 +141,34 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
 
    private static DataFieldDeclaration toXtextDataFieldDeclaration(IWrapperResolver wrapperResolver,
                                                                    IDataField field) {
-      return field.getType() == DataTypes.DATA ? WrappedReferencedDataField.toXtext(wrapperResolver, field)
-                                               : WrappedPrimitiveDataField.toXtext(field);
+      switch (field.getType()) {
+         case DATA:
+            return WrappedReferencedDataField.toXtext(wrapperResolver, field);
+         case ENUM:
+            return WrappedReferencedEnumField.toXtext(wrapperResolver, field);
+         default:
+            return WrappedPrimitiveDataField.toXtext(field);
+      }
    }
 
    private static IDataField toWrappedDataField(IWrapperResolver wrapperResolver, DataFieldDeclaration field) {
       switch (field.eClass().getClassifierID()) {
          case SystemDescriptorPackage.PRIMITIVE_DATA_FIELD_DECLARATION:
             return new WrappedPrimitiveDataField(wrapperResolver, (PrimitiveDataFieldDeclaration) field);
-         case SystemDescriptorPackage.REFERENCED_DATA_FIELD_DECLARATION:
-            return new WrappedReferencedDataField(wrapperResolver, (ReferencedDataFieldDeclaration) field);
+         case SystemDescriptorPackage.REFERENCED_DATA_MODEL_FIELD_DECLARATION:
+            return toWrappedReferenceDataField(wrapperResolver, (ReferencedDataModelFieldDeclaration) field);
+         default:
+            throw new UnrecognizedXtextTypeException(field);
+      }
+   }
+
+   private static IDataField toWrappedReferenceDataField(IWrapperResolver wrapperResolver,
+                                                         ReferencedDataModelFieldDeclaration field) {
+      switch (field.getDataModel().eClass().getClassifierID()) {
+         case SystemDescriptorPackage.DATA:
+            return new WrappedReferencedDataField(wrapperResolver, field);
+         case SystemDescriptorPackage.ENUMERATION:
+            return new WrappedReferencedEnumField(wrapperResolver, field);
          default:
             throw new UnrecognizedXtextTypeException(field);
       }

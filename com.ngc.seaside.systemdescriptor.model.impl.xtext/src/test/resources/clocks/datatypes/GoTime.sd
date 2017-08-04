@@ -1,5 +1,8 @@
 package clocks.datatypes
 
+import clocks.datatypes.TimeZone
+
 data GoTime : clocks.datatypes.Time {
   int timeToGo
+  TimeZone timeZone
 }

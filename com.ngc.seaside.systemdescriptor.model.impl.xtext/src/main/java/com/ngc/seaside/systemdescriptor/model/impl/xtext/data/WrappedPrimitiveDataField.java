@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
@@ -56,6 +57,17 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
                                       + " other data types!");
    }
 
+   @Override
+   public IEnumeration getReferencedEnumeration() {
+      return null; // This is a primitive data type, it can never reference other data.
+   }
+
+   @Override
+   public IDataField setReferencedEnumeration(IEnumeration enumeration) {
+      throw new IllegalStateException("the type of this field must be a primitive, it cannot be changed to reference"
+                                      + " enumerations!");
+   }
+
    /**
     * Creates a new {@code PrimitiveDataFieldDeclaration} that is equivalent to the given field.  Changes to the {@code
     * IDataField} are not reflected in the returned {@code PrimitiveDataFieldDeclaration} after construction.
@@ -63,8 +75,8 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
    public static PrimitiveDataFieldDeclaration toXtext(IDataField field) {
       Preconditions.checkNotNull(field, "field may not be null!");
       Preconditions.checkArgument(
-            field.getType() != DataTypes.DATA,
-            "cannot create a PrimitiveDataFieldDeclaration for an IDataField that references other data!");
+            field.getType() != DataTypes.DATA && field.getType() != DataTypes.ENUM,
+            "cannot create a PrimitiveDataFieldDeclaration for an IDataField that references other data or enums!");
       PrimitiveDataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createPrimitiveDataFieldDeclaration();
       x.setMetadata(WrappedMetadata.toXtextJson(field.getMetadata()));
       x.setName(field.getName());

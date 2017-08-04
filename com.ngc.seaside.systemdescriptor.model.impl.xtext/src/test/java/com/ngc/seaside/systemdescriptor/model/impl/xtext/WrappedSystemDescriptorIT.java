@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -354,6 +355,40 @@ public class WrappedSystemDescriptorIT {
       assertEquals("superType fully qualified name is not correct!",
                    "clocks.datatypes.Time",
                    superType.get().getFullyQualifiedName());
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testDoesCreateWrappedDescriptorWithEnums() throws Throwable {
+      resourceOf("clocks/datatypes/Time.sd");
+      resourceOf("clocks/datatypes/TimeZone.sd");
+      Resource goTimeResource = resourceOf("clocks/datatypes/GoTime.sd");
+      resourceOf("clocks/models/Timer.sd");
+      resourceOf("clocks/models/ClockDisplay.sd");
+      resourceOf("clocks/models/Speaker.sd");
+      resourceOf("clocks/models/Alarm.sd");
+      resourceOf("clocks/AlarmClock.sd");
+
+      IParseResult result = ((XtextResource) goTimeResource).getParseResult();
+      assertFalse("should not have errors!",
+                  result.hasSyntaxErrors());
+
+      Package p = (Package) goTimeResource.getContents().get(0);
+      wrapped = new WrappedSystemDescriptor(p);
+
+      Optional<IEnumeration> timeZone = wrapped.findEnumeration("clocks.datatypes", "TimeZone");
+      assertTrue("did not find enum!",
+                 timeZone.isPresent());
+
+      assertTrue("missing enum value!",
+                 timeZone.get().getValues().contains("CST"));
+      assertTrue("missing enum value!",
+                 timeZone.get().getValues().contains("EST"));
+      assertTrue("missing enum value!",
+                 timeZone.get().getValues().contains("MST"));
+      assertTrue("missing enum value!",
+                 timeZone.get().getValues().contains("PST"));
+
    }
 
    @After

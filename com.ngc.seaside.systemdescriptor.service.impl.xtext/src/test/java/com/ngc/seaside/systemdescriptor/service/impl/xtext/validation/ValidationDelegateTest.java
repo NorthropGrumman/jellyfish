@@ -14,7 +14,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
@@ -24,7 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -141,8 +140,11 @@ public class ValidationDelegateTest {
 
    @Test
    public void testDoesValidateReferencedDataField() throws Throwable {
-      ReferencedDataFieldDeclaration source = factory().createReferencedDataFieldDeclaration();
+      Data referencedData = factory().createData();
+
+      ReferencedDataModelFieldDeclaration source = factory().createReferencedDataModelFieldDeclaration();
       source.setName("myReferencedDataField");
+      source.setDataModel(referencedData);
       Data data = factory().createData();
       data.setName("MyData");
       data.getFields().add(source);

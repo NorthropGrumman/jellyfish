@@ -101,10 +101,22 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
    }
 
    @Test(expected = IllegalArgumentException.class)
+   public void testNotAllowDataTypeToBeChangedToNonPrimitiveType2() throws Throwable {
+      wrappedDataField = new WrappedPrimitiveDataField(resolver(), field);
+      wrappedDataField.setType(DataTypes.ENUM);
+   }
+
+   @Test(expected = IllegalArgumentException.class)
    public void testDoesNotCreateXtextObjectForNonPrimitiveType() throws Throwable {
       IDataField newField = mock(IDataField.class);
       when(newField.getType()).thenReturn(DataTypes.DATA);
+      WrappedPrimitiveDataField.toXtext(newField);
+   }
 
+   @Test(expected = IllegalArgumentException.class)
+   public void testDoesNotCreateXtextObjectForNonPrimitiveType2() throws Throwable {
+      IDataField newField = mock(IDataField.class);
+      when(newField.getType()).thenReturn(DataTypes.ENUM);
       WrappedPrimitiveDataField.toXtext(newField);
    }
 }

@@ -1,6 +1,7 @@
 package clocks.models
 
 import clocks.datatypes.Time
+import clocks.datatypes.ComplexTime
 
 model ClockDisplay {
  metadata {
@@ -10,6 +11,7 @@ model ClockDisplay {
 
  input {
      Time currentTime
+     ComplexTime complexCurrentTime
  }
 
  //Left blank intentionally. This might be as far as we can go until we see a graphic design.

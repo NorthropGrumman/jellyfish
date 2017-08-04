@@ -5,16 +5,20 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
@@ -22,16 +26,17 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
+@RunWith(MockitoJUnitRunner.class)
+public class WrappedReferencedEnumFieldTest extends AbstractWrappedXtextTest {
 
-   private WrappedReferencedDataField wrappedDataField;
+   private WrappedReferencedEnumField wrappedEnumField;
 
    private ReferencedDataModelFieldDeclaration field;
 
-   private Data referencedData;
+   private Enumeration referencedEnum;
 
    @Mock
-   private IData referenced;
+   private IEnumeration referenced;
 
    @Mock
    private IData parent;
@@ -44,94 +49,94 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
       Data parentData = factory().createData();
       parentData.setName("Foo");
 
-      referencedData = factory().createData();
-      referencedData.setName("referencedData");
+      referencedEnum = factory().createEnumeration();
+      referencedEnum.setName("ReferencedEnum");
 
       Package packageZ = factory().createPackage();
-      packageZ.setName("my.foo.data");
-      packageZ.setElement(referencedData);
+      packageZ.setName("my.foo.enums");
+      packageZ.setElement(referencedEnum);
 
       field = factory().createReferencedDataModelFieldDeclaration();
       field.setName("field1");
-      field.setDataModel(referencedData);
+      field.setDataModel(referencedEnum);
       field.setCardinality(Cardinality.DEFAULT);
       parentData.getFields().add(field);
 
-      when(referenced.getName()).thenReturn(referencedData.getName());
+      when(referenced.getName()).thenReturn(referencedEnum.getName());
       when(referenced.getParent()).thenReturn(pack);
       when(pack.getName()).thenReturn(packageZ.getName());
 
       when(resolver().getWrapperFor(parentData)).thenReturn(parent);
-      when(resolver().getWrapperFor(referencedData)).thenReturn(referenced);
-      when(resolver().findXTextData(referenced.getName(), packageZ.getName())).thenReturn(Optional.of(referencedData));
+      when(resolver().getWrapperFor(referencedEnum)).thenReturn(referenced);
+      when(resolver().findXTextEnum(referenced.getName(), packageZ.getName())).thenReturn(Optional.of(referencedEnum));
    }
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
+      wrappedEnumField = new WrappedReferencedEnumField(resolver(), field);
       assertEquals("name not correct!",
-                   wrappedDataField.getName(),
+                   wrappedEnumField.getName(),
                    field.getName());
       assertEquals("parent not correct!",
                    parent,
-                   wrappedDataField.getParent());
+                   wrappedEnumField.getParent());
       assertEquals("metadata not set!",
                    IMetadata.EMPTY_METADATA,
-                   wrappedDataField.getMetadata());
-      assertEquals("referenced data not correct!",
+                   wrappedEnumField.getMetadata());
+      assertEquals("referenced enum not correct!",
                    referenced,
-                   wrappedDataField.getReferencedDataType());
+                   wrappedEnumField.getReferencedEnumeration());
       assertEquals("cardinality not correct!",
                    FieldCardinality.SINGLE,
-                   wrappedDataField.getCardinality());
+                   wrappedEnumField.getCardinality());
    }
 
    @Test
    public void testDoesUpdateXtextObject() throws Throwable {
-      Data anotherReferencedData = factory().createData();
-      anotherReferencedData.setName("referencedData2");
+      Enumeration anotherReferencedEnum = factory().createEnumeration();
+      anotherReferencedEnum.setName("ReferencedEnum2");
 
       Package packageZ = factory().createPackage();
-      packageZ.setName("more.of.foo.data");
-      packageZ.setElement(anotherReferencedData);
+      packageZ.setName("more.of.foo.enums");
+      packageZ.setElement(anotherReferencedEnum);
 
       IPackage anotherPackage = mock(IPackage.class);
       when(anotherPackage.getName()).thenReturn(packageZ.getName());
-      IData anotherReference = mock(IData.class);
-      when(anotherReference.getName()).thenReturn(anotherReferencedData.getName());
+      IEnumeration anotherReference = mock(IEnumeration.class);
+      when(anotherReference.getName()).thenReturn(anotherReferencedEnum.getName());
       when(anotherReference.getParent()).thenReturn(anotherPackage);
 
-      when(resolver().findXTextData(anotherReference.getName(), packageZ.getName()))
-            .thenReturn(Optional.of(anotherReferencedData));
+      when(resolver().findXTextEnum(anotherReference.getName(), packageZ.getName()))
+            .thenReturn(Optional.of(anotherReferencedEnum));
 
-      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
+      wrappedEnumField = new WrappedReferencedEnumField(resolver(), field);
       // Should not throw an error.
-      wrappedDataField.setType(DataTypes.DATA);
-      wrappedDataField.setReferencedDataType(anotherReference);
-      assertEquals("data not correct!",
-                   anotherReferencedData,
+      wrappedEnumField.setType(DataTypes.ENUM);
+      wrappedEnumField.setReferencedEnumeration(anotherReference);
+      assertEquals("enum not correct!",
+                   anotherReferencedEnum,
                    field.getDataModel());
 
-      wrappedDataField.setCardinality(FieldCardinality.MANY);
+      wrappedEnumField.setCardinality(FieldCardinality.MANY);
       assertEquals("cardinality not correct!",
                    FieldCardinality.MANY,
-                   wrappedDataField.getCardinality());
+                   wrappedEnumField.getCardinality());
    }
 
    @Test
    public void testDoesCreateXtextObject() throws Throwable {
       IDataField newField = mock(IDataField.class);
       when(newField.getName()).thenReturn("newField");
-      when(newField.getType()).thenReturn(DataTypes.DATA);
-      when(newField.getReferencedDataType()).thenReturn(referenced);
+      when(newField.getType()).thenReturn(DataTypes.ENUM);
+      when(newField.getReferencedEnumeration()).thenReturn(referenced);
       when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      ReferencedDataModelFieldDeclaration xtext = WrappedReferencedDataField.toXtext(resolver(), newField);
+      ReferencedDataModelFieldDeclaration xtext = WrappedReferencedEnumField.toXtext(resolver(), newField);
       assertEquals("name not correct!",
                    newField.getName(),
                    xtext.getName());
-      assertEquals("referenced data not correct!",
-                   referencedData,
+      assertEquals("referenced enum not correct!",
+                   referencedEnum,
                    xtext.getDataModel());
       assertEquals("cardinality not correct!",
                    xtext.getCardinality(),
@@ -139,28 +144,28 @@ public class WrappedReferencedDataFieldTest extends AbstractWrappedXtextTest {
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void testNotAllowDataTypeToBeChangedToPrimitiveType() throws Throwable {
-      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
-      wrappedDataField.setType(DataTypes.INT);
+   public void testNotAllowEnumTypeToBeChangedToPrimitiveType() throws Throwable {
+      wrappedEnumField = new WrappedReferencedEnumField(resolver(), field);
+      wrappedEnumField.setType(DataTypes.INT);
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void testNotAllowDataTypeToBeChangedToEnumType() throws Throwable {
-      wrappedDataField = new WrappedReferencedDataField(resolver(), field);
-      wrappedDataField.setType(DataTypes.ENUM);
+   public void testNotAllowDataTypeToBeChangedToDataType() throws Throwable {
+      wrappedEnumField = new WrappedReferencedEnumField(resolver(), field);
+      wrappedEnumField.setType(DataTypes.DATA);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void testDoesNotCreateXtextObjectForPrimitiveType() throws Throwable {
       IDataField newField = mock(IDataField.class);
       when(newField.getType()).thenReturn(DataTypes.INT);
-      WrappedReferencedDataField.toXtext(resolver(), newField);
+      WrappedReferencedEnumField.toXtext(resolver(), newField);
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void testDoesNotCreateXtextObjectForEnumType() throws Throwable {
+   public void testDoesNotCreateXtextObjectForDataType() throws Throwable {
       IDataField newField = mock(IDataField.class);
-      when(newField.getType()).thenReturn(DataTypes.ENUM);
-      WrappedReferencedDataField.toXtext(resolver(), newField);
+      when(newField.getType()).thenReturn(DataTypes.DATA);
+      WrappedReferencedEnumField.toXtext(resolver(), newField);
    }
 }

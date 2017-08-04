@@ -96,12 +96,13 @@ public class ValidationBridgeUtil {
             }
             return SystemDescriptorPackage.Literals.PRIMITIVE_DATA_FIELD_DECLARATION__TYPE;
          case "getReferencedDataType":
+         case "getReferencedEnumeration":
             if (SystemDescriptors.isPrimitiveDataFieldDeclaration(object)) {
                throw new IllegalValidationDeclarationException(
-                     "IDataField references a primitive, can only declare a validation error on the"
-                     + " 'referencedDataType' if the field references a data type!");
+                     "IDataField references a primitive, can only declare a validation error on the if the field"
+                     + " references a data type or enumeration!");
             }
-            return SystemDescriptorPackage.Literals.REFERENCED_DATA_FIELD_DECLARATION__DATA;
+            return SystemDescriptorPackage.Literals.REFERENCED_DATA_MODEL_FIELD_DECLARATION__DATA_MODEL;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
