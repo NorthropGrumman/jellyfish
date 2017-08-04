@@ -17,11 +17,11 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjellyfishcommand")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
-    
+
     compile project(":jellyfish.cli.command.createdomain")
     commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 
- 	 compile project(":jellyfish.cli.command.createprotocolbuffermessages")
+    compile project(":jellyfish.cli.command.createprotocolbuffermessages")
     commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjellyfishgradleproject")
@@ -32,6 +32,9 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjavaserviceconnector")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconnector", configuration: "commandTemplate")
+
+    compile project(":jellyfish.cli.command.report.requirementsverification")
+    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.createjavaservice")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
@@ -45,7 +48,6 @@ dependencies {
     compile project(":jellyfish.cli.command.createjavaserviceconfig")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconfig", configuration: "commandTemplate")
 
-
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "org.osgi:osgi.core:$osgiVersion"
@@ -58,13 +60,13 @@ dependencies {
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
     compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    
+
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 	 testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-applicationDistribution.from('src/main/resources') { 
+applicationDistribution.from('src/main/resources') {
 	into 'resources'
 }
 
