@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -102,7 +103,36 @@ public class GradleSettingsUtilitiesTest {
 
       GradleSettingsUtilities.tryAddProject(collection);
    }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void doesAddProjectToParent() throws IOException, FileUtilitiesException {
 
+      File outputDirectory = testFolder.newFolder("output", "output2");
+      Path settingsGradle = outputDirectory.toPath().getParent().resolve("settings.gradle");
+      Files.createFile(settingsGradle);
+
+      IParameterCollection collection = mock(IParameterCollection.class);
+      when(collection.containsParameter("outputDirectory")).thenReturn(true);
+      when(collection.containsParameter("groupId")).thenReturn(true);
+      when(collection.containsParameter("artifactId")).thenReturn(true);
+      when(collection.getParameter("outputDirectory"))
+               .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
+      when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
+      when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
+
+      GradleSettingsUtilities.tryAddProject(collection);
+
+      List<String> lines = Files.readAllLines(settingsGradle);
+
+      assertEquals(3, lines.size());
+
+      assertTrue(lines.contains(""));
+      assertTrue(lines.stream().collect(Collectors.joining("\n")), lines.contains("include 'output2/groupIdValue.artifactIdValue'"));
+      assertTrue(lines.contains("project(':output2/groupIdValue.artifactIdValue').name = 'artifactIdValue'"));
+   }
+
+   @SuppressWarnings("rawtypes")
    private IParameter createParameter(String name, String value) {
       return new DefaultParameter<>(name, value);
    }
