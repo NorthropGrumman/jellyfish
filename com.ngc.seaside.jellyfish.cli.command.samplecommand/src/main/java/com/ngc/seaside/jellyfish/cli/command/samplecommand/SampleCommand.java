@@ -80,7 +80,9 @@ public class SampleCommand implements IJellyFishCommand {
       IParameterCollection parameters = commandOptions.getParameters();
 
       try {
-         GradleSettingsUtilities.addProject(parameters);
+         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
       } catch (FileUtilitiesException e) {
          logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
          throw new CommandException(e);

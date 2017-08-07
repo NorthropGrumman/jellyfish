@@ -4,8 +4,6 @@ import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
-import com.ngc.seaside.service.fault.api.ServiceInputFaultException;
 
 #foreach ($i in $dto.imports)
 import ${i};
