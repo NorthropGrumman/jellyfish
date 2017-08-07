@@ -34,6 +34,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = "model";
    static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    static final String GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY = "generatedProjectDirectoryName";
+   static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
    static final String DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME = "generated-projects";
@@ -68,14 +69,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       CommandInvocationContext ctx = buildContext(commandOptions);
 
       createJellyFishGradleProject(ctx);
-      createDomainProject(ctx);
+      if (ctx.createDomain) {
+         createDomainProject(ctx);
+      }
       createEventsProject(ctx);
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
       createJavaServiceConfigProject(ctx);
 
-      // TODO TH: put these in the generated-projects directory.
-      // Allow user to specific the name of the directory for generated projects.
       createJavaServiceBaseProject(ctx);
       createJavaServiceConnectorProject(ctx);
    }
@@ -235,6 +236,23 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
                .toFile();
       }
+      
+      if (commandOptions.getParameters().containsParameter(CREATE_SERVICE_DOMAIN_PROPERTY)) {
+         String createDomain = commandOptions.getParameters().getParameter(CREATE_SERVICE_DOMAIN_PROPERTY).getStringValue();
+         switch (createDomain.toLowerCase()) {
+         case "true":
+            ctx.createDomain = true;
+            break;
+         case "false":
+            ctx.createDomain = false;
+            break;
+         default:
+            throw new CommandException(
+               "Invalid value for " + CREATE_SERVICE_DOMAIN_PROPERTY + ": " + createDomain + ". Expected either true or false.");
+         }
+      } else {
+         ctx.createDomain = true;
+      }
 
       // Get the group ID.
       if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
@@ -310,6 +328,9 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                   .setRequired(false),
             new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
                   .setDescription("The project's folder for generated code")
+                  .setRequired(false),
+            new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
+                  .setDescription("Whether or not to create the service's domain model")
                   .setRequired(false));
    }
 
@@ -327,5 +348,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       String modelName;
 
       IModel model;
+      
+      boolean createDomain;
    }
 }
