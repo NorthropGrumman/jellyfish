@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFilesEquals;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileBytesEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -86,25 +86,25 @@ public class CreateJavaServiceCommandIT {
 
       command.run(jellyFishCommandOptions);
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "settings.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "service unit test not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-test.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "service not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
@@ -123,25 +123,25 @@ public class CreateJavaServiceCommandIT {
 
       command.run(jellyFishCommandOptions);
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice", "build.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "settings.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "service unit test not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-test.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice",
                       "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "service not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),

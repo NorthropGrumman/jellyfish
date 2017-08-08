@@ -36,6 +36,9 @@ dependencies {
     compile project(":jellyfish.cli.command.report.requirementsverification")
     commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
 
+    compile project(":jellyfish.cli.command.report.requirementsallocation")
+    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsallocation", configuration: "commandTemplate")
+
     compile project(":jellyfish.cli.command.createjavaservice")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
 
@@ -62,7 +65,7 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-	 testCompile "junit:junit:$junitVersion"
+	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 

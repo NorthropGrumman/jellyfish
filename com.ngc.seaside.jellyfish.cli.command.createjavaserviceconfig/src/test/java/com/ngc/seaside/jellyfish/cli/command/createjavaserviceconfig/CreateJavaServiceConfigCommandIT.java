@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFilesEquals;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileBytesEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -84,18 +84,18 @@ public class CreateJavaServiceConfigCommandIT {
 
       command.run(jellyFishCommandOptions);
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-config-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.config", "build.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "settings.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-config-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "transport config not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-transport-config.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),

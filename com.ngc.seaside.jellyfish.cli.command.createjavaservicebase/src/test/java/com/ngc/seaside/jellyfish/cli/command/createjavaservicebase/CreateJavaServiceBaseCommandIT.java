@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFilesEquals;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileBytesEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -90,32 +90,32 @@ public class CreateJavaServiceBaseCommandIT {
       //      Files.walk(outputDirectory.getRoot().toPath())
 //            .forEach(p -> System.out.println(p.toFile().getAbsolutePath()));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base", "build.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "settings.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "transport topics not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "transport-topics.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "interface not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-interface.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "base class not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-class.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
@@ -137,32 +137,32 @@ public class CreateJavaServiceBaseCommandIT {
       //      Files.walk(outputDirectory.getRoot().toPath())
 //            .forEach(p -> System.out.println(p.toFile().getAbsolutePath()));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "build.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base", "build.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "settings.gradle not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-settings.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "transport topics not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "transport-topics.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "interface not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-interface.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                       "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java"));
 
-      assertFilesEquals(
+      assertFileBytesEquals(
             "base class not correct!",
             Paths.get("src", "test", "resources", "expectedfiles", "service-base-class.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),

@@ -1,0 +1,17 @@
+package com.ngc.seaside
+
+import com.ngc.seaside.dataTypes.SomeData
+
+model ModelReqsInMetadataOfOutputField {
+  metadata {
+    "name" : "ModelReqsInMetadataOfOutputField",
+    "description" : "My ModelReqsInMetadataOfOutputField description",
+    "stereotypes" : ["model", "service", "virtual", "output"]
+  }
+  
+  output {
+      SomeData x {
+        "satisfies": ["REQ001", "REQ003", "REQ004"]
+      }   
+  }
+}

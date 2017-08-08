@@ -27,9 +27,9 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector').nam
 include 'com.ngc.seaside.jellyfish.cli.command.createdomain'
 project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish.cli.command.createdomain'
 
-
 include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
+
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaservice'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaservice').name = 'jellyfish.cli.command.createjavaservice'
 
@@ -41,6 +41,9 @@ project(':com.ngc.seaside.jellyfish.cli.command.samplecommand').name = 'jellyfis
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaevents'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaevents').name = 'jellyfish.cli.command.createjavaevents'
+
+include 'com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation'
+project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation').name = 'jellyfish.cli.command.report.requirementsallocation'
 
 include 'com.ngc.seaside.jellyfish.cli.command.report.requirementsverification'
 project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsverification').name = 'jellyfish.cli.command.report.requirementsverification'

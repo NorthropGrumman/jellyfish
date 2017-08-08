@@ -1,0 +1,10 @@
+package com.ngc.seaside
+
+model ModelReqsInMetadata {
+  metadata {
+    "name" : "ModelReqsInMetadata",
+    "description" : "My ModelReqsInMetadata description",
+    "stereotypes" : ["model", "service", "virtual"],
+    "satisfies": ["REQ001", "REQ002"]
+  }
+}
