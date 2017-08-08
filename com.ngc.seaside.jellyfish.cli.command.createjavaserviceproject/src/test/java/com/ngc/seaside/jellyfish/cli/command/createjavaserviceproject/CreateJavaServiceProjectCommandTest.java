@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceProjectCommandTest {
@@ -140,7 +141,7 @@ public class CreateJavaServiceProjectCommandTest {
                                     any()))
             .thenReturn(modelName);
       when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTOY,
+                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
                                     null))
             .thenReturn(outputDirectoryName);
 
@@ -181,6 +182,30 @@ public class CreateJavaServiceProjectCommandTest {
       verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
    }
 
+   @Test
+   public void testWithoutDomain() throws Throwable {
+      String modelName = model.getFullyQualifiedName();
+      
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.CREATE_SERVICE_DOMAIN_PROPERTY,
+               "false"));
+      
+      when(promptUserService.prompt(eq(CreateJavaServiceProjectCommand.MODEL_PROPERTY),
+                                    eq(null),
+                                    any()))
+            .thenReturn(modelName);
+      when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
+                                    null))
+            .thenReturn(outputDirectoryName);
+
+      command.run(options);
+
+      ArgumentCaptor<IJellyFishCommandOptions> capture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
+      
+      verify(commandProvider, never()).run(eq(CreateJavaServiceProjectCommand.CREATE_DOMAIN_COMMAND_NAME),
+                                  capture.capture());
+   }
+   
    private void verifyParametersForCreateJellyFishGradleProjectCommand(IJellyFishCommandOptions options,
                                                                        String groupId,
                                                                        String projectName) {
@@ -220,16 +245,18 @@ public class CreateJavaServiceProjectCommandTest {
 
    private void verifyParametersForCreateServiceBaseCommand(IJellyFishCommandOptions options,
                                                             String projectName) {
-      requireParameter(options,
+      requireParameter(options, 
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+                       Paths.get(outputDirectoryName, projectName, 
+                          CreateJavaServiceProjectCommand.DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME).toAbsolutePath().toString());
    }
 
    private void verifyParametersForCreateConnectorCommand(IJellyFishCommandOptions options,
                                                           String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+                       Paths.get(outputDirectoryName, projectName, 
+                          CreateJavaServiceProjectCommand.DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME).toAbsolutePath().toString());
    }
 
    private void verifyParametersForCreateServiceConfigCommand(IJellyFishCommandOptions options,

@@ -13,9 +13,7 @@ import $import;
 import java.util.Objects;
 
 #if($domain.hasMultipleProperty)
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 #end
 #if($domain.hasArrayProperty)
 import java.util.Arrays;

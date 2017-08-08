@@ -138,7 +138,7 @@ public class BaseServiceTemplateDaoFactory extends TemplateDtoFactory {
             .setModelName(model.getFullyQualifiedName())
             .setImports(imports);
    }
-
+   
    private static String constantize(String value) {
       char[] chars = value.toCharArray();
       StringBuilder sb = new StringBuilder();
