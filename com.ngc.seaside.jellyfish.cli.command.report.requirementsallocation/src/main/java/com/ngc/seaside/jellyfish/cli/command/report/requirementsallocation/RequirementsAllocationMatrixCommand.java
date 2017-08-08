@@ -59,12 +59,10 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       String outputFormat = evaluateOutputFormat(commandOptions);
       String output = evaluateOutput(commandOptions);
-      String scope = evaluateScope(commandOptions);
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
 
-      // Collection<IModel> models = searchModels(commandOptions, scope, values, operator);
-      Collection<IModel> models = new TreeSet<IModel>(new Comparator<IModel>(){
+      Collection<IModel> models = new TreeSet<>(new Comparator<IModel>(){
          @Override
          public int compare(IModel o1, IModel o2) {
             return o1.getName().compareTo(o2.getName());
@@ -87,14 +85,14 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
          MatrixUtils.printAllocationConsole(report);
          success = true;
       } else {
-         Path outputPath = Paths.get(output);
+         Path outputPath = getAbsoluteOutputPath(output, commandOptions);
 
          try {
-            logService.info(RequirementsAllocationMatrixCommand.class, "Printing report to location: %s", output);
+            logService.info(RequirementsAllocationMatrixCommand.class, "Printing report to location: %s", outputPath);
             MatrixUtils.printAllocationMatrixToFile(report, outputPath);
             success = true;
          } catch (IOException e) {
-            logService.error(RequirementsAllocationMatrixCommand.class, "Failed to print report to location: %s", outputPath.toAbsolutePath().toString(), e);
+            logService.error(RequirementsAllocationMatrixCommand.class, "Failed to print report to location: %s", outputPath.toString(), e);
          }
       }
 
@@ -137,6 +135,14 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
 
          requirementsMap.get(eachReqName).addModel(model);
       });
+   }
+
+   private Path getAbsoluteOutputPath(String output, IJellyFishCommandOptions commandOptions) {
+      Path path = Paths.get(output);
+      if (!path.isAbsolute()) {
+         path = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(output).toAbsolutePath();
+      }
+      return path;
    }
 
    @Override
