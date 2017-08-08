@@ -195,7 +195,7 @@ public class StringTable<T> extends AbstractTable<T> {
    */
   protected MultiLineRow getHeader(Map<Integer, Integer> columnWidths) {
     MultiLineRow row = new MultiLineRow(-1);
-    int maxLines = 0;
+    int maxLines = 1;
     for (int column = 0; column < getFormat().getColumnCount(); column++) {
       MultiLineCell cell = new MultiLineCell(column);
       String value = getFormat().getColumnName(column);
