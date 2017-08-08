@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -17,13 +16,16 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDes
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,8 +93,7 @@ public class RequirementsAllocationMatrixCommandIT {
    public void testCommandWithOptionalParameter_Output() throws IOException {
       Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
 
-      String outputFilename = "requirements-allocation-matrix.txt";
-      outputFilePath = outputDir.resolve(outputFilename);
+      outputFilePath = outputDir.resolve("requirements-allocation-matrix.txt");
 
       parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
 
@@ -105,8 +106,7 @@ public class RequirementsAllocationMatrixCommandIT {
    public void testCommandWithOptionalParameter_Output_OutputFormat() throws IOException {
       Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.csv");
 
-      String outputFilename = "requirements-allocation-matrix.csv";
-      outputFilePath = outputDir.resolve(outputFilename);
+      outputFilePath = outputDir.resolve("requirements-allocation-matrix.csv");
 
       parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_FORMAT_PROPERTY, "csv"));
       parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
@@ -114,6 +114,70 @@ public class RequirementsAllocationMatrixCommandIT {
       runCommand();
 
       checkCommandOutput(expectedOutputFilePath, outputFilePath);
+   }
+
+   @Test
+   public void testCommandWithOptionalParameter_Output_ValuesInputOutput_OperatorOr() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrixWithInputOrOutputStereotype.txt");
+
+      outputFilePath = outputDir.resolve("requirements-allocation-matrix.txt");
+
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.VALUES_PROPERTY, "input,output"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OPERATOR_PROPERTY, "OR"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
+
+      runCommand();
+
+      checkCommandOutput(expectedOutputFilePath, outputFilePath);
+   }
+
+   @Test
+   public void testCommandWithOptionalParameter_Output_ValuesServiceVirtual_OperatorAnd() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrixWithServiceAndVirtualStereotype.txt");
+
+      outputFilePath = outputDir.resolve("requirements-allocation-matrix.txt");
+
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.VALUES_PROPERTY, "service,virtual"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OPERATOR_PROPERTY, "AND"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
+
+      runCommand();
+
+      checkCommandOutput(expectedOutputFilePath, outputFilePath);
+   }
+
+   @Test
+   public void testCommandWithOptionalParameter_Output_ValuesService_OperatorNot() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrixWithNotServiceStereotype.txt");
+
+      outputFilePath = outputDir.resolve("requirements-allocation-matrix.txt");
+
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.VALUES_PROPERTY, "service"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OPERATOR_PROPERTY, "NOT"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
+
+      runCommand();
+
+      checkCommandOutput(expectedOutputFilePath, outputFilePath);
+   }
+
+   @Test
+   public void testCommandWithNoParameters() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+      PrintStream oldOut = System.out;
+      System.setOut(new PrintStream(baos));
+
+      runCommand();
+
+      System.setOut(oldOut);
+
+      String output = new String(baos.toByteArray());
+      List<String> consoleOutputContent = Arrays.asList(output.split(System.getProperty("line.separator")));
+
+      assertFileLinesEquals("Stdout content does not equal expeted output", expectedOutputFilePath, consoleOutputContent);
    }
 
    private void runCommand(String... keyValues) {

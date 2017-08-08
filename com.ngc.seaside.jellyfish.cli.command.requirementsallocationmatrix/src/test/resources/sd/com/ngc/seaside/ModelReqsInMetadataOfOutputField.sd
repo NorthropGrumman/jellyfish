@@ -6,7 +6,7 @@ model ModelReqsInMetadataOfOutputField {
   metadata {
     "name" : "ModelReqsInMetadataOfOutputField",
     "description" : "My ModelReqsInMetadataOfOutputField description",
-    "stereotypes" : ["model", "service"]
+    "stereotypes" : ["model", "service", "virtual", "output"]
   }
   
   output {

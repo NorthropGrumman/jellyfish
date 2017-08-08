@@ -6,7 +6,7 @@ model ModelReqsInMetadataOfScenario {
   metadata {
     "name" : "ModelReqsInMetadataOfScenario",
     "description" : "My ModelReqsInMetadataOfScenario description",
-    "stereotypes" : ["model", "service"]
+    "stereotypes" : ["model", "virtual"]
   }
   
   input {

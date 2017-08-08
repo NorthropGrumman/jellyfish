@@ -6,7 +6,7 @@ model ModelReqsInMetadataOfInputField {
   metadata {
     "name" : "ModelReqsInMetadataOfInputField",
     "description" : "My ModelReqsInMetadataOfInputField description",
-    "stereotypes" : ["model", "service"]
+    "stereotypes" : ["model", "service",  "virtual", "input"]
   }
   
   input {
