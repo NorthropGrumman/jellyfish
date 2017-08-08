@@ -25,7 +25,6 @@ public class Requirement implements Comparable {
 
    public Requirement(String name) {
       this.ID = name;
-
    }
 
    /**

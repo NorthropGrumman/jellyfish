@@ -62,6 +62,7 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
    private IModel getModelAt(int index) {
       return (IModel) models.toArray()[index];
    }
+   
    @Override
    public Object getColumnValue(Requirement object, int column) {
       if (column == 0) {

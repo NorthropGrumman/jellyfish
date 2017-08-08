@@ -90,6 +90,25 @@ public class RequirementsAllocationMatrixCommandIT {
    }
 
    @Test
+   public void testCommandWithNoParameters() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+      PrintStream oldOut = System.out;
+      System.setOut(new PrintStream(baos));
+
+      runCommand();
+
+      System.setOut(oldOut);
+
+      String output = new String(baos.toByteArray());
+      List<String> consoleOutputContent = Arrays.asList(output.split(System.getProperty("line.separator")));
+
+      assertFileLinesEquals("Stdout content does not equal expeted output", expectedOutputFilePath, consoleOutputContent);
+   }
+
+   @Test
    public void testCommandWithOptionalParameter_Output() throws IOException {
       Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
 
@@ -159,25 +178,6 @@ public class RequirementsAllocationMatrixCommandIT {
       runCommand();
 
       checkCommandOutput(expectedOutputFilePath, outputFilePath);
-   }
-
-   @Test
-   public void testCommandWithNoParameters() throws IOException {
-      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
-
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-      PrintStream oldOut = System.out;
-      System.setOut(new PrintStream(baos));
-
-      runCommand();
-
-      System.setOut(oldOut);
-
-      String output = new String(baos.toByteArray());
-      List<String> consoleOutputContent = Arrays.asList(output.split(System.getProperty("line.separator")));
-
-      assertFileLinesEquals("Stdout content does not equal expeted output", expectedOutputFilePath, consoleOutputContent);
    }
 
    private void runCommand(String... keyValues) {

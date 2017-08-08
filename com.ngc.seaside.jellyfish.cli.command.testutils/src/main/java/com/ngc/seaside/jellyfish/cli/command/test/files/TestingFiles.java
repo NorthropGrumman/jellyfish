@@ -94,6 +94,12 @@ public class TestingFiles {
       return stripTrailingEmptyLines(lines);
    }
    
+   /**
+    * Returns a list of Strings with trailing empty lines removed.
+    * 
+    * @param lines the input list to trim
+    * @return the input list with empty trailing lines removed
+    */
    private static List<String> stripTrailingEmptyLines(List<String> lines) {
       final List<String> content = new ArrayList<>();
       content.addAll(lines);

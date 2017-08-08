@@ -25,6 +25,12 @@ public class ModelUtils {
    private ModelUtils() {
    }
 
+   /**
+    * Returns a colletion of all requirements that a given model satisfies
+    * 
+    * @param model the model to search for requirements
+    * @return a collection of all requirements satisfied by the model
+    */
    public static Collection<String> getAllRequirementsForModel(IModel model) {
       Collection<String> requirements = new TreeSet<>(Collections.reverseOrder());
       

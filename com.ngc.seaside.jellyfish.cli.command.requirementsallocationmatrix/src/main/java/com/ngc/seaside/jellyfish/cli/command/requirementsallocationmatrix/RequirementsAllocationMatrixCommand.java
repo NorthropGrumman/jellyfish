@@ -1,9 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.requirementsallocationmatrix;
 
-import com.google.common.io.Files;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
@@ -11,7 +8,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.requirementsallocationmatrix.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.requirementsallocationmatrix.utilities.ModelUtils;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -21,7 +17,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -111,6 +106,12 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       }
    }
 
+   /**
+    * Searches a collection of models for all requirements satisfied
+    * 
+    * @param models the list of models to search for requirements
+    * @return colletion of all requirements satisfied
+    */
    private Collection<Requirement> searchForRequirements(Collection<IModel> models) {
       final Map<String, Requirement> requirementsMap = new TreeMap<>();
 
@@ -119,7 +120,13 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       return requirementsMap.values();
    }
 
-   private Map<String, Requirement> searchForRequirements(IModel model, Map<String, Requirement> requirementsMap) {
+   /**
+    * Populates a map with all requirements that a given model satisfies
+    * 
+    * @param model the model to search for requirements
+    * @param requirementsMap the requirements map to populate
+    */
+   private void searchForRequirements(IModel model, Map<String, Requirement> requirementsMap) {
       Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(model);
 
       requirementsSet.forEach(eachReqName -> {
@@ -130,8 +137,6 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
 
          requirementsMap.get(eachReqName).addModel(model);
       });
-
-      return requirementsMap;
    }
 
    @Override
