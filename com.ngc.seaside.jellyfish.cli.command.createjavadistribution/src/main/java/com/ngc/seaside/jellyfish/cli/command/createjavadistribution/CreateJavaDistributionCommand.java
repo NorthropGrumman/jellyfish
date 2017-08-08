@@ -35,8 +35,10 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String GROUP_ID_PROPERTY = "groupId";
    public static final String ARTIFACT_ID_PROPERTY = "artifactId";
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
+
    public static final String MODEL_PROPERTY = "model";
-   public static final String MODELNAME_PROPERTY = "modelname";
+   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
+
    public static final String PACKAGE_PROPERTY = "package";
    public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
    public static final String CLEAN_PROPERTY = "clean";
@@ -129,7 +131,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       final IModel model = systemDescriptor.findModel(modelId)
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
-      parameters.addParameter(new DefaultParameter<>(MODELNAME_PROPERTY, model.getName()));
+      parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
 
       // Resolve output directory
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {

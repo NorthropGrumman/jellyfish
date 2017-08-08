@@ -4,7 +4,11 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
@@ -12,7 +16,12 @@ import java.util.TreeSet;
  */
 public class Requirement implements Comparable {
    private String ID;
-   private TreeSet<IModel> models = new TreeSet<>(Collections.reverseOrder());
+   private TreeSet<IModel> models = new TreeSet<IModel>(new Comparator<IModel>() {
+      public int compare(IModel obj1, IModel obj2)
+      {
+         return obj1.getName().compareTo(obj2.getName());
+      }
+   });
 
    public Requirement(String name) {
       this.ID = name;
@@ -53,6 +62,27 @@ public class Requirement implements Comparable {
     */
    void addModels(Collection<IModel> models) {
       models.forEach(this::addModel);
+   }
+   
+   /**
+    * Creates a comma delimited requirements allocation string
+    * @param models the models to check for requirement satisfaction
+    * @return a comma delimited string of requirement allocation
+    */
+   public String createRequirementAllocationCsvString(Collection<IModel> models) {
+      StringJoiner sj = new StringJoiner(",");
+
+      sj.add("\"" + ID + "\"");
+
+      models.forEach(model ->{
+         if (this.models.contains(model)) {
+            sj.add("X");
+         }else {
+            sj.add("");
+         }
+      });
+
+      return sj.toString();
    }
 
    @Override

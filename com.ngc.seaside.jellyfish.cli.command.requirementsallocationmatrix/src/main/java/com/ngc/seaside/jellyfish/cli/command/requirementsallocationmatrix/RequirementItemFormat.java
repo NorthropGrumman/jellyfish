@@ -3,29 +3,32 @@ package com.ngc.seaside.jellyfish.cli.command.requirementsallocationmatrix;
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 
 public class RequirementItemFormat implements ITableFormat<Requirement> {
    private Collection<IModel> models = new TreeSet<>(Collections.reverseOrder());
+   private final int reqColWidth;
 
-   public RequirementItemFormat(Collection<IModel> models) {
+   public RequirementItemFormat(Collection<IModel> models, int reqColWidth) {
       this.models = models;
+      this.reqColWidth = reqColWidth;
    }
 
    @Override
    public int getColumnCount() {
-      return models.size();
+      return models.size() + 1;
    }
 
    @Override
    public String getColumnName(int column) {
       if (column == 0) {
-         return "Req";
+         return " Req ";
       } else if (column < getColumnCount()) {
-         IModel model = (IModel) models.toArray()[column - 1];
-         return " ".concat(model.getName());
+         return " ".concat(getModelAt(column - 1).getName());
       }
       return "";
    }
@@ -43,26 +46,34 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
 
    @Override
    public int getColumnWidth(int column) {
+      final int columnWidth;
+
       if (column == 0) {
-         return 15;
+         columnWidth = this.reqColWidth + 2;
       } else if (column < getColumnCount()) {
-         return 30;
+         columnWidth = getModelAt(column - 1).getName().length() + 2;
       } else {
-         return -1;
+         columnWidth = -1;
       }
+
+      return columnWidth;
    }
 
+   private IModel getModelAt(int index) {
+      return (IModel) models.toArray()[index];
+   }
    @Override
    public Object getColumnValue(Requirement object, int column) {
       if (column == 0) {
-         return object.getID();
+         return " " + object.getID();
       } else if (column < getColumnCount()) {
-         IModel model = (IModel) models.toArray()[column - 1];
-         if (object.getModels().contains(model)) {
-            return "X";
+         if (object.getModels().contains(getModelAt(column - 1))) {
+            int colWidth = getColumnWidth(column);
+            int leftPad = (colWidth+1)/2;
+            
+            return StringUtils.leftPad("X", leftPad);
          }
       }
       return "";
    }
 }
-

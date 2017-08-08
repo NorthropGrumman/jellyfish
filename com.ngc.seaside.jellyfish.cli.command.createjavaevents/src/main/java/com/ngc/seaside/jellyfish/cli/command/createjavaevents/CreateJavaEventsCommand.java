@@ -2,8 +2,10 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
@@ -14,6 +16,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -32,18 +36,14 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
     */
    static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.java.vm";
    /**
-    * The name of the default events package suffix.
+    * The name of the default events artifact ID suffix.
     */
-   static final String DEFAULT_PACKAGE_SUFFIX = "events";
+   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "events";
 
    /**
     * The property used by the create-domain command for the Velocity template file.
     */
    static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
-   /**
-    * The name of the property used by the create-domain command to set the package suffix.
-    */
-   static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
    /**
     * The name of the command that is invoked to create the actual project.
     */
@@ -60,6 +60,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    private ILogService logService;
    private IResourceService resourceService;
+   private IPromptUserService promptUserService;
    private IJellyFishCommandProvider jellyFishCommandProvider;
 
    @Override
@@ -75,12 +76,15 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       issueUsageWarnings(commandOptions);
-      String packageSuffix = evaluatePackageSuffix(commandOptions.getParameters());
-      String eventTemplate = evaluateEventTemplate(commandOptions.getParameters());
+      IModel model = evaluateModelParameter(commandOptions);
+      String artifactId = evaluateArtifactId(commandOptions, model);
+      String eventTemplate = evaluateEventTemplate(commandOptions);
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
             commandOptions,
+            new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
             new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY, eventTemplate),
-            new DefaultParameter<>(PACKAGE_SUFFIX_PROPERTY, packageSuffix)));
+            new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
+                                   CreateJavaEventsCommand.class.getPackage().getName())));
    }
 
    @Activate
@@ -134,6 +138,17 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       setJellyFishCommandProvider(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptUserService")
+   public void setPromptUserService(IPromptUserService ref) {
+      this.promptUserService = ref;
+   }
+
+   public void removePromptUserService(IPromptUserService ref) {
+      setPromptUserService(null);
+   }
+
    private void issueUsageWarnings(IJellyFishCommandOptions commandOptions) {
       // This command will set the value of the domainFile parameter itself, thereby overriding the value provided
       // by the user.  We issue this warning in case the user gets confused.
@@ -145,8 +160,22 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       }
    }
 
-   private String evaluateEventTemplate(IParameterCollection parameters) {
-      IParameter<?> eventTemplateParameter = parameters.getParameter(EVENT_TEMPLATE_FILE_PROPERTY);
+   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
+      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
+      IParameterCollection parameters = commandOptions.getParameters();
+      final String modelName;
+      if (parameters.containsParameter(CreateDomainCommand.MODEL_PROPERTY)) {
+         modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
+      } else {
+         modelName = promptUserService.prompt(CreateDomainCommand.MODEL_PROPERTY,
+                                              null,
+                                              m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
+      }
+      return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
+   }
+
+   private String evaluateEventTemplate(IJellyFishCommandOptions options) {
+      IParameter<?> eventTemplateParameter = options.getParameters().getParameter(EVENT_TEMPLATE_FILE_PROPERTY);
       String eventTemplate = eventTemplateParameter == null ? null : eventTemplateParameter.getStringValue();
       if (eventTemplate == null) {
          // Unpack the velocity template to a temporary directory.
@@ -159,12 +188,14 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       return eventTemplate;
    }
 
-   private static String evaluatePackageSuffix(IParameterCollection parameters) {
-      String pkgSuffix = DEFAULT_PACKAGE_SUFFIX;
-      if (parameters.containsParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)) {
-         pkgSuffix = parameters.getParameter(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
+   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
+      final String artifactId;
+      if (options.getParameters().containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)) {
+         artifactId = options.getParameters().getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY).getStringValue();
+      } else {
+         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
       }
-      return pkgSuffix;
+      return artifactId;
    }
 
    /**

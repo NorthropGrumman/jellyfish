@@ -1,0 +1,8 @@
+| Req    | ModelNoRequirements | ModelReqsInMetadata | ModelReqsInMetadataOfInputField | ModelReqsInMetadataOfOutputField | ModelReqsInMetadataOfPartsField | ModelReqsInMetadataOfScenario |
+| REQ001 |                     |          X          |                                 |                X                 |                                 |               X               |
+| REQ002 |                     |          X          |                X                |                                  |                X                |                               |
+| REQ003 |                     |                     |                X                |                X                 |                                 |               X               |
+| REQ004 |                     |                     |                                 |                X                 |                X                |                               |
+| REQ006 |                     |                     |                                 |                                  |                X                |                               |
+| REQ007 |                     |                     |                                 |                                  |                                 |               X               |
+

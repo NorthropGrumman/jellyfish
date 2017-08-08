@@ -4,6 +4,8 @@ import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
+import java.nio.file.Path;
+
 /**
  * This interface provides the same information as the {@link IBootstrapCommandOptions} plus the added
  * System Descriptor model. The commands will be passed this object upon the execution of their tasks by the
@@ -32,4 +34,6 @@ public interface IJellyFishCommandOptions extends IBootstrapCommandOptions {
     * @return the system descriptor model.
     */
    ISystemDescriptor getSystemDescriptor();
+
+   Path getSystemDescriptorProjectPath();
 }

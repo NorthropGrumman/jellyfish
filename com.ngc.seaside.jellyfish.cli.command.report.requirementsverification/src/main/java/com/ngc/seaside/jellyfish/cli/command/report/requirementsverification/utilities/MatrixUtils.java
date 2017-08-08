@@ -1,0 +1,120 @@
+package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities;
+
+import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
+import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
+import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.Requirement;
+import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.RequirementItemFormat;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringJoiner;
+
+/**
+ * Utility class for matrix related operations
+ */
+public class MatrixUtils {
+   private MatrixUtils() {
+   }
+
+   /**
+    * Generates a requirements verification matrix given a Collection of requirements and features
+    *
+    * @param requirements satisfied requirements
+    * @param features     satisfied features
+    * @return a {@link StringTable} containing verification matrix
+    */
+   public static StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
+                                                               Collection<String> features) {
+      StringTable<Requirement> stringTable = createStringTable(features);
+
+      requirements.forEach(requirement -> stringTable.getModel().addItem(requirement));
+
+      stringTable.setRowSpacer("_");
+      stringTable.setColumnSpacer("|");
+
+      stringTable.setShowHeader(true);
+
+      return stringTable;
+   }
+
+   /**
+    * Creates a {@link StringTable} for {@link Requirement} objects
+    *
+    * @param features features features to compare against each {@link Requirement}
+    */
+   protected static StringTable<Requirement> createStringTable(Collection<String> features) {
+      return new StringTable<>(createTableFormat(features));
+   }
+
+   /**
+    * Creates a {@link ITableFormat} for {@link Requirement} objects
+    *
+    * @param features features features to compare against each {@link Requirement}
+    */
+   private static ITableFormat<Requirement> createTableFormat(Collection<String> features) {
+      return new RequirementItemFormat(features);
+   }
+
+   /**
+    * Generates a comma delimited requirements verification matrix given a Collection of requirements and features
+    *
+    * @param requirements satisfied requirements
+    * @param features     satisfied features
+    * @return a {@link StringTable} containing verification matrix
+    */
+   public static String generateCsvVerificationMatrix(Collection<Requirement> requirements,
+                                                      Collection<String> features) {
+      String commaSeparator = ",";
+
+      StringJoiner sj = new StringJoiner(",");
+
+      StringBuilder sb = new StringBuilder();
+
+      // Process header information
+      if (!features.isEmpty()) {
+         sb.append("\"Req\"").append(commaSeparator);
+         features.forEach(feature -> sj.add("\"" + feature + "\""));
+         sb.append(sj.toString()).append("\n");
+
+         requirements.forEach(req -> sb.append(req.createFeatureVerificationCsvString(features)).append("\n"));
+
+         return sb.toString();
+      }
+
+      return "";
+   }
+
+   /**
+    * Prints the verification matrix report to the file provided by the output
+    *
+    * @param outputPath file path to output
+    * @param report     verification matrix to be printed
+    */
+   public static void printVerificationMatrixToFile(Path outputPath, String report) throws IOException {
+      File parent = outputPath.getParent().toAbsolutePath().toFile();
+      boolean parentFolderCreationSuccessful = true;
+      if (!parent.exists()) {
+         parentFolderCreationSuccessful = parent.mkdirs();
+      }
+
+      if (parentFolderCreationSuccessful) {
+         List<String> test = new ArrayList<>();
+         test.add(report);
+         Files.write(outputPath, test);
+      }
+   }
+
+   /**
+    * Prints the verification matrix report to the file provided by the output
+    *
+    * @param report verification matrix to be printed
+    */
+   public static void printVerificationConsole(String report) {
+      System.out.println("\nOUTPUT:\n" + report);
+   }
+}

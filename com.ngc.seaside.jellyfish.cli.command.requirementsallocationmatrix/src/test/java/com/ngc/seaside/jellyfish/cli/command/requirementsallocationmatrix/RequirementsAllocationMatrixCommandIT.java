@@ -15,7 +15,7 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFilesEquals;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.*;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -37,7 +37,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RequirementsAllocationMatrixCommandTest {
+public class RequirementsAllocationMatrixCommandIT {
    private static final PrintStreamLogService logger = new PrintStreamLogService();
    private static final Injector injector = Guice.createInjector(getModules());
 
@@ -101,30 +101,20 @@ public class RequirementsAllocationMatrixCommandTest {
       checkCommandOutput(expectedOutputFilePath, outputFilePath);
    }
 
-   // @Test
-   // public void testCommandWithRequirementInMetadata() {
-   // throw new AssertionError("Test not implemented!");
-   // }
-   //
-   // @Test
-   // public void testCommandWithRequirementInMetadataOfInputFields () {
-   // throw new AssertionError("Test not implemented!");
-   // }
-   //
-   // @Test
-   // public void testCommandWithRequirementInMetadataOfOutputFields () {
-   // throw new AssertionError("Test not implemented!");
-   // }
-   //
-   // @Test
-   // public void testCommandWithRequirementInMetadataOfPartsFields () {
-   // throw new AssertionError("Test not implemented!");
-   // }
-   //
-   // @Test
-   // public void testCommandWithRequirementInMetadataOfScenarioFields () {
-   // throw new AssertionError("Test not implemented!");
-   // }
+   @Test
+   public void testCommandWithOptionalParameter_Output_OutputFormat() throws IOException {
+      Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.csv");
+
+      String outputFilename = "requirements-allocation-matrix.csv";
+      outputFilePath = outputDir.resolve(outputFilename);
+
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_FORMAT_PROPERTY, "csv"));
+      parameters.addParameter(new DefaultParameter<>(RequirementsAllocationMatrixCommand.OUTPUT_PROPERTY, outputFilePath.toString()));
+
+      runCommand();
+
+      checkCommandOutput(expectedOutputFilePath, outputFilePath);
+   }
 
    private void runCommand(String... keyValues) {
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
@@ -141,6 +131,6 @@ public class RequirementsAllocationMatrixCommandTest {
       Assert.assertTrue(outputFilePath + " output file not created", outputFilePath.toFile().exists());
 
       // Check file contents
-      assertFilesEquals("Output file content is incorrect", outputFilePath, expectedOutputFilePath);
+      assertFileLinesEquals("Output file content is incorrect", outputFilePath, expectedOutputFilePath);
    }
 }
