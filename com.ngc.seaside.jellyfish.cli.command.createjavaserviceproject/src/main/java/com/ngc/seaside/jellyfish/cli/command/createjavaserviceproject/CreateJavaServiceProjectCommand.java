@@ -5,6 +5,7 @@ import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
+import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -21,11 +22,15 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
-   private static final IUsage USAGE = createUsage();
+   private IUsage USAGE = null;
 
    static final String GROUP_ID_PROPERTY = "groupId";
    static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -34,6 +39,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = "model";
    static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    static final String GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY = "generatedProjectDirectoryName";
+   static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
    static final String DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME = "generated-projects";
@@ -46,6 +52,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME = "create-java-service-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
+   private static final String[] SUBCOMMANDS = { CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
+            CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
+            CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME,
+            CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME };
 
    public static final String NAME = "create-java-service-project";
 
@@ -60,6 +70,44 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
    @Override
    public IUsage getUsage() {
+      if (USAGE == null) {
+         synchronized (CreateJavaServiceProjectCommand.class) {
+            if (USAGE == null) {
+               Map<String, IParameter<?>> usageParameters = new HashMap<>();
+               
+               for (String subcommand : SUBCOMMANDS) {
+                  List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
+                           .getAllParameters();
+                  for (IParameter<?> parameter : parameters) {
+                     if (parameter.getName() != null && parameter.getDescription() != null) {
+                        usageParameters.put(parameter.getName(), parameter);
+                     }
+                  }
+               }
+               
+               usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
+                        .setDescription("Base directory in which to output the project").setRequired(true));
+               usageParameters.put(MODEL_PROPERTY, new DefaultParameter<String>(MODEL_PROPERTY)
+                        .setDescription("The fully qualified path to the system descriptor model").setRequired(true));
+               usageParameters.put(PROJECT_NAME, new DefaultParameter<String>(PROJECT_NAME)
+                        .setDescription("The name of the project.").setRequired(false));
+               usageParameters.put(GROUP_ID_PROPERTY, new DefaultParameter<String>(GROUP_ID_PROPERTY)
+                        .setDescription("The project's group ID").setRequired(false));
+               usageParameters.put(ARTIFACT_ID_PROPERTY, new DefaultParameter<String>(ARTIFACT_ID_PROPERTY)
+                        .setDescription("The project's version").setRequired(false));
+               usageParameters.put(PACKAGE_PROPERTY, new DefaultParameter<String>(PACKAGE_PROPERTY)
+                        .setDescription("The project's default package").setRequired(false));
+               usageParameters.put(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY,
+                  new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
+                           .setDescription("The project's folder for generated code").setRequired(false));
+               usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY,
+                  new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
+                           .setDescription("Whether or not to create the service's domain model").setRequired(false));
+               IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
+               USAGE = new DefaultUsage("Create a new Java service project for a particular model.", parameters);
+            }
+         }
+      }
       return USAGE;
    }
 
@@ -68,14 +116,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       CommandInvocationContext ctx = buildContext(commandOptions);
 
       createJellyFishGradleProject(ctx);
-      createDomainProject(ctx);
+      if (ctx.createDomain) {
+         createDomainProject(ctx);
+      }
       createEventsProject(ctx);
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
       createJavaServiceConfigProject(ctx);
 
-      // TODO TH: put these in the generated-projects directory.
-      // Allow user to specific the name of the directory for generated projects.
       createJavaServiceBaseProject(ctx);
       createJavaServiceConnectorProject(ctx);
    }
@@ -235,6 +283,23 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
                .toFile();
       }
+      
+      if (commandOptions.getParameters().containsParameter(CREATE_SERVICE_DOMAIN_PROPERTY)) {
+         String createDomain = commandOptions.getParameters().getParameter(CREATE_SERVICE_DOMAIN_PROPERTY).getStringValue();
+         switch (createDomain.toLowerCase()) {
+         case "true":
+            ctx.createDomain = true;
+            break;
+         case "false":
+            ctx.createDomain = false;
+            break;
+         default:
+            throw new CommandException(
+               "Invalid value for " + CREATE_SERVICE_DOMAIN_PROPERTY + ": " + createDomain + ". Expected either true or false.");
+         }
+      } else {
+         ctx.createDomain = true;
+      }
 
       // Get the group ID.
       if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
@@ -282,37 +347,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    }
 
 
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   private static IUsage createUsage() {
-      return new DefaultUsage(
-            "Create a new Java service project for a particular model.",
-            new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
-                  .setDescription("Base directory in which to output the project")
-                  .setRequired(true),
-            new DefaultParameter<String>(MODEL_PROPERTY)
-                  .setDescription("The fully qualified path to the system descriptor model")
-                  .setRequired(true),
-            new DefaultParameter<String>(PROJECT_NAME)
-                  .setDescription("The name of the project.")
-                  .setRequired(false),
-            new DefaultParameter<String>(GROUP_ID_PROPERTY)
-                  .setDescription("The project's group ID")
-                  .setRequired(false),
-            new DefaultParameter<String>(ARTIFACT_ID_PROPERTY)
-                  .setDescription("The project's version")
-                  .setRequired(false),
-            new DefaultParameter<String>(PACKAGE_PROPERTY)
-                  .setDescription("The project's default package")
-                  .setRequired(false),
-            new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
-                  .setDescription("The project's folder for generated code")
-                  .setRequired(false));
-   }
-
    private static class CommandInvocationContext {
 
       IJellyFishCommandOptions originalCommandOptions;
@@ -327,5 +361,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       String modelName;
 
       IModel model;
+      
+      boolean createDomain;
    }
 }
