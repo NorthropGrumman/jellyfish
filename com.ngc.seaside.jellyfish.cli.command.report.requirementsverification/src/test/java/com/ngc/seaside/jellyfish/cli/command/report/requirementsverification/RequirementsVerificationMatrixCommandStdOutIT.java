@@ -107,44 +107,41 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals(4, rows.size());
       rows.forEach(row -> {
          assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
+         assertEquals(9, row.getCells().size());
       });
 
       // Validate First Requirement
       MultiLineRow firstRow = rows.get(0);
       assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("X", firstRow.getCells().get(2).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("X", firstRow.getCells().get(4).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("X", firstRow.getCells().get(6).getLine(0));
+      assertEquals("X", firstRow.getCells().get(6).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(7).getLine(0));
-      assertEquals("", firstRow.getCells().get(8).getLine(0));
-      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+      assertEquals("X", firstRow.getCells().get(8).getLine(0).trim());
 
       // Validate Second Requirement
       MultiLineRow secondRow = rows.get(1);
       assertEquals("", secondRow.getCells().get(1).getLine(0));
       assertEquals("", secondRow.getCells().get(2).getLine(0));
-      assertEquals("X", secondRow.getCells().get(3).getLine(0));
+      assertEquals("X", secondRow.getCells().get(3).getLine(0).trim());
       assertEquals("", secondRow.getCells().get(4).getLine(0));
       assertEquals("", secondRow.getCells().get(5).getLine(0));
       assertEquals("", secondRow.getCells().get(6).getLine(0));
       assertEquals("", secondRow.getCells().get(7).getLine(0));
-      assertEquals("", secondRow.getCells().get(8).getLine(0));
-      assertEquals("X", secondRow.getCells().get(9).getLine(0));
+      assertEquals("X", secondRow.getCells().get(8).getLine(0).trim());
 
       // Validate Third Requirement
       MultiLineRow thirdRow = rows.get(2);
-      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(1).getLine(0).trim());
       assertEquals("", thirdRow.getCells().get(2).getLine(0));
       assertEquals("", thirdRow.getCells().get(3).getLine(0));
       assertEquals("", thirdRow.getCells().get(4).getLine(0));
       assertEquals("", thirdRow.getCells().get(5).getLine(0));
       assertEquals("", thirdRow.getCells().get(6).getLine(0));
       assertEquals("", thirdRow.getCells().get(7).getLine(0));
-      assertEquals("", thirdRow.getCells().get(8).getLine(0));
-      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(8).getLine(0).trim());
 
       // Validate Fourth Requirement
       MultiLineRow fourthRow = rows.get(3);
@@ -153,10 +150,9 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals("", fourthRow.getCells().get(3).getLine(0));
       assertEquals("", fourthRow.getCells().get(4).getLine(0));
       assertEquals("", fourthRow.getCells().get(5).getLine(0));
-      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
+      assertEquals("X", fourthRow.getCells().get(6).getLine(0).trim());
       assertEquals("", fourthRow.getCells().get(7).getLine(0));
       assertEquals("", fourthRow.getCells().get(8).getLine(0));
-      assertEquals("", fourthRow.getCells().get(9).getLine(0));
    }
 
    @Test
@@ -181,30 +177,30 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       // First Requirement
       MultiLineRow firstRow = rows.get(0);
       assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("X", firstRow.getCells().get(2).getLine(0));
+      assertEquals("X", firstRow.getCells().get(2).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("X", firstRow.getCells().get(4).getLine(0));
+      assertEquals("X", firstRow.getCells().get(4).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("X", firstRow.getCells().get(6).getLine(0));
+      assertEquals("X", firstRow.getCells().get(6).getLine(0).trim());
       assertEquals("", firstRow.getCells().get(7).getLine(0));
       assertEquals("", firstRow.getCells().get(8).getLine(0));
-      assertEquals("X", firstRow.getCells().get(9).getLine(0));
+      assertEquals("X", firstRow.getCells().get(9).getLine(0).trim());
 
       // Second Requirement
       MultiLineRow secondRow = rows.get(1);
       assertEquals("", secondRow.getCells().get(1).getLine(0));
       assertEquals("", secondRow.getCells().get(2).getLine(0));
-      assertEquals("X", secondRow.getCells().get(3).getLine(0));
+      assertEquals("X", secondRow.getCells().get(3).getLine(0).trim());
       assertEquals("", secondRow.getCells().get(4).getLine(0));
       assertEquals("", secondRow.getCells().get(5).getLine(0));
       assertEquals("", secondRow.getCells().get(6).getLine(0));
       assertEquals("", secondRow.getCells().get(7).getLine(0));
       assertEquals("", secondRow.getCells().get(8).getLine(0));
-      assertEquals("X", secondRow.getCells().get(9).getLine(0));
+      assertEquals("X", secondRow.getCells().get(9).getLine(0).trim());
 
       // Third Requirement
       MultiLineRow thirdRow = rows.get(2);
-      assertEquals("X", thirdRow.getCells().get(1).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(1).getLine(0).trim());
       assertEquals("", thirdRow.getCells().get(2).getLine(0));
       assertEquals("", thirdRow.getCells().get(3).getLine(0));
       assertEquals("", thirdRow.getCells().get(4).getLine(0));
@@ -212,7 +208,7 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals("", thirdRow.getCells().get(6).getLine(0));
       assertEquals("", thirdRow.getCells().get(7).getLine(0));
       assertEquals("", thirdRow.getCells().get(8).getLine(0));
-      assertEquals("X", thirdRow.getCells().get(9).getLine(0));
+      assertEquals("X", thirdRow.getCells().get(9).getLine(0).trim());
 
       // Fourth Requirement
       MultiLineRow fourthRow = rows.get(3);
@@ -221,7 +217,7 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals("", fourthRow.getCells().get(3).getLine(0));
       assertEquals("", fourthRow.getCells().get(4).getLine(0));
       assertEquals("", fourthRow.getCells().get(5).getLine(0));
-      assertEquals("X", fourthRow.getCells().get(6).getLine(0));
+      assertEquals("X", fourthRow.getCells().get(6).getLine(0).trim());
       assertEquals("", fourthRow.getCells().get(7).getLine(0));
       assertEquals("", fourthRow.getCells().get(8).getLine(0));
       assertEquals("", fourthRow.getCells().get(9).getLine(0));
@@ -234,7 +230,7 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals("", fifthRow.getCells().get(4).getLine(0));
       assertEquals("", fifthRow.getCells().get(5).getLine(0));
       assertEquals("", fifthRow.getCells().get(6).getLine(0));
-      assertEquals("X", fifthRow.getCells().get(7).getLine(0));
+      assertEquals("X", fifthRow.getCells().get(7).getLine(0).trim());
       assertEquals("", fifthRow.getCells().get(8).getLine(0));
       assertEquals("", fifthRow.getCells().get(9).getLine(0));
    }
@@ -269,17 +265,11 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       assertEquals(1, rows.size());
       rows.forEach(row -> {
          assertEquals(1, row.getNumberOfLines());
-         assertEquals(8, row.getCells().size());
+         assertEquals(2, row.getCells().size());
       });
 
       // First Requirement
       MultiLineRow firstRow = rows.get(0);
-      assertEquals("", firstRow.getCells().get(1).getLine(0));
-      assertEquals("", firstRow.getCells().get(2).getLine(0));
-      assertEquals("", firstRow.getCells().get(3).getLine(0));
-      assertEquals("", firstRow.getCells().get(4).getLine(0));
-      assertEquals("", firstRow.getCells().get(5).getLine(0));
-      assertEquals("", firstRow.getCells().get(6).getLine(0));
-      assertEquals("X", firstRow.getCells().get(7).getLine(0));
+      assertEquals("X", firstRow.getCells().get(1).getLine(0).trim());
    }
 }

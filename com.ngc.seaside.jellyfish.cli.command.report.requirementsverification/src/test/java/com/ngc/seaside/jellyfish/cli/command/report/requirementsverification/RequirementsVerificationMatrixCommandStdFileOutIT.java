@@ -131,7 +131,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       assertEquals(4, rows.size());
       rows.forEach(row -> {
          assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
+         assertEquals(9, row.getCells().size());
       });
 
       // Verify output string
@@ -165,7 +165,7 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
       assertEquals(4, rows.size());
       rows.forEach(row -> {
          assertEquals(1, row.getNumberOfLines());
-         assertEquals(10, row.getCells().size());
+         assertEquals(9, row.getCells().size());
       });
 
       // Verify output string

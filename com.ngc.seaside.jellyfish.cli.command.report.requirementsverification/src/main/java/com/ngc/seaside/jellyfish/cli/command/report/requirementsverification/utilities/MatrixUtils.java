@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.ut
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.Requirement;
-import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.RequirementItemFormat;
+import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.RequirementsVerificationItemFormat;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,17 @@ public class MatrixUtils {
     * @return a {@link StringTable} containing verification matrix
     */
    public static StringTable<Requirement> generateDefaultVerificationMatrix(Collection<Requirement> requirements,
-                                                               Collection<String> features) {
-      StringTable<Requirement> stringTable = createStringTable(features);
+                                                                            Collection<String> features) {
+      int reqNameWidth = 0;
+      for (Requirement eachRequirement : requirements) {
+         if (eachRequirement.getID().length() > reqNameWidth) {
+            reqNameWidth = eachRequirement.getID().length();
+         }
+      }
 
-      requirements.forEach(requirement -> stringTable.getModel().addItem(requirement));
+      StringTable<Requirement> stringTable = createStringTable(features, reqNameWidth);
+
+      requirements.forEach(eachRequirement -> stringTable.getModel().addItem(eachRequirement));
 
       stringTable.setRowSpacer("_");
       stringTable.setColumnSpacer("|");
@@ -45,19 +52,21 @@ public class MatrixUtils {
    /**
     * Creates a {@link StringTable} for {@link Requirement} objects
     *
-    * @param features features features to compare against each {@link Requirement}
+    * @param features     features features to compare against each {@link Requirement}
+    * @param reqNameWidth determines the column width. Calculated from reqId length.
     */
-   protected static StringTable<Requirement> createStringTable(Collection<String> features) {
-      return new StringTable<>(createTableFormat(features));
+   protected static StringTable<Requirement> createStringTable(Collection<String> features, int reqNameWidth) {
+      return new StringTable<>(createTableFormat(features, reqNameWidth));
    }
 
    /**
     * Creates a {@link ITableFormat} for {@link Requirement} objects
     *
-    * @param features features features to compare against each {@link Requirement}
+    * @param features     features features to compare against each {@link Requirement}
+    * @param reqNameWidth determines the column width. Calculated from reqId length.
     */
-   private static ITableFormat<Requirement> createTableFormat(Collection<String> features) {
-      return new RequirementItemFormat(features);
+   private static ITableFormat<Requirement> createTableFormat(Collection<String> features, int reqNameWidth) {
+      return new RequirementsVerificationItemFormat(features, reqNameWidth);
    }
 
    /**
