@@ -129,26 +129,23 @@ public class ModelUtils {
     */
    public static Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models,
                                                      String uri) {
-      HashSet<String> packages = new HashSet<>();
       TreeMap<String, Feature> features = new TreeMap<>(Collections.reverseOrder());
 
       models.forEach(model -> {
          String packagez = model.getParent().getName();
-         if (packages.add(packagez)) {
-            String modelPathURI = packagez.replace(".", "/");
+         String modelPathURI = packagez.replace(".", "/");
 
-            File featureFilesRoot =
-                     getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI)
-                              .toFile();
+         File featureFilesRoot =
+                  getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI)
+                           .toFile();
 
-            File[] files = featureFilesRoot.listFiles();
-            if (files != null) {
-               for (File file : files) {
-                  String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
-                  String name = ModelUtils.substringBetween(file.getName(), ".", ".");
-                  if (qualifiedName.contains(model.getName())) {
-                     features.put(qualifiedName, new Feature(qualifiedName, name));
-                  }
+         File[] files = featureFilesRoot.listFiles();
+         if (files != null) {
+            for (File file : files) {
+               String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
+               String name = ModelUtils.substringBetween(file.getName(), ".", ".");
+               if (qualifiedName.contains(model.getName())) {
+                  features.put(qualifiedName, new Feature(qualifiedName, name));
                }
             }
          }
