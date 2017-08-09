@@ -22,7 +22,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +198,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    private void createEventsProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
-            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.generatedDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
    }
