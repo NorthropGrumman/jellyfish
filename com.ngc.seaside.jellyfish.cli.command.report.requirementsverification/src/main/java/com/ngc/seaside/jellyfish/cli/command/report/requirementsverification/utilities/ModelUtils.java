@@ -144,9 +144,11 @@ public class ModelUtils {
             File[] files = featureFilesRoot.listFiles();
             if (files != null) {
                for (File file : files) {
-                     String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
-                     String name = ModelUtils.substringBetween(file.getName(), ".", ".");
+                  String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
+                  String name = ModelUtils.substringBetween(file.getName(), ".", ".");
+                  if (qualifiedName.contains(model.getName())) {
                      features.put(qualifiedName, new Feature(qualifiedName, name));
+                  }
                }
             }
          }

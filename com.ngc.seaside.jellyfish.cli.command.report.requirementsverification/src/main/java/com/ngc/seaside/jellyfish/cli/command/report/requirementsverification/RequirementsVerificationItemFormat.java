@@ -2,20 +2,24 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 
 import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 
-public class RequirementItemFormat implements ITableFormat<Requirement> {
+public class RequirementsVerificationItemFormat implements ITableFormat<Requirement> {
+   private final int reqColWidth;
    private Collection<String> features = new TreeSet<>(Collections.reverseOrder());
 
-   public RequirementItemFormat(Collection<String> features) {
+   public RequirementsVerificationItemFormat(Collection<String> features, int reqColWidth) {
       this.features = features;
+      this.reqColWidth = reqColWidth;
    }
 
    @Override
    public int getColumnCount() {
-      return features.size();
+      return features.size() + 1;
    }
 
    @Override
@@ -23,7 +27,7 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
       if (column == 0) {
          return "Req";
       } else if (column < getColumnCount()) {
-         return " ".concat((String) features.toArray()[column - 1]);
+         return " ".concat(getFeatureAt(column - 1));
       }
       return "";
    }
@@ -42,9 +46,9 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
    @Override
    public int getColumnWidth(int column) {
       if (column == 0) {
-         return 15;
+         return this.reqColWidth + 2;
       } else if (column < getColumnCount()) {
-         return 30;
+         return getFeatureAt(column - 1).length() + 2;
       } else {
          return -1;
       }
@@ -57,9 +61,22 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
       } else if (column < getColumnCount()) {
          String feature = (String) features.toArray()[column - 1];
          if (object.getFeatures().contains(feature)) {
-            return "X";
+            int colWidth = getColumnWidth(column);
+            int leftPad = (colWidth + 1) / 2;
+
+            return StringUtils.leftPad("X", leftPad);
          }
       }
       return "";
+   }
+
+   /**
+    * Searches for a feature name at a location
+    *
+    * @param index index location to search
+    * @return returns feature at index
+    */
+   private String getFeatureAt(int index) {
+      return (String) features.toArray()[index];
    }
 }
