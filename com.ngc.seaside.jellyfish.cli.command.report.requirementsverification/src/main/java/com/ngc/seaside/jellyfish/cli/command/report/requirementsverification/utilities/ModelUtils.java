@@ -143,8 +143,9 @@ public class ModelUtils {
          if (files != null) {
             for (File file : files) {
                String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
+               String modelName = ModelUtils.substringBetween(file.getName(), "", ".");
                String name = ModelUtils.substringBetween(file.getName(), ".", ".");
-               if (qualifiedName.contains(model.getName())) {
+               if (modelName.equals(model.getName())) {
                   features.put(qualifiedName, new Feature(qualifiedName, name));
                }
             }
