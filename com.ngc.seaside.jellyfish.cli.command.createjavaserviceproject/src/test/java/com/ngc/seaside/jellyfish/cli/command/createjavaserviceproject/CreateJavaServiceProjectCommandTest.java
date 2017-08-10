@@ -226,7 +226,7 @@ public class CreateJavaServiceProjectCommandTest {
                                                        String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+                       Paths.get(outputDirectoryName, projectName, CreateJavaServiceProjectCommand.DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME).toAbsolutePath().toString());
    }
 
    private void verifyParametersForCreateDistributionCommand(IJellyFishCommandOptions options,
