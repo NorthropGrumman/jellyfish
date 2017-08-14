@@ -1,5 +1,9 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
@@ -16,6 +20,23 @@ public class PublishStepHandler extends AbstractStepHandler {
 
    public PublishStepHandler() {
       register(PAST, PRESENT, FUTURE);
+   }
+
+   public IData getOutputs(IScenarioStep step) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(
+            keyword.equals(PAST.getVerb())
+            || keyword.equals(PRESENT.getVerb())
+            || keyword.equals(FUTURE.getVerb()),
+            "the step cannot be processed by this handler!");
+
+      IModel model = step.getParent().getParent();
+      String outputName = step.getParameters().get(0);
+      return model.getOutputs()
+            .getByName(outputName)
+            .orElseThrow(() -> new IllegalStateException("model does not contain an output named " + outputName))
+            .getType();
    }
 
    @Override

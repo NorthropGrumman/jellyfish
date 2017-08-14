@@ -13,6 +13,7 @@ dependencies {
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+   testCompile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
 }
 
 jar {
