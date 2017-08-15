@@ -27,6 +27,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -44,6 +45,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -119,7 +121,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path projectDir = evaluateProjectDirectory(outputDir, groupId, artifactId, clean);
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
-
+      
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
          final String domainPackage = useModelStructure ? sdPackage : pkg;
@@ -490,14 +492,25 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Generates the Blocs domain xml file with the given data and package.
     *
     * @param xmlFile output xml file
-    * @param data    collection of data
-    * @param pkg     package of domain data classes
+    * @param data collection of data
+    * @param pkg package of domain data classes
     * @throws CommandException if an error occurred when creating the xml file
     */
    private static void generateDomainXml(Path xmlFile, Collection<IData> data, String pkg) {
       Tdomain domain = new Tdomain();
+      ArrayList<Tobject> enumObjList = new ArrayList<Tobject>();
 
-      data.forEach(d -> domain.getObject().add(convert(d, pkg)));
+      for (IData d : data) {
+         domain.getObject().add(convert(d, pkg));
+
+         for (IDataField dField : d.getFields()) {
+            if (dField.getReferencedEnumeration() != null) {
+               // Handle enumerations
+               enumObjList.add(convertEnum(dField, pkg));
+            }
+         }
+      }
+      domain.getObject().addAll(enumObjList);
 
       ObjectFactory factory = new ObjectFactory();
       try {
@@ -512,7 +525,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Converts the IData to a Tobject.
     *
     * @param data IData
-    * @param pkg  package of domain classes
+    * @param pkg package of domain classes
     * @return domain object
     */
    private static Tobject convert(IData data, String pkg) {
@@ -521,6 +534,28 @@ public class CreateDomainCommand implements IJellyFishCommand {
       data.getFields().forEach(field -> object.getProperty().add(convert(field, pkg)));
       return object;
    }
+   
+   /**
+    * Converts the IData enumeration to a Tobject.
+    *
+    * @param dField IData enumeration
+    * @param pkg package of domain classes
+    * @return domain object
+    */
+   private static Tobject convertEnum(IDataField dField, String pkg) {
+      String enumValString = "";
+      Tobject object = new Tobject();
+      object.setClazz(dField.getReferencedEnumeration().getFullyQualifiedName());
+      object.setType("enum");
+
+      for (String enumVal : dField.getReferencedEnumeration().getValues()) {
+         enumValString += enumVal + " ";
+      }
+      enumValString = enumValString.trim();
+      object.setEnumValues(enumValString);
+      return object;
+   }
+
 
    /**
     * Converts the IDataField to a Tproperty.
@@ -559,6 +594,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
             break;
          case STRING:
             property.setType("String");
+            break;
+         case ENUM:
+            property.setType(field.getReferencedEnumeration().getFullyQualifiedName());
             break;
          default:
             throw new IllegalStateException("Unknown field type: " + field.getType());
