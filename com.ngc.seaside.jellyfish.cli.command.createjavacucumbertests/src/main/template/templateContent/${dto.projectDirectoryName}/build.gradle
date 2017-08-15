@@ -1,0 +1,59 @@
+#set( $D = '$' )
+
+apply plugin: 'application'
+apply plugin: 'java'
+
+mainClassName = "${dto.projectDirectoryName}.${dto.className}TestMain"
+
+distributions {
+    main {
+        contents {
+            from('src/main/resources') {
+                into 'resources'
+            }
+        }
+    }
+}
+
+dependencies {
+    compile project(":${dto.artifactId}.events")
+    compile project(":${dto.artifactId}.base")
+
+    compile "com.ngc.seaside:threateval.messages:${D}threatEvalMessagesVersion"
+
+    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
+    compile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsCoreVersion"
+    compile "com.ngc.blocs:service.thread.impl.common.threadservice:${D}blocsCoreVersion"
+
+    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:${D}transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.testutils:${D}transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.topic.multicast:${D}multicastTransportVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast:${D}multicastTransportVersion"
+
+    compile "com.ngc.seaside:guice.modules:${D}seasideBootstrapVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:${D}transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:${D}multicastTransportVersion"
+
+    compile "com.google.inject:guice:${D}guiceVersion"
+    compile "com.google.guava:guava:${D}guavaVersion"
+    compile "info.cukes:cucumber-java:${D}cucumberVersion"
+    compile "info.cukes:cucumber-guice:${D}cucumberVersion"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "${dto.projectDirectoryName}.${dto.className}TestMain"
+    }
+}
+
+// Provide the app home directory has a system property.
+applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
+
+// Set the property to the value in the script (windows vs *nix).
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '\$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+    }
+}
