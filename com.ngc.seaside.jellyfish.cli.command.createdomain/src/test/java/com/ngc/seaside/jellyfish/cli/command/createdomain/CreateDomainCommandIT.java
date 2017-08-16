@@ -200,6 +200,20 @@ public class CreateDomainCommandIT {
       checkDomain(projectDir);
       checkSettingsDotGradle(projectDir);
    }
+   
+   @Test
+   public void testCommandWithEnums() throws IOException {
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model3",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model3.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model3.domain");
+      checkVelocity(projectDir);
+      Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
+      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
+   }
 
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
