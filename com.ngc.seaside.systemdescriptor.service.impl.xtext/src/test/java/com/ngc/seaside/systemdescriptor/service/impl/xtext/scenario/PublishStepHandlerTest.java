@@ -23,11 +23,13 @@ public class PublishStepHandlerTest {
 
    private Data data;
 
+   private DataReferenceField field;
+
    @Before
    public void setup() throws Throwable {
       data = new Data("TestData");
 
-      DataReferenceField field = new DataReferenceField("output1");
+      field = new DataReferenceField("output1");
       field.setType(data);
 
       Model model = new Model("TestModel");
@@ -47,7 +49,7 @@ public class PublishStepHandlerTest {
    @Test
    public void testGetGetOutputs() throws Throwable {
       assertEquals("did not return correct data!",
-                   data,
+                   field,
                    handler.getOutputs(step));
    }
 }

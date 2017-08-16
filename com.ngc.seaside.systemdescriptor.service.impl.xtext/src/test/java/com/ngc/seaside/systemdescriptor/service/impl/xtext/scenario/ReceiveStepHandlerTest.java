@@ -22,11 +22,13 @@ public class ReceiveStepHandlerTest {
 
    private Data data;
 
+   private DataReferenceField field;
+
    @Before
    public void setup() throws Throwable {
       data = new Data("TestData");
 
-      DataReferenceField field = new DataReferenceField("input1");
+      field = new DataReferenceField("input1");
       field.setType(data);
 
       Model model = new Model("TestModel");
@@ -45,8 +47,8 @@ public class ReceiveStepHandlerTest {
 
    @Test
    public void testGetGetInputs() throws Throwable {
-      assertEquals("did not return correct data!",
-                   data,
+      assertEquals("did not return correct field!",
+                   field,
                    handler.getInputs(step));
    }
 }

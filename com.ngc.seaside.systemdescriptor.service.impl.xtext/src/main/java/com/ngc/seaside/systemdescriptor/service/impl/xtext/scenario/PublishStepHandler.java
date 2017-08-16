@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario;
 import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
@@ -22,7 +23,7 @@ public class PublishStepHandler extends AbstractStepHandler {
       register(PAST, PRESENT, FUTURE);
    }
 
-   public IData getOutputs(IScenarioStep step) {
+   public IDataReferenceField getOutputs(IScenarioStep step) {
       Preconditions.checkNotNull(step, "step may not be null!");
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
@@ -35,8 +36,7 @@ public class PublishStepHandler extends AbstractStepHandler {
       String outputName = step.getParameters().get(0);
       return model.getOutputs()
             .getByName(outputName)
-            .orElseThrow(() -> new IllegalStateException("model does not contain an output named " + outputName))
-            .getType();
+            .orElseThrow(() -> new IllegalStateException("model does not contain an output named " + outputName));
    }
 
    @Override
