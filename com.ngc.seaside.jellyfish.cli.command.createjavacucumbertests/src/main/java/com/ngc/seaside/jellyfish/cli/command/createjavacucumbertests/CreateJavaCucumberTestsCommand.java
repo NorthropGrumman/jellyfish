@@ -13,6 +13,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -42,6 +43,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
    private static final String DEFAULT_PACKAGE_SUFFIX = "tests";
+   private static final String PACKAGE_PROPERTY = "package";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -52,42 +54,83 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
-      if (!parameters.containsParameter((OUTPUT_DIRECTORY_PROPERTY)) {
-         String outputDir = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
-      }
-      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-
-      if (!parameters.containsParameter((MODEL_PROPERTY)) {
+      if (!parameters.containsParameter(MODEL_PROPERTY)) {
          String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
          parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
       }
-      final String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue());
 
-      if (!parameters.containsParameter((MODEL_OBJECT_PROPERTY)) {
-         IModel model = commandOptions.getSystemDescriptor().findModel(modelId)
-               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
-         parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
-      }
-      final IModel model = commandOptions.getSystemDescriptor().findModel(modelId)
+      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
+      String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
+      final IModel model = systemDescriptor.findModel(modelId)
             .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
-      if (!parameters.containsParameter((GROUP_ID_PROPERTY)) {
+      parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
+
+      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
+         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
+      }
+      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+
+      doCreateDirectories(outputDirectory);
+
+      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
          parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
       }
       final String groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
 
-      if (!parameters.containsParameter((ARTIFACT_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY,
-                                                        model.getName().toLowerCase() + '.' + DEFAULT_PACKAGE_SUFFIX));
+      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+         String artifact = model.getName().toLowerCase().concat(".connector");
+         parameters.addParameter(new DefaultParameter<String>(ARTIFACT_ID_PROPERTY, artifact));
       }
       final String artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      parameters.addParameter(new DefaultParameter<String>(PACKAGE_PROPERTY, groupId + "." + artifactId));
 
-      if (!parameters.containsParameter((OUTPUT_DIRECTORY_PROPERTY)) {
-         String outputDir = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaCucumberTestsCommand.class, e);
+         throw new CommandException(e);
       }
-      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+
+      final boolean refreshFeature;
+      if (parameters.containsParameter(REFRESH_FEATURE_FILES_PROPERTY)) {
+         String value = parameters.getParameter(REFRESH_FEATURE_FILES_PROPERTY).getStringValue();
+         switch (value.toLowerCase()) {
+            case "true":
+               refreshFeature = true;
+               break;
+            case "false":
+               refreshFeature = false;
+               break;
+            default:
+               throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+         }
+      } else {
+         refreshFeature = false;
+      }
+
+      final boolean clean;
+      if (parameters.containsParameter(CLEAN_PROPERTY)) {
+         String value = parameters.getParameter(CLEAN_PROPERTY).getStringValue();
+         switch (value.toLowerCase()) {
+            case "true":
+               clean = true;
+               break;
+            case "false":
+               clean = false;
+               break;
+            default:
+               throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+         }
+      } else {
+         clean = true;
+      }
+
+      doAddProject(parameters);
+
+      templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(), parameters, outputDirectory, clean);
+      logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
    }
 
    /**
@@ -112,8 +155,10 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                                     .setRequired(true),
                               new DefaultParameter(CLEAN_PROPERTY).setDescription(
                                     "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                    .setRequired(false)
-      );
+                                    .setRequired(false),
+                              new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
+                                    "If false, copy the feature files and resources from the system descriptor project into src/main/resources.")
+                                    .setRequired(false));
    }
 
    @Override
@@ -198,6 +243,34 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       }
    }
 
+   /**
+    * Returns the boolean value of the given parameter if it was set, false otherwise.
+    *
+    * @param parameters command parameters
+    * @param parameter  name of parameter
+    * @return the boolean value of the parameter
+    * @throws CommandException if the value is invalid
+    */
+   private static boolean getCleanProperty(IParameterCollection parameters, String parameter) {
+      final boolean booleanValue;
+      if (parameters.containsParameter(parameter)) {
+         String value = parameters.getParameter(parameter).getStringValue();
+         switch (value.toLowerCase()) {
+            case "true":
+               booleanValue = true;
+               break;
+            case "false":
+               booleanValue = false;
+               break;
+            default:
+               throw new CommandException(
+                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
+         }
+      } else {
+         booleanValue = false;
+      }
+      return booleanValue;
+   }
    protected void doCreateDirectories(Path outputDirectory) {
       try {
          Files.createDirectories(outputDirectory);

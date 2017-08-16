@@ -96,12 +96,12 @@ public class CreateJavaCucumberTestsCommandTest {
                  CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path",
                  CreateJavaCucumberTestsCommand.ARTIFACT_ID_PROPERTY, "model",
                  CreateJavaCucumberTestsCommand.GROUP_ID_PROPERTY, "com.ngc.seaside.test",
-                 CreateJavaCucumberTestsCommand.CLEAN_PROPERTY, true,
-                 CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY, false);
+                 CreateJavaCucumberTestsCommand.CLEAN_PROPERTY, "true",
+                 CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY, "false");
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
-      verify(options, times(2)).getSystemDescriptor();
+      verify(options, times(1)).getSystemDescriptor();
       verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
 
@@ -118,10 +118,12 @@ public class CreateJavaCucumberTestsCommandTest {
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.GROUP_ID_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("com.ngc.seaside.test",
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
+                          createDirectoriesPath.toAbsolutePath().toString());
+      Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.CLEAN_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("com.ngc.seaside.test",
+      Assert.assertEquals("false",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY)
                                 .getStringValue());
    }
@@ -142,7 +144,7 @@ public class CreateJavaCucumberTestsCommandTest {
 
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
-      verify(options, times(2)).getSystemDescriptor();
+      verify(options, times(1)).getSystemDescriptor();
       verify(promptUserService, times(1)).prompt(CreateJavaCucumberTestsCommand.MODEL_PROPERTY, null, null);
       verify(promptUserService, times(1)).prompt(CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
 
@@ -162,16 +164,15 @@ public class CreateJavaCucumberTestsCommandTest {
       Assert.assertEquals("com.ngc.seaside",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.GROUP_ID_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("com.ngc.seaside",
+      Assert.assertEquals("true",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.CLEAN_PROPERTY)
                                 .getStringValue());
-      Assert.assertEquals("com.ngc.seaside",
+      Assert.assertEquals("false",
                           addProjectParameters.getParameter(CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY)
                                 .getStringValue());
    }
 
-   @Test
-   public void runCommand(String... keyValues) {
+   private void runCommand(String... keyValues) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
@@ -196,5 +197,4 @@ public class CreateJavaCucumberTestsCommandTest {
                   });
       cmd.run(options);
    }
-   
 }
