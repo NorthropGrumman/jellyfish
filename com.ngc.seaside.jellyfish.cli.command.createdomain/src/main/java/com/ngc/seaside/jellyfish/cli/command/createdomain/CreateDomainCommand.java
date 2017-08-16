@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
 import com.google.common.collect.Streams;
-
 import com.ngc.blocs.domain.impl.common.generated.ObjectFactory;
 import com.ngc.blocs.domain.impl.common.generated.Tdomain;
 import com.ngc.blocs.domain.impl.common.generated.Tobject;
@@ -27,7 +26,6 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
