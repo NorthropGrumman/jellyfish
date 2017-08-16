@@ -11,7 +11,14 @@ package $domain.packagename;
 import $import;
 #end
 
+##determine if the type is a class or enum
+#if(! $domain.enumType)
 import java.util.Objects;
+
+ #set($type = "class")
+#else
+ #set($type = "enum")
+#end
 
 #if($domain.hasMultipleProperty)
 import java.util.Collections;
@@ -22,8 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 #end
 
+#if($type == "class")
 import com.ngc.blocs.service.event.api.EventTopic;
 import com.ngc.blocs.service.event.api.IEventTopic;
+#end
 
 /**
  * This file has been generated and should not be edited directly.
@@ -35,10 +44,26 @@ import com.ngc.blocs.service.event.api.IEventTopic;
 #set($modifier = " ")
 #end
 #if(! $domain.extended)
-public${modifier}class ${domain.classname} {
+public${modifier}$type ${domain.classname} {
 #else
-public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
+public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
+
+## Generate an enumeration
+#if($type == "enum")
+#set($size = $domain.getEnumValues().size())
+#foreach ($value in $domain.enumValues)
+#if($velocityCount == $size)
+	$value
+#else
+	$value,
+#end
+#end
+}
+
+## Generate the class
+#else
+
 ##Topic and Name
 
   public static final String TOPIC_NAME = "/data/${domain.packagename}.${domain.classname}";
@@ -169,3 +194,4 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
     return builder.toString();
   }
 }
+#end
