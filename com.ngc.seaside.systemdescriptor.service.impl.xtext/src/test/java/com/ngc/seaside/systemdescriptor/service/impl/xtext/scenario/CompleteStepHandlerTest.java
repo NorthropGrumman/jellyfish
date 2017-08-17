@@ -76,7 +76,7 @@ public class CompleteStepHandlerTest {
    public void testDoesValidateWrongOperand() throws Throwable {
       IScenarioStep mockedStep = mock(IScenarioStep.class);
       when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-      step.getParameters().addAll(Arrays.asList("atLeast", "500", TimeUnit.SECONDS.toString().toLowerCase()));
+      step.getParameters().addAll(Arrays.asList("somewhereAround", "500", TimeUnit.SECONDS.toString().toLowerCase()));
 
       handler.doValidateStep(context);
       verify(mockedStep).getKeyword();
@@ -100,5 +100,21 @@ public class CompleteStepHandlerTest {
 
       handler.doValidateStep(context);
       verify(mockedStep).getKeyword();
+   }
+
+   @Test
+   public void testDoesGetValues() throws Throwable {
+      step.getParameters().addAll(Arrays.asList("within", "500", TimeUnit.SECONDS.toString().toLowerCase()));
+
+      assertEquals("operand not correct!",
+                   CompleteStepHandler.Operand.LESS_THAN_OR_EQUAL,
+                   handler.getOperand(step));
+      assertEquals("duration not correct!",
+                   500,
+                   handler.getDuration(step),
+                   Double.MIN_VALUE);
+      assertEquals("time unit not correct!",
+                   TimeUnit.SECONDS,
+                   handler.getTimeUnit(step));
    }
 }
