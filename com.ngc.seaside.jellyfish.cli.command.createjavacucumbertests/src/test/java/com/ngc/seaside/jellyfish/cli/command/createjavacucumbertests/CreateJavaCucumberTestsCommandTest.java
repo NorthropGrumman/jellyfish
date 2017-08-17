@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -12,8 +11,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,9 +32,9 @@ public class CreateJavaCucumberTestsCommandTest {
    private CreateJavaCucumberTestsCommand cmd;
    private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
-   private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
-   private ITemplateService templateService = mock(TemplateService.class);
-   private IModel model = mock(Model.class);
+   private ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+   private ITemplateService templateService = mock(ITemplateService.class);
+   private IModel model = mock(IModel.class);
    private Path createDirectoriesPath;
    private IParameterCollection addProjectParameters;
 

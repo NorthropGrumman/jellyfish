@@ -20,7 +20,7 @@ import java.nio.file.Paths;
  *
  * @author bperkins
  */
-public class ${dto.className}TestMain {
+public class ${dto.className} {
 
    public static final String APP_HOME_SYS_PROPERTY = "appHome";
 
