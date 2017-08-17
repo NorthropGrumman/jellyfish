@@ -224,11 +224,23 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       return path;
    }
 
+   /**
+    * Copies feature files from a System Descriptor project to a newly generated test project.  Only feature files that
+    * apply to scenarios in the given model will be copied.  Any features files that are already in the test project
+    * will be deleted before coping the new files.
+    *
+    * @param model the model for which the feature files will be copied
+    * @param options the options the command was run with
+    * @param generatedProjectDirectory the directory that contains the generated tests project
+    */
    private void copyFeatureFilesToGeneratedProject(IModel model,
                                                    IJellyFishCommandOptions options,
                                                    Path generatedProjectDirectory) {
+      removeOldFeatureFiles(generatedProjectDirectory);
+
       // First, find the feature files that apply to the model.
       Collection<Feature> featureFiles = null; // TODO: find the feature files.
+
       // Second, copy the files to the generated project.
       for(Feature feature : featureFiles) {
          Path dest = generatedProjectDirectory.resolve("src/main/resources");
@@ -240,6 +252,11 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          // TODO
          //Files.copy(feature.getPath(), dest);
       }
+   }
+
+   private void removeOldFeatureFiles(Path testsProjectDirectory) {
+      // TODO: implement
+      throw new UnsupportedOperationException("not implemented");
    }
 
    private CucumberDto createDto() {
