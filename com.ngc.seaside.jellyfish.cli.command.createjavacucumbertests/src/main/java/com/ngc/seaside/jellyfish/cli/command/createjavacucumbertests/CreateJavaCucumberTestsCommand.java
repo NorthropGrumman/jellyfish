@@ -42,8 +42,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
-   private static final String DEFAULT_PACKAGE_SUFFIX = "tests";
+   //private static final String DEFAULT_PACKAGE_SUFFIX = "tests";
    private static final String PACKAGE_PROPERTY = "package";
+   private static final String OUTPUT_PROPERTY = "output";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -99,6 +100,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          switch (value.toLowerCase()) {
             case "true":
                refreshFeature = true;
+               //TODO add feature files requirement
                break;
             case "false":
                refreshFeature = false;
@@ -159,6 +161,13 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                               new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
                                     "If false, copy the feature files and resources from the system descriptor project into src/main/resources.")
                                     .setRequired(false));
+   }
+   private Path getAbsoluteOutputPath(String output, IJellyFishCommandOptions commandOptions) {
+      Path path = Paths.get(output);
+      if (!path.isAbsolute()) {
+         path = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(output).toAbsolutePath();
+      }
+      return path;
    }
 
    @Override
@@ -279,5 +288,26 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
    }
+
+   /**
+    * Retrieve the output property value based on user input. Default is standard output
+    *
+    * @param commandOptions Jellyfish command options containing user params
+    */
+   protected Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
+      Path output;
+      if (commandOptions.getParameters().containsParameter(REFRESH_FEATURE_FILES_PROPERTY)) {
+         String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
+         output = Paths.get(outputUri);
+
+         if (!output.isAbsolute()) {
+            output = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(outputUri);
+         }
+
+         return output.toAbsolutePath();
+      } else {
+         return null;
+      }
    }
+}
 
