@@ -47,6 +47,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component(service = IJellyFishCommandProvider.class)
 public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
+   private final static String BYPASS_VALIDATION_PARAMETER = "bypassValidation";
+
    private final Map<String, IJellyFishCommand> commandMap = new ConcurrentHashMap<>();
    private ILogService logService;
    private IParameterService parameterService;
@@ -403,7 +405,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       } else {
          path = Paths.get(inputDir.getStringValue());
       }
-      options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
+      options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command,
+                                                                                              userInputParameters)));
       options.setSystemDescriptorProjectPath(path);
       return options;
    }
@@ -465,8 +468,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       return config == null || config.autoTemplateProcessing();
    }
 
-   private static boolean doesCommandRequireValidSystemDescriptor(IJellyFishCommand command) {
+   private static boolean doesCommandRequireValidSystemDescriptor(IJellyFishCommand command,
+                                                                  IParameterCollection parameters) {
       JellyFishCommandConfiguration config = command.getClass().getAnnotation(JellyFishCommandConfiguration.class);
-      return config == null || config.requireValidSystemDescriptor();
+      return (config == null || config.requireValidSystemDescriptor())
+             && !parameters.containsParameter(BYPASS_VALIDATION_PARAMETER);
    }
 }
