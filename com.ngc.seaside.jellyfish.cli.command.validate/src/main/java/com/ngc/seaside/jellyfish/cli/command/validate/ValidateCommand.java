@@ -21,7 +21,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -110,12 +109,10 @@ public class ValidateCommand implements IJellyFishCommand {
    }
 
    private void printIssue(IParsingIssue issue) {
-      Path offendingFile = issue.getOffendingFile();
       logService.info(ValidateCommand.class, "----------------------------------------");
-      logService.info(ValidateCommand.class, "File: %s", offendingFile == null ? "unknown"
-                                                                               : offendingFile.toAbsolutePath());
+      logService.info(ValidateCommand.class, "File: %s", issue.getOffendingFile().toAbsolutePath());
       logService.info(ValidateCommand.class, "%s: %s", issue.getSeverity(), issue.getMessage());
-      if (offendingFile != null && issue.getOffendingFile().toFile().isFile()) {
+      if (issue.getOffendingFile() != null && issue.getOffendingFile().toFile().isFile()) {
          printOffendingLine(issue);
       }
    }
