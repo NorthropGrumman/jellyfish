@@ -24,11 +24,19 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import sun.security.smartcardio.SunPCSC;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
@@ -44,16 +52,18 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
-   //private static final String DEFAULT_PACKAGE_SUFFIX = "tests";
    private static final String PACKAGE_PROPERTY = "package";
    private static final String OUTPUT_PROPERTY = "output";
+   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
+   private Collection<IModel> models;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
+
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
@@ -82,8 +92,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
 
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         // TODO: should connector be tests
-         String artifact = model.getName().toLowerCase().concat(".connector");
+         String artifact = model.getName().toLowerCase().concat(".tests");
          parameters.addParameter(new DefaultParameter<String>(ARTIFACT_ID_PROPERTY, artifact));
       }
       final String artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
@@ -91,7 +100,14 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       // If the REFRESH_FEATURE_FILES_PROPERTY is set, then do not invoke the template service.
       if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
-         final CucumberDto dto = createDto();
+
+         String packageName = evaluatePackage(commandOptions, groupId, artifactId);
+         CucumberDto dto = new CucumberDto().setArtifactId(artifactId).setClassName(className)
+               .setGroupId(groupId).setPackageName(packageName)
+               .setProjectDirectoryName(projectDirectoryName);
+//         dto.setProjectDirectoryName(projectDir.getFileName().toString());
+
+//         final CucumberDto dto = createDto();
          final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
          templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(),
                                 parameters,
@@ -101,7 +117,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          // TODO: make sure this is called with the right parameters.
          doAddProject(parameters);
       }
-      copyFeatureFilesToGeneratedProject(model, commandOptions, outputDirectory);
+      copyFeatureFilesToGeneratedProject(commandOptions, models,  outputDirectory);
    }
 
    @Override
@@ -195,6 +211,20 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       }
    }
 
+
+   private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
+      return String.format("%s.%s", groupId, artifactId);
+   }
+
+   private static Path evaluateProjectDirectory(Path outputDir, String packagez, boolean clean) {
+      Path projectDir = outputDir.resolve(packagez);
+      File projectDirFile = projectDir.toFile();
+      if (clean && projectDirFile.exists() && projectDirFile.isDirectory()) {
+         deleteDir(projectDirFile);
+      }
+      return projectDir;
+   }
+
    /**
     * Retrieve the output property value based on user input. Default is standard output
     *
@@ -216,12 +246,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       }
    }
 
-   private Path getAbsoluteOutputPath(String output, IJellyFishCommandOptions commandOptions) {
-      Path path = Paths.get(output);
-      if (!path.isAbsolute()) {
-         path = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(output).toAbsolutePath();
-      }
-      return path;
+   private static Path getAbsoluteOutputPath(IJellyFishCommandOptions commandOptions, String generatedProjectDirectory) {
+      return commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(generatedProjectDirectory);
    }
 
    /**
@@ -229,32 +255,56 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     * apply to scenarios in the given model will be copied.  Any features files that are already in the test project
     * will be deleted before coping the new files.
     *
-    * @param model the model for which the feature files will be copied
-    * @param options the options the command was run with
+    * @param models the model for which the feature files will be copied
+    * @param commandOptions the options the command was run with
     * @param generatedProjectDirectory the directory that contains the generated tests project
     */
-   private void copyFeatureFilesToGeneratedProject(IModel model,
-                                                   IJellyFishCommandOptions options,
-                                                   Path generatedProjectDirectory) {
+   private Map<String, Feature> copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions,
+                                                                   Collection<IModel> models,
+                                                                   String generatedProjectDirectory) {
       removeOldFeatureFiles(generatedProjectDirectory);
 
+      // TODO: find the feature files.
       // First, find the feature files that apply to the model.
-      Collection<Feature> featureFiles = null; // TODO: find the feature files.
+      TreeMap<String, Feature> features = new TreeMap<>(Collections.reverseOrder());
 
-      // Second, copy the files to the generated project.
-      for(Feature feature : featureFiles) {
-         Path dest = generatedProjectDirectory.resolve("src/main/resources");
-         // TODO
-         // dest.resolve(feature.getPackagePath());
-         dest.resolve(feature.getFileName());
-         // This will create the parent directories.
-         dest.toFile().getParentFile().mkdirs();
-         // TODO
-         //Files.copy(feature.getPath(), dest);
-      }
+      models.forEach(model -> {
+         String packages = model.getParent().getName();
+         String modelPath = packages.replace(".", "/");
+
+         File
+               featureFilesRoot =
+               getAbsoluteOutputPath(commandOptions, generatedProjectDirectory).toAbsolutePath().resolve(modelPath)
+                     .toFile();
+
+         File[] files = featureFilesRoot.listFiles();
+         if (files != null) {
+            for (File file : files) {
+               String qualifiedName = CreateJavaCucumberTestsCommand.substringBetween(file.getName(), "", ".feature");
+               String modelName = CreateJavaCucumberTestsCommand.substringBetween(file.getName(), "", ".");
+               String name = CreateJavaCucumberTestsCommand.substringBetween(file.getName(), ".", ".");
+               if (modelName.equals(model.getName())) {
+                  features.put(qualifiedName, new Feature(qualifiedName, name));
+               }
+            }
+         }
+      });
+      return features;
+
+//      // Second, copy the files to the generated project.
+//      for(Feature feature : featureFiles) {
+//         Path dest = generatedProjectDirectory.resolve("src/main/resources");
+//         // TODO
+//         // dest.resolve(feature.getPackagePath());
+//         dest.resolve(feature.getFileName());
+//         // This will create the parent directories.
+//         dest.toFile().getParentFile().mkdirs();
+//         // TODO
+//         //Files.copy(feature.getPath(), dest);
+//      }
    }
 
-   private void removeOldFeatureFiles(Path testsProjectDirectory) {
+   private void removeOldFeatureFiles(String testsProjectDirectory) {
       // TODO: implement
       throw new UnsupportedOperationException("not implemented");
    }
@@ -296,5 +346,35 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       return parameters.containsParameter(parameter)
              && Boolean.valueOf(parameters.getParameter(parameter).getStringValue().toLowerCase());
    }
+
+   /**
+    * Helper method to delete folder/files
+    *
+    * @param file file/folder to delete
+    */
+   private static void deleteDir(File file) {
+      File[] contents = file.listFiles();
+      if (contents != null) {
+         for (File f : contents) {
+            deleteDir(f);
+         }
+      }
+      file.delete();
+   }
+
+   private static String substringBetween(final String str, final String open, final String close) {
+      if (str == null || open == null || close == null) {
+         return null;
+      }
+      final int start = str.indexOf(open);
+      if (start != INDEX_NOT_FOUND) {
+         final int end = str.indexOf(close, start + open.length());
+         if (end != INDEX_NOT_FOUND) {
+            return str.substring(start + open.length(), end);
+         }
+      }
+      return null;
+   }
+
 }
 
