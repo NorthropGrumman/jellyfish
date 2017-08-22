@@ -1,5 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -10,36 +13,35 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
 
-   private CreateJavaCucumberTestsCommand command;
+   private CreateJavaCucumberTestsCommand command = new CreateJavaCucumberTestsCommand();
 
    private MockedTemplateService templateService;
 
    private DefaultParameterCollection parameters;
 
-//   @Rule
-//   public final TemporaryFolder outputDirectory = new TemporaryFolder();
+   @Rule
+   public final TemporaryFolder tempFolder = new TemporaryFolder();
 
-   // TODO: remove this, use the rule above.
    private Path outputDirectory;
 
    @Mock
@@ -59,28 +61,20 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @Before
    public void setup() throws IOException {
-      // TODO: remove this
-      outputDirectory = Files.createDirectories(Paths.get("build/test-template"));
+      outputDirectory = tempFolder.newFolder().toPath();
 
-      command = new CreateJavaCucumberTestsCommand();
-
-      templateService = new MockedTemplateService()
-            .useRealPropertyService()
-            .setTemplateDirectory(CreateJavaCucumberTestsCommandIT.class.getPackage().getName(),
-                                  Paths.get("src", "main", "template"));
+      templateService = new MockedTemplateService().useRealPropertyService().setTemplateDirectory(
+         CreateJavaCucumberTestsCommandIT.class.getPackage().getName(),
+         Paths.get("src", "main", "template"));
 
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
-      when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
-      when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
-      when(model.getName()).thenReturn("Model");
-      when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
 
       command.setLogService(logService);
       command.setPromptService(promptUserService);
@@ -88,93 +82,75 @@ public class CreateJavaCucumberTestsCommandIT {
       command.activate();
    }
 
+   private void setupModel(Path inputDirectory, String pkg, String name) {
+      when(options.getSystemDescriptorProjectPath()).thenReturn(inputDirectory);
+      when(systemDescriptor.findModel(pkg + '.' + name)).thenReturn(Optional.of(model));
+      when(model.getParent().getName()).thenReturn(pkg);
+      when(model.getName()).thenReturn(name);
+      when(model.getFullyQualifiedName()).thenReturn(pkg + '.' + name);
+   }
+
    @Test
-   public void testDoesGenerateANewProjectAndCopyFeatureFiles() throws IOException {
+   public void testDoesGenerateANewProjectAndCopyFeatureFiles() throws IOException, URISyntaxException {
+      Path inputDir = Paths.get("src", "test", "resources");
+      setupModel(inputDir, "com.ngc.seaside.testeval", "HamburgerService");
+
       parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.MODEL_PROPERTY,
-                                                     model.getFullyQualifiedName()));
+         model.getFullyQualifiedName()));
       parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                                     outputDirectory.toString()));
-      parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY,
-                                                     "false"));
+         outputDirectory.toString()));
 
       command.run(options);
 
-      // TODO: check that files exists.
-      assertFileLinesEquals("some error messages",
-                            Paths.get(null), // expected file
-                            Paths.get(null)); // the file that was generated.
+      Path projectDir = outputDirectory.resolve(model.getFullyQualifiedName().toLowerCase() + ".tests");
 
-//      runCommand(CreateJavaCucumberTestsCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
-//                 CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
-//
-//      Mockito.verify(options, Mockito.times(1)).getParameters();
-//      Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
-//      System.out.println(printDirectoryTree(outputDir.toFile()));
-//      checkGradleBuild(outputDir);
-//      checkLogContents(outputDir);
+      Path javaDir = projectDir.resolve(
+         Paths.get("src", "main", "java", model.getFullyQualifiedName().replace('.', File.separatorChar), "tests"));
+      Assert.assertTrue(Files.isDirectory(javaDir));
+
+      Path featureDir = projectDir.resolve(Paths.get("src",
+         "main",
+         "resources",
+         model.getParent().getName().replace('.', File.separatorChar)));
+      Assert.assertTrue(Files.isDirectory(featureDir));
+
+      Path addBacon = featureDir.resolve("HamburgerService.addBacon.feature");
+      Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
+      Assert.assertTrue(Files.isRegularFile(addBacon));
+      Assert.assertTrue(Files.isRegularFile(removeTheCheese));
    }
 
    @Test
    public void testDoesRefreshFeatureFilesOnly() throws Throwable {
-      // TODO: create some feature files before running the command.
-      fail("not implemented");
-      // TODO: check the old feature files where removed and the updated ones where copied.
+      Path inputDir = Paths.get("src", "test", "resources");
+      setupModel(inputDir, "com.ngc.seaside.testeval", "HamburgerService");
+
+      parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.MODEL_PROPERTY,
+         model.getFullyQualifiedName()));
+      parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDirectory.toString()));
+      parameters.addParameter(
+         new DefaultParameter<>(CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY, "true"));
+
+      command.run(options);
+
+      Path projectDir = outputDirectory.resolve(model.getFullyQualifiedName().toLowerCase() + ".tests");
+
+      Path javaDir = projectDir.resolve(
+         Paths.get("src", "main", "java"));
+      Assert.assertFalse(Files.isDirectory(javaDir));
+
+      Path featureDir = projectDir.resolve(Paths.get("src",
+         "main",
+         "resources",
+         model.getParent().getName().replace('.', File.separatorChar)));
+      Assert.assertTrue(Files.isDirectory(featureDir));
+
+      Path addBacon = featureDir.resolve("HamburgerService.addBacon.feature");
+      Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
+      Assert.assertTrue(Files.isRegularFile(addBacon));
+      Assert.assertTrue(Files.isRegularFile(removeTheCheese));
+
    }
 
-   @Test
-   public void testDoesRefreshFeatureFilesOnlyDefaultToFalse() throws Throwable {
-      fail("not implemented");
-   }
-
-//   private void runCommand(String... keyValues) {
-//      DefaultParameterCollection collection = new DefaultParameterCollection();
-//
-//      for (int n = 0; n + 1 < keyValues.length; n += 2) {
-//         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
-//      }
-//
-//      Mockito.when(options.getParameters()).thenReturn(collection);
-//
-//      cmd.run(options);
-//   }
-//
-//   private void checkLogContents(Path projectDir) throws IOException {
-//      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**log4j.xml");
-//      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
-//
-//      // There should only be one log4j.xml file generated
-//      Assert.assertEquals(1, gradleFiles.size());
-//      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
-//      Assert.assertTrue("log4j.xml is missing", Files.isRegularFile(generatedFile));
-//      String actualContents = new String(Files.readAllBytes(generatedFile));
-//
-//      Path expectedFile = Paths.get("src/test/resources/expectedfiles/log4j.xml.expected");
-//      String expectedContents = new String(Files.readAllBytes(expectedFile));
-//
-//      Assert.assertEquals(expectedContents, actualContents);
-//   }
-//
-//   private void checkGradleBuild(Path projectDir) throws IOException {
-//      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**build.gradle");
-//      Collection<Path> gradleFiles = Files.walk(projectDir).filter(matcher::matches).collect(Collectors.toSet());
-//
-//      // There should only be one build.gradle generated
-//      Assert.assertEquals(1,gradleFiles.size());
-//      Path generatedFile = Paths.get(gradleFiles.toArray()[0].toString());
-//      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(generatedFile));
-//      String actualContents = new String(Files.readAllBytes(generatedFile));
-//
-//      Path expectedFile = Paths.get("src/test/resources/expectedfiles/build.gradle.expected");
-//      String expectedContents = new String(Files.readAllBytes(expectedFile));
-//
-//      Assert.assertEquals(expectedContents, actualContents);
-//   }
-//
-//   private void createSettings() throws IOException {
-//      try {
-//         Files.createFile(outputDir.resolve("settings.gradle"));
-//      } catch (FileAlreadyExistsException e) {
-//         // ignore
-//      }
-//   }
 }

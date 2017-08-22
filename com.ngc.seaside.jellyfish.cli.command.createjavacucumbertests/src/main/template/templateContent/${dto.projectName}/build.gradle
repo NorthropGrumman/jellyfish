@@ -3,7 +3,7 @@
 apply plugin: 'application'
 apply plugin: 'java'
 
-mainClassName = "${dto.projectDirectoryName}.${dto.className}TestMain"
+mainClassName = "${dto.packageName}.main.${dto.className}TestMain"
 
 distributions {
     main {
@@ -16,8 +16,8 @@ distributions {
 }
 
 dependencies {
-    compile project(":${dto.artifactId}.events")
-    compile project(":${dto.artifactId}.base")
+    compile project(":${dto.basePackage}.events")
+    compile project(":${dto.basePackage}.base")
 
     compile "com.ngc.seaside:threateval.messages:${D}threatEvalMessagesVersion"
 
@@ -43,7 +43,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': "${dto.projectDirectoryName}.${dto.className}TestMain"
+        attributes 'Main-Class': "${dto.packageName}.${dto.className}TestMain"
     }
 }
 
@@ -53,7 +53,7 @@ applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP
 // Set the property to the value in the script (windows vs *nix).
 startScripts {
     doLast {
-        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '\$APP_HOME')
+        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '${D}APP_HOME')
         windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
     }
 }

@@ -3,12 +3,11 @@ package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto;
 public class CucumberDto {
 
    private String className;
-   private String packageName;
+   private String basePackage;
    private String artifactId;
    private String groupId;
-   private String projectDirectoryName;
-
-
+   private String projectName;
+   private String packageName;
 
    public String getGroupId() {
       return groupId;
@@ -19,7 +18,6 @@ public class CucumberDto {
       return this;
    }
 
-
    public String getArtifactId() {
       return artifactId;
    }
@@ -29,16 +27,15 @@ public class CucumberDto {
       return this;
    }
 
-   public String getProjectDirectoryName() {
-      return projectDirectoryName;
+   public String getProjectName() {
+      return projectName;
    }
 
-   public CucumberDto setProjectDirectoryName(String projectDirectoryName) {
-      this.projectDirectoryName = projectDirectoryName;
+   public CucumberDto setProjectName(String projectName) {
+      this.projectName = projectName;
       return this;
 
    }
-
 
    public String getClassName() {
       return className;
@@ -46,6 +43,15 @@ public class CucumberDto {
 
    public CucumberDto setClassName(String className) {
       this.className = className;
+      return this;
+   }
+
+   public String getBasePackage() {
+      return basePackage;
+   }
+
+   public CucumberDto setBasePackage(String basePackage) {
+      this.basePackage = basePackage;
       return this;
    }
 
@@ -57,4 +63,5 @@ public class CucumberDto {
       this.packageName = packageName;
       return this;
    }
+
 }

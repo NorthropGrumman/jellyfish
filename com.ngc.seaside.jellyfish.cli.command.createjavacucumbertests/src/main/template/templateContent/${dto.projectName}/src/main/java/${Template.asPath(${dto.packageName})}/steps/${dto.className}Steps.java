@@ -1,4 +1,4 @@
-package ${dto.packageName};
+package ${dto.packageName}.steps;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.service.transport.api.ITransportService;
@@ -23,4 +23,10 @@ public class ${dto.className}Steps {
    @After
    public void cleanup() {
    }
+   
+   @Inject
+   public void setTransportService(ITransportService transportService) {
+      this.transportService = transportService;
+   }
+   
 }
