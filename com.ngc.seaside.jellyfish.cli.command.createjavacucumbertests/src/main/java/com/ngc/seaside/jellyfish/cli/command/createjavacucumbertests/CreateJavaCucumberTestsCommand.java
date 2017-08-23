@@ -49,7 +49,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
    private static final String OUTPUT_PROPERTY = "output";
-   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -245,7 +244,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     * apply to scenarios in the given model will be copied. Any features files that are already in the test project
     * will be deleted before coping the new files.
     *
-    * @param models the model for which the feature files will be copied
+    * @param model the model for which the feature files will be copied
     * @param commandOptions the options the command was run with
     * @param generatedProjectDirectory the directory that contains the generated tests project
     * @throws IOException
