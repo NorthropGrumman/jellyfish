@@ -17,6 +17,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.Cucumbe
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -102,6 +103,12 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       // If the REFRESH_FEATURE_FILES_PROPERTY is set, then do not invoke the template service.
       if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
+//         try {
+//            Files.createDirectories(outputDirectory);
+//         } catch (IOException e) {
+//            logService.error(CreateJavaCucumberTestsCommand.class, e);
+//            throw new CommandException(e);
+//         }
          CucumberDto dto = new CucumberDto().setBaseArtifactId(baseArtifact)
                                             .setArtifactId(artifactId)
                                             .setGroupId(groupId)
@@ -259,7 +266,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final Path gherkin = commandOptions.getSystemDescriptorProjectPath()
                                          .resolve(Paths.get("src", "test", "gherkin"))
                                          .toAbsolutePath();
-
+      final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
+            .resolve(Paths.get("src", "test", "resources", "data"))
+            .toAbsolutePath();
       String packages = model.getParent().getName();
       Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
 
@@ -278,6 +287,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       // Second, copy the files to the generated project.
       final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
+      final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
+
       for (FeatureFile feature : features.values()) {
          Path featureDestination = destination.resolve(feature.getRelativePath());
          try {
@@ -285,6 +296,16 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
             Files.copy(feature.getAbsolutePath(), featureDestination);
          } catch (IOException e) {
             throw new CommandException("Failed to copy " + feature.getAbsolutePath() + " to " + featureDestination, e);
+         }
+      }
+      if(Files.isDirectory(dataFile)) {
+
+         try {
+
+            FileUtils.copyDirectory(dataFile.toFile(), dataDestination.toFile());
+
+         } catch (IOException e) {
+            throw new CommandException("Failed to copy resoureces  to " + destination, e);
          }
       }
    }

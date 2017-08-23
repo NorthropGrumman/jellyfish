@@ -25,7 +25,6 @@ public class ${dto.className}TestInjectorSource implements InjectorSource {
                                   new ResourceServiceModule(),
                                   new ThreadServiceModule(),
                                   new DefaultTransportServiceModule(),
-                                  new MulticastTransportProviderModule(),
                                   new ${dto.className}TestModule());
    }
 }
