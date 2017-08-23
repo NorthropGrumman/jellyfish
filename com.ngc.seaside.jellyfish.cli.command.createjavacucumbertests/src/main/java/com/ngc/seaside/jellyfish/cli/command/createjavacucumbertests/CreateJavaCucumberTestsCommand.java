@@ -318,7 +318,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
             "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                                              .setRequired(false),
          new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
-            "If false, copy the feature files and resources from the system descriptor project into src/main/resources.")
+            "If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
                                                              .setRequired(false));
    }
 
