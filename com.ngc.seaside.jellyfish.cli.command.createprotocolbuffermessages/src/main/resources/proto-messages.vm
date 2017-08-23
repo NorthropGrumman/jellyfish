@@ -10,21 +10,20 @@ import "${import.replace('.', '/')}.proto";
 #foreach ($import in $domain.imports)
 import "${import.replace('.', '/')}.proto";
 #end
-#if ($import)
+#if ($domain.superClassImports || $domain.imports)
 
 #end
-message $domain.classname {
-
 ## Generate an enumeration
 #if($domain.enumType)
+enum $domain.classname {
 #set($i = 0)
 #set($size = $domain.getEnumValues().size())
 #foreach ($value in $domain.enumValues)
 	$value = $i;
-	#set($i = $i+1)
+#set ($i = $i+1)
 #end
 #else
-
+message $domain.classname {
 #set ($properties = [])
 #set ($discard = $properties.addAll($domain.superClassProperties))
 #set ($discard = $properties.addAll($domain.properties))
@@ -38,8 +37,6 @@ message $domain.classname {
 #set ($type = "sint32")
 #elseif ($property.type == "String")
 #set ($type = "string")
-#elseif ($property.type == "enumeration")
-#set ($type = "enum")
 #else
 #set ($type = $property.type)
 #end
