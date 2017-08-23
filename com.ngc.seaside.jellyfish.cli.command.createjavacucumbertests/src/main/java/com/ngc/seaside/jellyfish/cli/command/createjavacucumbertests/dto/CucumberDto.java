@@ -5,6 +5,7 @@ public class CucumberDto {
    private String className;
    private String basePackage;
    private String artifactId;
+   private String baseArtifactId;
    private String groupId;
    private String projectName;
    private String packageName;
@@ -22,8 +23,17 @@ public class CucumberDto {
       return artifactId;
    }
 
-   public CucumberDto setArtifactId(String artifactId) {
-      this.artifactId = artifactId;
+   public CucumberDto setArtifactId(String baseArtifactId) {
+      this.artifactId = baseArtifactId;
+      return this;
+   }
+
+   public String getBaseArtifactId() {
+      return baseArtifactId;
+   }
+
+   public CucumberDto setBaseArtifactId(String baseArtifactId) {
+      this.baseArtifactId = baseArtifactId;
       return this;
    }
 

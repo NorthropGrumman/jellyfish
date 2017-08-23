@@ -6,8 +6,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import ${dto.basePackage}.transport.topic.${dto.className}TransportTopics;
 
-import java.net.UnknownHostException;
-
 public class ${dto.className}TestConfiguration{
 
    @SuppressWarnings("unused")
@@ -25,6 +23,6 @@ public class ${dto.className}TestConfiguration{
 
    private void activate() {
       // TODO Implement configurations
-      throw new UnsupportedOperationException("Not Implemented")
+      throw new UnsupportedOperationException("Not Implemented");
    }
 }

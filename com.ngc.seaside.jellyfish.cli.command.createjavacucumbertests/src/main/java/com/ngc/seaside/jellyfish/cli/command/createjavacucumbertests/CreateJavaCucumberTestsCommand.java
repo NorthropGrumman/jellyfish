@@ -103,7 +103,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       // If the REFRESH_FEATURE_FILES_PROPERTY is set, then do not invoke the template service.
       if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
-         CucumberDto dto = new CucumberDto().setArtifactId(artifactId)
+         CucumberDto dto = new CucumberDto().setBaseArtifactId(baseArtifact)
+                                            .setArtifactId(artifactId)
                                             .setGroupId(groupId)
                                             .setProjectName(projectName)
                                             .setBasePackage(basePackage)
