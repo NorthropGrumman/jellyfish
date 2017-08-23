@@ -10,6 +10,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector.dto.ConnectorDto;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -146,6 +147,10 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
       }
 
       doAddProject(parameters);
+      
+      ConnectorDto dto = new ConnectorDto();
+      // TODO: set dto values
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
 
       templateService.unpack(CreateJavaServiceConnectorCommand.class.getPackage().getName(), parameters, outputDirectory, clean);
       logService.info(CreateJavaServiceConnectorCommand.class, "%s project successfully created", modelId);
