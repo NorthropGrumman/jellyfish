@@ -102,7 +102,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String projectName = packageName;
       final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
 
-      // If the REFRESH_FEATURE_FILES_PROPERTY is set, then do not invoke the template service.
       if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
          CucumberDto dto = new CucumberDto().setBaseArtifactId(baseArtifact)
@@ -264,6 +263,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
             .resolve(Paths.get("src", "test", "resources", "data"))
             .toAbsolutePath();
+
       String packages = model.getParent().getName();
       Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
 
@@ -280,7 +280,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
 
-      // Second, copy the files to the generated project.
       final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
       final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
 
