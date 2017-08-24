@@ -6,14 +6,10 @@ import com.ngc.blocs.requestmodel.api.RequestThreadLocal;
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatusWrapper;
 import com.ngc.seaside.service.monitoring.api.SessionlessRequirementAwareRequest;
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
-import com.ngc.seaside.threateval.datatype.TrackPriorityWrapper;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus;
-import com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority;
 import com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic.EngagementTrackPriorityServiceTransportTopics;
 
 import org.osgi.service.component.annotations.Activate;
@@ -31,17 +27,18 @@ import java.util.Collections;
 public class EngagementTrackPriorityServiceConnector {
 
    private ILogService logService;
-
    private IEventService eventService;
    private ITransportService transportService;
 
    @SuppressWarnings("unchecked")
    @Activate
    public void activate() {
-      eventService.addSubscriber(this::sendTrackPriority,
-                                 TrackPriority.TOPIC);
-      transportService.addReceiver(this::receiveTrackEngagementStatus,
-                                   EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
+      transportService.addReceiver(this::receiveTrackEngagementStatus, 
+         EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
+
+      eventService.addSubscriber(this::sendTrackPriority, 
+         com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority.TOPIC);
+
       logService.debug(getClass(), "Activated.");
    }
 
@@ -49,9 +46,11 @@ public class EngagementTrackPriorityServiceConnector {
    @Deactivate
    public void deactivate() {
       transportService.removeReceiver(this::receiveTrackEngagementStatus,
-                                      EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
+         EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
+
       eventService.removeSubscriber(this::sendTrackPriority,
-                                    TrackPriority.TOPIC);
+         com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority.TOPIC);
+
       logService.debug(getClass(), "Deactivated.");
    }
 
@@ -82,55 +81,57 @@ public class EngagementTrackPriorityServiceConnector {
       setLogService(null);
    }
 
-   private void sendTrackPriority(IEvent<TrackPriority> event) {
-      preSendMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
-      try {
-         TrackPriority from = event.getSource();
-         TrackPriorityWrapper.TrackPriority to = convert(from);
-         transportService.send(ITransportObject.withPayload(to.toByteArray()),
-                               EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
-         postSendMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
-      } finally {
-         postSendMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
-      }
-   }
-
    private void receiveTrackEngagementStatus(ITransportObject transportObject,
-                                             EngagementTrackPriorityServiceTransportTopics transportTopic) {
+                                          EngagementTrackPriorityServiceTransportTopics transportTopic) {
       preReceiveMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
       try {
-         TrackEngagementStatusWrapper.TrackEngagementStatus trackEngagementStatus;
+         com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatusWrapper.TrackEngagementStatus trackEngagementStatus;
          try {
             trackEngagementStatus =
-                  TrackEngagementStatusWrapper.TrackEngagementStatus.parseFrom(transportObject.getPayload());
+               com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatusWrapper.TrackEngagementStatus.parseFrom(transportObject.getPayload());
          } catch (InvalidProtocolBufferException e) {
             throw new IllegalStateException(e);
          }
-         eventService.publish(convert(trackEngagementStatus), TrackEngagementStatus.TOPIC);
+         eventService.publish(convert(trackEngagementStatus), com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus.TOPIC);
       } finally {
          postReceiveMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_ENGAGEMENT_STATUS);
       }
    }
 
-   private TrackEngagementStatus convert(TrackEngagementStatusWrapper.TrackEngagementStatus from) {
-      TrackEngagementStatus to = new TrackEngagementStatus();
+   private void sendTrackPriority(IEvent<com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority> event) {
+      preSendMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
+      com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority from = event.getSource();
+      com.ngc.seaside.threateval.datatype.TrackPriorityWrapper.TrackPriority to = convert(from);
+      try {
+         transportService.send(ITransportObject.withPayload(to.toByteArray()), 
+            EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
+      } finally {
+         postSendMessage(EngagementTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
+      }
+   }
+
+   private static com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus convert(com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatusWrapper.TrackEngagementStatus from) {
+      com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus to = new com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus();
+
+      to.setTrackId(from.getTrackId());
       to.setPlannedEngagementCount(from.getPlannedEngagementCount());
       to.setProbabilityOfKill(from.getProbabilityOfKill());
-      to.setTrackId(from.getTrackId());
+
       return to;
    }
 
-   private TrackPriorityWrapper.TrackPriority convert(TrackPriority from) {
-      return TrackPriorityWrapper.TrackPriority.newBuilder()
-            .setPriority(from.getPriority())
-            .setSourceId(from.getSourceId())
-            .setTrackId(from.getTrackId())
-            .build();
-   }
+   private static com.ngc.seaside.threateval.datatype.TrackPriorityWrapper.TrackPriority convert(com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority from) {
+      com.ngc.seaside.threateval.datatype.TrackPriorityWrapper.TrackPriority.Builder to = com.ngc.seaside.threateval.datatype.TrackPriorityWrapper.TrackPriority.newBuilder();
 
+      to.setTrackId(from.getTrackId());
+      to.setSourceId(from.getSourceId());
+      to.setPriority(from.getPriority());
+
+      return to.build();
+   }
    private void preReceiveMessage(ITransportTopic transportTopic) {
       RequestThreadLocal.setCurrentRequest(new SessionlessRequirementAwareRequest(
-            getRequirementsForTransportTopic(transportTopic)));
+         getRequirementsForTransportTopic(transportTopic)));
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }
 
@@ -148,26 +149,26 @@ public class EngagementTrackPriorityServiceConnector {
    }
 
    private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
-      Collection<String> requirements = Collections.emptyList();
+      final Collection<String> requirements;
+
       switch((EngagementTrackPriorityServiceTransportTopics) transportTopic){
          case TRACK_ENGAGEMENT_STATUS:
             requirements = Arrays.asList(
-                  "TE001.2",
-                  "TE001.4"
+               "TE001.2",
+               "TE001.4"
             );
             break;
-
          case TRACK_PRIORITY:
             requirements = Arrays.asList(
-                  "TE001.2",
-                  "TE001.4"
+               "TE001.2",
+               "TE001.4"
             );
             break;
-
          default:
-            //do nothing
+            requirements = Collections.emptyList();
             break;
       }
+
       return requirements;
    }
 }
