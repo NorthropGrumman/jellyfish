@@ -509,7 +509,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          domain.getObject().add(convert(d, pkg, useVerboseImports));
 
          for (IDataField dField : d.getFields()) {
-            if (dField.getReferencedEnumeration() != null) {
+            if (dField.getType() == DataTypes.ENUM) {
                // Handle enumerations
                enumObjList.add(convertEnum(dField, pkg));
             }
@@ -550,7 +550,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static Tobject convertEnum(IDataField dField, String pkg) {
       String enumValString = "";
       Tobject object = new Tobject();
-      object.setClazz(dField.getReferencedEnumeration().getFullyQualifiedName());
+      object.setClazz(pkg + '.' + dField.getReferencedEnumeration().getName());
       object.setType("enum");
 
       for (String enumVal : dField.getReferencedEnumeration().getValues()) {
@@ -601,7 +601,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
             property.setType("String");
             break;
          case ENUM:
-            property.setType(field.getReferencedEnumeration().getFullyQualifiedName());
+            property.setType(pkg + "." + field.getReferencedEnumeration().getName());
             break;
          default:
             throw new IllegalStateException("Unknown field type: " + field.getType());
