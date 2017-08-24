@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.TreeMap;
 
@@ -99,16 +100,11 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String basePackage = evaluatePackage(commandOptions, groupId, baseArtifact);
       final String packageName = evaluatePackage(commandOptions, groupId, artifactId);
       final String projectName = packageName;
+      final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
 
       // If the REFRESH_FEATURE_FILES_PROPERTY is set, then do not invoke the template service.
       if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
-//         try {
-//            Files.createDirectories(outputDirectory);
-//         } catch (IOException e) {
-//            logService.error(CreateJavaCucumberTestsCommand.class, e);
-//            throw new CommandException(e);
-//         }
          CucumberDto dto = new CucumberDto().setBaseArtifactId(baseArtifact)
                                             .setArtifactId(artifactId)
                                             .setGroupId(groupId)
@@ -119,7 +115,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
          parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-         final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
          templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(),
             parameters,
             outputDirectory,
@@ -127,7 +122,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
          doAddProject(parameters);
       }
-      copyFeatureFilesToGeneratedProject(commandOptions, model, outputDirectory.resolve(projectName));
+      copyFeatureFilesToGeneratedProject(commandOptions, model, outputDirectory.resolve(projectName), clean);
    }
 
    @Override
@@ -254,12 +249,12 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     * @param model the model for which the feature files will be copied
     * @param commandOptions the options the command was run with
     * @param generatedProjectDirectory the directory that contains the generated tests project
+    * @param clean if true, deletes the features and resources before copying them
     * @throws IOException
     */
    private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
-            Path generatedProjectDirectory) {
-      removeOldFeatureFiles(generatedProjectDirectory, model);
-
+            Path generatedProjectDirectory, boolean clean) {
+      
       // First, find the feature files that apply to the model.
       TreeMap<String, FeatureFile> features = new TreeMap<>(Collections.reverseOrder());
       final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
@@ -289,11 +284,16 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
       final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
 
+      if (clean) {
+         deleteDir(destination.resolve(model.getParent().getName()).toFile());
+         deleteDir(dataDestination.toFile());
+      }
+
       for (FeatureFile feature : features.values()) {
          Path featureDestination = destination.resolve(feature.getRelativePath());
          try {
             Files.createDirectories(featureDestination.getParent());
-            Files.copy(feature.getAbsolutePath(), featureDestination);
+            Files.copy(feature.getAbsolutePath(), featureDestination, StandardCopyOption.REPLACE_EXISTING);
          } catch (IOException e) {
             throw new CommandException("Failed to copy " + feature.getAbsolutePath() + " to " + featureDestination, e);
          }
@@ -308,10 +308,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
             throw new CommandException("Failed to copy resoureces  to " + destination, e);
          }
       }
-   }
-
-   private void removeOldFeatureFiles(Path testsProjectDirectory, IModel model) {
-      deleteDir(testsProjectDirectory.resolve(model.getParent().getName()).toFile());
    }
 
    /**
