@@ -283,10 +283,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
       final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
 
-      if (clean) {
-         deleteDir(destination.resolve(model.getParent().getName()).toFile());
-         deleteDir(dataDestination.toFile());
-      }
+      deleteDir(destination.resolve(model.getParent().getName()).toFile());
+      deleteDir(dataDestination.toFile());
 
       for (FeatureFile feature : features.values()) {
          Path featureDestination = destination.resolve(feature.getRelativePath());
