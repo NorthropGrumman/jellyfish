@@ -33,14 +33,14 @@ public class ${dto.model.name}Connector {
    @SuppressWarnings("unchecked")
    @Activate
    public void activate() {
-#foreach($input in ${dto.model.inputs})
+#foreach($input in $dto.model.inputs)
       transportService.addReceiver(this::receive${input.type.name}, 
          ${dto.model.name}TransportTopics.${input.type.name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()});
 
 #end
-#foreach($output in ${dto.model.outputs})
+#foreach($output in $dto.model.outputs)
       eventService.addSubscriber(this::send${output.type.name}, 
-         ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${output.type.name}.TOPIC);
+         ${dto.basePackage}.events.${output.type.name}.TOPIC);
 
 #end
       logService.debug(getClass(), "Activated.");
@@ -101,7 +101,7 @@ public class ${dto.model.name}Connector {
          } catch (InvalidProtocolBufferException e) {
             throw new IllegalStateException(e);
          }
-         eventService.publish(convert(${input.name}), ${input.type.fullyQualifiedName}.TOPIC);
+         eventService.publish(convert(${input.name}), ${dto.basePackage}.events.${input.type.name}.TOPIC);
       } finally {
          postReceiveMessage(${dto.model.name}TransportTopics.${input.type.name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()});
       }
@@ -109,9 +109,9 @@ public class ${dto.model.name}Connector {
 #end
 #foreach( $output in ${dto.model.outputs} )
 
-   private void send${output.type.name}(IEvent<${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${output.type.name}> event) {
+   private void send${output.type.name}(IEvent<${dto.basePackage}.events.${output.type.name}> event) {
       preSendMessage(${dto.model.name}TransportTopics.${output.type.name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()});
-      ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${output.type.name} from = event.getSource();
+      ${dto.basePackage}.events.${output.type.name} from = event.getSource();
       ${output.type.fullyQualifiedName}Wrapper.${output.type.name} to = convert(from);
       try {
          transportService.send(ITransportObject.withPayload(to.toByteArray()), 
@@ -123,15 +123,20 @@ public class ${dto.model.name}Connector {
 #end
 #foreach($data in ${dto.allInputData})
 
-   private static ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name} convert(${data.fullyQualifiedName}Wrapper.${data.name} from) {
-      ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name} to = new ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name}();
+   private static ${dto.basePackage}.events.${data.name} convert(${data.fullyQualifiedName}Wrapper.${data.name} from) {
+      ${dto.basePackage}.events.${data.name} to = new ${dto.basePackage}.events.${data.name}();
 
 #foreach ($field in $data.fields)
-#set( $fieldCap = ${Character.toUpperCase(field.name.charAt(0)) + field.name.substring(1)} )
+#set( $fieldCap = "${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)}" )
 #if ( $field.type == "DATA" || $field.type == "ENUM" )
+#if ( $field.type == "DATA")
+#set ( $name = $field.referencedDataType.name )
+#else
+#set ( $name = $field.referencedEnumeration.name )
+#end
 #if ( $field.cardinality == "MANY" )
       to.set${fieldCap}(new java.util.ArrayList<>(from.get${fieldCap}Count()));
-      for (${field.type.fullyQualifiedName}Wrapper.${field.type.name} value : from.get${fieldCap}List()) {
+      for (${field.type.fullyQualifiedName}Wrapper.${name} value : from.get${fieldCap}List()) {
          to.get${fieldCap}().add(convert(value));
       }
 #else
@@ -144,19 +149,26 @@ public class ${dto.model.name}Connector {
       to.set${fieldCap}(from.get${fieldCap}());
 #end
 #end
+#end
 
       return to;
    }
 #end
 #foreach($data in ${dto.allOutputData})
 
-   private static ${data.fullyQualifiedName}Wrapper.${data.name} convert(${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name} from) {
+   private static ${data.fullyQualifiedName}Wrapper.${data.name} convert(${dto.basePackage}.events.${data.name} from) {
       ${data.fullyQualifiedName}Wrapper.${data.name}.Builder to = ${data.fullyQualifiedName}Wrapper.${data.name}.newBuilder();
+
 #foreach ( $field in $data.fields )
-#set( $fieldCap = ${Character.toUpperCase(field.name.charAt(0)) + field.name.substring(1)} )
+#set( $fieldCap = "${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)}" )
 #if ( $field.type == "DATA" || $field.type == "ENUM" )
+#if ( $field.type == "DATA")
+#set ( $name = $field.referencedDataType.name )
+#else
+#set ( $name = $field.referencedEnumeration.name )
+#end
 #if ( $field.cardinality == "MANY" )
-      for (${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${field.type.name} value : from.get${fieldCap}()) {
+      for (${dto.basePackage}.events.${name} value : from.get${fieldCap}()) {
          to.add${fieldCap}(convert(value));
       }
 #else
@@ -169,21 +181,19 @@ public class ${dto.model.name}Connector {
       to.set${fieldCap}(from.get${fieldCap}());
 #end
 #end
-
-      return to;
-   }
 #end      
-      return to.build()
+
+      return to.build();
    }
 #end
 #foreach ( $enum in ${dto.allInputEnums} )
 
-   private static ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${enum.name} convert(${enum.fullyQualifiedName}Wrapper.${enum.name} from) {
-      final ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name} to;
+   private static ${dto.basePackage}.events.${enum.name} convert(${enum.fullyQualifiedName}Wrapper.${enum.name} from) {
+      final ${dto.basePackage}.events.${enum.name} to;
       switch (from) {
 #foreach ( $value in $enum.values)
-      case ${enum.fullyQualifiedName}Wrapper.${enum.name}.$value:
-         to = ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${data.name}.$value;
+      case $value:
+         to = ${dto.basePackage}.events.${enum.name}.$value;
          break;
 #end
       default:
@@ -194,11 +204,11 @@ public class ${dto.model.name}Connector {
 #end
 #foreach ( $enum in ${dto.allInputEnums} )
 
-   private static ${enum.fullyQualifiedName}Wrapper.${enum.name} convert(${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.${enum.name} from) {
-      final ${enum.fullyQualifiedName}Wrapper.${enum.name}.${data.name} to;
+   private static ${enum.fullyQualifiedName}Wrapper.${enum.name} convert(${dto.basePackage}.events.${enum.name} from) {
+      final ${enum.fullyQualifiedName}Wrapper.${enum.name} to;
       switch (from) {
 #foreach ( $value in $enum.values)
-      case ${dto.model.parent.name}.${dto.model.name.toLowerCase()}.events.$value:
+      case $value:
          to = ${enum.fullyQualifiedName}Wrapper.${enum.name}.$value;
          break;
 #end
@@ -232,23 +242,29 @@ public class ${dto.model.name}Connector {
 
       switch((${dto.model.name}TransportTopics) transportTopic){
 #foreach( $field in $dto.model.inputs )
-#set( $className = $field.type.name )
-#set( $fieldName = $field.name )
-         case ${className.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()}:
+         case ${field.type.name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()}:
             requirements = Arrays.asList(
-#foreach($req in $modelRequirements)
+#set ($size = $dto.requirements.size())
+#foreach($req in $dto.requirements)
+#if($velocityCount == $size)
                ${req}
+#else
+               ${req},
+#end
 #end
             );
             break;
-            #end
-         #foreach($field in $modelObject.getOutputs())
-         #set( $className = $field.getType().getName() )
-         #set( $fieldName = $field.getName() )
-         case ${className.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()}:
+#end
+#foreach($field in $dto.model.outputs)
+         case ${field.type.name.replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase()}:
             requirements = Arrays.asList(
-#foreach($req in $modelRequirements)
+#set ($size = $dto.requirements.size())
+#foreach($req in $dto.requirements)
+#if($velocityCount == $size)
                ${req}
+#else
+               ${req},
+#end
 #end
             );
             break;

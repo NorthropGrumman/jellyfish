@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.List;
 import java.util.Set;
 
 public class ConnectorDto {
@@ -18,6 +19,7 @@ public class ConnectorDto {
    private Set<IEnumeration> allInputEnums;
    private Set<IData> allOutputData;
    private Set<IEnumeration> allOutputEnums;
+   private List<String> requirements;
 
    public IModel getModel() {
       return model;
@@ -118,4 +120,12 @@ public class ConnectorDto {
       return this;
    }
 
+   public List<String> getRequirements() {
+      return requirements;
+   }
+
+   public ConnectorDto setRequirements(List<String> requirements) {
+      this.requirements = requirements;
+      return this;
+   }
 }
