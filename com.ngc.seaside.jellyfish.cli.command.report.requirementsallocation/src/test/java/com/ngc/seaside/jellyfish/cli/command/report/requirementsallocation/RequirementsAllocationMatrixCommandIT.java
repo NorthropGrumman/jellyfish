@@ -106,7 +106,7 @@ public class RequirementsAllocationMatrixCommandIT {
       String output = new String(baos.toByteArray());
       List<String> consoleOutputContent = Arrays.asList(output.split(System.getProperty("line.separator")));
 
-      assertFileLinesEquals("Stdout content does not equal expeted output", expectedOutputFilePath, consoleOutputContent);
+      assertFileLinesEquals("Stdout content does not equal expected output", expectedOutputFilePath, consoleOutputContent);
    }
 
    @Test
