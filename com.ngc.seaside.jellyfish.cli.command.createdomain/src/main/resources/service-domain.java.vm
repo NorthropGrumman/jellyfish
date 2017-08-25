@@ -10,7 +10,14 @@ package $domain.packagename;
 import $import;
 #end
 
+##determine if the type is a class or enum
+#if(! $domain.enumType)
 import java.util.Objects;
+
+ #set($type = "class")
+#else
+ #set($type = "enum")
+#end
 
 #if($domain.hasMultipleProperty)
 import java.util.List;
@@ -25,10 +32,25 @@ import java.util.Arrays;
 #set($modifier = " ")
 #end
 #if(! $domain.extended)
-public${modifier}class ${domain.classname} {
+public${modifier}$type ${domain.classname} {
 #else
-public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
+public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
+## Generate an enumeration
+#if($type == "enum")
+#set($size = $domain.getEnumValues().size())
+#foreach ($value in $domain.enumValues)
+#if($velocityCount == $size)
+	$value
+#else
+	$value,
+#end
+#end
+}
+
+## Generate the class
+#else
+
 ##Topic and Name
 
   public static final String NAME = ${domain.classname}.class.getName();
@@ -157,3 +179,4 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
     return builder.toString();
   }
 }
+#end
