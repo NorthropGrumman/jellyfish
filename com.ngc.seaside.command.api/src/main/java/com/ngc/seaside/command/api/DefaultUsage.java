@@ -50,6 +50,7 @@ public class DefaultUsage implements IUsage {
     * @param parameters List of parameters. Can be null.
     */
    public DefaultUsage(String description, List<IParameter<?>> parameters) {
+      this.description = description;
       if (parameters != null) {
          this.allParameters = parameters;
          requiredParameters.addAll(this.allParameters.stream().filter(IParameter::isRequired)
@@ -78,7 +79,7 @@ public class DefaultUsage implements IUsage {
    public String toString() {
       StringBuilder builder = new StringBuilder();
       builder.append(description).append(" ");
-      for (IParameter parameter : allParameters) {
+      for (IParameter<?> parameter : allParameters) {
          builder.append(String.format("[%s] ", parameter));
       }
       return builder.toString();
