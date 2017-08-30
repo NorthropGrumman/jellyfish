@@ -42,7 +42,7 @@ public class GradleSettingsUtilities {
                              OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
       }
 
-      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue()).normalize();
+      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue()).normalize().toAbsolutePath();
       Path settings = outputDirectory.resolve(SETTINGS_FILE_NAME);
       if (settings.toFile().isFile()) {
          addProject(parameters, settings);
