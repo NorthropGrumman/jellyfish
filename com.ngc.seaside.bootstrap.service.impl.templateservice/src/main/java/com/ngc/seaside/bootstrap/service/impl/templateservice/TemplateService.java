@@ -189,7 +189,7 @@ public class TemplateService implements ITemplateService {
 
          output = updateTemplate(unzippedFolderPath, parameters, outputDirectory, clean, templateIgnoreComponent);
 
-      } catch (TemplateServiceException | IOException e) {
+      } catch (TemplateServiceException | IOException | NullPointerException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
          logService.error(getClass(), e, message);
          throw new TemplateServiceException(message, e);
