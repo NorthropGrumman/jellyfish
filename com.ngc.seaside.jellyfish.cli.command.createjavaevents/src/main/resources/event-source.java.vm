@@ -76,13 +76,13 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #if(! $property.multiple)
   private $property.shortType $property.name;
 #else##is multiple
-  private List<$property.shortType> $property.name;
+  private List<$property.type> $property.name;
 #end##end multiple
 #else##has a value
 #if(! $property.multiple)
   private $property.shortType $property.name = $property.value;
 #else##is multiple
-  private List<$property.shortType> $property.name = $property.value;
+  private List<$property.type> $property.name = $property.value;
 #end##is multiple
 #end##has value
 #end##is abstraction
@@ -113,11 +113,11 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #else
 #if(! $property.abstraction)
   //@Override
-  public List<$property.shortType> get${property.methodString}() {
+  public List<$property.type> get${property.methodString}() {
     return $property.name;
   }
 
-  public ${domain.classname} set$property.getMethodString()(List<$property.shortType> $property.name) {
+  public ${domain.classname} set$property.getMethodString()(List<$property.type> $property.name) {
     this.$property.name = $property.name;
     return this;
   }
