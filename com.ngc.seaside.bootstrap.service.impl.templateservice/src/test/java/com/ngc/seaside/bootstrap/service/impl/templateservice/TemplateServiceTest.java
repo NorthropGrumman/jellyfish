@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -92,6 +93,11 @@ public class TemplateServiceTest {
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
+   }
+
+   @Test(expected = TemplateServiceException.class)
+   public void invalidTest() throws TemplateServiceException, IOException {
+      templateService.unpack("Invalid", new DefaultParameterCollection(), Files.createTempDirectory(null), false);
    }
 
    /**
