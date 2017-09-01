@@ -1,5 +1,5 @@
 #set( $D = '$' )
-
+apply plugin: 'maven'
 apply plugin: 'com.ngc.seaside.distribution'
 
 seasideDistribution {
