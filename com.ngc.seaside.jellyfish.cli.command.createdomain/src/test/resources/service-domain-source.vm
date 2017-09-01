@@ -2,9 +2,6 @@
 ***************************************** UNCLASSIFIED ******************************************
 *************************************************************************************************
 ************************* Copyright 2017 Northrop Grumman Corporation ***************************
-*
-* Description: Threat Evaluation Engagement Track Priority Service Domain
-*
 */
 package $domain.packagename;
 
@@ -13,12 +10,17 @@ package $domain.packagename;
 import $import;
 #end
 
+##determine if the type is a class or enum
+#if(! $domain.enumType)
 import java.util.Objects;
 
+ #set($type = "class")
+#else
+ #set($type = "enum")
+#end
+
 #if($domain.hasMultipleProperty)
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 #end
 #if($domain.hasArrayProperty)
 import java.util.Arrays;
@@ -30,36 +32,42 @@ import java.util.Arrays;
 #set($modifier = " ")
 #end
 #if(! $domain.extended)
-public${modifier}class ${domain.classname} {
+public${modifier}$type ${domain.classname} {
 #else
-public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
+public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
+## Generate an enumeration
+#if($type == "enum")
+#set($size = $domain.getEnumValues().size())
+#foreach ($value in $domain.enumValues)
+#if($velocityCount == $size)
+	$value
+#else
+	$value,
+#end
+#end
+}
+
+## Generate the class
+#else
+
 ##Topic and Name
 
   public static final String NAME = ${domain.classname}.class.getName();
 
 #foreach ($property in $domain.properties)
-#if( $property.type == "int" )
-#set ($type = "Integer")
-#elseif( $property.type == "float" )
-#set ($type = "Float")
-#elseif( $property.type == "boolean" )
-#set ($type = "Boolean")
-#else
-#set ($type = $property.type)
-#end
 #if(!$property.abstraction)
 #if(! $property.value)
 #if(! $property.multiple)
   private $property.shortType $property.name;
 #else##is multiple
-  private List<$type> $property.name;
+  private List<$property.shortType> $property.name;
 #end##end multiple
 #else##has a value
 #if(! $property.multiple)
   private $property.shortType $property.name = $property.value;
 #else##is multiple
-  private List<$type> $property.name = $property.value;
+  private List<$property.shortType> $property.name = $property.value;
 #end##is multiple
 #end##has value
 #end##is abstraction
@@ -90,11 +98,11 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
 #else
 #if(! $property.abstraction)
   //@Override
-  public List<$type> get${property.methodString}() {
+  public List<$property.shortType> get${property.methodString}() {
     return $property.name;
   }
 
-  public ${domain.classname} set$property.getMethodString()(List<$type> $property.name) {
+  public ${domain.classname} set$property.getMethodString()(List<$property.shortType> $property.name) {
     this.$property.name = $property.name;
     return this;
   }
@@ -160,14 +168,15 @@ public${modifier}class ${domain.classname} extends $domain.extendedClassShort {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-#if($domain.extended) 
+#if($domain.extended)
     builder.append(super.toString());
-#else 
+#else
 	builder.append(getClass().getSimpleName()).append(" - ");
-#end	
+#end
 #foreach ($property in $domain.nonAbstractProperties)
     builder.append("[${property.name}=").append(${property.name}).append("]");
 #end
     return builder.toString();
   }
 }
+#end

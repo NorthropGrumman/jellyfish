@@ -46,13 +46,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
    static final String CREATE_JAVA_EVENTS_COMMAND_NAME = "create-java-events";
+   static final String CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME = "create-java-cucumber-tests";
    static final String CREATE_JAVA_DISTRIBUTION_COMMAND_NAME = "create-java-distribution";
    static final String CREATE_JAVA_SERVICE_COMMAND_NAME = "create-java-service";
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME = "create-java-service-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
    private static final String[] SUBCOMMANDS = { CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
-            CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
+            CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
             CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME,
             CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME };
 
@@ -119,6 +120,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
          createDomainProject(ctx);
       }
       createEventsProject(ctx);
+      createCucumberTestsProject(ctx);
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
       createJavaServiceConfigProject(ctx);
@@ -201,6 +203,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.generatedDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
+   }
+
+   private void createCucumberTestsProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, delegateOptions);
    }
 
    private void createDistributionProject(CommandInvocationContext ctx) {
