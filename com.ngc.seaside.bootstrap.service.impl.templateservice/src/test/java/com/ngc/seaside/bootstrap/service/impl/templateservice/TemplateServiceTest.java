@@ -96,7 +96,7 @@ public class TemplateServiceTest {
    }
 
    @Test(expected = TemplateServiceException.class)
-   public void invalidTest() throws TemplateServiceException, IOException {
+   public void testInvalidTemplateFileThrowsATemplateServiceException() throws TemplateServiceException, IOException {
       templateService.unpack("Invalid", new DefaultParameterCollection(), Files.createTempDirectory(null), false);
    }
 
