@@ -153,6 +153,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
       Collection<IModel> models = searchModels(commandOptions, values, operator);
+      
       Map<String, Feature> features = getAllFeatures(commandOptions, models, GHERKIN_URI);
       Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
 
