@@ -119,6 +119,22 @@ public class GradleSettingsUtilitiesTest {
 
       GradleSettingsUtilities.tryAddProject(collection);
    }
+
+   @Test
+   public void test_givenAnOutputDirectoryWithNoParentOrSettingsFile_whenTryAddProject_thenNoExceptionThrown() throws Throwable {
+      IParameterCollection collection = mock(IParameterCollection.class);
+      when(collection.containsParameter("outputDirectory")).thenReturn(true);
+      when(collection.containsParameter("groupId")).thenReturn(true);
+      when(collection.containsParameter("artifactId")).thenReturn(true);
+
+      File relativePathOutputDirectory = new File("/");
+
+      when(collection.getParameter("outputDirectory")).thenReturn(createParameter("outputDirectory", relativePathOutputDirectory.getPath()));
+      when(collection.getParameter("groupId"))        .thenReturn(createParameter("groupId",         "groupIdValue"));
+      when(collection.getParameter("artifactId"))     .thenReturn(createParameter("artifactId",      "artifactIdValue"));
+
+      GradleSettingsUtilities.tryAddProject(collection);
+   }
    
    @SuppressWarnings("unchecked")
    @Test
