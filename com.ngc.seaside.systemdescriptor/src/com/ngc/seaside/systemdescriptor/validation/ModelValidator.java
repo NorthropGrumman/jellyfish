@@ -5,25 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -31,7 +28,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -40,9 +36,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenStep;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
 
 /**
  * Validates a {@code Model} is correct. This validator mostly handles checking
@@ -50,13 +44,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep;
  */
 public class ModelValidator extends AbstractSystemDescriptorValidator {
 
-	
+	// TODO TH: inject the interface instead of the impl
 	@Inject
-	ResourceDescriptionsProvider resourceDescriptionsProvider;
+	private ResourceDescriptionsProvider resourceDescriptionsProvider;
 	
+	// TODO TH: why are we using this?  Need comments.
 	@Inject
-	IContainer.Manager containerManager;
-	
+	private IContainer.Manager containerManager;
+		
 	// The grammar allows the various blocks to be declared in the following
 	// order:
 	//
@@ -321,7 +316,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 
 	
 	private void checkModelLinks(Model model, List<String> superclasses, HashMap<String, String> dataFieldDeclarations){
-		
+		// TODO TH: refactor this
 		if(model.getLinks() != null) {
 			//Only need to check input and output at the moment since parts and requires use models.
 			//if target or source has an object name that corresponds to a class name that is in the superclasses list, send a warning
@@ -385,7 +380,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	 */
 	@Check
 	public void checkForSuperClassDataObject(Model model) {
-
+		// TODO TH: refactor this
 		HashMap<String, String> dataFieldDeclarations = new HashMap<String, String>(); //<dataFieldDeclarations, Classname>
 		List<String> superclasses = new ArrayList<String>();
 		

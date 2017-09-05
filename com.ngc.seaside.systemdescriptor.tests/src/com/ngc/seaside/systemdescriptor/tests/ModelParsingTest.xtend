@@ -503,7 +503,7 @@ class ModelParsingTest {
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.IMPORT,
-			Diagnostic.LINKING_DIAGNOSTIC
+			null
 		)
 	}
 

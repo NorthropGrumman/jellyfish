@@ -84,34 +84,10 @@ public class Main {
 		XtextResourceSet resourceSet = injector.getProvider(XtextResourceSet.class).get();
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		
-		// This will parse all the files to determine if they are datas, enums, models, etc.  Once we figure
-		// that out we order the files so they are parsed in the following order:
-		// 1) enums
-		// 2) data
-		// 3) models
-		// This fixes the linking errors that happen on Linux (I don't know why it fixes it and I don't like
-		// have to parse the files twice, but I don't know what else to do).
-		files = orderResources(files);
-		
 		Collection<XtextResource> resources = new ArrayList<>(files.size());
 		for(File f : files) {
 			resources.add((XtextResource) resourceSet.getResource(URI.createFileURI(f.getAbsolutePath()), true));
 		}
-		
-		// This doesn't fix anything.
-//		for(XtextResource resource : resources) {
-//			try {
-//				resource.load(null);
-//			} catch (IOException e) {
-//				throw new RuntimeException(e.getMessage(), e);
-//			}
-//		}
-//		
-//		for(XtextResource resource : resources) {
-//			resource.getCache().clear(resource);
-//			resource.setModified(true);
-//		}
-//		resourceSet.markOutdated();
 		
 		Collection<Issue> issues = new ArrayList<>();
 		for(XtextResource resource : resources) {
