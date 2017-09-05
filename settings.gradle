@@ -56,3 +56,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicebase').name = '
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig').name = 'jellyfish.cli.command.createjavaserviceconfig'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests').name = 'jellyfish.cli.command.createjavacucumbertests'

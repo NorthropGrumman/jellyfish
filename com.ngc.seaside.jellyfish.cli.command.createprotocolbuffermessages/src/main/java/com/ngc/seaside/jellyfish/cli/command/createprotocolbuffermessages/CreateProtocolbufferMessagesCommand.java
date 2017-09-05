@@ -8,7 +8,6 @@ import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
@@ -25,8 +24,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.nio.file.Path;
 
 /**
  * This command generates the message IDL and gradle project structure that will
@@ -66,8 +63,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
       // Unpack the velocity template to a temporary directory.
       final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
-            CreateProtocolbufferMessagesCommand.class,
-            TEMPLATE_FILE);
+         CreateProtocolbufferMessagesCommand.class,
+         TEMPLATE_FILE);
       resourceService.readResource(velocityTemplate);
       final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
@@ -78,7 +75,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
             new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
-                                         CreateProtocolbufferMessagesCommand.class.getPackage().getName())));
+               CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
+            new DefaultParameter<>(CreateDomainCommand.USE_VERBOSE_IMPORTS_PROPERTY, true)));
    }
 
    @Activate
@@ -142,9 +140,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePromptUserService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptUserService")
    public void setPromptUserService(IPromptUserService ref) {
       this.promptUserService = ref;
    }
@@ -161,8 +157,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
          modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
       } else {
          modelName = promptUserService.prompt(CreateDomainCommand.MODEL_PROPERTY,
-                                              null,
-                                              m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
+            null,
+            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
@@ -186,20 +182,28 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       return new DefaultUsage(
          "Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
          new DefaultParameter<String>(CreateDomainCommand.GROUP_ID_PROPERTY).setDescription("The project's group ID")
-                  .setRequired(false),
+                                                                            .setRequired(false),
          new DefaultParameter<String>(CreateDomainCommand.ARTIFACT_ID_PROPERTY).setDescription("The project's version")
-                  .setRequired(false),
+                                                                               .setRequired(false),
          new DefaultParameter<String>(CreateDomainCommand.PACKAGE_PROPERTY)
-                  .setDescription("The project's default package").setRequired(false),
+                                                                           .setDescription(
+                                                                              "The project's default package")
+                                                                           .setRequired(false),
          new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)
-                  .setDescription("A string to append to the end of the generated package name").setRequired(false),
+                                                                                  .setDescription(
+                                                                                     "A string to append to the end of the generated package name")
+                                                                                  .setRequired(false),
          new DefaultParameter<String>(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY)
-                  .setDescription("Base directory in which to output the project").setRequired(true),
+                                                                                    .setDescription(
+                                                                                       "Base directory in which to output the project")
+                                                                                    .setRequired(true),
          new DefaultParameter<String>(CreateDomainCommand.MODEL_PROPERTY)
-                  .setDescription("The fully qualified path to the system descriptor model").setRequired(true),
+                                                                         .setDescription(
+                                                                            "The fully qualified path to the system descriptor model")
+                                                                         .setRequired(true),
          new DefaultParameter<String>(CreateDomainCommand.CLEAN_PROPERTY)
-                  .setDescription(
-                     "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                  .setRequired(false));
+                                                                         .setDescription(
+                                                                            "If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                                                                         .setRequired(false));
    }
 }

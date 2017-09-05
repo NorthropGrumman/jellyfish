@@ -112,8 +112,12 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateEventsCommand(capture.getValue(), "my-project");
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME),
                                   capture.capture());
+      verifyParametersForCreateCucumberTestsCommand(capture.getValue(), "my-project");
+
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
+                                                                                                                 capture.capture());
       verifyParametersForCreateDistributionCommand(capture.getValue(), "my-project");
 
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_COMMAND_NAME),
@@ -160,6 +164,10 @@ public class CreateJavaServiceProjectCommandTest {
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateEventsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
+
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateCucumberTestsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
                                   capture.capture());
@@ -227,6 +235,13 @@ public class CreateJavaServiceProjectCommandTest {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName, CreateJavaServiceProjectCommand.DEFAULT_GENERATED_PROJECT_DIRECTORY_NAME).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreateCucumberTestsCommand(IJellyFishCommandOptions options,
+                                                             String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
 
    private void verifyParametersForCreateDistributionCommand(IJellyFishCommandOptions options,

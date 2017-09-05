@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.json.JsonArray;
 import javax.json.JsonString;
@@ -31,6 +33,9 @@ import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
  * Utility class for model and system descriptor related operation
  */
 public class ModelUtils {
+
+   private static final Pattern FEATURE_FILE_NAME_PATTERN = Pattern.compile("([a-zA-Z$_][a-zA-Z$_0-9]*[.]){2}feature");
+
    private ModelUtils() {
    }
 
@@ -139,12 +144,19 @@ public class ModelUtils {
                   getResolvedFeatureFilesDirectory(commandOptions, uri).toAbsolutePath().resolve(modelPathURI)
                            .toFile();
 
-         File[] files = featureFilesRoot.listFiles();
+         FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+               return FEATURE_FILE_NAME_PATTERN.matcher(name).matches();
+            }
+         };
+         
+         File[] files = featureFilesRoot.listFiles(filter);
          if (files != null) {
             for (File file : files) {
                String qualifiedName = ModelUtils.substringBetween(file.getName(), "", ".feature");
-               String modelName = ModelUtils.substringBetween(file.getName(), "", ".");
-               String name = ModelUtils.substringBetween(file.getName(), ".", ".");
+               String modelName     = ModelUtils.substringBetween(file.getName(), "", ".");
+               String name          = ModelUtils.substringBetween(file.getName(), ".", ".");
                if (modelName.equals(model.getName())) {
                   features.put(qualifiedName, new Feature(qualifiedName, name));
                }

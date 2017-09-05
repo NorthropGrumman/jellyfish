@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
 import com.google.common.collect.Streams;
-
+import com.ngc.blocs.domain.impl.common.generated.DomainConfiguration;
 import com.ngc.blocs.domain.impl.common.generated.ObjectFactory;
 import com.ngc.blocs.domain.impl.common.generated.Tdomain;
 import com.ngc.blocs.domain.impl.common.generated.Tobject;
@@ -44,6 +44,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -71,6 +72,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
    public static final String USE_MODEL_STRUCTURE_PROPERTY = "useModelStructure";
+   public static final String USE_VERBOSE_IMPORTS_PROPERTY = "useVerboseImports";
    public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
@@ -98,6 +100,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useModelStructure = evaluateBooleanParameter(parameters, USE_MODEL_STRUCTURE_PROPERTY);
+      final boolean useVerboseImports = evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
 
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
@@ -119,11 +122,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path projectDir = evaluateProjectDirectory(outputDir, groupId, artifactId, clean);
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
-
+      
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
          final String domainPackage = useModelStructure ? sdPackage : pkg;
-         generateDomainXml(xmlFile, dataList, domainPackage);
+         generateDomainXml(xmlFile, dataList, domainPackage, useVerboseImports);
       });
 
       updateGradleDotSettings(outputDir, groupId, artifactId, commandOptions.getParameters());
@@ -490,14 +493,29 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Generates the Blocs domain xml file with the given data and package.
     *
     * @param xmlFile output xml file
-    * @param data    collection of data
-    * @param pkg     package of domain data classes
+    * @param data collection of data
+    * @param pkg package of domain data classes
     * @throws CommandException if an error occurred when creating the xml file
     */
-   private static void generateDomainXml(Path xmlFile, Collection<IData> data, String pkg) {
+   private static void generateDomainXml(Path xmlFile, Collection<IData> data, String pkg, boolean useVerboseImports) {
       Tdomain domain = new Tdomain();
+      
+      DomainConfiguration config = new DomainConfiguration();
+      config.setUseVerboseImports(useVerboseImports);
+      domain.setConfig(config);
+      
+      ArrayList<Tobject> enumObjList = new ArrayList<Tobject>();
+      for (IData d : data) {
+         domain.getObject().add(convert(d, pkg, useVerboseImports));
 
-      data.forEach(d -> domain.getObject().add(convert(d, pkg)));
+         for (IDataField dField : d.getFields()) {
+            if (dField.getType() == DataTypes.ENUM) {
+               // Handle enumerations
+               enumObjList.add(convertEnum(dField, pkg));
+            }
+         }
+      }
+      domain.getObject().addAll(enumObjList);
 
       ObjectFactory factory = new ObjectFactory();
       try {
@@ -512,15 +530,37 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Converts the IData to a Tobject.
     *
     * @param data IData
-    * @param pkg  package of domain classes
+    * @param pkg package of domain classes
     * @return domain object
     */
-   private static Tobject convert(IData data, String pkg) {
+   private static Tobject convert(IData data, String pkg, boolean useVerboseImports) {
       Tobject object = new Tobject();
       object.setClazz(pkg + '.' + data.getName());
       data.getFields().forEach(field -> object.getProperty().add(convert(field, pkg)));
       return object;
    }
+   
+   /**
+    * Converts the IData enumeration to a Tobject.
+    *
+    * @param dField IData enumeration
+    * @param pkg package of domain classes
+    * @return domain object
+    */
+   private static Tobject convertEnum(IDataField dField, String pkg) {
+      String enumValString = "";
+      Tobject object = new Tobject();
+      object.setClazz(pkg + '.' + dField.getReferencedEnumeration().getName());
+      object.setType("enum");
+
+      for (String enumVal : dField.getReferencedEnumeration().getValues()) {
+         enumValString += enumVal + " ";
+      }
+      enumValString = enumValString.trim();
+      object.setEnumValues(enumValString);
+      return object;
+   }
+
 
    /**
     * Converts the IDataField to a Tproperty.
@@ -560,6 +600,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
          case STRING:
             property.setType("String");
             break;
+         case ENUM:
+            property.setType(pkg + "." + field.getReferencedEnumeration().getName());
+            break;
          default:
             throw new IllegalStateException("Unknown field type: " + field.getType());
       }
@@ -594,6 +637,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
                               new DefaultParameter<String>(CLEAN_PROPERTY)
                                     .setDescription(
                                           "If true, recursively deletes the domain project (if it already exists), before generating the it again")
+                                    .setRequired(false),
+                              new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
+                                    .setDescription("If true, imports from the same package will be included for generated domains")
                                     .setRequired(false),
                               new DefaultParameter<String>(USE_MODEL_STRUCTURE_PROPERTY)
                                     .setDescription(

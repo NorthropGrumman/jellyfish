@@ -8,7 +8,7 @@ dependencies {
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     
     compile "com.ngc.blocs:blocs-core:$blocsVersion"
-    compile "com.ngc.blocs:domain.impl.common.domaingenerator:$blocsVersion"
+    compile "com.ngc.blocs:domain.impl.common.domaingenerator:$blocsDomainVersion"
     
     compile "org.osgi:osgi.core:$osgiVersion"
     compile "org.osgi:osgi.enterprise:$osgiVersion"

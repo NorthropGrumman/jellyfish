@@ -1,15 +1,15 @@
 #set( $D = '$' )
 
 ext {
-   threatevalEngagementtrackpriorityserviceMessagesVersion = '1.0'
+   threatevalMessagesVersion = '1.3.1-SNAPSHOT'
 }
 
 dependencies {
-   compile project(":${modelObject.getName().toLowerCase()}.events")
-   compile project(":${modelObject.getName().toLowerCase()}.base")
+   compile project(":${dto.model.name.toLowerCase()}.events")
+   compile project(":${dto.model.name.toLowerCase()}.base")
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-   compile "com.ngc.seaside:threateval.engagementtrackpriorityservice.messages:${D}threatevalEngagementtrackpriorityserviceMessagesVersion"
+   compile "com.ngc.seaside:threateval.messages:${D}threatevalMessagesVersion"
    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
 
    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
