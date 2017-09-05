@@ -1,6 +1,4 @@
-apply plugin: 'application'
-
-mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
+apply plugin: 'com.ngc.seaside.application'
 
 configurations {
     commandTemplate
@@ -69,20 +67,25 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
-applicationDistribution.from('src/main/resources') {
-	into 'resources'
-}
+seasideApplication {    
+    mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
+    includeDistributionDirs = ['src/main/resources/']
+    appHomeVarName = 'myAppHome'
+    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    distributionName = "${project.name}-${project.version}"
+    installationDir = "${buildDir}/distributions/${distributionName}-install"
 
-// Provide the app home directory has a system property.
-applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
-
-// Set the property to the value in the script (windows vs *nix).
-startScripts {
-    doLast {
-        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '\$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
     }
 }
+
+// J* The task "copyCommandTemplate" seems to be done AFTER the installationDir is populated... it does not contain the templates
+// J* The installationDir ends up with the jellyfish jar, but the non-installationDir jellyfish dir does not, it has a zip instead 
+//    -- OR did I change it for investigation purposes... rebuild to check
 
 /**
  * Copy the archive to the distribution directory and rename it to contain the groupId prefix.
