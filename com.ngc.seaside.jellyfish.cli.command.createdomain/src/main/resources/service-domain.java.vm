@@ -56,18 +56,27 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
   public static final String NAME = ${domain.classname}.class.getName();
 
 #foreach ($property in $domain.properties)
+#if ($property.type == "boolean")
+#set ($type = "Boolean")
+#elseif ($property.type == "float")
+#set ($type = "Float")
+#elseif ($property.type == "int")
+#set ($type = "Integer")
+#else
+#set ($type = $property.type)
+#end
 #if(!$property.abstraction)
 #if(! $property.value)
 #if(! $property.multiple)
   private $property.shortType $property.name;
 #else##is multiple
-  private List<$property.type> $property.name;
+  private List<$type> $property.name;
 #end##end multiple
 #else##has a value
 #if(! $property.multiple)
   private $property.shortType $property.name = $property.value;
 #else##is multiple
-  private List<$property.type> $property.name = $property.value;
+  private List<$type> $property.name = $property.value;
 #end##is multiple
 #end##has value
 #end##is abstraction
@@ -78,6 +87,15 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
   }
 
 #foreach ($property in $domain.properties)
+#if ($property.type == "boolean")
+#set ($type = "Boolean")
+#elseif ($property.type == "float")
+#set ($type = "Float")
+#elseif ($property.type == "int")
+#set ($type = "Integer")
+#else
+#set ($type = $property.type)
+#end
 #if(! $property.multiple)
 #if(! $property.abstraction)
 #if($property.shortType == "boolean")
@@ -98,11 +116,11 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #else
 #if(! $property.abstraction)
   //@Override
-  public List<$property.type> get${property.methodString}() {
+  public List<$type> get${property.methodString}() {
     return $property.name;
   }
 
-  public ${domain.classname} set$property.getMethodString()(List<$property.type> $property.name) {
+  public ${domain.classname} set$property.getMethodString()(List<$type> $property.name) {
     this.$property.name = $property.name;
     return this;
   }
