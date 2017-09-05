@@ -48,14 +48,18 @@ public class GradleSettingsUtilities {
          addProject(parameters, settings);
          return true;
       } else {
-         settings = outputDirectory.getParent().resolve(SETTINGS_FILE_NAME);
-         if (settings.toFile().isFile()) {
-            DefaultParameterCollection newParameters = new DefaultParameterCollection();
-            newParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY,
-               outputDirectory.getFileName() + "/" + parameters.getParameter(GROUP_ID_PROPERTY).getStringValue()));
-            newParameters.addParameter(parameters.getParameter(ARTIFACT_ID_PROPERTY));
-            addProject(newParameters, settings);
-            return true;
+         Path outputDirParent = outputDirectory.getParent();
+         
+         if (outputDirParent != null) {
+            settings = outputDirectory.getParent().resolve(SETTINGS_FILE_NAME);
+            if (settings.toFile().isFile()) {
+               DefaultParameterCollection newParameters = new DefaultParameterCollection();
+               newParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY,
+                        outputDirectory.getFileName() + "/" + parameters.getParameter(GROUP_ID_PROPERTY).getStringValue()));
+               newParameters.addParameter(parameters.getParameter(ARTIFACT_ID_PROPERTY));
+               addProject(newParameters, settings);
+               return true;
+            }
          }
          return false;
       }
