@@ -11,7 +11,7 @@ buildscript {
     }
 
    dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:1.6-SNAPSHOT'
+      classpath 'com.ngc.seaside:gradle.plugins:1.6'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.ngc.blocs:gradle.plugin:0.3'
    }
