@@ -115,7 +115,6 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
 #else
 #if(! $property.abstraction)
-  //@Override
   public List<$type> get${property.methodString}() {
     return $property.name;
   }
