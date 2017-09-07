@@ -15,7 +15,7 @@ buildscript {
 
    dependencies {
       classpath 'com.ngc.blocs:gradle.plugin:0.2'
-      classpath 'com.ngc.seaside:gradle.plugins:1.4.1'
+      classpath 'com.ngc.seaside:gradle.plugins:1.6'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.0'
    }
@@ -44,7 +44,7 @@ subprojects {
         guiceVersion = '4.1.0'
         osgiVersion =  '6.0.0'
         guavaVersion = '22.0'
-		  protobufVersion = '3.2.0'
+        protobufVersion = '3.2.0'
 
         junitVersion = '4.12'
         mockitoVersion = '2.7.14'
