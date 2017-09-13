@@ -68,3 +68,18 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig').name =
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests').name = 'jellyfish.cli.command.createjavacucumbertests'
+
+include 'com.ngc.seaside.jellyfish.service.api'
+project(':com.ngc.seaside.jellyfish.service.api').name = 'jellyfish.service.api'
+
+include 'com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices'
+project(':com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices').name = 'jellyfish.service.codegen.impl.codegenservices'
+
+include 'com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice'
+project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice').name = 'jellyfish.service.config.impl.transportconfigurationservice'
+
+include 'com.ngc.seaside.jellyfish.service.name.impl.namingservices'
+project(':com.ngc.seaside.jellyfish.service.name.impl.namingservices').name = 'jellyfish.service.name.impl.namingservices'
+
+include 'com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice'
+project(':com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice').name = 'jellyfish.service.scenario.impl.scenarioservice'
