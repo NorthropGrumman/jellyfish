@@ -15,6 +15,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -45,6 +46,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    private IJellyFishCommandProvider jellyfishCommandProvider;
    private IResourceService resourceService;
    private IPromptUserService promptUserService;
+   private IPackageNamingService packageNamingService;
 
    @Override
    public String getName() {
@@ -147,6 +149,18 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    public void removePromptUserService(IPromptUserService ref) {
       setPromptUserService(null);
+   }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
+   public void setPackageNamingService(IPackageNamingService ref) {
+         this.packageNamingService = ref;
+   }
+   
+
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {

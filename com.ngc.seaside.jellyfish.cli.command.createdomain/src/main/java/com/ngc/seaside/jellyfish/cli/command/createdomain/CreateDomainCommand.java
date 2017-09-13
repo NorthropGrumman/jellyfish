@@ -23,6 +23,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -79,6 +80,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private IPromptUserService promptService;
    private ITemplateService templateService;
    private IResourceService resourceService;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -208,6 +210,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    public void removeResourceService(IResourceService ref) {
       setResourceService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+      
+   }
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
    }
 
    private void updateGradleDotSettings(Path outputDir,
