@@ -1,0 +1,9 @@
+package com
+
+data Data2 {
+	many int manyIntField {
+		"satisfies": "TE008"
+	}
+	many float manyFloatField
+	many boolean manyBooleanField
+}
