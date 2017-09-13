@@ -20,7 +20,8 @@ public class ProjectNamingService implements IProjectNamingService {
    
    private static final String GROUP_ID_PROPERTY = "groupId";
    private static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   private static final String DEFAULT_ARTIFACT_ID_SUFFIX = "domain";
+   private static final String DOMAIN_ARTIFACT_ID_SUFFIX = "domain";
+   private static final String EVENT_ARTIFACT_ID_SUFFIX = "events";
 
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
@@ -46,7 +47,7 @@ public class ProjectNamingService implements IProjectNamingService {
       String versionPropertyName = modelName + "DomainVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
       String groupId = evaluateGroupId(options, model);
-      String artifactId = evaluateArtifactId(options, model, DEFAULT_ARTIFACT_ID_SUFFIX);
+      String artifactId = evaluateArtifactId(options, model, DOMAIN_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(groupId)
@@ -62,10 +63,11 @@ public class ProjectNamingService implements IProjectNamingService {
       String modelName = model.getName();
       String versionPropertyName = modelName + "EventsVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, EVENT_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".events")
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName)
             .setGenerated(true)
             .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);

@@ -8,6 +8,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -64,6 +65,8 @@ public class CreateJavaEventsCommandTest {
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
       resourceService = new MockedResourceService();
+      
+      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
 
       command = new CreateJavaEventsCommand();
       command.setLogService(logService);

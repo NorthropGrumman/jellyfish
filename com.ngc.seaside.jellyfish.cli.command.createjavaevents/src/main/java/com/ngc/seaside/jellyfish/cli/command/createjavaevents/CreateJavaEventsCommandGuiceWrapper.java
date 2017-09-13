@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
@@ -20,11 +21,13 @@ public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
    public CreateJavaEventsCommandGuiceWrapper(ILogService logService,
                                               IResourceService resourceService,
                                               IPromptUserService promptUserService,
-                                              IJellyFishCommandProvider jellyFishCommandProvider) {
+                                              IJellyFishCommandProvider jellyFishCommandProvider,
+                                              IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setResourceService(resourceService);
       delegate.setPromptUserService(promptUserService);
       delegate.setJellyFishCommandProvider(jellyFishCommandProvider);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 

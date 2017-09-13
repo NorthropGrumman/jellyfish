@@ -16,6 +16,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -62,6 +64,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    private IResourceService resourceService;
    private IPromptUserService promptUserService;
    private IJellyFishCommandProvider jellyFishCommandProvider;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -77,7 +80,10 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       issueUsageWarnings(commandOptions);
       IModel model = evaluateModelParameter(commandOptions);
-      String artifactId = evaluateArtifactId(commandOptions, model);
+      IProjectInformation eventsProjectName = projectNamingService.getEventsProjectName(commandOptions, model);
+      String artifactId = eventsProjectName.getArtifactId();
+      
+      //String artifactId = evaluateArtifactId(commandOptions, model);
       String eventTemplate = evaluateEventTemplate(commandOptions);
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
             commandOptions,
@@ -148,6 +154,17 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    public void removePromptUserService(IPromptUserService ref) {
       setPromptUserService(null);
    }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+      
+   }
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
+   }
 
    private void issueUsageWarnings(IJellyFishCommandOptions commandOptions) {
       // This command will set the value of the domainFile parameter itself, thereby overriding the value provided
@@ -186,16 +203,6 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
          eventTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
       }
       return eventTemplate;
-   }
-
-   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
-      final String artifactId;
-      if (options.getParameters().containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)) {
-         artifactId = options.getParameters().getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactId;
    }
 
    /**
