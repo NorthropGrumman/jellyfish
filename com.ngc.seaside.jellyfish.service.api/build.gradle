@@ -1,0 +1,17 @@
+dependencies {
+    compile project(':jellyfish.api')
+
+    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.jellyfish.service.*')
+    }
+}
+
