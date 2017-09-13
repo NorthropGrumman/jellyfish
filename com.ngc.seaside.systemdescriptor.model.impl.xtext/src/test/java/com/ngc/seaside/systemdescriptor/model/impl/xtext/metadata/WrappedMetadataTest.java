@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newArrayValue;
+import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newBooleanValue;
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newDblValue;
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newIntValue;
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newJsonValue;
@@ -25,6 +27,7 @@ import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.Wrapped
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newNullValue;
 import static com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata.newStringValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class WrappedMetadataTest extends AbstractWrappedXtextTest {
@@ -46,6 +49,9 @@ public class WrappedMetadataTest extends AbstractWrappedXtextTest {
       JsonObject nested = factory().createJsonObject();
       nested.getMembers().add(newMember("once", newStringValue("again")));
       root.getMembers().add(newMember("nested", newJsonValue(nested)));
+
+      root.getMembers().add(newMember("b", newBooleanValue(true)));
+      root.getMembers().add(newMember("c", newBooleanValue(false)));
 
       metadata = factory().createMetadata();
       metadata.setJson(root);
@@ -72,6 +78,11 @@ public class WrappedMetadataTest extends AbstractWrappedXtextTest {
 
       assertEquals("again",
                    wrapped.getJson().getJsonObject("nested").getJsonString("once").getString());
+
+      assertTrue("boolean value not correct!",
+                 wrapped.getJson().getBoolean("b"));
+      assertFalse("boolean value not correct!",
+                  wrapped.getJson().getBoolean("c"));
    }
 
    @Test
@@ -114,5 +125,10 @@ public class WrappedMetadataTest extends AbstractWrappedXtextTest {
                    object.getMembers().get(0).getKey());
       assertEquals("again",
                    ((StringValue) object.getMembers().get(0).getValue()).getValue());
+
+      assertEquals(Boolean.TRUE.toString(),
+                   ((BooleanValue) andBackAgain.getJson().getMembers().get(6).getValue()).getValue());
+      assertEquals(Boolean.FALSE.toString(),
+                   ((BooleanValue) andBackAgain.getJson().getMembers().get(7).getValue()).getValue());
    }
 }
