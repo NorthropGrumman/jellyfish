@@ -4,6 +4,7 @@ dependencies {
 
     compile project(":jellyfish.api")
     compile project(":jellyfish.cli.command.createjavaservice")
+    compile project(":jellyfish.service.codegen.impl.codegenservices")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"

@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceTemplateDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -48,6 +49,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private IPromptUserService promptService;
    private ITemplateService templateService;
    private ITemplateDtoFactory templateDaoFactory;
+   private IJavaServiceGenerationService generationService;
 
    @Override
    public String getName() {
@@ -155,6 +157,25 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
     */
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
+   }
+   
+   /**
+    * Sets java service generation service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeJavaServiceGenerationService")
+   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      this.generationService = ref;
+   }
+
+   /**
+    * Remove java service generation service.
+    */
+   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      setJavaServiceGenerationService(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
