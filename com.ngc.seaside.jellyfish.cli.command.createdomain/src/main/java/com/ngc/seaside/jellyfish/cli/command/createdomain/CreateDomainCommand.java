@@ -23,6 +23,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -60,7 +61,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
-   private static final String DEFAULT_ARTIFACT_ID_SUFFIX = "domain";
    static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
 
    public static final String GROUP_ID_PROPERTY = "groupId";
@@ -96,8 +96,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
       final IModel model = evaluateModelParameter(commandOptions);
-      final String groupId = evaluateGroupId(parameters, model);
-      final String artifactId = evaluateArtifactId(parameters, model);
+      IProjectInformation domainProjName = projectNamingService.getDomainProjectName(commandOptions, model);
+      String groupId = domainProjName.getGroupId();
+      String artifactId = domainProjName.getArtifactId();
+      
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
@@ -122,6 +124,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       final Path outputDir = evaluateOutputDirectory(parameters);
       final Path projectDir = evaluateProjectDirectory(outputDir, groupId, artifactId, clean);
+ 
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
       
@@ -289,40 +292,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
 
    /**
-    * Returns the groupId for the domain project.
-    *
-    * @param parameters command parameters
-    * @param model      domain model
-    * @return the groupId for the domain project
-    */
-   private static String evaluateGroupId(IParameterCollection parameters, IModel model) {
-      final String groupId;
-      if (parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
-      } else {
-         groupId = model.getParent().getName();
-      }
-      return groupId;
-   }
-
-   /**
-    * Returns the artifactId for the domain project.
-    *
-    * @param parameters command parameters
-    * @param model      domain model
-    * @return the artifactId for the domain project
-    */
-   private static String evaluateArtifactId(IParameterCollection parameters, IModel model) {
-      final String artifactId;
-      if (parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactId;
-   }
-
-   /**
     * Returns the package for the domain project.
     *
     * @param parameters command parameters
@@ -462,7 +431,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    private void createGradleBuild(Path projectDir, IJellyFishCommandOptions commandOptions, Path domainTemplateFile,
                                   Set<String> packages, boolean clean) {
-
       String extension = "java";
       if (commandOptions.getParameters().containsParameter(EXTENSION_PROPERTY)) {
          extension = commandOptions.getParameters().getParameter(EXTENSION_PROPERTY).getStringValue();

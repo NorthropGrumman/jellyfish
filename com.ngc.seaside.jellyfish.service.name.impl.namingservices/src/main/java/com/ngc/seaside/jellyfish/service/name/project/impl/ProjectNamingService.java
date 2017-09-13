@@ -17,6 +17,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = IProjectNamingService.class)
 public class ProjectNamingService implements IProjectNamingService {
+   
+   private static final String GROUP_ID_PROPERTY = "groupId";
+   private static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   private static final String DEFAULT_ARTIFACT_ID_SUFFIX = "domain";
 
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
@@ -38,17 +42,18 @@ public class ProjectNamingService implements IProjectNamingService {
    public IProjectInformation getDomainProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
-      String modelPackageName = model.getParent().getName();
       String modelName = model.getName();
       String versionPropertyName = modelName + "DomainVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String groupId = evaluateGroupId(options, model);
+      String artifactId = evaluateArtifactId(options, model, DEFAULT_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
-            .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".domain")
+            .setGroupId(groupId)
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName);
    }
-
+   
    @Override
    public IProjectInformation getEventsProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -99,5 +104,25 @@ public class ProjectNamingService implements IProjectNamingService {
 
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+
+   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model, String suffix) {
+      String artifactId;
+      if (options.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
+         artifactId = options.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      } else {
+         artifactId = model.getName().toLowerCase() + "." + suffix;
+      }
+      return artifactId;
+   }
+
+   private String evaluateGroupId(IJellyFishCommandOptions options, IModel model) {
+      String groupId;
+      if (options.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
+         groupId = options.getParameters().getParameter(GROUP_ID_PROPERTY).getStringValue();
+      } else {
+         groupId = model.getParent().getName();
+      }
+      return groupId;
    }
 }

@@ -1,7 +1,9 @@
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -14,15 +16,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectNamingServiceTest {
 
    private ProjectNamingService service;
 
    private Model model;
+   
+   private DefaultParameterCollection parameters;
 
    @Mock
    private ILogService logService;
@@ -32,6 +33,9 @@ public class ProjectNamingServiceTest {
 
    @Before
    public void setup() throws Throwable {
+      parameters = new DefaultParameterCollection();
+      when(options.getParameters()).thenReturn(parameters);
+      
       service = new ProjectNamingService();
       service.setLogService(logService);
       service.activate();
