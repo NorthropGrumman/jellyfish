@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.scenario.api;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.util.Collection;
@@ -44,15 +43,6 @@ public interface IScenarioService {
     */
    Collection<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
                                                                               IScenario scenario);
-
-   /**
-    * Gets a collection of requirement IDs as string that are associated with the given scenario.
-    *
-    * @param options  the options the current command is being executed with
-    * @param scenario the scenario to get the requirement IDs for
-    * @return a collection of requirement IDs as string that are associated with the given scenario
-    */
-   Collection<String> getRequirements(IJellyFishCommandOptions options, IScenario scenario);
 
    /**
     * Gets a collection of timing constraints that have been applied to the given scenario.

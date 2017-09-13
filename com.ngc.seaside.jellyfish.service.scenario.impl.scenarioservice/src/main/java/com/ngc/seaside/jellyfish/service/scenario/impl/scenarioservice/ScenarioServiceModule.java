@@ -9,6 +9,6 @@ public class ScenarioServiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(IScenarioService.class).to(ScenarioService.class).in(Singleton.class);
+      bind(IScenarioService.class).to(ScenarioServiceGuiceWrapper.class).in(Singleton.class);
    }
 }

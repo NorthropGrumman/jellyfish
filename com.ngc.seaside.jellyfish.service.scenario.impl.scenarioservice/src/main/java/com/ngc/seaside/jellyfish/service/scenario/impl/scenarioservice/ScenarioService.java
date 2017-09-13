@@ -71,12 +71,6 @@ public class ScenarioService implements IScenarioService {
    }
 
    @Override
-   public Collection<String> getRequirements(IJellyFishCommandOptions options, IScenario scenario) {
-      // Note this logic is the same regardless of messaging paradigm.
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
    public Collection<ITimingConstraint> getTimingConstraints(IJellyFishCommandOptions options, IScenario scenario) {
       // Note this logic is the same regardless of messaging paradigm.
       throw new UnsupportedOperationException("not implemented");

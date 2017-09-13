@@ -132,7 +132,7 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceBaseCommand(capture.getValue(), "my-project");
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME),
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), "my-project");
    }
@@ -185,7 +185,7 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceBaseCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME),
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
    }

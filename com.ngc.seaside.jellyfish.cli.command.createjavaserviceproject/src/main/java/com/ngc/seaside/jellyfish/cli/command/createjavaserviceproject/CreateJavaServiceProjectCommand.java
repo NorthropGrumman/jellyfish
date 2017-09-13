@@ -50,11 +50,11 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_DISTRIBUTION_COMMAND_NAME = "create-java-distribution";
    static final String CREATE_JAVA_SERVICE_COMMAND_NAME = "create-java-service";
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
-   static final String CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME = "create-java-service-connector";
+   static final String CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME = "create-java-pubsub-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
    private static final String[] SUBCOMMANDS = { CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
             CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
-            CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME,
+            CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
             CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME };
 
    public static final String NAME = "create-java-service-project";
@@ -126,7 +126,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       createJavaServiceConfigProject(ctx);
 
       createJavaServiceBaseProject(ctx);
-      createJavaServiceConnectorProject(ctx);
+      createJavaPubsubConnectorProject(ctx);
    }
 
    @Activate
@@ -246,12 +246,12 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    }
 
 
-   private void createJavaServiceConnectorProject(CommandInvocationContext ctx) {
+   private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.generatedDirectory.getAbsolutePath())
       );
-      doRunCommand(CREATE_JAVA_SERVICE_CONNECTOR_COMMAND_NAME, delegateOptions);
+      doRunCommand(CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME, delegateOptions);
    }
 
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {

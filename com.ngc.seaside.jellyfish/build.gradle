@@ -28,8 +28,8 @@ dependencies {
     compile project(":jellyfish.cli.command.createjavaevents")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
 
-    compile project(":jellyfish.cli.command.createjavaserviceconnector")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconnector", configuration: "commandTemplate")
+    compile project(":jellyfish.cli.command.createjavapubsubconnector")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavapubsubconnector", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.report.requirementsverification")
     commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
