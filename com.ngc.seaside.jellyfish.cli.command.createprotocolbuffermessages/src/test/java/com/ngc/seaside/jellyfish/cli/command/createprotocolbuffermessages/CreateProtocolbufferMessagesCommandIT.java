@@ -106,6 +106,18 @@ public class CreateProtocolbufferMessagesCommandIT {
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
    }
+   
+   @Test
+   public void testCommandArtifactId() throws IOException {
+      final String artifact = "test.artifact.g1";
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+         CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifact);
+      
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact);
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+   }
 
    @Test
    public void testGradleBuildForProtoBufferItems() throws IOException {
