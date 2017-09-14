@@ -23,6 +23,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
+import net.bytebuddy.implementation.bind.MethodDelegationBinder.ParameterBinding.Anonymous;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaEventsCommandTest {
@@ -60,7 +63,6 @@ public class CreateJavaEventsCommandTest {
       IParsingResult result = mock(IParsingResult.class);
 
       IModel model = mock(IModel.class);
-      when(model.getName()).thenReturn("Model");
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("my.Model")).thenReturn(Optional.of(model));
 
@@ -72,14 +74,17 @@ public class CreateJavaEventsCommandTest {
       resourceService = new MockedResourceService();
       
       IProjectInformation projectInformation = mock(IProjectInformation.class);
-      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
-      when(projectNamingService.getEventsProjectName(any(), model)).thenReturn(projectInformation);
+      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);  
+
+      when (projectNamingService.getEventsProjectName(any(), any())).thenReturn(projectInformation);
+      when (projectInformation.getArtifactId()).thenReturn("model.events");
 
       command = new CreateJavaEventsCommand();
       command.setLogService(logService);
       command.setResourceService(resourceService);
       command.setJellyFishCommandProvider(commandProvider);
       command.setPromptUserService(promptUserService);
+      command.setProjectNamingService(projectNamingService);
       command.activate();
 
    }
