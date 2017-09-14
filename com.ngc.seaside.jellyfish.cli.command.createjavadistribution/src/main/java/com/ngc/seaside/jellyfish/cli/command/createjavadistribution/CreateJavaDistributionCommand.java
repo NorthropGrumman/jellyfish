@@ -11,6 +11,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -32,21 +33,20 @@ import java.util.regex.Pattern;
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
+   public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
-   public static final String MODEL_PROPERTY = "model";
-   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
-
-   public static final String PACKAGE_PROPERTY = "package";
    public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
-   public static final String CLEAN_PROPERTY = "clean";
-
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
             .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+   
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
@@ -58,21 +58,11 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the gradle distribution project for a Java application",
-                              new DefaultParameter(GROUP_ID_PROPERTY)
-                                       .setDescription("The project's group ID. (default: the package in the model)")
-                                       .setRequired(false),
-                              new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription(
-                                       "The project's artifact ID. (default: model name in lowercase + '.distribution')")
-                                       .setRequired(false),
-                              new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                       .setDescription("Base directory in which to output the project")
-                                       .setRequired(true),
-                              new DefaultParameter(MODEL_PROPERTY)
-                                       .setDescription("The fully qualified path to the system descriptor model")
-                                       .setRequired(true),
-                              new DefaultParameter(CLEAN_PROPERTY).setDescription(
-                                       "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                       .setRequired(false)
+            CommonParameters.GROUP_ID, 
+            CommonParameters.ARTIFACT_ID, 
+            CommonParameters.OUTPUT_DIRECTORY.required(), 
+            CommonParameters.MODEL.required(), 
+            CommonParameters.CLEAN
       );
    }
 

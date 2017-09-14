@@ -11,6 +11,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
@@ -42,14 +43,14 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-cucumber-tests";
    private static final IUsage USAGE = createUsage();
 
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_PROPERTY = "model";
-   public static final String CLEAN_PROPERTY = "clean";
-   public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
 
-   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
+   public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
    private static final String OUTPUT_PROPERTY = "output";
 
    private ILogService logService;
@@ -100,9 +101,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String basePackage = evaluatePackage(commandOptions, groupId, baseArtifact);
       final String packageName = evaluatePackage(commandOptions, groupId, artifactId);
       final String projectName = packageName;
-      final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
+      final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
 
-      if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
+      if (!CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
          CucumberDto dto = new CucumberDto().setBaseArtifactId(baseArtifact)
                                             .setArtifactId(artifactId)
@@ -253,7 +254,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     */
    private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
             Path generatedProjectDirectory, boolean clean) {
-      
+
       // First, find the feature files that apply to the model.
       TreeMap<String, FeatureFile> features = new TreeMap<>(Collections.reverseOrder());
       final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
@@ -261,8 +262,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                                          .resolve(Paths.get("src", "test", "gherkin"))
                                          .toAbsolutePath();
       final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
-            .resolve(Paths.get("src", "test", "resources", "data"))
-            .toAbsolutePath();
+                                          .resolve(Paths.get("src", "test", "resources", "data"))
+                                          .toAbsolutePath();
 
       String packages = model.getParent().getName();
       Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
@@ -295,7 +296,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
             throw new CommandException("Failed to copy " + feature.getAbsolutePath() + " to " + featureDestination, e);
          }
       }
-      if(Files.isDirectory(dataFile)) {
+      if (Files.isDirectory(dataFile)) {
 
          try {
 
@@ -315,30 +316,15 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the gradle distribution project for a Java application",
-         new DefaultParameter(GROUP_ID_PROPERTY)
-                                                .setDescription(
-                                                   "The project's group ID. (default: the package in the model)")
-                                                .setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription(
-            "The project's artifact ID. (default: model name in lowercase + '.distribution')")
-                                                   .setRequired(false),
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                                        .setDescription("Base directory in which to output the project")
-                                                        .setRequired(true),
-         new DefaultParameter(MODEL_PROPERTY)
-                                             .setDescription("The fully qualified path to the system descriptor model")
-                                             .setRequired(true),
-         new DefaultParameter(CLEAN_PROPERTY).setDescription(
-            "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                             .setRequired(false),
-         new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
-            "If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
-                                                             .setRequired(false));
-   }
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN,
 
-   private static boolean evaluateBoolean(IParameterCollection parameters, String parameter) {
-      return parameters.containsParameter(parameter)
-         && Boolean.valueOf(parameters.getParameter(parameter).getStringValue().toLowerCase());
+         new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY)
+            .setDescription("If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
+            .setRequired(false));
    }
 
    /**
