@@ -8,6 +8,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -28,6 +29,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaEventsCommandTest {
@@ -66,7 +71,9 @@ public class CreateJavaEventsCommandTest {
 
       resourceService = new MockedResourceService();
       
+      IProjectInformation projectInformation = mock(IProjectInformation.class);
       IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
+      when(projectNamingService.getEventsProjectName(any(), model)).thenReturn(projectInformation);
 
       command = new CreateJavaEventsCommand();
       command.setLogService(logService);
