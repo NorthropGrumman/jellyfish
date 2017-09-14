@@ -1,5 +1,13 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
@@ -22,20 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
-
-import net.bytebuddy.implementation.bind.MethodDelegationBinder.ParameterBinding.Anonymous;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaEventsCommandTest {
@@ -86,7 +80,6 @@ public class CreateJavaEventsCommandTest {
       command.setPromptUserService(promptUserService);
       command.setProjectNamingService(projectNamingService);
       command.activate();
-
    }
 
    @Test

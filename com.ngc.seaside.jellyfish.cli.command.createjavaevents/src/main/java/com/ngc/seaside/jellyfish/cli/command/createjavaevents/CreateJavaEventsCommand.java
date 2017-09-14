@@ -82,9 +82,8 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       IModel model = evaluateModelParameter(commandOptions);
       IProjectInformation eventsProjectName = projectNamingService.getEventsProjectName(commandOptions, model);
       String artifactId = eventsProjectName.getArtifactId();
-      
-      //String artifactId = evaluateArtifactId(commandOptions, model);
       String eventTemplate = evaluateEventTemplate(commandOptions);
+      
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
             commandOptions,
             new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
