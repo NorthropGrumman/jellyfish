@@ -25,12 +25,14 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
                                                           IJellyFishCommandProvider jellyfishCommandProvider,
                                                           IResourceService resourceService,
                                                           IJellyFishCommandProvider provider,
-                                                          IPackageNamingService packageNamingService) {
+                                                          IPackageNamingService packageNamingService,
+                                                          IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setJellyFishCommandProvider(jellyfishCommandProvider);
       delegate.setResourceService(resourceService);
       delegate.setJellyFishCommandProvider(provider);
       delegate.setPackageNamingService(packageNamingService);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 

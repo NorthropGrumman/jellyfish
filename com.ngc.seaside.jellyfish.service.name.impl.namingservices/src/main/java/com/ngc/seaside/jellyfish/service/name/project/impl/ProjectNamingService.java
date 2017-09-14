@@ -22,6 +22,7 @@ public class ProjectNamingService implements IProjectNamingService {
    private static final String ARTIFACT_ID_PROPERTY = "artifactId";
    private static final String DOMAIN_ARTIFACT_ID_SUFFIX = "domain";
    private static final String EVENT_ARTIFACT_ID_SUFFIX = "events";
+   private static final String MESSAGES_ARTIFACT_ID_SUFFIX = "messages";
 
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
@@ -81,10 +82,12 @@ public class ProjectNamingService implements IProjectNamingService {
       String modelName = model.getName();
       String versionPropertyName = modelName + "MessagesVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
-
+      String artifactId = evaluateArtifactId(options, model, MESSAGES_ARTIFACT_ID_SUFFIX);
+      
+      
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".messages")
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName);
    }
 

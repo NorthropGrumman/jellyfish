@@ -16,6 +16,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -38,7 +40,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    static final String NAME = "create-protocolbuffer-messages";
    static final String CREATE_DOMAIN_COMMAND = "create-domain";
    static final String TEMPLATE_FILE = "proto-messages.vm";
-   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "messages";
    static final String DEFAULT_EXT_PROPERTY = "proto";
    static final IUsage USAGE = createUsage();
 
@@ -47,6 +48,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    private IResourceService resourceService;
    private IPromptUserService promptUserService;
    private IPackageNamingService packageNamingService;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -61,8 +63,9 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IModel model = evaluateModelParameter(commandOptions);
-      final String artifactId = evaluateArtifactId(commandOptions, model);
-
+      IProjectInformation messageProjectName = projectNamingService.getMessageProjectName(commandOptions, model);
+      String artifactId = messageProjectName.getArtifactId();
+      
       // Unpack the velocity template to a temporary directory.
       final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
          CreateProtocolbufferMessagesCommand.class,
@@ -162,6 +165,17 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
    }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
+   public void setProjectNamingService(IProjectNamingService ref) {
+         this.projectNamingService = ref;
+   }
+   
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
+   }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
@@ -175,16 +189,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
             m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-   }
-
-   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
-      final String artifactId;
-      if (options.getParameters().containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)) {
-         artifactId = options.getParameters().getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactId;
    }
 
    /**
