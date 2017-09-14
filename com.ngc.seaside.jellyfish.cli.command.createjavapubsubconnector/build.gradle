@@ -26,6 +26,7 @@ dependencies {
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
 
    testCompile project(":jellyfish.cli.command.testutils")
+   testCompile project(":jellyfish.service.name.impl.namingservices")
    testCompile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
    testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
    testCompile "com.ngc.blocs:service.api:$blocsVersion"

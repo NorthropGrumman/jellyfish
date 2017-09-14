@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 
@@ -23,13 +24,15 @@ public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishC
                                                         ITemplateService templateService,
                                                         IScenarioService scenarioService,
                                                         ITransportConfigurationService transportConfigService,
-                                                        IRequirementsService requirementsService) {
+                                                        IRequirementsService requirementsService,
+                                                        IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
       delegate.setScenarioService(scenarioService);
       delegate.setTransportConfigurationService(transportConfigService);
       delegate.setRequirementsService(requirementsService);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 

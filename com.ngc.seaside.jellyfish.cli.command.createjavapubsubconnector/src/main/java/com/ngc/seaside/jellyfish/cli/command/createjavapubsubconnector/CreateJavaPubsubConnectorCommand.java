@@ -15,6 +15,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto.ConnectorDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
@@ -66,6 +67,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    private IScenarioService scenarioService;
    private ITransportConfigurationService transportConfigService;
    private IRequirementsService requirementsService;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -412,6 +414,18 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public void removeRequirementsService(IRequirementsService ref) {
       setRequirementsService(null);
    }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+      
+   }
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
+   }
+
 
    /**
     * Create the usage for this command.
