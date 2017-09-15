@@ -67,6 +67,38 @@ public class ProjectNamingService implements IProjectNamingService {
    }
 
    @Override
+   public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ImplVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(modelName.toLowerCase() + ".impl")
+            .setVersionPropertyName(versionPropertyName);
+   }
+
+   @Override
+   public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "BaseServiceVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(modelName.toLowerCase() + ".base")
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+   }
+
+   @Override
    public IProjectInformation getMessageProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
