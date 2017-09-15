@@ -20,7 +20,7 @@ public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
    public CreateJavaServiceCommandGuiceWrapper(ILogService logService,
                                                IPromptUserService promptUserService,
                                                ITemplateService templateService,
-                                               @Named("java-service") IServiceDtoFactory templateDaoFactory) {
+                                               IServiceDtoFactory templateDaoFactory) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);

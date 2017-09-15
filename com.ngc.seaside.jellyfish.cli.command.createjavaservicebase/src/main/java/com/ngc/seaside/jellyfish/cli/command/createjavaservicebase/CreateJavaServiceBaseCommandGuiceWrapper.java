@@ -20,7 +20,7 @@ public class CreateJavaServiceBaseCommandGuiceWrapper implements IJellyFishComma
    public CreateJavaServiceBaseCommandGuiceWrapper(ILogService logService,
                                                    IPromptUserService promptUserService,
                                                    ITemplateService templateService,
-                                                   @Named("java-service-base") IBaseServiceDtoFactory templateDtoFactory) {
+                                                   IBaseServiceDtoFactory templateDtoFactory) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
