@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
