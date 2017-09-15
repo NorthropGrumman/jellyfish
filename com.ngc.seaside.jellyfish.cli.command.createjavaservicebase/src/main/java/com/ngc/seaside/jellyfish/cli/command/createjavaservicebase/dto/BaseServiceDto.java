@@ -1,81 +1,90 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.MethodDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceInterfaceDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BaseServiceTemplateDto extends TemplateDto {
+public class BaseServiceDto {
 
+   private String projectDirectoryName;
+   private ClassDto<? extends MethodDto> interfacez;
+   private ClassDto<? extends PubSubMethodDto> abstractClass;
+   private Set<String> projectDependencies;
    private Set<String> exportedPackages;
-   private Set<String> transportTopics;
-   private List<MethodDto> publishingMethods;
-   private List<MethodDto> receivingMethods;
-   private String basePackageName;
-   private ServiceInterfaceDto serviceInterfaceDto;
+   private EnumDto<?> topics;
+   private IModel model;
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
             .collect(Collectors.joining(", "));
    }
 
+   public String getProjectDirectoryName() {
+      return projectDirectoryName;
+   }
+
+   public BaseServiceDto setProjectDirectoryName(String projectDirectoryName) {
+      this.projectDirectoryName = projectDirectoryName;
+      return this;
+   }
+
+   public ClassDto<? extends MethodDto> getInterface() {
+      return interfacez;
+   }
+
+   public BaseServiceDto setInterface(ClassDto<? extends MethodDto> interfacez) {
+      this.interfacez = interfacez;
+      return this;
+   }
+
+   public ClassDto<? extends PubSubMethodDto> getAbstractClass() {
+      return abstractClass;
+   }
+
+   public BaseServiceDto setAbstractClass(ClassDto<? extends PubSubMethodDto> abstractClass) {
+      this.abstractClass = abstractClass;
+      return this;
+   }
+
+   public Set<String> getProjectDependencies() {
+      return projectDependencies;
+   }
+
+   public BaseServiceDto setProjectDependencies(Set<String> projectDependencies) {
+      this.projectDependencies = projectDependencies;
+      return this;
+   }
+
    public Set<String> getExportedPackages() {
       return exportedPackages;
    }
 
-   public BaseServiceTemplateDto setExportedPackages(Set<String> exportedPackages) {
+   public BaseServiceDto setExportedPackages(Set<String> exportedPackages) {
       this.exportedPackages = exportedPackages;
       return this;
    }
 
-   public Set<String> getTransportTopics() {
-      return transportTopics;
+   public EnumDto<?> getTopicsEnum() {
+      return topics;
    }
 
-   public BaseServiceTemplateDto setTransportTopics(Set<String> transportTopics) {
-      this.transportTopics = transportTopics;
+   public BaseServiceDto setTopicsEnum(EnumDto<?> topics) {
+      this.topics = topics;
       return this;
    }
 
-   public List<MethodDto> getPublishingMethods() {
-      return publishingMethods;
+   public IModel getModel() {
+      return model;
    }
 
-   public BaseServiceTemplateDto setPublishingMethods(
-         List<MethodDto> publishingMethods) {
-      this.publishingMethods = publishingMethods;
+   public BaseServiceDto setModel(IModel model) {
+      this.model = model;
       return this;
    }
 
-   public List<MethodDto> getReceivingMethods() {
-      return receivingMethods;
-   }
-
-   public BaseServiceTemplateDto setReceivingMethods(
-         List<MethodDto> receivingMethods) {
-      this.receivingMethods = receivingMethods;
-      return this;
-   }
-
-   public String getBasePackageName() {
-      return basePackageName;
-   }
-
-   public BaseServiceTemplateDto setBasePackageName(String basePackageName) {
-      this.basePackageName = basePackageName;
-      return this;
-   }
-
-   public ServiceInterfaceDto getServiceInterfaceDto() {
-      return serviceInterfaceDto;
-   }
-
-   public BaseServiceTemplateDto setServiceInterfaceDto(
-         ServiceInterfaceDto serviceInterfaceDto) {
-      this.serviceInterfaceDto = serviceInterfaceDto;
-      return this;
-   }
 }

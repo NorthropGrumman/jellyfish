@@ -1,8 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-public interface ITemplateDtoFactory {
+public interface IServiceDtoFactory {
 
-   TemplateDto newDto(IModel model, String packagez);
+   ServiceDto newDto(IJellyFishCommandOptions options, IModel model);
 }
