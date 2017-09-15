@@ -19,6 +19,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -27,6 +28,8 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.util.function.Function;
 
 /**
  * This command generates the message IDL and gradle project structure that will
@@ -73,11 +76,15 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       resourceService.readResource(velocityTemplate);
       final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
+      Function<IData, String> packageGenerator =
+            (d) -> packageNamingService.getMessagePackageName(commandOptions, d);
+      
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
             new DefaultParameter<>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
             new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
+            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator),
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                CreateProtocolbufferMessagesCommand.class.getPackage().getName()),

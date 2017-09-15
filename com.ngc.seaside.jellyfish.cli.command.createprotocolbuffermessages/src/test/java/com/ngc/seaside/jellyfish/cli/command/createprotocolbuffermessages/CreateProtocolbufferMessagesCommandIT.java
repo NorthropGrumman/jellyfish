@@ -20,6 +20,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -42,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -118,6 +120,21 @@ public class CreateProtocolbufferMessagesCommandIT {
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact);
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
    }
+   
+   @Test
+   public void testCommandProjectGenerator() throws IOException {
+      Function<IData, String> packageGenerator = (d) -> "foo";
+      
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+         CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
+      
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1");
+      checkGradleBuildDoesntContain(projectDir, "foo");
+   }
 
    @Test
    public void testGradleBuildForProtoBufferItems() throws IOException {
@@ -130,11 +147,11 @@ public class CreateProtocolbufferMessagesCommandIT {
       checkGradleBuild(projectDir, "com.google.protobuf", "src/main/resources/velocity/proto-messages.vm");
    }
 
-   private void runCommand(String... keyValues) {
+   private void runCommand(Object... keyValues) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<>((String) keyValues[n]).setValue(keyValues[n + 1]));
       }
       Mockito.when(options.getParameters()).thenReturn(collection);
       cmd.run(options);
@@ -147,6 +164,16 @@ public class CreateProtocolbufferMessagesCommandIT {
       Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
       for (String content : fileContents) {
          Assert.assertTrue("Expected \"" + content + "\" in build.gradle", contents.contains(content));
+      }
+   }
+   
+   private void checkGradleBuildDoesntContain(Path projectDir, String... fileContents) throws IOException {
+      Path buildFile = projectDir.resolve("build.gradle");
+      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
+      String contents = new String(Files.readAllBytes(buildFile));
+      Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
+      for (String content : fileContents) {
+         Assert.assertFalse("Didn't expect \"" + content + "\" in build.gradle", contents.contains(content));
       }
    }
 
