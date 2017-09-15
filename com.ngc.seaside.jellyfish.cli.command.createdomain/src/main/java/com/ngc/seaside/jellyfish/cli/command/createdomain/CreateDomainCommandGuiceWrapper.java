@@ -9,6 +9,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
@@ -21,12 +22,14 @@ public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
                                           IPromptUserService promptService,
                                           ITemplateService templateService,
                                           IResourceService resourceService,
-                                          IProjectNamingService projectNamingService) {
+                                          IProjectNamingService projectNamingService,
+                                          IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
       delegate.setResourceService(resourceService);
       delegate.setProjectNamingService(projectNamingService);
+      delegate.setPackageNamingService(packageNamingService);
    }
 
    @Override

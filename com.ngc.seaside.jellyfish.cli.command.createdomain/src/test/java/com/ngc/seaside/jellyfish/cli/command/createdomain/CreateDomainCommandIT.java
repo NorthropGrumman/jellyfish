@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -18,6 +17,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -177,6 +178,23 @@ public class CreateDomainCommandIT {
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
+   
+   @Test
+   public void testCommandWithPackageGenerator() throws IOException, FileUtilitiesException {
+      Function<IData, String> packageGenerator = (d) -> "foo";
+
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+                 CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "foo");
+      checkVelocity(projectDir);
+      checkDomain(projectDir);
+   }
+
 
    @Test
    public void testCommandWithSettingsDotGradle() throws IOException, FileUtilitiesException {
@@ -276,11 +294,11 @@ public class CreateDomainCommandIT {
                         lines.contains("project(':com.ngc.seaside.test1.model1').name = 'test1.model1'"));
    }
 
-   private void runCommand(String... keyValues) {
+   private void runCommand(Object... keyValues) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
+         collection.addParameter(new DefaultParameter<>((String) keyValues[n], keyValues[n + 1]));
       }
 
       Mockito.when(options.getParameters()).thenReturn(collection);

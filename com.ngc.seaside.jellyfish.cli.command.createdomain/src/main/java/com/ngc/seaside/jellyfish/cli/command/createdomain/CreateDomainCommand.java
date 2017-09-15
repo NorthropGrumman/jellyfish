@@ -23,6 +23,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -50,10 +51,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component(service = IJellyFishCommand.class)
@@ -74,6 +77,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String MODEL_PROPERTY = "model";
    public static final String USE_MODEL_STRUCTURE_PROPERTY = "useModelStructure";
    public static final String USE_VERBOSE_IMPORTS_PROPERTY = "useVerboseImports";
+   public static final String PACKAGE_GENERATOR_PROPERTY = "packageGenerator";
    public static final String CLEAN_PROPERTY = "clean";
 
    private ILogService logService;
@@ -81,6 +85,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private ITemplateService templateService;
    private IResourceService resourceService;
    private IProjectNamingService projectNamingService;
+   private IPackageNamingService packageNamingService;
 
    @Override
    public String getName() {
@@ -97,14 +102,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final IParameterCollection parameters = commandOptions.getParameters();
       final IModel model = evaluateModelParameter(commandOptions);
       IProjectInformation domainProjName = projectNamingService.getDomainProjectName(commandOptions, model);
+      
       String groupId = domainProjName.getGroupId();
       String artifactId = domainProjName.getArtifactId();
-      
+
       final String pkg = evaluatePackage(parameters, groupId, artifactId);
+
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useModelStructure = evaluateBooleanParameter(parameters, USE_MODEL_STRUCTURE_PROPERTY);
       final boolean useVerboseImports = evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
+      final Function<IData, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
 
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
@@ -115,25 +123,18 @@ public class CreateDomainCommand implements IJellyFishCommand {
       // Group data by their sd package
       Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
-      final Set<String> domainPackages;
-      if (useModelStructure) {
-         domainPackages = mappedData.keySet();
-      } else {
-         domainPackages = Collections.singleton(pkg);
-      }
-
       final Path outputDir = evaluateOutputDirectory(parameters);  
       final Path projectDir = evaluateProjectDirectory(outputDir, domainProjName.getDirectoryName(), clean);
 
-      createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
-      createDomainTemplate(projectDir, domainTemplateFile);
-      
+
+      final Set<String> domainPackages = new LinkedHashSet<>();
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
-         final String domainPackage = useModelStructure ? sdPackage : pkg;
-         generateDomainXml(xmlFile, dataList, domainPackage, useVerboseImports);
+         domainPackages.addAll(generateDomainXml(xmlFile, dataList, packageGenerator, commandOptions, useVerboseImports));
       });
 
+      createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
+      createDomainTemplate(projectDir, domainTemplateFile);
       updateGradleDotSettings(outputDir, groupId, artifactId, commandOptions.getParameters());
 
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
@@ -225,6 +226,17 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
+   public void setPackageNamingService(IPackageNamingService ref) {
+      this.packageNamingService = ref;
+      
+   }
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
+   }
 
    private void updateGradleDotSettings(Path outputDir,
                                         String groupId,
@@ -241,6 +253,15 @@ public class CreateDomainCommand implements IJellyFishCommand {
       } catch (FileUtilitiesException e) {
          throw new CommandException("failed to update settings.gradle!", e);
       }
+   }
+   
+   @SuppressWarnings("unchecked")
+   private static Function<IData, String> evaluatePackageGeneratorParameter(IParameterCollection parameters) {
+      Function<IData, String> generator = null;
+      if (parameters.containsParameter(PACKAGE_GENERATOR_PROPERTY)) {
+         generator = (Function<IData, String>) parameters.getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
+      }
+      return generator;
    }
 
    /**
@@ -477,15 +498,18 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param pkg package of domain data classes
     * @throws CommandException if an error occurred when creating the xml file
     */
-   private static void generateDomainXml(Path xmlFile, Collection<IData> data, String pkg, boolean useVerboseImports) {
+   private Collection<String> generateDomainXml(Path xmlFile, Collection<IData> data, Function<IData, String> packageGenerator, IJellyFishCommandOptions options, boolean useVerboseImports) {
+      Collection<String> packages = new LinkedHashSet<>();
       Tdomain domain = new Tdomain();
-      
+
       DomainConfiguration config = new DomainConfiguration();
       config.setUseVerboseImports(useVerboseImports);
       domain.setConfig(config);
       
       ArrayList<Tobject> enumObjList = new ArrayList<Tobject>();
-      for (IData d : data) {
+      for (IData d : data) { 
+         String pkg = packageGenerator == null ? packageNamingService.getDomainPackageName(options, d) : packageGenerator.apply(d);
+         packages.add(pkg);
          domain.getObject().add(convert(d, pkg, useVerboseImports));
 
          for (IDataField dField : d.getFields()) {
@@ -504,6 +528,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       } catch (IOException e) {
          throw new CommandException(e);
       }
+      return packages;
    }
 
    /**
@@ -631,7 +656,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
                               new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
                                     .setDescription(
                                           "Name of template used to generate the domain projects build.gradle")
+                                    .setRequired(false),
+                              new DefaultParameter<String>(PACKAGE_GENERATOR_PROPERTY)
+                                    .setDescription(
+                                           "Use the package generator")
                                     .setRequired(false));
+      
+      
    }
 
 }
