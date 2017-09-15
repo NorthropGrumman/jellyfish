@@ -62,4 +62,13 @@ public interface IPackageNamingService {
     * @return the package name of the implementation base class of the data type
     */
    String getServiceBaseImplementationPackageName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the package name for the transport topics of a Java service.
+    *
+    * @param options the options the current command is being executed with
+    * @param model   the model of a service to get the package name for
+    * @return the package name for the transport topics of a Java service
+    */
+   String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model);
 }

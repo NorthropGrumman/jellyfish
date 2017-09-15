@@ -54,4 +54,9 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
                                                          IModel model) {
       return packageNamingService.getServiceBaseImplementationPackageName(options, model);
    }
+
+   @Override
+   public String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getTransportTopicsPackageName(options, model);
+   }
 }

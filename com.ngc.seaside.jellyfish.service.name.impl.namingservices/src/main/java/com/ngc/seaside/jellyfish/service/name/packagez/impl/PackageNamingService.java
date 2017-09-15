@@ -53,17 +53,38 @@ public class PackageNamingService implements IPackageNamingService {
 
    @Override
    public String getServiceInterfacePackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".api" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Override
    public String getServiceImplementationPackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".impl" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Override
    public String getServiceBaseImplementationPackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".base.impl" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
+   }
+   
+   @Override
+   public String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".transport.topic" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Activate
