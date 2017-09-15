@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.service.codegen.api.dto;
 
-import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
-import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow.FlowType;
-
 import java.util.Map;
 
 /**
@@ -12,38 +9,18 @@ public class PubSubMethodDto extends MethodDto {
 
    private Map<String, ? extends MethodDto> publishMethods;
    private String publishingTopic;
-   private IPublishSubscribeMessagingFlow flow;
-
-   /**
-    * Gets the pub/sub method's signature. Two pub/sub methods can be considered equal if their signatures are the same.
-    */
-   public String getPubSubMethodSignature() {
-      return flow.getFlowType() + ":" + super.getMethodSignature();
-   }
-
-   /**
-    * Gets the flow associated with this method.
-    */
-   public IPublishSubscribeMessagingFlow getFlow() {
-      return flow;
-   }
-
-   public PubSubMethodDto setFlow(IPublishSubscribeMessagingFlow flow) {
-      this.flow = flow;
-      return this;
-   }
+   private boolean isPublisher;
 
    /**
     * Gets whether or not this method is associated with publishing
     */
    public boolean isPublisher() {
-      if (flow.getFlowType() == FlowType.SOURCE) {
-         return true;
-      }
-      if (flow.getFlowType() == FlowType.SINK) {
-         return false;
-      }
-      return publishingTopic != null;
+      return isPublisher;
+   }
+
+   public PubSubMethodDto setPublisher(boolean publisher) {
+      this.isPublisher = publisher;
+      return this;
    }
 
    /**

@@ -18,7 +18,6 @@ import com.ngc.seaside.jellyfish.service.codegen.testutils.FlowFactory;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
-import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow.FlowType;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -138,7 +137,6 @@ public class JavaServiceGenerationServiceTest {
       assertFalse("method should not return!", subscriber.isReturns());
       assertEquals("argument list not correct!", "IEvent<TestDataInput> event", subscriber.getArgumentsListSnippet());
       assertFalse("method should be a subscriber!", subscriber.isPublisher());
-      assertEquals("method should have a path flow type!", FlowType.PATH, subscriber.getFlow().getFlowType());
       assertEquals("subscriber's publishers not correct!", 1, subscriber.getPublishMethods().size());
       assertEquals("subscriber's publishers not correct!",
          "calculateTrackPriority",
@@ -152,7 +150,6 @@ public class JavaServiceGenerationServiceTest {
       assertFalse("method should not return!", publisher.isReturns());
       assertEquals("argument list not correct!", "TestDataOutput outputField", publisher.getArgumentsListSnippet());
       assertTrue("method should be a publisher!", publisher.isPublisher());
-      assertEquals("method should have a path flow type!", FlowType.PATH, publisher.getFlow().getFlowType());
       assertTrue("method should not have publishing methods!", publisher.getPublishMethods().isEmpty());
       assertEquals("publishing topic not correct!", "TestDataOutput.TOPIC", publisher.getPublishingTopic());
 
@@ -212,7 +209,6 @@ public class JavaServiceGenerationServiceTest {
       assertFalse("method should not return!", subscriber.isReturns());
       assertEquals("argument list not correct!", "IEvent<TestDataInput> event", subscriber.getArgumentsListSnippet());
       assertFalse("method should be a subscriber!", subscriber.isPublisher());
-      assertEquals("method should have a sink flow type!", FlowType.SINK, subscriber.getFlow().getFlowType());
       assertEquals("subscriber's publishers not correct!", 1, subscriber.getPublishMethods().size());
       assertEquals("subscriber's publishers not correct!",
          "calculateTrackPriority",
@@ -272,7 +268,6 @@ public class JavaServiceGenerationServiceTest {
       assertFalse("method should not return!", publisher.isReturns());
       assertEquals("argument list not correct!", "TestDataOutput outputField", publisher.getArgumentsListSnippet());
       assertTrue("method should be a publisher!", publisher.isPublisher());
-      assertEquals("method should have a source flow type!", FlowType.SOURCE, publisher.getFlow().getFlowType());
       assertEquals("source's publishing method not correct!", 1, publisher.getPublishMethods().size());
       assertEquals("source's publishing method not correct!",
          "calculateTrackPriority",

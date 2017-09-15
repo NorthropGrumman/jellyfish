@@ -34,9 +34,9 @@ public abstract class ${dto.abstractClass.name}
    protected ILogService logService;
 
    protected IFaultManagementService faultManagementService;
-   
+
    protected IThreadService threadService;
-   
+
    protected Map<String, ISubmittedLongLivingTask> threads = new HashMap<>();
 
 #foreach($method in $dto.abstractClass.methods)
@@ -51,7 +51,7 @@ public abstract class ${dto.abstractClass.name}
 #set ($scenarioName = $entry.key)
 #set ($publishMethod = $entry.value)
       try {
-#if ($method.flow.flowType == "PATH")
+#if ($publishMethod)
          ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
 #else
          ${scenarioName}(${argument.name}.getSource());
@@ -66,9 +66,9 @@ public abstract class ${dto.abstractClass.name}
 
 #end
    }
-#end
-#end
 
+#end
+#end
    @Override
    public String getName() {
       return NAME;
@@ -98,12 +98,12 @@ public abstract class ${dto.abstractClass.name}
 
    protected void activate() {
       eventService.addSubscriber(this);
-      
+
 #foreach ($method in $dto.abstractClass.methods)
-#if ($method.flow.flowType == "SOURCE")
+#if ($method.isPublisher())
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
-      ISubmittedLongLivingTask task = threadService.executeLongLivingTask("", () -> {
+      ISubmittedLongLivingTask task = threadService.executeLongLivingTask("${scenarioName}::${method.name}", () -> {
          try {
             ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
          }  (ServiceFaultException fault) {
@@ -115,6 +115,7 @@ public abstract class ${dto.abstractClass.name}
          }
       });
       threads.put("${scenarioName}::${method.name}", task);
+
 #end
 #end
 #end
@@ -169,6 +170,7 @@ public abstract class ${dto.abstractClass.name}
       Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
       eventService.publish(${argument.name}, ${method.publishingTopic});
    }
+
 #end
 #end
 }

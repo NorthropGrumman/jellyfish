@@ -24,8 +24,6 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
-import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
-import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow.FlowType;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
@@ -85,8 +83,7 @@ public class CreateJavaServiceBaseCommandIT {
 
    private IModel model = newModelForTesting();
 
-   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto().setFlow(
-      mock(IPublishSubscribeMessagingFlow.class))
+   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto().setPublisher(true)
                                                                               .setPublishingTopic("TrackPriority.TOPIC")
                                                                               .setName("publishTrackPriority")
                                                                               .setArguments(Collections.singletonList(
@@ -97,12 +94,7 @@ public class CreateJavaServiceBaseCommandIT {
                                                                                                   .setName(
                                                                                                      "trackPriority")));
 
-   private PubSubMethodDto receiver = (PubSubMethodDto) new PubSubMethodDto().setFlow(
-      mock(IPublishSubscribeMessagingFlow.class))
-                                                                             .setPublishMethods(
-                                                                                Collections.singletonMap(
-                                                                                   "calculateTrackPriority",
-                                                                                   publisher))
+   private PubSubMethodDto receiver = (PubSubMethodDto) new PubSubMethodDto().setPublisher(false)
                                                                              .setName("receiveTrackEngagementStatus")
                                                                              .setArguments(Collections.singletonList(
                                                                                 new ArgumentDto().setTypeName("IEvent")
@@ -217,8 +209,8 @@ public class CreateJavaServiceBaseCommandIT {
          outputDirectory.getRoot().getAbsolutePath()));
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
                       .setMethods(Arrays.asList(publisher, receiver));
-      when(publisher.getFlow().getFlowType()).thenReturn(FlowType.PATH);
-      when(receiver.getFlow().getFlowType()).thenReturn(FlowType.PATH);
+      publisher.setPublishMethods(Collections.emptyMap());
+      receiver.setPublishMethods(Collections.singletonMap("calculateTrackPriority", publisher));
 
       command.run(jellyFishCommandOptions);
 
@@ -283,7 +275,7 @@ public class CreateJavaServiceBaseCommandIT {
          outputDirectory.getRoot().getAbsolutePath()));
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
                       .setMethods(Arrays.asList(receiver));
-      when(receiver.getFlow().getFlowType()).thenReturn(FlowType.SINK);
+      receiver.setPublishMethods(Collections.singletonMap("calculateTrackPriority", null));
 
       command.run(jellyFishCommandOptions);
 
@@ -311,8 +303,7 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(abstractPath,
          "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bcalculateTrackPriority\\s*\\(");
-      assertFileNotContains(abstractPath,
-         "\\bpublishTrackPriority\\b");
+      assertFileNotContains(abstractPath, "\\bpublishTrackPriority\\b");
 
       Path interfacePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
          "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
@@ -349,7 +340,6 @@ public class CreateJavaServiceBaseCommandIT {
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
                       .setMethods(Arrays.asList(publisher));
       publisher.setPublishMethods(Collections.singletonMap("calculateTrackPriority", null));
-      when(publisher.getFlow().getFlowType()).thenReturn(FlowType.SOURCE);
 
       command.run(jellyFishCommandOptions);
 
@@ -378,7 +368,7 @@ public class CreateJavaServiceBaseCommandIT {
          "\\breceiveTrackEngagementStatus\\b");
       int threadIndex = assertFileContains(abstractPath, "\\bthreadService\\.executeLongLivingTask\\b");
       int callIndex = assertFileContains(abstractPath, "\\bcalculateTrackPriority\\b");
-      assertTrue(callIndex > threadIndex);
+      assertTrue(callIndex >= threadIndex);
       assertFileContains(abstractPath, "\\bthis::publishTrackPriority\\b");
       assertFileContains(abstractPath,
          "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
