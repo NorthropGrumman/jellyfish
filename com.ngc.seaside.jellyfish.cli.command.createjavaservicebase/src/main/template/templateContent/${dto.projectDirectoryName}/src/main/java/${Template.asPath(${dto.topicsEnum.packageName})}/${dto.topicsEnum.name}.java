@@ -1,9 +1,11 @@
-package ${dto.basePackageName}.transport.topic;
+package ${dto.topicsEnum.packageName};
 
-import com.ngc.seaside.service.transport.api.ITransportTopic;
+#foreach ($i in $dto.topicsEnum.imports)
+import ${i};
+#end
 
-public enum ${dto.className}TransportTopics implements ITransportTopic {
-#foreach ($topic in $dto.transportTopics)
+public enum ${dto.topicsEnum.name}#if ($dto.topicsEnum.implementedInterface) implements ${dto.topicsEnum.implementedInterface.name}#end {
+#foreach ($topic in $dto.topicsEnum.values)
    $topic,
 #end
 }

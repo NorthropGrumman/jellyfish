@@ -1,7 +1,8 @@
-package ${dto.abstractServiceDto.packageName};
+package ${dto.abstractClass.packageName};
 
 import com.google.common.base.Preconditions;
-
+import java.util.Map;
+import java.util.HashMap;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
@@ -12,15 +13,17 @@ import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
+import com.ngc.blocs.service.thread.api.IThreadService;
+import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 
-#foreach ($i in $dto.abstractServiceDto.imports)
+#foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
 
-public abstract class ${dto.abstractServiceDto.className}
-   implements IServiceModule, ${dto.serviceInterfaceDto.interfaceName} {
+public abstract class ${dto.abstractClass.name}
+   implements IServiceModule, ${dto.interface.name} {
 
-   public final static String NAME = "service:${dto.abstractServiceDto.modelName}";
+   public final static String NAME = "service:${dto.model.fullyQualifiedName}";
 
    protected IContext context;
 
@@ -31,22 +34,39 @@ public abstract class ${dto.abstractServiceDto.className}
    protected ILogService logService;
 
    protected IFaultManagementService faultManagementService;
+   
+   protected IThreadService threadService;
+   
+   protected Map<String, ISubmittedLongLivingTask> threads = new HashMap<>();
 
-#foreach($method in $dto.receivingMethods)
-   @Subscriber(${method.eventSourceClassName}.TOPIC_NAME)
-   public void ${method.methodName}(${method.arguments.get(0).argumentClassName} ${method.arguments.get(0).argumentName}) {
-      Preconditions.checkNotNull(${method.arguments.get(0).argumentName}, "${method.arguments.get(0).argumentName} may not be null!");
+#foreach($method in $dto.abstractClass.methods)
+#if (!$method.isPublisher())
+#set ($argument = $method.arguments.get(0))
+#set ($type = $argument.types.get(0).name)
+   @Subscriber(${type}.TOPIC_NAME)
+   public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
+      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
+
+#foreach ($entry in $method.publishMethods.entrySet())
+#set ($scenarioName = $entry.key)
+#set ($publishMethod = $entry.value)
       try {
-         ${method.publishMethod.methodName}(${method.interfaceMethod.methodName}(event.getSource()));
+#if ($method.flow.flowType == "PATH")
+         ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
+#else
+         ${scenarioName}(${argument.name}.getSource());
+#end
       } catch (ServiceFaultException fault) {
-         logService.error(
-            getClass(),
-            "Invocation of '%s.${method.interfaceMethod.methodName}(${method.eventSourceClassName})' generated fault, dispatching to fault management service.",
+         logService.error(getClass(),
+            "Invocation of '%s.${scenarioName}(${type})' generated fault, dispatching to fault management service.",
             getClass().getName());
          faultManagementService.handleFault(fault);
          // Consume exception.
       }
+
+#end
    }
+#end
 #end
 
    @Override
@@ -78,12 +98,34 @@ public abstract class ${dto.abstractServiceDto.className}
 
    protected void activate() {
       eventService.addSubscriber(this);
+      
+#foreach ($method in $dto.abstractClass.methods)
+#if ($method.flow.flowType == "SOURCE")
+#foreach ($entry in $method.publishMethods.entrySet())
+#set ($scenarioName = $entry.key)
+      ISubmittedLongLivingTask task = threadService.executeLongLivingTask("", () -> {
+         try {
+            ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
+         }  (ServiceFaultException fault) {
+            logService.error(getClass(),
+               "Invocation of '%s.${scenarioName}(Consumer<${method.arguments.get(0).name}>)' generated fault, dispatching to fault management service.",
+               getClass().getName());
+            faultManagementService.handleFault(fault);
+            // Consume exception.
+         }
+      });
+      threads.put("${scenarioName}::${method.name}", task);
+#end
+#end
+#end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
    }
 
    protected void deactivate() {
       eventService.removeSubscriber(this);
+      threads.values().forEach(ISubmittedLongLivingTask::cancel);
+      threads.clear();
       setStatus(ServiceStatus.DEACTIVATED);
       logService.info(getClass(), "deactivated");
    }
@@ -112,10 +154,21 @@ public abstract class ${dto.abstractServiceDto.className}
       setFaultManagementService(null);
    }
 
-#foreach($method in $dto.publishingMethods)
-   private void ${method.methodName}(${method.arguments.get(0).argumentClassName} ${method.arguments.get(0).argumentName}) {
-      Preconditions.checkNotNull(${method.arguments.get(0).argumentName}, "${method.arguments.get(0).argumentName} may not be null!");
-      eventService.publish(${method.arguments.get(0).argumentName}, ${method.arguments.get(0).argumentClassName}.TOPIC);
+   public void setThreadService(IThreadService ref) {
+      this.threadService = ref;
    }
+
+   public void removeThreadService(IThreadService ref) {
+      setThreadService(null);
+   }
+
+#foreach($method in $dto.abstractClass.methods)
+#if ($method.isPublisher())
+#set ($argument = $method.arguments.get(0))
+   private ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
+      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
+      eventService.publish(${argument.name}, ${method.publishingTopic});
+   }
+#end
 #end
 }

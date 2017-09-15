@@ -1,11 +1,11 @@
-package ${dto.packageName};
+package ${dto.service.packageName};
 
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 
-#foreach ($i in $dto.imports)
+#foreach ($i in $dto.service.imports)
 import ${i};
 #end
 
@@ -16,14 +16,14 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(service = {${dto.serviceInterfaceDto.interfaceName}.class, IServiceModule.class}, immediate = true)
-public class ${dto.className} extends ${dto.abstractServiceDto.className} {
+@Component(service = {#if($dto.service.implementedInterface)${dto.service.implementedInterface.name}.class, #{end}IServiceModule.class}, immediate = true)
+public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.service.baseClass.name}#end {
 
-#foreach ($method in $dto.methods)
+#foreach ($method in $dto.service.methods)
 #if( ${method.override} )
    @Override
 #end
-   public ${method.returnSnippet} ${method.methodName}(${method.argumentsListSnippet}) {
+   public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -40,7 +40,7 @@ public class ${dto.className} extends ${dto.abstractServiceDto.className} {
    }
 
    @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       super.setLogService(ref);
    }
@@ -51,7 +51,7 @@ public class ${dto.className} extends ${dto.abstractServiceDto.className} {
    }
 
    @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
    public void setEventService(IEventService ref) {
       super.setEventService(ref);
    }
@@ -62,7 +62,7 @@ public class ${dto.className} extends ${dto.abstractServiceDto.className} {
    }
 
    @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFaultManagementService")
    public void setFaultManagementService(IFaultManagementService ref) {
       super.setFaultManagementService(ref);
    }

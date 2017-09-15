@@ -1,13 +1,14 @@
-package ${dto.serviceInterfaceDto.packageName};
+package ${dto.interface.packageName};
 
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
-#foreach ($i in $dto.serviceInterfaceDto.imports)
+#foreach ($i in $dto.interface.imports)
 import ${i};
 #end
 
-public interface ${dto.serviceInterfaceDto.interfaceName} {
+public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) extends ${dto.interface.implementedInterface.name}#end {
 
-#foreach ($method in $dto.methods)
-   ${method.returnSnippet} ${method.methodName}(${method.argumentsListSnippet}) throws ServiceFaultException;
+#foreach ($method in $dto.interface.methods)
+   ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) throws ServiceFaultException;
+
 #end
 }
