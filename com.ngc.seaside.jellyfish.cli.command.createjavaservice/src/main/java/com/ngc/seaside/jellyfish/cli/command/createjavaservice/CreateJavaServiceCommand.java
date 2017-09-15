@@ -12,9 +12,8 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.TemplateDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -24,7 +23,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -45,21 +43,17 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
-   private ITemplateDtoFactory templateDaoFactory;
-   private IJavaServiceGenerationService generationService;
+   private IServiceDtoFactory templateDaoFactory;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
       String groupId = evaluateGroupId(commandOptions, model);
       String artifactId = evaluateArtifactId(commandOptions, model);
-      String packagez = evaluatePackage(commandOptions, groupId, artifactId);
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
-      Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
 
-      TemplateDto dto = templateDaoFactory.newDto(model, packagez);
-      dto.setProjectDirectoryName(projectDir.getFileName().toString());
+      ServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -162,33 +156,14 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       setPromptService(null);
    }
    
-   /**
-    * Sets java service generation service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeJavaServiceGenerationService")
-   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      this.generationService = ref;
-   }
-
-   /**
-    * Remove java service generation service.
-    */
-   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      setJavaServiceGenerationService(null);
-   }
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          unbind = "removeTemplateDaoFactory")
-   public void setTemplateDaoFactory(ITemplateDtoFactory ref) {
+   public void setTemplateDaoFactory(IServiceDtoFactory ref) {
       this.templateDaoFactory = ref;
    }
 
-   public void removeTemplateDaoFactory(ITemplateDtoFactory ref) {
+   public void removeTemplateDaoFactory(IServiceDtoFactory ref) {
       setTemplateDaoFactory(null);
    }
 
@@ -241,19 +216,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       return artifactId;
    }
 
-   private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
-      return String.format("%s.%s", groupId, artifactId);
-   }
-
-   private static Path evaluateProjectDirectory(Path outputDir, String packagez, boolean clean) {
-      Path projectDir = outputDir.resolve(packagez);
-      File projectDirFile = projectDir.toFile();
-      if (clean && projectDirFile.exists() && projectDirFile.isDirectory()) {
-         deleteDir(projectDirFile);
-      }
-      return projectDir;
-   }
-
    private static IUsage createUsage() {
       return new DefaultUsage(
             "Generates the service for a Java application",
@@ -273,21 +235,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
                   .setDescription("If true, recursively deletes the domain project before generating the it again")
                   .setRequired(false)
       );
-   }
-
-   /**
-    * Helper method to delete folder/files
-    *
-    * @param file file/folder to delete
-    */
-   private static void deleteDir(File file) {
-      File[] contents = file.listFiles();
-      if (contents != null) {
-         for (File f : contents) {
-            deleteDir(f);
-         }
-      }
-      file.delete();
    }
 
    private static boolean evaluateBooleanParameter(IJellyFishCommandOptions options, String parameter) {

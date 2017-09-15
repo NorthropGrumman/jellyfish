@@ -12,9 +12,8 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceTemplateDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -48,8 +47,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
-   private ITemplateDtoFactory templateDaoFactory;
-   private IJavaServiceGenerationService generationService;
+   private IBaseServiceDtoFactory templateDaoFactory;
 
    @Override
    public String getName() {
@@ -72,15 +70,15 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       Path outputDir = evaluateOutputDirectory(commandOptions);
       Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
 
-      BaseServiceTemplateDto dto = (BaseServiceTemplateDto) templateDaoFactory.newDto(model, packagez);
+      BaseServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       templateService.unpack(CreateJavaServiceBaseCommand.class.getPackage().getName(),
-                             parameters,
-                             outputDir,
-                             clean);
+         parameters,
+         outputDir,
+         clean);
 
       try {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
@@ -126,9 +124,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -145,9 +141,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePromptService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
    public void setPromptService(IPromptUserService ref) {
       this.promptService = ref;
    }
@@ -158,34 +152,13 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    public void removePromptService(IPromptUserService ref) {
       setPromptService(null);
    }
-   
-   /**
-    * Sets java service generation service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeJavaServiceGenerationService")
-   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      this.generationService = ref;
-   }
 
-   /**
-    * Remove java service generation service.
-    */
-   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      setJavaServiceGenerationService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateDaoFactory")
-   public void setTemplateDaoFactory(ITemplateDtoFactory ref) {
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateDaoFactory")
+   public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
       this.templateDaoFactory = ref;
    }
 
-   public void removeTemplateDaoFactory(ITemplateDtoFactory ref) {
+   public void removeTemplateDaoFactory(IBaseServiceDtoFactory ref) {
       setTemplateDaoFactory(null);
    }
 
@@ -196,21 +169,21 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
          modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       } else {
          modelName = promptService.prompt(MODEL_PROPERTY,
-                                          null,
-                                          m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
+            null,
+            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
       // Find the actual model.
       return commandOptions.getSystemDescriptor()
-            .findModel(modelName)
-            .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
+                           .findModel(modelName)
+                           .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
    }
 
    private Path evaluateOutputDirectory(IJellyFishCommandOptions commandOptions) {
       Path outputDirectory;
       if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          outputDirectory = Paths.get(commandOptions.getParameters()
-                                           .getParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                           .getStringValue());
+                                                   .getParameter(OUTPUT_DIRECTORY_PROPERTY)
+                                                   .getStringValue());
       } else {
          // Ask the user if needed.
          outputDirectory = Paths.get(promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null));
@@ -267,23 +240,26 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the base abstract service for a Java application",
-            new DefaultParameter<>(GROUP_ID_PROPERTY)
-                  .setDescription("The project's group ID. (default: the package in the model)")
-                  .setRequired(false),
-            new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
-                  .setDescription("The project's artifact Id. (default: the model name in lowercase)")
-                  .setRequired(false),
-            new DefaultParameter<>(MODEL_PROPERTY)
-                  .setDescription("The fully qualified path to the model.")
-                  .setRequired(true),
-            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY)
-                  .setDescription("Base directory in which to output the project")
-                  .setRequired(true),
-            new DefaultParameter<>(CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the project before generating the it again")
-                  .setRequired(false)
-      );
+         "Generates the base abstract service for a Java application",
+         new DefaultParameter<>(GROUP_ID_PROPERTY)
+                                                  .setDescription(
+                                                     "The project's group ID. (default: the package in the model)")
+                                                  .setRequired(false),
+         new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
+                                                     .setDescription(
+                                                        "The project's artifact Id. (default: the model name in lowercase)")
+                                                     .setRequired(false),
+         new DefaultParameter<>(MODEL_PROPERTY)
+                                               .setDescription("The fully qualified path to the model.")
+                                               .setRequired(true),
+         new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY)
+                                                          .setDescription(
+                                                             "Base directory in which to output the project")
+                                                          .setRequired(true),
+         new DefaultParameter<>(CLEAN_PROPERTY)
+                                               .setDescription(
+                                                  "If true, recursively deletes the project before generating the it again")
+                                               .setRequired(false));
    }
 
    /**
@@ -306,15 +282,15 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       if (options.getParameters().containsParameter(parameter)) {
          String value = options.getParameters().getParameter(parameter).getStringValue();
          switch (value.toLowerCase()) {
-            case "true":
-               booleanValue = true;
-               break;
-            case "false":
-               booleanValue = false;
-               break;
-            default:
-               throw new CommandException(
-                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
+         case "true":
+            booleanValue = true;
+            break;
+         case "false":
+            booleanValue = false;
+            break;
+         default:
+            throw new CommandException(
+               "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
          }
       } else {
          booleanValue = false;
