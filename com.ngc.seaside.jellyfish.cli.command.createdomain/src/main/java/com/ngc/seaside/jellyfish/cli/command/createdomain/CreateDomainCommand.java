@@ -122,9 +122,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
          domainPackages = Collections.singleton(pkg);
       }
 
-      final Path outputDir = evaluateOutputDirectory(parameters);
-      final Path projectDir = evaluateProjectDirectory(outputDir, groupId, artifactId, clean);
- 
+      final Path outputDir = evaluateOutputDirectory(parameters);  
+      final Path projectDir = evaluateProjectDirectory(outputDir, domainProjName.getDirectoryName(), clean);
+
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
       
@@ -374,14 +374,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Creates and returns the path to the domain project directory.
     *
     * @param outputDir  output directory
-    * @param groupId    the groupId
-    * @param artifactId the artifactId
+    * @param projDirName project directory name
     * @param clean      whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
-   private Path evaluateProjectDirectory(Path outputDir, String groupId, String artifactId, boolean clean) {
-      final Path projectDir = outputDir.resolve(Paths.get(groupId + "." + artifactId));
+   private Path evaluateProjectDirectory(Path outputDir, String projDirName, boolean clean) {
+      final Path projectDir = outputDir.resolve(Paths.get(projDirName));
       try {
          Files.createDirectories(outputDir);
          if (clean) {
