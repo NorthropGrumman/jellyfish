@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
+import com.google.common.collect.Streams;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
@@ -16,9 +17,14 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -27,6 +33,12 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.Function;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaEventsCommand implements IJellyFishCommand {
@@ -65,6 +77,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    private IPromptUserService promptUserService;
    private IJellyFishCommandProvider jellyFishCommandProvider;
    private IProjectNamingService projectNamingService;
+   private IPackageNamingService packageNamingService;
 
    @Override
    public String getName() {
@@ -82,6 +95,8 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       IModel model = evaluateModelParameter(commandOptions);
       IProjectInformation eventsProjectName = projectNamingService.getEventsProjectName(commandOptions, model);
       String artifactId = eventsProjectName.getArtifactId();
+      Function<IData, String> packageGenerator =
+               (d) -> packageNamingService.getEventPackageName(commandOptions, d);
       String eventTemplate = evaluateEventTemplate(commandOptions);
       
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
@@ -89,7 +104,8 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
             new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
             new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY, eventTemplate),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
-                                   CreateJavaEventsCommand.class.getPackage().getName())));
+                                   CreateJavaEventsCommand.class.getPackage().getName()),
+            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator)));
    }
 
    @Activate
@@ -164,6 +180,17 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
+   public void setPackageNamingService(IPackageNamingService ref) {
+      this.packageNamingService = ref;
+      
+   }
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
+   }
 
    private void issueUsageWarnings(IJellyFishCommandOptions commandOptions) {
       // This command will set the value of the domainFile parameter itself, thereby overriding the value provided
@@ -203,7 +230,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       }
       return eventTemplate;
    }
-
+   
    /**
     * Create the usage for this command.
     *

@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
@@ -22,12 +23,14 @@ public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
                                               IResourceService resourceService,
                                               IPromptUserService promptUserService,
                                               IJellyFishCommandProvider jellyFishCommandProvider,
-                                              IProjectNamingService projectNamingService) {
+                                              IProjectNamingService projectNamingService,
+                                              IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
       delegate.setResourceService(resourceService);
       delegate.setPromptUserService(promptUserService);
       delegate.setJellyFishCommandProvider(jellyFishCommandProvider);
       delegate.setProjectNamingService(projectNamingService);
+      delegate.setPackageNamingService(packageNamingService);
       delegate.activate();
    }
 
