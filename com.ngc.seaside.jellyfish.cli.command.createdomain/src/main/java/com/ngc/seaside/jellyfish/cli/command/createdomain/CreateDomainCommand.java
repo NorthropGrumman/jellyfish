@@ -106,7 +106,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       String groupId = domainProjName.getGroupId();
       String artifactId = domainProjName.getArtifactId();
 
-      final String pkg = evaluatePackage(parameters, groupId, artifactId);
+      //final String pkg = evaluatePackage(parameters, groupId, artifactId);
 
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
@@ -312,37 +312,37 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 
-   /**
-    * Returns the package for the domain project.
-    *
-    * @param parameters command parameters
-    * @param groupId    domain groupId
-    * @param artifactId domain artifactId
-    * @return the package for the domain project
-    */
-   private static String evaluatePackage(IParameterCollection parameters, String groupId, String artifactId) {
-      final String pkg;
-      if (parameters.containsParameter(PACKAGE_PROPERTY)) {
-         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-            throw new CommandException(
-                  "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY
-                  + " is set");
-         }
-         pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
-      } else {
-         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
-            if (suffix.isEmpty() || suffix.startsWith(".")) {
-               pkg = groupId + '.' + artifactId + suffix;
-            } else {
-               pkg = groupId + '.' + artifactId + '.' + suffix;
-            }
-         } else {
-            pkg = groupId + '.' + artifactId;
-         }
-      }
-      return pkg;
-   }
+//   /**
+//    * Returns the package for the domain project.
+//    *
+//    * @param parameters command parameters
+//    * @param groupId    domain groupId
+//    * @param artifactId domain artifactId
+//    * @return the package for the domain project
+//    */
+//   private static String evaluatePackage(IParameterCollection parameters, String groupId, String artifactId) {
+//      final String pkg;
+//      if (parameters.containsParameter(PACKAGE_PROPERTY)) {
+//         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
+//            throw new CommandException(
+//                  "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY
+//                  + " is set");
+//         }
+//         pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
+//      } else {
+//         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
+//            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
+//            if (suffix.isEmpty() || suffix.startsWith(".")) {
+//               pkg = groupId + '.' + artifactId + suffix;
+//            } else {
+//               pkg = groupId + '.' + artifactId + '.' + suffix;
+//            }
+//         } else {
+//            pkg = groupId + '.' + artifactId;
+//         }
+//      }
+//      return pkg;
+//   }
 
    /**
     * Returns the path to the domain template file.
