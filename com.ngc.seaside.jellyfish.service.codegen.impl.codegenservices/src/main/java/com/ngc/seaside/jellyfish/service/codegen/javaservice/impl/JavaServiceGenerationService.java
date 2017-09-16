@@ -174,7 +174,6 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          method.setReturns(first.isReturns());
          method.setReturnArgument(first.getReturnArgument());
          method.setArguments(first.getArguments());
-         method.setPublisher(first.isPublisher());
          method.setPublishingTopic(first.getPublishingTopic());
          Map<String, MethodDto> publishers = new HashMap<>();
          for (PubSubMethodDto receiver : entry.getValue()) {
@@ -273,8 +272,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                               options,
                                                                               input.getType()))));
 
-      MethodDto publisherMethod = new PubSubMethodDto().setPublisher(true)
-                                                       .setPublishingTopic(output.getType().getName() + ".TOPIC")
+      MethodDto publisherMethod = new PubSubMethodDto().setPublishingTopic(output.getType().getName() + ".TOPIC")
                                                        .setName("publish" + output.getType().getName())
                                                        .setOverride(false)
                                                        .setReturns(false)
@@ -287,8 +285,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                                  options,
                                                                                  output.getType()))));
 
-      MethodDto subscriberMethod = new PubSubMethodDto().setPublisher(false)
-                                                        .setPublishMethods(
+      MethodDto subscriberMethod = new PubSubMethodDto().setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(),
                                                               publisherMethod))
                                                         .setName("receive" + input.getType().getName())
@@ -341,8 +338,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                            options,
                                                                            input.getType()))));
 
-      MethodDto subscriberMethod = new PubSubMethodDto().setPublisher(false)
-                                                        .setPublishMethods(
+      MethodDto subscriberMethod = new PubSubMethodDto().setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(), null))
                                                         .setName("receive" + input.getType().getName())
                                                         .setOverride(false)
@@ -398,8 +394,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                                                options,
                                                                                                output.getType()))))));
 
-      MethodDto publisherMethod = new PubSubMethodDto().setPublisher(true)
-                                                       .setPublishMethods(
+      MethodDto publisherMethod = new PubSubMethodDto().setPublishMethods(
                                                           Collections.singletonMap(flow.getScenario().getName(),
                                                              null))
                                                        .setPublishingTopic(output.getType().getName() + ".TOPIC")

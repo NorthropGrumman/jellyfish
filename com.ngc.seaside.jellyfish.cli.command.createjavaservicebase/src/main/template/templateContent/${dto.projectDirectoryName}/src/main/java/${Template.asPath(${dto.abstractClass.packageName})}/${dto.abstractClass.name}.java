@@ -103,7 +103,8 @@ public abstract class ${dto.abstractClass.name}
 #if ($method.isPublisher())
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
-      ISubmittedLongLivingTask task = threadService.executeLongLivingTask("${scenarioName}::${method.name}", () -> {
+      final String taskKey = "${scenarioName}::${method.name}";
+      ISubmittedLongLivingTask task = threadService.executeLongLivingTask(taskKey, () -> {
          try {
             ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
          }  (ServiceFaultException fault) {
@@ -112,9 +113,11 @@ public abstract class ${dto.abstractClass.name}
                getClass().getName());
             faultManagementService.handleFault(fault);
             // Consume exception.
+         } finally {
+            threads.remove(taskKey);
          }
       });
-      threads.put("${scenarioName}::${method.name}", task);
+      threads.put(taskKey, task);
 
 #end
 #end

@@ -83,8 +83,7 @@ public class CreateJavaServiceBaseCommandIT {
 
    private IModel model = newModelForTesting();
 
-   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto().setPublisher(true)
-                                                                              .setPublishingTopic("TrackPriority.TOPIC")
+   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto().setPublishingTopic("TrackPriority.TOPIC")
                                                                               .setName("publishTrackPriority")
                                                                               .setArguments(Collections.singletonList(
                                                                                  new ArgumentDto().setTypeName(
@@ -94,8 +93,7 @@ public class CreateJavaServiceBaseCommandIT {
                                                                                                   .setName(
                                                                                                      "trackPriority")));
 
-   private PubSubMethodDto receiver = (PubSubMethodDto) new PubSubMethodDto().setPublisher(false)
-                                                                             .setName("receiveTrackEngagementStatus")
+   private PubSubMethodDto receiver = (PubSubMethodDto) new PubSubMethodDto().setName("receiveTrackEngagementStatus")
                                                                              .setArguments(Collections.singletonList(
                                                                                 new ArgumentDto().setTypeName("IEvent")
                                                                                                  .setPackageName(
@@ -366,9 +364,9 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(abstractPath, "\"service:com.ngc.seaside.threateval.EngagementTrackPriorityService\"");
       assertFileNotContains(abstractPath,
          "\\breceiveTrackEngagementStatus\\b");
-      int threadIndex = assertFileContains(abstractPath, "\\bthreadService\\.executeLongLivingTask\\b");
+      int activateIndex = assertFileContains(abstractPath, "\\bvoid\\s+activate\\s*\\(\\s*\\)");
       int callIndex = assertFileContains(abstractPath, "\\bcalculateTrackPriority\\b");
-      assertTrue(callIndex >= threadIndex);
+      assertTrue(callIndex >= activateIndex);
       assertFileContains(abstractPath, "\\bthis::publishTrackPriority\\b");
       assertFileContains(abstractPath,
          "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
