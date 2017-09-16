@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = {#if($dto.service.implementedInterface)${dto.service.implementedInterface.name}.class, #{end}IServiceModule.class}, immediate = true)
-public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.service.baseClass.name}#end {
+public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.service.baseClass.name}#elseif($dto.service.implementedInterface) implements ${dto.service.implementedInterface.name}#end {
 
 #foreach ($method in $dto.service.methods)
 #if( ${method.override} )
@@ -27,6 +27,7 @@ public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.servic
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
+
 #end
 
    @Activate

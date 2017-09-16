@@ -2,12 +2,11 @@ package ${dto.abstractClass.packageName};
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.api.ServiceStatus;
-import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -37,7 +36,7 @@ public abstract class ${dto.abstractClass.name}
 
    protected IThreadService threadService;
 
-   protected Map<String, ISubmittedLongLivingTask> threads = new HashMap<>();
+   protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
 
 #foreach($method in $dto.abstractClass.methods)
 #if (!$method.isPublisher())
@@ -103,8 +102,7 @@ public abstract class ${dto.abstractClass.name}
 #if ($method.isPublisher())
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
-      final String taskKey = "${scenarioName}::${method.name}";
-      ISubmittedLongLivingTask task = threadService.executeLongLivingTask(taskKey, () -> {
+      threads.put("${scenarioName}::${method.name}", threadService.executeLongLivingTask("${scenarioName}::${method.name}", () -> {
          try {
             ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
          }  (ServiceFaultException fault) {
@@ -114,10 +112,9 @@ public abstract class ${dto.abstractClass.name}
             faultManagementService.handleFault(fault);
             // Consume exception.
          } finally {
-            threads.remove(taskKey);
+            threads.remove("${scenarioName}::${method.name}");
          }
-      });
-      threads.put(taskKey, task);
+      }));
 
 #end
 #end
