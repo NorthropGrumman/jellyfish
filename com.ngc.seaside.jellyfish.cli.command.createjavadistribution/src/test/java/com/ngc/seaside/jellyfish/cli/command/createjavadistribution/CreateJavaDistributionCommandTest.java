@@ -15,6 +15,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -52,12 +53,18 @@ public class CreateJavaDistributionCommandTest {
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
       
+      //Setup mock project naming service
       IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
       IProjectInformation domainProjName = mock(IProjectInformation.class);
       when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(domainProjName);
       
       when (domainProjName.getArtifactId()).thenReturn("model.distribution");
       when (domainProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
+      
+      //set up mock package naming service
+      IPackageNamingService packageNamingService = mock(IPackageNamingService.class);
+      when (packageNamingService.getDistributionPackageName(any(), any())).thenReturn("com.ngc.seaside.test");
+      
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
@@ -81,6 +88,7 @@ public class CreateJavaDistributionCommandTest {
       fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
       fixture.setProjectNamingService(projectNamingService);
+      fixture.setPackageNamingService(packageNamingService);
    }
 
    @Test

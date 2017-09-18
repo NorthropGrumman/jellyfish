@@ -64,4 +64,9 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
    public String getConnectorPackageName(IJellyFishCommandOptions options, IModel model) {
       return packageNamingService.getConnectorPackageName(options, model);
    }
+
+   @Override
+   public String getDistributionPackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getDistributionPackageName(options, model);
+   }
 }

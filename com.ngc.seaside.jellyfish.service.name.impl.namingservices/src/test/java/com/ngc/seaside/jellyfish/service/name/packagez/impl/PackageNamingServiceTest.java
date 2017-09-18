@@ -71,6 +71,39 @@ public class PackageNamingServiceTest {
                    "com.ngc.seaside.threateval.threatevaluation",
                    service.getMessagePackageName(options, data));
    }
+   
+   @Test
+   public void testDoesGenerateFullyQualifiedNameForDistribution() throws Throwable {
+      Model model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("name not correct!",
+                   "com.ngc.seaside.threateval.trackpriorityservice",
+                   service.getDistributionPackageName(options, model));
+
+      model = newModel("EngagementTrackPriorityService", "com.ngc.seaside.common.datatype");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("name not correct!",
+                   "com.ngc.seaside.common.datatype.engagementtrackpriorityservice",
+                   service.getDistributionPackageName(options, model));
+
+      model = newModel("DefendedAreaTrackPriorityService", "com.ngc.seaside.common.defendedareatrackpriorityservice");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("name not correct!",
+                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice",
+                   service.getDistributionPackageName(options, model));
+
+      model = newModel("ClassificationTrackPriorityService", "external.datatype");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("name not correct!",
+                   "external.datatype.classificationtrackpriorityservice",
+                   service.getDistributionPackageName(options, model));
+
+      model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("name not correct!",
+                   "com.ngc.seaside.threateval.trackpriorityservice",
+                   service.getDistributionPackageName(options, model));
+   }
 
    @Test
    public void testDoesGetFullyQualifiedNameForDomain() throws Throwable {

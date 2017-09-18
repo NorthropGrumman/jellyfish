@@ -13,9 +13,9 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
@@ -43,17 +42,15 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
 
    public static final String PACKAGE_PROPERTY = "package";
-   public static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
    public static final String CLEAN_PROPERTY = "clean";
 
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
-   private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
-            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
+   private IPackageNamingService packageNamingService;
 
 
    /**
@@ -133,16 +130,13 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
       String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-      
-      final IModel model = systemDescriptor.findModel(modelId)
-               .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
-      
-      IProjectInformation domainProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
-      final String groupId = domainProjName.getGroupId();
-      final String artifactId = domainProjName.getArtifactId(); 
-      
+      final IModel model = systemDescriptor.findModel(modelId)
+                                           .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+
       parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
+
+      IProjectInformation domainProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
 
       // Resolve output directory
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
@@ -155,24 +149,20 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, domainProjName.getGroupId()));
       }
 
       // Resolve artifactId
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          parameters.addParameter(
-                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, domainProjName.getArtifactId()));
       }
 
       // Resolve clean property
       final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
 
-      // Assign package name
-      parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, groupId + '.' + artifactId));
-      String pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
-      if (!JAVA_QUALIFIED_IDENTIFIER.matcher(pkg).matches()) {
-         throw new CommandException("Invalid package name: " + pkg);
-      }
+      String pkg = packageNamingService.getDistributionPackageName(commandOptions, model);
+      parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, pkg));
 
       doAddProject(parameters);
 
@@ -263,6 +253,26 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     */
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
+   }
+   
+   /**
+    * Sets package naming service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
+   public void setPackageNamingService(IPackageNamingService ref) {
+      this.packageNamingService = ref;
+      
+   }
+   
+   /**
+    * Remove package naming service.
+    */
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
    }
    
    protected void doAddProject(IParameterCollection parameters) {
