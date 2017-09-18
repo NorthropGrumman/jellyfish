@@ -1,5 +1,7 @@
 package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.google.common.base.Preconditions;
 
 import org.apache.velocity.VelocityContext;
@@ -18,11 +20,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Class for generating an instance of a template
@@ -33,6 +35,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
    private final Path outputFolder;
    private final Path inputFolder;
    private final boolean clean;
+   private final Set<String> cleanedPaths = new HashSet<>();
    private Path topLevelFolder;
    private TemplateIgnoreComponent templateIgnoreComponent;
 
@@ -119,7 +122,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
          topLevelFolder = outputFolderTemp.normalize();
       }
 
-      if (clean && !path.equals(inputFolder)) {
+      if (clean && !path.equals(inputFolder) && cleanedPaths.add(outputFolderTemp.toAbsolutePath().toString())) {
          try {
             deleteRecursive(outputFolderTemp, true);
          } catch (IOException e) {
