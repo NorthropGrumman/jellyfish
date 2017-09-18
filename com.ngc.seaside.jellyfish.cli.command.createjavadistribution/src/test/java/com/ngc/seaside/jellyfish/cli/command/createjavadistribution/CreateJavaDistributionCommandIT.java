@@ -16,6 +16,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -152,7 +153,7 @@ public class CreateJavaDistributionCommandIT {
       when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
       when(model.getName()).thenReturn("Model");
       when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
-
+      cmd.setProjectNamingService(injector.getInstance(IProjectNamingService.class));
       cmd.setLogService(injector.getInstance(ILogService.class));
       cmd.setPromptService(promptUserService);
       cmd.setTemplateService(mockedTemplateService);
@@ -166,7 +167,7 @@ public class CreateJavaDistributionCommandIT {
       runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
-      Mockito.verify(options, Mockito.times(1)).getParameters();
+      Mockito.verify(options, Mockito.times(3)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
       System.out.println(printDirectoryTree(outputDir.toFile()));
       checkGradleBuild(outputDir);

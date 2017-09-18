@@ -63,19 +63,19 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the gradle distribution project for a Java application",
-                              new DefaultParameter(GROUP_ID_PROPERTY)
+                              new DefaultParameter<String>(GROUP_ID_PROPERTY)
                                        .setDescription("The project's group ID. (default: the package in the model)")
                                        .setRequired(false),
-                              new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription(
+                              new DefaultParameter<String>(ARTIFACT_ID_PROPERTY).setDescription(
                                        "The project's artifact ID. (default: model name in lowercase + '.distribution')")
                                        .setRequired(false),
-                              new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
+                              new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
                                        .setDescription("Base directory in which to output the project")
                                        .setRequired(true),
-                              new DefaultParameter(MODEL_PROPERTY)
+                              new DefaultParameter<String>(MODEL_PROPERTY)
                                        .setDescription("The fully qualified path to the system descriptor model")
                                        .setRequired(true),
-                              new DefaultParameter(CLEAN_PROPERTY).setDescription(
+                              new DefaultParameter<String>(CLEAN_PROPERTY).setDescription(
                                        "If true, recursively deletes the domain project (if it already exists), before generating the it again")
                                        .setRequired(false)
       );
@@ -138,7 +138,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
                .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
 
       
-      IProjectInformation domainProjName = projectNamingService.getDomainProjectName(commandOptions, model);
+      IProjectInformation domainProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
       final String groupId = domainProjName.getGroupId();
       final String artifactId = domainProjName.getArtifactId(); 
       
@@ -161,8 +161,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       // Resolve artifactId
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          parameters.addParameter(
-                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY,
-                                         model.getName().toLowerCase() + '.' + DEFAULT_PACKAGE_SUFFIX));
+                  new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
       }
 
       // Resolve clean property

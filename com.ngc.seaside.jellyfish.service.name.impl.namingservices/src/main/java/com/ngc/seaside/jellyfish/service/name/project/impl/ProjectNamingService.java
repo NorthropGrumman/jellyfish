@@ -26,7 +26,7 @@ public class ProjectNamingService implements IProjectNamingService {
    private static final String CONNECTOR_ARTIFACT_ID_SUFFIX = "connector";
    private static final String SERVICE_ARTIFACT_ID_SUFFIX = "impl";
    private static final String SERVICE_BASE_ARTIFACT_ID_SUFFIX = "base";
-   private static final String DEFAULT_PACKAGE_SUFFIX = "distribution";
+   private static final String DISTRIBUTION_ARTIFACT_ID_SUFFIX = "distribution";
 
 
    /**
@@ -104,7 +104,7 @@ public class ProjectNamingService implements IProjectNamingService {
       String versionPropertyName = modelName + "DistributionVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
       String groupId = evaluateGroupId(options, model);
-      String artifactId = evaluateArtifactId(options, model, DEFAULT_PACKAGE_SUFFIX);
+      String artifactId = evaluateArtifactId(options, model, DISTRIBUTION_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(groupId)

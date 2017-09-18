@@ -1,5 +1,11 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
@@ -9,6 +15,8 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -25,11 +33,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class CreateJavaDistributionCommandTest {
 
    private CreateJavaDistributionCommand fixture;
@@ -43,9 +46,18 @@ public class CreateJavaDistributionCommandTest {
 
    @Before
    public void setup() throws IOException {
+      
+
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
+      
+      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
+      IProjectInformation domainProjName = mock(IProjectInformation.class);
+      when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(domainProjName);
+      
+      when (domainProjName.getArtifactId()).thenReturn("model.distribution");
+      when (domainProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
@@ -68,6 +80,7 @@ public class CreateJavaDistributionCommandTest {
       fixture.setLogService(new PrintStreamLogService());
       fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
+      fixture.setProjectNamingService(projectNamingService);
    }
 
    @Test
@@ -78,8 +91,8 @@ public class CreateJavaDistributionCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
-      verify(model, times(2)).getParent();
+      verify(model, times(1)).getName();
+      verify(model, times(1)).getParent();
 
       // Verify passed values
       Assert.assertEquals("com.ngc.seaside.test.Model",
