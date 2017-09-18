@@ -17,6 +17,15 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = IProjectNamingService.class)
 public class ProjectNamingService implements IProjectNamingService {
+   
+   private static final String GROUP_ID_PROPERTY = "groupId";
+   private static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   private static final String DOMAIN_ARTIFACT_ID_SUFFIX = "domain";
+   private static final String EVENT_ARTIFACT_ID_SUFFIX = "events";
+   private static final String MESSAGES_ARTIFACT_ID_SUFFIX = "messages";
+   private static final String CONNECTOR_ARTIFACT_ID_SUFFIX = "connector";
+   private static final String SERVICE_ARTIFACT_ID_SUFFIX = "impl";
+   private static final String SERVICE_BASE_ARTIFACT_ID_SUFFIX = "base";
 
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
@@ -38,17 +47,18 @@ public class ProjectNamingService implements IProjectNamingService {
    public IProjectInformation getDomainProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
-      String modelPackageName = model.getParent().getName();
       String modelName = model.getName();
       String versionPropertyName = modelName + "DomainVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String groupId = evaluateGroupId(options, model);
+      String artifactId = evaluateArtifactId(options, model, DOMAIN_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
-            .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".domain")
+            .setGroupId(groupId)
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName);
    }
-
+   
    @Override
    public IProjectInformation getEventsProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -57,42 +67,11 @@ public class ProjectNamingService implements IProjectNamingService {
       String modelName = model.getName();
       String versionPropertyName = modelName + "EventsVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, EVENT_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".events")
-            .setVersionPropertyName(versionPropertyName)
-            .setGenerated(true)
-            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
-   }
-
-   @Override
-   public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
-      Preconditions.checkNotNull(options, "options may not be null!");
-      Preconditions.checkNotNull(model, "model may not be null!");
-      String modelPackageName = model.getParent().getName();
-      String modelName = model.getName();
-      String versionPropertyName = modelName + "ImplVersion";
-      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
-
-      return new ProjectInformation()
-            .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".impl")
-            .setVersionPropertyName(versionPropertyName);
-   }
-
-   @Override
-   public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
-      Preconditions.checkNotNull(options, "options may not be null!");
-      Preconditions.checkNotNull(model, "model may not be null!");
-      String modelPackageName = model.getParent().getName();
-      String modelName = model.getName();
-      String versionPropertyName = modelName + "BaseServiceVersion";
-      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
-
-      return new ProjectInformation()
-            .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".base")
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName)
             .setGenerated(true)
             .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
@@ -106,11 +85,66 @@ public class ProjectNamingService implements IProjectNamingService {
       String modelName = model.getName();
       String versionPropertyName = modelName + "MessagesVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, MESSAGES_ARTIFACT_ID_SUFFIX);
+      
+      
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName);
+   }
+   
+   @Override
+   public IProjectInformation getConnectorProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ConnectorVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, CONNECTOR_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(modelName.toLowerCase() + ".messages")
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+   }
+   
+   @Override
+   public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ServiceVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, SERVICE_ARTIFACT_ID_SUFFIX);
+      
+      
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName);
+   }
+
+   @Override
+   public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "BaseServiceVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, SERVICE_BASE_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
    }
 
    @Activate
@@ -132,4 +166,25 @@ public class ProjectNamingService implements IProjectNamingService {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
+
+   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model, String suffix) {
+      String artifactId;
+      if (options.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
+         artifactId = options.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
+      } else {
+         artifactId = model.getName().toLowerCase() + "." + suffix;
+      }
+      return artifactId;
+   }
+
+   private String evaluateGroupId(IJellyFishCommandOptions options, IModel model) {
+      String groupId;
+      if (options.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
+         groupId = options.getParameters().getParameter(GROUP_ID_PROPERTY).getStringValue();
+      } else {
+         groupId = model.getParent().getName();
+      }
+      return groupId;
+   }
+
 }

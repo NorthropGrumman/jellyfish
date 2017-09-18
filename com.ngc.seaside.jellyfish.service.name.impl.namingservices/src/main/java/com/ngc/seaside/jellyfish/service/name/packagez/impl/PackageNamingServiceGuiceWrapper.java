@@ -1,11 +1,11 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
@@ -21,19 +21,19 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
 
    @Override
    public String getDomainPackageName(IJellyFishCommandOptions options,
-                                      IData data) {
+                                      INamedChild<IPackage> data) {
       return packageNamingService.getDomainPackageName(options, data);
    }
 
    @Override
    public String getEventPackageName(IJellyFishCommandOptions options,
-                                     IData data) {
+                                     INamedChild<IPackage> data) {
       return packageNamingService.getEventPackageName(options, data);
    }
 
    @Override
    public String getMessagePackageName(IJellyFishCommandOptions options,
-                                       IData data) {
+                                       INamedChild<IPackage> data) {
       return packageNamingService.getMessagePackageName(options, data);
    }
 
@@ -58,5 +58,10 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
    @Override
    public String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model) {
       return packageNamingService.getTransportTopicsPackageName(options, model);
+   }
+
+   @Override
+   public String getConnectorPackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getConnectorPackageName(options, model);
    }
 }
