@@ -109,6 +109,51 @@ public class ProjectNamingServiceTest {
    }
 
    @Test
+   public void testDoesGenerateServiceProjectName() throws Throwable {
+      model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+
+      IProjectInformation name = service.getServiceProjectName(options, model);
+      assertEquals("groupId not correct!",
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "threatevaluation.impl",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   "com.ngc.seaside.threateval.threatevaluation.impl",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationServiceVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:threatevaluation.impl:$threatEvaluationServiceVersion",
+                   name.getGavFormattedString());
+   }
+
+   @Test
+   public void testDoesGenerateBaseServiceProjectName() throws Throwable {
+      model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+
+      IProjectInformation name = service.getBaseServiceProjectName(options, model);
+      assertEquals("groupId not correct!",
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "threatevaluation.base",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
+                   "/com.ngc.seaside.threateval.threatevaluation.base",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationBaseServiceVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:threatevaluation.base:$threatEvaluationBaseServiceVersion",
+                   name.getGavFormattedString());
+   }
+
+   @Test
    public void testDoesGenerateRootProjectName() throws Throwable {
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
 

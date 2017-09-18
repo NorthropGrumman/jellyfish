@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -37,5 +36,20 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    @Override
    public IProjectInformation getMessageProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getMessageProjectName(options, model);
+   }
+
+   @Override
+   public IProjectInformation getConnectorProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getConnectorProjectName(options, model);
+   }
+
+   @Override
+   public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getServiceProjectName(options, model);
+   }
+
+   @Override
+   public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getBaseServiceProjectName(options, model);
    }
 }

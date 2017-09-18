@@ -34,7 +34,34 @@ public interface IProjectNamingService {
     * @return the project information for a events project
     */
    IProjectInformation getEventsProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a connector project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a connector project
+    */
+   IProjectInformation getConnectorProjectName(IJellyFishCommandOptions options, IModel model);
 
+   /**
+    * Gets the project information for a service project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a service project
+    */
+   IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a base service project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a base service project
+    */
+   IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model);
+   
    /**
     * Gets the project information for a messages project given a model.
     *

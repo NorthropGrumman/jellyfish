@@ -1,11 +1,11 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -23,7 +23,7 @@ public class PackageNamingService implements IPackageNamingService {
    private ILogService logService;
 
    @Override
-   public String getDomainPackageName(IJellyFishCommandOptions options, IData data) {
+   public String getDomainPackageName(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(data, "data may not be null!");
       // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
@@ -32,7 +32,7 @@ public class PackageNamingService implements IPackageNamingService {
    }
 
    @Override
-   public String getEventPackageName(IJellyFishCommandOptions options, IData data) {
+   public String getEventPackageName(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(data, "data may not be null!");
       // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
@@ -41,7 +41,7 @@ public class PackageNamingService implements IPackageNamingService {
    }
 
    @Override
-   public String getMessagePackageName(IJellyFishCommandOptions options, IData data) {
+   public String getMessagePackageName(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(data, "data may not be null!");
       // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
@@ -50,20 +50,51 @@ public class PackageNamingService implements IPackageNamingService {
       // We want to skip any common prefixes the model's package and data's package have in common.
       return (fqn + getPackageNameMinusCommonPart(fqn, data.getParent().getName())).toLowerCase();
    }
+   
+   @Override
+   public String getConnectorPackageName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "data may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      // Construct the name using the fully qualified model name then add the remaining package names of the data type.
+      // We want to skip any common prefixes the model's package and data's package have in common.
+      return (fqn + ".connector" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();   }
 
    @Override
    public String getServiceInterfacePackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".api" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Override
    public String getServiceImplementationPackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".impl" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Override
    public String getServiceBaseImplementationPackageName(IJellyFishCommandOptions options, IModel model) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".base.impl" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
+   }
+   
+   @Override
+   public String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      return (fqn + ".transport.topic" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Activate
@@ -124,4 +155,5 @@ public class PackageNamingService implements IPackageNamingService {
       }
       return name;
    }
+
 }
