@@ -9,7 +9,7 @@ public enum CommonParameters implements IParameter<String> {
 
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
-   CLEAN("clean", "If true, recursively deletes the domain project (if it already exists), before generating the it again"),
+   CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
    MODEL("model", "The fully qualified path to the system descriptor model"),
    MODEL_OBJECT("modelObject", "The fully qualified name of the model to generate connectors for"),
@@ -56,20 +56,19 @@ public enum CommonParameters implements IParameter<String> {
     * @param parameters command parameters
     * @param parameter name of parameter
     * @return the boolean value of the parameter
-    * @throws CommandException if the value is neither 'true' nor 'false' or if parameter not in parameters
+    * @throws CommandException if the value is neither 'true' nor 'false'
     */
    public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
       if (parameters.containsParameter(parameter)) {
          String value = parameters.getParameter(parameter).getStringValue().toLowerCase();
-         if (value != "true" && value != "false") {
+         if (!value.equals("true") && !value.equals("false")) {
             throw new CommandException(
                "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
          } else {
             return Boolean.valueOf(value);
          }
       } else {
-         throw new CommandException(
-            "Invalid value. Parameter " + parameter + " was not included in parameter list.");
+         return false;
       }
    }
    
