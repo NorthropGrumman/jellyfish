@@ -49,7 +49,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -75,7 +74,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String MODEL_PROPERTY = "model";
-   public static final String USE_MODEL_STRUCTURE_PROPERTY = "useModelStructure";
    public static final String USE_VERBOSE_IMPORTS_PROPERTY = "useVerboseImports";
    public static final String PACKAGE_GENERATOR_PROPERTY = "packageGenerator";
    public static final String CLEAN_PROPERTY = "clean";
@@ -105,12 +103,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
       
       String groupId = domainProjName.getGroupId();
       String artifactId = domainProjName.getArtifactId();
-
-      //final String pkg = evaluatePackage(parameters, groupId, artifactId);
-
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
-      final boolean useModelStructure = evaluateBooleanParameter(parameters, USE_MODEL_STRUCTURE_PROPERTY);
       final boolean useVerboseImports = evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
       final Function<IData, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
 
@@ -128,6 +122,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
 
       final Set<String> domainPackages = new LinkedHashSet<>();
+      
       mappedData.forEach((sdPackage, dataList) -> {
          final Path xmlFile = projectDir.resolve(Paths.get("src", "main", "resources", "domain", sdPackage + ".xml"));
          domainPackages.addAll(generateDomainXml(xmlFile, dataList, packageGenerator, commandOptions, useVerboseImports));
@@ -311,38 +306,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       }
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
-
-//   /**
-//    * Returns the package for the domain project.
-//    *
-//    * @param parameters command parameters
-//    * @param groupId    domain groupId
-//    * @param artifactId domain artifactId
-//    * @return the package for the domain project
-//    */
-//   private static String evaluatePackage(IParameterCollection parameters, String groupId, String artifactId) {
-//      final String pkg;
-//      if (parameters.containsParameter(PACKAGE_PROPERTY)) {
-//         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-//            throw new CommandException(
-//                  "Invalid parameter: " + PACKAGE_SUFFIX_PROPERTY + " cannot be set if " + PACKAGE_PROPERTY
-//                  + " is set");
-//         }
-//         pkg = parameters.getParameter(PACKAGE_PROPERTY).getStringValue();
-//      } else {
-//         if (parameters.containsParameter(PACKAGE_SUFFIX_PROPERTY)) {
-//            String suffix = parameters.getParameter(PACKAGE_SUFFIX_PROPERTY).getStringValue().trim();
-//            if (suffix.isEmpty() || suffix.startsWith(".")) {
-//               pkg = groupId + '.' + artifactId + suffix;
-//            } else {
-//               pkg = groupId + '.' + artifactId + '.' + suffix;
-//            }
-//         } else {
-//            pkg = groupId + '.' + artifactId;
-//         }
-//      }
-//      return pkg;
-//   }
 
    /**
     * Returns the path to the domain template file.
@@ -645,10 +608,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
                                     .setRequired(false),
                               new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
                                     .setDescription("If true, imports from the same package will be included for generated domains")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(USE_MODEL_STRUCTURE_PROPERTY)
-                                    .setDescription(
-                                          "If true, uses the System Descriptor package structure for the generated domain package structure")
                                     .setRequired(false),
                               new DefaultParameter<String>(EXTENSION_PROPERTY)
                                     .setDescription("The extension of the generated domain files")

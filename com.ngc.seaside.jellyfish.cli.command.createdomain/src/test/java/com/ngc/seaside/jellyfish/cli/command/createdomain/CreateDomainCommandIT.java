@@ -116,7 +116,7 @@ public class CreateDomainCommandIT {
 
       Path projectDir = outputDir.resolve(groupId + ".model1.domain");
       Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, groupId + ".model1.domain");
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -146,7 +146,7 @@ public class CreateDomainCommandIT {
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact);
       Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1." + artifact);
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
       checkVelocity(projectDir);
       checkDomain(projectDir);
    }
@@ -165,20 +165,6 @@ public class CreateDomainCommandIT {
       checkDomain(projectDir);
    }
 
-   @Test
-   public void testCommandUseModelStructure() throws IOException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true");
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-   
    @Test
    public void testCommandWithPackageGenerator() throws IOException, FileUtilitiesException {
       Function<IData, String> packageGenerator = (d) -> "foo";
