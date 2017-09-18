@@ -70,4 +70,13 @@ public interface IProjectNamingService {
     * @return the project information for a messages project
     */
    IProjectInformation getMessageProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a distribution command project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a messages project
+    */
+   IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model);
 }

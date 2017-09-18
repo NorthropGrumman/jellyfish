@@ -9,6 +9,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishCommand {
@@ -16,11 +17,14 @@ public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishComm
    private final CreateJavaDistributionCommand delegate = new CreateJavaDistributionCommand();
 
    @Inject
-   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService, IPromptUserService promptUserService,
-                                                    ITemplateService templateService) {
+   public CreateJavaDistributionCommandGuiceWrapper(ILogService logService, 
+                                                    IPromptUserService promptUserService,
+                                                    ITemplateService templateService,
+                                                    IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 

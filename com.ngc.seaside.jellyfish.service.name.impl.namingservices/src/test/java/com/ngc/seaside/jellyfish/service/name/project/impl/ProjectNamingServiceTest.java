@@ -86,6 +86,28 @@ public class ProjectNamingServiceTest {
    }
 
    @Test
+   public void testDoesGenerateDistributeProjectName() throws Throwable {
+      model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+
+      IProjectInformation name = service.getDistributionProjectName(options, model);
+      assertEquals("groupId not correct!",
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "threatevaluation.distribution",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   "com.ngc.seaside.threateval.threatevaluation.distribution",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationDistributionVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:threatevaluation.distribution:$threatEvaluationDistributionVersion",
+                   name.getGavFormattedString());
+   }
+   
+   @Test
    public void testDoesGenerateEventsProjectName() throws Throwable {
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
 

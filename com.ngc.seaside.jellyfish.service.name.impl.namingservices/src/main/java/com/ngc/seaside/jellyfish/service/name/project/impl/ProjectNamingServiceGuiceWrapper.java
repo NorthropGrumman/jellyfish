@@ -52,4 +52,9 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getBaseServiceProjectName(options, model);
    }
+
+   @Override
+   public IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getDistributionProjectName(options, model);
+   }
 }
