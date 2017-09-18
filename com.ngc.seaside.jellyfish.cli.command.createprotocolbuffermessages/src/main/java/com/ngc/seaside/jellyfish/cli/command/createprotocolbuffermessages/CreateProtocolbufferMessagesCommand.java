@@ -18,8 +18,9 @@ import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -76,7 +77,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       resourceService.readResource(velocityTemplate);
       final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
-      Function<IData, String> packageGenerator =
+      Function<INamedChild<IPackage>, String> packageGenerator =
             (d) -> packageNamingService.getMessagePackageName(commandOptions, d);
       
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,

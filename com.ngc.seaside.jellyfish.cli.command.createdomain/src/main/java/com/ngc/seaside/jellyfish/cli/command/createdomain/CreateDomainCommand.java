@@ -26,10 +26,13 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -106,7 +109,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useVerboseImports = evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
-      final Function<IData, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
+      final Function<INamedChild<IPackage>, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
 
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
@@ -251,10 +254,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
    
    @SuppressWarnings("unchecked")
-   private static Function<IData, String> evaluatePackageGeneratorParameter(IParameterCollection parameters) {
-      Function<IData, String> generator = null;
+   private static Function<INamedChild<IPackage>, String> evaluatePackageGeneratorParameter(IParameterCollection parameters) {
+      Function<INamedChild<IPackage>, String> generator = null;
       if (parameters.containsParameter(PACKAGE_GENERATOR_PROPERTY)) {
-         generator = (Function<IData, String>) parameters.getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
+         generator = (Function<INamedChild<IPackage>, String>) parameters.getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
       }
       return generator;
    }
@@ -461,7 +464,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param pkg package of domain data classes
     * @throws CommandException if an error occurred when creating the xml file
     */
-   private Collection<String> generateDomainXml(Path xmlFile, Collection<IData> data, Function<IData, String> packageGenerator, IJellyFishCommandOptions options, boolean useVerboseImports) {
+   private Collection<String> generateDomainXml(Path xmlFile, Collection<IData> data, Function<INamedChild<IPackage>, String> packageGenerator, IJellyFishCommandOptions options, boolean useVerboseImports) {
       Collection<String> packages = new LinkedHashSet<>();
       Tdomain domain = new Tdomain();
 
@@ -478,7 +481,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          for (IDataField dField : d.getFields()) {
             if (dField.getType() == DataTypes.ENUM) {
                // Handle enumerations
-               enumObjList.add(convertEnum(dField, pkg));
+               enumObjList.add(convertEnum(dField.getReferencedEnumeration(), packageGenerator, options));
             }
          }
       }
@@ -511,18 +514,20 @@ public class CreateDomainCommand implements IJellyFishCommand {
    /**
     * Converts the IData enumeration to a Tobject.
     *
-    * @param dField IData enumeration
-    * @param pkg package of domain classes
+    * @param enum IData enumeration
+    * @param packageGenerator package of domain classes
+    * @param options 
     * @return domain object
     */
-   private static Tobject convertEnum(IDataField dField, String pkg) {
+   private Tobject convertEnum(IEnumeration enumVal, Function<INamedChild<IPackage>, String> packageGenerator, IJellyFishCommandOptions options) {    
+      String pkg = packageGenerator == null ? packageNamingService.getDomainPackageName(options, enumVal) : packageGenerator.apply(enumVal);
       String enumValString = "";
       Tobject object = new Tobject();
-      object.setClazz(pkg + '.' + dField.getReferencedEnumeration().getName());
+      object.setClazz(pkg + '.' + enumVal.getName());
       object.setType("enum");
 
-      for (String enumVal : dField.getReferencedEnumeration().getValues()) {
-         enumValString += enumVal + " ";
+      for (String e : enumVal.getValues()) {
+         enumValString += e + " ";
       }
       enumValString = enumValString.trim();
       object.setEnumValues(enumValString);

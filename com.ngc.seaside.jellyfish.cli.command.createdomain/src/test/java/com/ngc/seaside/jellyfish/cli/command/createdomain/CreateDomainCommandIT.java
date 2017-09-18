@@ -16,6 +16,8 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -179,6 +181,23 @@ public class CreateDomainCommandIT {
       checkGradleBuild(projectDir, "foo");
       checkVelocity(projectDir);
       checkDomain(projectDir);
+   }
+   
+   @Test
+   public void testCommandWithEnumsPackageGenerator() throws IOException, FileUtilitiesException {
+      Function<INamedChild<IPackage>, String> packageGenerator = (d) -> "foo";
+
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model3",
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+                 CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model3.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "foo");
+      checkVelocity(projectDir);
+      Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
+      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
    }
 
 
