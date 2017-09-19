@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.validation.Issue;
 
 import java.io.File;
@@ -64,7 +65,15 @@ public class XTextParsingIssue implements IParsingIssue {
 
    @Override
    public Path getOffendingFile() {
-      return new File(wrapped.getUriToProblem().toFileString()).toPath();
+      Path path = null;
+      URI uri = wrapped.getUriToProblem();
+      if (uri != null) {
+         String fileString = uri.toFileString();
+         if (fileString != null) {
+            path = new File(fileString).toPath();
+         }
+      }
+      return path;
    }
 
    @Override
