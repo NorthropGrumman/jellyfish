@@ -18,7 +18,7 @@ subprojects {
 
 
     group = 'com.ngc.seaside'
-    version = '1.5.2'
+    version = '1.5.3-SNAPSHOT'
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
