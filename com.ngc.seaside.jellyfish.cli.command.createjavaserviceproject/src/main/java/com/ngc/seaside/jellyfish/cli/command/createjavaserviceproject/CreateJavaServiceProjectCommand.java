@@ -7,6 +7,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -85,18 +86,13 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                   }
                }
                
-               usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
-                        .setDescription("Base directory in which to output the project").setRequired(true));
-               usageParameters.put(MODEL_PROPERTY, new DefaultParameter<String>(MODEL_PROPERTY)
-                        .setDescription("The fully qualified path to the system descriptor model").setRequired(true));
+               usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
+               usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
                usageParameters.put(PROJECT_NAME, new DefaultParameter<String>(PROJECT_NAME)
                         .setDescription("The name of the project.").setRequired(false));
-               usageParameters.put(GROUP_ID_PROPERTY, new DefaultParameter<String>(GROUP_ID_PROPERTY)
-                        .setDescription("The project's group ID").setRequired(false));
-               usageParameters.put(ARTIFACT_ID_PROPERTY, new DefaultParameter<String>(ARTIFACT_ID_PROPERTY)
-                        .setDescription("The project's version").setRequired(false));
-               usageParameters.put(PACKAGE_PROPERTY, new DefaultParameter<String>(PACKAGE_PROPERTY)
-                        .setDescription("The project's default package").setRequired(false));
+               usageParameters.put(GROUP_ID_PROPERTY, CommonParameters.GROUP_ID);
+               usageParameters.put(ARTIFACT_ID_PROPERTY, CommonParameters.ARTIFACT_ID);
+               usageParameters.put(PACKAGE_PROPERTY, CommonParameters.PACKAGE);
                usageParameters.put(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY,
                   new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
                            .setDescription("The project's folder for generated code").setRequired(false));

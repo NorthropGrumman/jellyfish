@@ -3,24 +3,24 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
+import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaserviceconnector.dto.ConnectorDto;
-import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -46,17 +45,17 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-service-connector";
    private static final IUsage USAGE = createUsage();
 
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_PROPERTY = "model";
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
+   public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
-   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
    public static final String MODEL_REQUIREMENTS_PROPERTY = "modelRequirements";
    public static final String JAVA_CLASS_NAME_PROPERTY = "javaClassName";
-   public static final String PACKAGE_PROPERTY = "package";
-   public static final String CLEAN_PROPERTY = "clean";
-
+   
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
@@ -92,10 +91,12 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
 
       if (!parameters.containsParameter(MODEL_OBJECT_PROPERTY)) {
 
-         IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+         IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(
+            () -> new CommandException("Unknown model:" + modelId));
          parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
       }
-      final IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+      final IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(
+         () -> new CommandException("Unknown model:" + modelId));
 
       ArrayList<String> requirements = new ArrayList<String>();
       if (!parameters.containsParameter(MODEL_REQUIREMENTS_PROPERTY)) {
@@ -155,7 +156,7 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
       final Set<IEnumeration> allInputEnums = new LinkedHashSet<>();
       final Set<IEnumeration> allOutputEnums = new LinkedHashSet<>();
 
-      //final INamedChildCollection<IModel, IDataReferenceField> inputs = model.getInputs();
+      // final INamedChildCollection<IModel, IDataReferenceField> inputs = model.getInputs();
 
       model.getInputs().forEach(eachInput -> {
          allInputData.add(eachInput.getType());
@@ -188,12 +189,15 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-      templateService.unpack(CreateJavaServiceConnectorCommand.class.getPackage().getName(), parameters, outputDirectory, clean);
+      templateService.unpack(CreateJavaServiceConnectorCommand.class.getPackage().getName(),
+         parameters,
+         outputDirectory,
+         clean);
       logService.info(CreateJavaServiceConnectorCommand.class, "%s project successfully created", modelId);
    }
 
-
-   private void separateFields(final INamedChildCollection<IData, IDataField> fields, final Set<IData> dataSet, final Set<IEnumeration> enumSet) {
+   private void separateFields(final INamedChildCollection<IData, IDataField> fields, final Set<IData> dataSet,
+            final Set<IEnumeration> enumSet) {
       fields.forEach(eachField -> {
          final DataTypes fieldType = eachField.getType();
          switch (fieldType) {
@@ -305,10 +309,10 @@ public class CreateJavaServiceConnectorCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Creates a new JellyFish Service Connector project.",
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY).setDescription("The directory to generate the command project").setRequired(false),
-         new DefaultParameter(MODEL_OBJECT_PROPERTY).setDescription("The fully qualified name of the model to generate connectors for").setRequired(false),
-         new DefaultParameter(GROUP_ID_PROPERTY).setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false), new DefaultParameter(CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the connector project (if it already exists), before generating the connector project again").setRequired(false));
+         CommonParameters.OUTPUT_DIRECTORY,
+         CommonParameters.MODEL_OBJECT,
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.CLEAN);
    }
 }

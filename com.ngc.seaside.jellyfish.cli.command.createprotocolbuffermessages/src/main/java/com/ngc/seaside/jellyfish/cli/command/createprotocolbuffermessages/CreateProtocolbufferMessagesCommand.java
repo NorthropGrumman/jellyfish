@@ -10,6 +10,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -72,7 +73,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
             new DefaultParameter<>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
-            new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
+            new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), artifactId),
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
@@ -153,10 +154,10 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
       final String modelName;
-      if (parameters.containsParameter(CreateDomainCommand.MODEL_PROPERTY)) {
-         modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
+      if (parameters.containsParameter(CommonParameters.MODEL.getName())) {
+         modelName = parameters.getParameter(CommonParameters.MODEL.getName()).getStringValue();
       } else {
-         modelName = promptUserService.prompt(CreateDomainCommand.MODEL_PROPERTY,
+         modelName = promptUserService.prompt(CommonParameters.MODEL.getName(),
             null,
             m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
@@ -165,8 +166,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
       final String artifactId;
-      if (options.getParameters().containsParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY)) {
-         artifactId = options.getParameters().getParameter(CreateDomainCommand.ARTIFACT_ID_PROPERTY).getStringValue();
+      if (options.getParameters().containsParameter(CommonParameters.ARTIFACT_ID.getName())) {
+         artifactId = options.getParameters().getParameter(CommonParameters.ARTIFACT_ID.getName()).getStringValue();
       } else {
          artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
       }
@@ -179,31 +180,13 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      return new DefaultUsage(
-         "Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
-         new DefaultParameter<String>(CreateDomainCommand.GROUP_ID_PROPERTY).setDescription("The project's group ID")
-                                                                            .setRequired(false),
-         new DefaultParameter<String>(CreateDomainCommand.ARTIFACT_ID_PROPERTY).setDescription("The project's version")
-                                                                               .setRequired(false),
-         new DefaultParameter<String>(CreateDomainCommand.PACKAGE_PROPERTY)
-                                                                           .setDescription(
-                                                                              "The project's default package")
-                                                                           .setRequired(false),
-         new DefaultParameter<String>(CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY)
-                                                                                  .setDescription(
-                                                                                     "A string to append to the end of the generated package name")
-                                                                                  .setRequired(false),
-         new DefaultParameter<String>(CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                                                                    .setDescription(
-                                                                                       "Base directory in which to output the project")
-                                                                                    .setRequired(true),
-         new DefaultParameter<String>(CreateDomainCommand.MODEL_PROPERTY)
-                                                                         .setDescription(
-                                                                            "The fully qualified path to the system descriptor model")
-                                                                         .setRequired(true),
-         new DefaultParameter<String>(CreateDomainCommand.CLEAN_PROPERTY)
-                                                                         .setDescription(
-                                                                            "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                                                         .setRequired(false));
+      return new DefaultUsage("Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.PACKAGE,
+         CommonParameters.PACKAGE_SUFFIX,
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN);
    }
 }
