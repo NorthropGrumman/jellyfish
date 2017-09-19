@@ -10,6 +10,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
@@ -40,13 +41,13 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
             .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
-   public static final String OUTPUT_DIR_PROPERTY = "outputDirectory";
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String PACKAGE_PROPERTY = "package";
+   public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
    public static final String CLASSNAME_PROPERTY = "classname";
    public static final String COMMAND_NAME_PROPERTY = "commandName";
-   public static final String CLEAN_PROPERTY = "clean";
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
@@ -232,20 +233,11 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
                   .setDescription(
                      "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
                   .setRequired(false),
-         new DefaultParameter(GROUP_ID_PROPERTY)
-                  .setDescription("The groupId. This is usually similar to com.ngc.myprojectname").setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY)
-                  .setDescription("The artifactId, usually the lowercase version of the classname").setRequired(false),
-         new DefaultParameter(PACKAGE_PROPERTY)
-                  .setDescription(
-                     "The default package for the classname to reside, usually a combination of the groupId.artifactId")
-                  .setRequired(false),
-         new DefaultParameter(OUTPUT_DIR_PROPERTY).setDescription("The directory to generate the command project")
-                  .setRequired(false),
-         new DefaultParameter(CLEAN_PROPERTY)
-                  .setDescription(
-                     "If true, recursively deletes the command project (if it already exists), before generating the command project again")
-                  .setRequired(false));
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.PACKAGE,
+         CommonParameters.OUTPUT_DIRECTORY,
+         CommonParameters.CLEAN);
    }
 
 }
