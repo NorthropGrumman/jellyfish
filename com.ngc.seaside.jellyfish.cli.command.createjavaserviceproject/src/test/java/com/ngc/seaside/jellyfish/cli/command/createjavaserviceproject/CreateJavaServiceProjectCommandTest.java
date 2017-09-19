@@ -94,7 +94,7 @@ public class CreateJavaServiceProjectCommandTest {
                                                      outputDirectoryName));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.GROUP_ID_PROPERTY,
                                                      "my.group"));
-      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME,
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY,
                                                      "my-project"));
 
       command.run(options);
@@ -218,7 +218,7 @@ public class CreateJavaServiceProjectCommandTest {
                                                                        String groupId,
                                                                        String projectName) {
       requireParameter(options, CreateJavaServiceProjectCommand.GROUP_ID_PROPERTY, groupId);
-      requireParameter(options, CreateJavaServiceProjectCommand.PROJECT_NAME, projectName);
+      requireParameter(options, CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY, projectName);
       requireParameter(options, CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectoryName);
       requireParameter(options, CreateJavaServiceProjectCommand.MODEL_PROPERTY, model.getFullyQualifiedName());
    }

@@ -7,6 +7,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -31,13 +32,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
    private IUsage USAGE = null;
 
-   static final String GROUP_ID_PROPERTY = "groupId";
-   static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   static final String PACKAGE_PROPERTY = "package";
-   static final String PROJECT_NAME = "projectName";
-   static final String MODEL_PROPERTY = "model";
-   static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   static final String GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY = "generatedProjectDirectoryName";
+   static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   static final String PROJECT_NAME_PROPERTY = "projectName";
+   static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
@@ -84,21 +82,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                   }
                }
                
-               usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
-                        .setDescription("Base directory in which to output the project").setRequired(true));
-               usageParameters.put(MODEL_PROPERTY, new DefaultParameter<String>(MODEL_PROPERTY)
-                        .setDescription("The fully qualified path to the system descriptor model").setRequired(true));
-               usageParameters.put(PROJECT_NAME, new DefaultParameter<String>(PROJECT_NAME)
+               usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
+               usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
+               usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
                         .setDescription("The name of the project.").setRequired(false));
-               usageParameters.put(GROUP_ID_PROPERTY, new DefaultParameter<String>(GROUP_ID_PROPERTY)
-                        .setDescription("The project's group ID").setRequired(false));
-               usageParameters.put(ARTIFACT_ID_PROPERTY, new DefaultParameter<String>(ARTIFACT_ID_PROPERTY)
-                        .setDescription("The project's version").setRequired(false));
-               usageParameters.put(PACKAGE_PROPERTY, new DefaultParameter<String>(PACKAGE_PROPERTY)
-                        .setDescription("The project's default package").setRequired(false));
-               usageParameters.put(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY,
-                  new DefaultParameter<String>(GENERATED_PROJECT_DIRECTORY_NAME_PROPERTY)
-                           .setDescription("The project's folder for generated code").setRequired(false));
                usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY,
                   new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
                            .setDescription("Whether or not to create the service's domain model").setRequired(false));
@@ -182,7 +169,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    private void createJellyFishGradleProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
-            new DefaultParameter<>(PROJECT_NAME, ctx.projectName),
+            new DefaultParameter<>(PROJECT_NAME_PROPERTY, ctx.projectName),
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.rootOutputDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME, delegateOptions);
@@ -292,22 +279,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                .toFile();
       }
       
-      if (commandOptions.getParameters().containsParameter(CREATE_SERVICE_DOMAIN_PROPERTY)) {
-         String createDomain = commandOptions.getParameters().getParameter(CREATE_SERVICE_DOMAIN_PROPERTY).getStringValue();
-         switch (createDomain.toLowerCase()) {
-         case "true":
-            ctx.createDomain = true;
-            break;
-         case "false":
-            ctx.createDomain = false;
-            break;
-         default:
-            throw new CommandException(
-               "Invalid value for " + CREATE_SERVICE_DOMAIN_PROPERTY + ": " + createDomain + ". Expected either true or false.");
-         }
-      } else {
-         ctx.createDomain = true;
-      }
+      ctx.createDomain = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true);
 
       // Get the group ID.
       if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
@@ -318,8 +290,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       }
 
       // Get the actual project name.
-      if (commandOptions.getParameters().containsParameter(PROJECT_NAME)) {
-         ctx.projectName = commandOptions.getParameters().getParameter(PROJECT_NAME).getStringValue();
+      if (commandOptions.getParameters().containsParameter(PROJECT_NAME_PROPERTY)) {
+         ctx.projectName = commandOptions.getParameters().getParameter(PROJECT_NAME_PROPERTY).getStringValue();
       } else {
          // Compute the project name from the groupID and the model name.
          ctx.projectName = ctx.groupId + "." + ctx.model.getName().toLowerCase();
