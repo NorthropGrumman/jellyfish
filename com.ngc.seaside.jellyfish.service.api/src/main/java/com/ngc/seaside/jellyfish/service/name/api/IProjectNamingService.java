@@ -76,7 +76,16 @@ public interface IProjectNamingService {
     *
     * @param options options the options the current command is being executed with
     * @param model   the model to get the root project name for
-    * @return the project information for a messages project
+    * @return the project information for a distribution project
     */
    IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a cucumber tests project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a cucumber tests project
+    */
+   IProjectInformation getCucumberTestsProjectName(IJellyFishCommandOptions options, IModel model);
 }

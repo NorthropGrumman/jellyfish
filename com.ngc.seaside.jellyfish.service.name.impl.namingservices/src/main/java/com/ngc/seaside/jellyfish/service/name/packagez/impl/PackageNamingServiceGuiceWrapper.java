@@ -69,4 +69,9 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
    public String getDistributionPackageName(IJellyFishCommandOptions options, IModel model) {
       return packageNamingService.getDistributionPackageName(options, model);
    }
+
+   @Override
+   public String getCucumberTestsPackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getCucumberTestsPackageName(options, model);
+   }
 }

@@ -57,4 +57,9 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    public IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getDistributionProjectName(options, model);
    }
+
+   @Override
+   public IProjectInformation getCucumberTestsProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getCucumberTestsProjectName(options, model);
+   }
 }

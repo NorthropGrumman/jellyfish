@@ -87,7 +87,16 @@ public interface IPackageNamingService {
     *
     * @param options the options the current command is being executed with
     * @param model   the model of a service to get the package name for
-    * @return the package name for the transport topics of a Java service
+    * @return the package name for the distribution project of a Java service
     */
    String getDistributionPackageName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the package name for the cucumber tests project of a Java service.
+    *
+    * @param options the options the current command is being executed with
+    * @param model   the model of a service to get the package name for
+    * @return the package name for the cucumber tests project of a Java service
+    */
+   String getCucumberTestsPackageName(IJellyFishCommandOptions options, IModel model);
 }

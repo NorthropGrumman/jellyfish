@@ -77,31 +77,31 @@ public class PackageNamingServiceTest {
       Model model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "com.ngc.seaside.threateval.trackpriorityservice",
+                   "com.ngc.seaside.threateval.trackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
 
       model = newModel("EngagementTrackPriorityService", "com.ngc.seaside.common.datatype");
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "com.ngc.seaside.common.datatype.engagementtrackpriorityservice",
+                   "com.ngc.seaside.common.datatype.engagementtrackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
 
       model = newModel("DefendedAreaTrackPriorityService", "com.ngc.seaside.common.defendedareatrackpriorityservice");
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice",
+                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
 
       model = newModel("ClassificationTrackPriorityService", "external.datatype");
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "external.datatype.classificationtrackpriorityservice",
+                   "external.datatype.classificationtrackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
 
       model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "com.ngc.seaside.threateval.trackpriorityservice",
+                   "com.ngc.seaside.threateval.trackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
    }
 
@@ -332,6 +332,39 @@ public class PackageNamingServiceTest {
                    service.getTransportTopicsPackageName(options, model));
    }
 
+   @Test
+   public void testDoesGetFullyQualifiedNameForCucumberTests() throws Throwable {
+      Model model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.threateval.trackpriorityservice.tests",
+                   service.getCucumberTestsPackageName(options, model));
+
+      model = newModel("EngagementTrackPriorityService", "com.ngc.seaside.common.datatype");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.common.datatype.engagementtrackpriorityservice.tests",
+                   service.getCucumberTestsPackageName(options, model));
+
+      model = newModel("DefendedAreaTrackPriorityService", "com.ngc.seaside.common.defendedareatrackpriorityservice");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice.tests",
+                   service.getCucumberTestsPackageName(options, model));
+
+      model = newModel("ClassificationTrackPriorityService", "external.datatype");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("event name not correct!",
+                   "external.datatype.classificationtrackpriorityservice.tests",
+                   service.getCucumberTestsPackageName(options, model));
+
+      model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
+      parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME, model.getFullyQualifiedName()));
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.threateval.trackpriorityservice.tests",
+                   service.getCucumberTestsPackageName(options, model));
+   }
+   
    private static Model newModel(String name, String packageName) {
       Model model = new Model(name);
       Package p = new Package(packageName);
