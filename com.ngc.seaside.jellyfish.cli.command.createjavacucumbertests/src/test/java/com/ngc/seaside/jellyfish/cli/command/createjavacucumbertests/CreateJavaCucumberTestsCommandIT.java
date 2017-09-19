@@ -1,8 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.*;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -11,7 +12,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
