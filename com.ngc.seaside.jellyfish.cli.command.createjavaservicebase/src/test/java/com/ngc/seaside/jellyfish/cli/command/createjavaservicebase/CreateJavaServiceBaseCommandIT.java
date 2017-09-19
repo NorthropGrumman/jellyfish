@@ -133,6 +133,8 @@ public class CreateJavaServiceBaseCommandIT {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
          when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".base");
+         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
+         when(information.getGroupId()).thenReturn(model.getParent().getName());
          return information;
       });
       when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
