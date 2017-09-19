@@ -14,6 +14,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -48,6 +51,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private IPromptUserService promptService;
    private ITemplateService templateService;
    private IBaseServiceDtoFactory templateDaoFactory;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -62,13 +66,11 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
-      String groupId = evaluateGroupId(commandOptions, model);
-      String artifactIdWithoutSuffix = evaluateArtifactIdWithoutSuffix(commandOptions, model);
-      String artifactId = evaluateArtifactId(commandOptions, model, artifactIdWithoutSuffix);
-      String packagez = evaluatePackage(commandOptions, groupId, artifactId);
+      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(commandOptions, model);
+
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
-      Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
+      Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       BaseServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
@@ -82,8 +84,8 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
       try {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInfo.getGroupId()));
+         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInfo.getArtifactId()));
          if (!GradleSettingsUtilities.tryAddProject(parameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
@@ -162,6 +164,16 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       setTemplateDaoFactory(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+   }
+
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
+   }
+
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       // Get the fully qualified model name.
       String modelName;
@@ -191,40 +203,6 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       return outputDirectory;
    }
 
-   private static String evaluateGroupId(IJellyFishCommandOptions commandOptions, IModel model) {
-      String groupId;
-      if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
-         groupId = commandOptions.getParameters().getParameter(GROUP_ID_PROPERTY).getStringValue();
-      } else {
-         groupId = model.getParent().getName();
-      }
-      return groupId;
-   }
-
-   private static String evaluateArtifactIdWithoutSuffix(IJellyFishCommandOptions commandOptions, IModel model) {
-      String artifactId;
-      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactId = commandOptions.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase();
-      }
-      return artifactId;
-   }
-
-   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model,
-            String artifactIdWithoutSuffix) {
-      String artifactIdSuffix;
-      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_SUFFIX_PROPERTY)) {
-         artifactIdSuffix = commandOptions.getParameters().getParameter(ARTIFACT_ID_SUFFIX_PROPERTY).getStringValue();
-         if (!artifactIdSuffix.isEmpty() && !artifactIdSuffix.startsWith(".")) {
-            artifactIdSuffix = '.' + artifactIdSuffix;
-         }
-      } else {
-         artifactIdSuffix = '.' + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactIdWithoutSuffix + artifactIdSuffix;
-   }
-
    private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
       return String.format("%s.%s", groupId, artifactId);
    }
@@ -241,8 +219,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Generates the base abstract service for a Java application",
-         new DefaultParameter<>(GROUP_ID_PROPERTY)
-                                                  .setDescription(
+         new DefaultParameter<>(GROUP_ID_PROPERTY).setDescription(
                                                      "The project's group ID. (default: the package in the model)")
                                                   .setRequired(false),
          new DefaultParameter<>(ARTIFACT_ID_PROPERTY)

@@ -1,13 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -52,6 +44,14 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceBaseCommandIT {
 
@@ -83,44 +83,41 @@ public class CreateJavaServiceBaseCommandIT {
 
    private IModel model = newModelForTesting();
 
-   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto().setPublishingTopic("TrackPriority.TOPIC")
-                                                                              .setName("publishTrackPriority")
-                                                                              .setArguments(Collections.singletonList(
-                                                                                 new ArgumentDto().setTypeName(
-                                                                                    "TrackPriority")
-                                                                                                  .setPackageName(
-                                                                                                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.events")
-                                                                                                  .setName(
-                                                                                                     "trackPriority")));
+   private PubSubMethodDto publisher = (PubSubMethodDto) new PubSubMethodDto()
+         .setPublishingTopic("TrackPriority.TOPIC")
+         .setName("publishTrackPriority")
+         .setArguments(Collections.singletonList(
+               new ArgumentDto()
+                     .setTypeName("TrackPriority")
+                     .setPackageName("com.ngc.seaside.threateval.engagementtrackpriorityservice.events")
+                     .setName("trackPriority")));
 
    private PubSubMethodDto receiver = (PubSubMethodDto) new PubSubMethodDto().setName("receiveTrackEngagementStatus")
-                                                                             .setArguments(Collections.singletonList(
-                                                                                new ArgumentDto().setTypeName("IEvent")
-                                                                                                 .setPackageName(
-                                                                                                    "com.ngc.blocs.service.event.api.IEvent")
-                                                                                                 .setTypes(
-                                                                                                    Collections.singletonList(
-                                                                                                       new ClassDto<>().setTypeName(
-                                                                                                          "TrackEngagementStatus")
-                                                                                                                       .setPackageName(
-                                                                                                                          "com.ngc.seaside.threateval.engagementtrackpriorityservice.events")))
-                                                                                                 .setName("event")));
+         .setArguments(Collections.singletonList(
+               new ArgumentDto()
+                     .setTypeName("IEvent")
+                     .setPackageName("com.ngc.blocs.service.event.api.IEvent")
+                     .setTypes(Collections.singletonList(
+                           new ClassDto<>()
+                                 .setTypeName("TrackEngagementStatus")
+                                 .setPackageName("com.ngc.seaside.threateval.engagementtrackpriorityservice.events")))
+                     .setName("event")));
 
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
 
       templateService = new MockedTemplateService()
-                                                   .useRealPropertyService()
-                                                   .setTemplateDirectory(
-                                                      CreateJavaServiceBaseCommand.class.getPackage().getName(),
-                                                      Paths.get("src", "main", "template"));
+            .useRealPropertyService()
+            .setTemplateDirectory(
+                  CreateJavaServiceBaseCommand.class.getPackage().getName(),
+                  Paths.get("src", "main", "template"));
 
       templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
-         Optional.of(model));
+            Optional.of(model));
 
       parameters = new DefaultParameterCollection();
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
@@ -130,11 +127,12 @@ public class CreateJavaServiceBaseCommandIT {
       command.setLogService(logService);
       command.setTemplateDaoFactory(templateDaoFactory);
       command.setTemplateService(templateService);
+      command.setProjectNamingService(projectService);
 
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getDirectoryName()).thenReturn(model.getName().toLowerCase() + ".base");
+         when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".base");
          return information;
       });
       when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
@@ -160,31 +158,31 @@ public class CreateJavaServiceBaseCommandIT {
          IModel model = args.getArgument(1);
          ClassDto<MethodDto> interfaceDto = new ClassDto<>();
          interfaceDto.setName("I" + model.getName())
-                     .setPackageName(packageService.getServiceInterfacePackageName(options, model))
-                     .setMethods(Collections.singletonList(
-                        new MethodDto().setName("calculateTrackPriority")
-                                       .setOverride(false)
-                                       .setReturnArgument(
-                                          new ArgumentDto().setTypeName("TrackPriority")
-                                                           .setPackageName("com.ngc.seaside.threateval")
-                                                           .setName("asdf"))
-                                       .setArguments(Collections.singletonList(
-                                          new ArgumentDto().setTypeName("TrackEngagementStatus")
-                                                           .setPackageName("com.ngc.seaside.threateval")
-                                                           .setName("trackEngagementStatus")))))
-                     .setImports(new LinkedHashSet<>(Arrays.asList(
-                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
-                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
+               .setPackageName(packageService.getServiceInterfacePackageName(options, model))
+               .setMethods(Collections.singletonList(
+                     new MethodDto().setName("calculateTrackPriority")
+                           .setOverride(false)
+                           .setReturnArgument(
+                                 new ArgumentDto().setTypeName("TrackPriority")
+                                       .setPackageName("com.ngc.seaside.threateval")
+                                       .setName("asdf"))
+                           .setArguments(Collections.singletonList(
+                                 new ArgumentDto().setTypeName("TrackEngagementStatus")
+                                       .setPackageName("com.ngc.seaside.threateval")
+                                       .setName("trackEngagementStatus")))))
+               .setImports(new LinkedHashSet<>(Arrays.asList(
+                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
+                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
          return interfaceDto;
       });
 
       ClassDto<PubSubMethodDto> abstractClassDto = new ClassDto<>();
       abstractClassDto.setName("Abstract" + model.getName())
-                      .setPackageName(packageService.getServiceBaseImplementationPackageName(null, model))
-                      .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
-                         "com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService",
-                         "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
-                         "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
+            .setPackageName(packageService.getServiceBaseImplementationPackageName(null, model))
+            .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
 
       when(generatorService.getBaseServiceDescription(any(), eq(model))).thenReturn(abstractClassDto);
       when(generatorService.getTransportTopicsDescription(any(), eq(model))).thenAnswer(args -> {
@@ -194,7 +192,7 @@ public class CreateJavaServiceBaseCommandIT {
          dto.setImports(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic"));
          dto.setValues(new LinkedHashSet<>(Arrays.asList("TRACK_ENGAGEMENT_STATUS", "TRACK_PRIORITY")));
          dto.setImplementedInterface(
-            new ClassDto<>().setName("ITransportTopic").setPackageName("com.ngc.seaside.service.transport.api"));
+               new ClassDto<>().setName("ITransportTopic").setPackageName("com.ngc.seaside.service.transport.api"));
          return dto;
       });
    }
@@ -202,63 +200,63 @@ public class CreateJavaServiceBaseCommandIT {
    @Test
    public void testGeneratePubSub() throws Throwable {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath()));
+                                                     outputDirectory.getRoot().getAbsolutePath()));
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
-                      .setMethods(Arrays.asList(publisher, receiver));
+            .setMethods(Arrays.asList(publisher, receiver));
       publisher.setPublishMethods(Collections.emptyMap());
       receiver.setPublishMethods(Collections.singletonMap("calculateTrackPriority", publisher));
 
       command.run(jellyFishCommandOptions);
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "build.gradle");
+                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                       "build.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
       Path abstractPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
+                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                    "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
 
       assertFileContains(abstractPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(abstractPath, "\\babstract\\s+class\\s+AbstractEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\\bimplements\\s+.*?\\bIEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\"service:com.ngc.seaside.threateval.EngagementTrackPriorityService\"");
       assertFileContains(abstractPath,
-         "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
+                         "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bpublishTrackPriority\\s*\\(\\s*calculateTrackPriority\\s*\\(");
       assertFileContains(abstractPath,
-         "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
+                         "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
 
       Path interfacePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
+                                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                     "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
 
       assertFileContains(interfacePath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(interfacePath, "\\binterface\\s+IEngagementTrackPriorityService\\b");
       assertFileContains(interfacePath,
-         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
+                         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
 
       Path topicsPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
+                                  "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                  "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
 
       assertFileContains(topicsPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
       assertFileContains(topicsPath, "\\benum\\s+EngagementTrackPriorityServiceTransportTopics");
       assertFileContains(topicsPath, "\\bimplements\\s+\\S*\\bITransportTopic\\b");
       assertFileContains(topicsPath, "TRACK_ENGAGEMENT_STATUS");
@@ -268,61 +266,61 @@ public class CreateJavaServiceBaseCommandIT {
    @Test
    public void testGenerateSink() throws Throwable {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath()));
+                                                     outputDirectory.getRoot().getAbsolutePath()));
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
-                      .setMethods(Arrays.asList(receiver));
+            .setMethods(Arrays.asList(receiver));
       receiver.setPublishMethods(Collections.singletonMap("calculateTrackPriority", null));
 
       command.run(jellyFishCommandOptions);
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "build.gradle");
+                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                       "build.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
       Path abstractPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
+                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                    "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
 
       assertFileContains(abstractPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(abstractPath, "\\babstract\\s+class\\s+AbstractEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\\bimplements\\s+.*?\\bIEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\"service:com.ngc.seaside.threateval.EngagementTrackPriorityService\"");
       assertFileContains(abstractPath,
-         "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
+                         "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bcalculateTrackPriority\\s*\\(");
       assertFileNotContains(abstractPath, "\\bpublishTrackPriority\\b");
 
       Path interfacePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
+                                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                     "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
 
       assertFileContains(interfacePath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(interfacePath, "\\binterface\\s+IEngagementTrackPriorityService\\b");
       assertFileContains(interfacePath,
-         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
+                         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
 
       Path topicsPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
+                                  "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                  "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
 
       assertFileContains(topicsPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
       assertFileContains(topicsPath, "\\benum\\s+EngagementTrackPriorityServiceTransportTopics");
       assertFileContains(topicsPath, "\\bimplements\\s+\\S*\\bITransportTopic\\b");
       assertFileContains(topicsPath, "TRACK_ENGAGEMENT_STATUS");
@@ -332,65 +330,65 @@ public class CreateJavaServiceBaseCommandIT {
    @Test
    public void testGenerateSource() throws Throwable {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath()));
+                                                     outputDirectory.getRoot().getAbsolutePath()));
       generatorService.getBaseServiceDescription(jellyFishCommandOptions, model)
-                      .setMethods(Arrays.asList(publisher));
+            .setMethods(Arrays.asList(publisher));
       publisher.setPublishMethods(Collections.singletonMap("calculateTrackPriority", null));
 
       command.run(jellyFishCommandOptions);
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "build.gradle");
+                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                       "build.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
       Path abstractPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
+                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                    "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
 
       assertFileContains(abstractPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(abstractPath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(abstractPath, "\\babstract\\s+class\\s+AbstractEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\\bimplements\\s+.*?\\bIEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\"service:com.ngc.seaside.threateval.EngagementTrackPriorityService\"");
       assertFileNotContains(abstractPath,
-         "\\breceiveTrackEngagementStatus\\b");
+                            "\\breceiveTrackEngagementStatus\\b");
       int activateIndex = assertFileContains(abstractPath, "\\bvoid\\s+activate\\s*\\(\\s*\\)");
       int callIndex = assertFileContains(abstractPath, "\\bcalculateTrackPriority\\b");
       assertTrue(callIndex >= activateIndex);
       assertFileContains(abstractPath, "\\bthis::publishTrackPriority\\b");
       assertFileContains(abstractPath,
-         "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
+                         "\\bvoid\\s+publishTrackPriority\\s*\\(\\s*?\\S*?\\bTrackPriority\\s+trackPriority\\s*\\)");
 
       Path interfacePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
+                                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                     "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
 
       assertFileContains(interfacePath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus\\s*;");
       assertFileContains(interfacePath,
-         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
+                         "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(interfacePath, "\\binterface\\s+IEngagementTrackPriorityService\\b");
       assertFileContains(interfacePath,
-         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
+                         "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
 
       Path topicsPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
+                                  "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
+                                  "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
 
       assertFileContains(topicsPath,
-         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
+                         "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic\\s*;");
       assertFileContains(topicsPath, "\\benum\\s+EngagementTrackPriorityServiceTransportTopics");
       assertFileContains(topicsPath, "\\bimplements\\s+\\S*\\bITransportTopic\\b");
       assertFileContains(topicsPath, "TRACK_ENGAGEMENT_STATUS");
