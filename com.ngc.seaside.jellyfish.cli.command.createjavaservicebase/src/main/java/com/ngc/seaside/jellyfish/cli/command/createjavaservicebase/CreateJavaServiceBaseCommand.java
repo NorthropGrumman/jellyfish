@@ -14,7 +14,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
-import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -26,7 +25,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -70,10 +68,8 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
       boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
       Path outputDir = evaluateOutputDirectory(commandOptions);
-      Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       BaseServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
-      dto.setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -83,7 +79,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
          clean);
 
       try {
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
+         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
          parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInfo.getGroupId()));
          parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInfo.getArtifactId()));
          if (!GradleSettingsUtilities.tryAddProject(parameters)) {
@@ -164,8 +160,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       setTemplateDaoFactory(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC)
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
    }
@@ -203,24 +198,11 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       return outputDirectory;
    }
 
-   private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
-      return String.format("%s.%s", groupId, artifactId);
-   }
-
-   private static Path evaluateProjectDirectory(Path outputDir, String packagez, boolean clean) {
-      Path projectDir = outputDir.resolve(packagez);
-      File projectDirFile = projectDir.toFile();
-      if (clean && projectDirFile.exists() && projectDirFile.isDirectory()) {
-         deleteDir(projectDirFile);
-      }
-      return projectDir;
-   }
-
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Generates the base abstract service for a Java application",
          new DefaultParameter<>(GROUP_ID_PROPERTY).setDescription(
-                                                     "The project's group ID. (default: the package in the model)")
+            "The project's group ID. (default: the package in the model)")
                                                   .setRequired(false),
          new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
                                                      .setDescription(
@@ -237,21 +219,6 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
                                                .setDescription(
                                                   "If true, recursively deletes the project before generating the it again")
                                                .setRequired(false));
-   }
-
-   /**
-    * Helper method to delete folder/files
-    *
-    * @param file file/folder to delete
-    */
-   private static void deleteDir(File file) {
-      File[] contents = file.listFiles();
-      if (contents != null) {
-         for (File f : contents) {
-            deleteDir(f);
-         }
-      }
-      file.delete();
    }
 
    private static boolean evaluateBooleanParameter(IJellyFishCommandOptions options, String parameter) {

@@ -1,5 +1,13 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -43,14 +51,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
-
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceBaseCommandIT {
