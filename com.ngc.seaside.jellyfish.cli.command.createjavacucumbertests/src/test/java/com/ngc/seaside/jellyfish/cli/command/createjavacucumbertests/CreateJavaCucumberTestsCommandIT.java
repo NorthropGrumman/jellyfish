@@ -2,13 +2,19 @@ package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -45,9 +51,6 @@ public class CreateJavaCucumberTestsCommandIT {
    private Path outputDirectory;
 
    @Mock
-   private IPromptUserService promptUserService;
-
-   @Mock
    private IJellyFishCommandOptions options;
 
    @Mock
@@ -58,7 +61,17 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @Mock
    private ILogService logService;
-
+   
+   @Mock
+   private IJavaServiceGenerationService generationService;
+   
+   @Mock
+   private IProjectNamingService projectService;
+   
+   @Mock
+   private IPackageNamingService packageService;
+   
+   
    @Before
    public void setup() throws IOException {
       outputDirectory = tempFolder.newFolder().toPath();
@@ -77,17 +90,41 @@ public class CreateJavaCucumberTestsCommandIT {
       when(model.getParent()).thenReturn(mock(IPackage.class));
 
       command.setLogService(logService);
-      command.setPromptService(promptUserService);
       command.setTemplateService(templateService);
+      command.setProjectNamingService(projectService);
+      command.setPackageNamingService(packageService);
+      command.setJavaServiceGenerationService(generationService);
       command.activate();
    }
 
+   @SuppressWarnings("unchecked")
    private void setupModel(Path inputDirectory, String pkg, String name) {
       when(options.getSystemDescriptorProjectPath()).thenReturn(inputDirectory);
       when(systemDescriptor.findModel(pkg + '.' + name)).thenReturn(Optional.of(model));
       when(model.getParent().getName()).thenReturn(pkg);
       when(model.getName()).thenReturn(name);
       when(model.getFullyQualifiedName()).thenReturn(pkg + '.' + name);
+
+      IProjectInformation info = mock(IProjectInformation.class);
+      when(projectService.getCucumberTestsProjectName(any(), eq(model))).thenReturn(info);
+      when(info.getDirectoryName()).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
+      when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".tests");
+      when(info.getGroupId()).thenReturn(pkg);
+      
+      info = mock(IProjectInformation.class);
+      when(projectService.getBaseServiceProjectName(any(), eq(model))).thenReturn(info);
+      when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".base.impl");
+
+      info = mock(IProjectInformation.class);
+      when(projectService.getMessageProjectName(any(), eq(model))).thenReturn(info);
+      when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".messages");
+
+      when(packageService.getCucumberTestsPackageName(any(), eq(model))).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
+      
+      @SuppressWarnings("rawtypes")
+      EnumDto mockEnum = mock(EnumDto.class);
+      when(generationService.getTransportTopicsDescription(any(), eq(model))).thenReturn(mockEnum);
+      when(mockEnum.getFullyQualifiedName()).thenReturn(pkg + "." + name.toLowerCase() + ".transport.topics." + name + "TransportTopics");
    }
 
    @Test

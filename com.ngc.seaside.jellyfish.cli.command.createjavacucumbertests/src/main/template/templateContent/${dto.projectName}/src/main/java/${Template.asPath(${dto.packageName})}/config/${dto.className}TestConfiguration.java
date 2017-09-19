@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import ${dto.basePackage}.transport.topic.${dto.className}TransportTopics;
 import com.ngc.seaside.service.transport.api.ITransportService;
+import ${dto.transportTopicsClass};
 
 public class ${dto.className}TestConfiguration{
 
@@ -16,7 +16,7 @@ public class ${dto.className}TestConfiguration{
    private final IResourceService resourceService;
 
    @SuppressWarnings("unused")
-   private final ITransportService transportService ;
+   private final ITransportService transportService;
    @Inject
    public ${dto.className}TestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
