@@ -8,8 +8,8 @@ import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
@@ -46,11 +46,11 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-cucumber-tests";
    private static final IUsage USAGE = createUsage();
 
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_PROPERTY = "model";
-   public static final String CLEAN_PROPERTY = "clean";
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
    public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
@@ -80,9 +80,10 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       final String packageName = packageNamingService.getCucumberTestsPackageName(commandOptions, model);
       final String projectName = info.getDirectoryName();
-      final boolean clean = evaluateBoolean(commandOptions.getParameters(), CLEAN_PROPERTY);
-
-      if (!evaluateBoolean(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
+      final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
+      
+      
+      if (!CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
 
          CucumberDto dto = new CucumberDto().setProjectName(projectName)
                                             .setPackageName(packageName)
@@ -310,30 +311,14 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the gradle distribution project for a Java application",
-         new DefaultParameter(GROUP_ID_PROPERTY)
-                                                .setDescription(
-                                                   "The project's group ID. (default: the package in the model)")
-                                                .setRequired(false),
-         new DefaultParameter(ARTIFACT_ID_PROPERTY).setDescription(
-            "The project's artifact ID. (default: model name in lowercase + '.distribution')")
-                                                   .setRequired(false),
-         new DefaultParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                                        .setDescription("Base directory in which to output the project")
-                                                        .setRequired(true),
-         new DefaultParameter(MODEL_PROPERTY)
-                                             .setDescription("The fully qualified path to the system descriptor model")
-                                             .setRequired(true),
-         new DefaultParameter(CLEAN_PROPERTY).setDescription(
-            "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                             .setRequired(false),
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN,
          new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
             "If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
                                                              .setRequired(false));
-   }
-
-   private static boolean evaluateBoolean(IParameterCollection parameters, String parameter) {
-      return parameters.containsParameter(parameter)
-         && Boolean.valueOf(parameters.getParameter(parameter).getStringValue().toLowerCase());
    }
 
    /**
