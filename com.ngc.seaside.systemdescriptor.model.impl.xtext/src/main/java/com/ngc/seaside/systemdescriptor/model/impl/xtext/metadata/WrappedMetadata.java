@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject;
@@ -128,6 +129,12 @@ public class WrappedMetadata implements IMetadata {
       return SystemDescriptorFactory.eINSTANCE.createNullValue();
    }
 
+   static BooleanValue newBooleanValue(boolean x) {
+      BooleanValue value = SystemDescriptorFactory.eINSTANCE.createBooleanValue();
+      value.setValue(Boolean.toString(x));
+      return value;
+   }
+
    static ArrayValue newArrayValue(Collection<Value> values) {
       ArrayValue value = SystemDescriptorFactory.eINSTANCE.createArrayValue();
       Array array = SystemDescriptorFactory.eINSTANCE.createArray();
@@ -178,9 +185,8 @@ public class WrappedMetadata implements IMetadata {
          case SystemDescriptorPackage.DBL_VALUE:
             return getProvider().createValue(((DblValue) value).getValue());
          case SystemDescriptorPackage.BOOLEAN_VALUE:
-            // TODO TH: the current grammar requires a boolean value to be a string: 'true' or 'false' which is incorrect.
-            // Fix the grammar first then fix this.
-            throw new UnsupportedOperationException("boolean json conversion not implement yet, see source TODO!");
+            boolean bool = Boolean.valueOf(((BooleanValue) value).getValue());
+            return bool ? javax.json.JsonValue.TRUE : javax.json.JsonValue.FALSE;
          case SystemDescriptorPackage.NULL_VALUE:
             return javax.json.JsonValue.NULL;
          case SystemDescriptorPackage.JSON_VALUE:
@@ -200,11 +206,9 @@ public class WrappedMetadata implements IMetadata {
             javax.json.JsonNumber number = (javax.json.JsonNumber) value;
             return number.isIntegral() ? newIntValue(number.intValue()) : newDblValue(number.doubleValue());
          case TRUE:
-            // TODO TH: see boolean/grammar comment above.
-            throw new UnsupportedOperationException("boolean json conversion not implement yet, see source TODO!");
+            return newBooleanValue(true);
          case FALSE:
-            // TODO TH: see boolean/grammar comment above.
-            throw new UnsupportedOperationException("boolean json conversion not implement yet, see source TODO!");
+            return newBooleanValue(false);
          case NULL:
             return newNullValue();
          case ARRAY:
