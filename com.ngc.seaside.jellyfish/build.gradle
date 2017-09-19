@@ -54,6 +54,11 @@ dependencies {
 
     compile project(":jellyfish.cli.command.createjavacucumbertests")
     commandTemplate project(path: ":jellyfish.cli.command.createjavacucumbertests", configuration: "commandTemplate")
+    
+    compile project(":jellyfish.service.codegen.impl.codegenservices")
+    compile project(":jellyfish.service.name.impl.namingservices")
+    compile project(":jellyfish.service.scenario.impl.scenarioservice")
+    compile project(":jellyfish.service.config.impl.transportconfigurationservice")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"

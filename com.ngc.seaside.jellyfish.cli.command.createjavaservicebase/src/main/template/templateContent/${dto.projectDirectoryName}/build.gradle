@@ -1,7 +1,9 @@
 #set( $D = '$' )
 
 dependencies {
-   compile project(':${dto.artifactId}.events')
+#foreach ($project in  $dto.projectDependencies)
+   compile project(':${project}')
+#end
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"

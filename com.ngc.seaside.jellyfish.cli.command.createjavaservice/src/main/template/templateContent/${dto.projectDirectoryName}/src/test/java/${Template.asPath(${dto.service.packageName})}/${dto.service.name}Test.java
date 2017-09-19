@@ -1,4 +1,4 @@
-package ${dto.packageName};
+package ${dto.service.packageName};
 
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -13,9 +13,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${dto.className}Test {
+public class ${dto.service.name}Test {
 
-   private ${dto.className} service;
+   private ${dto.service.name} service;
 
    @Mock
    private ILogService logService;
@@ -25,15 +25,15 @@ public class ${dto.className}Test {
 
    @Before
    public void setup() throws Throwable {
-      service = new ${dto.className}();
+      service = new ${dto.service.name}();
       service.setLogService(logService);
       service.setEventService(eventService);
       service.activate();
    }
 
-#foreach ($method in $dto.methods)
+#foreach ($method in $dto.service.methods)
    @Test
-   public void ${method.methodName}Test(){
+   public void ${method.name}Test(){
        // TODO Auto-generated method stub
        fail("not implemented");
    }
