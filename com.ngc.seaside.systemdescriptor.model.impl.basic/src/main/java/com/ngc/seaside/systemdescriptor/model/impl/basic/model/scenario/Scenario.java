@@ -14,25 +14,23 @@ import java.util.Objects;
 /**
  * Implements the IScenario interface.  Stores the "Given", "When", "Then" clauses that
  * define a Scenario.
- *
- * @author psnell
  */
 public class Scenario implements IScenario {
 
    private final String name;
    private IModel parent;
    private IMetadata metadata;
-   private ArrayList<IScenarioStep> givens;
-   private ArrayList<IScenarioStep> whens;
-   private ArrayList<IScenarioStep> thens;
+   private List<IScenarioStep> givens;
+   private List<IScenarioStep> whens;
+   private List<IScenarioStep> thens;
 
    public Scenario(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       this.name = name;
-      this.givens = new ArrayList<IScenarioStep>();
-      this.whens = new ArrayList<IScenarioStep>();
-      this.thens = new ArrayList<IScenarioStep>();
+      this.givens = new ArrayList<>();
+      this.whens = new ArrayList<>();
+      this.thens = new ArrayList<>();
    }
 
    @Override
@@ -109,7 +107,7 @@ public class Scenario implements IScenario {
     *
     * @param givens the array of IScenarioStep objects specifying the Given steps of the Scenario
     */
-   public void setGivens(ArrayList<IScenarioStep> givens) {
+   public void setGivens(List<IScenarioStep> givens) {
       this.givens = givens;
    }
 
@@ -118,7 +116,7 @@ public class Scenario implements IScenario {
     *
     * @param whens the array of IScenarioStep objects specifying the When steps of the Scenario
     */
-   public void setWhens(ArrayList<IScenarioStep> whens) {
+   public void setWhens(List<IScenarioStep> whens) {
       this.whens = whens;
    }
 
@@ -127,7 +125,7 @@ public class Scenario implements IScenario {
     *
     * @param thens the array of IScenarioStep objects specifying the Then steps of the Scenario
     */
-   public void setThens(ArrayList<IScenarioStep> thens) {
+   public void setThens(List<IScenarioStep> thens) {
       this.thens = thens;
    }
 
