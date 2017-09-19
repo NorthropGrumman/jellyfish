@@ -23,6 +23,7 @@ import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -67,19 +68,21 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
    static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
-
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   public static final String PACKAGE_PROPERTY = "package";
+   
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+ 
    public static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
    public static final String EXTENSION_PROPERTY = "extension";
    public static final String BUILD_GRADLE_TEMPLATE_PROPERTY = "buildGradleTemplate";
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
-   public static final String MODEL_PROPERTY = "model";
    public static final String USE_VERBOSE_IMPORTS_PROPERTY = "useVerboseImports";
    public static final String PACKAGE_GENERATOR_PROPERTY = "packageGenerator";
-   public static final String CLEAN_PROPERTY = "clean";
+
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -107,8 +110,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
       String groupId = domainProjName.getGroupId();
       String artifactId = domainProjName.getArtifactId();
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
-      final boolean clean = evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
-      final boolean useVerboseImports = evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
+      final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
+      final boolean useVerboseImports = CommonParameters.evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
       final Function<INamedChild<IPackage>, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
 
       final Set<IData> data = getDataFromModel(model);
@@ -260,35 +263,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
          generator = (Function<INamedChild<IPackage>, String>) parameters.getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
       }
       return generator;
-   }
-
-   /**
-    * Returns the boolean value of the given parameter if it was set, false otherwise.
-    *
-    * @param parameters command parameters
-    * @param parameter  name of parameter
-    * @return the boolean value of the parameter
-    * @throws CommandException if the value is invalid
-    */
-   private static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
-      final boolean booleanValue;
-      if (parameters.containsParameter(parameter)) {
-         String value = parameters.getParameter(parameter).getStringValue();
-         switch (value.toLowerCase()) {
-            case "true":
-               booleanValue = true;
-               break;
-            case "false":
-               booleanValue = false;
-               break;
-            default:
-               throw new CommandException(
-                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
-         }
-      } else {
-         booleanValue = false;
-      }
-      return booleanValue;
    }
 
    /**
@@ -589,44 +563,27 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-                              new DefaultParameter<String>(GROUP_ID_PROPERTY).setDescription("The project's group ID")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(ARTIFACT_ID_PROPERTY).setDescription("The project's version")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(PACKAGE_PROPERTY)
-                                    .setDescription("The project's default package")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(PACKAGE_SUFFIX_PROPERTY)
-                                    .setDescription("A string to append to the end of the generated package name")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
-                                    .setDescription("Base directory in which to output the project").setRequired(true),
-                              new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
-                                    .setDescription("The velocity template file")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(MODEL_PROPERTY)
-                                    .setDescription("The fully qualified path to the system descriptor model")
-                                    .setRequired(true),
-                              new DefaultParameter<String>(CLEAN_PROPERTY)
-                                    .setDescription(
-                                          "If true, recursively deletes the domain project (if it already exists), before generating the it again")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
-                                    .setDescription("If true, imports from the same package will be included for generated domains")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(EXTENSION_PROPERTY)
-                                    .setDescription("The extension of the generated domain files")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
-                                    .setDescription(
-                                          "Name of template used to generate the domain projects build.gradle")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(PACKAGE_GENERATOR_PROPERTY)
-                                    .setDescription(
-                                           "Use the package generator")
-                                    .setRequired(false));
-      
-      
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.PACKAGE,
+         CommonParameters.PACKAGE_SUFFIX, 
+         CommonParameters.OUTPUT_DIRECTORY.required(),         
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN,        
+         new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
+            .setDescription("The velocity template file")
+            .setRequired(false),
+         new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
+            .setDescription("If true, imports from the same package will be included for generated domains")
+            .setRequired(false),
+         new DefaultParameter<String>(EXTENSION_PROPERTY)
+            .setDescription("The extension of the generated domain files")
+            .setRequired(false),          
+         new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
+            .setDescription("Name of template used to generate the domain projects build.gradle")
+            .setRequired(false),
+         new DefaultParameter<String>(PACKAGE_GENERATOR_PROPERTY)
+            .setDescription("Use the package generator")
+            .setRequired(false));
    }
-
 }
