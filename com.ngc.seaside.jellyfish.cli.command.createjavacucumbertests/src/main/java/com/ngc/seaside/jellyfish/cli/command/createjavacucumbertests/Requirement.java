@@ -9,7 +9,7 @@ import java.util.TreeSet;
 /**
  * POJO for a requirement
  */
-public class Requirement implements Comparable {
+public class Requirement implements Comparable<Requirement> {
    private String ID;
    private TreeSet<String> features = new TreeSet<>(Collections.reverseOrder());
 
@@ -94,10 +94,7 @@ public class Requirement implements Comparable {
    }
 
    @Override
-   public int compareTo(Object obj) throws ClassCastException {
-      if (!(obj instanceof Requirement)) {
-         throw new ClassCastException("A Requirement object expected.");
-      }
+   public int compareTo(Requirement obj) throws ClassCastException {
       int thatHashCode = obj.hashCode();
       return this.hashCode() - thatHashCode;
    }
