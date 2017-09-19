@@ -1,13 +1,28 @@
 package com.ngc.seaside.jellyfish.service.codegen.api.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Represents an argument to a Java method.
  */
-public class ArgumentDto {
+public class ArgumentDto implements TypeDto<ArgumentDto> {
 
    private String name;
-   private String className;
+   private String typeName;
    private String packageName;
+   private List<TypeDto<?>> types = new ArrayList<>();
+
+   /**
+    * Gets a string that contains the verbatim Java code for the type parameters of this argument.
+    */
+   public String getTypeSnippet() {
+      if (types == null || types.isEmpty()) {
+         return "";
+      }
+      return "<" + types.stream().map(TypeDto::getTypeName).collect(Collectors.joining(", ")) + ">";
+   }
 
    /**
     * Gets the name of this argument.
@@ -20,16 +35,16 @@ public class ArgumentDto {
       this.name = name;
       return this;
    }
-
+   
    /**
     * Gets the unqualified class name of this argument's type.
     */
-   public String getClassName() {
-      return className;
+   public String getTypeName() {
+      return typeName;
    }
 
-   public ArgumentDto setClassName(String className) {
-      this.className = className;
+   public ArgumentDto setTypeName(String name) {
+      this.typeName = name;
       return this;
    }
 
@@ -42,6 +57,15 @@ public class ArgumentDto {
 
    public ArgumentDto setPackageName(String packageName) {
       this.packageName = packageName;
+      return this;
+   }
+
+   public List<TypeDto<?>> getTypes() {
+      return types;
+   }
+
+   public ArgumentDto setTypes(List<TypeDto<?>> types) {
+      this.types = types;
       return this;
    }
 }

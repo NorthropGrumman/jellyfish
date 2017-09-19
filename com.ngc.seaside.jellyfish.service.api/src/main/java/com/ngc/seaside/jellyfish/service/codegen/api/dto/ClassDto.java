@@ -4,17 +4,19 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a description of a Java class.  May also be used to represent an interface.
+ * Represents a description of a Java class. May also be used to represent an interface.
+ * 
+ * @param <T> the type of the MethodDto
  */
-public class ClassDto {
+public class ClassDto<T extends MethodDto> implements TypeDto<ClassDto<T>> {
 
    private Set<String> imports;
    private String name;
    private String packageName;
-   private List<MethodDto> methods;
+   private List<? extends T> methods;
    private boolean interfaze;
-   private ClassDto baseClass;
-   private ClassDto implementedInterface;
+   private ClassDto<?> baseClass;
+   private ClassDto<?> implementedInterface;
 
    /**
     * Gets the list of imports needed by this class.
@@ -23,7 +25,7 @@ public class ClassDto {
       return imports;
    }
 
-   public ClassDto setImports(Set<String> imports) {
+   public ClassDto<T> setImports(Set<String> imports) {
       this.imports = imports;
       return this;
    }
@@ -35,7 +37,19 @@ public class ClassDto {
       return name;
    }
 
-   public ClassDto setName(String name) {
+   public ClassDto<T> setName(String name) {
+      this.name = name;
+      return this;
+   }
+
+   /**
+    * Gets the unqualified name of this class.
+    */
+   public String getTypeName() {
+      return name;
+   }
+
+   public ClassDto<T> setTypeName(String name) {
       this.name = name;
       return this;
    }
@@ -47,7 +61,7 @@ public class ClassDto {
       return packageName;
    }
 
-   public ClassDto setPackageName(String packageName) {
+   public ClassDto<T> setPackageName(String packageName) {
       this.packageName = packageName;
       return this;
    }
@@ -55,11 +69,11 @@ public class ClassDto {
    /**
     * Gets the methods defined by this class.
     */
-   public List<MethodDto> getMethods() {
+   public List<? extends T> getMethods() {
       return methods;
    }
 
-   public ClassDto setMethods(List<MethodDto> methods) {
+   public ClassDto<T> setMethods(List<? extends T> methods) {
       this.methods = methods;
       return this;
    }
@@ -71,7 +85,7 @@ public class ClassDto {
       return interfaze;
    }
 
-   public ClassDto setInterface(boolean interfaze) {
+   public ClassDto<T> setInterface(boolean interfaze) {
       this.interfaze = interfaze;
       return this;
    }
@@ -79,11 +93,11 @@ public class ClassDto {
    /**
     * Gets the base class of this class or {@code null} if there is no base class.
     */
-   public ClassDto getBaseClass() {
+   public ClassDto<?> getBaseClass() {
       return baseClass;
    }
 
-   public ClassDto setBaseClass(ClassDto baseClass) {
+   public ClassDto<T> setBaseClass(ClassDto<?> baseClass) {
       this.baseClass = baseClass;
       return this;
    }
@@ -91,11 +105,11 @@ public class ClassDto {
    /**
     * Gets the interface this class implements (if any).
     */
-   public ClassDto getImplementedInterface() {
+   public ClassDto<?> getImplementedInterface() {
       return implementedInterface;
    }
 
-   public ClassDto setImplementedInterface(ClassDto implementedInterface) {
+   public ClassDto<T> setImplementedInterface(ClassDto<?> implementedInterface) {
       this.implementedInterface = implementedInterface;
       return this;
    }

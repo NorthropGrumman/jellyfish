@@ -15,10 +15,18 @@ public class MethodDto {
    private List<ArgumentDto> arguments;
 
    /**
+    * Gets the method's signature. Two methods can be considered equal if their signatures are the same.
+    */
+   public String getMethodSignature() {
+      return (returns ? returnArgument.getFullyQualifiedName() : "void") + " " + name + "("
+         + arguments.stream().map(ArgumentDto::getTypeName).collect(Collectors.joining(",")) + ")";
+   }
+
+   /**
     * Gets a string that contains the verbatim Java code for the return type of this method.
     */
    public String getReturnSnippet() {
-      return returns ? returnArgument.getClassName() : "void";
+      return returns ? returnArgument.getTypeName() : "void";
    }
 
    /**
@@ -26,8 +34,8 @@ public class MethodDto {
     */
    public String getArgumentsListSnippet() {
       return arguments.stream()
-            .map(a -> a.getClassName() + " " + a.getName())
-            .collect(Collectors.joining(", "));
+                      .map(a -> a.getTypeName() + a.getTypeSnippet() + " " + a.getName())
+                      .collect(Collectors.joining(", "));
    }
 
    /**
@@ -74,6 +82,7 @@ public class MethodDto {
    }
 
    public MethodDto setReturnArgument(ArgumentDto returnArgument) {
+      this.returns = returnArgument != null;
       this.returnArgument = returnArgument;
       return this;
    }
