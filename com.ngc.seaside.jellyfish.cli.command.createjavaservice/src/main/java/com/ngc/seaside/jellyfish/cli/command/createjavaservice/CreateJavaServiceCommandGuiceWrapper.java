@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -18,12 +17,10 @@ public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
 
    @Inject
    public CreateJavaServiceCommandGuiceWrapper(ILogService logService,
-                                               IPromptUserService promptUserService,
                                                ITemplateService templateService,
                                                IServiceDtoFactory templateDaoFactory,
                                                IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
       delegate.setTemplateDaoFactory(templateDaoFactory);
       delegate.setProjectNamingService(projectNamingService);
