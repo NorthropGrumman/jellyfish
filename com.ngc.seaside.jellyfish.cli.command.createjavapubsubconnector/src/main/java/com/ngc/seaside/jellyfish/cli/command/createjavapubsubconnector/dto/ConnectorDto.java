@@ -1,26 +1,25 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto;
 
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public class ConnectorDto {
    private IModel model;
    private String packageName;
-   private String basePackage;
+   private Function<INamedChild<IPackage>, String> eventsPackageName;
+   private String transportTopicsClass;
    private String projectName;
-   private String artifactId;
-   private String groupId;
-   private String baseArtifactId;
-   private Set<IData> allInputData;
-   private Set<IEnumeration> allInputEnums;
-   private Set<IData> allOutputData;
-   private Set<IEnumeration> allOutputEnums;
+   private Set<String> projectDependencies;
    private Map<String, IData> inputTopics;
    private Map<String, IData> outputTopics;
+   private Set<INamedChild<IPackage>> allInputs;
+   private Set<INamedChild<IPackage>> allOutputs;
    private Map<String, Set<String>> topicRequirements;
 
    public IModel getModel() {
@@ -40,85 +39,55 @@ public class ConnectorDto {
       this.packageName = packageName;
       return this;
    }
-
-   public String getBasePackage() {
-      return basePackage;
+   
+   public Function<INamedChild<IPackage>, String> getEventsPackageName() {
+      return eventsPackageName;
    }
 
-   public ConnectorDto setBasePackage(String basePackage) {
-      this.basePackage = basePackage;
-      return this;
+   public void setEventsPackageName(Function<INamedChild<IPackage>, String> eventsPackageName) {
+      this.eventsPackageName = eventsPackageName;
    }
 
+   public String getTransportTopicsClass() {
+      return transportTopicsClass;
+   }
+
+   public void setTransportTopicsClass(String transportTopicsClass) {
+      this.transportTopicsClass = transportTopicsClass;
+   }
+   
    public String getProjectName() {
       return projectName;
    }
-
+   
    public ConnectorDto setProjectName(String projectName) {
       this.projectName = projectName;
       return this;
    }
-
-   public String getArtifactId() {
-      return artifactId;
+   
+   public Set<String> getProjectDependencies() {
+      return projectDependencies;
    }
 
-   public ConnectorDto setArtifactId(String artifactId) {
-      this.artifactId = artifactId;
+   public void setProjectDependencies(Set<String> projectDependencies) {
+      this.projectDependencies = projectDependencies;
+   }
+
+   public Set<INamedChild<IPackage>> getAllInputs() {
+      return allInputs;
+   }
+
+   public ConnectorDto setAllInputs(Set<INamedChild<IPackage>> allInputs) {
+      this.allInputs = allInputs;
       return this;
    }
 
-   public String getGroupId() {
-      return groupId;
+   public Set<INamedChild<IPackage>> getAllOutputs() {
+      return allOutputs;
    }
 
-   public ConnectorDto setGroupId(String groupId) {
-      this.groupId = groupId;
-      return this;
-   }
-
-   public String getBaseArtifactId() {
-      return baseArtifactId;
-   }
-
-   public ConnectorDto setBaseArtifactId(String baseArtifactId) {
-      this.baseArtifactId = baseArtifactId;
-      return this;
-   }
-
-   public Set<IData> getAllInputData() {
-      return allInputData;
-   }
-
-   public ConnectorDto setAllInputData(Set<IData> allInputData) {
-      this.allInputData = allInputData;
-      return this;
-   }
-
-   public Set<IEnumeration> getAllInputEnums() {
-      return allInputEnums;
-   }
-
-   public ConnectorDto setAllInputEnums(Set<IEnumeration> allInputEnums) {
-      this.allInputEnums = allInputEnums;
-      return this;
-   }
-
-   public Set<IData> getAllOutputData() {
-      return allOutputData;
-   }
-
-   public ConnectorDto setAllOutputData(Set<IData> allOutputData) {
-      this.allOutputData = allOutputData;
-      return this;
-   }
-
-   public Set<IEnumeration> getAllOutputEnums() {
-      return allOutputEnums;
-   }
-
-   public ConnectorDto setAllOutputEnums(Set<IEnumeration> allOutputEnums) {
-      this.allOutputEnums = allOutputEnums;
+   public ConnectorDto setAllOutputs(Set<INamedChild<IPackage>> allOutputs) {
+      this.allOutputs = allOutputs;
       return this;
    }
 

@@ -59,6 +59,7 @@ dependencies {
     compile project(":jellyfish.service.name.impl.namingservices")
     compile project(":jellyfish.service.scenario.impl.scenarioservice")
     compile project(":jellyfish.service.config.impl.transportconfigurationservice")
+    compile project(":jellyfish.service.requirements.impl.requirementsservice")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"

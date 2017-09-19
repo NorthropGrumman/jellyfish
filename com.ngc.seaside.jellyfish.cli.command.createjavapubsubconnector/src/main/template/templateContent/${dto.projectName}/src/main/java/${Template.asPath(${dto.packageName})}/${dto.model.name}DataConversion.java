@@ -1,10 +1,12 @@
-package ${dto.packageName};
+package ${dto.packageName}
 
 public class ${dto.model.name}DataConversion {
-#foreach($data in ${dto.allInputData})
-
-   public static ${dto.basePackage}.events.${data.name} convert(${data.fullyQualifiedName}Wrapper.${data.name} from) {
-      ${dto.basePackage}.events.${data.name} to = new ${dto.basePackage}.events.${data.name}();
+#foreach($value in ${dto.allInputs})
+#set ($eventsPackage = $dto.getEventsPackageName().apply($value))
+   public static ${eventsPackage}.${value.name} convert(${value.fullyQualifiedName}Wrapper.${value.name} from) {
+#if (${IData.isInstance($value)})
+#set ($data = $value)
+      ${eventsPackage}.${value.name} to = new ${eventsPackage}.${value.name}();
 
 #foreach ($field in $data.fields)
 #set( $fieldCap = "${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)}" )
@@ -30,13 +32,30 @@ public class ${dto.model.name}DataConversion {
 #end
 #end
 #end
+#else
+#set ($enum = $value)
+      final ${eventsPackage}.${enum.name} to;
+
+      switch (from) {
+#foreach ( $enumValue in $enum.values)
+      case $enumValue:
+         to = ${eventsPackage}.${enum.name}.$enumValue;
+         break;
+#end
+      default:
+         throw new IllegalArgumentException("Unknown enum: " + from);
+      }
+#end
 
       return to;
    }
 #end
-#foreach($data in ${dto.allOutputData})
+#foreach($value in ${dto.allOutputs})
+#set ($eventsPackage = $dto.getEventsPackageName().apply($value))
 
-   public static ${data.fullyQualifiedName}Wrapper.${data.name} convert(${dto.basePackage}.events.${data.name} from) {
+   public static ${value.fullyQualifiedName}Wrapper.${value.name} convert(${eventsPackage}.${value.name} from) {
+#if (${IData.isInstance($value)})
+#set ($data = $value)
       ${data.fullyQualifiedName}Wrapper.${data.name}.Builder to = ${data.fullyQualifiedName}Wrapper.${data.name}.newBuilder();
 
 #foreach ( $field in $data.fields )
@@ -48,7 +67,7 @@ public class ${dto.model.name}DataConversion {
 #set ( $name = $field.referencedEnumeration.name )
 #end
 #if ( $field.cardinality == "MANY" )
-      for (${dto.basePackage}.events.${name} value : from.get${fieldCap}()) {
+      for (${eventsPackage}.${name} value : from.get${fieldCap}()) {
          to.add${fieldCap}(convert(value));
       }
 #else
@@ -61,38 +80,18 @@ public class ${dto.model.name}DataConversion {
       to.set${fieldCap}(from.get${fieldCap}());
 #end
 #end
-#end      
+#end
 
       return to.build();
    }
-#end
-#foreach ( $enum in ${dto.allInputEnums} )
-
-   public static ${dto.basePackage}.events.${enum.name} convert(${enum.fullyQualifiedName}Wrapper.${enum.name} from) {
-      final ${dto.basePackage}.events.${enum.name} to;
-
-      switch (from) {
-#foreach ( $value in $enum.values)
-      case $value:
-         to = ${dto.basePackage}.events.${enum.name}.$value;
-         break;
-#end
-      default:
-         throw new IllegalArgumentException("Unknown enum: " + from);
-      }
-
-      return to;
-   }
-#end
-#foreach ( $enum in ${dto.allInputEnums} )
-
-   public static ${enum.fullyQualifiedName}Wrapper.${enum.name} convert(${dto.basePackage}.events.${enum.name} from) {
+#else
+#set ($enum = $value)
       final ${enum.fullyQualifiedName}Wrapper.${enum.name} to;
 
       switch (from) {
-#foreach ( $value in $enum.values)
-      case $value:
-         to = ${enum.fullyQualifiedName}Wrapper.${enum.name}.$value;
+#foreach ( $enumValue in $enum.values)
+      case $enumValue:
+         to = ${enum.fullyQualifiedName}Wrapper.${enum.name}.$enumValue;
          break;
 #end
       default:
@@ -101,6 +100,7 @@ public class ${dto.model.name}DataConversion {
 
       return to;
    }
-#end   
+#end
+#end
 
 }

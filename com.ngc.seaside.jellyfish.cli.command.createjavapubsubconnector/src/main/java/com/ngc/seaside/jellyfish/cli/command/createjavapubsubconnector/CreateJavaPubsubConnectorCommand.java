@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -9,16 +8,22 @@ import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto.ConnectorDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
@@ -33,11 +38,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -52,22 +56,20 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-pubsub-connector";
    private static final IUsage USAGE = createUsage();
 
-   public static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   public static final String MODEL_PROPERTY = "model";
-   public static final String GROUP_ID_PROPERTY = "groupId";
-   public static final String ARTIFACT_ID_PROPERTY = "artifactId";
-
-   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
-   public static final String PACKAGE_PROPERTY = "package";
-   public static final String CLEAN_PROPERTY = "clean";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
    private IScenarioService scenarioService;
    private ITransportConfigurationService transportConfigService;
    private IRequirementsService requirementsService;
-   private IProjectNamingService projectNamingService;
+   private IPackageNamingService packageService;
+   private IProjectNamingService projectService;
+   private IJavaServiceGenerationService generationService;
 
    @Override
    public String getName() {
@@ -81,104 +83,51 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameters(commandOptions.getParameters().getAllParameters());
+      final Path outputDirectory = Paths.get(commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      final String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
+      final IModel model = commandOptions.getSystemDescriptor().findModel(modelName).orElseThrow(
+         () -> new CommandException("Unknown model: " + modelName));
 
-      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
+      final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
 
-         String outputDir = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
-      }
-      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-
-      if (!parameters.containsParameter(MODEL_PROPERTY)) {
-
-         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
-      }
-      final String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-
-      if (!parameters.containsParameter(MODEL_OBJECT_PROPERTY)) {
-
-         IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(
-            () -> new CommandException("Unknown model:" + modelId));
-         parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
-      }
-      final IModel model = commandOptions.getSystemDescriptor().findModel(modelId).orElseThrow(
-         () -> new CommandException("Unknown model:" + modelId));
-
-      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, model.getParent().getName()));
-      }
-      final String groupId = parameters.getParameter(GROUP_ID_PROPERTY).getStringValue();
-
-      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         String artifact = model.getName().toLowerCase().concat(".connector");
-         parameters.addParameter(new DefaultParameter<String>(ARTIFACT_ID_PROPERTY, artifact));
-      }
-      final String artifactId = parameters.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      final String packageName = groupId + "." + artifactId;
-      parameters.addParameter(new DefaultParameter<String>(PACKAGE_PROPERTY, packageName));
-
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaPubsubConnectorCommand.class, e);
-         throw new CommandException(e);
-      }
-
-      final boolean clean;
-      if (parameters.containsParameter(CLEAN_PROPERTY)) {
-         String value = parameters.getParameter(CLEAN_PROPERTY).getStringValue();
-         switch (value.toLowerCase()) {
-         case "true":
-            clean = true;
-            break;
-         case "false":
-            clean = false;
-            break;
-         default:
-            throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
-         }
-      } else {
-         clean = true;
-      }
-
-      doAddProject(parameters);
+      IProjectInformation info = projectService.getConnectorProjectName(commandOptions, model);
+      doAddProject(outputDirectory, info);
 
       ConnectorDto dto = new ConnectorDto();
 
-      final String projectName = packageName;
-      final String basePackageName = stripTrailingString(packageName, ".connector");
-      final String baseArtifactId = stripTrailingString(artifactId, ".connector");
+      final String packageName = packageService.getConnectorPackageName(commandOptions, model);
 
-      dto.setProjectName(projectName);
+      dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(packageName);
       dto.setModel(model);
-      dto.setGroupId(groupId);
-      dto.setArtifactId(artifactId);
-      dto.setBasePackage(basePackageName);
-      dto.setBaseArtifactId(baseArtifactId);
+      dto.setEventsPackageName(value -> packageService.getEventPackageName(commandOptions, value));
+      EnumDto<?> transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
+      dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
+      dto.setProjectDependencies(new LinkedHashSet<>(
+         Arrays.asList(projectService.getBaseServiceProjectName(commandOptions, model).getArtifactId(),
+            projectService.getEventsProjectName(commandOptions, model).getArtifactId(),
+            projectService.getMessageProjectName(commandOptions, model).getArtifactId())));
 
       evaluateIO(commandOptions, dto);
 
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
+      parameters.addParameter(new DefaultParameter<>("IData", IData.class));
+      parameters.addParameter(new DefaultParameter<>("IEnumeration", IEnumeration.class));
 
       templateService.unpack(CreateJavaPubsubConnectorCommand.class.getPackage().getName(),
          parameters,
          outputDirectory,
          clean);
-      logService.info(CreateJavaPubsubConnectorCommand.class, "%s project successfully created", modelId);
+      logService.info(CreateJavaPubsubConnectorCommand.class, "%s project successfully created", modelName);
    }
 
    private void evaluateIO(IJellyFishCommandOptions options, ConnectorDto dto) {
 
       IModel model = dto.getModel();
 
-      Set<IData> inputs = new LinkedHashSet<>();
-      Set<IEnumeration> inputEnums = new LinkedHashSet<>();
-      Set<IData> outputs = new LinkedHashSet<>();
-      Set<IEnumeration> outputEnums = new LinkedHashSet<>();
+      Set<INamedChild<IPackage>> inputs = new LinkedHashSet<>();
+      Set<INamedChild<IPackage>> outputs = new LinkedHashSet<>();
 
       Map<String, IData> inputTopics = new TreeMap<>();
       Map<String, IData> outputTopics = new TreeMap<>();
@@ -236,23 +185,27 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
       }
 
-      addNestedData(inputs, inputEnums);
-      addNestedData(outputs, outputEnums);
+      addNestedData(inputs);
+      addNestedData(outputs);
 
-      dto.setAllInputData(inputs);
-      dto.setAllInputEnums(inputEnums);
-      dto.setAllOutputData(outputs);
-      dto.setAllOutputEnums(outputEnums);
+      dto.setAllInputs(inputs);
+      dto.setAllOutputs(outputs);
       dto.setInputTopics(inputTopics);
       dto.setOutputTopics(outputTopics);
       dto.setTopicRequirements(topicRequirements);
    }
 
-   private static void addNestedData(Set<IData> data, Set<IEnumeration> enums) {
-      Queue<IData> queue = new ArrayDeque<>(data);
+   private static void addNestedData(Set<INamedChild<IPackage>> data) {
+      Queue<INamedChild<IPackage>> queue = new ArrayDeque<>(data);
       Set<IData> superTypes = new HashSet<>();
       while (!queue.isEmpty()) {
-         IData datum = queue.poll();
+         INamedChild<IPackage> value = queue.poll();
+         IData datum;
+         if (value instanceof IData) {
+            datum = (IData) value;
+         } else {
+            continue;
+         }
          for (IDataField field : datum.getFields()) {
             switch (field.getType()) {
             case DATA:
@@ -261,14 +214,14 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
                }
                break;
             case ENUM:
-               enums.add(field.getReferencedEnumeration());
+               data.add(field.getReferencedEnumeration());
                break;
             default:
                // Ignore primitive field types
                break;
             }
          }
-         
+
          while (datum.getSuperDataType().isPresent()) {
             datum = datum.getSuperDataType().get();
             if (superTypes.add(datum)) {
@@ -278,21 +231,11 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       }
    }
 
-   private String stripTrailingString(final String sourceStr, final String trailingStringToRemove) {
-      String retStr = sourceStr;
-
-      if (sourceStr.endsWith(trailingStringToRemove)) {
-         final int sourceStrLen = sourceStr.length();
-         final int removeStringLen = trailingStringToRemove.length();
-         final int trimmedStrLen = sourceStrLen - removeStringLen;
-
-         retStr = sourceStr.substring(0, trimmedStrLen);
-      }
-
-      return retStr;
-   }
-
-   protected void doAddProject(IParameterCollection parameters) {
+   private void doAddProject(Path outputDirectory, IProjectInformation info) {
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory.resolve(info.getDirectoryName())));
+      parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
          if (!GradleSettingsUtilities.tryAddProject(parameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
@@ -318,7 +261,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -331,28 +274,11 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    }
 
    /**
-    * Sets prompt user service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt user service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
-   }
-
-   /**
     * Sets log service.
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -369,7 +295,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeScenarioService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setScenarioService(IScenarioService ref) {
       this.scenarioService = ref;
    }
@@ -386,7 +312,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTransportConfigurationService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setTransportConfigurationService(ITransportConfigurationService ref) {
       this.transportConfigService = ref;
    }
@@ -403,7 +329,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setRequirementsService(IRequirementsService ref) {
       this.requirementsService = ref;
    }
@@ -415,17 +341,56 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       setRequirementsService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeProjectNamingService")
-   public void setProjectNamingService(IProjectNamingService ref) {
-      this.projectNamingService = ref;
-      
+   /**
+    * Sets package naming service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setPackageNamingService(IPackageNamingService ref) {
+      this.packageService = ref;
    }
+
+   /**
+    * Remove package naming service.
+    */
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
+   }
+
+   /**
+    * Sets project naming service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectService = ref;
+   }
+
+   /**
+    * Remove project naming service.
+    */
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
+   
+   /**
+    * Sets java service generation service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      this.generationService = ref;
+   }
 
+   /**
+    * Remove java service generation service.
+    */
+   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      setJavaServiceGenerationService(null);
+   }
 
    /**
     * Create the usage for this command.
@@ -434,21 +399,10 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Creates a new JellyFish Pub/Sub Connector project.",
-         new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY).setDescription("The directory to generate the command project")
-                                                        .setRequired(false),
-         new DefaultParameter<>(MODEL_OBJECT_PROPERTY).setDescription(
-            "The fully qualified name of the model to generate connectors for").setRequired(false),
-         new DefaultParameter<>(GROUP_ID_PROPERTY)
-                                                .setDescription(
-                                                   "The groupId. This is usually similar to com.ngc.myprojectname")
-                                                .setRequired(false),
-         new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
-                                                   .setDescription(
-                                                      "The artifactId, usually the lowercase version of the classname")
-                                                   .setRequired(false),
-         new DefaultParameter<>(CLEAN_PROPERTY)
-                                             .setDescription(
-                                                "If true, recursively deletes the connector project (if it already exists), before generating the connector project again")
-                                             .setRequired(false));
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN);
    }
 }

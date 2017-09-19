@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -15,8 +17,6 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaPubsubConnectorCommand;
-import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaPubsubConnectorCommandGuiceWrapper;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -35,7 +35,6 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -66,22 +65,17 @@ public class CreateJavaPubsubConnectorCommandIT {
 
       runCommand(CreateJavaPubsubConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(), "model", model);
       
-      Path connectorFile = outputDir.resolve(Paths.get("com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelConnector.java"));
-      Path conversionFile = outputDir.resolve(Paths.get("com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelDataConversion.java"));
+      Path connectorFile = outputDir.resolve(Paths.get("generated-projects", "com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelConnector.java"));
+      Path conversionFile = outputDir.resolve(Paths.get("generated-projects", "com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelDataConversion.java"));
       
       assertTrue(Files.isRegularFile(connectorFile));
-      assertTrue(Files.isRegularFile(conversionFile));
-      
-      List<String> conversionLines = Files.readAllLines(conversionFile);
       
       // Check for nested data type conversions
-      assertTrue(conversionLines.stream().anyMatch(line -> line.matches(".*convert\\s*\\(\\s*com.model.events.Data2.*")));
-      assertTrue(conversionLines.stream().anyMatch(line -> line.matches(".*convert\\s*\\(\\s*com.model.events.Enum1.*")));
+      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*com.model.event.Data2\\b");
+      assertFileContains(conversionFile, "\\bcom.model.event.Enum1\\s+convert\\s*\\(");
 
       // Check that many primitives are handled correctly
-      assertTrue(conversionLines.stream().noneMatch(line -> line.contains("List<int>")));
-      assertTrue(conversionLines.stream().noneMatch(line -> line.contains("List<float>")));
-      assertTrue(conversionLines.stream().noneMatch(line -> line.contains("List<boolean>")));
+      assertFileNotContains(conversionFile, "<\\s*(?:boolean|int|long|float)\\s*>");
 
       
    }
