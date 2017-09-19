@@ -1,17 +1,5 @@
 package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -38,6 +26,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -100,7 +100,7 @@ public class TemplateServiceTest {
    @Test
    public void doesCleanCorrectly() throws IOException {
       final String folder = "same-path";
-      
+
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("parameter1", folder));
       parameters.addParameter(new DefaultParameter<>("parameter2", folder));
@@ -110,28 +110,28 @@ public class TemplateServiceTest {
       when(properties.getKeys()).thenReturn(
          Arrays.asList(new String[] { "parameter1", "parameter2" }));
       when(propertyService.load(any())).thenReturn(properties);
-      
+
       Path outputDirectory;
-      
+
       outputDirectory = testFolder.newFolder("output1").toPath();
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample", parameters, outputDirectory, false);
-      
+
       assertEquals(4, Files.walk(outputDirectory).count());
       assertTrue(Files.isDirectory(outputDirectory.resolve(folder)));
       assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File1.txt"))));
       assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File2.txt"))));
-      
+
       Files.createFile(outputDirectory.resolve(Paths.get(folder, "File3.txt")));
       Files.createDirectory(outputDirectory.resolve(folder).resolve("other-folder"));
       Files.createFile(outputDirectory.resolve(folder).resolve("other-folder").resolve("File4.txt"));
-      
+
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample", parameters, outputDirectory, true);
-      
+
       assertEquals(4, Files.walk(outputDirectory).count());
       assertTrue(Files.isDirectory(outputDirectory.resolve(folder)));
       assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File1.txt"))));
       assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File2.txt"))));
-      
+
    }
 
    @Test(expected = TemplateServiceException.class)
@@ -158,26 +158,24 @@ public class TemplateServiceTest {
       when(properties.get("version")).thenReturn("1.0-SNAPSHOT");
       when(properties.get("package")).thenReturn("com.ngc.seaside.mybundle");
       when(properties.getKeys()).thenReturn(
-         Arrays.asList(new String[] { "classname", "groupId", "artifactId", "version", "package" }));
+               Arrays.asList(new String[] { "classname", "groupId", "artifactId", "version", "package" }));
 
       when(propertyService.load(any())).thenReturn(properties);
       when(promptUserService.prompt(
-         parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
+               parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("classname").setValue("MyUserClass"));
       collection.addParameter(new DefaultParameter<>("pojo", new TestablePojo("Bob", "Smith")));
 
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.example",
-         collection,
-         Paths.get(outputDirectory.getAbsolutePath()),
-         false);
+                             collection, Paths.get(outputDirectory.getAbsolutePath()), false);
 
-      // verify that the prompt service isn't called for the default parameter that we passed in for classname!
+      //verify that the prompt service isn't called for the default parameter that we passed in for classname!
       verify(promptUserService, times(4))
-                                         .prompt(anyString(), anyString(), any());
+               .prompt(anyString(), anyString(), any());
 
-      // this is called 'value' because of the "when" above that mocks the promptUserService
+      //this is called 'value' because of the "when" above that mocks the promptUserService
       File value = Paths.get(outputDirectory.getAbsolutePath(), "value.value").toFile();
       File src = Paths.get(value.getAbsolutePath(), "src").toFile();
 
@@ -200,26 +198,26 @@ public class TemplateServiceTest {
 
       try {
          templateService.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofile",
-            collection,
-            Paths.get(outputDirectory.getAbsolutePath()),
-            false);
+                                collection,
+                                Paths.get(outputDirectory.getAbsolutePath()),
+                                false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
-            "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofile");
+                      "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofile");
          assertEquals(e.getCause().getMessage(),
-            "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
+                      "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
       }
 
       try {
          templateService.unpack("com.ngc.seaside.bootstrap.command.impl.invalidnofolder",
-            collection,
-            Paths.get(outputDirectory.getAbsolutePath()),
-            false);
+                                collection,
+                                Paths.get(outputDirectory.getAbsolutePath()),
+                                false);
       } catch (TemplateServiceException e) {
          assertEquals(e.getMessage(),
-            "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");
+                      "An error occurred processing the template zip file: com.ngc.seaside.bootstrap.command.impl.invalidnofolder");
          assertEquals(e.getCause().getMessage(),
-            "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
+                      "Invalid template. Each template must contain template.properties and a template folder named 'templateContent'");
       }
    }
 
@@ -237,11 +235,11 @@ public class TemplateServiceTest {
       when(properties.get("commandName")).thenReturn("my-bundle");
       when(properties.get("package")).thenReturn("com.ngc.seaside.mybundle");
       when(properties.getKeys()).thenReturn(
-         Arrays.asList(new String[] { "classname", "groupId", "artifactId", "commandName", "package" }));
+               Arrays.asList(new String[] { "classname", "groupId", "artifactId", "commandName", "package" }));
 
       when(propertyService.load(any())).thenReturn(properties);
       when(promptUserService.prompt(
-         parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
+               parameterCapture.capture(), defaultCapture.capture(), any())).thenReturn("value");
 
       IParameterCollection collection = mock(IParameterCollection.class);
       when(collection.containsParameter("classname")).thenReturn(true);
@@ -249,24 +247,20 @@ public class TemplateServiceTest {
       when(collection.containsParameter("artifactId")).thenReturn(true);
       when(collection.containsParameter("commandName")).thenReturn(true);
       when(collection.containsParameter("package")).thenReturn(true);
-      when(collection.getParameter("classname")).thenReturn(new DefaultParameter<>("classname").setValue("MyClass"));
-      when(collection.getParameter("groupId")).thenReturn(
-         new DefaultParameter<>("classname").setValue("com.ngc.seaside"));
-      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter<>("artifactId").setValue("mybundle"));
-      when(collection.getParameter("commandName")).thenReturn(
-         new DefaultParameter<>("commandName").setValue("my-bundle"));
-      when(collection.getParameter("package")).thenReturn(
-         new DefaultParameter<>("classname").setValue("com.ngc.seaside.mybundle"));
+      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyClass"));
+      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside"));
+      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter("artifactId").setValue("mybundle"));
+      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter("commandName").setValue("my-bundle"));
+      when(collection.getParameter("package")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside.mybundle"));
+
 
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",
-         collection,
-         Paths.get(outputDirectory.getAbsolutePath()),
-         false);
+                             collection, Paths.get(outputDirectory.getAbsolutePath()), false);
 
-      // verify that the prompt service isn't called for the default parameter that we passed in for classname!
+      //verify that the prompt service isn't called for the default parameter that we passed in for classname!
       verify(promptUserService, never()).prompt(anyString(), anyString(), any());
 
-      // this is called 'value' because of the "when" above that mocks the promptUserService
+      //this is called 'value' because of the "when" above that mocks the promptUserService
       File bundle = Paths.get(outputDirectory.getAbsolutePath(), "com.ngc.seaside.mybundle").toFile();
       File src = Paths.get(bundle.getAbsolutePath(), "src").toFile();
       File main = Paths.get(src.getAbsolutePath(), "main").toFile();
@@ -281,17 +275,17 @@ public class TemplateServiceTest {
       assertTrue(templateContent.exists());
       assertTrue(groupArtifact.exists());
 
-      // listFiles(bundle, "");
+//      listFiles(bundle, "");
    }
 
    private void listFiles(File file, String indent) {
       System.out.println(String.format("%s%s", indent, file.getAbsolutePath()));
-      if (file.isFile()) {
+      if(file.isFile()) {
          return;
       }
       String newIndent = indent + "";
-      if (file.isDirectory()) {
-         for (File sub : file.listFiles()) {
+      if(file.isDirectory()) {
+         for(File sub : file.listFiles()) {
             listFiles(sub, newIndent);
          }
       }
