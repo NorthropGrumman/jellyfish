@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -91,8 +92,46 @@ public class TemplateServiceTest {
    public void testTemplateExists() {
       assertFalse(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalid"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
+      assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
+   }
+
+   @Test
+   public void doesCleanCorrectly() throws IOException {
+      final String folder = "same-path";
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("parameter1", folder));
+      parameters.addParameter(new DefaultParameter<>("parameter2", folder));
+      IProperties properties = mock(IProperties.class);
+      when(properties.get("parameter1")).thenReturn(folder);
+      when(properties.get("parameter2")).thenReturn(folder);
+      when(properties.getKeys()).thenReturn(
+         Arrays.asList(new String[] { "parameter1", "parameter2" }));
+      when(propertyService.load(any())).thenReturn(properties);
+
+      Path outputDirectory;
+
+      outputDirectory = testFolder.newFolder("output1").toPath();
+      templateService.unpack("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample", parameters, outputDirectory, false);
+
+      assertEquals(4, Files.walk(outputDirectory).count());
+      assertTrue(Files.isDirectory(outputDirectory.resolve(folder)));
+      assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File1.txt"))));
+      assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File2.txt"))));
+
+      Files.createFile(outputDirectory.resolve(Paths.get(folder, "File3.txt")));
+      Files.createDirectory(outputDirectory.resolve(folder).resolve("other-folder"));
+      Files.createFile(outputDirectory.resolve(folder).resolve("other-folder").resolve("File4.txt"));
+
+      templateService.unpack("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample", parameters, outputDirectory, true);
+
+      assertEquals(4, Files.walk(outputDirectory).count());
+      assertTrue(Files.isDirectory(outputDirectory.resolve(folder)));
+      assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File1.txt"))));
+      assertTrue(Files.isRegularFile(outputDirectory.resolve(Paths.get(folder, "File2.txt"))));
+
    }
 
    @Test(expected = TemplateServiceException.class)
