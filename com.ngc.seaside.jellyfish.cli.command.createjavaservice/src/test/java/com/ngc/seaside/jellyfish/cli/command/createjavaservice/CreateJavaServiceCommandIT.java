@@ -102,6 +102,7 @@ public class CreateJavaServiceCommandIT {
       command.setLogService(logService);
       command.setTemplateDaoFactory(templateDaoFactory);
       command.setTemplateService(templateService);
+      command.setProjectNamingService(projectService);
 
       when(projectService.getServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
