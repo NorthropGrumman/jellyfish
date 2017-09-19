@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -10,6 +9,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
@@ -31,43 +31,28 @@ import java.nio.file.Paths;
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
-   static final String GROUP_ID_PROPERTY = "groupId";
-   static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   static final String MODEL_PROPERTY = "model";
-   static final String OUTPUT_DIRECTORY_PROPERTY = "outputDirectory";
-   static final String CLEAN_PROPERTY = "clean";
-   static final String ARTIFACT_ID_SUFFIX_PROPERTY = "artifactIdSuffix";
-
-   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "base";
-
-   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
+   static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    private static final String NAME = "create-java-service-base";
    private static final IUsage USAGE = createUsage();
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
    private IBaseServiceDtoFactory templateDaoFactory;
    private IProjectNamingService projectNamingService;
 
    @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
-   }
-
-   @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
-      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(commandOptions, model);
+      boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
+      Path outputDir = Paths.get(
+         commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
-      boolean clean = evaluateBooleanParameter(commandOptions, CLEAN_PROPERTY);
-      Path outputDir = evaluateOutputDirectory(commandOptions);
+      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(commandOptions, model);
 
       BaseServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
 
@@ -88,6 +73,16 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       } catch (FileUtilitiesException e) {
          throw new CommandException("failed to update settings.gradle!", e);
       }
+   }
+
+   @Override
+   public String getName() {
+      return NAME;
+   }
+
+   @Override
+   public IUsage getUsage() {
+      return USAGE;
    }
 
    @Activate
@@ -134,23 +129,6 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       setTemplateService(null);
    }
 
-   /**
-    * Sets prompt service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
-   }
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateDaoFactory")
    public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
       this.templateDaoFactory = ref;
@@ -170,75 +148,20 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
-      // Get the fully qualified model name.
-      String modelName;
-      if (commandOptions.getParameters().containsParameter(MODEL_PROPERTY)) {
-         modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
-      } else {
-         modelName = promptService.prompt(MODEL_PROPERTY,
-            null,
-            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
-      }
-      // Find the actual model.
+      String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       return commandOptions.getSystemDescriptor()
                            .findModel(modelName)
-                           .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
-   }
-
-   private Path evaluateOutputDirectory(IJellyFishCommandOptions commandOptions) {
-      Path outputDirectory;
-      if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         outputDirectory = Paths.get(commandOptions.getParameters()
-                                                   .getParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                                   .getStringValue());
-      } else {
-         // Ask the user if needed.
-         outputDirectory = Paths.get(promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null));
-      }
-      return outputDirectory;
+                           .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
    }
 
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Generates the base abstract service for a Java application",
-         new DefaultParameter<>(GROUP_ID_PROPERTY).setDescription(
-            "The project's group ID. (default: the package in the model)")
-                                                  .setRequired(false),
-         new DefaultParameter<>(ARTIFACT_ID_PROPERTY)
-                                                     .setDescription(
-                                                        "The project's artifact Id. (default: the model name in lowercase)")
-                                                     .setRequired(false),
-         new DefaultParameter<>(MODEL_PROPERTY)
-                                               .setDescription("The fully qualified path to the model.")
-                                               .setRequired(true),
-         new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY)
-                                                          .setDescription(
-                                                             "Base directory in which to output the project")
-                                                          .setRequired(true),
-         new DefaultParameter<>(CLEAN_PROPERTY)
-                                               .setDescription(
-                                                  "If true, recursively deletes the project before generating the it again")
-                                               .setRequired(false));
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.MODEL.required(),
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.CLEAN);
    }
 
-   private static boolean evaluateBooleanParameter(IJellyFishCommandOptions options, String parameter) {
-      final boolean booleanValue;
-      if (options.getParameters().containsParameter(parameter)) {
-         String value = options.getParameters().getParameter(parameter).getStringValue();
-         switch (value.toLowerCase()) {
-         case "true":
-            booleanValue = true;
-            break;
-         case "false":
-            booleanValue = false;
-            break;
-         default:
-            throw new CommandException(
-               "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
-         }
-      } else {
-         booleanValue = false;
-      }
-      return booleanValue;
-   }
 }
