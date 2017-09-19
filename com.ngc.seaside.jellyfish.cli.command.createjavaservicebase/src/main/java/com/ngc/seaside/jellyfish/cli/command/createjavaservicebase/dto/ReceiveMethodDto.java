@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 
 public class ReceiveMethodDto extends MethodDto {
 

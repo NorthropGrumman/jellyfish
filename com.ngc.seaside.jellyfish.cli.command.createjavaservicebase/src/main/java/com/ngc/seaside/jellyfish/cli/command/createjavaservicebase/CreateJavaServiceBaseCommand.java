@@ -13,8 +13,10 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ITemplateDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceTemplateDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -36,18 +38,19 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
-   
+
    static final String ARTIFACT_ID_SUFFIX_PROPERTY = "artifactIdSuffix";
    static final String DEFAULT_ARTIFACT_ID_SUFFIX = "base";
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
-   
+
    private static final String NAME = "create-java-service-base";
    private static final IUsage USAGE = createUsage();
 
    private ILogService logService;
    private IPromptUserService promptService;
    private ITemplateService templateService;
-   private ITemplateDtoFactory templateDaoFactory;
+   private IBaseServiceDtoFactory templateDaoFactory;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -62,28 +65,26 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
-      String groupId = evaluateGroupId(commandOptions, model);
-      String artifactIdWithoutSuffix = evaluateArtifactIdWithoutSuffix(commandOptions, model);
-      String artifactId = evaluateArtifactId(commandOptions, model, artifactIdWithoutSuffix);
-      String packagez = evaluatePackage(commandOptions, groupId, artifactId);
+      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(commandOptions, model);
       boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
-      Path outputDir = evaluateOutputDirectory(commandOptions);
-      Path projectDir = evaluateProjectDirectory(outputDir, packagez, clean);
 
-      BaseServiceTemplateDto dto = (BaseServiceTemplateDto) templateDaoFactory.newDto(model, packagez);
+      Path outputDir = evaluateOutputDirectory(commandOptions);
+      Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
+
+      BaseServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
       dto.setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       templateService.unpack(CreateJavaServiceBaseCommand.class.getPackage().getName(),
-         parameters,
-         outputDir,
-         clean);
+                             parameters,
+                             outputDir,
+                             clean);
 
       try {
          parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInfo.getGroupId()));
+         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInfo.getArtifactId()));
          if (!GradleSettingsUtilities.tryAddProject(parameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
@@ -141,7 +142,9 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptService")
    public void setPromptService(IPromptUserService ref) {
       this.promptService = ref;
    }
@@ -153,13 +156,25 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       setPromptService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateDaoFactory")
-   public void setTemplateDaoFactory(ITemplateDtoFactory ref) {
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateDaoFactory")
+   public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
       this.templateDaoFactory = ref;
    }
 
-   public void removeTemplateDaoFactory(ITemplateDtoFactory ref) {
+   public void removeTemplateDaoFactory(IBaseServiceDtoFactory ref) {
       setTemplateDaoFactory(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+   }
+
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
@@ -169,60 +184,26 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
          modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       } else {
          modelName = promptService.prompt(MODEL_PROPERTY,
-            null,
-            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
+                                          null,
+                                          m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
       }
       // Find the actual model.
       return commandOptions.getSystemDescriptor()
-                           .findModel(modelName)
-                           .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
+            .findModel(modelName)
+            .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
    }
 
    private Path evaluateOutputDirectory(IJellyFishCommandOptions commandOptions) {
       Path outputDirectory;
       if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
          outputDirectory = Paths.get(commandOptions.getParameters()
-                                                   .getParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                                   .getStringValue());
+                                           .getParameter(OUTPUT_DIRECTORY_PROPERTY)
+                                           .getStringValue());
       } else {
          // Ask the user if needed.
          outputDirectory = Paths.get(promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null));
       }
       return outputDirectory;
-   }
-
-   private static String evaluateGroupId(IJellyFishCommandOptions commandOptions, IModel model) {
-      String groupId;
-      if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
-         groupId = commandOptions.getParameters().getParameter(GROUP_ID_PROPERTY).getStringValue();
-      } else {
-         groupId = model.getParent().getName();
-      }
-      return groupId;
-   }
-
-   private static String evaluateArtifactIdWithoutSuffix(IJellyFishCommandOptions commandOptions, IModel model) {
-      String artifactId;
-      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
-         artifactId = commandOptions.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase();
-      }
-      return artifactId;
-   }
-
-   private static String evaluateArtifactId(IJellyFishCommandOptions commandOptions, IModel model,
-            String artifactIdWithoutSuffix) {
-      String artifactIdSuffix;
-      if (commandOptions.getParameters().containsParameter(ARTIFACT_ID_SUFFIX_PROPERTY)) {
-         artifactIdSuffix = commandOptions.getParameters().getParameter(ARTIFACT_ID_SUFFIX_PROPERTY).getStringValue();
-         if (!artifactIdSuffix.isEmpty() && !artifactIdSuffix.startsWith(".")) {
-            artifactIdSuffix = '.' + artifactIdSuffix;
-         }
-      } else {
-         artifactIdSuffix = '.' + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactIdWithoutSuffix + artifactIdSuffix;
    }
 
    private static String evaluatePackage(IJellyFishCommandOptions commandOptions, String groupId, String artifactId) {
@@ -240,11 +221,11 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
    private static IUsage createUsage() {
       return new DefaultUsage("Generates the base abstract service for a Java application",
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.OUTPUT_DIRECTORY.required(),
-         CommonParameters.MODEL.required(),
-         CommonParameters.CLEAN);
+                              CommonParameters.GROUP_ID,
+                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.OUTPUT_DIRECTORY.required(),
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.CLEAN);
    }
 
    /**
