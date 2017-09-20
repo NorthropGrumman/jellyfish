@@ -11,6 +11,8 @@ import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
+ * This scope provider is not currently used.
+ * 
  * This scope provider behaves the same as
  * {@code ImportedNamespaceAwareLocalScopeProvider} except it allows the value
  * of the importedNamespace feature to be something other than a string. This is
@@ -20,6 +22,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
  * that provider demands the type of the of the {@code importedNamespace}
  * feature be just a string. This code works around that issues.
  */
+@Deprecated
 public class SdImportedNamespaceAwareLocalScopeProvider extends ImportedNamespaceAwareLocalScopeProvider {
 
 	@Override

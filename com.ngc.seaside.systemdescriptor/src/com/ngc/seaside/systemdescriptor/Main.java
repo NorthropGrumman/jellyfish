@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.validation.CheckMode;
@@ -21,12 +20,11 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
+/**
+ * This is a simple command line to validate and set of system descriptor files.
+ * It is mostly used for debugging.
+ */
 public class Main {
 
 	private static final Path SD_SOURCE_PATH = Paths.get("src", "main", "sd");
@@ -52,7 +50,6 @@ public class Main {
 			}
 		}
 		
-		//new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("cry-text3");
 		injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
 		
 		printIssues(getIssues(files));
@@ -91,8 +88,6 @@ public class Main {
 		
 		Collection<Issue> issues = new ArrayList<>();
 		for(XtextResource resource : resources) {
-			printContents(resource);
-			
 			IResourceValidator validator = resource.getResourceServiceProvider().getResourceValidator();
 			issues.addAll(validator.validate(resource, CheckMode.ALL, null));
 		}
@@ -100,62 +95,8 @@ public class Main {
 		return issues;
 	}
 	
-	private Collection<File> orderResources(Collection<File> files) {
-		XtextResourceSet resourceSet = injector.getProvider(XtextResourceSet.class).get();
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		
-		Collection<File> dataFiles = new ArrayList<>();
-		Collection<File> modelFiles = new ArrayList<>();
-		Collection<File> enumFiles = new ArrayList<>();
-		Collection<File> everythingElse = new ArrayList<>();
-		
-		for(File f : files) {
-			XtextResource r = (XtextResource) resourceSet.getResource(URI.createFileURI(f.getAbsolutePath()), true);
-			if(r.getContents().isEmpty()) {
-				everythingElse.add(f);
-			} else {
-				EObject object = r.getContents().get(0);
-				if(object instanceof Package) {
-					Element element = ((Package) object).getElement();
-					if(element instanceof Enumeration) {
-						enumFiles.add(f);
-					} else if(element instanceof Data) {
-						dataFiles.add(f);
-					} else if(element instanceof Model) {
-						modelFiles.add(f);
-					} else {
-						everythingElse.add(f);
-					}
-				} else {
-					everythingElse.add(f);
-				}
-			}
-		}
-		// Throw the parsed files away.
-		resourceSet.getResources().clear();
-		
-		Collection<File> ordered = new ArrayList<>(files.size());
-		ordered.addAll(enumFiles);
-		ordered.addAll(dataFiles);
-		ordered.addAll(modelFiles);
-		ordered.addAll(everythingElse);
-		return ordered;
-	}
-	
 	private static void printIssues(Collection<Issue> issues) {
 		System.out.format("Found %d issues:%n", issues.size());
 		issues.forEach(i -> System.out.format("%s: %s: line %d - %s%n", i.getSeverity(), i.getUriToProblem(), i.getLineNumber(), i.getMessage()));
-	}
-	
-	private static void printContents(XtextResource resource) {
-		System.out.println("Contents of " + resource.getURI());
-		for(EObject object : resource.getContents()) {
-			System.out.println(object);
-			if(object instanceof Package) {
-				Element element = ((Package)object).getElement();
-				System.out.println("element = " + element);
-			}
-		}
-		System.out.println("----");
 	}
 }

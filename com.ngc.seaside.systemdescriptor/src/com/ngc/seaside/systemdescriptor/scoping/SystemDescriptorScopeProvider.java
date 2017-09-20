@@ -20,11 +20,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * The scope provider for the System Descriptor language. This provider will
- * delegate the handling of imports to
- * {@link SdImportedNamespaceAwareLocalScopeProvider}. Otherwise it implements
- * rules using the reflective based syntax described in
- * {@link AbstractDeclarativeScopeProvider}.
+ * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
