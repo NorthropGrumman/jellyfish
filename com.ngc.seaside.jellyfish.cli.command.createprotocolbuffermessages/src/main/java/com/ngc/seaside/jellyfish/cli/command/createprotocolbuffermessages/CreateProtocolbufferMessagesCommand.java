@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.CommandException;
@@ -51,7 +50,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
    private IResourceService resourceService;
-   private IPromptUserService promptUserService;
    private IPackageNamingService packageNamingService;
    private IProjectNamingService projectNamingService;
 
@@ -153,15 +151,6 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptUserService")
-   public void setPromptUserService(IPromptUserService ref) {
-      this.promptUserService = ref;
-   }
-
-   public void removePromptUserService(IPromptUserService ref) {
-      setPromptUserService(null);
-   }
-   
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.STATIC,
             unbind = "removePackageNamingService")
@@ -188,14 +177,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName;
-      if (parameters.containsParameter(CreateDomainCommand.MODEL_PROPERTY)) {
-         modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
-      } else {
-         modelName = promptUserService.prompt(CreateDomainCommand.MODEL_PROPERTY,
-            null,
-            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
-      }
+      final String modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 
