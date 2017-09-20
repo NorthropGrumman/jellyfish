@@ -147,10 +147,6 @@ public class CreateJavaServiceBaseCommandIT {
          IModel model = args.getArgument(1);
          return model.getFullyQualifiedName().toLowerCase() + ".base.impl";
       });
-      when(packageService.getServiceImplementationPackageName(any(), any())).thenAnswer(args -> {
-         IModel model = args.getArgument(1);
-         return model.getFullyQualifiedName().toLowerCase() + ".impl";
-      });
       when(packageService.getServiceInterfacePackageName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          return model.getFullyQualifiedName().toLowerCase() + ".api";
