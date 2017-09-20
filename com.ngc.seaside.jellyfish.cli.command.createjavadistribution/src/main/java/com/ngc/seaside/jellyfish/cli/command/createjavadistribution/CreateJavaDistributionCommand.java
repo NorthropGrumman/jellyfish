@@ -170,7 +170,8 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
             projectNamingService.getConnectorProjectName(commandOptions, model).getArtifactId(),
             projectNamingService.getConfigProjectName(commandOptions, model).getArtifactId(),
             projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getServiceNoSuffixProjectName(commandOptions, model).getArtifactId())));
+            projectNamingService.getMessageProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getServiceProjectName(commandOptions, model).getArtifactId())));
       
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 

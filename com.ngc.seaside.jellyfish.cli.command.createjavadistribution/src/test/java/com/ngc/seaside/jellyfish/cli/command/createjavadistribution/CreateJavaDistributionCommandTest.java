@@ -61,14 +61,16 @@ public class CreateJavaDistributionCommandTest {
       IProjectInformation connectorProjName = mock(IProjectInformation.class);
       IProjectInformation configProjName = mock(IProjectInformation.class);
       IProjectInformation baseServiceProjName = mock(IProjectInformation.class);
-      IProjectInformation serviceNoSuffixProjName = mock(IProjectInformation.class);
+      IProjectInformation serviceProjName = mock(IProjectInformation.class);
+      IProjectInformation messagesProjName = mock(IProjectInformation.class);
       when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(distributionProjName);
       when (projectNamingService.getEventsProjectName(any(), any())).thenReturn(eventsProjName);
       when (projectNamingService.getDomainProjectName(any(), any())).thenReturn(domainProjName);
       when (projectNamingService.getConnectorProjectName(any(), any())).thenReturn(connectorProjName);
       when (projectNamingService.getConfigProjectName(any(), any())).thenReturn(configProjName);
       when (projectNamingService.getBaseServiceProjectName(any(), any())).thenReturn(baseServiceProjName);
-      when (projectNamingService.getServiceNoSuffixProjectName(any(), any())).thenReturn(serviceNoSuffixProjName);
+      when (projectNamingService.getServiceProjectName(any(), any())).thenReturn(serviceProjName);
+      when (projectNamingService.getMessageProjectName(any(), any())).thenReturn(messagesProjName);
       
       when (distributionProjName.getArtifactId()).thenReturn("model.distribution");
       when (distributionProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
@@ -78,7 +80,8 @@ public class CreateJavaDistributionCommandTest {
       when (connectorProjName.getArtifactId()).thenReturn("model.connector");
       when (configProjName.getArtifactId()).thenReturn("model.config");
       when (baseServiceProjName.getArtifactId()).thenReturn("model.base");
-      when (serviceNoSuffixProjName.getArtifactId()).thenReturn("model");
+      when (serviceProjName.getArtifactId()).thenReturn("model.impl");
+      when (messagesProjName.getArtifactId()).thenReturn("model.messages");
       
       
       //set up mock package naming service

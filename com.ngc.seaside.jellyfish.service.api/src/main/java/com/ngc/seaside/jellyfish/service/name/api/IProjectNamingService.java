@@ -54,15 +54,6 @@ public interface IProjectNamingService {
    IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model);
    
    /**
-    * Gets the project information for a service project given a model.  Doesn't include suffix.
-    *
-    * @param options options the options the current command is being executed with
-    * @param model   the model to get the root project name for
-    * @return the project information for a service project
-    */
-   IProjectInformation getServiceNoSuffixProjectName(IJellyFishCommandOptions options, IModel model);
-   
-   /**
     * Gets the project information for a base service project given a model.
     *
     * @param options options the options the current command is being executed with

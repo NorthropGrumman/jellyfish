@@ -161,9 +161,7 @@ public class ProjectNamingService implements IProjectNamingService {
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
             .setArtifactId(artifactId)
-            .setVersionPropertyName(versionPropertyName)
-            .setGenerated(true)
-            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+            .setVersionPropertyName(versionPropertyName);
    }
    
    @Override
@@ -183,23 +181,6 @@ public class ProjectNamingService implements IProjectNamingService {
             .setVersionPropertyName(versionPropertyName);
    }
    
-   @Override
-   public IProjectInformation getServiceNoSuffixProjectName(IJellyFishCommandOptions options, IModel model) {
-      Preconditions.checkNotNull(options, "options may not be null!");
-      Preconditions.checkNotNull(model, "model may not be null!");
-      String modelPackageName = model.getParent().getName();
-      String modelName = model.getName();
-      String versionPropertyName = modelName + "ServiceVersion";
-      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
-      String artifactId = evaluateArtifactId(options, model, "");
-      
-      
-      return new ProjectInformation()
-            .setGroupId(modelPackageName.toLowerCase())
-            .setArtifactId(artifactId)
-            .setVersionPropertyName(versionPropertyName);
-   }
-
    @Override
    public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -242,10 +223,8 @@ public class ProjectNamingService implements IProjectNamingService {
       String artifactId;
       if (options.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
          artifactId = options.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else if (!suffix.isEmpty()) {
-         artifactId = model.getName().toLowerCase() + "." + suffix;
       } else {
-         artifactId = model.getName().toLowerCase();
+         artifactId = model.getName().toLowerCase() + "." + suffix;
       }
       return artifactId;
    }
