@@ -71,7 +71,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       ServiceConfigDto dto = new ServiceConfigDto()
             .setModelName(model.getName())
             .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getServiceProjectName(commandOptions, model).getArtifactId())
+            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
             .setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();

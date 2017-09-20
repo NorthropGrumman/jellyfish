@@ -1,4 +1,4 @@
-package ${dto.PackageName};
+package ${dto.packageName};
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
