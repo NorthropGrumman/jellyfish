@@ -105,10 +105,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       final IParameterCollection parameters = commandOptions.getParameters();
       final IModel model = evaluateModelParameter(commandOptions);
-      IProjectInformation domainProjName = projectNamingService.getDomainProjectName(commandOptions, model);
+      IProjectInformation projectInfo = projectNamingService.getDomainProjectName(commandOptions, model);
       
-      String groupId = domainProjName.getGroupId();
-      String artifactId = domainProjName.getArtifactId();
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useVerboseImports = CommonParameters.evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
@@ -124,7 +122,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       Map<String, List<IData>> mappedData = data.stream().collect(Collectors.groupingBy(d -> d.getParent().getName()));
 
       final Path outputDir = evaluateOutputDirectory(parameters);  
-      final Path projectDir = evaluateProjectDirectory(outputDir, domainProjName.getDirectoryName(), clean);
+      final Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
 
       final Set<String> domainPackages = new LinkedHashSet<>();
@@ -136,7 +134,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, domainPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
-      updateGradleDotSettings(outputDir, groupId, artifactId, commandOptions.getParameters());
+      updateGradleDotSettings(outputDir, projectInfo);
 
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
@@ -239,14 +237,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setPackageNamingService(null);
    }
 
-   private void updateGradleDotSettings(Path outputDir,
-                                        String groupId,
-                                        String artifactId,
-                                        IParameterCollection originalParameters) {
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
       DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
          if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");

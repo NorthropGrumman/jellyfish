@@ -63,11 +63,17 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
          outputDir,
          clean);
 
+      updateGradleDotSettings(outputDir, projectInfo);
+   }
+   
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir));
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInfo.getGroupId()));
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInfo.getArtifactId()));
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
       } catch (FileUtilitiesException e) {
