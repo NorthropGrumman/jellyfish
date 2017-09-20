@@ -102,7 +102,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
             outputDirectory,
             clean);
          logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
-         doAddProject(outputDirectory, info);
+         updateGradleDotSettings(outputDirectory, info);
       }
       copyFeatureFilesToGeneratedProject(commandOptions, model, outputDirectory.resolve(projectName), clean);
    }
@@ -212,18 +212,18 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       setJavaServiceGenerationService(null);
    }
 
-   protected void doAddProject(Path outputDirectory, IProjectInformation projectInformation) {
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
-      parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInformation.getGroupId()));
-      parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInformation.getArtifactId()));
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
       } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
+         throw new CommandException("failed to update settings.gradle!", e);
       }
    }
 

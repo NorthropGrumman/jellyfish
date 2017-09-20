@@ -49,10 +49,11 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME = "create-java-pubsub-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
+   static final String CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME = "create-protocolbuffer-messages";
    private static final String[] SUBCOMMANDS = { CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
             CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
             CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
-            CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME };
+            CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME, CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME };
 
    public static final String NAME = "create-java-service-project";
 
@@ -113,6 +114,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
       createJavaServiceBaseProject(ctx);
       createJavaPubsubConnectorProject(ctx);
+      createProtocolBufferMessagesProject(ctx);
    }
 
    @Activate
@@ -230,7 +232,14 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       );
       doRunCommand(CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, delegateOptions);
    }
-
+   
+   private void createProtocolBufferMessagesProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
+            ctx.standardCommandOptions,
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
+      );
+      doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
+   }
 
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(

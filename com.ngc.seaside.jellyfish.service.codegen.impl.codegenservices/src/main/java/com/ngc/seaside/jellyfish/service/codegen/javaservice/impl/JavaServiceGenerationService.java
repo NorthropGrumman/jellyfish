@@ -73,7 +73,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
       getMethods(options, model, new ArrayList<>(), methods);
       dto.setMethods(methods);
       dto.setImports(getImports(dto));
-
+      dto.getImports().add(packageNamingService.getServiceInterfacePackageName(options, model) + ".I" + model.getName());
       return dto;
    }
 
@@ -385,7 +385,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                     new ArgumentDto()
                                                                      .setName("consumer")
                                                                      .setTypeName("Consumer")
-                                                                     .setPackageName("java.util.function.Consumer")
+                                                                     .setPackageName("java.util.function")
                                                                      .setTypes(Collections.singletonList(
                                                                         new ArgumentDto().setTypeName(
                                                                            output.getType().getName())
@@ -415,6 +415,12 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
    private static Set<String> getImports(ClassDto<? extends MethodDto> dto) {
       Set<String> imports = new TreeSet<>();
+      if (dto.getBaseClass() != null) {
+         imports.add(dto.getBaseClass().getFullyQualifiedName());
+      }
+      if (dto.getImplementedInterface() != null) {
+         imports.add(dto.getImplementedInterface().getFullyQualifiedName());
+      }
       for (MethodDto method : dto.getMethods()) {
          if (method.isReturns()) {
             imports.add(method.getReturnArgument().getPackageName() + "." + method.getReturnArgument().getTypeName());

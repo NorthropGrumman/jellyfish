@@ -132,6 +132,10 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceBaseCommand(capture.getValue(), "my-project");
 
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
+         capture.capture());
+      verifyParametersForCreateProtocolCommand(capture.getValue(), "my-project");
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateConnectorCommand(capture.getValue(), "my-project");
@@ -264,6 +268,13 @@ public class CreateJavaServiceProjectCommandTest {
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
+   
+   private void verifyParametersForCreateProtocolCommand(IJellyFishCommandOptions options,
+                                                         String projectName) {
+      requireParameter(options, 
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+  }
 
    private void verifyParametersForCreateConnectorCommand(IJellyFishCommandOptions options,
                                                           String projectName) {
