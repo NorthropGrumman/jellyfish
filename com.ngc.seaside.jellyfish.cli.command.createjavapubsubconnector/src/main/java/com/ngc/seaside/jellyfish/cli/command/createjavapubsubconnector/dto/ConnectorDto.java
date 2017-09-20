@@ -13,6 +13,7 @@ public class ConnectorDto {
    private IModel model;
    private String packageName;
    private Function<INamedChild<IPackage>, String> eventsPackageName;
+   private Function<INamedChild<IPackage>, String> messagesPackageName;
    private String transportTopicsClass;
    private String projectName;
    private Set<String> projectDependencies;
@@ -46,6 +47,14 @@ public class ConnectorDto {
 
    public void setEventsPackageName(Function<INamedChild<IPackage>, String> eventsPackageName) {
       this.eventsPackageName = eventsPackageName;
+   }
+   
+   public Function<INamedChild<IPackage>, String> getMessagesPackageName() {
+      return messagesPackageName;
+   }
+
+   public void setMessagesPackageName(Function<INamedChild<IPackage>, String> messagesPackageName) {
+      this.messagesPackageName = messagesPackageName;
    }
 
    public String getTransportTopicsClass() {

@@ -10,6 +10,7 @@ import com.ngc.seaside.service.monitoring.api.SessionlessRequirementAwareRequest
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
+import com.ngc.seaside.service.transport.api.ITransportReceiver;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,6 +22,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Future;
 
 @Component
 public class ${dto.model.name}Connector {
@@ -96,34 +98,38 @@ public class ${dto.model.name}Connector {
 #foreach($inputEntry in $dto.inputTopics.entrySet())
 #set ($topic = $inputEntry.key)
 #set ($input = $inputEntry.value)
+#set ($eventsPackage = $dto.getEventsPackageName().apply($input))
+#set ($messagesPackage = $dto.getMessagesPackageName().apply($input))
 
-   private void receive${input.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
+   private Future<Collection<ITransportObject>> receive${input.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
       preReceiveMessage(${dto.transportTopicsClass}.${topic});
       try {
-         ${input.fullyQualifiedName}Wrapper.${input.name} from;
+         ${messagesPackage}.${input.name} from;
          try {
-            from = ${input.fullyQualifiedName}Wrapper.${input.name}.parseFrom(transportObject.getPayload());
+            from = ${messagesPackage}.${input.name}.parseFrom(transportObject.getPayload());
          } catch (InvalidProtocolBufferException e) {
             throw new IllegalStateException(e);
          }
-         eventService.publish(${dto.model.name}DataConversion.convert(from), ${dto.getEventsPackageName().apply($input)}.${input.name}.TOPIC);
+         eventService.publish(${dto.model.name}DataConversion.convert(from), ${eventsPackage}.${input.name}.TOPIC);
       } finally {
          postReceiveMessage(${dto.transportTopicsClass}.${topic});
       }
+      return ITransportReceiver.EMPTY_RESPONSE;
    }
 #end
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($topic = $outputEntry.key)
 #set ($output = $outputEntry.value)
 #set ($eventsPackage = $dto.getEventsPackageName().apply($output))
+#set ($messagesPackage = $dto.getMessagesPackageName().apply($output))
 
    private void send${output.name}(IEvent<${eventsPackage}.${output.name}> event) {
-      preSendMessage(${dto.model.name}TransportTopics.${topic});
+      preSendMessage(${dto.transportTopicsClass}.${topic});
       ${eventsPackage}.${output.name} from = event.getSource();
-      ${output.fullyQualifiedName}Wrapper.${output.name} to = ${dto.model.name}DataConversion.convert(from);
+      ${messagesPackage}.${output.name} to = ${dto.model.name}DataConversion.convert(from);
       try {
          transportService.send(ITransportObject.withPayload(to.toByteArray()),
-            ${dto.model.name}TransportTopics.${topic});
+            ${dto.transportTopicsClass}.${topic});
       } finally {
          postSendMessage(${dto.transportTopicsClass}.${topic});
       }
@@ -132,15 +138,15 @@ public class ${dto.model.name}Connector {
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
       RequestThreadLocal.setCurrentRequest(new SessionlessRequirementAwareRequest(
-         getRequirementsForTransportTopic(transportTopic)));
+         getRequirementsForTransportTopic(transportTopic), this));
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }
 
-   private void postReceiveMessage(${dto.model.name}TransportTopics transportTopic) {
+   private void postReceiveMessage(${dto.transportTopicsClass} transportTopic) {
       RequestThreadLocal.clear();
    }
 
-   private void preSendMessage(${dto.model.name}TransportTopics transportTopic) {
+   private void preSendMessage(${dto.transportTopicsClass} transportTopic) {
       // Do nothing.
    }
 
