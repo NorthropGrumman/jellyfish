@@ -39,8 +39,6 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
-   static final String ARTIFACT_ID_SUFFIX_PROPERTY = "artifactIdSuffix";
-   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
    private static final String NAME = "create-java-service-config";
    private static final IUsage USAGE = createUsage();
@@ -65,8 +63,6 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       IModel model = evaluateModelParameter(commandOptions);
       boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);  
       IProjectInformation projectInfo = projectNamingService.getConfigProjectName(commandOptions, model);
-      String groupId = projectInfo.getGroupId();
-      String artifactId = projectInfo.getArtifactId();
       String packagez = packageNamingService.getConfigPackageName(commandOptions, model);
       Path outputDir = Paths.get(
          commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
@@ -85,11 +81,17 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
                              outputDir,
                              clean);
 
+      updateGradleDotSettings(outputDir, projectInfo);
+   }
+   
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, groupId));
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, artifactId));
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
       } catch (FileUtilitiesException e) {
@@ -201,20 +203,10 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage(
             "Generates the service configuration for a Java application",
-            new DefaultParameter<String>(GROUP_ID_PROPERTY)
-                  .setDescription("The project's group ID. (default: the package in the model)")
-                  .setRequired(false),
-            new DefaultParameter<String>(ARTIFACT_ID_PROPERTY)
-                  .setDescription("The project's artifact Id. (default: the model name in lowercase)")
-                  .setRequired(false),
-            new DefaultParameter<String>(MODEL_PROPERTY)
-                  .setDescription("The fully qualified path to the model.")
-                  .setRequired(true),
-            new DefaultParameter<String>(OUTPUT_DIRECTORY_PROPERTY)
-                  .setDescription("Base directory in which to output the project")
-                  .setRequired(true),
-            new DefaultParameter<String>(CLEAN_PROPERTY)
-                  .setDescription("If true, recursively deletes the domain project before generating the it again")
-                  .setRequired(false));
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.CLEAN);
    }
 }
