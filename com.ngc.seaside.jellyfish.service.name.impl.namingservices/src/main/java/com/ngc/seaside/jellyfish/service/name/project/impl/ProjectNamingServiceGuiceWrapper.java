@@ -49,6 +49,11 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    }
 
    @Override
+   public IProjectInformation getServiceNoSuffixProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getServiceNoSuffixProjectName(options, model);
+   }
+
+   @Override
    public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getBaseServiceProjectName(options, model);
    }
@@ -61,5 +66,10 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    @Override
    public IProjectInformation getCucumberTestsProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getCucumberTestsProjectName(options, model);
+   }
+
+   @Override
+   public IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getConfigProjectName(options, model);
    }
 }

@@ -28,6 +28,7 @@ public class ProjectNamingService implements IProjectNamingService {
    private static final String SERVICE_BASE_ARTIFACT_ID_SUFFIX = "base";
    private static final String DISTRIBUTION_ARTIFACT_ID_SUFFIX = "distribution";
    private static final String CUCUMBER_TESTS_ARTIFACT_ID_SUFFIX = "tests";
+   private static final String CONFIG_ARTIFACT_ID_SUFFIX = "config";
 
 
    /**
@@ -148,6 +149,24 @@ public class ProjectNamingService implements IProjectNamingService {
    }
    
    @Override
+   public IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ConfigVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, CONFIG_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+   }
+   
+   @Override
    public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
@@ -156,6 +175,23 @@ public class ProjectNamingService implements IProjectNamingService {
       String versionPropertyName = modelName + "ServiceVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
       String artifactId = evaluateArtifactId(options, model, SERVICE_ARTIFACT_ID_SUFFIX);
+      
+      
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName);
+   }
+   
+   @Override
+   public IProjectInformation getServiceNoSuffixProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ServiceVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, "");
       
       
       return new ProjectInformation()
@@ -206,8 +242,10 @@ public class ProjectNamingService implements IProjectNamingService {
       String artifactId;
       if (options.getParameters().containsParameter(ARTIFACT_ID_PROPERTY)) {
          artifactId = options.getParameters().getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
-      } else {
+      } else if (!suffix.isEmpty()) {
          artifactId = model.getName().toLowerCase() + "." + suffix;
+      } else {
+         artifactId = model.getName().toLowerCase();
       }
       return artifactId;
    }

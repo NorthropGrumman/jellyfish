@@ -55,11 +55,31 @@ public class CreateJavaDistributionCommandTest {
       
       //Setup mock project naming service
       IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
+      IProjectInformation distributionProjName = mock(IProjectInformation.class);
+      IProjectInformation eventsProjName = mock(IProjectInformation.class);
       IProjectInformation domainProjName = mock(IProjectInformation.class);
-      when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(domainProjName);
+      IProjectInformation connectorProjName = mock(IProjectInformation.class);
+      IProjectInformation configProjName = mock(IProjectInformation.class);
+      IProjectInformation baseServiceProjName = mock(IProjectInformation.class);
+      IProjectInformation serviceNoSuffixProjName = mock(IProjectInformation.class);
+      when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(distributionProjName);
+      when (projectNamingService.getEventsProjectName(any(), any())).thenReturn(eventsProjName);
+      when (projectNamingService.getDomainProjectName(any(), any())).thenReturn(domainProjName);
+      when (projectNamingService.getConnectorProjectName(any(), any())).thenReturn(connectorProjName);
+      when (projectNamingService.getConfigProjectName(any(), any())).thenReturn(configProjName);
+      when (projectNamingService.getBaseServiceProjectName(any(), any())).thenReturn(baseServiceProjName);
+      when (projectNamingService.getServiceNoSuffixProjectName(any(), any())).thenReturn(serviceNoSuffixProjName);
       
-      when (domainProjName.getArtifactId()).thenReturn("model.distribution");
-      when (domainProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
+      when (distributionProjName.getArtifactId()).thenReturn("model.distribution");
+      when (distributionProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
+      
+      when (eventsProjName.getArtifactId()).thenReturn("model.events");
+      when (domainProjName.getArtifactId()).thenReturn("model.domain");
+      when (connectorProjName.getArtifactId()).thenReturn("model.connector");
+      when (configProjName.getArtifactId()).thenReturn("model.config");
+      when (baseServiceProjName.getArtifactId()).thenReturn("model.base");
+      when (serviceNoSuffixProjName.getArtifactId()).thenReturn("model");
+      
       
       //set up mock package naming service
       IPackageNamingService packageNamingService = mock(IPackageNamingService.class);

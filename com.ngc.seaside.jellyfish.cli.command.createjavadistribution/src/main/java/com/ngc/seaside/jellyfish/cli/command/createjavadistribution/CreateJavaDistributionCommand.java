@@ -14,6 +14,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto.ConfigDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
@@ -125,7 +128,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
 
-      IProjectInformation domainProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
+      IProjectInformation distributionProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
 
       // Resolve output directory
       if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
@@ -138,13 +141,13 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       // Resolve groupId
       if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, domainProjName.getGroupId()));
+         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, distributionProjName.getGroupId()));
       }
 
       // Resolve artifactId
       if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          parameters.addParameter(
-            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, domainProjName.getArtifactId()));
+            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, distributionProjName.getArtifactId()));
       }
 
       // Resolve clean property
@@ -154,6 +157,22 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, pkg));
 
       doAddProject(parameters);
+      
+      ConfigDto dto = new ConfigDto();
+      
+      dto.setProjectName(distributionProjName.getDirectoryName());
+      dto.setPackageName(pkg);
+      dto.setModel(model);
+      dto.setProjectDependencies(new LinkedHashSet<String>(
+         Arrays.asList(
+            projectNamingService.getEventsProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getDomainProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getConnectorProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getConfigProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId(),
+            projectNamingService.getServiceNoSuffixProjectName(commandOptions, model).getArtifactId())));
+      
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
 
       templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(),
                              parameters,
