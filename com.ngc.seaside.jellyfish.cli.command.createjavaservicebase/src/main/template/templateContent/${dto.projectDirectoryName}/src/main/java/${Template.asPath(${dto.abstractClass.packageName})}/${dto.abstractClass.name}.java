@@ -105,7 +105,7 @@ public abstract class ${dto.abstractClass.name}
       threads.put("${scenarioName}::${method.name}", threadService.executeLongLivingTask("${scenarioName}::${method.name}", () -> {
          try {
             ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
-         }  (ServiceFaultException fault) {
+         } catch (ServiceFaultException fault) {
             logService.error(getClass(),
                "Invocation of '%s.${scenarioName}(Consumer<${method.arguments.get(0).name}>)' generated fault, dispatching to fault management service.",
                getClass().getName());
