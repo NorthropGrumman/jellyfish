@@ -22,7 +22,7 @@ subprojects {
    }
 
    group 'com.ngc.seaside'
-   version '1.4.1-SNAPSHOT'
+   version '1.5-SNAPSHOT'
 
    ext {
       jellyfishDslVersion = '0.7'
