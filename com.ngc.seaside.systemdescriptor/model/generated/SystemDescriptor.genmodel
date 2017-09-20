@@ -26,7 +26,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//FieldDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Import">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Import/importedNamespace"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//Import/importedNamespace"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//EnumerationValueDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EnumerationValueDeclaration/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//EnumerationValueDeclaration/metadata"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//EnumerationValueDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EnumerationValueDeclaration/value"/>

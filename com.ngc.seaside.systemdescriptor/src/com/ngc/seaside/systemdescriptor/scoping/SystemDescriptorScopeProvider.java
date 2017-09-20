@@ -6,13 +6,11 @@ package com.ngc.seaside.systemdescriptor.scoping;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 
-import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
@@ -22,29 +20,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * The scope provider for the System Descriptor language. This provider will
- * delegate the handling of imports to
- * {@link SdImportedNamespaceAwareLocalScopeProvider}. Otherwise it implements
- * rules using the reflective based syntax described in
- * {@link AbstractDeclarativeScopeProvider}.
+ * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
-
-	@Inject
-	private SdImportedNamespaceAwareLocalScopeProvider scopeProviderDelegate;
-
-	@Override
-	public IScope getScope(EObject context, EReference reference) {
-		// Is the object related to the importing a namespace?
-		if (scopeProviderDelegate.isNamespaceRelevant(context)) {
-			// If so, use the import namespace aware local scope provider.
-			return scopeProviderDelegate.getScope(context, reference);
-		} else {
-			// Otherwise, delegate to the base class which will call our
-			// custom methods.
-			return super.getScope(context, reference);
-		}
-	}
 
 	/**
 	 * Provides scope for a link expression of the form

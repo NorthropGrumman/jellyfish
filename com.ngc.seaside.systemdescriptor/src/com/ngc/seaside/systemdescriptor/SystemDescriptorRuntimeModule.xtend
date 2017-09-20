@@ -13,10 +13,10 @@ class SystemDescriptorRuntimeModule extends AbstractSystemDescriptorRuntimeModul
 
 	override public void configure(Binder binder) {
 		super.configure(binder)
-		configureScopeProvider(binder)
+		//configureScopeProvider(binder)
 	}
 	
-	def void configureScopeProvider(Binder binder) {
-		binder.bind(SdImportedNamespaceAwareLocalScopeProvider)
-	}
+//	def void configureScopeProvider(Binder binder) {
+//		binder.bind(SdImportedNamespaceAwareLocalScopeProvider)
+//	}
 }

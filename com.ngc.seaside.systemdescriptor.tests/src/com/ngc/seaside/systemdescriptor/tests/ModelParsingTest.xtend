@@ -122,22 +122,6 @@ class ModelParsingTest {
 	}
 
 	@Test
-	def void testDoesParseModelWithImportedData() {
-		val source = '''
-			package clocks.models
-			
-			import clocks.datatypes.Time
-			
-			model Timer {
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
-	}
-
-	@Test
 	def void testDoesParseModelWithOutputs() {
 		val source = '''
 			package clocks.models
@@ -229,28 +213,6 @@ class ModelParsingTest {
 			invalidResult,
 			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
 			null
-		)
-	}
-
-	@Test
-	def void testDoesNotParseModelWithMissingOutputDataType() {
-		val source = '''
-			package clocks.models
-			
-			model Timer {
-				
-				output {
-					Time currentTime
-				}
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
-			Diagnostic.LINKING_DIAGNOSTIC
 		)
 	}
 
@@ -414,28 +376,6 @@ class ModelParsingTest {
 	}
 
 	@Test
-	def void testDoesNotParseModelWithMissingInputDataType() {
-		val source = '''
-			package clocks.models
-			
-			model ClockDisplay {
-				
-				input {
-					Time currentTime
-				}
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.INPUT_DECLARATION,
-			Diagnostic.LINKING_DIAGNOSTIC
-		)
-	}
-
-	@Test
 	def void testDoesNotParseModelWithInputTypeOfModel() {
 		val source = '''
 			package clocks.models
@@ -484,26 +424,6 @@ class ModelParsingTest {
 			invalidResult,
 			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
 			null
-		)
-	}
-
-	@Test
-	def void testDoesNotParseWithMissingImports() {
-		val source = '''
-			package clocks.models
-			
-			import clocks.datatypes.Foo
-			
-			model Timer {
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.IMPORT,
-			Diagnostic.LINKING_DIAGNOSTIC
 		)
 	}
 

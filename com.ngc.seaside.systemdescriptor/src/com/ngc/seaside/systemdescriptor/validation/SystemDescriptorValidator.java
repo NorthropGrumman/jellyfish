@@ -18,6 +18,7 @@ import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
  * extensions that have been registered.
  */
 @ComposedChecks(validators = {
+		ImportValidator.class,
 		DuplicateElementValidator.class,
 		ModelValidator.class,
 		ScenarioValidator.class,

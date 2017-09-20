@@ -90,7 +90,7 @@ FieldDeclaration
  * Note that wildcard ('*') imports are not yet supported.
  */
 Import
-	: 'import' importedNamespace=[Element|QualifiedName]
+	: 'import' importedNamespace=QualifiedName
 	;
 
 // ------------------------------
