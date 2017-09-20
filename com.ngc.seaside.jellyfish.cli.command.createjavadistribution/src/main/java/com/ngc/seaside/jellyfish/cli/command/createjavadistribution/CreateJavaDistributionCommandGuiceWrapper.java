@@ -1,9 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -19,12 +17,10 @@ public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishComm
 
    @Inject
    public CreateJavaDistributionCommandGuiceWrapper(ILogService logService, 
-                                                    IPromptUserService promptUserService,
                                                     ITemplateService templateService,
                                                     IProjectNamingService projectNamingService,
                                                     IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptUserService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);

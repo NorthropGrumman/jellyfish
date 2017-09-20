@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -9,7 +8,6 @@ import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -49,7 +47,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
@@ -70,35 +67,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       );
    }
 
-   /**
-    * Returns the boolean value of the given parameter if it was set, false otherwise.
-    *
-    * @param parameters command parameters
-    * @param parameter  name of parameter
-    * @return the boolean value of the parameter
-    * @throws CommandException if the value is invalid
-    */
-   private static boolean getCleanProperty(IParameterCollection parameters, String parameter) {
-      final boolean booleanValue;
-      if (parameters.containsParameter(parameter)) {
-         String value = parameters.getParameter(parameter).getStringValue();
-         switch (value.toLowerCase()) {
-         case "true":
-            booleanValue = true;
-            break;
-         case "false":
-            booleanValue = false;
-            break;
-         default:
-            throw new CommandException(
-                     "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
-         }
-      } else {
-         booleanValue = false;
-      }
-      return booleanValue;
-   }
-
    @Override
    public String getName() {
       return NAME;
@@ -114,12 +82,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(commandOptions.getParameters().getAllParameters());
 
-      // Resolve model properties
-      if (!parameters.containsParameter(MODEL_PROPERTY)) {
-         String modelId = promptService.prompt(MODEL_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(MODEL_PROPERTY, modelId));
-      }
-
       ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
       String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
 
@@ -128,39 +90,21 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
 
-      IProjectInformation distributionProjName = projectNamingService.getDistributionProjectName(commandOptions, model);
+      IProjectInformation info = projectNamingService.getDistributionProjectName(commandOptions, model);
 
-      // Resolve output directory
-      if (!parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, input));
-      }
       final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
       doCreateDirectories(outputDirectory);
 
-      // Resolve groupId
-      if (!parameters.containsParameter(GROUP_ID_PROPERTY)) {
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, distributionProjName.getGroupId()));
-      }
-
-      // Resolve artifactId
-      if (!parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
-         parameters.addParameter(
-            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, distributionProjName.getArtifactId()));
-      }
-
       // Resolve clean property
-      final boolean clean = getCleanProperty(parameters, CLEAN_PROPERTY);
+      final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
 
       String pkg = packageNamingService.getDistributionPackageName(commandOptions, model);
       parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, pkg));
 
-      doAddProject(parameters);
-      
       ConfigDto dto = new ConfigDto();
       
-      dto.setProjectName(distributionProjName.getDirectoryName());
+      dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(pkg);
       dto.setModel(model);
       dto.setProjectDependencies(new LinkedHashSet<String>(
@@ -179,8 +123,26 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
                              parameters,
                              outputDirectory,
                              clean);
+      
+      updateGradleDotSettings(outputDirectory, info);
+      
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
                       model.getName());
+   }
+   
+   protected void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
+      try {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("failed to update settings.gradle!", e);
+      }
    }
 
    @Activate
@@ -228,23 +190,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    }
 
    /**
-    * Sets prompt user service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt user service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
-   }
-
-   /**
     * Sets project naming service.
     *
     * @param ref the ref
@@ -284,17 +229,6 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       setPackageNamingService(null);
    }
    
-   protected void doAddProject(IParameterCollection parameters) {
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
-      }
-   }
-
    protected void doCreateDirectories(Path outputDirectory) {
       try {
          Files.createDirectories(outputDirectory);

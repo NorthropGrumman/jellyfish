@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -37,7 +36,6 @@ import java.util.Optional;
 public class CreateJavaDistributionCommandTest {
 
    private CreateJavaDistributionCommand fixture;
-   private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
@@ -97,7 +95,11 @@ public class CreateJavaDistributionCommandTest {
       // Setup class under test
       fixture = new CreateJavaDistributionCommand() {
          @Override
-         protected void doAddProject(IParameterCollection parameters) {
+         protected void updateGradleDotSettings(Path outputDirectory, IProjectInformation info) {
+            DefaultParameterCollection parameters = new DefaultParameterCollection();
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.GROUP_ID_PROPERTY, info.getGroupId()));
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, info.getArtifactId()));
             addProjectParameters = parameters;
          }
 
@@ -108,7 +110,6 @@ public class CreateJavaDistributionCommandTest {
       };
 
       fixture.setLogService(new PrintStreamLogService());
-      fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
       fixture.setProjectNamingService(projectNamingService);
       fixture.setPackageNamingService(packageNamingService);
@@ -126,10 +127,7 @@ public class CreateJavaDistributionCommandTest {
       verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("/just/a/mock/path",
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
@@ -156,56 +154,16 @@ public class CreateJavaDistributionCommandTest {
       verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("/just/a/mock/path",
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
-      Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
+      Assert.assertEquals("model.distribution", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
                .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
-   }
-
-   @Test
-   public void testCommandWithoutRequiredParams() {
-
-      // Mock behaviors
-      when(promptUserService.prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
-               .thenReturn("/just/a/mock/path");
-      when(promptUserService.prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null))
-               .thenReturn("com.ngc.seaside.test.Model");
-      when(model.getName()).thenReturn("Model");
-
-      runCommand(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, "test",
-                 CreateJavaDistributionCommand.GROUP_ID_PROPERTY, "com.ngc.seaside");
-
-      // Verify mocked behaviors
-      verify(options, times(1)).getParameters();
-      verify(options, times(1)).getSystemDescriptor();
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null);
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
-
-      // Verify passed values
-      Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                   .getStringValue()
-      );
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
-               .getStringValue());
-      Assert.assertEquals("com.ngc.seaside",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
-                          createDirectoriesPath.toAbsolutePath().toString());
-
    }
 
    private void runCommand(String... keyValues) {
