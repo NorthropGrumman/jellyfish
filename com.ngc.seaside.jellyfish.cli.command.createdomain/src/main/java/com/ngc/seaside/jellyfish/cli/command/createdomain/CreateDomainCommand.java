@@ -9,7 +9,6 @@ import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -85,7 +84,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
    private IResourceService resourceService;
    private IProjectNamingService projectNamingService;
@@ -164,25 +162,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
-   }
-
-   /**
-    * Sets prompt user service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
    }
 
    /**
@@ -271,12 +250,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName;
-      if (parameters.containsParameter(MODEL_PROPERTY)) {
-         modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-      } else {
-         modelName = promptService.prompt(MODEL_PROPERTY, null, null);
-      }
+      final String modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 
@@ -316,14 +290,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @throws CommandException if an error occurred in creating the project directory
     */
    private Path evaluateOutputDirectory(IParameterCollection parameters) {
-      final Path outputDir;
+      final Path outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
-      if (parameters.containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         outputDir = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      } else {
-         String input = promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, null, null);
-         outputDir = Paths.get(input);
-      }
       return outputDir;
    }
 

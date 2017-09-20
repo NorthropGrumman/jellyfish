@@ -19,13 +19,11 @@ public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
 
    @Inject
    public CreateDomainCommandGuiceWrapper(ILogService logService,
-                                          IPromptUserService promptService,
                                           ITemplateService templateService,
                                           IResourceService resourceService,
                                           IProjectNamingService projectNamingService,
                                           IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
       delegate.setResourceService(resourceService);
       delegate.setProjectNamingService(projectNamingService);
