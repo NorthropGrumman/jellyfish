@@ -1,4 +1,4 @@
-package ${dto.basePacakgeName}.transport.config;
+package ${dto.PackageName};
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;

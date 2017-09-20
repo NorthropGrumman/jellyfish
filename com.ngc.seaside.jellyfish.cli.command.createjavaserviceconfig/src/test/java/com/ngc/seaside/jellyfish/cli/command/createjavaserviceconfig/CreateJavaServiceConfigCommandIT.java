@@ -49,9 +49,6 @@ public class CreateJavaServiceConfigCommandIT {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IPromptUserService promptUserService;
-
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
@@ -71,7 +68,6 @@ public class CreateJavaServiceConfigCommandIT {
 
       command = new CreateJavaServiceConfigCommand();
       command.setLogService(logService);
-      command.setPromptService(promptUserService);
       command.setTemplateService(templateService);
    }
 
