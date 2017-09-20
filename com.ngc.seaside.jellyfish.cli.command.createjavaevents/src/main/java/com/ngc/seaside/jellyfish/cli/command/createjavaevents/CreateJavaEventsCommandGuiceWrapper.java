@@ -1,10 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -21,13 +19,11 @@ public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
    @Inject
    public CreateJavaEventsCommandGuiceWrapper(ILogService logService,
                                               IResourceService resourceService,
-                                              IPromptUserService promptUserService,
                                               IJellyFishCommandProvider jellyFishCommandProvider,
                                               IProjectNamingService projectNamingService,
                                               IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
       delegate.setResourceService(resourceService);
-      delegate.setPromptUserService(promptUserService);
       delegate.setJellyFishCommandProvider(jellyFishCommandProvider);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);

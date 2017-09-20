@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -49,9 +48,6 @@ public class CreateJavaEventsCommandTest {
    @Mock
    private IJellyFishCommandProvider commandProvider;
 
-   @Mock
-   private IPromptUserService promptUserService;
-
    @Before
    public void setup() {
       IParsingResult result = mock(IParsingResult.class);
@@ -77,7 +73,6 @@ public class CreateJavaEventsCommandTest {
       command.setLogService(logService);
       command.setResourceService(resourceService);
       command.setJellyFishCommandProvider(commandProvider);
-      command.setPromptUserService(promptUserService);
       command.setProjectNamingService(projectNamingService);
       command.activate();
    }
