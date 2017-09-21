@@ -1,17 +1,10 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
@@ -29,6 +22,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+import java.util.function.Supplier;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaEventsCommandTest {
@@ -40,10 +42,16 @@ public class CreateJavaEventsCommandTest {
    private MockedResourceService resourceService;
 
    @Mock
+   private IProjectInformation projectInformation;
+
+   @Mock
    private IJellyFishCommandOptions options;
 
    @Mock
    private ILogService logService;
+
+   @Mock
+   private IProjectNamingService projectNamingService;
 
    @Mock
    private IJellyFishCommandProvider commandProvider;
@@ -62,12 +70,9 @@ public class CreateJavaEventsCommandTest {
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
       resourceService = new MockedResourceService();
-      
-      IProjectInformation projectInformation = mock(IProjectInformation.class);
-      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);  
 
-      when (projectNamingService.getEventsProjectName(any(), any())).thenReturn(projectInformation);
-      when (projectInformation.getArtifactId()).thenReturn("model.events");
+      when(projectNamingService.getEventsProjectName(any(), any())).thenReturn(projectInformation);
+      when(projectInformation.getArtifactId()).thenReturn("model.events");
 
       command = new CreateJavaEventsCommand();
       command.setLogService(logService);
@@ -85,6 +90,8 @@ public class CreateJavaEventsCommandTest {
                   .getResourceAsStream(CreateJavaEventsCommand.EVENT_SOURCE_VELOCITY_TEMPLATE));
 
       parameters.addParameter(new DefaultParameter<>("model", "my.Model"));
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
+                                                     "/my/output/directory"));
       command.run(options);
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
@@ -120,6 +127,17 @@ public class CreateJavaEventsCommandTest {
                    delegateOptions.getParameters()
                          .getParameter(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY)
                          .getStringValue());
+
+      assertTrue("project namer not set not set!",
+                 delegateOptions.getParameters().containsParameter(CreateDomainCommand.PROJECT_NAMER_PROPERTY));
+      @SuppressWarnings({"unchecked"})
+      Supplier<IProjectInformation> namer = (Supplier<IProjectInformation>) delegateOptions
+            .getParameters()
+            .getParameter(CreateDomainCommand.PROJECT_NAMER_PROPERTY)
+            .getValue();
+      assertEquals("project namer did not return correct project information!",
+                   projectInformation,
+                   namer.get());
    }
 
    @Test
@@ -127,6 +145,8 @@ public class CreateJavaEventsCommandTest {
       parameters.addParameter(new DefaultParameter<>(CreateJavaEventsCommand.EVENT_TEMPLATE_FILE_PROPERTY,
                                                      "my/template/file"));
       parameters.addParameter(new DefaultParameter<>("model", "my.Model"));
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
+                                                     "/my/output/directory"));
       command.run(options);
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
