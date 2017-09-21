@@ -70,11 +70,10 @@ public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.servic
    }
 
    @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void removeFaultManagementService(IFaultManagementService ref) {
       super.removeFaultManagementService(ref);
    }
-   
+
    @Override
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeThreadService")
    public void setThreadService(IThreadService ref) {
@@ -82,7 +81,6 @@ public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.servic
    }
 
    @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
    }
