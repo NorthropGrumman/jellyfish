@@ -104,7 +104,6 @@ public class ScenarioService implements IScenarioService {
          target = "(component.name=com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler)")
    public void setReceiveStepHandler(IScenarioStepHandler ref) {
       this.receiveStepHandler = (ReceiveStepHandler) ref;
-      System.err.println("HERE1");
       if (this.publishStepHandler != null && this.receiveStepHandler != null) {
          this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler);
       }
@@ -120,7 +119,6 @@ public class ScenarioService implements IScenarioService {
          target = "(component.name=com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler)")
    public void setPublishStepHandler(IScenarioStepHandler ref) {
       this.publishStepHandler = (PublishStepHandler) ref;
-      System.err.println("HERE2");
       if (this.publishStepHandler != null && this.receiveStepHandler != null) {
          this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler);
       }
