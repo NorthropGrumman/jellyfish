@@ -4,6 +4,7 @@ import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
+import com.ngc.blocs.service.thread.api.IThreadService;
 
 #foreach ($i in $dto.service.imports)
 import ${i};
@@ -72,5 +73,17 @@ public class ${dto.service.name}#if($dto.service.baseClass) extends ${dto.servic
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void removeFaultManagementService(IFaultManagementService ref) {
       super.removeFaultManagementService(ref);
+   }
+   
+   @Override
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeThreadService")
+   public void setThreadService(IThreadService ref) {
+      super.setThreadService(ref);
+   }
+
+   @Override
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void removeThreadService(IThreadService ref) {
+      super.removeThreadService(ref);
    }
 }
