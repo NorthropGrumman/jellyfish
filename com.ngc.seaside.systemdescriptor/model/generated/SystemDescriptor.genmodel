@@ -32,10 +32,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EnumerationValueDeclaration/value"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//EnumerationValueDeclaration/metadata"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//EnumerationValueDeclaration">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//EnumerationValueDeclaration/value"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//EnumerationValueDeclaration/metadata"/>
-    </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//PrimitiveDataFieldDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//PrimitiveDataFieldDeclaration/type"/>
     </genClasses>
