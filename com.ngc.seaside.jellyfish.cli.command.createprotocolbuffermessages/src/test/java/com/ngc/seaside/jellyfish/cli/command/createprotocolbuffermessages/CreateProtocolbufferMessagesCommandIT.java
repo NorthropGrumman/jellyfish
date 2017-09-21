@@ -102,8 +102,7 @@ public class CreateProtocolbufferMessagesCommandIT {
    public void testExtensionOverride() throws IOException {
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
                  CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-                 CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, "asdf");
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
       Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
