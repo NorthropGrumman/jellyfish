@@ -124,21 +124,6 @@ public class CreateDomainCommandIT {
    }
 
    @Test
-   public void testCommandPackageSuffix() throws IOException {
-      final String suffix = "example";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.PACKAGE_SUFFIX_PROPERTY, suffix);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-
-   @Test
    public void testCommandArtifactId() throws IOException {
       final String artifact = "test.artifact.g1";
       runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",

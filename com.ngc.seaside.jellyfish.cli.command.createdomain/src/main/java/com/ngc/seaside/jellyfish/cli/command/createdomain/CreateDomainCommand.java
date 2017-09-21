@@ -75,7 +75,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
  
-   public static final String PACKAGE_SUFFIX_PROPERTY = "packageSuffix";
    public static final String EXTENSION_PROPERTY = "extension";
    public static final String BUILD_GRADLE_TEMPLATE_PROPERTY = "buildGradleTemplate";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
@@ -108,7 +107,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
       final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
       final boolean useVerboseImports = CommonParameters.evaluateBooleanParameter(parameters, USE_VERBOSE_IMPORTS_PROPERTY);
-      final Function<INamedChild<IPackage>, String> packageGenerator = evaluatePackageGeneratorParameter(parameters);
+      final Function<INamedChild<IPackage>, String> packageGenerator = evaluatePackageGeneratorParameter(commandOptions);
 
       final Set<IData> data = getDataFromModel(model);
       if (data.isEmpty()) {
@@ -232,10 +231,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
    
    @SuppressWarnings("unchecked")
-   private static Function<INamedChild<IPackage>, String> evaluatePackageGeneratorParameter(IParameterCollection parameters) {
+   private Function<INamedChild<IPackage>, String> evaluatePackageGeneratorParameter(IJellyFishCommandOptions options) {
       Function<INamedChild<IPackage>, String> generator = null;
-      if (parameters.containsParameter(PACKAGE_GENERATOR_PROPERTY)) {
-         generator = (Function<INamedChild<IPackage>, String>) parameters.getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
+      if (options.getParameters().containsParameter(PACKAGE_GENERATOR_PROPERTY)) {
+         generator = (Function<INamedChild<IPackage>, String>) options.getParameters().getParameter(PACKAGE_GENERATOR_PROPERTY).getValue();
+      }
+      if (generator == null) {
+         generator = value -> packageNamingService.getDomainPackageName(options, value);
       }
       return generator;
    }
@@ -399,7 +401,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     *
     * @param xmlFile output xml file
     * @param data collection of data
-    * @param pkg package of domain data classes
+    * @param pkg package generating function
     * @throws CommandException if an error occurred when creating the xml file
     */
    private Collection<String> generateDomainXml(Path xmlFile, Collection<IData> data, Function<INamedChild<IPackage>, String> packageGenerator, IJellyFishCommandOptions options, boolean useVerboseImports) {
@@ -412,9 +414,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
       
       ArrayList<Tobject> enumObjList = new ArrayList<Tobject>();
       for (IData d : data) { 
-         String pkg = packageGenerator == null ? packageNamingService.getDomainPackageName(options, d) : packageGenerator.apply(d);
+         String pkg = packageGenerator.apply(d);
          packages.add(pkg);
-         domain.getObject().add(convert(d, pkg, useVerboseImports));
+         domain.getObject().add(convert(d, packageGenerator, useVerboseImports));
 
          for (IDataField dField : d.getFields()) {
             if (dField.getType() == DataTypes.ENUM) {
@@ -439,13 +441,14 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Converts the IData to a Tobject.
     *
     * @param data IData
-    * @param pkg package of domain classes
+    * @param pkg package generating function
     * @return domain object
     */
-   private static Tobject convert(IData data, String pkg, boolean useVerboseImports) {
+   private static Tobject convert(IData data, Function<INamedChild<IPackage>, String> packageGenerator, boolean useVerboseImports) {
       Tobject object = new Tobject();
+      String pkg = packageGenerator.apply(data);
       object.setClazz(pkg + '.' + data.getName());
-      data.getFields().forEach(field -> object.getProperty().add(convert(field, pkg)));
+      data.getFields().forEach(field -> object.getProperty().add(convert(field, packageGenerator)));
       return object;
    }
    
@@ -453,7 +456,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Converts the IData enumeration to a Tobject.
     *
     * @param enum IData enumeration
-    * @param packageGenerator package of domain classes
+    * @param packageGenerator package generating function
     * @param options 
     * @return domain object
     */
@@ -477,10 +480,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * Converts the IDataField to a Tproperty.
     *
     * @param field IDataField
-    * @param pkg   package of domain class
+    * @param packageGenerator package generating function
     * @return domain property
     */
-   private static Tproperty convert(IDataField field, String pkg) {
+   private static Tproperty convert(IDataField field, Function<INamedChild<IPackage>, String> packageGenerator) {
       Tproperty property = new Tproperty();
       property.setAbstract(false);
       property.setName(field.getName());
@@ -494,13 +497,15 @@ public class CreateDomainCommand implements IJellyFishCommand {
          default:
             throw new IllegalStateException("Unknown cardinality: " + field.getCardinality());
       }
+      String pkg;
       switch (field.getType()) {
          case BOOLEAN:
             property.setType("boolean");
             break;
          case DATA:
-            IData ref = field.getReferencedDataType();
-            property.setType(pkg + '.' + ref.getName());
+            IData dataRef = field.getReferencedDataType();
+            pkg = packageGenerator.apply(dataRef);
+            property.setType(pkg + '.' + dataRef.getName());
             break;
          case FLOAT:
             property.setType("float");
@@ -512,7 +517,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
             property.setType("String");
             break;
          case ENUM:
-            property.setType(pkg + "." + field.getReferencedEnumeration().getName());
+            IEnumeration enumRef = field.getReferencedEnumeration();
+            pkg = packageGenerator.apply(enumRef);
+            property.setType(pkg + "." + enumRef.getName());
             break;
          default:
             throw new IllegalStateException("Unknown field type: " + field.getType());
@@ -529,8 +536,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
-         CommonParameters.PACKAGE,
-         CommonParameters.PACKAGE_SUFFIX, 
          CommonParameters.OUTPUT_DIRECTORY.required(),         
          CommonParameters.MODEL.required(),
          CommonParameters.CLEAN,        
@@ -544,10 +549,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
             .setDescription("The extension of the generated domain files")
             .setRequired(false),          
          new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
-            .setDescription("Name of template used to generate the domain projects build.gradle")
+            .setDescription("Name of template used to generate the domain project build.gradle")
             .setRequired(false),
          new DefaultParameter<String>(PACKAGE_GENERATOR_PROPERTY)
-            .setDescription("Use the package generator")
+            .setDescription("Function to convert IData/IEnumeration to package names")
             .setRequired(false));
    }
 }
