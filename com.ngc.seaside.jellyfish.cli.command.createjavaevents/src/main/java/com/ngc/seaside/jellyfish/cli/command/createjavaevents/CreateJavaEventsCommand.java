@@ -31,7 +31,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaEventsCommand implements IJellyFishCommand {
@@ -42,10 +45,6 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
     * The name of the default Velocity template.
     */
    static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.java.vm";
-   /**
-    * The name of the default events artifact ID suffix.
-    */
-   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "events";
 
    /**
     * The property used by the create-domain command for the Velocity template file.
@@ -88,16 +87,18 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       IProjectInformation eventsProjectName = projectNamingService.getEventsProjectName(commandOptions, model);
       String artifactId = eventsProjectName.getArtifactId();
       Function<INamedChild<IPackage>, String> packageGenerator =
-               (d) -> packageNamingService.getEventPackageName(commandOptions, d);
+            (d) -> packageNamingService.getEventPackageName(commandOptions, d);
+      Supplier<IProjectInformation> eventsProjectNamer = () -> eventsProjectName;
       String eventTemplate = evaluateEventTemplate(commandOptions);
-      
+
       jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
             commandOptions,
             new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), artifactId),
             new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY, eventTemplate),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                                    CreateJavaEventsCommand.class.getPackage().getName()),
-            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator)));
+            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator),
+            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, eventsProjectNamer)));
    }
 
    @Activate
@@ -152,23 +153,25 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeProjectNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
-      
+
    }
+
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
-   
+
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removePackageNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageNamingService = ref;
-      
+
    }
+
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
    }
@@ -204,7 +207,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       }
       return eventTemplate;
    }
-   
+
    /**
     * Create the usage for this command.
     *
@@ -212,17 +215,17 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-         "Generate a Gradle project that can generate the event sources as Java types.",
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.PACKAGE,
-         CommonParameters.PACKAGE_SUFFIX,
-         CommonParameters.OUTPUT_DIRECTORY.required(),
-         CommonParameters.MODEL.required(),
-         CommonParameters.CLEAN,
-         
-         new DefaultParameter<String>(EVENT_TEMPLATE_FILE_PROPERTY)
-            .setDescription("The velocity template file that will be included in the Gradle project.")
-            .setRequired(false));
+            "Generate a Gradle project that can generate the event sources as Java types.",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.PACKAGE,
+            CommonParameters.PACKAGE_SUFFIX,
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.MODEL.required(),
+            CommonParameters.CLEAN,
+
+            new DefaultParameter<String>(EVENT_TEMPLATE_FILE_PROPERTY)
+                  .setDescription("The velocity template file that will be included in the Gradle project.")
+                  .setRequired(false));
    }
 }

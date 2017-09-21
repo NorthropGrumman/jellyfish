@@ -16,6 +16,8 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -41,14 +43,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CreateDomainCommandIT {
 
    private IJellyFishCommand cmd = injector.getInstance(CreateDomainCommandGuiceWrapper.class);
 
-   private IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
+   private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
 
    private Path outputDir;
    private Path velocityPath;
@@ -67,7 +74,7 @@ public class CreateDomainCommandIT {
       IParsingResult result = sdService.parseFiles(sdFiles);
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
-      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
+      when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
@@ -200,6 +207,30 @@ public class CreateDomainCommandIT {
       checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
    }
 
+   @Test
+   public void testWithProjectNamer() throws IOException, FileUtilitiesException {
+      IProjectInformation info = mock(IProjectInformation.class);
+      when(info.getDirectoryName()).thenReturn("com.ngc.seaside.test1.model1.domain");
+      when(info.getGroupId()).thenReturn("com.ngc.seaside.test1");
+      when(info.getArtifactId()).thenReturn("model1.domain");
+
+      @SuppressWarnings({"unchecked"})
+      Supplier<IProjectInformation> namer = mock(Supplier.class);
+      when(namer.get()).thenReturn(info);
+
+      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
+                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
+                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
+                 CreateDomainCommand.PROJECT_NAMER_PROPERTY, namer);
+
+      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
+      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
+      checkVelocity(projectDir);
+      checkDomain(projectDir);
+
+      verify(namer).get();
+   }
 
    @Test
    public void testCommandWithSettingsDotGradle() throws IOException, FileUtilitiesException {
@@ -306,7 +337,7 @@ public class CreateDomainCommandIT {
          collection.addParameter(new DefaultParameter<>((String) keyValues[n], keyValues[n + 1]));
       }
 
-      Mockito.when(options.getParameters()).thenReturn(collection);
+      when(options.getParameters()).thenReturn(collection);
 
       cmd.run(options);
    }
