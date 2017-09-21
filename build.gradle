@@ -22,10 +22,10 @@ subprojects {
    }
 
    group 'com.ngc.seaside'
-   version '1.5-SNAPSHOT'
+   version '1.5'
 
    ext {
-      jellyfishDslVersion = '0.7'
+      jellyfishDslVersion = '0.8'
       jellyfishApiVersion = '1.3.1'
       guavaVersion = '21.0'
       guiceVersion = '3.0'
