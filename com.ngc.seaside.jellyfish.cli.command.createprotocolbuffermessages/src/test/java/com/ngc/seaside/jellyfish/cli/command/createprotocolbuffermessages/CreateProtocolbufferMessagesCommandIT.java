@@ -91,7 +91,7 @@ public class CreateProtocolbufferMessagesCommandIT {
                  CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
                  CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
+      Path projectDir = outputDir.resolve("generated-projects/com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.ngc.blocs.gradle.plugin.domain");
       checkVelocity(projectDir);
@@ -104,7 +104,7 @@ public class CreateProtocolbufferMessagesCommandIT {
                  CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
                  CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
+      Path projectDir = outputDir.resolve("generated-projects/com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
    }
    
@@ -116,7 +116,7 @@ public class CreateProtocolbufferMessagesCommandIT {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
          CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifact);
       
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact);
+      Path projectDir = outputDir.resolve("generated-projects/com.ngc.seaside.test1." + artifact);
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
    }
    
@@ -129,7 +129,7 @@ public class CreateProtocolbufferMessagesCommandIT {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
          CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
       
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
+      Path projectDir = outputDir.resolve("generated-projects/com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1");
       checkGradleBuildDoesntContain(projectDir, "foo");
@@ -141,7 +141,7 @@ public class CreateProtocolbufferMessagesCommandIT {
                  CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
                  CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.messages");
+      Path projectDir = outputDir.resolve("generated-projects/com.ngc.seaside.test1.model1.messages");
       Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "com.google.protobuf", "src/main/resources/velocity/proto-messages.vm");
    }

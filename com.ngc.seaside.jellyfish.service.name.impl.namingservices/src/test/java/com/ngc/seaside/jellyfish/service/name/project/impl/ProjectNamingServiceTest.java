@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -16,13 +13,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectNamingServiceTest {
 
    private ProjectNamingService service;
 
    private Model model;
-   
+
    private DefaultParameterCollection parameters;
 
    @Mock
@@ -35,7 +35,7 @@ public class ProjectNamingServiceTest {
    public void setup() throws Throwable {
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);
-      
+
       service = new ProjectNamingService();
       service.setLogService(logService);
       service.activate();
@@ -53,7 +53,8 @@ public class ProjectNamingServiceTest {
                    "threatevaluation.messages",
                    name.getArtifactId());
       assertEquals("directoryName not correct!",
-                   "com.ngc.seaside.threateval.threatevaluation.messages",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
+                   "/com.ngc.seaside.threateval.threatevaluation.messages",
                    name.getDirectoryName());
       assertEquals("versionPropertyName not correct!",
                    "threatEvaluationMessagesVersion",
@@ -106,7 +107,7 @@ public class ProjectNamingServiceTest {
                    "com.ngc.seaside.threateval:threatevaluation.distribution:$threatEvaluationDistributionVersion",
                    name.getGavFormattedString());
    }
-   
+
    @Test
    public void testDoesGenerateEventsProjectName() throws Throwable {
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
@@ -174,7 +175,7 @@ public class ProjectNamingServiceTest {
                    "com.ngc.seaside.threateval:threatevaluation.base:$threatEvaluationBaseServiceVersion",
                    name.getGavFormattedString());
    }
-   
+
    @Test
    public void testDoesGenerateCucumberTestsProjectName() throws Throwable {
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");

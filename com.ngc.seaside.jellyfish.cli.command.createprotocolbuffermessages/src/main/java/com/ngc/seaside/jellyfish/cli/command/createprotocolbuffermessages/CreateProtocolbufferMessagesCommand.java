@@ -31,6 +31,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * This command generates the message IDL and gradle project structure that will
@@ -78,6 +79,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
       Function<INamedChild<IPackage>, String> packageGenerator =
             (d) -> packageNamingService.getMessagePackageName(commandOptions, d);
+      Supplier<IProjectInformation> messageProjectNamer = () -> messageProjectName;
       
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
@@ -87,7 +89,8 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
-            new DefaultParameter<>(CreateDomainCommand.USE_VERBOSE_IMPORTS_PROPERTY, true)));
+            new DefaultParameter<>(CreateDomainCommand.USE_VERBOSE_IMPORTS_PROPERTY, true),
+            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, messageProjectNamer)));
    }
 
    @Activate

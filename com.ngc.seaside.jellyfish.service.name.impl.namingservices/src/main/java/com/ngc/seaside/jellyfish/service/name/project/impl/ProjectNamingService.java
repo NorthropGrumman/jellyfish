@@ -95,7 +95,9 @@ public class ProjectNamingService implements IProjectNamingService {
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())
             .setArtifactId(artifactId)
-            .setVersionPropertyName(versionPropertyName);
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
    }
    
    @Override
