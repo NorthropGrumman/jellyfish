@@ -4,8 +4,8 @@ public class ServiceConfigDto {
 
    private String modelName;
    private String packageName;
-   private String basePacakgeName;
    private String projectDirectoryName;
+   private String baseProjectArtifactName;
 
    public String getModelName() {
       return modelName;
@@ -25,12 +25,12 @@ public class ServiceConfigDto {
       return this;
    }
 
-   public String getBasePacakgeName() {
-      return basePacakgeName;
+   public String getBaseProjectArtifactName() {
+      return baseProjectArtifactName;
    }
 
-   public ServiceConfigDto setBasePacakgeName(String basePacakgeName) {
-      this.basePacakgeName = basePacakgeName;
+   public ServiceConfigDto setBaseProjectArtifactName(String baseProjectArtifactName) {
+      this.baseProjectArtifactName = baseProjectArtifactName;
       return this;
    }
 

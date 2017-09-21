@@ -26,6 +26,10 @@ public class ProjectNamingService implements IProjectNamingService {
    private static final String CONNECTOR_ARTIFACT_ID_SUFFIX = "connector";
    private static final String SERVICE_ARTIFACT_ID_SUFFIX = "impl";
    private static final String SERVICE_BASE_ARTIFACT_ID_SUFFIX = "base";
+   private static final String DISTRIBUTION_ARTIFACT_ID_SUFFIX = "distribution";
+   private static final String CUCUMBER_TESTS_ARTIFACT_ID_SUFFIX = "tests";
+   private static final String CONFIG_ARTIFACT_ID_SUFFIX = "config";
+
 
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
@@ -95,6 +99,38 @@ public class ProjectNamingService implements IProjectNamingService {
    }
    
    @Override
+   public IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "DistributionVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String groupId = evaluateGroupId(options, model);
+      String artifactId = evaluateArtifactId(options, model, DISTRIBUTION_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(groupId)
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName);
+   }
+   
+   @Override
+   public IProjectInformation getCucumberTestsProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "CucumberTestsVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String groupId = evaluateGroupId(options, model);
+      String artifactId = evaluateArtifactId(options, model, CUCUMBER_TESTS_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(groupId)
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName);
+   }
+   
+   @Override
    public IProjectInformation getConnectorProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
@@ -113,6 +149,22 @@ public class ProjectNamingService implements IProjectNamingService {
    }
    
    @Override
+   public IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ConfigVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, CONFIG_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName);
+   }
+   
+   @Override
    public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
@@ -128,7 +180,7 @@ public class ProjectNamingService implements IProjectNamingService {
             .setArtifactId(artifactId)
             .setVersionPropertyName(versionPropertyName);
    }
-
+   
    @Override
    public IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");

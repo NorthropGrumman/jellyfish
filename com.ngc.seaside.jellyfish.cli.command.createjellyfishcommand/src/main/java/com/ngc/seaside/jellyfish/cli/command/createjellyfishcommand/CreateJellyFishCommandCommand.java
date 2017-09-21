@@ -45,10 +45,10 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
-   public static final String CLASSNAME_PROPERTY = CommonParameters.CLASSNAME.getName();
-   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
-   
+   public static final String CLASSNAME_PROPERTY = "classname";
    public static final String COMMAND_NAME_PROPERTY = "commandName";
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+
    static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
 
@@ -227,16 +227,16 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    private static IUsage createUsage() {
       return new DefaultUsage(
          "Creates a new JellyFish Command project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
-         CommonParameters.CLASSNAME, 
-
+         new DefaultParameter(CLASSNAME_PROPERTY)
+                  .setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
          new DefaultParameter(COMMAND_NAME_PROPERTY)
-            .setDescription("The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
-            .setRequired(false),
-            
-         CommonParameters.GROUP_ID, 
-         CommonParameters.ARTIFACT_ID, 
-         CommonParameters.PACKAGE, 
-         CommonParameters.OUTPUT_DIRECTORY, 
+                  .setDescription(
+                     "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
+                  .setRequired(false),
+         CommonParameters.GROUP_ID,
+         CommonParameters.ARTIFACT_ID,
+         CommonParameters.PACKAGE,
+         CommonParameters.OUTPUT_DIRECTORY,
          CommonParameters.CLEAN);
    }
 

@@ -9,6 +9,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 /**
  * Wrap the service using Guice Injection
@@ -22,11 +24,15 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
    public CreateProtocolbufferMessagesCommandGuiceWrapper(ILogService logService,
                                                           IJellyFishCommandProvider jellyfishCommandProvider,
                                                           IResourceService resourceService,
-                                                          IJellyFishCommandProvider provider) {
+                                                          IJellyFishCommandProvider provider,
+                                                          IPackageNamingService packageNamingService,
+                                                          IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setJellyFishCommandProvider(jellyfishCommandProvider);
       delegate.setResourceService(resourceService);
       delegate.setJellyFishCommandProvider(provider);
+      delegate.setPackageNamingService(packageNamingService);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 

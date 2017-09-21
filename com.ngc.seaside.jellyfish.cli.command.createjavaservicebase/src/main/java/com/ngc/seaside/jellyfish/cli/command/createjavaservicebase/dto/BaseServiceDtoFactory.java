@@ -47,8 +47,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          .setAbstractClass(abstractClassDto)
          .setInterface(interfaceDto)
          .setExportedPackages(new LinkedHashSet<>(
-            Arrays.asList(packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
-               packageService.getServiceImplementationPackageName(options, model) + ".*",
+            Arrays.asList(packageService.getServiceInterfacePackageName(options, model) + ".*",
+               packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
                packageService.getTransportTopicsPackageName(options, model) + ".*")))
          .setTopicsEnum(topicsDto)
          .setModel(model);

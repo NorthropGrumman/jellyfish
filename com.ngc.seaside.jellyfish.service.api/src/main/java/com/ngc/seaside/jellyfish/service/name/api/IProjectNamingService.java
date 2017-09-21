@@ -70,4 +70,31 @@ public interface IProjectNamingService {
     * @return the project information for a messages project
     */
    IProjectInformation getMessageProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a distribution project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a distribution project
+    */
+   IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model);
+   
+   /**
+    * Gets the project information for a cucumber tests project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a cucumber tests project
+    */
+   IProjectInformation getCucumberTestsProjectName(IJellyFishCommandOptions options, IModel model);
+
+   /**
+    * Gets the project information for a config project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a cucumber tests project
+    */
+   IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model);
 }

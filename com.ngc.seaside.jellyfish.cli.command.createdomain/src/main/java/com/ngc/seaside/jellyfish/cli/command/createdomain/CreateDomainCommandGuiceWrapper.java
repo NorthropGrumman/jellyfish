@@ -1,15 +1,15 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
@@ -18,13 +18,15 @@ public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
 
    @Inject
    public CreateDomainCommandGuiceWrapper(ILogService logService,
-                                          IPromptUserService promptService,
                                           ITemplateService templateService,
-                                          IResourceService resourceService) {
+                                          IResourceService resourceService,
+                                          IProjectNamingService projectNamingService,
+                                          IPackageNamingService packageNamingService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
       delegate.setResourceService(resourceService);
+      delegate.setProjectNamingService(projectNamingService);
+      delegate.setPackageNamingService(packageNamingService);
    }
 
    @Override

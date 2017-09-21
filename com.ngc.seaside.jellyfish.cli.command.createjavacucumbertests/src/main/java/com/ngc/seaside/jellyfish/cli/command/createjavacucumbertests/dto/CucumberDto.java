@@ -1,41 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto;
 
+import java.util.Set;
+
 public class CucumberDto {
 
-   private String className;
-   private String basePackage;
-   private String artifactId;
-   private String baseArtifactId;
-   private String groupId;
    private String projectName;
    private String packageName;
-
-   public String getGroupId() {
-      return groupId;
-   }
-
-   public CucumberDto setGroupId(String groupId) {
-      this.groupId = groupId;
-      return this;
-   }
-
-   public String getArtifactId() {
-      return artifactId;
-   }
-
-   public CucumberDto setArtifactId(String baseArtifactId) {
-      this.artifactId = baseArtifactId;
-      return this;
-   }
-
-   public String getBaseArtifactId() {
-      return baseArtifactId;
-   }
-
-   public CucumberDto setBaseArtifactId(String baseArtifactId) {
-      this.baseArtifactId = baseArtifactId;
-      return this;
-   }
+   private String className;
+   private String transportTopicsClass;
+   private Set<String> dependencies;
 
    public String getProjectName() {
       return projectName;
@@ -44,7 +17,15 @@ public class CucumberDto {
    public CucumberDto setProjectName(String projectName) {
       this.projectName = projectName;
       return this;
+   }
+   
+   public String getPackageName() {
+      return packageName;
+   }
 
+   public CucumberDto setPackageName(String packageName) {
+      this.packageName = packageName;
+      return this;
    }
 
    public String getClassName() {
@@ -56,22 +37,22 @@ public class CucumberDto {
       return this;
    }
 
-   public String getBasePackage() {
-      return basePackage;
+   public String getTransportTopicsClass() {
+      return transportTopicsClass;
    }
 
-   public CucumberDto setBasePackage(String basePackage) {
-      this.basePackage = basePackage;
+   public CucumberDto setTransportTopicsClass(String transportTopicsClass) {
+      this.transportTopicsClass = transportTopicsClass;
       return this;
    }
 
-   public String getPackageName() {
-      return packageName;
+   public Set<String> getDependencies() {
+      return dependencies;
    }
 
-   public CucumberDto setPackageName(String packageName) {
-      this.packageName = packageName;
+   public CucumberDto setDependencies(Set<String> dependencies) {
+      this.dependencies = dependencies;
       return this;
    }
-
+   
 }

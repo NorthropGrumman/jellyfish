@@ -86,6 +86,28 @@ public class ProjectNamingServiceTest {
    }
 
    @Test
+   public void testDoesGenerateDistributeProjectName() throws Throwable {
+      model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+
+      IProjectInformation name = service.getDistributionProjectName(options, model);
+      assertEquals("groupId not correct!",
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "threatevaluation.distribution",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   "com.ngc.seaside.threateval.threatevaluation.distribution",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationDistributionVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:threatevaluation.distribution:$threatEvaluationDistributionVersion",
+                   name.getGavFormattedString());
+   }
+   
+   @Test
    public void testDoesGenerateEventsProjectName() throws Throwable {
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
 
@@ -150,6 +172,28 @@ public class ProjectNamingServiceTest {
                    name.getVersionPropertyName());
       assertEquals("gavFormattedString not correct!",
                    "com.ngc.seaside.threateval:threatevaluation.base:$threatEvaluationBaseServiceVersion",
+                   name.getGavFormattedString());
+   }
+   
+   @Test
+   public void testDoesGenerateCucumberTestsProjectName() throws Throwable {
+      model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+
+      IProjectInformation name = service.getCucumberTestsProjectName(options, model);
+      assertEquals("groupId not correct!",
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "threatevaluation.tests",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   "com.ngc.seaside.threateval.threatevaluation.tests",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationCucumberTestsVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:threatevaluation.tests:$threatEvaluationCucumberTestsVersion",
                    name.getGavFormattedString());
    }
 

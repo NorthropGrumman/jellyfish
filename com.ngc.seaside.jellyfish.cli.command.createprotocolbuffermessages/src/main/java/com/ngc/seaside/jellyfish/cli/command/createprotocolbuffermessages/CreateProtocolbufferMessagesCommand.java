@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.command.api.CommandException;
@@ -16,6 +15,11 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -25,6 +29,8 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.util.function.Function;
 
 /**
  * This command generates the message IDL and gradle project structure that will
@@ -38,14 +44,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    static final String NAME = "create-protocolbuffer-messages";
    static final String CREATE_DOMAIN_COMMAND = "create-domain";
    static final String TEMPLATE_FILE = "proto-messages.vm";
-   static final String DEFAULT_ARTIFACT_ID_SUFFIX = "messages";
    static final String DEFAULT_EXT_PROPERTY = "proto";
    static final IUsage USAGE = createUsage();
 
    private ILogService logService;
    private IJellyFishCommandProvider jellyfishCommandProvider;
    private IResourceService resourceService;
-   private IPromptUserService promptUserService;
+   private IPackageNamingService packageNamingService;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -60,8 +66,9 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final IModel model = evaluateModelParameter(commandOptions);
-      final String artifactId = evaluateArtifactId(commandOptions, model);
-
+      IProjectInformation messageProjectName = projectNamingService.getMessageProjectName(commandOptions, model);
+      String artifactId = messageProjectName.getArtifactId();
+      
       // Unpack the velocity template to a temporary directory.
       final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
          CreateProtocolbufferMessagesCommand.class,
@@ -69,11 +76,14 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       resourceService.readResource(velocityTemplate);
       final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
+      Function<INamedChild<IPackage>, String> packageGenerator =
+            (d) -> packageNamingService.getMessagePackageName(commandOptions, d);
+      
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
-            new DefaultParameter<>(CreateDomainCommand.USE_MODEL_STRUCTURE_PROPERTY, "true"),
-            new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), artifactId),
+            new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
+            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator),
             new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
@@ -141,37 +151,34 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptUserService")
-   public void setPromptUserService(IPromptUserService ref) {
-      this.promptUserService = ref;
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
+   public void setPackageNamingService(IPackageNamingService ref) {
+         this.packageNamingService = ref;
    }
+   
 
-   public void removePromptUserService(IPromptUserService ref) {
-      setPromptUserService(null);
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
+   }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
+   public void setProjectNamingService(IProjectNamingService ref) {
+         this.projectNamingService = ref;
+   }
+   
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName;
-      if (parameters.containsParameter(CommonParameters.MODEL.getName())) {
-         modelName = parameters.getParameter(CommonParameters.MODEL.getName()).getStringValue();
-      } else {
-         modelName = promptUserService.prompt(CommonParameters.MODEL.getName(),
-            null,
-            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
-      }
+      final String modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-   }
-
-   private String evaluateArtifactId(IJellyFishCommandOptions options, IModel model) {
-      final String artifactId;
-      if (options.getParameters().containsParameter(CommonParameters.ARTIFACT_ID.getName())) {
-         artifactId = options.getParameters().getParameter(CommonParameters.ARTIFACT_ID.getName()).getStringValue();
-      } else {
-         artifactId = model.getName().toLowerCase() + "." + DEFAULT_ARTIFACT_ID_SUFFIX;
-      }
-      return artifactId;
    }
 
    /**

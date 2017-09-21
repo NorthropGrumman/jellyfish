@@ -113,15 +113,9 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
 #if(! $property.multiple)
 #if(! $property.abstraction)
-#if($property.shortType == "boolean")
-  public $property.shortType is${property.methodString}() {
-    return $property.name;
-  }
-#else
   public $property.shortType get${property.methodString}() {
     return $property.name;
   }
-#end
 
   public ${domain.classname} set$property.getMethodString()($property.shortType $property.name) {
     this.$property.name = $property.name;

@@ -6,6 +6,9 @@ configurations {
 
 dependencies {
     compile project(":jellyfish.impl.provider")
+    compile project(":jellyfish.service.name.impl.namingservices")
+    compile project(":jellyfish.service.scenario.impl.scenarioservice")
+    compile project(":jellyfish.service.codegen.impl.codegenservices")
 
     compile project(":jellyfish.cli.command.samplecommand")
     commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
@@ -28,8 +31,8 @@ dependencies {
     compile project(":jellyfish.cli.command.createjavaevents")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
 
-    compile project(":jellyfish.cli.command.createjavaserviceconnector")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconnector", configuration: "commandTemplate")
+    compile project(":jellyfish.cli.command.createjavapubsubconnector")
+    commandTemplate project(path: ":jellyfish.cli.command.createjavapubsubconnector", configuration: "commandTemplate")
 
     compile project(":jellyfish.cli.command.report.requirementsverification")
     commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
@@ -56,6 +59,7 @@ dependencies {
     compile project(":jellyfish.service.name.impl.namingservices")
     compile project(":jellyfish.service.scenario.impl.scenarioservice")
     compile project(":jellyfish.service.config.impl.transportconfigurationservice")
+    compile project(":jellyfish.service.requirements.impl.requirementsservice")
 
     compile "com.ngc.blocs:service.api:$blocsVersion"
     compile "com.google.guava:guava:$guavaVersion"

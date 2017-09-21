@@ -1,12 +1,20 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
@@ -27,10 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceConfigCommandIT {
 
@@ -48,9 +52,12 @@ public class CreateJavaServiceConfigCommandIT {
 
    @Mock
    private ILogService logService;
-
+   
    @Mock
-   private IPromptUserService promptUserService;
+   private IProjectNamingService projectService;
+   
+   @Mock
+   private IPackageNamingService packageService;
 
    @Before
    public void setup() throws Throwable {
@@ -69,9 +76,32 @@ public class CreateJavaServiceConfigCommandIT {
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
       when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(systemDescriptor);
 
+      when(projectService.getConfigProjectName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         IProjectInformation info = mock(IProjectInformation.class);
+         when(info.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".config");
+         when(info.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".config");
+         when(info.getGroupId()).thenReturn(model.getParent().getName());
+         return info;
+      });
+      
+      when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         IProjectInformation info = mock(IProjectInformation.class);
+         when(info.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
+         return info;
+      });
+      
+      
+      when(packageService.getConfigPackageName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         return model.getFullyQualifiedName().toLowerCase() + ".transport.config";
+      });
+      
       command = new CreateJavaServiceConfigCommand();
       command.setLogService(logService);
-      command.setPromptService(promptUserService);
+      command.setProjectNamingService(projectService);
+      command.setPackageNamingService(packageService);
       command.setTemplateService(templateService);
    }
 

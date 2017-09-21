@@ -1,14 +1,22 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -25,15 +33,9 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class CreateJavaDistributionCommandTest {
 
    private CreateJavaDistributionCommand fixture;
-   private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private ITemplateService templateService = mock(TemplateService.class);
@@ -43,9 +45,47 @@ public class CreateJavaDistributionCommandTest {
 
    @Before
    public void setup() throws IOException {
+      
+
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
+      
+      //Setup mock project naming service
+      IProjectNamingService projectNamingService = mock(IProjectNamingService.class);
+      IProjectInformation distributionProjName = mock(IProjectInformation.class);
+      IProjectInformation eventsProjName = mock(IProjectInformation.class);
+      IProjectInformation domainProjName = mock(IProjectInformation.class);
+      IProjectInformation connectorProjName = mock(IProjectInformation.class);
+      IProjectInformation configProjName = mock(IProjectInformation.class);
+      IProjectInformation baseServiceProjName = mock(IProjectInformation.class);
+      IProjectInformation serviceProjName = mock(IProjectInformation.class);
+      IProjectInformation messagesProjName = mock(IProjectInformation.class);
+      when (projectNamingService.getDistributionProjectName(any(), any())).thenReturn(distributionProjName);
+      when (projectNamingService.getEventsProjectName(any(), any())).thenReturn(eventsProjName);
+      when (projectNamingService.getDomainProjectName(any(), any())).thenReturn(domainProjName);
+      when (projectNamingService.getConnectorProjectName(any(), any())).thenReturn(connectorProjName);
+      when (projectNamingService.getConfigProjectName(any(), any())).thenReturn(configProjName);
+      when (projectNamingService.getBaseServiceProjectName(any(), any())).thenReturn(baseServiceProjName);
+      when (projectNamingService.getServiceProjectName(any(), any())).thenReturn(serviceProjName);
+      when (projectNamingService.getMessageProjectName(any(), any())).thenReturn(messagesProjName);
+      
+      when (distributionProjName.getArtifactId()).thenReturn("model.distribution");
+      when (distributionProjName.getGroupId()).thenReturn("com.ngc.seaside.test");
+      
+      when (eventsProjName.getArtifactId()).thenReturn("model.events");
+      when (domainProjName.getArtifactId()).thenReturn("model.domain");
+      when (connectorProjName.getArtifactId()).thenReturn("model.connector");
+      when (configProjName.getArtifactId()).thenReturn("model.config");
+      when (baseServiceProjName.getArtifactId()).thenReturn("model.base");
+      when (serviceProjName.getArtifactId()).thenReturn("model.impl");
+      when (messagesProjName.getArtifactId()).thenReturn("model.messages");
+      
+      
+      //set up mock package naming service
+      IPackageNamingService packageNamingService = mock(IPackageNamingService.class);
+      when (packageNamingService.getDistributionPackageName(any(), any())).thenReturn("com.ngc.seaside.test");
+      
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
@@ -55,7 +95,11 @@ public class CreateJavaDistributionCommandTest {
       // Setup class under test
       fixture = new CreateJavaDistributionCommand() {
          @Override
-         protected void doAddProject(IParameterCollection parameters) {
+         protected void updateGradleDotSettings(Path outputDirectory, IProjectInformation info) {
+            DefaultParameterCollection parameters = new DefaultParameterCollection();
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.GROUP_ID_PROPERTY, info.getGroupId()));
+            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, info.getArtifactId()));
             addProjectParameters = parameters;
          }
 
@@ -66,8 +110,9 @@ public class CreateJavaDistributionCommandTest {
       };
 
       fixture.setLogService(new PrintStreamLogService());
-      fixture.setPromptService(promptUserService);
       fixture.setTemplateService(templateService);
+      fixture.setProjectNamingService(projectNamingService);
+      fixture.setPackageNamingService(packageNamingService);
    }
 
    @Test
@@ -78,14 +123,11 @@ public class CreateJavaDistributionCommandTest {
       // Verify mocked behaviors
       verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
-      verify(model, times(2)).getName();
-      verify(model, times(2)).getParent();
+      verify(model, times(1)).getName();
+      verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("/just/a/mock/path",
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
@@ -112,56 +154,16 @@ public class CreateJavaDistributionCommandTest {
       verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("/just/a/mock/path",
+      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
                                    .getStringValue());
-      Assert.assertEquals("model", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
+      Assert.assertEquals("model.distribution", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
                .getStringValue());
       Assert.assertEquals("com.ngc.seaside.test",
                           addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
                                    .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
-   }
-
-   @Test
-   public void testCommandWithoutRequiredParams() {
-
-      // Mock behaviors
-      when(promptUserService.prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null))
-               .thenReturn("/just/a/mock/path");
-      when(promptUserService.prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null))
-               .thenReturn("com.ngc.seaside.test.Model");
-      when(model.getName()).thenReturn("Model");
-
-      runCommand(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, "test",
-                 CreateJavaDistributionCommand.GROUP_ID_PROPERTY, "com.ngc.seaside");
-
-      // Verify mocked behaviors
-      verify(options, times(1)).getParameters();
-      verify(options, times(1)).getSystemDescriptor();
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.MODEL_PROPERTY, null, null);
-      verify(promptUserService, times(1)).prompt(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, null, null);
-
-      // Verify passed values
-      Assert.assertEquals("/just/a/mock/path",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                   .getStringValue()
-      );
-      Assert.assertEquals("com.ngc.seaside.test.Model",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.MODEL_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("test", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
-               .getStringValue());
-      Assert.assertEquals("com.ngc.seaside",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
-                          createDirectoriesPath.toAbsolutePath().toString());
-
    }
 
    private void runCommand(String... keyValues) {

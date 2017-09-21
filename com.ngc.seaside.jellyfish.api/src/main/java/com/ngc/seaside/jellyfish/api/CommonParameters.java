@@ -59,6 +59,18 @@ public enum CommonParameters implements IParameter<String> {
     * @throws CommandException if the value is neither 'true' nor 'false'
     */
    public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
+      return evaluateBooleanParameter(parameters, parameter, false);
+   }
+   
+   /**
+    * Returns the boolean value of the given parameter if it was set, the given default otherwise.
+    *
+    * @param parameters command parameters
+    * @param parameter name of parameter
+    * @return the boolean value of the parameter
+    * @throws CommandException if the value is neither 'true' nor 'false'
+    */
+   public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter, boolean defaultValue) {
       if (parameters.containsParameter(parameter)) {
          String value = parameters.getParameter(parameter).getStringValue().toLowerCase();
          if (!value.equals("true") && !value.equals("false")) {
@@ -68,7 +80,7 @@ public enum CommonParameters implements IParameter<String> {
             return Boolean.valueOf(value);
          }
       } else {
-         return false;
+         return defaultValue;
       }
    }
    

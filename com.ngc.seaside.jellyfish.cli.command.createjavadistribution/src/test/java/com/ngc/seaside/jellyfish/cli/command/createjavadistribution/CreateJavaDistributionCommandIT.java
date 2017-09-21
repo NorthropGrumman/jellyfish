@@ -1,21 +1,24 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceWrapper;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -43,9 +46,6 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class CreateJavaDistributionCommandIT {
 
    private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
@@ -57,7 +57,6 @@ public class CreateJavaDistributionCommandIT {
    };
    private static final Injector injector = Guice.createInjector(getModules());
    private CreateJavaDistributionCommand cmd = new CreateJavaDistributionCommand();
-   private IPromptUserService promptUserService = mock(IPromptUserService.class);
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
    private IModel model = mock(Model.class);
@@ -152,9 +151,9 @@ public class CreateJavaDistributionCommandIT {
       when(model.getParent().getName()).thenReturn("com.ngc.seaside.test");
       when(model.getName()).thenReturn("Model");
       when(model.getFullyQualifiedName()).thenReturn("com.ngc.seaside.test.Model");
-
+      cmd.setProjectNamingService(injector.getInstance(IProjectNamingService.class));
+      cmd.setPackageNamingService(injector.getInstance(IPackageNamingService.class));
       cmd.setLogService(injector.getInstance(ILogService.class));
-      cmd.setPromptService(promptUserService);
       cmd.setTemplateService(mockedTemplateService);
 
    }
@@ -166,7 +165,7 @@ public class CreateJavaDistributionCommandIT {
       runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
-      Mockito.verify(options, Mockito.times(1)).getParameters();
+      Mockito.verify(options, Mockito.times(13)).getParameters();
       Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
       System.out.println(printDirectoryTree(outputDir.toFile()));
       checkGradleBuild(outputDir);

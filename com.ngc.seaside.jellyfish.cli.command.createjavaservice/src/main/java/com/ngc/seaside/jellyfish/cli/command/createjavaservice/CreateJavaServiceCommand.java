@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -38,13 +37,10 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
-   static final String DEFAULT_OUTPUT_DIRECTORY = ".";
-
    private static final String NAME = "create-java-service";
    private static final IUsage USAGE = createUsage();
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
    private IServiceDtoFactory templateDaoFactory;
    private IProjectNamingService projectNamingService;
@@ -53,7 +49,8 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
       boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
-      Path outputDir = evaluateOutputDirectory(commandOptions);
+      Path outputDir = Paths.get(
+         commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
       IProjectInformation projectInfo = projectNamingService.getServiceProjectName(commandOptions, model);
 
@@ -66,16 +63,32 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          outputDir,
          clean);
 
+      updateGradleDotSettings(outputDir, projectInfo);
+   }
+   
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
-         parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDir.toString()));
-         parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, projectInfo.getGroupId()));
-         parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, projectInfo.getArtifactId()));
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
             logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
          }
       } catch (FileUtilitiesException e) {
          throw new CommandException("failed to update settings.gradle!", e);
       }
+   }
+
+   @Override
+   public String getName() {
+      return NAME;
+   }
+
+   @Override
+   public IUsage getUsage() {
+      return USAGE;
    }
 
    @Activate
@@ -86,21 +99,6 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    @Deactivate
    public void deactivate() {
       logService.trace(getClass(), "Deactivated");
-   }
-
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
    }
 
    /**
@@ -137,26 +135,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       setTemplateService(null);
    }
 
-   /**
-    * Sets prompt service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateDaoFactory")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateDaoFactory")
    public void setTemplateDaoFactory(IServiceDtoFactory ref) {
       this.templateDaoFactory = ref;
    }
@@ -165,9 +144,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       setTemplateDaoFactory(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
    }
@@ -177,40 +154,20 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
-      // Get the fully qualified model name.
-      String modelName;
-      if (commandOptions.getParameters().containsParameter(MODEL_PROPERTY)) {
-         modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
-      } else {
-         modelName = promptService.prompt(MODEL_PROPERTY,
-            null,
-            m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
-      }
-      // Find the actual model.
+      String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       return commandOptions.getSystemDescriptor()
                            .findModel(modelName)
-                           .orElseThrow(() -> new CommandException(String.format("model %s not found!", modelName)));
-   }
-
-   private Path evaluateOutputDirectory(IJellyFishCommandOptions commandOptions) {
-      Path outputDirectory;
-      if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         outputDirectory = Paths.get(commandOptions.getParameters()
-                                                   .getParameter(OUTPUT_DIRECTORY_PROPERTY)
-                                                   .getStringValue());
-      } else {
-         // Ask the user if needed.
-         outputDirectory = Paths.get(promptService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null));
-      }
-      return outputDirectory;
+                           .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
    }
 
    private static IUsage createUsage() {
-      return new DefaultUsage("Generates the service for a Java application",
+      return new DefaultUsage(
+         "Generates the service for a Java application",
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
          CommonParameters.MODEL.required(),
          CommonParameters.OUTPUT_DIRECTORY.required(),
          CommonParameters.CLEAN);
    }
+
 }

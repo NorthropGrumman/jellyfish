@@ -50,12 +50,6 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Collection<String> getRequirements(IJellyFishCommandOptions options,
-                                             IScenario scenario) {
-      return scenarioService.getRequirements(options, scenario);
-   }
-
-   @Override
    public Collection<ITimingConstraint> getTimingConstraints(
          IJellyFishCommandOptions options,
          IScenario scenario) {
