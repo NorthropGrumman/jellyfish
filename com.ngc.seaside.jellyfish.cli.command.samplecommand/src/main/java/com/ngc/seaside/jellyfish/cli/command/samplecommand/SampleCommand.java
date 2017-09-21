@@ -8,6 +8,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
@@ -28,11 +29,11 @@ public class SampleCommand implements IJellyFishCommand {
    private static final String NAME = "sample";
    private static final IUsage USAGE = createUsage();
 
-   private static final String OUTPUT_DIR_PROPERTY = "outputDirectory";
-   private static final String GROUP_ID_PROPERTY = "groupId";
-   private static final String ARTIFACT_ID_PROPERTY = "artifactId";
-   private static final String PACKAGE_PROPERTY = "package";
-   private static final String CLASSNAME_PROPERTY = "classname";
+   private static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   private static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
+   private static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   private static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
+   private static final String CLASSNAME_PROPERTY = CommonParameters.CLASSNAME.getName();
 
    private ILogService logService;
 
@@ -51,9 +52,7 @@ public class SampleCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -96,22 +95,11 @@ public class SampleCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Create a new Java bundle. This requires that a settings.gradle file be present in the output directory. See the init-java-gradle-repo command.",
-            new DefaultParameter(CLASSNAME_PROPERTY)
-                  .setDescription("The name of the class that will be generated. i.e. MyClass")
-                  .setRequired(true),
-            new DefaultParameter(GROUP_ID_PROPERTY)
-                  .setDescription("The groupId. This is usually similar to com.ngc.myprojectname.")
-                  .setRequired(true),
-            new DefaultParameter(ARTIFACT_ID_PROPERTY)
-                  .setDescription("The artifactId. This is usually the lowercase version of the classname.")
-                  .setRequired(true),
-            new DefaultParameter(PACKAGE_PROPERTY)
-                  .setDescription(
-                        "The default package for the classname to reside. This is usually a combination of the groupId.artifactId")
-                  .setRequired(true),
-            new DefaultParameter(OUTPUT_DIR_PROPERTY)
-                  .setDescription("The directory in which the bundle has been created.")
-                  .setRequired(true));
+         "Create a new Java bundle. This requires that a settings.gradle file be present in the output directory. See the init-java-gradle-repo command.",
+         CommonParameters.CLASSNAME.required(),
+         CommonParameters.GROUP_ID.required(),
+         CommonParameters.ARTIFACT_ID.required(),
+         CommonParameters.PACKAGE.required(),
+         CommonParameters.OUTPUT_DIRECTORY.required());
    }
 }
