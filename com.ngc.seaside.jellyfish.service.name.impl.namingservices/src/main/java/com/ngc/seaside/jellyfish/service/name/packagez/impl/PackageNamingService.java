@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.MetadataNames;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -168,30 +169,12 @@ public class PackageNamingService implements IPackageNamingService {
       Preconditions.checkArgument(lastPeriodPosition > 0, "model name is not in the correct format!");
       String prefix = fullName.substring(0, lastPeriodPosition);
       String unqualifiedName = fullName.substring(lastPeriodPosition + 1);
-      unqualifiedName = getAlias(options, fullName).orElse(unqualifiedName);
+      unqualifiedName = MetadataNames.getModelAlias(options, fullName).orElse(unqualifiedName);
       return new String[]{
             prefix,
             unqualifiedName,
             prefix + "." + unqualifiedName
       };
-   }
-
-   private static Optional<String> getAlias(IJellyFishCommandOptions options, String fullyQualifiedName) {
-      // Try to find the model.
-      String alias = null;
-      ISystemDescriptor systemDescriptor = options.getSystemDescriptor();
-      if (systemDescriptor != null) {
-         IModel model = options.getSystemDescriptor().findModel(fullyQualifiedName).orElse(null);
-         if (model != null && model.getMetadata() != null) {
-            // Use the codegen.alias metadata property to name the model.
-            JsonValue codegen = model.getMetadata().getJson().get(MetadataNames.CODEGEN);
-            if (codegen != null && codegen.getValueType() == JsonValue.ValueType.OBJECT) {
-               JsonString aliasJson = ((JsonObject) codegen).getJsonString(MetadataNames.CODEGEN_ALIAS);
-               alias = aliasJson == null ? null : aliasJson.getString();
-            }
-         }
-      }
-      return Optional.ofNullable(alias);
    }
 
    private static String getPackageNameMinusCommonPart(String modelPackageName, String dataPackageName) {
