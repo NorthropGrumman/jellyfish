@@ -22,4 +22,6 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
     testCompile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
+
+    testCompile "org.glassfish:javax.json:$glassfishJsonVersion"
 }

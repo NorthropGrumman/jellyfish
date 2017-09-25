@@ -166,7 +166,7 @@ public class CreateJavaDistributionCommandIT {
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
       Mockito.verify(options, Mockito.times(13)).getParameters();
-      Mockito.verify(options, Mockito.times(1)).getSystemDescriptor();
+      Mockito.verify(options, Mockito.atLeastOnce()).getSystemDescriptor();
       System.out.println(printDirectoryTree(outputDir.toFile()));
       checkGradleBuild(outputDir);
       checkLogContents(outputDir);
