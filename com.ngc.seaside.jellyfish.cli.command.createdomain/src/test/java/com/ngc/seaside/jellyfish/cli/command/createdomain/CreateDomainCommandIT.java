@@ -1,12 +1,22 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.ngc.blocs.domain.impl.common.generated.Tdomain;
+import com.ngc.blocs.domain.impl.common.generated.Tobject;
+import com.ngc.blocs.domain.impl.common.generated.Tproperty;
+import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
@@ -15,41 +25,32 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CreateDomainCommandIT {
 
@@ -72,247 +73,261 @@ public class CreateDomainCommandIT {
       Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
       ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
       IParsingResult result = sdService.parseFiles(sdFiles);
-      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
+      assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
       when(options.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
    public void testCommand() throws IOException, FileUtilitiesException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+         "com.ngc.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir,
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+         velocityPath);
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
+      Path projectDir = outputDir.resolve("com.ngc.model1.domain");
+      assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.model1.domain");
       checkVelocity(projectDir);
-      checkDomain(projectDir);
+      List<Tdomain> domains = getDomain(projectDir);
+      domains.forEach(domain -> assertFalse(domain.getConfig() != null && domain.getConfig().isUseVerboseImports()));
+      Map<String, Tobject> objects = getDomainObjects(projectDir);
+      assertDomainObject(objects.get("com.ngc.model1.domain.b1.Base1"),
+         null,
+         true,
+         "com.ngc.model1.domain.b1.Base1",
+         "int intFieldBase1",
+         "many int manyIntFieldBase1",
+         "float floatFieldBase1",
+         "many float manyFloatFieldBase1",
+         "String stringFieldBase1",
+         "many String manyStringFieldBase1",
+         "com.ngc.model1.domain.d1.Data1 dataFieldBase1",
+         "many com.ngc.model1.domain.d1.Data1 manyDataFieldBase1",
+         "com.ngc.model1.domain.e1.Enum1 enumFieldBase1",
+         "many com.ngc.model1.domain.e1.Enum1 manyEnumFieldBase1",
+         "com.ngc.model1.domain.c2.Child2 inheritedDataFieldBase1",
+         "many com.ngc.model1.domain.c2.Child2 manyInheritedDataFieldBase1");
+
+      assertDomainObject(objects.get("com.ngc.model1.domain.b2.Base2"),
+         null,
+         true,
+         "com.ngc.model1.domain.b2.Base2",
+         "int intFieldBase2",
+         "many int manyIntFieldBase2",
+         "float floatFieldBase2",
+         "many float manyFloatFieldBase2",
+         "String stringFieldBase2",
+         "many String manyStringFieldBase2",
+         "com.ngc.model1.domain.d1.Data1 dataFieldBase2",
+         "many com.ngc.model1.domain.d1.Data1 manyDataFieldBase2",
+         "com.ngc.model1.domain.e1.Enum1 enumFieldBase2",
+         "many com.ngc.model1.domain.e1.Enum1 manyEnumFieldBase2");
+
+      assertDomainObject(objects.get("com.ngc.model1.domain.c1.Child1"),
+         "com.ngc.model1.domain.b1.Base1",
+         false,
+         "com.ngc.model1.domain.c1.Child1",
+         "int intFieldChild1",
+         "many int manyIntFieldChild1",
+         "float floatFieldChild1",
+         "many float manyFloatFieldChild1",
+         "String stringFieldChild1",
+         "many String manyStringFieldChild1",
+         "com.ngc.model1.domain.d1.Data1 dataFieldChild1",
+         "many com.ngc.model1.domain.d1.Data1 manyDataFieldChild1",
+         "com.ngc.model1.domain.e1.Enum1 enumFieldChild1",
+         "many com.ngc.model1.domain.e1.Enum1 manyEnumFieldChild1",
+         "com.ngc.model1.domain.c2.Child2 inheritedDataFieldChild1",
+         "many com.ngc.model1.domain.c2.Child2 manyInheritedDataFieldChild1",
+         "com.ngc.model1.domain.c1.Child1 recursiveDataFieldChild1",
+         "many com.ngc.model1.domain.c1.Child1 manyRecursiveDataFieldChild1");
+
+      assertDomainObject(objects.get("com.ngc.model1.domain.c2.Child2"),
+         "com.ngc.model1.domain.b2.Base2",
+         false,
+         "com.ngc.model1.domain.c2.Child2",
+         "int intFieldChild2",
+         "many int manyIntFieldChild2",
+         "float floatFieldChild2",
+         "many float manyFloatFieldChild2",
+         "String stringFieldChild2",
+         "many String manyStringFieldChild2",
+         "com.ngc.model1.domain.d1.Data1 dataFieldChild2",
+         "many com.ngc.model1.domain.d1.Data1 manyDataFieldChild2",
+         "com.ngc.model1.domain.e1.Enum1 enumFieldChild2",
+         "many com.ngc.model1.domain.e1.Enum1 manyEnumFieldChild2",
+         "com.ngc.model1.domain.c2.Child2 recursiveDataFieldChild2",
+         "many com.ngc.model1.domain.c2.Child2 manyRecursiveDataFieldChild2");
+
+      assertDomainObject(objects.get("com.ngc.model1.domain.d1.Data1"), null, false, "com.ngc.model1.domain.d1.Data1");
+
    }
-   
+
    @Test
    public void testWithExtensionCommand() throws IOException {
       final String extension = "asidgoajsdig";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.EXTENSION_PROPERTY, extension);
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+         "com.ngc.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir,
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+         velocityPath,
+         CreateDomainCommand.EXTENSION_PROPERTY,
+         extension);
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, extension, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
+      Path projectDir = outputDir.resolve("com.ngc.model1.domain");
+      assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, extension, "com.ngc.model1.domain");
    }
 
    @Test
    public void testCommandWithEmptyModel() throws IOException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model2",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+         "com.ngc.Model2",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir,
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+         velocityPath);
 
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertFalse("Directory should not be created: " + projectDir, Files.isDirectory(projectDir));
-   }
-
-   @Test
-   public void testCommandGroupId() throws IOException {
-      final String groupId = "net.example.g1";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.GROUP_ID_PROPERTY, groupId);
-
-      Path projectDir = outputDir.resolve(groupId + ".model1.domain");
-      Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-
-   @Test
-   public void testCommandArtifactId() throws IOException {
-      final String artifact = "test.artifact.g1";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifact);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1." + artifact);
-      Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-
-   @Test
-   public void testCommandPackage() throws IOException {
-      final String pkg = "com.test.e1.test.artifact.g1";
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-         CreateDomainCommand.PACKAGE_PROPERTY, pkg);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find model " + projectDir, Files.isDirectory(projectDir));
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
+      Path projectDir = outputDir.resolve("com.ngc.model1.domain");
+      assertFalse("Directory should not be created: " + projectDir, Files.isDirectory(projectDir));
    }
 
    @Test
    public void testCommandWithPackageGenerator() throws IOException, FileUtilitiesException {
-      Function<IData, String> packageGenerator = (d) -> "foo";
-
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-                 CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "foo");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-   }
-   
-   @Test
-   public void testCommandWithEnumsPackageGenerator() throws IOException, FileUtilitiesException {
       Function<INamedChild<IPackage>, String> packageGenerator = (d) -> "foo";
 
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model3",
-                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-                 CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model3.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+         "com.ngc.Model1",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir,
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+         velocityPath,
+         CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY,
+         packageGenerator);
+      Path projectDir = outputDir.resolve("com.ngc.model1.domain");
+      assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
       checkGradleBuild(projectDir, "foo");
       checkVelocity(projectDir);
-      Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
-      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
+      Map<String, Map<String, Tproperty>> domains = getDomainProperties(projectDir);
+      domains.forEach((object, properties) -> {
+         assertFalse(object.contains("com"));
+         properties.forEach((name, property) -> {
+            assertFalse(name.contains("com"));
+            assertFalse(property.getType().contains("com"));
+         });
+      });
    }
 
-   @Test
-   public void testWithProjectNamer() throws IOException, FileUtilitiesException {
-      IProjectInformation info = mock(IProjectInformation.class);
-      when(info.getDirectoryName()).thenReturn("com.ngc.seaside.test1.model1.domain");
-      when(info.getGroupId()).thenReturn("com.ngc.seaside.test1");
-      when(info.getArtifactId()).thenReturn("model1.domain");
-
-      @SuppressWarnings({"unchecked"})
-      Supplier<IProjectInformation> namer = mock(Supplier.class);
-      when(namer.get()).thenReturn(info);
-
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model1",
-                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString(),
-                 CreateDomainCommand.PROJECT_NAMER_PROPERTY, namer);
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1.domain");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-
-      verify(namer).get();
-   }
-
-   @Test
-   public void testCommandWithSettingsDotGradle() throws IOException, FileUtilitiesException {
-      Files.copy(Paths.get("src", "test", "resources", "settings.gradle"),
-                 outputDir.resolve("settings.gradle"));
-      runCommand(CreateDomainCommand.MODEL_PROPERTY,
-                 "com.ngc.seaside.test1.Model1",
-                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
-                 outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
-                 velocityPath.toString(),
-                 CreateDomainCommand.GROUP_ID_PROPERTY,
-                 "com.ngc.seaside",
-                 CreateDomainCommand.ARTIFACT_ID_PROPERTY,
-                 "test1.model1");
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model1");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model1");
-      checkVelocity(projectDir);
-      checkDomain(projectDir);
-      checkSettingsDotGradle(projectDir);
-   }
    
-   @Test
-   public void testCommandWithEnums() throws IOException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.seaside.test1.Model3",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
-
-      Path projectDir = outputDir.resolve("com.ngc.seaside.test1.model3.domain");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.seaside.test1.model3.domain");
-      checkVelocity(projectDir);
-      Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
-      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2");
-   }
-
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
-      Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
+      assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
+      TestingFiles.assertFileContains(buildFile, velocityPath.getFileName().toString());
       for (String content : fileContents) {
-         Assert.assertTrue("Expected \"" + content + "\" in build.gradle", contents.contains(content));
+         TestingFiles.assertFileContains(buildFile, content);
       }
    }
 
    private void checkVelocity(Path projectDir) {
       Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
-      Assert.assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
-      Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
+      assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
+      assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
          Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
    }
 
-   private void checkDomain(Path projectDir) throws IOException {
+   private List<Tdomain> getDomain(Path projectDir) throws IOException {
       Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
-      checkDomainFiles(domainDir, "com.ngc.seaside.test1", "com.ngc.seaside.test2", "com.ngc.seaside.test1.test3");
-      checkDomainContents(domainDir, "com.ngc.seaside.test1", 1, 2, 0, 5);
-      checkDomainContents(domainDir, "com.ngc.seaside.test2", 3, 4, 6, 7);
-      checkDomainContents(domainDir, "com.ngc.seaside.test1.test3", 5, 5, 8, 8);
+      assertTrue(Files.isDirectory(domainDir));
+      List<Tdomain> domains = Files.list(domainDir)
+                                   .filter(Files::isRegularFile)
+                                   .filter(f -> f.toAbsolutePath().toString().endsWith(".xml"))
+                                   .map(f -> {
+                                      try {
+                                         return JAXBUtilities.load(f.toFile(), Tdomain.class);
+                                      } catch (IOException e) {
+                                         throw new AssertionError(e);
+                                      }
+                                   })
+                                   .collect(Collectors.toList());
+      return domains;
    }
 
-   private void checkDomainFiles(Path domainDir, String... filenames) throws IOException {
-      try {
-         Assert.assertEquals(filenames.length, Files.list(domainDir).count());
-      } catch (NoSuchFileException e) {
-         Assert.assertEquals(0, filenames.length);
-      }
-      for (String pkg : filenames) {
-         Assert.assertTrue("Missing file: " + pkg + ".xml", Files.isRegularFile(domainDir.resolve(pkg + ".xml")));
-      }
+   private Map<String, Tobject> getDomainObjects(Path projectDir) throws IOException {
+      List<Tdomain> domains = getDomain(projectDir);
+      Map<String, Tobject> objects = new HashMap<>();
+      domains.forEach(domain -> {
+         domain.getObject().forEach(object -> objects.put(object.getClazz(), object));
+      });
+      return objects;
    }
 
-   private void checkDomainContents(Path domainDir, String filename, int startData, int endData, int startField,
-            int endField)
-      throws IOException {
-      Path file = domainDir.resolve(filename + ".xml");
-      String text = new String(Files.readAllBytes(file));
-      for (int n = startData; n <= endData; n++) {
-         Assert.assertTrue("Couldn't find Data" + n + " in " + file, text.contains("Data" + n));
+   private Map<String, Map<String, Tproperty>> getDomainProperties(Path projectDir) throws IOException {
+      List<Tdomain> domains = getDomain(projectDir);
+      Map<String, Map<String, Tproperty>> objects = new HashMap<>();
+      for (Tdomain domain : domains) {
+         for (Tobject object : domain.getObject()) {
+            Map<String, Tproperty> properties = new HashMap<>();
+            for (Tproperty property : object.getProperty()) {
+               properties.put(property.getName(), property);
+            }
+            objects.put(object.getClazz(), properties);
+         }
       }
-      Assert.assertFalse(Pattern.compile("Data[^" + startData + "-" + endData + "]").matcher(text).find());
-
-      for (int n = startField; n <= endField; n++) {
-         Assert.assertTrue("Couldn't find field" + n + " in " + file, text.contains("field" + n));
-      }
-      Assert.assertFalse(Pattern.compile("field[^" + startField + "-" + endField + "]").matcher(text).find());
+      return objects;
    }
-
-   private void checkSettingsDotGradle(Path projectDir) throws IOException {
-      Path settingsFile = projectDir.getParent().resolve("settings.gradle");
-      List<String> lines = Files.readAllLines(settingsFile);
-      Assert.assertTrue("settings.gradle is missing 'include' for project!",
-                        lines.contains("include 'com.ngc.seaside.test1.model1'"));
-      Assert.assertTrue("settings.gradle does not set name on included project!",
-                        lines.contains("project(':com.ngc.seaside.test1.model1').name = 'test1.model1'"));
+   
+   private void assertDomainObject(Tobject object, String superObject, boolean isObjectAbstract, String name,
+            String... properties) {
+      assertNotNull(name + " wasn't a domain object", object);
+      assertEquals(name, object.getClazz());
+      if (superObject == null) {
+         assertTrue("object " + name + " does not extend another object",
+            object.getExtends() == null || object.getExtends().isEmpty());
+      } else {
+         assertEquals("Incorrect value for object " + name, superObject, object.getExtends());
+      }
+      assertEquals("Incorrect value for object " + name,
+         isObjectAbstract,
+         object.isAbstract() != null && object.isAbstract());
+      assertEquals("Incorrect value for object " + name, properties.length, object.getProperty().size());
+      for (String property : properties) {
+         final boolean isMultiple;
+         final boolean isAbstract;
+         if (property.startsWith("abstract ")) {
+            isAbstract = true;
+            property = property.substring(9);
+         } else {
+            isAbstract = false;
+         }
+         if (property.startsWith("many ")) {
+            isMultiple = true;
+            property = property.substring(5);
+         } else {
+            isMultiple = false;
+         }
+         String type = property.substring(0, property.indexOf(' '));
+         String fieldName = property.substring(property.indexOf(' ') + 1);
+         Tproperty actualProperty = object.getProperty()
+                                          .stream()
+                                          .filter(prop -> prop.getName().equals(fieldName))
+                                          .findAny()
+                                          .orElseThrow(
+                                             () -> new AssertionError(fieldName + " not found in object " + name));
+         assertNotNull("property " + fieldName + " is missing from object " + name, actualProperty);
+         assertEquals("Invalid value for property " + fieldName + " from object " + name,
+            isMultiple,
+            actualProperty.isMultiple() != null && actualProperty.isMultiple());
+         assertEquals("Invalid value for property " + fieldName + " from object " + name,
+            isAbstract,
+            actualProperty.isAbstract() != null && actualProperty.isAbstract());
+         assertEquals("Invalid type for property " + fieldName + " from object " + name,
+            type,
+            actualProperty.getType());
+      }
    }
 
    private void runCommand(Object... keyValues) {
@@ -330,17 +345,22 @@ public class CreateDomainCommandIT {
    private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
       @Override
       protected void configure() {
-         bind(ILogService.class).to(PrintStreamLogService.class);
+         bind(ILogService.class).toInstance(mock(ILogService.class));
          MockedTemplateService mockedTemplateService = new MockedTemplateService()
-               .useRealPropertyService()
-               .useDefaultUserValues(true)
-               .setTemplateDirectory(CreateDomainCommand.class.getPackage().getName(),
-                                     Paths.get("src", "main", "template"));
+                                                                                  .useRealPropertyService()
+                                                                                  .useDefaultUserValues(true)
+                                                                                  .setTemplateDirectory(
+                                                                                     CreateDomainCommand.class.getPackage()
+                                                                                                              .getName(),
+                                                                                     Paths.get("src",
+                                                                                        "main",
+                                                                                        "template"));
 
          MockedResourceService resourceService = new MockedResourceService()
-               .onNextReadDrain(CreateDomainCommandIT.class
-                                      .getClassLoader()
-                                      .getResourceAsStream(CreateDomainCommand.DEFAULT_DOMAIN_TEMPLATE_FILE));
+                                                                            .onNextReadDrain(CreateDomainCommandIT.class
+                                                                                                                        .getClassLoader()
+                                                                                                                        .getResourceAsStream(
+                                                                                                                           CreateDomainCommand.DEFAULT_DOMAIN_TEMPLATE_FILE));
 
          bind(ITemplateService.class).toInstance(mockedTemplateService);
          bind(IResourceService.class).toInstance(resourceService);

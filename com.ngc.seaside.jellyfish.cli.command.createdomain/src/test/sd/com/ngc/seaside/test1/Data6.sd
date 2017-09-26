@@ -1,8 +1,0 @@
-package com.ngc.seaside.test1
-
-import com.ngc.seaside.test1.Data7
-
-data Data6 {
-	int field6
-	Data7 field7
-}
