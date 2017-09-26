@@ -24,7 +24,7 @@ public abstract class ${dto.abstractClass.name}
 
    public final static String NAME = "service:${dto.model.fullyQualifiedName}";
 
-   protected IContext context;
+   protected IContext<?> context;
 
    protected ServiceStatus status = ServiceStatus.DEACTIVATED;
 
@@ -74,12 +74,12 @@ public abstract class ${dto.abstractClass.name}
    }
 
    @Override
-   public IContext getContext() {
+   public IContext<?> getContext() {
       return context;
    }
 
    @Override
-   public void setContext(IContext iContext) {
+   public void setContext(@SuppressWarnings("rawtypes") IContext iContext) {
       this.context = iContext;
    }
 
