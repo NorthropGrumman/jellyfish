@@ -5,6 +5,10 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.nio.file.Paths;
 
+/**
+ * Base class for JellyFish Gradle tasks.  All this class does is set the "NG_FW_HOME" system property if the property
+ * is not already set.  This gets rid of the warnings about the property not be set when executing some services.
+ */
 public abstract class AbstractJellyFishCliCommandTask extends DefaultTask {
 
    @TaskAction
@@ -23,5 +27,8 @@ public abstract class AbstractJellyFishCliCommandTask extends DefaultTask {
       }
    }
 
+   /**
+    * Invoked to perform the actual execution of the task.
+    */
    protected abstract void doExecuteTask();
 }
