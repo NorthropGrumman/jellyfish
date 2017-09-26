@@ -33,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,6 +80,12 @@ public class CreateJavaServiceProjectCommandTest {
    public void setup() throws Throwable {
       when(projectInformation.getDirectoryName()).thenReturn("projectDirectory");
       when(projectNamingService.getBaseServiceProjectName(any(IJellyFishCommandOptions.class), eq(model)))
+            .thenReturn(projectInformation);
+      when(projectNamingService.getEventsProjectName(any(IJellyFishCommandOptions.class), eq(model)))
+            .thenReturn(projectInformation);
+      when(projectNamingService.getConnectorProjectName(any(IJellyFishCommandOptions.class), eq(model)))
+            .thenReturn(projectInformation);
+      when(projectNamingService.getMessageProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
 
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
@@ -161,10 +168,10 @@ public class CreateJavaServiceProjectCommandTest {
       verifyParametersForCreateConnectorCommand(capture.getValue(), "my-project");
 
       // Verify the build.gradle files were created in 4 generated-projects projects.
-      verify(templateService).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-                                     any(IParameterCollection.class),
-                                     any(Path.class),
-                                     eq(false));
+      verify(templateService, times(4)).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
+                                               any(IParameterCollection.class),
+                                               any(Path.class),
+                                               eq(false));
    }
 
    @Test
@@ -220,10 +227,10 @@ public class CreateJavaServiceProjectCommandTest {
       verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
 
       // Verify the build.gradle files were created in 4 generated-projects projects.
-      verify(templateService).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-                                     any(IParameterCollection.class),
-                                     any(Path.class),
-                                     eq(false));
+      verify(templateService, times(4)).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
+                                               any(IParameterCollection.class),
+                                               any(Path.class),
+                                               eq(false));
    }
 
    @Test

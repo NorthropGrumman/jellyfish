@@ -221,6 +221,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getEventsProjectName(delegateOptions, ctx.model));
    }
 
    private void createCucumberTestsProject(CommandInvocationContext ctx) {
@@ -264,22 +265,13 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       generateGradleBuildFile(ctx, projectNamingService.getBaseServiceProjectName(delegateOptions, ctx.model));
    }
 
-   private void generateGradleBuildFile(CommandInvocationContext ctx, IProjectInformation projectInfo) {
-      boolean clean = CommonParameters.evaluateBooleanParameter(ctx.originalCommandOptions.getParameters(),
-                                                                CommonParameters.CLEAN.getName(),
-                                                                false);
-      templateService.unpack(CreateJavaServiceProjectCommand.class.getPackage().getName(),
-                             ctx.standardCommandOptions.getParameters(),
-                             ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
-                             clean);
-   }
-
    private void createProtocolBufferMessagesProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getMessageProjectName(delegateOptions, ctx.model));
    }
 
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {
@@ -288,6 +280,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getConnectorProjectName(delegateOptions, ctx.model));
    }
 
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
@@ -370,6 +363,15 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       return ctx;
    }
 
+   private void generateGradleBuildFile(CommandInvocationContext ctx, IProjectInformation projectInfo) {
+      boolean clean = CommonParameters.evaluateBooleanParameter(ctx.originalCommandOptions.getParameters(),
+                                                                CommonParameters.CLEAN.getName(),
+                                                                false);
+      templateService.unpack(CreateJavaServiceProjectCommand.class.getPackage().getName(),
+                             ctx.standardCommandOptions.getParameters(),
+                             ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
+                             clean);
+   }
 
    private static class CommandInvocationContext {
 
