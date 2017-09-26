@@ -27,6 +27,7 @@ subprojects {
         jellyfishAPIVersion = '1.3.1'
         jellyfishEXTVersion = '1.5'
 
+        seasideGradlePluginsVersion = '1.6'
         bootstrapApiVersion = '1.7.2'
         bootstrapVersion = '1.5.2'
         bootstrapCommandsVersion = '1.2'

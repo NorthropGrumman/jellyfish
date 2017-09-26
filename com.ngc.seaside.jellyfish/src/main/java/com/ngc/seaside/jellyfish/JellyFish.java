@@ -68,7 +68,6 @@ public class JellyFish {
          // However, we need to build the module via forStandaloneUsage() to make sure the XText framework is
          // initialized correctly.
          if (dynamicModule.getClass() != XTextSystemDescriptorServiceModule.class) {
-            System.out.format("Loaded module %s.%n", dynamicModule.getClass());
             modules.add(dynamicModule);
          }
       }
