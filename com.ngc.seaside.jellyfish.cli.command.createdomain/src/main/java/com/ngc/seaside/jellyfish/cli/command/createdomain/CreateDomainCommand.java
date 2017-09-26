@@ -52,7 +52,6 @@ import java.util.LinkedHashSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -484,7 +483,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
             Predicate<INamedChild<IPackage>> generatedObjectPredicate,
             Function<INamedChild<IPackage>, String> packageGenerator, Set<String> packages) {
       final String pkg = packageGenerator.apply(data);
-      packages.add(pkg);
+      final boolean generated = generatedObjectPredicate.test(data);
+      if (generated) {
+         packages.add(pkg);
+      }
 
       Tobject object = new Tobject();
       object.setAbstract(isAbstract);
@@ -492,9 +494,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
          String superPkg = packageGenerator.apply(superDataType);
          object.setExtends(superPkg + '.' + superDataType.getName());
       });
-      object.setGenerated(generatedObjectPredicate.test(data));
+      object.setGenerated(generated);
       object.setClazz(pkg + '.' + data.getName());
-      data.getFields().forEach(field -> object.getProperty().add(convert(field, packageGenerator, packages)));
+      data.getFields().forEach(field -> object.getProperty().add(convert(field, packageGenerator)));
       return object;
    }
 
@@ -510,13 +512,16 @@ public class CreateDomainCommand implements IJellyFishCommand {
             Function<INamedChild<IPackage>, String> packageGenerator,
             Set<String> packages) {
       final String pkg = packageGenerator.apply(enumVal);
-      packages.add(pkg);
+      final boolean generated = generatedObjectPredicate.test(enumVal);
+      if (generated) {
+         packages.add(pkg);
+      }
       
       Tobject object = new Tobject();
       object.setClazz(pkg + '.' + enumVal.getName());
       object.setType("enum");
       object.setAbstract(false);
-      object.setGenerated(generatedObjectPredicate.test(enumVal));
+      object.setGenerated(generated);
       object.setEnumValues(enumVal.getValues().stream().collect(Collectors.joining(" ")));
       return object;
    }
@@ -529,8 +534,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @param packages set of packages that this method should add to
     * @return domain property
     */
-   private static Tproperty convert(IDataField field, Function<INamedChild<IPackage>, String> packageGenerator,
-            Set<String> packages) {
+   private static Tproperty convert(IDataField field, Function<INamedChild<IPackage>, String> packageGenerator) {
       Tproperty property = new Tproperty();
       property.setAbstract(false);
       property.setName(field.getName());
@@ -552,7 +556,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       case DATA:
          IData dataRef = field.getReferencedDataType();
          pkg = packageGenerator.apply(dataRef);
-         packages.add(pkg);
          property.setType(pkg + '.' + dataRef.getName());
          break;
       case FLOAT:
@@ -567,7 +570,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
       case ENUM:
          IEnumeration enumRef = field.getReferencedEnumeration();
          pkg = packageGenerator.apply(enumRef);
-         packages.add(pkg);
          property.setType(pkg + "." + enumRef.getName());
          break;
       default:
