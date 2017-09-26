@@ -2,14 +2,15 @@ package com.ngc.seaside.jellyfish.cli.gradle.tasks;
 
 import com.ngc.seaside.jellyfish.JellyFish;
 
-import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
-import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class JellyFishCliCommandTask extends DefaultTask {
+public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
 
    private String command;
 
@@ -17,10 +18,10 @@ public class JellyFishCliCommandTask extends DefaultTask {
 
    private boolean failBuildOnException = true;
 
-   private Map<String, String> arguments;
+   private Map<String, String> arguments = new HashMap<>();
 
-   @TaskAction
-   public void doCommand() {
+   @Override
+   protected void doExecuteTask() {
       if (command == null || command.trim().equals("")) {
          throw new GradleException("command must be set!");
       }
@@ -29,13 +30,14 @@ public class JellyFishCliCommandTask extends DefaultTask {
       }
 
       arguments.put("inputDir", inputDir);
-      String[] stringArgs = arguments.entrySet()
+      List<String> stringArgs = arguments.entrySet()
             .stream()
             .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))
-            .toArray(String[]::new);
+            .collect(Collectors.toList());
+      stringArgs.add(0, command);
 
       try {
-         JellyFish.run(stringArgs);
+         JellyFish.run(stringArgs.toArray(new String[stringArgs.size()]));
          getLogger().debug("Jellyfish command " + command + " executed successfully.");
       } catch (Throwable t) {
          if (failBuildOnException) {
