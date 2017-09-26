@@ -4,6 +4,7 @@ apply plugin: 'maven'
 
 dependencies {
 	compile project(":jellyfish")
+    compile "com.ngc.seaside:gradle.plugins:$seasideGradlePluginsVersion"
 	
     compile gradleApi()
     compile localGroovy()

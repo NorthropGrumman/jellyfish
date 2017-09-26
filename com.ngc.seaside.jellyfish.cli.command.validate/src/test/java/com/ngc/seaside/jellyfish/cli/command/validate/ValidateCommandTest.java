@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -15,11 +16,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ValidateCommandTests {
+public class ValidateCommandTest {
 
    private ValidateCommand command = new ValidateCommand();
 
@@ -55,7 +57,12 @@ public class ValidateCommandTests {
       when(parsingResult.isSuccessful()).thenReturn(false);
       when(parsingResult.getIssues()).thenReturn(Collections.singletonList(issue));
 
-      command.run(options);
+      try {
+         command.run(options);
+         fail("failed to throw CommandException if descriptor is invalid!");
+      } catch (CommandException e) {
+         // Expected.
+      }
    }
 
 }

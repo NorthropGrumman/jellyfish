@@ -1,11 +1,14 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.MetadataNames;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -14,6 +17,12 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.util.Optional;
+
+import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 
 @Component(service = IPackageNamingService.class)
 public class PackageNamingService implements IPackageNamingService {
@@ -39,7 +48,7 @@ public class PackageNamingService implements IPackageNamingService {
       String fqn = getModelNameAndPackage(options)[2];
       return (fqn + ".event" + getPackageNameMinusCommonPart(fqn, data.getParent().getName())).toLowerCase();
    }
-   
+
    @Override
    public String getMessagePackageName(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -50,7 +59,7 @@ public class PackageNamingService implements IPackageNamingService {
       // We want to skip any common prefixes the model's package and data's package have in common.
       return (fqn + getPackageNameMinusCommonPart(fqn, data.getParent().getName())).toLowerCase();
    }
-   
+
    @Override
    public String getConnectorPackageName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -59,7 +68,8 @@ public class PackageNamingService implements IPackageNamingService {
       String fqn = getModelNameAndPackage(options)[2];
       // Construct the name using the fully qualified model name then add the remaining package names of the data type.
       // We want to skip any common prefixes the model's package and data's package have in common.
-      return (fqn + ".connector" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();   }
+      return (fqn + ".connector" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
+   }
 
    @Override
    public String getServiceInterfacePackageName(IJellyFishCommandOptions options, IModel model) {
@@ -87,7 +97,7 @@ public class PackageNamingService implements IPackageNamingService {
       String fqn = getModelNameAndPackage(options)[2];
       return (fqn + ".base.impl" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
-   
+
    @Override
    public String getTransportTopicsPackageName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -96,7 +106,7 @@ public class PackageNamingService implements IPackageNamingService {
       String fqn = getModelNameAndPackage(options)[2];
       return (fqn + ".transport.topic" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
-   
+
    @Override
    public String getDistributionPackageName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -107,7 +117,7 @@ public class PackageNamingService implements IPackageNamingService {
       // We want to skip any common prefixes the model's package and data's package have in common.
       return (fqn + ".distribution" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
-   
+
    @Override
    public String getCucumberTestsPackageName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -157,10 +167,13 @@ public class PackageNamingService implements IPackageNamingService {
       String fullName = options.getParameters().getParameter(MODEL_PARAMETER_NAME).getStringValue();
       int lastPeriodPosition = fullName.lastIndexOf('.');
       Preconditions.checkArgument(lastPeriodPosition > 0, "model name is not in the correct format!");
+      String prefix = fullName.substring(0, lastPeriodPosition);
+      String unqualifiedName = fullName.substring(lastPeriodPosition + 1);
+      unqualifiedName = MetadataNames.getModelAlias(options, fullName).orElse(unqualifiedName);
       return new String[]{
-            fullName.substring(0, lastPeriodPosition),
-            fullName.substring(lastPeriodPosition),
-            fullName
+            prefix,
+            unqualifiedName,
+            prefix + "." + unqualifiedName
       };
    }
 
@@ -188,7 +201,4 @@ public class PackageNamingService implements IPackageNamingService {
       }
       return name;
    }
-
-
-
 }

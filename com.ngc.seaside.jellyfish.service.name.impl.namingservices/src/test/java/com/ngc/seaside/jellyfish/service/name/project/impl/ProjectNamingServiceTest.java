@@ -1,10 +1,15 @@
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.MetadataNames;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.packagez.impl.PackageNamingService;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
 import org.junit.Before;
@@ -13,7 +18,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -199,12 +210,32 @@ public class ProjectNamingServiceTest {
    }
 
    @Test
-   public void testDoesGenerateRootProjectName() throws Throwable {
+   public void testDoesUseCodeGenMetadataToConstructName() throws Throwable {
+      JsonObject codegen = Json.createObjectBuilder()
+            .add(MetadataNames.CODEGEN_ALIAS, Json.createValue("te"))
+            .build();
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
+      model.setMetadata(new Metadata().setJson(Json.createObjectBuilder()
+                                                     .add(MetadataNames.CODEGEN, codegen)
+                                                     .build()));
 
+      IProjectInformation name = service.getBaseServiceProjectName(options, model);
       assertEquals("groupId not correct!",
-                   "com.ngc.seaside.threateval.threatevaluation",
-                   service.getRootProjectName(options, model));
+                   "com.ngc.seaside.threateval",
+                   name.getGroupId());
+      assertEquals("artifactId not correct!",
+                   "te.base",
+                   name.getArtifactId());
+      assertEquals("directoryName not correct!",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
+                   "/com.ngc.seaside.threateval.te.base",
+                   name.getDirectoryName());
+      assertEquals("versionPropertyName not correct!",
+                   "threatEvaluationBaseServiceVersion",
+                   name.getVersionPropertyName());
+      assertEquals("gavFormattedString not correct!",
+                   "com.ngc.seaside.threateval:te.base:$threatEvaluationBaseServiceVersion",
+                   name.getGavFormattedString());
    }
 
    private static Model newModel(String modelPackageName, String modelName) {
