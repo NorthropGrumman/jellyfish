@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -83,6 +84,7 @@ public class ValidateCommand implements IJellyFishCommand {
       } else {
          logErrors(result);
          logWarnings(result);
+         throw new CommandException("System Descriptor failed validation!");
       }
    }
 
