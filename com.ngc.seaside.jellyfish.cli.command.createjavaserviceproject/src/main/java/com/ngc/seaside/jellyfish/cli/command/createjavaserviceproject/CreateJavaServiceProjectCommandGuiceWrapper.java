@@ -4,11 +4,13 @@ import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaServiceProjectCommandGuiceWrapper implements IJellyFishCommand {
@@ -18,10 +20,14 @@ public class CreateJavaServiceProjectCommandGuiceWrapper implements IJellyFishCo
    @Inject
    public CreateJavaServiceProjectCommandGuiceWrapper(ILogService logService,
                                                       IJellyFishCommandProvider jellyFishCommandProvider,
-                                                      IPromptUserService promptUserService) {
+                                                      IPromptUserService promptUserService,
+                                                      ITemplateService templateService,
+                                                      IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setJellyFishCommandProvider(jellyFishCommandProvider);
       delegate.setPromptUserService(promptUserService);
+      delegate.setTemplateService(templateService);
+      delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
 
