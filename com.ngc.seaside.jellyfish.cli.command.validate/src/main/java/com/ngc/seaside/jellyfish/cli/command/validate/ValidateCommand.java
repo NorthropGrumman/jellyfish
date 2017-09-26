@@ -98,8 +98,8 @@ public class ValidateCommand implements IJellyFishCommand {
             .stream()
             .filter(i -> i.getSeverity() == Severity.ERROR)
             .collect(Collectors.toList());
-      logService.info(ValidateCommand.class, "System Descriptor project contains %d errors.", errors.size());
-      errors.forEach(this::printIssue);
+      logService.error(ValidateCommand.class, "System Descriptor project contains %d errors.", errors.size());
+      errors.forEach(this::printIssueError);
    }
 
    private void logWarnings(IParsingResult result) {
@@ -107,36 +107,68 @@ public class ValidateCommand implements IJellyFishCommand {
             .stream()
             .filter(i -> i.getSeverity() == Severity.WARNING)
             .collect(Collectors.toList());
-      logService.info(ValidateCommand.class, "System Descriptor project contains %d warnings.", warnings.size());
-      warnings.forEach(this::printIssue);
+      logService.warn(ValidateCommand.class, "System Descriptor project contains %d warnings.", warnings.size());
+      warnings.forEach(this::printIssueWarning);
    }
 
-   private void printIssue(IParsingIssue issue) {
+   private void printIssueError(IParsingIssue issue) {
       Path offendingFile = issue.getOffendingFile();
-      logService.info(ValidateCommand.class, "----------------------------------------");
-      logService.info(ValidateCommand.class, "File: %s", offendingFile == null ? "unknown"
-                                                                               : offendingFile.toAbsolutePath());
-      logService.info(ValidateCommand.class, "%s: %s", issue.getSeverity(), issue.getMessage());
+      logService.error(ValidateCommand.class, "----------------------------------------");
+      logService.error(ValidateCommand.class, "File: %s", offendingFile == null ? "unknown"
+                                                                                : offendingFile.toAbsolutePath());
+      logService.error(ValidateCommand.class, "%s: %s", issue.getSeverity(), issue.getMessage());
       if (offendingFile != null && offendingFile.toFile().isFile()) {
-         printOffendingLine(issue);
+         printOffendingLineError(issue);
       }
    }
 
-   private void printOffendingLine(IParsingIssue issue) {
+   private void printIssueWarning(IParsingIssue issue) {
+      Path offendingFile = issue.getOffendingFile();
+      logService.warn(ValidateCommand.class, "----------------------------------------");
+      logService.warn(ValidateCommand.class, "File: %s", offendingFile == null ? "unknown"
+                                                                               : offendingFile.toAbsolutePath());
+      logService.warn(ValidateCommand.class, "%s: %s", issue.getSeverity(), issue.getMessage());
+      if (offendingFile != null && offendingFile.toFile().isFile()) {
+         printOffendingLineWarning(issue);
+      }
+   }
+
+   private void printOffendingLineError(IParsingIssue issue) {
       try {
          String line = Files.readLines(issue.getOffendingFile().toFile(),
                                        Charsets.UTF_8,
                                        new LineFinder(issue.getLineNumber()));
          if (line != null) {
-            logService.info(ValidateCommand.class, "");
+            logService.error(ValidateCommand.class, "");
             // Note the "%s" format string ensures there will not be logging errors if the line in the file contains
             // a format string.
-            logService.info(ValidateCommand.class, "%s", line);
+            logService.error(ValidateCommand.class, "%s", line);
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i < issue.getColumn(); i++) {
                sb.append(' ');
             }
-            logService.info(ValidateCommand.class, sb.append("^"));
+            logService.error(ValidateCommand.class, sb.append("^"));
+         }
+      } catch (IOException e) {
+         // Do nothing.
+      }
+   }
+
+   private void printOffendingLineWarning(IParsingIssue issue) {
+      try {
+         String line = Files.readLines(issue.getOffendingFile().toFile(),
+                                       Charsets.UTF_8,
+                                       new LineFinder(issue.getLineNumber()));
+         if (line != null) {
+            logService.warn(ValidateCommand.class, "");
+            // Note the "%s" format string ensures there will not be logging errors if the line in the file contains
+            // a format string.
+            logService.warn(ValidateCommand.class, "%s", line);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < issue.getColumn(); i++) {
+               sb.append(' ');
+            }
+            logService.warn(ValidateCommand.class, sb.append("^"));
          }
       } catch (IOException e) {
          // Do nothing.
