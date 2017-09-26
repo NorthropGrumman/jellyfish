@@ -603,10 +603,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
          new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
                                                                      .setDescription(
                                                                         "Name of template used to generate the domain project build.gradle")
-                                                                     .setRequired(false),
-         new DefaultParameter<String>(PACKAGE_GENERATOR_PROPERTY)
-                                                                 .setDescription(
-                                                                    "Function to convert IData/IEnumeration to package names")
-                                                                 .setRequired(false));
+                                                                     .setRequired(false));
    }
 }
