@@ -1,7 +1,6 @@
 package ${dto.packageName};
 
 public class ${dto.model.name}DataConversion {
-
 #foreach($value in ${dto.allInputs})
 #set ($eventsPackage = $dto.getEventsPackageName().apply($value))
 #set ($messagesPackage = $dto.getMessagesPackageName().apply($value))
@@ -10,7 +9,7 @@ public class ${dto.model.name}DataConversion {
 #set ($data = $value)
       ${eventsPackage}.${value.name} to = new ${eventsPackage}.${value.name}();
 
-#foreach ($field in $dto.getFields().apply($data))
+#foreach ($field in $data.fields)
 #set( $fieldCap = "${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)}" )
 #if ( $field.type == "DATA" || $field.type == "ENUM" )
 #if ( $field.type == "DATA")
@@ -53,17 +52,17 @@ public class ${dto.model.name}DataConversion {
 
       return to;
    }
-
 #end
 #foreach($value in ${dto.allOutputs})
 #set ($eventsPackage = $dto.getEventsPackageName().apply($value))
 #set ($messagesPackage = $dto.getMessagesPackageName().apply($value))
+
    public static ${messagesPackage}.${value.name} convert(${eventsPackage}.${value.name} from) {
 #if (${IData.isInstance($value)})
 #set ($data = $value)
       ${messagesPackage}.${value.name}.Builder to = ${messagesPackage}.${value.name}.newBuilder();
 
-#foreach ( $field in $dto.getFields().apply($data) )
+#foreach ( $field in $data.fields )
 #set( $fieldCap = "${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)}" )
 #if ( $field.type == "DATA" || $field.type == "ENUM" )
 #if ( $field.type == "DATA")
@@ -108,6 +107,6 @@ public class ${dto.model.name}DataConversion {
       return to;
    }
 #end
-
 #end
+
 }

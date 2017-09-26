@@ -4,20 +4,13 @@ package $domain.packagename;
 
 option java_multiple_files = true;
 
-#set ($properties = [])
-#set ($discard = $properties.addAll($domain.superClassProperties))
-#set ($discard = $properties.addAll($domain.properties))
-#set ($imports = {})
-#foreach ($property in $properties)
-#if ($property.type != $property.shortType)
-#set ($discard = $imports.put($property.type, false))
-#end
-#end
-#set ($discard = $imports.remove("${domain.packagename}.${domain.classname}"))
-#foreach ($import in $imports.keySet())
+#foreach ($import in $domain.superClassImports)
 import "${import.replace('.', '/')}.proto";
 #end
-#if (! $imports.isEmpty())
+#foreach ($import in $domain.imports)
+import "${import.replace('.', '/')}.proto";
+#end
+#if ($domain.superClassImports || $domain.imports)
 
 #end
 ## Generate an enumeration

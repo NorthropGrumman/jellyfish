@@ -42,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -50,7 +49,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Function;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
@@ -64,15 +62,6 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
-   private static final Function<IData, Collection<IDataField>> FIELDS_FUNCTION = data -> {
-      Set<IDataField> fields = new HashSet<>();
-      while (data != null) {
-         fields.addAll(data.getFields());
-         data = data.getSuperDataType().orElse(null);
-      }
-      return fields;
-   };
-   
    private ILogService logService;
    private ITemplateService templateService;
    private IScenarioService scenarioService;
@@ -113,7 +102,6 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       dto.setModel(model);
       dto.setEventsPackageName(value -> packageService.getEventPackageName(commandOptions, value));
       dto.setMessagesPackageName(value -> packageService.getMessagePackageName(commandOptions, value));
-      dto.setFields(FIELDS_FUNCTION);
       EnumDto<?> transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
       dto.setProjectDependencies(new LinkedHashSet<>(

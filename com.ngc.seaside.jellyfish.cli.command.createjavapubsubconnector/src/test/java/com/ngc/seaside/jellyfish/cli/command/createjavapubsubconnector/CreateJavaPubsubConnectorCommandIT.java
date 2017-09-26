@@ -61,75 +61,18 @@ public class CreateJavaPubsubConnectorCommandIT {
 
    @Test
    public void testCommand() throws IOException {
-      final String model = "com.ngc.Model1";
+      final String model = "com.Model";
 
-      runCommand(CreateJavaPubsubConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(), CreateJavaPubsubConnectorCommand.MODEL_PROPERTY, model);
+      runCommand(CreateJavaPubsubConnectorCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(), "model", model);
       
-      Path srcFolder = outputDir.resolve(Paths.get("generated-projects", "com.ngc.model1.connector", "src", "main", "java", "com", "ngc", "model1", "connector"));
-      Path connectorFile = srcFolder.resolve("Model1Connector.java");
-      Path conversionFile = srcFolder.resolve("Model1DataConversion.java");
+      Path connectorFile = outputDir.resolve(Paths.get("generated-projects", "com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelConnector.java"));
+      Path conversionFile = outputDir.resolve(Paths.get("generated-projects", "com.model.connector", "src", "main", "java", "com", "model", "connector", "ModelDataConversion.java"));
       
       assertTrue(Files.isRegularFile(connectorFile));
       
-      Files.lines(conversionFile).forEach(System.out::println);
       // Check for nested data type conversions
-      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*\\S*Child1\\b");
-      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*\\S*Child2\\b");
-      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*\\S*Data1\\b");
-      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*\\S*Enum1\\b");
-      
-      // Check for base and child data fields
-      assertFileContains(conversionFile, "\\bsetIntFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyIntFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetFloatFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyFloatFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetStringFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyStringFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetDataFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyDataFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetEnumFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyEnumFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetInheritedDataFieldBase1\\b");
-      assertFileContains(conversionFile, "\\bsetManyInheritedDataFieldBase1\\b");
-      
-      assertFileContains(conversionFile, "\\bsetIntFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetManyIntFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetFloatFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetManyFloatFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetStringFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetManyStringFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetDataFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetManyDataFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetEnumFieldBase2\\b");
-      assertFileContains(conversionFile, "\\bsetManyEnumFieldBase2\\b");
-      
-      assertFileContains(conversionFile, "\\bsetIntFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyIntFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetFloatFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyFloatFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetStringFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyStringFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetDataFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyDataFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetEnumFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyEnumFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetInheritedDataFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyInheritedDataFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetRecursiveDataFieldChild1\\b");
-      assertFileContains(conversionFile, "\\bsetManyRecursiveDataFieldChild1\\b");
-      
-      assertFileContains(conversionFile, "\\bsetIntFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyIntFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetFloatFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyFloatFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetStringFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyStringFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetDataFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyDataFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetEnumFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyEnumFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetRecursiveDataFieldChild2\\b");
-      assertFileContains(conversionFile, "\\bsetManyRecursiveDataFieldChild2\\b");
+      assertFileContains(conversionFile, "\\bconvert\\s*\\(\\s*com.model.event.Data2\\b");
+      assertFileContains(conversionFile, "\\bcom.model.event.Enum1\\s+convert\\s*\\(");
 
       // Check that many primitives are handled correctly
       assertFileNotContains(conversionFile, "<\\s*(?:boolean|int|long|float)\\s*>");
@@ -153,7 +96,7 @@ public class CreateJavaPubsubConnectorCommandIT {
    private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
       @Override
       protected void configure() {
-         bind(ILogService.class).toInstance(mock(ILogService.class));
+         bind(ILogService.class).to(PrintStreamLogService.class);
          MockedTemplateService mockedTemplateService = new MockedTemplateService().useRealPropertyService().useDefaultUserValues(true)
                   .setTemplateDirectory(CreateJavaPubsubConnectorCommand.class.getPackage().getName(), Paths.get("src", "main", "template"));
          bind(ITemplateService.class).toInstance(mockedTemplateService);

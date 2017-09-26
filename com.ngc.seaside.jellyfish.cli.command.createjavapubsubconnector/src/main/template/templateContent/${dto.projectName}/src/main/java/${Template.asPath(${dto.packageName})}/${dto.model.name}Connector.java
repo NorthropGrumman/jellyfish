@@ -137,7 +137,7 @@ public class ${dto.model.name}Connector {
 #end
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
-      RequestThreadLocal.setCurrentRequest(new SessionlessRequirementAwareRequest<>(
+      RequestThreadLocal.setCurrentRequest(new SessionlessRequirementAwareRequest(
          getRequirementsForTransportTopic(transportTopic), this));
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }

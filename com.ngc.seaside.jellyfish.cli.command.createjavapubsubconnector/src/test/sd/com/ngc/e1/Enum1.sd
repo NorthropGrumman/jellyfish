@@ -1,6 +1,0 @@
-package com.ngc.e1
-
-enum Enum1 {
-	field1
-	field2
-}

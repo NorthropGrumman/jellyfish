@@ -21,9 +21,6 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -33,13 +30,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -78,7 +69,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       final IModel model = evaluateModelParameter(commandOptions);
       IProjectInformation messageProjectName = projectNamingService.getMessageProjectName(commandOptions, model);
       String artifactId = messageProjectName.getArtifactId();
-
+      
       // Unpack the velocity template to a temporary directory.
       final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
          CreateProtocolbufferMessagesCommand.class,
@@ -86,11 +77,10 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       resourceService.readResource(velocityTemplate);
       final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
 
-      Function<INamedChild<IPackage>, String> packageGenerator = (d) -> packageNamingService.getMessagePackageName(
-         commandOptions, d);
+      Function<INamedChild<IPackage>, String> packageGenerator =
+            (d) -> packageNamingService.getMessagePackageName(commandOptions, d);
       Supplier<IProjectInformation> messageProjectNamer = () -> messageProjectName;
-      Predicate<INamedChild<IPackage>> predicate = child -> isGenerated(model, child);
-
+      
       jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
          DefaultJellyFishCommandOptions.mergeWith(commandOptions,
             new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
@@ -100,44 +90,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
             new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
                CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
             new DefaultParameter<>(CreateDomainCommand.USE_VERBOSE_IMPORTS_PROPERTY, true),
-            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, messageProjectNamer),
-            new DefaultParameter<>(CreateDomainCommand.GENERATED_OBJECT_PREDICATE_PROPERTY, predicate)));
-   }
-   
-   private static boolean isGenerated(IModel model, INamedChild<IPackage> child) {
-      if (child instanceof IData) {
-         IData data = (IData) child;
-         Queue<IData> queue = new ArrayDeque<>();
-         model.getInputs().forEach(field -> queue.add(field.getType()));
-         model.getOutputs().forEach(field -> queue.add(field.getType()));
-         Set<IData> checked = new HashSet<>();
-         Set<IData> generated = new HashSet<>(queue);
-         while (!queue.isEmpty()) {
-            IData next = queue.poll();
-            if (data == next && generated.contains(data)) {
-               return true;
-            }
-            if (checked.add(next)) {
-               next.getFields()
-                   .stream()
-                   .filter(field -> field.getType() == DataTypes.DATA)
-                   .map(IDataField::getReferencedDataType)
-                   .peek(queue::add)
-                   .forEach(generated::add);
-               IData parent = next.getSuperDataType().orElse(null);
-               while (parent != null) {
-                  if (checked.add(parent)) {
-                     queue.add(parent);
-                  } else {
-                     break;
-                  }
-               }
-            }
-         }
-         return false;
-      }
-
-      return true;
+            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, messageProjectNamer)));
    }
 
    @Activate
@@ -201,20 +154,25 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setResourceService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePackageNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
-      this.packageNamingService = ref;
+         this.packageNamingService = ref;
    }
+   
 
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
    }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeProjectNamingService")
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
-      this.projectNamingService = ref;
+         this.projectNamingService = ref;
    }
-
+   
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
@@ -232,8 +190,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      return new DefaultUsage(
-         "Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
+      return new DefaultUsage("Generate the message IDL and gradle project structure that can generate the protocol buffer message bundle.",
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
          CommonParameters.PACKAGE,
