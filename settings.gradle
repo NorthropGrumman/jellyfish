@@ -77,6 +77,3 @@ project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationse
 
 include 'com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice'
 project(':com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice').name = 'jellyfish.service.requirements.impl.requirementsservice'
-
-include 'com.ngc.seaside.jellyfish.cli.gradle.utilities'
-project(':com.ngc.seaside.jellyfish.cli.gradle.utilities').name = 'jellyfish.cli.gradle.utilities'
