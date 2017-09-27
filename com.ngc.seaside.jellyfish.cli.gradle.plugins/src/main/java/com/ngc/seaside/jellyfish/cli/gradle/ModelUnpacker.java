@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -23,26 +24,31 @@ public class ModelUnpacker {
 
    private Configuration configuration;
 
+   private Supplier<Boolean> executeCondition = () -> true;
+
    public Collection<Path> unpack() {
       Preconditions.checkNotNull(destinationDirectory, "destinationDirectory may not be null!");
       Preconditions.checkNotNull(configuration, "configuration may not be null!");
-
-      File dest = destinationDirectory.toFile();
-      Preconditions.checkArgument(!dest.exists() || !dest.isDirectory(),
-                                  "%s exists but is not a directory!",
-                                  destinationDirectory);
-
-      if (!dest.isDirectory()) {
-         dest.mkdirs();
-      }
-
       Collection<Path> unpackedFiles = new ArrayList<>();
-      for (File f : configuration) {
-         // Strip the extension.
-         File destForZip = new File(dest, f.getName().substring(0, f.getName().lastIndexOf('.')));
-         unpackedFiles.add(destForZip.toPath());
-         unpackFile(f, destForZip);
+
+      if (executeCondition.get()) {
+         File dest = destinationDirectory.toFile();
+         Preconditions.checkArgument(!dest.exists() || !dest.isDirectory(),
+                                     "%s exists but is not a directory!",
+                                     destinationDirectory);
+
+         if (!dest.isDirectory()) {
+            dest.mkdirs();
+         }
+
+         for (File f : configuration) {
+            // Strip the extension.
+            File destForZip = new File(dest, f.getName().substring(0, f.getName().lastIndexOf('.')));
+            unpackedFiles.add(destForZip.toPath());
+            unpackFile(f, destForZip);
+         }
       }
+
       return unpackedFiles;
    }
 
@@ -66,6 +72,15 @@ public class ModelUnpacker {
 
    public ModelUnpacker setConfiguration(Configuration configuration) {
       this.configuration = configuration;
+      return this;
+   }
+
+   public Supplier<Boolean> getExecuteCondition() {
+      return executeCondition;
+   }
+
+   public ModelUnpacker setExecuteCondition(Supplier<Boolean> executeCondition) {
+      this.executeCondition = executeCondition;
       return this;
    }
 
