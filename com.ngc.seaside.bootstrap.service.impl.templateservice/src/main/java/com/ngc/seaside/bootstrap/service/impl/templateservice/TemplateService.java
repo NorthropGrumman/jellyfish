@@ -216,7 +216,7 @@ public class TemplateService implements ITemplateService {
                                                                             TemplateServiceException {
       Path path = getTemplatePath(templateName);
       if (path == null) {
-         throw new TemplateServiceException("not template with the name " + templateName + "was found!");
+         throw new TemplateServiceException("no template with the name " + templateName + " was found!");
       }
       return new FileInputStream(path.toFile());
    }
