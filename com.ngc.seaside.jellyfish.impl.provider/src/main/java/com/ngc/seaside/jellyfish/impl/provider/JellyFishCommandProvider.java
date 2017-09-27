@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
@@ -20,7 +19,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
-import com.ngc.seaside.jellyfish.cli.command.help.HelpCommand;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -52,7 +50,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
    private ITemplateService templateService;
-   private HelpCommand helpCommand;
 
    /**
     * Ensure the dynamic references are added only after the activation of this
@@ -243,16 +240,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       Preconditions.checkArgument(!command.getName().isEmpty(), "Command Name is empty %s", command);
       logService.trace(getClass(), "Adding command '%s'", command.getName());
-      if (command instanceof HelpCommand) {
-         helpCommand = (HelpCommand) command;
-         for (IJellyFishCommand cmd : commandMap.values()) {
-            helpCommand.addCommand(cmd);
-         }
-      }
       commandMap.put(command.getName(), command);
-      if (helpCommand != null) {
-         helpCommand.addCommand(command);
-      }
    }
 
    /**
@@ -265,12 +253,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       Preconditions.checkNotNull(command.getName(), "Command name is null %s", command);
       logService.trace(getClass(), "Removing command '%s'", command.getName());
       commandMap.remove(command.getName());
-      if (helpCommand != null) {
-         helpCommand.removeCommand(command);
-         if (command instanceof HelpCommand) {
-            helpCommand = null;
-         }
-      }
    }
 
    /**
@@ -340,13 +322,13 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
-      DefaultParameter templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
+      DefaultParameter<?> outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
+      DefaultParameter<?> templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
                                                                   output.getOutputPath().toString());
       collection.addParameter(outputDir);
       collection.addParameter(templateOutputDir);
 
-      for (IParameter templateParameter : templateParameters.getAllParameters()) {
+      for (IParameter<?> templateParameter : templateParameters.getAllParameters()) {
          collection.addParameter(templateParameter);
       }
 
@@ -396,7 +378,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          options.setParameters(all);
       }
 
-      IParameter inputDir = userInputParameters.getParameter("inputDir");
+      IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
       Path path;
       if (inputDir == null) {
          path = Paths.get(System.getProperty("user.dir"));
