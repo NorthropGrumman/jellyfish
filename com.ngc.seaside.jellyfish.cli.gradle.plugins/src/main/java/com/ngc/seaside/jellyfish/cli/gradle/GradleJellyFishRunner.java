@@ -22,7 +22,7 @@ public class GradleJellyFishRunner {
       Set<Class<? extends Module>> ignoring = new HashSet<>();
       // Do no load these modules if they are present.
       ignoring.add(XTextSystemDescriptorServiceModule.class);
-      //ignoring.add(TemplateServiceGuiceModule.class);
+      ignoring.add(TemplateServiceGuiceModule.class);
       MODULES_TO_IGNORE = Collections.unmodifiableSet(ignoring);
    }
 
@@ -46,6 +46,8 @@ public class GradleJellyFishRunner {
       }
       // Register the standalone version of the XText service.
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      // Register the custom template service used for gradle builds.
+      modules.add(JarTemplateService.MODULE);
       return modules;
    }
 

@@ -36,6 +36,10 @@ jar {
     from "${buildDir}/commands-templates/"
 }
 
+processResources {
+    expand(version: version)
+}
+
 task copyCommandTemplate(type: Copy) {
     from configurations.commandTemplate {
         rename { name ->
