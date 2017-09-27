@@ -9,7 +9,6 @@ import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
@@ -21,6 +20,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,12 +29,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * Default implementation of the {@link ITemplateService} interface.
@@ -69,8 +68,8 @@ public class TemplateService implements ITemplateService {
     * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeLogService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -88,8 +87,8 @@ public class TemplateService implements ITemplateService {
     * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeResourceService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeResourceService")
    public void setResourceService(IResourceService ref) {
       this.resourceService = ref;
    }
@@ -107,8 +106,8 @@ public class TemplateService implements ITemplateService {
     * @param ref the ref
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removePromptUserService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptUserService")
    public void setPromptUserService(IPromptUserService ref) {
       this.promptUserService = ref;
    }
@@ -126,8 +125,8 @@ public class TemplateService implements ITemplateService {
     * @param ref the property service.
     */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removePropertyService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePropertyService")
    public void setPropertyService(IPropertyService ref) {
       this.propertyService = ref;
    }
@@ -143,7 +142,15 @@ public class TemplateService implements ITemplateService {
 
    @Override
    public boolean templateExists(String templatePrefix) {
-      return getTemplatePath(templatePrefix) != null;
+      InputStream is;
+      try {
+         is = getTemplateInputStream(templatePrefix);
+         is.close();
+      } catch (IOException | TemplateServiceException e) {
+         // Don't care about any exception, this just means the template may not exists.
+         is = null;
+      }
+      return is != null;
    }
 
    @Override
@@ -151,60 +158,67 @@ public class TemplateService implements ITemplateService {
                                  IParameterCollection parameters,
                                  Path outputDirectory,
                                  boolean clean)
-            throws TemplateServiceException {
-      ZipFile zipFile = null;
+         throws TemplateServiceException {
       ITemplateOutput output;
-      try {
-         Path path = getTemplatePath(templateName);
-         zipFile = new ZipFile(path.toString());
-         Path unzippedFolderPath = Files.createTempDirectory(null);
-         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-         while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
+      try (ZipInputStream zis = new ZipInputStream(getTemplateInputStream(templateName))) {
+         Path unzippedFolderPath = Files.createTempDirectory(null);
+         ZipEntry entry = zis.getNextEntry();
+
+         while (entry != null) {
             File entryDestination = new File(unzippedFolderPath.toString(), entry.getName());
             if (entry.isDirectory()) {
                entryDestination.mkdirs();
             } else {
                entryDestination.getParentFile().mkdirs();
-               InputStream in = zipFile.getInputStream(entry);
                OutputStream out = new FileOutputStream(entryDestination);
-               IOUtils.copy(in, out);
-               IOUtils.closeQuietly(in);
+               IOUtils.copy(zis, out);
                out.close();
             }
+            entry = zis.getNextEntry();
          }
 
          if (!isValidateTemplate(unzippedFolderPath)) {
             String message = String.format(
-                     "Invalid template. Each template must contain %s and a template folder named '%s'",
-                     TEMPLATE_PROPERTIES, TEMPLATE_FOLDER);
+                  "Invalid template. Each template must contain %s and a template folder named '%s'",
+                  TEMPLATE_PROPERTIES, TEMPLATE_FOLDER);
             logService.error(getClass(), message);
             throw new TemplateServiceException(message);
          }
 
-         TemplateIgnoreComponent templateIgnoreComponent =
-                  new TemplateIgnoreComponent(unzippedFolderPath, TEMPLATE_FOLDER, logService);
+         TemplateIgnoreComponent templateIgnoreComponent = new TemplateIgnoreComponent(unzippedFolderPath,
+                                                                                       TEMPLATE_FOLDER,
+                                                                                       logService);
          templateIgnoreComponent.parse();
 
-         output = updateTemplate(unzippedFolderPath, parameters, outputDirectory, clean, templateIgnoreComponent);
-
+         output = updateTemplate(unzippedFolderPath,
+                                 parameters,
+                                 outputDirectory,
+                                 clean,
+                                 templateIgnoreComponent);
       } catch (TemplateServiceException | IOException | NullPointerException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
          logService.error(getClass(), e, message);
          throw new TemplateServiceException(message, e);
-      } finally {
-         if (zipFile != null) {
-            try {
-               zipFile.close();
-            } catch (IOException e) {
-               //being unable to close the zip file should not kill the process if it has worked
-               //up until this point. It will close the file when the application exits.
-            }
-         }
       }
 
       return output;
+   }
+
+   /**
+    * Invoked to get the input stream to the template ZIP file.
+    *
+    * @return the input stream to the template zip file
+    * @throws IOException              if the stream could not be opened
+    * @throws TemplateServiceException if no template with the given name could be found
+    */
+   protected InputStream getTemplateInputStream(String templateName) throws IOException,
+                                                                            TemplateServiceException {
+      Path path = getTemplatePath(templateName);
+      if (path == null) {
+         throw new TemplateServiceException("not template with the name " + templateName + "was found!");
+      }
+      return new FileInputStream(path.toFile());
    }
 
    /**
@@ -223,10 +237,10 @@ public class TemplateService implements ITemplateService {
                                             Path outputFolder,
                                             boolean clean,
                                             TemplateIgnoreComponent templateIgnoreComponent)
-            throws IOException {
+         throws IOException {
       // Parse template.properties file for each parameter and its default value
       IProperties parametersAndDefaults =
-               propertyService.load(templateFolder.resolve(TEMPLATE_PROPERTIES));
+            propertyService.load(templateFolder.resolve(TEMPLATE_PROPERTIES));
 
       // For each parameter query the user for its value if that property isn't already in the parameters collection.
       Map<String, Object> parametersAndValues = new HashMap<>();
@@ -264,8 +278,8 @@ public class TemplateService implements ITemplateService {
       Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER), visitor);
 
       return new DefaultTemplateOutput()
-               .setOutputPath(visitor.getTopLevelFolder())
-               .setProperties(parametersAndValues);
+            .setOutputPath(visitor.getTopLevelFolder())
+            .setProperties(parametersAndValues);
    }
 
    /**
@@ -276,7 +290,7 @@ public class TemplateService implements ITemplateService {
     *                       being run.
     * @return the Path to the template or null if the file doesn't exists or if it is a directory.
     */
-   protected Path getTemplatePath(String templatePrefix) {
+   private Path getTemplatePath(String templatePrefix) {
       Path templateFile = null;
 
       Path templatesPath = Paths.get(resourceService.getResourceRootPath().toString(), TEMPLATES_DIRECTORY);
