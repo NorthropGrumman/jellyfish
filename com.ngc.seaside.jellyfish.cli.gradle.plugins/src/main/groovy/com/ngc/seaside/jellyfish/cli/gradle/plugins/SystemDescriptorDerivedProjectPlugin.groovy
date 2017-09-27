@@ -16,10 +16,10 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                 }
             }
 
-            if (!file("build.generated.gradle").exists()) {
+            if (!file("${project.projectDir}/build.generated.gradle").exists()) {
                 logger.info(":generate")
                 new JellyFishProjectGenerator(logger)
-                      .setCommand('create-java-events')
+                      .setCommand("${command}")
                       .setInputDir(file("${systemDescriptorLocation}").absolutePath)
                       .setArguments(['model'               : "${modelName}",
                                      'outputDirectory'     : "${project.rootDir.absolutePath}",
@@ -27,7 +27,7 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                       .generate()
             }
 
-            apply from: 'build.generated.gradle'
+            apply from: "${project.projectDir}/build.generated.gradle"
         }
     }
 }

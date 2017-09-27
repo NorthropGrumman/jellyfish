@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class JellyFishProjectGenerator {
@@ -22,22 +23,28 @@ public class JellyFishProjectGenerator {
 
    private Map<String, String> arguments = new HashMap<>();
 
+   private Supplier<Boolean> executionCondition = () -> true;
+
    public JellyFishProjectGenerator(Logger logger) {
       this.logger = logger;
    }
 
    public void generate() {
-      String previousProperty = System.getProperty("NG_FW_HOME");
-      boolean isPropertySet = previousProperty != null && previousProperty.trim().equals("");
-      if (!isPropertySet) {
-         System.setProperty("NG_FW_HOME", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString());
-      }
-      try {
-         doGenerate();
-      } finally {
+      if (executionCondition.get()) {
+
+         String previousProperty = System.getProperty("NG_FW_HOME");
+         boolean isPropertySet = previousProperty != null && previousProperty.trim().equals("");
          if (!isPropertySet) {
-            System.clearProperty("NG_FW_HOME");
+            System.setProperty("NG_FW_HOME", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString());
          }
+         try {
+            doGenerate();
+         } finally {
+            if (!isPropertySet) {
+               System.clearProperty("NG_FW_HOME");
+            }
+         }
+
       }
    }
 
@@ -74,6 +81,15 @@ public class JellyFishProjectGenerator {
 
    public JellyFishProjectGenerator setArguments(Map<String, String> arguments) {
       this.arguments = arguments;
+      return this;
+   }
+
+   public Supplier<Boolean> getExecutionCondition() {
+      return executionCondition;
+   }
+
+   public JellyFishProjectGenerator setExecutionCondition(Supplier<Boolean> executionCondition) {
+      this.executionCondition = executionCondition;
       return this;
    }
 
