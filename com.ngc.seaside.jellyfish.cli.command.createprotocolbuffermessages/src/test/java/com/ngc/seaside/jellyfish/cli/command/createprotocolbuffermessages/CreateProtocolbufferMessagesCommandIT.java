@@ -157,22 +157,22 @@ public class CreateProtocolbufferMessagesCommandIT {
    }
 
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
-      Path buildFile = projectDir.resolve("build.gradle");
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Assert.assertTrue("build.generated.gradle is missing", Files.isRegularFile(buildFile));
       String contents = new String(Files.readAllBytes(buildFile));
       Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
       for (String content : fileContents) {
-         Assert.assertTrue("Expected \"" + content + "\" in build.gradle", contents.contains(content));
+         Assert.assertTrue("Expected \"" + content + "\" in build.generated.gradle", contents.contains(content));
       }
    }
    
    private void checkGradleBuildDoesntContain(Path projectDir, String... fileContents) throws IOException {
-      Path buildFile = projectDir.resolve("build.gradle");
-      Assert.assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Assert.assertTrue("build.generated.gradle is missing", Files.isRegularFile(buildFile));
       String contents = new String(Files.readAllBytes(buildFile));
       Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
       for (String content : fileContents) {
-         Assert.assertFalse("Didn't expect \"" + content + "\" in build.gradle", contents.contains(content));
+         Assert.assertFalse("Didn't expect \"" + content + "\" in build.generated.gradle", contents.contains(content));
       }
    }
 
