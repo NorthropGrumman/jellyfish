@@ -37,13 +37,14 @@ public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
       stringArgs.add(0, command);
 
       try {
+         getLogger().debug("Running JellyFish command " + command + ".");
          JellyFish.run(stringArgs.toArray(new String[stringArgs.size()]));
-         getLogger().debug("Jellyfish command " + command + " executed successfully.");
+         getLogger().debug("JellyFish command " + command + " executed successfully.");
       } catch (Throwable t) {
          if (failBuildOnException) {
             throw new GradleException("Jellyfish command " + command + " failed!", t);
          } else {
-            getLogger().error("Jellyfish command " + command + " failed!", t);
+            getLogger().error("JellyFish command " + command + " failed!", t);
          }
       }
    }
