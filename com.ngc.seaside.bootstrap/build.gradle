@@ -78,18 +78,3 @@ jar {
     //will overwrite the seaside parent plugin naming convention.
     archiveName = "${project.name}"
 }
-
-/**
- * Unzip the distribution created by the application plugin to make it easier when
- * developing the CLI.
- */
-task unzipDistribution( type: Copy , dependsOn: copyCommandTemplate) {
-    def zipFile = file("${buildDir}/distributions/${project.name}-${project.version}.zip")
-    def outputDir = file("${buildDir}/distributions/")
-
-    from zipTree(zipFile)
-    into outputDir
-}
-
-install.dependsOn unzipDistribution
-build.dependsOn unzipDistribution
