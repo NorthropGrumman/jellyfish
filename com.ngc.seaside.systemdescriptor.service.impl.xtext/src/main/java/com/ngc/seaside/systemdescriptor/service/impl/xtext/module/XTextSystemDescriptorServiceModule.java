@@ -12,10 +12,6 @@ import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.AskStepHandler;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.CompleteStepHandler;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -59,7 +55,6 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
       bindDefaultValidators();
-      bindDefaultStepHandlers();
 
       // If in standalone mode, include the DSL module so the client does not have to.
       if (isStandalone) {
@@ -75,34 +70,6 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
             binder(),
             ISystemDescriptorValidator.class);
       multibinder.addBinding().to(ScenarioStepValidator.class);
-   }
-
-   /**
-    * Invoked to bind the default {@link IScenarioStepHandler}s.
-    */
-   protected void bindDefaultStepHandlers() {
-      // Step handlers should be singletons.
-      bind(ReceiveStepHandler.class).in(Singleton.class);
-      bind(AskStepHandler.class).in(Singleton.class);
-      bind(PublishStepHandler.class).in(Singleton.class);
-      bind(CompleteStepHandler.class).in(Singleton.class);
-
-      Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
-            binder(),
-            IScenarioStepHandler.class);
-      handlers.addBinding().to(ReceiveStepHandler.class);
-      handlers.addBinding().to(AskStepHandler.class);
-      handlers.addBinding().to(PublishStepHandler.class);
-      handlers.addBinding().to(CompleteStepHandler.class);
-
-      // These handlers are also validators.
-      Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
-            binder(),
-            ISystemDescriptorValidator.class);
-      validators.addBinding().to(PublishStepHandler.class);
-      validators.addBinding().to(ReceiveStepHandler.class);
-      validators.addBinding().to(AskStepHandler.class);
-      validators.addBinding().to(CompleteStepHandler.class);
    }
 
    /**
