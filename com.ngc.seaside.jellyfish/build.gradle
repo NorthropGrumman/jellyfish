@@ -6,9 +6,7 @@ configurations {
 
 dependencies {
     compile project(":jellyfish.impl.provider")
-    compile project(":jellyfish.service.name.impl.namingservices")
-    compile project(":jellyfish.service.scenario.impl.scenarioservice")
-    compile project(":jellyfish.service.codegen.impl.codegenservices")
+    compile project(":jellyfish.cli.command.validate")
 
     compile project(":jellyfish.cli.command.samplecommand")
     commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
@@ -55,8 +53,8 @@ dependencies {
     compile project(":jellyfish.cli.command.createjavacucumbertests")
     commandTemplate project(path: ":jellyfish.cli.command.createjavacucumbertests", configuration: "commandTemplate")
     
-    compile project(":jellyfish.service.codegen.impl.codegenservices")
     compile project(":jellyfish.service.name.impl.namingservices")
+    compile project(":jellyfish.service.codegen.impl.codegenservices")
     compile project(":jellyfish.service.scenario.impl.scenarioservice")
     compile project(":jellyfish.service.config.impl.transportconfigurationservice")
     compile project(":jellyfish.service.requirements.impl.requirementsservice")

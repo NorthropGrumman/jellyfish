@@ -45,7 +45,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -402,12 +401,12 @@ public class CreateJavaServiceBaseCommandIT {
       ScenarioStep step = new ScenarioStep();
       step.setKeyword(ReceiveStepHandler.PRESENT.getVerb());
       step.getParameters().add("trackEngagementStatus");
-      calculateTrackPriority.setWhens(listOf(step));
+      calculateTrackPriority.setWhens(Collections.singletonList(step));
 
       step = new ScenarioStep();
       step.setKeyword(PublishStepHandler.FUTURE.getVerb());
       step.getParameters().add("trackPriority");
-      calculateTrackPriority.setThens(listOf(step));
+      calculateTrackPriority.setThens(Collections.singletonList(step));
 
       Model model = new Model("EngagementTrackPriorityService");
       model.addInput(new DataReferenceField("trackEngagementStatus").setType(trackEngagementStatus));
@@ -419,12 +418,6 @@ public class CreateJavaServiceBaseCommandIT {
       p.addModel(model);
 
       return model;
-   }
-
-   private static <T> ArrayList<T> listOf(T... things) {
-      // TODO TH:
-      // Fix the basic model impl. ArrayList SHOULD NOT be in the signature.
-      return new ArrayList<>(Arrays.asList(things));
    }
 
 }
