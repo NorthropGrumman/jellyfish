@@ -31,8 +31,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
