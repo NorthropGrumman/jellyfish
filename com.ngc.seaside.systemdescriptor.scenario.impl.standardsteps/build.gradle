@@ -1,5 +1,4 @@
 dependencies {
-   compile project(':systemdescriptor.model.impl.xtext')
    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
