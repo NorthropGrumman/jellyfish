@@ -1,0 +1,21 @@
+package clocks.models
+
+import clocks.datatypes.Time
+import clocks.datatypes.ComplexTime
+
+model ClockDisplay {
+ metadata {
+    "description": "Displays the current time.",
+    "stereotypes": ["service"]
+ }
+
+ input {
+     Time currentTime
+     ComplexTime complexCurrentTime
+ }
+
+ //Left blank intentionally. This might be as far as we can go until we see a graphic design.
+ //This might need to display the time in AM/PM vs a 24-hour representation.
+ scenario displayCurrentTime {
+ }
+}
