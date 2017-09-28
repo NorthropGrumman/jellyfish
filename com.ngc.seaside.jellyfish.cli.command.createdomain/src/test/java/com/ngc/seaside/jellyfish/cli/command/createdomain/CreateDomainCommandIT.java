@@ -20,7 +20,6 @@ import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -79,7 +78,7 @@ public class CreateDomainCommandIT {
    }
 
    @Test
-   public void testCommand() throws IOException, FileUtilitiesException {
+   public void testCommand() throws Exception {
       runCommand(CreateDomainCommand.MODEL_PROPERTY,
          "com.ngc.Model1",
          CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
@@ -94,6 +93,8 @@ public class CreateDomainCommandIT {
       List<Tdomain> domains = getDomain(projectDir);
       domains.forEach(domain -> assertFalse(domain.getConfig() != null && domain.getConfig().isUseVerboseImports()));
       Map<String, Tobject> objects = getDomainObjects(projectDir);
+      assertEquals(6, objects.size());
+
       assertDomainObject(objects.get("com.ngc.model1.domain.b1.Base1"),
          null,
          true,
@@ -167,7 +168,7 @@ public class CreateDomainCommandIT {
    }
 
    @Test
-   public void testWithExtensionCommand() throws IOException {
+   public void testWithExtensionCommand() throws Exception {
       final String extension = "asidgoajsdig";
       runCommand(CreateDomainCommand.MODEL_PROPERTY,
          "com.ngc.Model1",
@@ -184,7 +185,7 @@ public class CreateDomainCommandIT {
    }
 
    @Test
-   public void testCommandWithEmptyModel() throws IOException {
+   public void testCommandWithEmptyModel() throws Exception {
       runCommand(CreateDomainCommand.MODEL_PROPERTY,
          "com.ngc.Model2",
          CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
@@ -192,12 +193,13 @@ public class CreateDomainCommandIT {
          CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
          velocityPath);
 
-      Path projectDir = outputDir.resolve("com.ngc.model1.domain");
-      assertFalse("Directory should not be created: " + projectDir, Files.isDirectory(projectDir));
+      Path projectDir = outputDir.resolve("com.ngc.model2.domain");
+      Map<String, Tobject> objects = getDomainObjects(projectDir);
+      assertEquals(0, objects.size());
    }
 
    @Test
-   public void testCommandWithPackageGenerator() throws IOException, FileUtilitiesException {
+   public void testCommandWithPackageGenerator() throws Exception {
       Function<INamedChild<IPackage>, String> packageGenerator = (d) -> "foo";
 
       runCommand(CreateDomainCommand.MODEL_PROPERTY,
@@ -222,7 +224,26 @@ public class CreateDomainCommandIT {
       });
    }
 
-   
+   @Test
+   public void testCommandWithSimpleModel() throws Exception {
+      runCommand(CreateDomainCommand.MODEL_PROPERTY,
+         "com.ngc.Model3",
+         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDir,
+         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
+         velocityPath);
+
+      Path projectDir = outputDir.resolve("com.ngc.model3.domain");
+      assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
+      checkGradleBuild(projectDir, "com.ngc.model3.domain");
+      checkVelocity(projectDir);
+      List<Tdomain> domains = getDomain(projectDir);
+      domains.forEach(domain -> assertFalse(domain.getConfig() != null && domain.getConfig().isUseVerboseImports()));
+      Map<String, Tobject> objects = getDomainObjects(projectDir);
+      assertEquals(1, objects.size());
+      assertDomainObject(objects.get("com.ngc.model3.domain.d1.Data1"), null, false, "com.ngc.model3.domain.d1.Data1");
+   }
+
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
       Path buildFile = projectDir.resolve("build.gradle");
       assertTrue("build.gradle is missing", Files.isRegularFile(buildFile));
@@ -279,7 +300,7 @@ public class CreateDomainCommandIT {
       }
       return objects;
    }
-   
+
    private void assertDomainObject(Tobject object, String superObject, boolean isObjectAbstract, String name,
             String... properties) {
       assertNotNull(name + " wasn't a domain object", object);

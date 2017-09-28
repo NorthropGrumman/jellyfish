@@ -390,6 +390,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private Set<String> generateDomainXml(Path xmlFile, IModel model,
             Predicate<INamedChild<IPackage>> generatedObjectPredicate,
             Function<INamedChild<IPackage>, String> packageGenerator, boolean useVerboseImports) {
+
+      try {
+         Files.createDirectories(xmlFile.getParent());
+      } catch (IOException e) {
+         throw new CommandException(e);
+      }
+
       Set<String> packages = new TreeSet<>();
       Set<IData> dataTypes = new LinkedHashSet<>();
       Set<IData> superDataTypes = new LinkedHashSet<>();
@@ -417,7 +424,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       ObjectFactory factory = new ObjectFactory();
       try {
-         Files.createDirectories(xmlFile.getParent());
          JAXBUtilities.write(xmlFile.toFile(), factory.createDomain(domain));
       } catch (IOException e) {
          throw new CommandException(e);
@@ -439,7 +445,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       Queue<IData> queue = new ArrayDeque<>();
       model.getInputs().forEach(field -> queue.add(field.getType()));
       model.getOutputs().forEach(field -> queue.add(field.getType()));
-
+      dataTypes.addAll(queue);
       while (!queue.isEmpty()) {
          IData next = queue.poll();
          IData parent = next.getSuperDataType().orElse(null);
@@ -516,7 +522,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       if (generated) {
          packages.add(pkg);
       }
-      
+
       Tobject object = new Tobject();
       object.setClazz(pkg + '.' + enumVal.getName());
       object.setType("enum");
