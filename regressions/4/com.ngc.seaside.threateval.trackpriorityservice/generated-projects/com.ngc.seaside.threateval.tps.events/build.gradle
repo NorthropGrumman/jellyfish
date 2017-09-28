@@ -1,0 +1,19 @@
+
+apply plugin: 'com.ngc.blocs.gradle.plugin.domain'
+
+generateDomain {
+   domainGenProperty('template.list', file('src/main/resources/velocity/event-source.java.vm'))
+   domainGenProperty('extension.list', 'java')
+}
+
+dependencies {
+	compile "com.ngc.blocs:service.api:$blocsDomainVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package':
+         'com.ngc.seaside.threateval.tps.event.common.datatype.*,' +
+         'com.ngc.seaside.threateval.tps.event.datatype.*')
+   }
+}

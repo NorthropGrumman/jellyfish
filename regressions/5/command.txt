@@ -1,0 +1,1 @@
+create-java-service-project -DinputDir='../../pubsub-system-descriptor' -Dmodel='com.ngc.test.Model1' -DoutputDirectory='.' -Dversion=1.0-SNAPSHOT

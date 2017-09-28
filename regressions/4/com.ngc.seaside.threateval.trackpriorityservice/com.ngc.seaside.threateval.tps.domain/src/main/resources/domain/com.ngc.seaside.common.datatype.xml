@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier">
+        <property name="identifier" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.DroppedSystemTrack">
+        <property name="identifier" type="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>

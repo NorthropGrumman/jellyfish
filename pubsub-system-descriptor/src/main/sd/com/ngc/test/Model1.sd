@@ -1,0 +1,73 @@
+package com.ngc.test
+
+import com.ngc.test.Data1
+import com.ngc.test.Data2
+import com.ngc.test.test2.Data3
+import com.ngc.test.test2.Data4
+import com.ngc.test.Data5
+
+model Model1 {
+  metadata {
+    "name" : "Model1",
+    "description" : "Model1 description",
+    "stereotypes" : ["model", "example"]
+  }
+  
+  input {
+  	Data1 input1
+  	Data2 input2
+  	Data3 input3
+  }
+  
+  output {
+  	Data1 output1
+  	Data4 output2
+  	Data5 output3
+  }
+  
+  scenario pubsub1 {
+  	when receiving input1
+  	then willPublish output1
+  }
+  
+  scenario duplicatePubsub {
+  	when receiving input1
+  	then willPublish output1
+  }
+
+  scenario pubsub2 {
+  	when receiving input2
+  	then willPublish output2
+  }
+  
+  scenario sink1 {
+  	when receiving input1
+  	then willBeCompleted within 500 milliseconds
+  }
+  
+  scenario duplicateSink {
+  	when receiving input1
+  	then willBeCompleted within 500 milliseconds
+  }
+  
+  scenario sink2 {
+  	when receiving input3
+  	then willBeCompleted within 500 milliseconds
+  }
+  
+  scenario source1 {
+  	when completing within 500 milliseconds
+  	then willPublish output1
+  }
+  
+  scenario duplicateSource {
+  	when completing within 500 milliseconds
+  	then willPublish output1
+  }
+  
+  scenario source2 {
+  	when completing within 500 milliseconds
+  	then willPublish output3
+  }
+  
+}

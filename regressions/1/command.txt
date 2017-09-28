@@ -1,0 +1,1 @@
+create-java-service-project -DinputDir='../../threat-eval-system-descriptor' -Dmodel='com.ngc.seaside.threateval.ClassificationTrackPriorityService' -DoutputDirectory='.' -Dversion=1.0-SNAPSHOT
