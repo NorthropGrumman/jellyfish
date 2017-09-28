@@ -5,6 +5,7 @@ generateDomain {
    domainGenProperty('extension.list', '$extension')
 }
 
+#if(! $packages.isEmpty() )
 jar {
    manifest {
       attributes('Export-Package': 
@@ -17,3 +18,4 @@ jar {
 #end
    }
 }
+#end
