@@ -24,7 +24,7 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
+    compile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
 
     testCompile project(":jellyfish.service.codegen.impl.codegenservices")
     testCompile project(":jellyfish.cli.command.testutils")

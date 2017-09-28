@@ -11,6 +11,7 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementsAllocationMatrixCommand;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
@@ -57,8 +58,8 @@ public class RequirementsAllocationMatrixCommandIT {
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
+      modules.add(new StepsSystemDescriptorServiceModule());
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
