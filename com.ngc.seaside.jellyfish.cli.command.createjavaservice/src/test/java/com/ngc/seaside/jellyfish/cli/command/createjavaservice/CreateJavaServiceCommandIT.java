@@ -27,8 +27,8 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceFiel
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
 import org.junit.Before;
 import org.junit.Rule;
