@@ -132,11 +132,15 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
          parameters,
          outputDirectory,
          clean);
-      
-      updateGradleDotSettings(outputDirectory, info);
+
+      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
+                                                    true)) {
+         updateGradleDotSettings(outputDirectory, info);
+      }
       logService.info(CreateJavaPubsubConnectorCommand.class, "%s project successfully created", modelName);
    }
-   
+
    private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
       DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
       updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
@@ -404,7 +408,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
-   
+
    /**
     * Sets java service generation service.
     *
@@ -433,6 +437,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
          CommonParameters.MODEL.required(),
-         CommonParameters.CLEAN);
+         CommonParameters.CLEAN,
+         CommonParameters.UPDATE_GRADLE_SETTING);
    }
 }

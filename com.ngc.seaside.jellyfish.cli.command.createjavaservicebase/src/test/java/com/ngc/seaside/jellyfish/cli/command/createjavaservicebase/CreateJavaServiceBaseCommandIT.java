@@ -209,7 +209,7 @@ public class CreateJavaServiceBaseCommandIT {
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-                                       "build.gradle");
+                                       "build.generated.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
@@ -274,7 +274,7 @@ public class CreateJavaServiceBaseCommandIT {
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-                                       "build.gradle");
+                                       "build.generated.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
@@ -338,7 +338,7 @@ public class CreateJavaServiceBaseCommandIT {
 
       Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
-                                       "build.gradle");
+                                       "build.generated.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 

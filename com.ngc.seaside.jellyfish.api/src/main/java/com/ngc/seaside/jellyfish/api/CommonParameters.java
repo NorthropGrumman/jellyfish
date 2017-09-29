@@ -14,8 +14,10 @@ public enum CommonParameters implements IParameter<String> {
    MODEL("model", "The fully qualified path to the system descriptor model"),
    MODEL_OBJECT("modelObject", "The fully qualified name of the model to generate connectors for"),
    OUTPUT_DIRECTORY("outputDirectory", "Base directory in which to output the project"),
-   PACKAGE("package", "The project's default package"), 
-   PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name");
+   PACKAGE("package", "The project's default package"),
+   PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
+   UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
+                                                 + " settings.gradle file");
 
    private final String description;
    private final String name;
@@ -49,33 +51,34 @@ public enum CommonParameters implements IParameter<String> {
    public boolean isRequired() {
       return false;
    }
-   
+
    /**
     * Returns the boolean value of the given parameter if it was set, false otherwise.
     *
     * @param parameters command parameters
-    * @param parameter name of parameter
+    * @param parameter  name of parameter
     * @return the boolean value of the parameter
     * @throws CommandException if the value is neither 'true' nor 'false'
     */
    public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter) {
       return evaluateBooleanParameter(parameters, parameter, false);
    }
-   
+
    /**
     * Returns the boolean value of the given parameter if it was set, the given default otherwise.
     *
     * @param parameters command parameters
-    * @param parameter name of parameter
+    * @param parameter  name of parameter
     * @return the boolean value of the parameter
     * @throws CommandException if the value is neither 'true' nor 'false'
     */
-   public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter, boolean defaultValue) {
+   public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter,
+                                                  boolean defaultValue) {
       if (parameters.containsParameter(parameter)) {
          String value = parameters.getParameter(parameter).getStringValue().toLowerCase();
          if (!value.equals("true") && !value.equals("false")) {
             throw new CommandException(
-               "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
+                  "Invalid value for " + parameter + ": " + value + ". Expected either true or false.");
          } else {
             return Boolean.valueOf(value);
          }
@@ -83,7 +86,7 @@ public enum CommonParameters implements IParameter<String> {
          return defaultValue;
       }
    }
-   
+
    public IParameter<String> required() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);

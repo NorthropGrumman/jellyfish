@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.gradle.tasks;
 
-import com.ngc.seaside.jellyfish.JellyFish;
+import com.ngc.seaside.jellyfish.cli.gradle.GradleJellyFishRunner;
 
 import org.gradle.api.GradleException;
 
@@ -37,13 +37,14 @@ public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
       stringArgs.add(0, command);
 
       try {
-         JellyFish.run(stringArgs.toArray(new String[stringArgs.size()]));
-         getLogger().debug("Jellyfish command " + command + " executed successfully.");
+         getLogger().debug("Running JellyFish command " + command + ".");
+         GradleJellyFishRunner.run(stringArgs.toArray(new String[stringArgs.size()]));
+         getLogger().debug("JellyFish command " + command + " executed successfully.");
       } catch (Throwable t) {
          if (failBuildOnException) {
             throw new GradleException("Jellyfish command " + command + " failed!", t);
          } else {
-            getLogger().error("Jellyfish command " + command + " failed!", t);
+            getLogger().error("JellyFish command " + command + " failed!", t);
          }
       }
    }

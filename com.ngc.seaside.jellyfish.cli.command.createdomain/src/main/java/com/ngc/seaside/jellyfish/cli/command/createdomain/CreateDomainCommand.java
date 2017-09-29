@@ -127,7 +127,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       createGradleBuild(projectDir, commandOptions, domainTemplateFile, exportPackages, clean);
       createDomainTemplate(projectDir, domainTemplateFile);
-      updateGradleDotSettings(outputDir, projectInfo);
+      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
+                                                    true)) {
+         updateGradleDotSettings(outputDir, projectInfo);
+      }
 
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
@@ -596,6 +600,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
          CommonParameters.OUTPUT_DIRECTORY.required(),
          CommonParameters.MODEL.required(),
          CommonParameters.CLEAN,
+         CommonParameters.UPDATE_GRADLE_SETTING,
          new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                                                     .setDescription("The velocity template file")
                                                                     .setRequired(false),

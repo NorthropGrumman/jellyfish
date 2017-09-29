@@ -50,7 +50,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       IModel model = evaluateModelParameter(commandOptions);
       boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
       Path outputDir = Paths.get(
-         commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+            commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
 
       IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(commandOptions, model);
 
@@ -59,17 +59,22 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       templateService.unpack(CreateJavaServiceBaseCommand.class.getPackage().getName(),
-         parameters,
-         outputDir,
-         clean);
+                             parameters,
+                             outputDir,
+                             clean);
 
-      updateGradleDotSettings(outputDir, projectInfo);
+      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
+                                                    true)) {
+         updateGradleDotSettings(outputDir, projectInfo);
+      }
    }
-   
+
    private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
       DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
       updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+                                                            outputDir.resolve(info.getDirectoryName()).getParent()
+                                                                  .toString()));
       updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
       updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
       try {
@@ -156,18 +161,19 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       return commandOptions.getSystemDescriptor()
-                           .findModel(modelName)
-                           .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
+            .findModel(modelName)
+            .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
    }
 
    private static IUsage createUsage() {
       return new DefaultUsage(
-         "Generates the base abstract service for a Java application",
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.MODEL.required(),
-         CommonParameters.OUTPUT_DIRECTORY.required(),
-         CommonParameters.CLEAN);
+            "Generates the base abstract service for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.CLEAN,
+            CommonParameters.UPDATE_GRADLE_SETTING);
    }
 
 }

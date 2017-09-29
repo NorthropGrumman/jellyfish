@@ -29,7 +29,7 @@ subprojects {
 
         seasideGradlePluginsVersion = '1.6'
         bootstrapApiVersion = '1.7.2'
-        bootstrapVersion = '1.5.2'
+        bootstrapVersion = '1.6.0'
         bootstrapCommandsVersion = '1.2'
 
         blocsVersion = '2.1'
