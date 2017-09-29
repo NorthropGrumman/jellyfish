@@ -21,9 +21,7 @@ import java.util.Objects;
 #end
 
 #if($domain.hasMultipleProperty)
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 #end
 #if($domain.hasArrayProperty)
 import java.util.Arrays;
@@ -39,14 +37,14 @@ import com.ngc.blocs.service.event.api.IEventTopic;
  * @author Generated
  **/
 #if($domain.abstraction)
-#set($modifier = " abstract ")
+#set($modifier = " abstract")
 #else##not an abstraction
-#set($modifier = " ")
+#set($modifier = "")
 #end
 #if(! $domain.extended)
-public${modifier}$type ${domain.classname} {
+public${modifier} $type ${domain.classname} {
 #else
-public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
+public${modifier} $type ${domain.classname} extends $domain.extendedClassShort {
 #end
 
 ## Generate an enumeration
@@ -80,7 +78,7 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #else
 #set ($type = $property.type)
 #end
-#if(!$property.abstraction)
+#if(! $property.abstraction)
 #if(! $property.value)
 #if(! $property.multiple)
   private $property.shortType $property.name;
@@ -124,7 +122,6 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end
 #else
 #if(! $property.abstraction)
-  //@Override
   public List<$type> get${property.methodString}() {
     return $property.name;
   }

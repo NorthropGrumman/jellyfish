@@ -1,8 +1,0 @@
-package com.ngc.seaside.test1
-
-enum Data7 {
-	VAL0,
-	VAL1,
-	VAL2,
-	VAL3
-}

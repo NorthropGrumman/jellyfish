@@ -1,0 +1,20 @@
+package com.ngc.c2
+
+import com.ngc.b2.Base2
+import com.ngc.d1.Data1
+import com.ngc.e1.Enum1
+
+data Child2 : Base2 {
+	int intFieldChild2
+	many int manyIntFieldChild2
+	float floatFieldChild2
+	many float manyFloatFieldChild2
+	string stringFieldChild2
+	many string manyStringFieldChild2
+	Data1 dataFieldChild2
+	many Data1 manyDataFieldChild2
+	Enum1 enumFieldChild2
+	many Enum1 manyEnumFieldChild2
+	Child2 recursiveDataFieldChild2
+	many Child2 manyRecursiveDataFieldChild2
+}

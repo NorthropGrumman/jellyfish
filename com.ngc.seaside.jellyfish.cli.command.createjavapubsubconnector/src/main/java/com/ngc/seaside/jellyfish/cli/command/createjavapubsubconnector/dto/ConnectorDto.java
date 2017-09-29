@@ -3,8 +3,10 @@ package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -14,6 +16,7 @@ public class ConnectorDto {
    private String packageName;
    private Function<INamedChild<IPackage>, String> eventsPackageName;
    private Function<INamedChild<IPackage>, String> messagesPackageName;
+   private Function<IData, Collection<IDataField>> fields;
    private String transportTopicsClass;
    private String projectName;
    private Set<String> projectDependencies;
@@ -55,6 +58,14 @@ public class ConnectorDto {
 
    public void setMessagesPackageName(Function<INamedChild<IPackage>, String> messagesPackageName) {
       this.messagesPackageName = messagesPackageName;
+   }
+
+   public Function<IData, Collection<IDataField>> getFields() {
+      return fields;
+   }
+
+   public void setFields(Function<IData, Collection<IDataField>> fields) {
+      this.fields = fields;
    }
 
    public String getTransportTopicsClass() {
