@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -13,6 +14,8 @@ import java.util.ServiceLoader;
 
 public class JellyFish {
 
+   private final Collection<Module> modules;
+
    /**
     * Main to run the JellyFish application.
     *
@@ -20,6 +23,7 @@ public class JellyFish {
     *             followed by a list of parameters for that command.
     */
    public static void main(String[] args) {
+      Preconditions.checkNotNull(args, "args may not be null!");
       try {
          run(args);
       } catch (IllegalArgumentException e) {
@@ -34,7 +38,30 @@ public class JellyFish {
     *             followed by a list of parameters for that command.
     */
    public static void run(String[] args) {
+      Preconditions.checkNotNull(args, "args may not be null!");
       new JellyFish().doRun(args);
+   }
+
+   /**
+    * Runs JellyFish with the given modules.
+    *
+    * @param args    the program arguments. The first argument should always be the name of the command in which to run
+    *                followed by a list of parameters for that command.
+    * @param modules the Guice modules to execute JellyFish with.  When using this option, no default JellyFish modules
+    *                will be loaded
+    */
+   public static void run(String[] args, Collection<Module> modules) {
+      Preconditions.checkNotNull(args, "args may not be null!");
+      Preconditions.checkNotNull(modules, "modules may not be null!");
+      new JellyFish(modules).doRun(args);
+   }
+
+   private JellyFish() {
+      this(getDefaultModules());
+   }
+
+   private JellyFish(Collection<Module> modules) {
+      this.modules = modules;
    }
 
    private void doRun(String[] args) {
@@ -47,7 +74,7 @@ public class JellyFish {
     * @return the Guice injector
     */
    private Injector getInjector() {
-      return Guice.createInjector(getModules());
+      return Guice.createInjector(modules);
    }
 
    /**
@@ -57,7 +84,7 @@ public class JellyFish {
     *
     * @return A collection of modules or an empty collection.
     */
-   private Collection<Module> getModules() {
+   private static Collection<Module> getDefaultModules() {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishServiceModule());
       // Add the proxy command provider module so that an IJellyFishCommandProvider can be resolved.
