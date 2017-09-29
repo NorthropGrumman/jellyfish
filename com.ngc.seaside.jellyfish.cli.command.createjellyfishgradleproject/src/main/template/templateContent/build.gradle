@@ -31,7 +31,7 @@ subprojects {
     version = '${version}'
 
     ext {
-        starfishCoreVersion = '1.3'
+        starfishCoreVersion = '1.4.0'
         transportServiceVersion = '1.3'
         multicastTransportVersion = '1.1.1'
         seasideBootstrapVersion = '1.5'
