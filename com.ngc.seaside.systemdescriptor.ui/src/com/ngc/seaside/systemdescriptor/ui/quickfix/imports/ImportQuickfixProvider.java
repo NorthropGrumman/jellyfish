@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
 import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.BadLocationException;
@@ -8,6 +9,7 @@ import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.xtext.diagnostics.Diagnostic;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
@@ -24,13 +26,16 @@ import java.util.Set;
 public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 
    @Inject
-   private OrganizeImportsHandler organizeImportsHandler;
+   private IImportsOrganizer importsOrganizer;
 
    @Inject
    private IssueModificationContext.Factory factory;
-   
+
    @Inject
    private IReferenceResolver referenceResolver;
+
+   @Inject
+   private IQualifiedNameConverter qualifiedNameConverter;
 
    @Fixes({ @Fix(IssueCodes.IMPORT_UNUSED), @Fix(IssueCodes.IMPORT_DUPLICATE), @Fix(IssueCodes.IMPORT_COLLISION),
             @Fix(IssueCodes.IMPORT_CONFLICT), @Fix(IssueCodes.IMPORT_UNRESOLVED) })
@@ -61,7 +66,7 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
    private void organizeImports(Issue issue, IssueResolutionAcceptor acceptor) {
       acceptor.accept(issue, "Organize imports", "", getOrganizeImportsImage(), context -> {
          IXtextDocument document = context.getXtextDocument();
-         organizeImportsHandler.organizeImports(document);
+         importsOrganizer.organizeImports(document);
       });
    }
 
@@ -80,7 +85,17 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
             "Import " + reference + " (" + qualifiedPackage + ")",
             "",
             getAddImportImage(),
-            context -> organizeImportsHandler.addImports(context.getXtextDocument(), name));
+            context -> importsOrganizer.addImports(context.getXtextDocument(), new ImportImpl() {
+               @Override
+               public String getImportedNamespace() {
+                  return qualifiedNameConverter.toString(name);
+               }
+
+               @Override
+               public String toString() {
+                  return getImportedNamespace();
+               }
+            }));
       }
    }
 
