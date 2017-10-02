@@ -3,22 +3,27 @@
  */
 package com.ngc.seaside.systemdescriptor.ui.quickfix
 
-import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider
+import org.eclipse.xtext.validation.Issue
+import com.google.inject.Inject
+import com.ngc.seaside.systemdescriptor.ui.quickfix.imports.ImportQuickfixProvider
 
 /**
  * Custom quickfixes.
  *
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
-class SystemDescriptorQuickfixProvider extends DefaultQuickfixProvider {
+class SystemDescriptorQuickfixProvider implements IssueResolutionProvider {
+	
+	@Inject
+	private ImportQuickfixProvider provider;
+	
+	override getResolutions(Issue issue) {
+		return provider.getResolutions(issue)
+	}
+	
+	override hasResolutionFor(String issue) {
+		return provider.hasResolutionFor(issue)
+	}
 
-//	@Fix(SystemDescriptorValidator.INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
 }
