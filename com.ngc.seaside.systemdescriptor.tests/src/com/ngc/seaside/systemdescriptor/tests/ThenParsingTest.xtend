@@ -64,7 +64,6 @@ class ThenParsingTest {
 			package clocks.models
 			 
 			import clocks.datatypes.Time
-			import clocks.models.Speaker
 			 
 			model Alarm {
 			  input {
@@ -105,7 +104,6 @@ class ThenParsingTest {
 			package clocks.models
 			 
 			import clocks.datatypes.Time
-			import clocks.models.Speaker
 			 
 			model Alarm {
 			  input {

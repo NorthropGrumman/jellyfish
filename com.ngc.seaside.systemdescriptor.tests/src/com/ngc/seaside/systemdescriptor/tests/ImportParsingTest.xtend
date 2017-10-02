@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.eclipse.xtext.xbase.validation.IssueCodes
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -125,7 +126,7 @@ class ImportParsingTest {
 
 		val result = parseHelper.parse(source, dataResource.resourceSet)
 		assertNotNull(result)
-		validationTester.assertNoIssues(result)
+		validationTester.assertNoErrors(result)
 	}
 	
 	@Test
@@ -188,7 +189,8 @@ class ImportParsingTest {
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.IMPORT,
-			null
+			IssueCodes.IMPORT_UNRESOLVED,
+			#[]
 		)
 	}
 }

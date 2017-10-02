@@ -64,8 +64,6 @@ class ScenarioParsingTest {
 		val source = '''
 			package clocks.models
 			 
-			import clocks.datatypes.Time
-			 
 			model Speaker {
 			  scenario buzz { }
 			}
