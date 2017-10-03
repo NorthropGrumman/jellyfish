@@ -21,8 +21,8 @@ subprojects {
       apply plugin: 'com.ngc.seaside.parent'
    }
 
-   group 'com.ngc.seaside'
-   version '1.6.0-SNAPSHOT'
+   group = 'com.ngc.seaside'
+   version = '1.6.0-SNAPSHOT'
 
    ext {
       jellyfishDslVersion = '0.8'
