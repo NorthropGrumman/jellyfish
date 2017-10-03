@@ -21,7 +21,7 @@ public interface IImportsRegionIdentifier {
     * 
     * @param pkg package
     * @param resource xtext resource
-    * @full if true, returns the region immediately following the package's package declaration and up to the start of the package's element body
+    * @param fullRegion if true, returns the region immediately following the package's package declaration and up to the start of the package's element body
     * @return the text region of the imports section
     */
    public ITextRegion getImportsRegion(Package pkg, XtextResource resource, boolean fullRegion);
