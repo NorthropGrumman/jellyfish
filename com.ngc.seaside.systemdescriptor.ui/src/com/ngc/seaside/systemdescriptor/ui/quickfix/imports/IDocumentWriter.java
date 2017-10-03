@@ -48,9 +48,9 @@ class DefaultDocumentWriter implements IDocumentWriter {
          if (undoManager != null) {
             undoManager.endCompoundChange();
          }
-      }
-      if (session != null) {
-         ((IDocumentExtension4) document).stopRewriteSession(session);
+         if (session != null) {
+            ((IDocumentExtension4) document).stopRewriteSession(session);
+         }
       }
    }
 
