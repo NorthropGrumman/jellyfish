@@ -1,19 +1,18 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import com.google.common.collect.Iterables;
-import com.google.inject.ImplementedBy;
-import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -30,19 +29,20 @@ import org.eclipse.xtext.resource.IResourceDescriptionsProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.ITextRegion;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
-import java.util.concurrent.CancellationException;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import com.google.common.collect.Iterables;
+import com.google.inject.ImplementedBy;
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
 
 /**
  * Interface for determining the list of imports that a package needs.
@@ -68,7 +68,7 @@ class DefaultImportsResolver implements IImportsResolver {
     * A selector for choosing imports.
     */
    @Inject
-   private IReferenceSelector<Object> importChooser;
+   private IReferenceSelector importChooser;
 
    /**
     * A provider that is used to get the IResourceDescriptions which serves as
@@ -90,7 +90,7 @@ class DefaultImportsResolver implements IImportsResolver {
     */
    @Inject
    private IQualifiedNameConverter qualifiedNameConverter;
-   
+
    /**
     * Used to determine possible types a reference could be referring to.
     */
@@ -214,7 +214,7 @@ class DefaultImportsResolver implements IImportsResolver {
          return Optional.of(possibleImports.iterator().next());
       } else {
          List<QualifiedName> choices = new ArrayList<>(possibleImports);
-         OptionalInt choice = importChooser.select(choices, new XtextReferenceContext(resource, region));
+         OptionalInt choice = importChooser.select(choices, resource, region);
          if (choice.isPresent()) {
             return Optional.of(choices.get(choice.getAsInt()));
          } else {

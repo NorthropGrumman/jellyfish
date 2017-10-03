@@ -1,12 +1,12 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import com.google.inject.Inject;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
+
+import com.google.inject.Inject;
 
 /**
  * Organizes the import section of a system descriptor file

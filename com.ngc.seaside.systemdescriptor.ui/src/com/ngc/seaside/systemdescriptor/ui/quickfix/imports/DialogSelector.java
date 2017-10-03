@@ -1,7 +1,9 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,34 +30,30 @@ import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.eclipse.xtext.ui.label.AbstractLabelProvider;
 import org.eclipse.xtext.util.ITextRegion;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 /**
  * A dialog for selecting imports.
  */
-
-public class DialogSelector<T> implements IReferenceSelector<T> {
+public class DialogSelector implements IReferenceSelector {
 
    @Inject
    private ILabelProvider labelProvider;
 
    /**
     * Display a dialog for the user to select between the given choices and returns the choice.
+    * 
     * @param choices collection of choices
     * @param usage region in the document that is under consideration, can be null
     * @param resource resource
     * @return the choice or {@link Optional#empty()} if no choice was made
     */
-   public OptionalInt select(List<? extends T> choices, XtextReferenceContext context) {
+   public <T> OptionalInt select(List<? extends T> choices, XtextResource resource, ITextRegion usage) {
       XtextEditor editor = EditorUtils.getActiveXtextEditor();
       if (editor == null || choices.isEmpty()) {
          return OptionalInt.empty();
       }
-      ITextRegion usage = context.getUsage();
-      XtextResource resource = context.getResource();
       ISelection previousSelection = showSelectionInEditor(editor, usage, resource);
       Shell shell = Display.getDefault().getActiveShell();
       ChoiceDialog dialog = new ChoiceDialog(shell, new LabelProvider(labelProvider), new ContentProvider());

@@ -41,25 +41,25 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
       removeImport(issue, acceptor);
       organizeImports(issue, acceptor);
    }
-   
+
    @Fix(IssueCodes.IMPORT_DUPLICATE)
    public void fixDuplicateImports(Issue issue, IssueResolutionAcceptor acceptor) {
       removeImport(issue, acceptor);
       organizeImports(issue, acceptor);
    }
-   
+
    @Fix(IssueCodes.IMPORT_COLLISION)
    public void fixImportCollision(Issue issue, IssueResolutionAcceptor acceptor) {
       removeImport(issue, acceptor);
       organizeImports(issue, acceptor);
    }
-   
+
    @Fix(IssueCodes.IMPORT_CONFLICT)
    public void fixImportConflict(Issue issue, IssueResolutionAcceptor acceptor) {
       removeImport(issue, acceptor);
       organizeImports(issue, acceptor);
    }
-   
+
    @Fix(IssueCodes.IMPORT_UNRESOLVED)
    public void fixUnresolvedImports(Issue issue, IssueResolutionAcceptor acceptor) {
       removeImport(issue, acceptor);
