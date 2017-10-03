@@ -33,6 +33,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataModel;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -120,8 +121,6 @@ class DefaultImportsResolver implements IImportsResolver {
                   ref.getValue());
                if (choice.isPresent()) {
                   names.add(choice.get());
-               } else {
-                  throw new CancellationException();
                }
             } else {
                for (IEObjectDescription description : descriptions.getExportedObjectsByObject(reference)) {
@@ -141,10 +140,11 @@ class DefaultImportsResolver implements IImportsResolver {
 
    private Entry<EReference, Predicate<? super EObject>> getReference(EObject element) {
       final Predicate<EObject> DATA_INSTANCE = object -> object instanceof Data;
+      final Predicate<EObject> DATA_MODEL_INSTANCE = object -> object instanceof DataModel;
       final Predicate<EObject> MODEL_INSTANCE = object -> object instanceof Model;
       if (element instanceof ReferencedDataModelFieldDeclaration) {
          return new SimpleImmutableEntry<>(
-            SystemDescriptorPackage.Literals.REFERENCED_DATA_MODEL_FIELD_DECLARATION__DATA_MODEL, DATA_INSTANCE);
+            SystemDescriptorPackage.Literals.REFERENCED_DATA_MODEL_FIELD_DECLARATION__DATA_MODEL, DATA_MODEL_INSTANCE);
       }
       if (element instanceof Data) {
          return new SimpleImmutableEntry<>(SystemDescriptorPackage.Literals.DATA__SUPERCLASS, DATA_INSTANCE);
@@ -174,7 +174,8 @@ class DefaultImportsResolver implements IImportsResolver {
     * @param references import references that have previously been resolved by the user
     * @param region region of the reference in the resource
     * 
-    * @return the qualified name, or {@link Optional#empty()} if the user cancels the operation
+    * @return the qualified name, or {@link Optional#empty()} if the reference cannot be resolved
+    * @throws CancellationException if the user cancels the operation
     */
    private Optional<QualifiedName> findUnknownReference(XtextResource resource, ResourceSet resourceSet,
             Map<String, QualifiedName> references,
@@ -188,10 +189,17 @@ class DefaultImportsResolver implements IImportsResolver {
             if (references.containsKey(refText)) {
                return Optional.of(references.get(refText));
             }
+            Set<QualifiedName> possibleTypes = referenceResolver.findPossibleTypes(refText, resourceSet, choiceFilter);
+            if (possibleTypes.isEmpty()) {
+               return Optional.empty();
+            }
             Optional<QualifiedName> name = selectReference(resource,
-               referenceResolver.findPossibleTypes(refText, resourceSet, choiceFilter),
+               possibleTypes,
                region);
-            name.ifPresent(n -> references.put(refText, n));
+            if (!name.isPresent()) {
+               throw new CancellationException();
+            }
+            references.put(refText, name.get());
             return name;
          }
       }
