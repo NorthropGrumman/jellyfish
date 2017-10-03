@@ -40,6 +40,10 @@ dependencies {
    compile name: 'org.eclipse.xtext.ui.shared_2.10.0.v201605250459'
    compile name: 'org.eclipse.emf.edit_2.12.0.v20160526-0356'
    compile name: 'org.eclipse.equinox.registry_3.6.100.v20160223-2218'
+   compile name: 'org.eclipse.ui.workbench.texteditor_3.10.1.v20160818-1626'
+   compile name: 'org.eclipse.jface.text_3.11.2.v20161113-1700'
+   compile name: 'org.eclipse.text_3.6.0.v20160503-1849'
+   compile name: 'org.eclipse.ui.editors_3.10.1.v20161106-1856'
 }
 
 jar {
