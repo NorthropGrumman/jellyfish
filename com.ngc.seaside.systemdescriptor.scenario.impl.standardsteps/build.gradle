@@ -1,6 +1,4 @@
 dependencies {
-   compile project(':systemdescriptor.model.impl.xtext')
-   compile project(':systemdescriptor.scenario.impl.standardsteps')
    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
    compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
@@ -21,7 +19,7 @@ jar {
    manifest {
       // Note we don't import org.eclipse.xtext.util.  If we do, this bundle will not allow Eclipse to start if it is
       // deployed in Eclipse.
-      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.xtext.module',
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.scenario.*',
                  'Import-Package': '!org.eclipse.xtext.util, *')
    }
 }

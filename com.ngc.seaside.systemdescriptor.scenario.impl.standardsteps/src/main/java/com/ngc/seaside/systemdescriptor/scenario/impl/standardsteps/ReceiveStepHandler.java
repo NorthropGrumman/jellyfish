@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario;
+package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
 
