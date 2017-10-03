@@ -87,9 +87,9 @@ class DefaultImportsRegionIdentifier implements IImportsRegionIdentifier {
             SystemDescriptorPackage.Literals.PACKAGE__IMPORTS,
             0);
          for (int i = 0; i < pkg.getImports().size(); i++) {
-            importsRegion = importsRegion.merge(locationInFileProvider.getSignificantTextRegion(pkg,
+            importsRegion = importsRegion.merge(locationInFileProvider.getFullTextRegion(pkg,
                SystemDescriptorPackage.Literals.PACKAGE__IMPORTS,
-               i + 1));
+               i));
          }
          start = importsRegion.getOffset() + importsRegion.getLength();
       }
