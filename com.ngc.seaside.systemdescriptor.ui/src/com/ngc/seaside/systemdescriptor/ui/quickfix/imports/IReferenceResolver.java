@@ -57,7 +57,7 @@ class DefaultReferenceResolver implements IReferenceResolver {
          resourceSet);
 
       for (IEObjectDescription description : descriptions.getExportedObjectsByType(
-         SystemDescriptorPackage.Literals.DATA_MODEL)) {
+         SystemDescriptorPackage.Literals.ELEMENT)) {
          if (filter.test(description.getEObjectOrProxy())) {
             QualifiedName name = description.getQualifiedName();
             if (name.getLastSegment().equals(reference)) {
