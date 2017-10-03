@@ -1,0 +1,9 @@
+package com.ngc.example.inhertance.datatype
+
+import com.ngc.example.inhertance.datatype.A
+import com.ngc.example.inhertance.datatype.C
+
+data B : A {
+	int fieldB1
+	C fieldB2
+}
