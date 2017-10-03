@@ -7,10 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentRewriteSession;
-import org.eclipse.jface.text.DocumentRewriteSessionType;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.ITextRegion;
@@ -52,6 +48,9 @@ class DefaultImportsOrganizer implements IImportsOrganizer {
    @Inject
    private IImportsRegionIdentifier importsRegionIdentifier;
 
+   @Inject
+   private IDocumentWriter writer;
+
    public void organizeImports(IXtextDocument document) {
       ReplaceRegion replacement = document.readOnly(state -> {
          Package pkg = getPackage(state).orElseThrow(() -> new IllegalStateException());
@@ -72,18 +71,7 @@ class DefaultImportsOrganizer implements IImportsOrganizer {
       });
 
       if (replacement != null) {
-         DocumentRewriteSession session = null;
-         if (document instanceof IDocumentExtension4) {
-            session = ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
-         }
-         try {
-            document.replace(replacement.getOffset(), replacement.getLength(), replacement.getText());
-         } catch (BadLocationException e) {
-            throw new IllegalStateException(e);
-         }
-         if (session != null) {
-            ((IDocumentExtension4) document).stopRewriteSession(session);
-         }
+         writer.replace(document, replacement.getOffset(), replacement.getLength(), replacement.getText());
       }
    }
 
@@ -94,23 +82,11 @@ class DefaultImportsOrganizer implements IImportsOrganizer {
          return region;
       });
       if (imports.length > 0) {
-
          String importsText = System.lineSeparator()
             + Stream.of(imports).map(Import::getImportedNamespace).map("import "::concat).collect(
                Collectors.joining(System.lineSeparator()))
             + System.lineSeparator() + System.lineSeparator();
-         DocumentRewriteSession session = null;
-         if (document instanceof IDocumentExtension4) {
-            session = ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
-         }
-         try {
-            document.replace(importsRegion.getOffset(), importsRegion.getLength(), importsText);
-         } catch (BadLocationException e) {
-            throw new IllegalStateException(e);
-         }
-         if (session != null) {
-            ((IDocumentExtension4) document).stopRewriteSession(session);
-         }
+         writer.replace(document, importsRegion.getOffset(), importsRegion.getLength(), importsText);
       }
    }
 

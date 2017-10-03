@@ -4,9 +4,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentRewriteSession;
-import org.eclipse.jface.text.DocumentRewriteSessionType;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -35,6 +32,9 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 
    @Inject
    private IQualifiedNameConverter qualifiedNameConverter;
+   
+   @Inject
+   private IDocumentWriter writer;
 
    @Fix(IssueCodes.IMPORT_UNUSED)
    public void fixUnusedImport(Issue issue, IssueResolutionAcceptor acceptor) {
@@ -74,14 +74,7 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
    private void removeImport(Issue issue, IssueResolutionAcceptor acceptor) {
       acceptor.accept(issue, "Remove unused import", "", getRemoveImportImage(), context -> {
          IXtextDocument document = context.getXtextDocument();
-         DocumentRewriteSession session = null;
-         if (document instanceof IDocumentExtension4) {
-            session = ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
-         }
-         document.replace(issue.getOffset(), issue.getLength() + 1, "");
-         if (session != null) {
-            ((IDocumentExtension4) document).stopRewriteSession(session);
-         }
+         writer.replace(document, issue.getOffset(), issue.getLength() + 1, "");
       });
    }
 
