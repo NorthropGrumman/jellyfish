@@ -51,6 +51,7 @@ class DefaultImportsOrganizer implements IImportsOrganizer {
    @Inject
    private IDocumentWriter writer;
 
+   @Override
    public void organizeImports(IXtextDocument document) {
       ReplaceRegion replacement = document.readOnly(state -> {
          Package pkg = getPackage(state).orElseThrow(() -> new IllegalStateException());
@@ -75,6 +76,7 @@ class DefaultImportsOrganizer implements IImportsOrganizer {
       }
    }
 
+   @Override
    public void addImports(IXtextDocument document, Import... imports) {
       ITextRegion importsRegion = document.readOnly(state -> {
          Package pkg = getPackage(state).orElseThrow(() -> new IllegalStateException());

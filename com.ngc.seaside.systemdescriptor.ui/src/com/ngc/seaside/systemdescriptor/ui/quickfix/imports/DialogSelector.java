@@ -49,6 +49,7 @@ public class DialogSelector implements IReferenceSelector {
     * @param resource resource
     * @return the choice or {@link Optional#empty()} if no choice was made
     */
+   @Override
    public <T> OptionalInt select(List<? extends T> choices, XtextResource resource, ITextRegion usage) {
       XtextEditor editor = EditorUtils.getActiveXtextEditor();
       if (editor == null || choices.isEmpty()) {
