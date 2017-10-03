@@ -14,7 +14,7 @@ import java.util.List;
  *
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
-class SystemDescriptorQuickfixProvider implements IssueResolutionProvider {
+public class SystemDescriptorQuickfixProvider implements IssueResolutionProvider {
 
    @Inject
    private ImportQuickfixProvider provider;
