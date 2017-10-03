@@ -3,8 +3,8 @@ package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processo
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
