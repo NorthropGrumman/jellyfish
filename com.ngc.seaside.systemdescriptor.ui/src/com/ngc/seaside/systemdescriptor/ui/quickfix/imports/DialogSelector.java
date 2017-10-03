@@ -80,7 +80,7 @@ public class DialogSelector<T> implements IReferenceSelector<T> {
 
    private static ISelection showSelectionInEditor(XtextEditor editor, ITextRegion usage, XtextResource resource) {
       boolean isRevealUsages = editor.getDocument()
-                                     .priorityReadOnly(state -> Objects.equals(state.getURI(), resource.getURI()));
+                                     .readOnly(state -> Objects.equals(state.getURI(), resource.getURI()));
       ISelection originalSelection = null;
       if (isRevealUsages && usage != null) {
          originalSelection = editor.getSelectionProvider().getSelection();
