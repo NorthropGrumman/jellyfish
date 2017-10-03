@@ -12,9 +12,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepH
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 /**
- * The Guice module configuration for the service.  Only use the {@link #StepsSystemDescriptorServiceModule() default
- * constructor} of this module if the service is being used within Eclipse.  Otherwise, use {@link
- * #forStandaloneUsage()} to create the module.
+ * The Guice module configuration for the default step handlers.
  */
 public class StepsSystemDescriptorServiceModule extends AbstractModule {
 
@@ -46,9 +44,9 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       validators.addBinding().to(CompleteStepHandler.class);
    }
 
-	@Override
-	protected void configure() {
-	    bindDefaultStepHandlers();
-	}
+   @Override
+   protected void configure() {
+      bindDefaultStepHandlers();
+   }
 
 }

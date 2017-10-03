@@ -50,6 +50,13 @@
          unpack="false"/>
 
    <plugin
+         id="com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps"
+         download-size="0"
+         install-size="0"
+         version="${osgiVersion}"
+         unpack="false"/>
+
+   <plugin
          id="com.ngc.seaside.systemdescriptor.service.impl.xtext"
          download-size="0"
          install-size="0"

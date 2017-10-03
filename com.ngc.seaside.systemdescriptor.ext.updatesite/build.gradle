@@ -62,6 +62,7 @@ dependencies {
    features project(path: ':systemdescriptor.ext.feature', configuration: 'feature')
 
    sdPlugins project(':systemdescriptor.model.impl.xtext')
+   sdPlugins project(':systemdescriptor.scenario.impl.standardsteps')
    sdPlugins project(':systemdescriptor.service.impl.xtext')
    sdPlugins project(':service.log.impl.common.log4jlogservice')
 
