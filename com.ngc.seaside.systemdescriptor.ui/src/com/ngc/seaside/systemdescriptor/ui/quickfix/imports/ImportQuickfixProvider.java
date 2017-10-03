@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.BadLocationException;
@@ -16,12 +15,12 @@ import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.IssueModificationContext;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
-import org.eclipse.xtext.ui.editor.quickfix.Fixes;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.validation.IssueCodes;
 
-import java.util.Set;
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
 
 public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 
@@ -37,9 +36,32 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
    @Inject
    private IQualifiedNameConverter qualifiedNameConverter;
 
-   @Fixes({ @Fix(IssueCodes.IMPORT_UNUSED), @Fix(IssueCodes.IMPORT_DUPLICATE), @Fix(IssueCodes.IMPORT_COLLISION),
-            @Fix(IssueCodes.IMPORT_CONFLICT), @Fix(IssueCodes.IMPORT_UNRESOLVED) })
+   @Fix(IssueCodes.IMPORT_UNUSED)
    public void fixUnusedImport(Issue issue, IssueResolutionAcceptor acceptor) {
+      removeImport(issue, acceptor);
+      organizeImports(issue, acceptor);
+   }
+   
+   @Fix(IssueCodes.IMPORT_DUPLICATE)
+   public void fixDuplicateImports(Issue issue, IssueResolutionAcceptor acceptor) {
+      removeImport(issue, acceptor);
+      organizeImports(issue, acceptor);
+   }
+   
+   @Fix(IssueCodes.IMPORT_COLLISION)
+   public void fixImportCollision(Issue issue, IssueResolutionAcceptor acceptor) {
+      removeImport(issue, acceptor);
+      organizeImports(issue, acceptor);
+   }
+   
+   @Fix(IssueCodes.IMPORT_CONFLICT)
+   public void fixImportConflict(Issue issue, IssueResolutionAcceptor acceptor) {
+      removeImport(issue, acceptor);
+      organizeImports(issue, acceptor);
+   }
+   
+   @Fix(IssueCodes.IMPORT_UNRESOLVED)
+   public void fixUnresolvedImports(Issue issue, IssueResolutionAcceptor acceptor) {
       removeImport(issue, acceptor);
       organizeImports(issue, acceptor);
    }
