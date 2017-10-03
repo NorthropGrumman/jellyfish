@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class HelpCommandTests {
+public class HelpCommandTest {
 
    private HelpCommand cmd;
 
@@ -93,7 +93,8 @@ public class HelpCommandTests {
 
       IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      DefaultParameter parameter = new DefaultParameter("verbose").setRequired(false);
+      DefaultParameter<String> parameter = new DefaultParameter<>("verbose");
+      parameter.setRequired(true);
       parameter.setValue("true");
       parameters.addParameter(parameter);
       Mockito.when(options.getParameters()).thenReturn(parameters);
@@ -123,7 +124,8 @@ public class HelpCommandTests {
 
       IJellyFishCommandOptions options = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      DefaultParameter parameter = new DefaultParameter("command").setRequired(false);
+      DefaultParameter<String> parameter = new DefaultParameter<>("command");
+      parameter.setRequired(false);
       parameter.setValue("Command1");
       parameters.addParameter(parameter);
       Mockito.when(options.getParameters()).thenReturn(parameters);
