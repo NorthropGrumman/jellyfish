@@ -37,6 +37,7 @@ import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidato
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,7 +119,7 @@ public class ValidationDelegate implements IValidatorExtension {
             IValidationContext<IPackage> ctx1 = newContext(
                   descriptor.getPackages()
                         .getByName(name)
-                        .get(),
+                        .orElseThrow(() -> new IllegalStateException("failed to find wrapper for package " + name)),
                   helper);
             doValidation(ctx1);
             break;
@@ -156,7 +157,8 @@ public class ValidationDelegate implements IValidatorExtension {
             String modelName = ((Model) source.eContainer().eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
             IValidationContext<IDataReferenceField> ctx5 = newContext(
-                  descriptor.findModel(packageName, modelName).get()
+                  descriptor.findModel(packageName, modelName)
+                        .orElseThrow(() -> new IllegalStateException("failed to find wrapper for model " + modelName))
                         .getInputs()
                         .getByName(fieldName)
                         .get(),
@@ -322,14 +324,16 @@ public class ValidationDelegate implements IValidatorExtension {
       return (IModelLink<?>) model.getLinks()
             .stream()
             .map(l -> (IUnwrappable<?>) l)
-            .filter(l -> l.unwrap().equals(xtext))
+            .filter(l -> EcoreUtil.equals(l.unwrap(), xtext))
             .findAny()
-            .get();
+            .orElseThrow(() -> new IllegalStateException("failed to find the wrapper for link " + xtext));
    }
 
    @SuppressWarnings("unchecked")
    private static IScenarioStep findStep(IModel model, String scenarioName, Step xtext) {
-      IScenario scenario = model.getScenarios().getByName(scenarioName).get();
+      IScenario scenario = model.getScenarios()
+            .getByName(scenarioName)
+            .orElseThrow(() -> new IllegalStateException("failed to find the wrapper for scenario " + scenarioName));
       Collection<IScenarioStep> steps;
       switch (xtext.eClass().getClassifierID()) {
          case SystemDescriptorPackage.GIVEN_STEP:
@@ -346,9 +350,9 @@ public class ValidationDelegate implements IValidatorExtension {
       }
       return (IScenarioStep) steps.stream()
             .map(s -> (IUnwrappable<Step>) s)
-            .filter(s -> s.unwrap().equals(xtext))
+            .filter(s -> EcoreUtil.equals(xtext, s.unwrap()))
             .findAny()
-            .get();
+            .orElseThrow(() -> new IllegalStateException("failed to find the wrapper for step " + xtext));
    }
 
    /**
