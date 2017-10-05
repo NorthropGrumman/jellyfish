@@ -160,7 +160,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	}
 
 	def dispatch void format(Output output, extension IFormattableDocument document) {
-		debugLog("Entering method: format(INPUT)");
+		debugLog("Entering method: format(OUTPUT)");
 
 		var begin = output.regionFor.keyword('output')
 		var end = output.regionFor.keyword('}')
@@ -169,7 +169,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		for (OutputDeclaration dec : output.getDeclarations()) {
 			dec.format;
-			if (dec != output.getDeclarations.last) {
+			if (dec != output.getDeclarations.last && dec.getMetadata() != null) {
 				dec.append[setNewLines(2)]
 			} else {
 				dec.append[newLine]
