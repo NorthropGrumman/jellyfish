@@ -25,5 +25,4 @@ dependencies {
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
     testCompile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
     testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    
 }

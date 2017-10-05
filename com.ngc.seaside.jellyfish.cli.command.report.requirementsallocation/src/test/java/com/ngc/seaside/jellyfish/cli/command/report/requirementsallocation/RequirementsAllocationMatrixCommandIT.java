@@ -48,9 +48,9 @@ public class RequirementsAllocationMatrixCommandIT {
    private RequirementsAllocationMatrixCommand cmd = new RequirementsAllocationMatrixCommand();
 
    private DefaultParameterCollection parameters;
+
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
-   // private StringTable<Requirement> table;
 
    private Path outputDir;
    private Path outputFilePath;

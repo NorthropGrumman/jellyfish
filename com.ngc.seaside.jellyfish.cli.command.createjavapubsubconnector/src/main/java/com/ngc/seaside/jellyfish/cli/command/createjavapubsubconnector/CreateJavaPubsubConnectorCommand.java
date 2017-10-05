@@ -42,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -49,6 +50,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
@@ -62,6 +64,15 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
+   private static final Function<IData, Collection<IDataField>> FIELDS_FUNCTION = data -> {
+      Set<IDataField> fields = new HashSet<>();
+      while (data != null) {
+         fields.addAll(data.getFields());
+         data = data.getSuperDataType().orElse(null);
+      }
+      return fields;
+   };
+   
    private ILogService logService;
    private ITemplateService templateService;
    private IScenarioService scenarioService;
@@ -102,6 +113,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       dto.setModel(model);
       dto.setEventsPackageName(value -> packageService.getEventPackageName(commandOptions, value));
       dto.setMessagesPackageName(value -> packageService.getMessagePackageName(commandOptions, value));
+      dto.setFields(FIELDS_FUNCTION);
       EnumDto<?> transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
       dto.setProjectDependencies(new LinkedHashSet<>(
@@ -120,11 +132,15 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
          parameters,
          outputDirectory,
          clean);
-      
-      updateGradleDotSettings(outputDirectory, info);
+
+      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
+                                                    true)) {
+         updateGradleDotSettings(outputDirectory, info);
+      }
       logService.info(CreateJavaPubsubConnectorCommand.class, "%s project successfully created", modelName);
    }
-   
+
    private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
       DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
       updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
@@ -392,7 +408,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
-   
+
    /**
     * Sets java service generation service.
     *
@@ -421,6 +437,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
          CommonParameters.MODEL.required(),
-         CommonParameters.CLEAN);
+         CommonParameters.CLEAN,
+         CommonParameters.UPDATE_GRADLE_SETTING);
    }
 }

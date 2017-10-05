@@ -21,7 +21,7 @@ dependencies {
 
    bundles "com.ngc.seaside:service.api:${D}starfishCoreVersion"
    bundles "com.ngc.seaside:fault.impl.faultloggingservice:${D}starfishCoreVersion"
-   bundles "com.ngc.seaside:monitor.impl.loggingmonitoringservice:${D}starfishCoreVersion"
+   bundles "com.ngc.seaside:monitoring.impl.loggingmonitoringservice:${D}starfishCoreVersion"
    bundles "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
    bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:${D}transportServiceVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.multicast:${D}multicastTransportVersion"

@@ -1,0 +1,20 @@
+#set( $D = '$' )
+
+dependencies {
+    #foreach ($project in  $dto.projectDependencies)
+    compile project(':${project}')
+    #end
+
+    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
+    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
+    compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
+    compile "org.osgi:osgi.core:${D}osgiVersion"
+    compile "org.osgi:osgi.enterprise:${D}osgiVersion"
+    compile "com.google.guava:guava:${D}guavaVersion"
+}
+
+jar {
+    manifest {
+        attributes('Export-Package': '${dto.exportedPackagesSnippet}')
+    }
+}

@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
@@ -12,6 +13,8 @@ import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -50,16 +53,22 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME = "create-java-pubsub-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
    static final String CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME = "create-protocolbuffer-messages";
-   private static final String[] SUBCOMMANDS = { CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
-            CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME, CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
-            CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
-            CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME, CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME };
+   private static final String[] SUBCOMMANDS = {CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
+                                                CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME,
+                                                CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME,
+                                                CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
+                                                CREATE_JAVA_SERVICE_BASE_COMMAND_NAME,
+                                                CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
+                                                CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME,
+                                                CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME};
 
    public static final String NAME = "create-java-service-project";
 
    private ILogService logService;
    private IPromptUserService promptUserService;
    private IJellyFishCommandProvider jellyFishCommandProvider;
+   private ITemplateService templateService;
+   private IProjectNamingService projectNamingService;
 
    @Override
    public String getName() {
@@ -72,24 +81,25 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
          synchronized (CreateJavaServiceProjectCommand.class) {
             if (USAGE == null) {
                Map<String, IParameter<?>> usageParameters = new HashMap<>();
-               
+
                for (String subcommand : SUBCOMMANDS) {
                   List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
-                           .getAllParameters();
+                        .getAllParameters();
                   for (IParameter<?> parameter : parameters) {
                      if (parameter.getName() != null && parameter.getDescription() != null) {
                         usageParameters.put(parameter.getName(), parameter);
                      }
                   }
                }
-               
+
                usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
                usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
                usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
-                        .setDescription("The name of the project.").setRequired(false));
+                     .setDescription("The name of the project.").setRequired(false));
                usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY,
-                  new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
-                           .setDescription("Whether or not to create the service's domain model").setRequired(false));
+                                   new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
+                                         .setDescription("Whether or not to create the service's domain model")
+                                         .setRequired(false));
                IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
                USAGE = new DefaultUsage("Create a new Java service project for a particular model.", parameters);
             }
@@ -168,6 +178,26 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       setPromptUserService(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setProjectNamingService(IProjectNamingService ref) {
+      this.projectNamingService = ref;
+   }
+
+   public void removeProjectNamingService(IProjectNamingService ref) {
+      setProjectNamingService(null);
+   }
+
    private void createJellyFishGradleProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
@@ -191,6 +221,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getEventsProjectName(delegateOptions, ctx.model));
    }
 
    private void createCucumberTestsProject(CommandInvocationContext ctx) {
@@ -231,14 +262,16 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_SERVICE_BASE_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getBaseServiceProjectName(delegateOptions, ctx.model));
    }
-   
+
    private void createProtocolBufferMessagesProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = DefaultJellyFishCommandOptions.mergeWith(
             ctx.standardCommandOptions,
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getMessageProjectName(delegateOptions, ctx.model));
    }
 
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {
@@ -247,6 +280,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, ctx.projectDirectory.getAbsolutePath())
       );
       doRunCommand(CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME, delegateOptions);
+      generateGradleBuildFile(ctx, projectNamingService.getConnectorProjectName(delegateOptions, ctx.model));
    }
 
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
@@ -287,8 +321,10 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
                .toFile();
       }
-      
-      ctx.createDomain = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true);
+
+      ctx.createDomain =
+            CommonParameters
+                  .evaluateBooleanParameter(commandOptions.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true);
 
       // Get the group ID.
       if (commandOptions.getParameters().containsParameter(GROUP_ID_PROPERTY)) {
@@ -327,6 +363,15 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       return ctx;
    }
 
+   private void generateGradleBuildFile(CommandInvocationContext ctx, IProjectInformation projectInfo) {
+      boolean clean = CommonParameters.evaluateBooleanParameter(ctx.originalCommandOptions.getParameters(),
+                                                                CommonParameters.CLEAN.getName(),
+                                                                false);
+      templateService.unpack(CreateJavaServiceProjectCommand.class.getPackage().getName(),
+                             ctx.standardCommandOptions.getParameters(),
+                             ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
+                             clean);
+   }
 
    private static class CommandInvocationContext {
 
@@ -341,7 +386,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       String modelName;
 
       IModel model;
-      
+
       boolean createDomain;
    }
 }

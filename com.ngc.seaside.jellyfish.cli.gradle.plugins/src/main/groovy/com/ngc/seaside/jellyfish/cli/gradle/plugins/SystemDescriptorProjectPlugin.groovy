@@ -7,6 +7,11 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
 
+/**
+ * A plugin that can be applied to a System Descriptor project.  When a build is executed, the System Descriptor project
+ * will be validated with JellyFish and then a ZIP of the project will be created.  The ZIP can then be installed to
+ * a local Maven repository or uploaded to a remote Maven repository.
+ */
 class SystemDescriptorProjectPlugin implements Plugin<Project> {
 
     @Override
@@ -65,7 +70,8 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 }
 
                 // Configure the name of the distribution.  We do this here so that properties are evaluated correctly.
-                tasks.getByName('sdDistribution').archiveName = "${project.group}.${project.name}-${project.version}.zip"
+                tasks.getByName(
+                      'sdDistribution').archiveName = "${project.group}.${project.name}-${project.version}.zip"
 
                 // Set the default tasks.
                 defaultTasks = ['build']

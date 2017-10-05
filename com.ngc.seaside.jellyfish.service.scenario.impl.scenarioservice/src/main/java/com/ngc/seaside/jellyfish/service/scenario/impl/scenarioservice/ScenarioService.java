@@ -101,7 +101,7 @@ public class ScenarioService implements IScenarioService {
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         target = "(component.name=com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.ReceiveStepHandler)")
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
    public void setReceiveStepHandler(IScenarioStepHandler ref) {
       this.receiveStepHandler = (ReceiveStepHandler) ref;
       if (this.publishStepHandler != null && this.receiveStepHandler != null) {
@@ -116,7 +116,7 @@ public class ScenarioService implements IScenarioService {
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         target = "(component.name=com.ngc.seaside.systemdescriptor.service.impl.xtext.scenario.PublishStepHandler)")
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
    public void setPublishStepHandler(IScenarioStepHandler ref) {
       this.publishStepHandler = (PublishStepHandler) ref;
       if (this.publishStepHandler != null && this.receiveStepHandler != null) {
