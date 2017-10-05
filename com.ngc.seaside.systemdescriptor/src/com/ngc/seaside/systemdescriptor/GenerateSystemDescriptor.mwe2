@@ -54,6 +54,10 @@ Workflow {
 				generateXtendStub = false
 			}
 			
+			quickFixProvider = {
+				generateXtendStub = false
+			}
+			
 			generator = {
 				// Don't generate the generator stub since we have our own.
 				generateXtendStub = false

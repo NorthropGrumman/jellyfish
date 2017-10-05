@@ -60,6 +60,15 @@
 			</reference>
 		</activeWhen>
 		</handler>
+		<handler
+			class="com.ngc.seaside.systemdescriptor.ui.SystemDescriptorExecutableExtensionFactory:com.ngc.seaside.systemdescriptor.ui.quickfix.imports.OrganizeImportsHandler"
+			commandId="org.eclipse.xtext.xbase.ui.organizeImports">
+		<activeWhen>
+			<reference
+					definitionId="com.ngc.seaside.systemdescriptor.SystemDescriptor.Editor.opened">
+			</reference>
+		</activeWhen>
+		</handler>
 		<!-- copy qualified name -->
 		<handler
 			class="com.ngc.seaside.systemdescriptor.ui.SystemDescriptorExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"

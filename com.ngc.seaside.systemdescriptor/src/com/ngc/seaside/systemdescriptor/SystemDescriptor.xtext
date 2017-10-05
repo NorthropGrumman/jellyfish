@@ -383,7 +383,7 @@ Enumeration
  * attributes of metadata and optional members.
  */
 Data
-	: 'data' name=UnqualifiedName (':' superclass=[Data|QualifiedName])? '{'
+	: 'data' name=UnqualifiedName (':' superclass=[Data|UnqualifiedName])? '{'
 		metadata=Metadata?
 		fields+=DataFieldDeclaration* 
 	  '}'

@@ -123,8 +123,6 @@ class JellyFishExampleParsingTest {
 		val speakerSource = '''
 			package clocks.models
 			
-			import clocks.datatypes.Time
-			
 			model Speaker {
 			  metadata {
 			    "description": "Makes annoying buzzing sounds.",
