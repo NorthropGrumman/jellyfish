@@ -56,7 +56,6 @@ public class RequirementsVerificationMatrixCommandCsvFileOutIT {
 
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.removeIf(m -> m instanceof XTextSystemDescriptorServiceModule);
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       modules.add(new StepsSystemDescriptorServiceModule());
       modules.add(new AbstractModule() {

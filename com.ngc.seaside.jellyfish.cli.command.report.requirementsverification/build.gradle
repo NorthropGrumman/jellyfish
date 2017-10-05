@@ -19,10 +19,10 @@ dependencies {
     
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
     testCompile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+    testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 }
