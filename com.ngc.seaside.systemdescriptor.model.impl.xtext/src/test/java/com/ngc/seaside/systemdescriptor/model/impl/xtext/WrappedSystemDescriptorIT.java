@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext;
 
 import com.google.common.io.Closeables;
+import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -19,6 +21,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
@@ -33,8 +36,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -61,20 +69,24 @@ public class WrappedSystemDescriptorIT {
    @Inject
    private IParser parser;
 
-   @Inject
    private XtextResourceSet resourceSet;
 
    @Before
    public void setup() throws Throwable {
-      Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
+      TerminalsStandaloneSetup.doSetup();
+      Injector injector = Guice.createInjector(new SystemDescriptorRuntimeModule());
+      new SystemDescriptorStandaloneSetup().register(injector);
+      //Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       injector.injectMembers(this);
+
+      resourceSet = new XtextResourceSet();
       resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
    }
 
 
    @Test
    public void doesCreateWrappedDescriptorWithSingleResource() throws Throwable {
-      IParseResult result = parser.parse(new InputStreamReader(streamOf("clocks/datatypes/Time.sd")));
+      IParseResult result = parser.parse(new InputStreamReader(streamOf(pathTo("clocks/datatypes/Time.sd"))));
       Package p = (Package) result.getRootASTElement();
       wrapped = new WrappedSystemDescriptor(p);
 
@@ -115,12 +127,12 @@ public class WrappedSystemDescriptorIT {
    @SuppressWarnings("unchecked")
    @Test
    public void testDoesCreateWrappedDescriptorWithMultipleResources() throws Throwable {
-      resourceOf("clocks/datatypes/Time.sd");
-      Resource timerResource = resourceOf("clocks/models/Timer.sd");
-      resourceOf("clocks/models/ClockDisplay.sd");
-      resourceOf("clocks/models/Speaker.sd");
-      resourceOf("clocks/models/Alarm.sd");
-      resourceOf("clocks/AlarmClock.sd");
+      resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      Resource timerResource = resourceOf(pathTo("clocks/models/Timer.sd"));
+      resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
+      resourceOf(pathTo("clocks/models/Speaker.sd"));
+      resourceOf(pathTo("clocks/models/Alarm.sd"));
+      resourceOf(pathTo("clocks/AlarmClock.sd"));
 
       // This is how you get the parsing result from an XText resource.  The result has the errors.
       IParseResult result = ((XtextResource) timerResource).getParseResult();
@@ -329,13 +341,13 @@ public class WrappedSystemDescriptorIT {
    @SuppressWarnings("unchecked")
    @Test
    public void testDoesCreateWrappedDescriptorWithDataInheritance() throws Throwable {
-      resourceOf("clocks/datatypes/Time.sd");
-      Resource goTimeResource = resourceOf("clocks/datatypes/GoTime.sd");
-      resourceOf("clocks/models/Timer.sd");
-      resourceOf("clocks/models/ClockDisplay.sd");
-      resourceOf("clocks/models/Speaker.sd");
-      resourceOf("clocks/models/Alarm.sd");
-      resourceOf("clocks/AlarmClock.sd");
+      resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      Resource goTimeResource = resourceOf(pathTo("clocks/datatypes/GoTime.sd"));
+      resourceOf(pathTo("clocks/models/Timer.sd"));
+      resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
+      resourceOf(pathTo("clocks/models/Speaker.sd"));
+      resourceOf(pathTo("clocks/models/Alarm.sd"));
+      resourceOf(pathTo("clocks/AlarmClock.sd"));
 
       // This is how you get the parsing result from an XText resource.  The result has the errors.
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
@@ -360,14 +372,14 @@ public class WrappedSystemDescriptorIT {
    @SuppressWarnings("unchecked")
    @Test
    public void testDoesCreateWrappedDescriptorWithEnums() throws Throwable {
-      resourceOf("clocks/datatypes/Time.sd");
-      resourceOf("clocks/datatypes/TimeZone.sd");
-      Resource goTimeResource = resourceOf("clocks/datatypes/GoTime.sd");
-      resourceOf("clocks/models/Timer.sd");
-      resourceOf("clocks/models/ClockDisplay.sd");
-      resourceOf("clocks/models/Speaker.sd");
-      resourceOf("clocks/models/Alarm.sd");
-      resourceOf("clocks/AlarmClock.sd");
+      resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/datatypes/TimeZone.sd"));
+      Resource goTimeResource = resourceOf(pathTo("clocks/datatypes/GoTime.sd"));
+      resourceOf(pathTo("clocks/models/Timer.sd"));
+      resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
+      resourceOf(pathTo("clocks/models/Speaker.sd"));
+      resourceOf(pathTo("clocks/models/Alarm.sd"));
+      resourceOf(pathTo("clocks/AlarmClock.sd"));
 
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
@@ -396,15 +408,24 @@ public class WrappedSystemDescriptorIT {
       streams.values().forEach(Closeables::closeQuietly);
    }
 
-   private InputStream streamOf(String resource) throws Throwable {
-      InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
-      streams.put(resource, is);
+   public static Path pathTo(String... packagesAndFile) {
+      Collection<String> parts = new ArrayList<>();
+      parts.add("resources");
+      parts.add("test");
+      parts.addAll(Arrays.asList(packagesAndFile));
+      return Paths.get("build", parts.toArray(new String[parts.size()]));
+   }
+
+   private InputStream streamOf(Path file) throws IOException {
+      InputStream is = Files.newInputStream(file);
+      streams.put(file.toString(), is);
       return is;
    }
 
-   private Resource resourceOf(String resource) throws Throwable {
-      Resource r = resourceSet.createResource(URI.createURI("dummy:/" + resource));
-      r.load(streamOf(resource), resourceSet.getLoadOptions());
+   private XtextResource resourceOf(Path file) throws IOException {
+      XtextResource r = (XtextResource) resourceSet.createResource(
+            URI.createFileURI(file.toAbsolutePath().toFile().toString()));
+      r.load(streamOf(file), resourceSet.getLoadOptions());
       return r;
    }
 }

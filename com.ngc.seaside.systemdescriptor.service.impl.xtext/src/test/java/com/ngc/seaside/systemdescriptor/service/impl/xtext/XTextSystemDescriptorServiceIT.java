@@ -96,7 +96,7 @@ public class XTextSystemDescriptorServiceIT {
       assertFalse("AlarmClock system should not be in the result",
                   everythingButSystems.contains(result.getSystemDescriptor().findModel("clocks.AlarmClock").get()));
       assertEquals("did not find all results!",
-                   4,
+                   5,
                    everythingButSystems.size());
    }
 

@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
@@ -65,6 +66,19 @@ public class ParsingDelegateIT {
       IParsingResult result = delegate.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("parsing should be successful!", result.isSuccessful());
       assertNotNull("system descriptor not set!", result.getSystemDescriptor());
+   }
+
+   @Test
+   public void testDoesHandleDataInheritance() throws Throwable {
+      IParsingResult result = delegate.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      assertTrue("parsing should be successful!", result.isSuccessful());
+      assertNotNull("system descriptor not set!", result.getSystemDescriptor());
+      IData bestTime = result.getSystemDescriptor().findData("clocks.datatypes.BestTime").get();
+      assertTrue("data does not have base type!",
+                 bestTime.getSuperDataType().isPresent());
+      assertEquals("base data type name not correct!",
+                   "BaseTime",
+                   bestTime.getSuperDataType().get().getName());
    }
 
    @Test
