@@ -1,0 +1,3 @@
+
+include ':jellyfish-cli'
+project(':jellyfish-cli').projectDir = new File(settingsDir, '../jellyfish-cli')
