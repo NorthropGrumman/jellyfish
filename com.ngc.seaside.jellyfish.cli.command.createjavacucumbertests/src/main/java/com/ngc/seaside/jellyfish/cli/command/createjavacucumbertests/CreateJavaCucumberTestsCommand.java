@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -60,6 +61,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
    private IJavaServiceGenerationService generationService;
+   private IFeatureService featureService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -193,6 +195,23 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     */
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
+   }
+   
+   /**
+    * Sets feature service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFeatureService")
+   public void setFeatureService(IFeatureService ref) {
+      this.featureService = ref;
+   }
+
+   /**
+    * Remove feature service.
+    */
+   public void removeFeatureService(IFeatureService ref) {
+      setFeatureService(null);
    }
    
    /**
