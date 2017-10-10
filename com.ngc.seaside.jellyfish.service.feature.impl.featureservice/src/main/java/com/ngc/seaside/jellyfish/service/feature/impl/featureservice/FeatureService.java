@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -11,14 +12,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Path;
+
 @Component(service = IFeatureService.class)
 public class FeatureService implements IFeatureService {
 
    private ILogService logService;
-   
-   
+
    @Override
-   public IFeatureInformation getFeatureInfo(String uri) {
+   public IFeatureInformation getFeatureInfo(Path sdPath, IModel model) {
       // TODO Auto-generated method stub
       return null;
    }
