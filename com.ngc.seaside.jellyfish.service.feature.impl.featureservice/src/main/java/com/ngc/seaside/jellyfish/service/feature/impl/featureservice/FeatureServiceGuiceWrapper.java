@@ -2,8 +2,8 @@ package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
-import com.ngc.seaside.jellyfish.service.feature.api.dto.FeatureDto;
 
 public class FeatureServiceGuiceWrapper implements IFeatureService {
 
@@ -16,7 +16,7 @@ public class FeatureServiceGuiceWrapper implements IFeatureService {
    }
 
    @Override
-   public FeatureDto getFeatureInfo(String uri) {
+   public IFeatureInformation getFeatureInfo(String uri) {
       return delegate.getFeatureInfo(uri);
    }
 }

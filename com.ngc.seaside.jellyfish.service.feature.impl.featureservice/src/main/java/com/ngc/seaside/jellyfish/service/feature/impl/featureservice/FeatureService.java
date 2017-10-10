@@ -1,8 +1,8 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
-import com.ngc.seaside.jellyfish.service.feature.api.dto.FeatureDto;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,12 +16,13 @@ public class FeatureService implements IFeatureService {
 
    private ILogService logService;
    
+   
    @Override
-   public FeatureDto getFeatureInfo(String uri) {
-      //TODO implement me
+   public IFeatureInformation getFeatureInfo(String uri) {
+      // TODO Auto-generated method stub
       return null;
    }
-   
+
    @Activate
    public void activate() {
       logService.debug(getClass(), "activated");
