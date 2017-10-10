@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 // Use Nexus to retrieve additional Gradle plugins used by the build.
 buildscript {
 	repositories {
@@ -19,12 +21,15 @@ import org.gradle.api.ProjectConfigurationException
 ext {
    	xtextVersion = '2.10.0'
    	
-   	eclipseVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+	eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
+   	eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+
+	eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
    	
    	// The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
    	eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
 	// The cache location of downloaded files.
-    eclipseCache = '.gradle/eclipse'
+   	 eclipseCache = '.gradle/eclipse'
    	// The local file to save the ZIP to.
    	eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
    	// This is the location where the Eclipse download will be unzipped to.
@@ -37,7 +42,7 @@ ext {
 	
 	// This is the location of the Eclispe exe we use to create the update site
 	// metadata.
-	eclipseExe = "$eclipseInstallationDirectory/eclipse.exe"
+	eclipseExe = "$eclipseInstallationDirectory/eclipse" + OperatingSystem.current().isLinux() ? '' : '.exe'
 }
 
 allprojects {
@@ -165,10 +170,14 @@ task downloadEclipse() {
 }
 downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
 
-task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
-   from zipTree(file("$eclipseDownloadDestFile"))
-   into "$eclipseCache"
-}
+//if (OperatingSystem.current().isLinux()) {
+//   task unzipEclpse(type: , dep
+//} else {
+   task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+      from zipTree(file("$eclipseDownloadDestFile"))
+      into "$eclipseCache"
+   }
+//}
 unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
 
 task build(dependsOn: unzipEclipse) {
