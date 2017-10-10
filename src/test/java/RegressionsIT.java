@@ -12,13 +12,13 @@ import org.junit.Test;
 
 public class RegressionsIT {
 
-    // Class variable to hold regressions directory
-    String regressionTestsDir = "";
-    
-    
     //@Mock
     //private ILogService logService;  // Is this the logger that is needed for JellyFishProjectGenerator?
     
+   
+    // Class variable to hold regressions directory
+    String regressionTestsDir = "";
+   
     @Before
     public void setup() throws Throwable {
         // Set the regressions directory variable
@@ -26,7 +26,7 @@ public class RegressionsIT {
     }
    
     /**
-     * testGenerationAndDiff - this is the start method for the regression test
+     * This is the start method for the regression test
      */
     @Test
     public void testGenerationAndDiff() {
@@ -36,6 +36,7 @@ public class RegressionsIT {
         if (subs.length == 0) {
             System.out.println("The directory is empty");
         } else {
+            // Loop through the subdirectories under 'regressions' and perform operations
             for (String aFile : subs) {
                 String sub = "\\" + aFile;
                 String subDir = regressionTestsDir + sub;
@@ -64,7 +65,7 @@ public class RegressionsIT {
         // Place the newly generated project into a temporary directory
         String tempOutputDirectory = directory + "\\tmp";
 
-        // create the generation project object
+        // TODO: create the generation project object
         //Logger log = new Logger();//-------------? 
         //JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log);
         //         .setCommand(command)
@@ -89,7 +90,7 @@ public class RegressionsIT {
     private static void runGradleCleanBuildOnGeneratedProject(String directory) {
        System.out.println("Running 'gradle clean build -x test' on newly generated project: " + directory);
 
-       // Perform the 'gradle clean build -x test' command
+       // TODO: Perform the 'gradle clean build -x test' command
        
        diffDefaultAndGeneratedProject(directory);
     }
@@ -101,7 +102,7 @@ public class RegressionsIT {
     private static void diffDefaultAndGeneratedProject(String tmp) {
        String defaultDir = tmp.replace("\\tmp", "");
        
-       // Perform the recursive diff on the two directories. If different, throw an exception (fail the test)
+       // TODO: Perform the recursive diff on the two directories. If different, throw an exception (fail the test)
        
        System.out.println("Diffing proj at '" + defaultDir + "' and '" + tmp + "'");
     }
