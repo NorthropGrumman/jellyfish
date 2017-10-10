@@ -92,6 +92,7 @@ public class TemplateServiceTest {
    public void testTemplateExists() {
       assertFalse(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalid"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.example"));
+      assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.example-with-hyphen"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.duplicatefolderexample"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofile"));
       assertTrue(templateService.templateExists("com.ngc.seaside.bootstrap.command.impl.invalidnofolder"));
@@ -247,11 +248,11 @@ public class TemplateServiceTest {
       when(collection.containsParameter("artifactId")).thenReturn(true);
       when(collection.containsParameter("commandName")).thenReturn(true);
       when(collection.containsParameter("package")).thenReturn(true);
-      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyClass"));
-      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside"));
-      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter("artifactId").setValue("mybundle"));
-      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter("commandName").setValue("my-bundle"));
-      when(collection.getParameter("package")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside.mybundle"));
+      when(collection.getParameter("classname")).thenReturn(new DefaultParameter<>("classname").setValue("MyClass"));
+      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter<>("classname").setValue("com.ngc.seaside"));
+      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter<>("artifactId").setValue("mybundle"));
+      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter<>("commandName").setValue("my-bundle"));
+      when(collection.getParameter("package")).thenReturn(new DefaultParameter<>("classname").setValue("com.ngc.seaside.mybundle"));
 
 
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",

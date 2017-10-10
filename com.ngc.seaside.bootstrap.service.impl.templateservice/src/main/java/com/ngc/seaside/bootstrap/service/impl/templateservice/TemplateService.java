@@ -9,7 +9,6 @@ import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
@@ -294,7 +293,7 @@ public class TemplateService implements ITemplateService {
 
             //must test to make sure all parts are actually equal and the last value doesn't just being with
             //the same word.
-            name = name.substring(0, pathname.getName().indexOf('-'));
+            name = name.substring(0, pathname.getName().indexOf('-', templatePrefix.length()));
             List<String> nameList = Arrays.asList(name.split("\\."));
             return nameList.size() >= templatePrefixList.size() &&
                    templatePrefixList.equals(nameList);
