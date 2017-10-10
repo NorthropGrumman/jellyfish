@@ -109,7 +109,6 @@ task createMetadata(dependsOn: [copyFeatures, copySdPlugins, copyEclipsePlugins]
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
    doLast {
-   System.out.println("command == $eclipseExe")
 	   project.exec {
 	      commandLine(
 	         "$eclipseExe",
