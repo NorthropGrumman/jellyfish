@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedJavaField;
 import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedProtoField;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 
 public class DataFieldGenerationServiceGuiceWrapper implements IDataFieldGenerationService {
@@ -12,7 +13,8 @@ public class DataFieldGenerationServiceGuiceWrapper implements IDataFieldGenerat
    private final DataFieldGenerationService delegate = new DataFieldGenerationService();
    
    @Inject
-   public DataFieldGenerationServiceGuiceWrapper() {
+   public DataFieldGenerationServiceGuiceWrapper(IPackageNamingService packageNameService) {
+      delegate.setPackageNamingService(packageNameService);
    }
    
    @Override
