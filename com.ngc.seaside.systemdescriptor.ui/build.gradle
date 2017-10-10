@@ -1,4 +1,5 @@
 import com.ngc.seaside.gradle.plugins.util.Versions
+import org.gradle.internal.os.OperatingSystem
 
 sourceSets {
    main {
@@ -24,7 +25,6 @@ dependencies {
    compile name: 'org.eclipse.equinox.common_3.8.0.v20160509-1230'
    compile name: 'org.eclipse.jface_3.12.1.v20160923-1528'
    compile name: 'org.eclipse.swt_3.105.2.v20161122-0613'
-   compile name: 'org.eclipse.swt.win32.win32.x86_64_3.105.2.v20161122-0613'
    compile name: 'org.eclipse.ui.workbench_3.108.2.v20161025-2029'
    compile name: 'org.eclipse.jdt.core_3.12.2.v20161117-1814'
    compile name: 'org.eclipse.ui.ide_3.12.2.v20161115-1450'
@@ -44,6 +44,12 @@ dependencies {
    compile name: 'org.eclipse.jface.text_3.11.2.v20161113-1700'
    compile name: 'org.eclipse.text_3.6.0.v20160503-1849'
    compile name: 'org.eclipse.ui.editors_3.10.1.v20161106-1856'
+
+   if (OperatingSystem.current().isLinux()) {
+      compile name: 'org.eclipse.swt.gtk.linux.x86_64_3.105.2.v20161122-0613'
+   } else {
+      compile name: 'org.eclipse.swt.win32.win32.x86_64_3.105.2.v20161122-0613'
+   }
 }
 
 jar {

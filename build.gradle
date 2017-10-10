@@ -42,7 +42,7 @@ ext {
 	
 	// This is the location of the Eclispe exe we use to create the update site
 	// metadata.
-	eclipseExe = "$eclipseInstallationDirectory/eclipse" + OperatingSystem.current().isLinux() ? '' : '.exe'
+	eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
 }
 
 allprojects {
