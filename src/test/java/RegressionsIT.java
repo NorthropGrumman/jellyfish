@@ -1,20 +1,19 @@
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
-//import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-//import org.mockito.Mock;
-
-public class RegressionsIT {
-
-    //@Mock
-    //private ILogService logService;  // Is this the logger that is needed for JellyFishProjectGenerator?
-    
+public class RegressionsIT {  
    
     // Class variable to hold regressions directory
     String regressionTestsDir = "";
@@ -27,9 +26,10 @@ public class RegressionsIT {
    
     /**
      * This is the start method for the regression test
+    * @throws IOException 
      */
     @Test
-    public void testGenerationAndDiff() {
+    public void testGenerationAndDiff() throws IOException {
         
         String[] subs = new File(regressionTestsDir).list();
 
@@ -50,31 +50,39 @@ public class RegressionsIT {
     /**
      * Run Jellyfish using .properties file information
      * @param directory - the directory of the regression test (ex: 1, 2, etc)
+    * @throws IOException 
      */
-    private static void generateJellyfishProject(String directory) {
+    private static void generateJellyfishProject(String directory) throws IOException {
         System.out.println("Generating jelly fish project in directory: " + directory);
-        
-        // I suppose we could use a method to read the jellyfish.properties file, parse data, and return an map<String, String>
-        //  that allows for easy reading of the data.... or just do the parsing here.
-        
-        // String command = <derived>;
-        // String inputDir = <derived>;
-        // String model = <derived>;
-        // String version = <derived>;
         
         // Place the newly generated project into a temporary directory
         String tempOutputDirectory = directory + "\\tmp";
+        
+        // Parse the properties file and store the relevant data
+        Map<String, String> propertiesValues = readJellyfishPropertiesFile(directory);
+        String relPath = '\\' + propertiesValues.get("inputDir").replace('/', '\\');
+        
+        String fullInputDirPath = directory + relPath;
+        System.out.println("Full input directory path is " + fullInputDirPath);
+        System.out.println("Output directory is " + tempOutputDirectory);
+        
+        Map<String,String> generatorArguments = new HashMap<String, String>();
+        System.out.println("Model is " + propertiesValues.get("model"));
+        
+        generatorArguments.put("outputDirectory", tempOutputDirectory);
+        generatorArguments.put("updateGradleSettings", "false");
+        generatorArguments.put("version", propertiesValues.get("version"));
+        generatorArguments.put("model", propertiesValues.get("model"));
+        
+        // Create the generation project object
+        Logger log = Mockito.mock(Logger.class); 
+        JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log)
+                 .setCommand(propertiesValues.get("command"))
+                 .setInputDir(fullInputDirPath)
+                 .setArguments(generatorArguments);
 
-        // TODO: create the generation project object
-        //Logger log = new Logger();//-------------? 
-        //JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log);
-        //         .setCommand(command)
-        //         .setInputDir(inputDir)
-        //         .setArguments(['model'                : model,
-        //                        'outputDirectory'      : tempOutputDirectory,
-        //                        'updateGradleSettings  : false, 
-        //                        'version'              : version]); 
-        //proj.generate();
+        //System.out.println("generatorArguments include:\n\n" + generatorArguments);
+        proj.generate();
         
         
         // At this point, the project has been generated. Now, run 'gradle clean build -x text' on each subproject
@@ -105,5 +113,26 @@ public class RegressionsIT {
        // TODO: Perform the recursive diff on the two directories. If different, throw an exception (fail the test)
        
        System.out.println("Diffing proj at '" + defaultDir + "' and '" + tmp + "'");
+    }
+    
+    private static Map<String, String> readJellyfishPropertiesFile(String dir) throws IOException {
+       Map<String, String> props = new HashMap<String, String>();
+       File fin = new File(dir + "\\jellyfish.properties");
+       System.out.println("FILE is " + fin);
+       FileInputStream fis = new FileInputStream(fin);
+       
+       //Construct BufferedReader from InputStreamReader
+       BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+     
+       String line = null;
+       while ((line = br.readLine()) != null) {
+          String[] splitLine = line.split("=");
+          for (int i = 0; i < splitLine.length; i++) {
+             props.put(splitLine[0], splitLine[1]);
+          }
+       }
+     
+       br.close();
+       return props;
     }
 }
