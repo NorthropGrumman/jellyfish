@@ -1,27 +1,29 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
-import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
-import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.cli.command.createjavaevents.dto.EventsDataDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaevents.dto.EventsDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -31,42 +33,34 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaEventsCommand implements IJellyFishCommand {
 
    private static final IUsage USAGE = createUsage();
 
-   /**
-    * The name of the default Velocity template.
-    */
-   static final String EVENT_SOURCE_VELOCITY_TEMPLATE = "event-source.java.vm";
-
-   /**
-    * The property used by the create-domain command for the Velocity template file.
-    */
-   static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
-   /**
-    * The name of the command that is invoked to create the actual project.
-    */
-   static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
+   static final String EVENTS_BUILD_TEMPLATE_SUFFIX = "-build";
+   static final String EVENTS_JAVA_TEMPLATE_SUFFIX = "-java";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    /**
     * The name of the command.
     */
    public static final String NAME = "create-java-events";
-   /**
-    * The name of the property that defines the event template file.
-    */
-   public static final String EVENT_TEMPLATE_FILE_PROPERTY = "eventTemplateFile";
 
    private ILogService logService;
-   private IResourceService resourceService;
-   private IJellyFishCommandProvider jellyFishCommandProvider;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
+   private IDataFieldGenerationService dataFieldGenerationService;
+   private IDataService dataService;
+   private ITemplateService templateService;
 
    @Override
    public String getName() {
@@ -79,24 +73,66 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
    }
 
    @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
-      issueUsageWarnings(commandOptions);
-      IModel model = evaluateModelParameter(commandOptions);
-      IProjectInformation eventsProjectName = projectNamingService.getEventsProjectName(commandOptions, model);
-      String artifactId = eventsProjectName.getArtifactId();
-      Function<INamedChild<IPackage>, String> packageGenerator =
-            (d) -> packageNamingService.getEventPackageName(commandOptions, d);
-      Supplier<IProjectInformation> eventsProjectNamer = () -> eventsProjectName;
-      String eventTemplate = evaluateEventTemplate(commandOptions);
+   public void run(IJellyFishCommandOptions options) {
+      IModel model = evaluateModelParameter(options);
 
-      jellyFishCommandProvider.run(CREATE_DOMAIN_COMMAND_NAME, DefaultJellyFishCommandOptions.mergeWith(
-            commandOptions,
-            new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), artifactId),
-            new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY, eventTemplate),
-            new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
-                                   CreateJavaEventsCommand.class.getPackage().getName()),
-            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator),
-            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, eventsProjectNamer)));
+      Path outputDirectory = Paths.get(
+         options.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      boolean clean = CommonParameters.evaluateBooleanParameter(options.getParameters(), CLEAN_PROPERTY);
+
+      IProjectInformation projectInfo = projectNamingService.getEventsProjectName(options, model);
+
+      Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
+      
+      Map<INamedChild<IPackage>, Boolean> map = dataService.aggregateNestedFields(model);
+
+      EventsDto eventsDto = new EventsDto();
+      eventsDto.setProjectName(projectInfo.getDirectoryName());
+      eventsDto.setExportedPackages(map.keySet()
+                                       .stream()
+                                       .map(child -> packageNamingService.getEventPackageName(options, child))
+                                       .collect(Collectors.toCollection(TreeSet::new)));
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", eventsDto));
+      templateService.unpack(CreateJavaEventsCommand.class.getPackage().getName() + EVENTS_BUILD_TEMPLATE_SUFFIX,
+         parameters,
+         outputDirectory,
+         clean);
+
+      map.forEach((child, normal) -> {
+         EventsDataDto dataDto = new EventsDataDto();
+         dataDto.setPackageName(packageNamingService.getEventPackageName(options, child));
+         dataDto.setClassName(child.getName());
+         dataDto.setData(child);
+         dataDto.setAbstract(!normal);
+         if (child instanceof IData) {
+            ((IData) child).getSuperDataType().ifPresent(superData -> {
+               String pkg = packageNamingService.getEventPackageName(options, superData);
+               dataDto.setExtendedClass(pkg + '.' + superData.getName());
+            });
+         }
+         dataDto.setDataService(field -> dataFieldGenerationService.getEventsField(options, field));
+         DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+         dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
+         templateService.unpack(CreateJavaEventsCommand.class.getPackage().getName() + EVENTS_JAVA_TEMPLATE_SUFFIX, dataParameters, projectDirectory, false);
+      });
+      
+      updateGradleDotSettings(outputDirectory, projectInfo);
+   }
+   
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ID.getName(), info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), info.getArtifactId()));
+      try {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("failed to update settings.gradle!", e);
+      }
    }
 
    @Activate
@@ -109,62 +145,25 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       logService.trace(getClass(), "Deactivated");
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the log service
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
-   /**
-    * Removes log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeResourceService")
-   public void setResourceService(IResourceService ref) {
-      this.resourceService = ref;
-   }
-
-   public void removeResourceService(IResourceService ref) {
-      setResourceService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeJellyFishCommandProvider")
-   public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
-      this.jellyFishCommandProvider = ref;
-   }
-
-   public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
-      setJellyFishCommandProvider(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
-
    }
 
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePackageNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageNamingService = ref;
 
@@ -174,36 +173,41 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
       setPackageNamingService(null);
    }
 
-   private void issueUsageWarnings(IJellyFishCommandOptions commandOptions) {
-      // This command will set the value of the domainFile parameter itself, thereby overriding the value provided
-      // by the user.  We issue this warning in case the user gets confused.
-      if (commandOptions.getParameters().containsParameter(DOMAIN_TEMPLATE_FILE_PROPERTY)) {
-         logService.warn(CreateJavaEventsCommand.class,
-                         "The parameter '%s' has been set but it will be ignored; did you mean to use '%s' instead?",
-                         DOMAIN_TEMPLATE_FILE_PROPERTY,
-                         EVENT_TEMPLATE_FILE_PROPERTY);
-      }
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setDataFieldGenerationService(IDataFieldGenerationService ref) {
+      this.dataFieldGenerationService = ref;
+
+   }
+
+   public void removeDataFieldGenerationService(IDataFieldGenerationService ref) {
+      setDataFieldGenerationService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setDataService(IDataService ref) {
+      this.dataService = ref;
+
+   }
+
+   public void removeDataService(IDataService ref) {
+      setDataService(null);
+   }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+
+   }
+
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName = parameters.getParameter(CommonParameters.MODEL.getName()).getStringValue();
+      final String modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
-   }
-
-   private String evaluateEventTemplate(IJellyFishCommandOptions options) {
-      IParameter<?> eventTemplateParameter = options.getParameters().getParameter(EVENT_TEMPLATE_FILE_PROPERTY);
-      String eventTemplate = eventTemplateParameter == null ? null : eventTemplateParameter.getStringValue();
-      if (eventTemplate == null) {
-         // Unpack the velocity template to a temporary directory.
-         ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
-               CreateJavaEventsCommand.class,
-               EVENT_SOURCE_VELOCITY_TEMPLATE);
-         resourceService.readResource(velocityTemplate);
-         eventTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
-      }
-      return eventTemplate;
    }
 
    /**
@@ -213,17 +217,9 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Generate a Gradle project that can generate the event sources as Java types.",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.PACKAGE,
-            CommonParameters.PACKAGE_SUFFIX,
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.MODEL.required(),
-            CommonParameters.CLEAN,
-
-            new DefaultParameter<String>(EVENT_TEMPLATE_FILE_PROPERTY)
-                  .setDescription("The velocity template file that will be included in the Gradle project.")
-                  .setRequired(false));
+         "Generate a Gradle project that can generate the event sources as Java types.",
+         CommonParameters.OUTPUT_DIRECTORY.required(),
+         CommonParameters.MODEL.required(),
+         CommonParameters.CLEAN);
    }
 }
