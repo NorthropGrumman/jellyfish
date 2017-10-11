@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    parameters {
+        booleanParam(name: 'PERFORM_RELEASE',
+                     defaultValue: false,
+                     description: 'If true, a release build will be performed.')
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -26,24 +32,39 @@ pipeline {
             }
         }
 
-        stage('Deploy & Archive') {
+        stage('Upload') {
+            when {
+                expression { return !(params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) }
+            }
             steps {
-                parallel (
-                      'Upload': {
-                          sh './gradlew upload'
-                      },
-                      'Archive': {
-                          archiveArtifacts allowEmptyArchive: true,
-                                           artifacts: 'com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip',
-                                           caseSensitive: false,
-                                           defaultExcludes: false,
-                                           onlyIfSuccessful: true
-                      }
-                )
+                sh './gradlew upload'
+            }
+        }
+
+        stage('Release') {
+            when {
+                expression { return params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+            }
+            steps {
+                sh './gradlew clean build release'
+                echo 'Release has been completed, please manually trigger the release of jellyfish-cli.'
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts allowEmptyArchive: true,
+                                 artifacts: 'com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip',
+                                 caseSensitive: false,
+                                 defaultExcludes: false,
+                                 onlyIfSuccessful: true
             }
         }
 
         stage('Trigger Downstream Projects') {
+            when {
+                expression { return !(params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) }
+            }
             steps {
                 build job: 'jellyfish-cli', wait: false
             }
