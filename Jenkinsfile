@@ -57,7 +57,7 @@ pipeline {
                 expression { return !(params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) && env.BRANCH_NAME == 'master' }
             }
             steps {
-                build job: 'jellyfish-cli', wait: false
+                build job: 'jellyfish-systemdescriptor-ext', wait: false
             }
         }
     }
