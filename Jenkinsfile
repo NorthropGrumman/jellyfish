@@ -26,39 +26,35 @@ pipeline {
             }
         }
 
-        stage('Publish') {
+        stage('Publish Links') {
             steps {
                 script {
-
+                    currentBuild.description = "The Eclipse update site for this build is available at "
                 }
             }
         }
 
-//        stage("Quality Gate") {
+        stage('Deploy & Archive') {
+            steps {
+                parallel (
+                      'Upload': {
+                          sh './gradlew upload'
+                      },
+                      'Archive': {
+                          archiveArtifacts allowEmptyArchive: true,
+                                           artifacts: 'com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip',
+                                           caseSensitive: false,
+                                           defaultExcludes: false,
+                                           onlyIfSuccessful: true
+                      }
+                )
+            }
+        }
+
+//        stage('Trigger Downstream Projects') {
 //            steps {
-//                script {
-//                    step([$class: 'JacocoPublisher', execPattern:'**/build/jacoco/*.exec', classPattern: '**/build/classes/main', sourcePattern: 'src/main/java'])
-//                    sleep time:1000, unit:"MILLISECONDS"
-//                    timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-//                        def qualitygate = waitForQualityGate()
-////                        if (qualitygate.status != "OK" && qualitygate.status != "WARN") {
-////                            error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
-////                        }
-//                    }
-//                }
+//                build job: 'jellyfish-cli', wait: false
 //            }
 //        }
-
-        stage('Deploy') {
-            steps {
-                sh './gradlew upload'
-            }
-        }
-
-        stage('Trigger Downstream Projects') {
-            steps {
-                build job: 'jellyfish-cli', wait: false
-            }
-        }
     }
 }
