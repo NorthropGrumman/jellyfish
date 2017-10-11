@@ -93,7 +93,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public IUsage getUsage() {
       return USAGE;
    }
-
+   
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final Path outputDirectory = Paths.get(commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());

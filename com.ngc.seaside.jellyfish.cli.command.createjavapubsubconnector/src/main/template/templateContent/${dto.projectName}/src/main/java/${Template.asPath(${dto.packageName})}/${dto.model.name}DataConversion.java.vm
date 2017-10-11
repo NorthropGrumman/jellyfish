@@ -18,7 +18,7 @@ public class ${dto.model.name}DataConversion {
          to.${dto.eventGetter($field)}().add(${dto.messageToEventConvert($field, "value")});
       }
 #else
-      to.${dto.eventSetter($field)}(${dto.messageToEventConvert($field, "from.${dto.messageGetter($field)}")});
+      to.${dto.eventSetter($field)}(${dto.messageToEventConvert($field, "from.${dto.messageGetter($field)}()")});
 #end
 #end
 #else
@@ -56,7 +56,7 @@ public class ${dto.model.name}DataConversion {
          to.${dto.messageRepeatedAdder($field)}(${dto.eventToMessageConvert($field, "value")});
       }
 #else
-      to.${dto.messageSetter($field)}(${dto.eventToMessageConvert($field, "from.${dto.eventGetter($field)}")});
+      to.${dto.messageSetter($field)}(${dto.eventToMessageConvert($field, "from.${dto.eventGetter($field)}()")});
 #end
 #end
 #else
@@ -74,7 +74,7 @@ public class ${dto.model.name}DataConversion {
       }
 #end
 
-      return to;
+      return to.build();
    }
 
 #end

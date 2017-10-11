@@ -9,7 +9,7 @@ package $dto.packageName;
 /**
  * This file has been generated and should not be edited directly.
  * @author Generated
- **/
+ */
 public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end ${dto.className}#if($dto.extendedClass) extends $dto.extendedClass#end {
 
 ## Generate an enumeration
@@ -39,8 +39,8 @@ public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end
       return ${dto.fieldName($field)};
    }
 
-   public ${dto.className} ${dto.fieldGetter($field)}(${dto.fieldType($field)} ${dto.fieldName($field)}) {
-      this.${dto.fieldType($field)} = ${dto.fieldType($field)};
+   public ${dto.className} ${dto.fieldSetter($field)}(${dto.fieldType($field)} ${dto.fieldName($field)}) {
+      this.${dto.fieldName($field)} = ${dto.fieldName($field)};
       return this;
    }
 
@@ -48,12 +48,12 @@ public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end
 #set($size = ${dto.data.fields.size()})
    @Override
    public int hashCode() {
-      return Objects.hash(
+      return java.util.Objects.hash(
 #if($dto.extendedClass)
       super.hashCode()#if(! $dto.data.fields.isEmpty()),#end
 #end
 #foreach ($field in $dto.data.fields)
-       this.${dto.fieldName($field)}#if($velocityCount != $size),#end
+         this.${dto.fieldName($field)}#if($velocityCount != $size),#end
 #end
       );
    }
@@ -75,7 +75,7 @@ public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end
 
       return #if($dto.extendedClass)super.equals(obj) &&#end
 #foreach ($field in $dto.data.fields)
-         java.util.Objects.equals(this.${dto.fieldName($field)}, that.${dto.fieldName($field)})#if($velocityCount == $size) &&#end
+         java.util.Objects.equals(this.${dto.fieldName($field)}, that.${dto.fieldName($field)})#if($velocityCount != $size) &&#end
 #end
       ;
 #end

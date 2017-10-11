@@ -92,6 +92,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
                                        .stream()
                                        .map(child -> packageNamingService.getEventPackageName(options, child))
                                        .collect(Collectors.toCollection(TreeSet::new)));
+      
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", eventsDto));
       templateService.unpack(CreateJavaEventsCommand.class.getPackage().getName() + EVENTS_BUILD_TEMPLATE_SUFFIX,
