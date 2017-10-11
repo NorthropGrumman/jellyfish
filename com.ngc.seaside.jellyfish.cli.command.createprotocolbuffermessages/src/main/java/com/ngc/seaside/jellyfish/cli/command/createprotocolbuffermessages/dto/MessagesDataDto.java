@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto;
 
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedProtoField;
+import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedProtoField;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;

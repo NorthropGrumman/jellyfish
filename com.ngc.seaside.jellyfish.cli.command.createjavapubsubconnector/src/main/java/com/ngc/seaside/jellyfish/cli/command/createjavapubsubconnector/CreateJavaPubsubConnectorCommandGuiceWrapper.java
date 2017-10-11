@@ -7,6 +7,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -27,7 +28,8 @@ public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishC
                                                        IRequirementsService requirementsService,
                                                        IPackageNamingService packageService,
                                                        IProjectNamingService projectService,
-                                                       IJavaServiceGenerationService generationService) {
+                                                       IJavaServiceGenerationService generationService,
+                                                       IDataFieldGenerationService dataFieldService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setScenarioService(scenarioService);
@@ -36,6 +38,7 @@ public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishC
       delegate.setPackageNamingService(packageService);
       delegate.setProjectNamingService(projectService);
       delegate.setJavaServiceGenerationService(generationService);
+      delegate.setDataFieldGenerationService(dataFieldService);
       delegate.activate();
    }
 

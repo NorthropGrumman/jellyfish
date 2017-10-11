@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents.dto;
 
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedJavaField;
+import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;

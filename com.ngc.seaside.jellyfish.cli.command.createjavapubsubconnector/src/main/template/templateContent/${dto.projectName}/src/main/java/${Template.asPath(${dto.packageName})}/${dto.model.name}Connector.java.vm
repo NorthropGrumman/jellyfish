@@ -44,7 +44,7 @@ public class ${dto.model.name}Connector {
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($output = $outputEntry.value)
       eventService.addSubscriber(this::send${output.name},
-         ${dto.getEventsPackageName().apply($output)}.${output.name}.TOPIC);
+         ${dto.eventPackage($output)}.${output.name}.TOPIC);
 
 #end
       logService.debug(getClass(), "Activated.");
@@ -63,7 +63,7 @@ public class ${dto.model.name}Connector {
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($output = $outputEntry.value)
       eventService.removeSubscriber(this::send${output.name},
-         ${dto.getEventsPackageName().apply($output)}.${output.name}.TOPIC);
+         ${dto.eventPackage($output)}.${output.name}.TOPIC);
 
 #end
       logService.debug(getClass(), "Deactivated.");
@@ -98,19 +98,19 @@ public class ${dto.model.name}Connector {
 #foreach($inputEntry in $dto.inputTopics.entrySet())
 #set ($topic = $inputEntry.key)
 #set ($input = $inputEntry.value)
-#set ($eventsPackage = $dto.getEventsPackageName().apply($input))
-#set ($messagesPackage = $dto.getMessagesPackageName().apply($input))
+#set ($eventPackage = $dto.eventPackage($input))
+#set ($messagePackage = $dto.messagePackage($input))
 
    private Future<Collection<ITransportObject>> receive${input.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
       preReceiveMessage(${dto.transportTopicsClass}.${topic});
       try {
-         ${messagesPackage}.${input.name} from;
+         ${messagePackage}.${input.name} from;
          try {
-            from = ${messagesPackage}.${input.name}.parseFrom(transportObject.getPayload());
+            from = ${messagePackage}.${input.name}.parseFrom(transportObject.getPayload());
          } catch (InvalidProtocolBufferException e) {
             throw new IllegalStateException(e);
          }
-         eventService.publish(${dto.model.name}DataConversion.convert(from), ${eventsPackage}.${input.name}.TOPIC);
+         eventService.publish(${dto.model.name}DataConversion.convert(from), ${eventPackage}.${input.name}.TOPIC);
       } finally {
          postReceiveMessage(${dto.transportTopicsClass}.${topic});
       }
@@ -120,13 +120,13 @@ public class ${dto.model.name}Connector {
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($topic = $outputEntry.key)
 #set ($output = $outputEntry.value)
-#set ($eventsPackage = $dto.getEventsPackageName().apply($output))
-#set ($messagesPackage = $dto.getMessagesPackageName().apply($output))
+#set ($eventPackage = $dto.eventPackage($output))
+#set ($messagePackage = $dto.messagePackage($output))
 
-   private void send${output.name}(IEvent<${eventsPackage}.${output.name}> event) {
+   private void send${output.name}(IEvent<${eventPackage}.${output.name}> event) {
       preSendMessage(${dto.transportTopicsClass}.${topic});
-      ${eventsPackage}.${output.name} from = event.getSource();
-      ${messagesPackage}.${output.name} to = ${dto.model.name}DataConversion.convert(from);
+      ${eventPackage}.${output.name} from = event.getSource();
+      ${messagePackage}.${output.name} to = ${dto.model.name}DataConversion.convert(from);
       try {
          transportService.send(ITransportObject.withPayload(to.toByteArray()),
             ${dto.transportTopicsClass}.${topic});
