@@ -1,6 +1,8 @@
 package com.ngc.seaside.jellyfish.service.codegen.api;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
+import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedProtoField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 
 /**

@@ -1,4 +1,6 @@
-package com.ngc.seaside.jellyfish.service.codegen.api;
+package com.ngc.seaside.jellyfish.service.codegen.api.java;
+
+import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedField;
 
 public interface IGeneratedJavaField extends IGeneratedField {
 

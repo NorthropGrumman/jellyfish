@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedJavaField;
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedProtoField;
+import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
+import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedProtoField;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;

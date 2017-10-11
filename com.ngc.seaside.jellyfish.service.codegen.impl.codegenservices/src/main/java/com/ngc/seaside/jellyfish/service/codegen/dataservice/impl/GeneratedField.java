@@ -1,8 +1,9 @@
 package com.ngc.seaside.jellyfish.service.codegen.dataservice.impl;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedJavaField;
-import com.ngc.seaside.jellyfish.service.codegen.api.IGeneratedProtoField;
+import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
+import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedJavaProtoField;
+import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedProtoField;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -18,15 +19,58 @@ import java.util.regex.Pattern;
 public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField {
 
    private static final Pattern UNDERSCORE_PATTERN = Pattern.compile("(?<=_|\\d)[a-zA-Z]");
-   private static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList("abstract", "assert", "boolean",
-                "break", "byte", "case", "catch", "char", "class", "const",
-                "continue", "default", "do", "double", "else", "extends", "false",
-                "final", "finally", "float", "for", "goto", "if", "implements",
-                "import", "instanceof", "int", "interface", "long", "native",
-                "new", "null", "package", "private", "protected", "public",
-                "return", "short", "static", "strictfp", "super", "switch",
-                "synchronized", "this", "throw", "throws", "transient", "true",
-                "try", "void", "volatile", "while"));
+   private static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList("abstract",
+      "assert",
+      "boolean",
+      "break",
+      "byte",
+      "case",
+      "catch",
+      "char",
+      "class",
+      "const",
+      "continue",
+      "default",
+      "do",
+      "double",
+      "else",
+      "extends",
+      "false",
+      "final",
+      "finally",
+      "float",
+      "for",
+      "goto",
+      "if",
+      "implements",
+      "import",
+      "instanceof",
+      "int",
+      "interface",
+      "long",
+      "native",
+      "new",
+      "null",
+      "package",
+      "private",
+      "protected",
+      "public",
+      "return",
+      "short",
+      "static",
+      "strictfp",
+      "super",
+      "switch",
+      "synchronized",
+      "this",
+      "throw",
+      "throws",
+      "transient",
+      "true",
+      "try",
+      "void",
+      "volatile",
+      "while"));
 
    private final IDataField field;
    private final String javaType;
@@ -38,11 +82,16 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
    private final String protoJavaType;
    private final String protoJavaGetterName;
    private final String protoJavaSetterName;
-   private final IGeneratedJavaField protoJavaField = new GeneratedJavaProtoField();
+   private final String protoRepeatedJavaCountName;
+   private final String protoRepeatedJavaAddName;
+   private final String protoRepeatedJavaGetterName;
+
+   private final IGeneratedJavaProtoField protoJavaField = new GeneratedJavaProtoField();
 
    private GeneratedField(IDataField field, String javaType, String javaFieldName, String javaGetterName,
                           String javaSetterName, String protoType, String protoFieldName, String protoJavaType,
-                          String protoJavaGetterName, String protoJavaSetterName) {
+                          String protoJavaGetterName, String protoJavaSetterName, String protoRepeatedJavaCountName,
+                          String protoRepeatedJavaAddName, String protoRepeatedJavaGetterName) {
       this.field = field;
       this.javaType = javaType;
       this.javaFieldName = javaFieldName;
@@ -53,6 +102,9 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       this.protoJavaType = protoJavaType;
       this.protoJavaGetterName = protoJavaGetterName;
       this.protoJavaSetterName = protoJavaSetterName;
+      this.protoRepeatedJavaCountName = protoRepeatedJavaCountName;
+      this.protoRepeatedJavaAddName = protoRepeatedJavaAddName;
+      this.protoRepeatedJavaGetterName = protoRepeatedJavaGetterName;
    }
 
    public static GeneratedField of(IDataField field, IJellyFishCommandOptions options,
@@ -115,7 +167,8 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       StringBuffer buffer = new StringBuffer(originalFieldName.length());
       Matcher m = UNDERSCORE_PATTERN.matcher(originalFieldName);
       while (m.find()) {
-         if (buffer.length() == 0 && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
+         if (buffer.length() == 0
+            && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
             m.appendReplacement(buffer, m.group(0));
          } else {
             m.appendReplacement(buffer, m.group(0).toUpperCase());
@@ -123,7 +176,7 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       }
       m.appendTail(buffer);
       String fieldName = buffer.toString().replace("_", "");
-      
+
       final String capFieldName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
       final String javaFieldName;
       if (originalFieldName.startsWith("_") || RESERVED_WORDS.contains(originalFieldName)) {
@@ -131,12 +184,19 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       } else {
          javaFieldName = originalFieldName;
       }
+
+      final String repeatedCountName = "get" + capFieldName + "Count";
+      final String repeatedAddName = "add" + capFieldName;
+      final String repeatedGetterName = "get" + capFieldName;
+
       if (field.getCardinality() == FieldCardinality.SINGLE) {
-         return new GeneratedField(field, singleType, javaFieldName, "get" + capFieldName, "set" + capFieldName, protoType,
-            fieldName, protoSingleType, "get" + capFieldName, "set" + capFieldName);
+         return new GeneratedField(field, singleType, javaFieldName, "get" + capFieldName, "set" + capFieldName,
+            protoType, fieldName, protoSingleType, "get" + capFieldName, "set" + capFieldName, repeatedCountName,
+            repeatedAddName, repeatedGetterName);
       } else {
-         return new GeneratedField(field, multipleType, javaFieldName, "get" + capFieldName, "set" + capFieldName, protoType,
-            fieldName, protoMultipleType, "get" + capFieldName + "List", "addAll" + capFieldName);
+         return new GeneratedField(field, multipleType, javaFieldName, "get" + capFieldName, "set" + capFieldName,
+            protoType, fieldName, protoMultipleType, "get" + capFieldName + "List", "addAll" + capFieldName,
+            repeatedCountName, repeatedAddName, repeatedGetterName);
       }
    }
 
@@ -181,11 +241,11 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
    }
 
    @Override
-   public IGeneratedJavaField getJavaField() {
+   public IGeneratedJavaProtoField getJavaField() {
       return this.protoJavaField;
    }
 
-   private class GeneratedJavaProtoField implements IGeneratedJavaField {
+   private class GeneratedJavaProtoField implements IGeneratedJavaProtoField {
 
       @Override
       public IDataField getDataField() {
@@ -216,6 +276,21 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       @Override
       public String getJavaSetterName() {
          return GeneratedField.this.protoJavaSetterName;
+      }
+
+      @Override
+      public String getRepeatedJavaCountName() {
+         return GeneratedField.this.protoRepeatedJavaCountName;
+      }
+
+      @Override
+      public String getRepeatedJavaAddName() {
+         return GeneratedField.this.protoRepeatedJavaAddName;
+      }
+
+      @Override
+      public String getRepeatedJavaGetterName() {
+         return GeneratedField.this.protoRepeatedJavaGetterName;
       }
 
    }
