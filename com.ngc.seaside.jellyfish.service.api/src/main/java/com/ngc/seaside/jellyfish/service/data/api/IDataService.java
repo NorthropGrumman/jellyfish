@@ -35,7 +35,7 @@ public interface IDataService {
     */
    default Map<INamedChild<IPackage>, Boolean> aggregateNestedFields(IModel model) {
       Collection<IDataReferenceField> inputs = model.getInputs();
-      Collection<IDataReferenceField> outputs = model.getInputs();
+      Collection<IDataReferenceField> outputs = model.getOutputs();
       Collection<IData> data = new ArrayList<>(inputs.size() + outputs.size());
       inputs.forEach(field -> data.add(field.getType()));
       outputs.forEach(field -> data.add(field.getType()));
