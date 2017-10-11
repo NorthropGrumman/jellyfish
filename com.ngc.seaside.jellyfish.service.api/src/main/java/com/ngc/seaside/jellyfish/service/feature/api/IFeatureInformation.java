@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.service.feature.api;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 public interface IFeatureInformation {
@@ -31,4 +32,17 @@ public interface IFeatureInformation {
     */
    Collection<String> getRequirements();
 
+   /**
+    * Returns the relative path to this feature file
+    * 
+    * @return the relative path
+    */
+   Path getRelativePath();
+
+   /**
+    * Returns the absolute path to this feature file
+    * 
+    * @return the absolute path
+    */
+   Path getAbsolutePath();
 }

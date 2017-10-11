@@ -7,6 +7,8 @@ import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.TreeMap;
 
 public class FeatureServiceGuiceWrapper implements IFeatureService {
 
@@ -21,5 +23,15 @@ public class FeatureServiceGuiceWrapper implements IFeatureService {
    @Override
    public IFeatureInformation getFeatureInfo(Path sdPath, IModel model) {
       return delegate.getFeatureInfo(sdPath, model);
+   }
+
+   @Override
+   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
+      return delegate.getFeatures(sdPath, model);
+   }
+
+   @Override
+   public TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
+      return delegate.getAllFeatures(sdPath, models);
    }
 }
