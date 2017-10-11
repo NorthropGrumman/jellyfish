@@ -26,14 +26,6 @@ pipeline {
             }
         }
 
-        stage('Publish Links') {
-            steps {
-                script {
-                    currentBuild.description = "The Eclipse update site for this build is available at "
-                }
-            }
-        }
-
         stage('Deploy & Archive') {
             steps {
                 parallel (
