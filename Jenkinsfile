@@ -51,10 +51,10 @@ pipeline {
             }
         }
 
-//        stage('Trigger Downstream Projects') {
-//            steps {
-//                build job: 'jellyfish-cli', wait: false
-//            }
-//        }
+        stage('Trigger Downstream Projects') {
+            steps {
+                build job: 'jellyfish-cli', wait: false
+            }
+        }
     }
 }
