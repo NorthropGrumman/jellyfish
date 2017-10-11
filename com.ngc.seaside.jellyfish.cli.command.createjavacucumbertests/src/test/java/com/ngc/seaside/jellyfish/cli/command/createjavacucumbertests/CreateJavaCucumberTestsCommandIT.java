@@ -142,7 +142,11 @@ public class CreateJavaCucumberTestsCommandIT {
       Path projectDir = outputDirectory.resolve(model.getFullyQualifiedName().toLowerCase() + ".tests");
 
       Path javaDir = projectDir.resolve(
-         Paths.get("src", "main", "java", model.getFullyQualifiedName().replace('.', File.separatorChar), "tests"));
+         Paths.get("src",
+                   "main",
+                   "java",
+                   model.getFullyQualifiedName().replace('.', File.separatorChar).toLowerCase(),
+                   "tests"));
       Assert.assertTrue(Files.isDirectory(javaDir));
 
       Path featureDir = projectDir.resolve(Paths.get("src",
