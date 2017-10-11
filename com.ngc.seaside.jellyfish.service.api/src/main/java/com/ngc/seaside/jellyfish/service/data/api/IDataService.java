@@ -27,10 +27,10 @@ public interface IDataService {
 
    /**
     * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given model's input and output data. This includes all fields and nested fields of any of the model's data and any
-    * inherited classes of the
-    * aforementioned. The values of the returned map are true for a given key if the key is a field or nested field of any of the given data, and false if the key is exclusively an inherited class.
+    * inherited classes of the aforementioned. The values of the returned map are true for a given key if the key is a field or nested field of any of the given data, and false if the key is
+    * exclusively an inherited class.
     * 
-    * @param data collection of data
+    * @param model model
     * @return set of all {@link IData} and {@link IEnumeration} associated with the given model's data
     */
    default Map<INamedChild<IPackage>, Boolean> aggregateNestedFields(IModel model) {
