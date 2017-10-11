@@ -20,6 +20,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +29,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * Default implementation of the {@link ITemplateService} interface.
@@ -151,25 +151,21 @@ public class TemplateService implements ITemplateService {
                                  Path outputDirectory,
                                  boolean clean)
             throws TemplateServiceException {
-      ZipFile zipFile = null;
       ITemplateOutput output;
-      try {
-         Path path = getTemplatePath(templateName);
-         zipFile = new ZipFile(path.toString());
+      try(ZipInputStream zipFile = new ZipInputStream(getTemplateInputStream(templateName))) {
          Path unzippedFolderPath = Files.createTempDirectory(null);
-         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-         while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
+         ZipEntry entry;
+         while ((entry = zipFile.getNextEntry()) != null) {
             File entryDestination = new File(unzippedFolderPath.toString(), entry.getName());
             if (entry.isDirectory()) {
                entryDestination.mkdirs();
             } else {
                entryDestination.getParentFile().mkdirs();
-               InputStream in = zipFile.getInputStream(entry);
+               InputStream in = zipFile;
                OutputStream out = new FileOutputStream(entryDestination);
                IOUtils.copy(in, out);
-               IOUtils.closeQuietly(in);
+               zipFile.closeEntry();
                out.close();
             }
          }
@@ -192,18 +188,25 @@ public class TemplateService implements ITemplateService {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
          logService.error(getClass(), e, message);
          throw new TemplateServiceException(message, e);
-      } finally {
-         if (zipFile != null) {
-            try {
-               zipFile.close();
-            } catch (IOException e) {
-               //being unable to close the zip file should not kill the process if it has worked
-               //up until this point. It will close the file when the application exits.
-            }
-         }
       }
 
       return output;
+   }
+
+   /**
+    * Invoked to get the input stream to the template ZIP file.
+    *
+    * @return the input stream to the template zip file
+    * @throws IOException              if the stream could not be opened
+    * @throws TemplateServiceException if no template with the given name could be found
+    */
+   protected InputStream getTemplateInputStream(String templateName) throws IOException,
+                                                                            TemplateServiceException {
+      Path path = getTemplatePath(templateName);
+      if (path == null) {
+         throw new TemplateServiceException("no template with the name " + templateName + " was found!");
+      }
+      return new FileInputStream(path.toFile());
    }
 
    /**
