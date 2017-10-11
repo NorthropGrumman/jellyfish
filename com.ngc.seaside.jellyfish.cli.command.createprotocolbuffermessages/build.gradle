@@ -1,9 +1,9 @@
 apply plugin: 'com.ngc.seaside.command'
+
 dependencies {
 
     compile project(":jellyfish.api")
     compile project(":jellyfish.service.api")
-	compile project(":jellyfish.cli.command.createdomain")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
@@ -21,12 +21,13 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
     
+    testCompile project(":jellyfish.service.name.impl.namingservices")
+    testCompile project(":jellyfish.service.data.impl.dataservice")
+    testCompile project(":jellyfish.service.scenario.impl.scenarioservice")
+    testCompile project(":jellyfish.service.codegen.impl.codegenservices")
+    testCompile project(":jellyfish.service.config.impl.transportconfigurationservice")
     testCompile project(":jellyfish.cli.command.testutils")
     testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    testCompile project(":jellyfish.impl.provider")
-    testCompile project(":jellyfish.service.name.impl.namingservices")
-     
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
