@@ -373,4 +373,47 @@ class DataParsingTest {
 			timeDataRef.cardinality
 		)
 	}
+	
+	@Test
+	def void testDoesNotAllowDataNameKeywords() {
+		val source = '''
+			package foo.datatypes
+			
+			data ^Foo {
+				int data
+				float model
+			}
+
+		'''
+
+		val invalidResult = parseHelper.parse(source)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.ELEMENT,
+			null
+		)
+	}
+		
+	@Test
+	def void testDoesNotAllowFieldNameKeywords() {
+		val source = '''
+			package foo.datatypes
+			
+			data Foo {
+				int ^data
+				float model
+			}
+
+		'''
+
+		val invalidResult = parseHelper.parse(source)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
+			null
+		)
+	}
+	
 }

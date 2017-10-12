@@ -19,6 +19,7 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
@@ -68,6 +69,24 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	// same name in the parts block because requires is listed first. Thus,
 	// the part declaration is the duplicate (not the requires declaration).
 
+	/**
+	 * Validates that the user did not try to escape a keyword with ^ in the
+	 * name of the model.
+	 * 
+	 * @param model is the model to evaluate
+	 */	
+	@Check
+	public void checkUsageOfEscapeHatCharacter(Model model) {
+		// Verify the data name doesn't not have the escape hat
+		if (model.getName().charAt(0) == '^') {
+			String msg = String.format(
+					"Cannot use '^' to escape the model name %s.",
+					model.getName());
+			error(msg, model, SystemDescriptorPackage.Literals.ELEMENT__NAME);
+		}
+		
+	}
+	
 	/**
 	 * Validates that a require declaration is correct. Requires the containing
 	 * model not contain another requirement with the same name.

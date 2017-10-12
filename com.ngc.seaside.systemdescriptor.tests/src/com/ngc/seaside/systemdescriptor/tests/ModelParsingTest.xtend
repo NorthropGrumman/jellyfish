@@ -456,4 +456,24 @@ class ModelParsingTest {
 			null
 		)
 	}
+	
+
+	@Test
+	def void testDoesNotAllowModelNameKeywords() {
+		val source = '''
+			package clocks.models
+			
+			model ^Timer {
+				
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.ELEMENT,
+			null
+		)
+	}
 }

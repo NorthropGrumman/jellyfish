@@ -208,4 +208,24 @@ class ScenarioParsingTest {
 			null
 		)
 	}
+	
+
+	@Test
+	def void testDoesNotAllowScenarioNameKeywords() {
+		val source = '''
+			package clocks.models
+			 
+			model Speaker {
+			  scenario ^data { }
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.SCENARIO,
+			null
+		)
+	}
 }
