@@ -123,6 +123,11 @@ public class CreateJavaServiceProjectCommandTest {
                                                      "my.group"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY,
                                                      "my-project"));
+      //TODO remove or refactor
+//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.REPOSITORY_URL, 
+//    		  "http://10.207.42.137/nexus/repository/maven-public/"));
+//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.GROUP_ARTIFACT_VERSION_EXTENSION, 
+//    		  "com.ngc.seaside. threateval:threatevaluation.descriptor:2.0.0"));
 
       command.run(options);
 

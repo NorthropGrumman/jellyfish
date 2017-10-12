@@ -25,6 +25,7 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -32,6 +33,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -380,6 +385,17 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
       Path path;
+//      String url = userInputParameters.getParameter("repositoryUrl").toString();
+//      String gave = userInputParameters.getParameter("GAVE").toString();
+//      if(userInputParameters.containsParameter("repositoryUrl") && userInputParameters.containsParameter("GAVE")) {
+//    	  try {
+//			unpackArchiveFromUrl(url, gave);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+////    	  path = Paths.get(arg0);
+//      }
       if (inputDir == null) {
          path = Paths.get(System.getProperty("user.dir"));
       } else {
@@ -440,6 +456,62 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     */
    private IJellyFishCommand lookupCommand(String cmd) {
       return commandMap.get(cmd);
+   }
+   
+//   private String[] setInputDirectory(String[] arguments) {
+//	// TODO Auto-generated method stub
+//	   String[] validatedArgs;
+//   // If no input directory is provided, look in working directory
+//      if (arguments.length == 0) {
+//         throw new IllegalArgumentException("No command provided");
+//      } else {
+//         if (arguments.length == 1) {
+//        	 //TODO - should I remove this or leave it as backup if download fails
+//        	 //get the url and gave arguments - if there's no arguments, how do I have any?
+//        	 downloadSysDesProject();
+//             command.setPromptUserService(promptUserService);
+//        	 //concatenate
+//        	 //try download
+//        	 //set as inputdir
+//            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
+//         } else {
+//            validatedArgs = arguments;
+//         }
+//      }
+//	return validatedArgs;
+//}
+//
+//private void downloadSysDesProject() {
+//	// TODO Auto-generated method stub
+//  	 FileUtils.copyURLToFile(URL, file, 10000, 10000);
+//	
+//}
+   
+   /**
+    * This method downloads an archive from the provided url and 
+    * gave(group/artifact/version/extension) info
+    *
+    * @param url the string representation of the repository url
+    * @param gave the string representation of the archive info
+    */
+   public void unpackArchiveFromUrl(String url, String gave) throws IOException {
+	   File tempDir = FileUtils.getTempDirectory();
+	   String[] fileName = gave.split("/");
+	   URL myUrl = new URL(url + gave);
+	   File file = new File(tempDir.toString() + "\\" + fileName[fileName.length - 1]);
+	   FileUtils.copyURLToFile(myUrl, file);
+   }
+   
+   public String parseGave(String gave) {
+	   String gaveProperty;
+	   String[] splitter = gave.split(":");
+	   String[] temp;
+	   temp = splitter[0].split("\\.");
+
+	   gaveProperty = temp[0] + "/" + temp[1] + "/" + temp[2] + "/" + temp[3] + "/" + splitter[1] + "/" + splitter[2] + 
+			   "/" + splitter[1] + "-" + splitter[2] + ".zip";
+	   System.out.println("gaveProperty: " + gaveProperty);
+	   return gaveProperty;
    }
 
    private static boolean isCommandConfiguredForTemplateService(IJellyFishCommand command) {

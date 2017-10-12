@@ -40,6 +40,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
+   static final String URL_PROPERTY = CommonParameters.REPOSITORY_URL.getName();
+   static final String GAVE = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
@@ -100,6 +102,9 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                                    new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
                                          .setDescription("Whether or not to create the service's domain model")
                                          .setRequired(false));
+               //TODO remove or refactor
+//               usageParameters.put(REPOSITORY_URL, new DefaultParameter<String>(REPOSITORY_URL)
+//            		   .setDescription(REPOSITORY_URL).setRequired(false));
                IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
                USAGE = new DefaultUsage("Create a new Java service project for a particular model.", parameters);
             }
