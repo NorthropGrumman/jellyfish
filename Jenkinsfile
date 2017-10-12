@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+			echo "BRANCH_NAME is ${env.BRANCH_NAME}"
                 sh 'chmod +x gradlew && ./gradlew clean build -x test'
             }
         }
