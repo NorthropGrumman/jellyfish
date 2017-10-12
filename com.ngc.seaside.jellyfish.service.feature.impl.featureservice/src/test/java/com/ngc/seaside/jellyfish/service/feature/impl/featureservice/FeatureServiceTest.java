@@ -21,6 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,7 +52,7 @@ public class FeatureServiceTest {
    @Test
    public void testDoesObtainFeatureFilesForOneModel() {
       Path sdPath = Paths.get("src", "test", "resources");
-      setupModel(sdPath, "com.ngc.seaside.testeval", "HamburgerService");
+      setupModel("com.ngc.seaside.testeval", "HamburgerService");
 
       TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
 
@@ -59,7 +60,6 @@ public class FeatureServiceTest {
 
       for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
          String key = entry.getKey();
-         IFeatureInformation value = entry.getValue();
          assertTrue(key.contains("HamburgerService"));
       }
    }
@@ -67,7 +67,7 @@ public class FeatureServiceTest {
    @Test
    public void testContentsofFeatureInformation() {
       Path sdPath = Paths.get("src", "test", "resources");
-      setupModel(sdPath, "com.ngc.seaside.testeval", "MilkShakeService");
+      setupModel("com.ngc.seaside.testeval", "MilkShakeService");
       Path expectedAbsolutePath = Paths.get("com.ngc.seaside.jellyfish.service.feature.impl.featureservice",
          "src",
          "test",
@@ -100,21 +100,39 @@ public class FeatureServiceTest {
    @Test
    public void testDoesObtainFeatureFilesForMultipleModels() {
       Path sdPath = Paths.get("src", "test", "resources");
-     
-      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);
-      
+      Collection<IModel> models = setupMultipleModels();  
+      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);    
+      assertEquals(actualFeatures.size(), 4);
    }
 
-   @SuppressWarnings("unchecked")
-   private void setupModel(Path sdPath, String pkg, String name) {
+   private void setupModel(String pkg, String name) {
       when(model.getParent().getName()).thenReturn(pkg);
       when(model.getName()).thenReturn(name);
    }
    
-   @SuppressWarnings("unchecked")
-   private Collection<IModel> setupMultipleModels(Path sdPath, String pkg, String name) {
-      when(model.getParent().getName()).thenReturn(pkg);
-      when(model.getName()).thenReturn(name);
+   private Collection<IModel> setupMultipleModels() {
+      Collection<IModel> mockModelCollection = new ArrayList<>();
+      
+      IModel model0 = mock(IModel.class);     
+      IModel model1 = mock(IModel.class);   
+      IModel model2 = mock(IModel.class);
+      
+      when(model0.getParent()).thenReturn(mock(IPackage.class));
+      when(model1.getParent()).thenReturn(mock(IPackage.class));
+      when(model2.getParent()).thenReturn(mock(IPackage.class));
+      
+      when(model0.getParent().getName()).thenReturn("com.ngc.seaside.testeval"); 
+      when(model1.getParent().getName()).thenReturn("com.ngc.seaside.testeval2");      
+      when(model2.getParent().getName()).thenReturn("com.ngc.seaside.testeval3");
+      
+      when(model0.getName()).thenReturn("HamburgerService");   
+      when(model1.getName()).thenReturn("BooService");
+      when(model2.getName()).thenReturn("BotaService");
+      
+      mockModelCollection.add(model0);
+      mockModelCollection.add(model1);
+      mockModelCollection.add(model2);
+      
+      return mockModelCollection;
    }
-
 }
