@@ -14,7 +14,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.command.api.CommandException;
@@ -45,7 +44,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
 
    @Activate
@@ -76,16 +74,10 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       // Ensure OUTPUT_DIR_PROPERTY parameter is set
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
          collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY)
-                                                                            .setValue(
-                                                                               Paths.get(".")
-                                                                                    .toAbsolutePath()
-                                                                                    .toString()));
-      }
-
-      // Ensure PROJECT_NAME_PROPERTY parameter is set
-      if (!collection.containsParameter(PROJECT_NAME_PROPERTY)) {
-         String projectName = promptService.prompt(PROJECT_NAME_PROPERTY, "my-project", null);
-         collection.addParameter(new DefaultParameter<>(PROJECT_NAME_PROPERTY).setValue(projectName));
+                 .setValue(
+                         Paths.get(".")
+                                 .toAbsolutePath()
+                                 .toString()));
       }
 
       final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
@@ -103,12 +95,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       // Ensure GROUP_ID_PROPERTY parameter is set
       if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
          collection.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY).setValue(DEFAULT_GROUP_ID));
-      }
-
-      // Ensure VERSION_PROPERTY parameter is set
-      if (!collection.containsParameter(VERSION_PROPERTY)) {
-         String version = promptService.prompt(VERSION_PROPERTY, "1.0-SNAPSHOT", null);
-         collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
       }
 
       // Ensure CLEAN_PROPERTY parameter is set
@@ -151,24 +137,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
-   }
-
-   /**
-    * Sets prompt user service.
-    *
-    * @param ref
-    *           the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt user service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
    }
 
    /**

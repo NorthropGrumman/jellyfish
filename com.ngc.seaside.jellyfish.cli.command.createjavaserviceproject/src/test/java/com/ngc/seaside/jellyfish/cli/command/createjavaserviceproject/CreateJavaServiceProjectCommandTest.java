@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -47,9 +46,6 @@ public class CreateJavaServiceProjectCommandTest {
 
    @Mock
    private ILogService logService;
-
-   @Mock
-   private IPromptUserService promptUserService;
 
    @Mock
    private ITemplateService templateService;
@@ -105,7 +101,6 @@ public class CreateJavaServiceProjectCommandTest {
 
       command = new CreateJavaServiceProjectCommand();
       command.setLogService(logService);
-      command.setPromptUserService(promptUserService);
       command.setJellyFishCommandProvider(commandProvider);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectNamingService);
@@ -177,14 +172,6 @@ public class CreateJavaServiceProjectCommandTest {
    @Test
    public void testDoesCreateProjectWithNoParameters() throws Throwable {
       String modelName = model.getFullyQualifiedName();
-      when(promptUserService.prompt(eq(CreateJavaServiceProjectCommand.MODEL_PROPERTY),
-                                    eq(null),
-                                    any()))
-            .thenReturn(modelName);
-      when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
-                                    null))
-            .thenReturn(outputDirectoryName);
 
       command.run(options);
 
@@ -239,15 +226,6 @@ public class CreateJavaServiceProjectCommandTest {
 
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.CREATE_SERVICE_DOMAIN_PROPERTY,
                                                      "false"));
-
-      when(promptUserService.prompt(eq(CreateJavaServiceProjectCommand.MODEL_PROPERTY),
-                                    eq(null),
-                                    any()))
-            .thenReturn(modelName);
-      when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
-                                    null))
-            .thenReturn(outputDirectoryName);
 
       command.run(options);
 

@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
@@ -53,7 +52,6 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    static final String DEFAULT_ARTIFACT_ID_FORMAT = "jellyfish.cli.command.%s";
 
    private ILogService logService;
-   private IPromptUserService promptService;
    private ITemplateService templateService;
 
    @Activate
@@ -80,11 +78,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());
-
-      if (!collection.containsParameter(COMMAND_NAME_PROPERTY)) {
-         String commandName = promptService.prompt(COMMAND_NAME_PROPERTY, "", null);
-         collection.addParameter(new DefaultParameter<>(COMMAND_NAME_PROPERTY, commandName));
-      }
+      
       final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getStringValue();
 
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
@@ -182,23 +176,6 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
-   }
-
-   /**
-    * Sets prompt user service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptService")
-   public void setPromptService(IPromptUserService ref) {
-      this.promptService = ref;
-   }
-
-   /**
-    * Remove prompt user service.
-    */
-   public void removePromptService(IPromptUserService ref) {
-      setPromptService(null);
    }
 
    /**

@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -27,7 +26,6 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    private CreateJellyFishGradleProjectCommand cmd = new CreateJellyFishGradleProjectCommand();
    private PrintStreamLogService logger = new PrintStreamLogService();
-   private IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
    private ITemplateService mockTemplateService = new MockedTemplateService()
          .useRealPropertyService()
          .useDefaultUserValues(true)
@@ -41,7 +39,6 @@ public class CreateJellyFishGradleProjectCommandIT {
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
       cmd.setLogService(logger);
-      cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockTemplateService);
    }
 
