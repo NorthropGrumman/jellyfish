@@ -2,15 +2,20 @@ package com.ngc.seaside.jellyfish.tests;
 
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
 import org.gradle.api.logging.Logger;
+import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -63,18 +68,15 @@ public class RegressionsIT {
         // Parse the properties file and store the relevant data
         Map<String, String> propertiesValues = readJellyfishPropertiesFile(directory);
         String relPath = '\\' + propertiesValues.get("inputDir").replace('/', '\\');
-        
         String fullInputDirPath = directory + relPath;
-        //System.out.println("Full input directory path is " + fullInputDirPath);
-        //System.out.println("Output directory is " + tempOutputDirectory);
         
         Map<String,String> generatorArguments = new HashMap<String, String>();
-        //System.out.println("Model is " + propertiesValues.get("model"));
         
         generatorArguments.put("outputDirectory", tempOutputDirectory);
-        generatorArguments.put("updateGradleSettings", "false");
+//        generatorArguments.put("updateGradleSettings", "false");
         generatorArguments.put("version", propertiesValues.get("version"));
         generatorArguments.put("model", propertiesValues.get("model"));
+        generatorArguments.put("projectName", "a");
         
         // Create the generation project object
         Logger log = Mockito.mock(Logger.class); 
@@ -82,10 +84,10 @@ public class RegressionsIT {
                  .setCommand(propertiesValues.get("command"))
                  .setInputDir(fullInputDirPath)
                  .setArguments(generatorArguments);
-
+        
+        
         // Generate the object with a firey passion
         proj.generate();
-        
         
         // At this point, the project has been generated. Now, run 'gradle clean build -x text' on each subproject
         runGradleCleanBuildOnGeneratedProject(tempOutputDirectory);
@@ -98,9 +100,28 @@ public class RegressionsIT {
      * @param directory - the directory of the newly generated regression test project
      */
     private static void runGradleCleanBuildOnGeneratedProject(String directory) {
-       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + directory);
+       String generatedProj = directory + "\\a";
+       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
 
-       // TODO: Perform the 'gradle clean build -x test' command
+       // TODO: Correctly grab the directory under temp. Can you use wildcards when searching for a directory?
+       
+       String gradleHome = System.getenv("GRADLE_HOME");  
+       Assert.assertNotNull("GRADLE_HOME not set", gradleHome);  
+       
+       // Perform the 'gradle clean build -x test' command
+       ProjectConnection connection = GradleConnector.newConnector()
+                .useInstallation(Paths.get(gradleHome).toFile()).forProjectDirectory(new File(generatedProj)).connect();
+       
+       try {
+          BuildLauncher build = connection.newBuild();
+          build.forTasks("clean", "build");
+          build.withArguments("-x", "test");
+          build.setStandardError(System.err).setStandardOutput(System.out);
+          
+          build.run();
+       } finally {
+          connection.close();
+       }
        
        diffDefaultAndGeneratedProject(directory);
     }
