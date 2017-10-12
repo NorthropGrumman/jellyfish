@@ -1,3 +1,5 @@
+package com.ngc.seaside.jellyfish.tests;
+
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
 import org.gradle.api.logging.Logger;
 
