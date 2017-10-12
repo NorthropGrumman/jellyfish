@@ -30,6 +30,7 @@ dependencies {
     commandTemplate project(path: ":jellyfish.cli.command.createjavaservicebase", configuration: "commandTemplate")
     commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconfig", configuration: "commandTemplate")
     commandTemplate project(path: ":jellyfish.cli.command.createjavacucumbertests", configuration: "commandTemplate")
+    commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
 }
 
 // Include the command templates in the JAR.
