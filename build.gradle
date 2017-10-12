@@ -19,7 +19,7 @@ group = 'com.ngc.seaside'
 version = '1.0.0-SNAPSHOT'
 
 ext {
-    jellyfishCliVersion = '1.5.0'
+    jellyfishCliVersion = '1.5.1-SNAPSHOT'
 }
 
 dependencies {
