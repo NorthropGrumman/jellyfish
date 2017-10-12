@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
@@ -34,9 +35,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,6 +49,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
    private ITemplateService templateService;
+   private IPromptUserService promptService;
 
    /**
     * Ensure the dynamic references are added only after the activation of this
@@ -104,6 +104,55 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       commands.remove(command);
    }
 
+   private IParameterCollection getParameters(IParameterCollection givenParamCollection, IJellyFishCommand command) {
+      List<IParameter<?>> givenParams = givenParamCollection.getAllParameters();
+
+      List<IParameter<?>> requiredParams = command.getUsage().getRequiredParameters();
+      List<IParameter<?>> allParams = command.getUsage().getAllParameters();
+
+      int numRequiredParams = requiredParams.size();
+      String[] requiredParamNames = new String[numRequiredParams];
+      // populate required parameter names
+      for (int i = 0; i < numRequiredParams; i++) {
+         requiredParamNames[i] = requiredParams.get(i).getName();
+      }
+
+      ArrayList<String> requiredParamNamesFound = new ArrayList<String>();
+      // track required parameters found in given parameters
+      for (int i = 0; i < givenParams.size(); i++) {
+         String name = givenParams.get(i).getName();
+
+         if (Arrays.asList(requiredParamNames).contains(name)) {
+            requiredParamNamesFound.add(name);
+         }
+      }
+
+      if (requiredParamNamesFound.size() != numRequiredParams) {
+         DefaultParameterCollection newParamCollection = new DefaultParameterCollection();
+         // Populating new parameter collection with already given parameters
+         for (int i=0; i < givenParams.size(); i++) {
+            newParamCollection.addParameter(givenParams.get(i));
+         }
+
+         // Adding any missing required parameters via prompt to the new parameter collection
+         for (int i = 0; i < numRequiredParams; i++) {
+            IParameter<?> requiredParam = requiredParams.get(i);
+            if (!requiredParamNamesFound.contains(requiredParam.getName())) {
+               IParameter newParam = promptForParameter(requiredParam);
+               newParamCollection.addParameter(newParam);
+            }
+         }
+         return newParamCollection;
+      } else {
+         return givenParamCollection;
+      }
+   }
+
+   private IParameter<?> promptForParameter(IParameter<?> paramDesired) {  // TODO: Syntax?
+      String paramValue = promptService.prompt(paramDesired.getName(), null, null);
+      return new DefaultParameter<>(paramDesired.getName(), paramValue);
+   }
+
    @Override
    public void run(String[] arguments) {
       Preconditions.checkNotNull(arguments, "Arguments must not be null.");
@@ -132,6 +181,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       IParameterCollection userInputParameters = parameterService.parseParameters(
             Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+
+      userInputParameters = getParameters(userInputParameters, command);
 
       IParameterCollection templateParameters = null;
       if (isCommandConfiguredForTemplateService(command)) {
@@ -190,6 +241,25 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
+   }
+
+   /**
+    * Sets prompt service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+           policy = ReferencePolicy.STATIC,
+           unbind = "removePromptService")
+   public void setPromptService(IPromptUserService ref) {
+      this.promptService = ref;
+   }
+
+   /**
+    * Remove prompt service.
+    */
+   public void removePromptService(IPromptUserService ref) {
+      setPromptService(null);
    }
 
    /**
