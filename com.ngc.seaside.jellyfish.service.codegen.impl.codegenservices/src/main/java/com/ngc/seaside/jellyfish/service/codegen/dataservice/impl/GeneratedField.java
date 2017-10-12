@@ -265,7 +265,7 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       @Override
       public String getJavaFieldName() {
          throw new UnsupportedOperationException(
-            "Cannot retrieve the java field name from the generated protocol buffer message");
+            "The java field name from the generated protocol buffer message is unsupported");
       }
 
       @Override
@@ -280,16 +280,25 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
 
       @Override
       public String getRepeatedJavaCountName() {
+         if (!isMultiple()) {
+            throw new IllegalStateException("This field is not a repeated field");
+         }
          return GeneratedField.this.protoRepeatedJavaCountName;
       }
 
       @Override
       public String getRepeatedJavaAddName() {
+         if (!isMultiple()) {
+            throw new IllegalStateException("This field is not a repeated field");
+         }
          return GeneratedField.this.protoRepeatedJavaAddName;
       }
 
       @Override
       public String getRepeatedJavaGetterName() {
+         if (!isMultiple()) {
+            throw new IllegalStateException("This field is not a repeated field");
+         }
          return GeneratedField.this.protoRepeatedJavaGetterName;
       }
 

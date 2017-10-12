@@ -8,6 +8,7 @@ public interface IGeneratedJavaProtoField extends IGeneratedJavaField {
     * Returns the name of the count method for a repeated field.
     * 
     * @return the name of the count method for a repeated field
+    * @throws RuntimeException if {@link #isMultiple()} is false for this field
     */
    String getRepeatedJavaCountName();
 
@@ -15,12 +16,14 @@ public interface IGeneratedJavaProtoField extends IGeneratedJavaField {
     * Returns the name of the add method for a repeated field.
     * 
     * @return the name of the add method for a repeated field
+    * @throws RuntimeException if {@link #isMultiple()} is false for this field
     */
    String getRepeatedJavaAddName();
 
    /**
     * Returns the name of the get-at-index method for a repeated field.
     * @return the name of the get-at-index method for a repeated field
+    * @throws RuntimeException if {@link #isMultiple()} is false for this field
     */
    String getRepeatedJavaGetterName();
 
