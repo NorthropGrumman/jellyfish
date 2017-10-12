@@ -63,11 +63,11 @@ public class RegressionsIT {
         String relPath = '\\' + propertiesValues.get("inputDir").replace('/', '\\');
         
         String fullInputDirPath = directory + relPath;
-        System.out.println("Full input directory path is " + fullInputDirPath);
-        System.out.println("Output directory is " + tempOutputDirectory);
+        //System.out.println("Full input directory path is " + fullInputDirPath);
+        //System.out.println("Output directory is " + tempOutputDirectory);
         
         Map<String,String> generatorArguments = new HashMap<String, String>();
-        System.out.println("Model is " + propertiesValues.get("model"));
+        //System.out.println("Model is " + propertiesValues.get("model"));
         
         generatorArguments.put("outputDirectory", tempOutputDirectory);
         generatorArguments.put("updateGradleSettings", "false");
@@ -81,7 +81,7 @@ public class RegressionsIT {
                  .setInputDir(fullInputDirPath)
                  .setArguments(generatorArguments);
 
-        //System.out.println("generatorArguments include:\n\n" + generatorArguments);
+        // Generate the object with a firey passion
         proj.generate();
         
         
@@ -118,7 +118,7 @@ public class RegressionsIT {
     private static Map<String, String> readJellyfishPropertiesFile(String dir) throws IOException {
        Map<String, String> props = new HashMap<String, String>();
        File fin = new File(dir + "\\jellyfish.properties");
-       System.out.println("FILE is " + fin);
+       //System.out.println("FILE is " + fin);
        FileInputStream fis = new FileInputStream(fin);
        
        //Construct BufferedReader from InputStreamReader

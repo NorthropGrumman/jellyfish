@@ -11,8 +11,25 @@ repositories {
     
 dependencies {
 
-	compile "com.ngc.seaside:jellyfish.cli.gradle.plugins:1.5.1-SNAPSHOT"
+	compile "com.ngc.seaside:jellyfish.cli"
+
+    compile "com.ngc.seaside:jellyfish.cli.command.createdomain"
+	commandTemplate project(path: “com.ngc.seaside:jellyfish.cli.command.createdomain”, configuration: “commandTemplate”)
+    
+	compile (path = "com.ngc.seaside:jellyfish.cli.gradle.plugins:1.5.1-SNAPSHOT", 
 	compile gradleApi()
+	
+	compile "com.google.inject:guice:4.1.0"
+	compile "com.google.inject.extensions:guice-multibindings:4.1.0"
+
+	compile "com.ngc.seaside:bootstrap.api:1.7.2"
+    compile "com.ngc.seaside:bootstrap.service.api:1.7.2"
+    compile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:1.6.0"
+    compile "com.ngc.seaside:bootstrap.service.impl.parameterservice:1.6.0"
+    compile "com.ngc.seaside:bootstrap.service.impl.templateservice:1.6.0"
+    compile "com.ngc.seaside:bootstrap.service.impl.propertyservice:1.6.0"
+    compile "com.ngc.seaside:bootstrap.impl.provider:1.6.0"
+	compile "com.ngc.seaside:bootstrap.utilities:1.7.2"
 	
 	testCompile "org.mockito:mockito-core:2.7.14"
 	testCompile group: 'junit', name: 'junit', version: '4.+'
