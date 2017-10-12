@@ -63,7 +63,7 @@ public class RegressionsIT {
         System.out.println("Generating jelly fish project in directory: " + directory);
         
         // Place the newly generated project into a temporary directory
-        String tempOutputDirectory = directory + "\\tmp";
+        String tempOutputDirectory = directory;// + "\\tmp";
         
         // Parse the properties file and store the relevant data
         Map<String, String> propertiesValues = readJellyfishPropertiesFile(directory);
@@ -76,7 +76,7 @@ public class RegressionsIT {
 //        generatorArguments.put("updateGradleSettings", "false");
         generatorArguments.put("version", propertiesValues.get("version"));
         generatorArguments.put("model", propertiesValues.get("model"));
-        generatorArguments.put("projectName", "a");
+        generatorArguments.put("projectName", "generatedProject");
         
         // Create the generation project object
         Logger log = Mockito.mock(Logger.class); 
@@ -100,7 +100,7 @@ public class RegressionsIT {
      * @param directory - the directory of the newly generated regression test project
      */
     private static void runGradleCleanBuildOnGeneratedProject(String directory) {
-       String generatedProj = directory + "\\a";
+       String generatedProj = directory + "\\generatedProject";
        System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
 
        // TODO: Correctly grab the directory under temp. Can you use wildcards when searching for a directory?
