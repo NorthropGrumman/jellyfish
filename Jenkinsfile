@@ -34,7 +34,7 @@ pipeline {
 
         stage('Upload') {
             when {
-                expression { return !(params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) }
+                expression { return !(params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) && env.BRANCH_NAME == 'master' }
             }
             steps {
                 sh './gradlew upload'
@@ -43,7 +43,7 @@ pipeline {
 
         stage('Release') {
             when {
-                expression { return params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+                expression { return (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) && env.BRANCH_NAME == 'master' }
             }
             steps {
                 sh './gradlew clean build release'
