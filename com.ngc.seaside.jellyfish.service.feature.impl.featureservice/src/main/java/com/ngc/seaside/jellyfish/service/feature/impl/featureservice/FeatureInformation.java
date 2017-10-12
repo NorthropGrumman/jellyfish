@@ -1,23 +1,24 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
+import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
+
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.TreeSet;
 
 public class FeatureInformation implements IFeatureInformation {
    private String fileName;
    private String fullyQualifiedName;
    private String name;
-   private TreeSet<String> requirements = new TreeSet<>(Collections.reverseOrder());
    private Path absolutePath;
    private Path relativePath;
 
    public FeatureInformation(Path absolutePath, Path relativePath) {
+      fullyQualifiedName = substringBetween(absolutePath.getFileName().toString(), "", ".feature");
+      fileName = fullyQualifiedName.concat(".feature");
+      this.name = substringBetween(absolutePath.getFileName().toString(), ".", ".");
       this.setAbsolutePath(absolutePath);
-      this.setRelativePath(relativePath);
+      this.setRelativePath(relativePath);     
    }
 
    @Override
@@ -93,27 +94,35 @@ public class FeatureInformation implements IFeatureInformation {
       this.relativePath = relativePath;
    }
 
+   /**
+    * <p>Gets the String that is nested in between two Strings. Only the first match is returned.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An
+    * empty ("") open and close returns an empty string.</p>
+    *
+    * @param str   the String containing the substring, may be null
+    * @param open  the String before the substring, may be null
+    * @param close the String after the substring, may be null
+    * @return the substring, {@code null} if no match
+    */
+   private static String substringBetween(final String str, final String open, final String close) {
+      if (str == null || open == null || close == null) {
+         return null;
+      }
+      final int start = str.indexOf(open);
+      if (start != INDEX_NOT_FOUND) {
+         final int end = str.indexOf(close, start + open.length());
+         if (end != INDEX_NOT_FOUND) {
+            return str.substring(start + open.length(), end);
+         }
+      }
+      return null;
+   }
+
+
    @Override
-   public Collection<String> getRequirements() {
-      return requirements;
+   public String toString() {
+      return "FeatureInformation [fileName=" + fileName + ", fullyQualifiedName=" + fullyQualifiedName + ", name="
+         + name + ", absolutePath=" + absolutePath.toString() + ", relativePath=" + relativePath.toString() + "]";
    }
-
-   /**
-    * Adds a requirement to the feature
-    *
-    * @param requirement requirement to add
-    */
-   void addRequirement(String requirement) {
-      this.requirements.add(requirement);
-   }
-   
-   /**
-    * Adds a collection of requirements to the feature
-    *
-    * @param requirements requirements to add
-    */
-   public void addRequirements(Collection<String> requirements) {
-      requirements.forEach(this::addRequirement);
-   }
-
 }

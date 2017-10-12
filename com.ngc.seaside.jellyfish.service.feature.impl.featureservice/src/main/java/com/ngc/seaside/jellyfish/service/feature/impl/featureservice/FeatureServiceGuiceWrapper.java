@@ -21,11 +21,6 @@ public class FeatureServiceGuiceWrapper implements IFeatureService {
    }
 
    @Override
-   public IFeatureInformation getFeatureInfo(Path sdPath, IModel model) {
-      return delegate.getFeatureInfo(sdPath, model);
-   }
-
-   @Override
    public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
       return delegate.getFeatures(sdPath, model);
    }

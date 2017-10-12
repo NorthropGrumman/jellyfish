@@ -26,13 +26,6 @@ public interface IFeatureInformation {
    String getName();
 
    /**
-    * Returns a set of requirements that is belonging to this feature
-    *
-    * @return requirements belonging by this feature
-    */
-   Collection<String> getRequirements();
-
-   /**
     * Returns the relative path to this feature file
     * 
     * @return the relative path

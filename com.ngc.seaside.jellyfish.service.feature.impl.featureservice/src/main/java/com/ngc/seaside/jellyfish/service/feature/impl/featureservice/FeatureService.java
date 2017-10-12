@@ -31,35 +31,19 @@ public class FeatureService implements IFeatureService {
    private ILogService logService;
 
    @Override
-   public IFeatureInformation getFeatureInfo(Path sdPath, IModel model) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-   
-   @Override
-   public TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
-      TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
-
-      models.forEach(model -> {
-         features.putAll(getFeatures(sdPath, model));
-      });
-      return features;
-   }
-
-   @Override
    public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
-
+   
       TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
       final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
       final Path gherkin = sdPath.resolve(Paths.get("src", "test", "gherkin"))
                                          .toAbsolutePath();
       String packages = model.getParent().getName();
       Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
-
+   
       Path featureFilesRoot = gherkin.resolve(modelPath);
-
+   
       try {
          Files.list(featureFilesRoot)
               .filter(Files::isRegularFile)
@@ -71,9 +55,19 @@ public class FeatureService implements IFeatureService {
          throw new CommandException(e);
       }
       return features;
-
+   
    }
 
+   @Override
+   public TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
+      TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
+
+      models.forEach(model -> {
+         features.putAll(getFeatures(sdPath, model));
+      });
+      return features;
+   }
+   
    @Activate
    public void activate() {
       logService.debug(getClass(), "activated");

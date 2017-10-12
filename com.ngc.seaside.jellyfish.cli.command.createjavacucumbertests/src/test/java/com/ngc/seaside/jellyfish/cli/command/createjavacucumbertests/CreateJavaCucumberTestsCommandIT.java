@@ -12,6 +12,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -71,6 +72,9 @@ public class CreateJavaCucumberTestsCommandIT {
    @Mock
    private IPackageNamingService packageService;
    
+   @Mock
+   private IFeatureService featureService;
+   
    
    @Before
    public void setup() throws IOException {
@@ -88,12 +92,14 @@ public class CreateJavaCucumberTestsCommandIT {
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
+      
 
       command.setLogService(logService);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
       command.setJavaServiceGenerationService(generationService);
+      command.setFeatureService(featureService);
       command.activate();
    }
 

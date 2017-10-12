@@ -11,14 +11,6 @@ import java.util.TreeMap;
  * @author bperkins
  */
 public interface IFeatureService {
-
-   /**
-    * Gets the feature information with the given system descriptor path and model.
-    * @param sdPath the path to the system descriptor
-    * @param model the model
-    * @return the feature information
-    */
-   IFeatureInformation getFeatureInfo(Path sdPath, IModel model);
    
    /**
     * Gets a map of all the features for the given system descriptor path and model
