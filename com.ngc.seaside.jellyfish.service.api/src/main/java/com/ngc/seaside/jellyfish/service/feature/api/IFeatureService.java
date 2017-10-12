@@ -24,7 +24,7 @@ public interface IFeatureService {
     * Gets a map of all the features for the given system descriptor path and a collection of models
     * @param sdPath the path to the system descriptor
     * @param models the collection of models
-    * @returna map of the feature information
+    * @return map of the feature information
     */
    TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models);
 
