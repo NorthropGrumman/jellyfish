@@ -71,7 +71,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
          }         
       });
       models.addAll(ModelUtils.searchModels(commandOptions, values, operator));
-      Collection<Requirement> requirements = searchForRequirements(models);
+      Collection<Requirement> requirements = searchForRequirements(commandOptions, models);
 
       String report = "";
       if (outputFormat.equalsIgnoreCase("csv")) {
@@ -108,26 +108,29 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
 
    /**
     * Searches a collection of models for all requirements satisfied
+    * @param commandOptions 
     * 
     * @param models the list of models to search for requirements
+    * @param commandOptions the command options
     * @return colletion of all requirements satisfied
     */
-   private Collection<Requirement> searchForRequirements(Collection<IModel> models) {
+   private Collection<Requirement> searchForRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models) {
       final Map<String, Requirement> requirementsMap = new TreeMap<>();
 
-      models.forEach(m -> searchForRequirements(m, requirementsMap));
+      models.forEach(m -> searchForRequirements(commandOptions, m, requirementsMap));
 
       return requirementsMap.values();
    }
 
    /**
     * Populates a map with all requirements that a given model satisfies
-    * 
+    * @param commandOptions the command options
     * @param model the model to search for requirements
     * @param requirementsMap the requirements map to populate
     */
-   private void searchForRequirements(IModel model, Map<String, Requirement> requirementsMap) {
-      Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(model);
+   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model, Map<String, Requirement> requirementsMap) {
+      
+      Collection<String> requirementsSet = requirementsService.getRequirements(commandOptions, model);
 
       requirementsSet.forEach(eachReqName -> {
          if (!requirementsMap.containsKey(eachReqName) || 

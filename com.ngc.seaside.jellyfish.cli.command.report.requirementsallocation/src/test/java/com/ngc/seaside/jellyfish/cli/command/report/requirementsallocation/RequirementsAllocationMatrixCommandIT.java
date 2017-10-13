@@ -1,5 +1,11 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -9,14 +15,21 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementsAllocationMatrixCommand;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,16 +42,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequirementsAllocationMatrixCommandIT {
@@ -51,6 +59,9 @@ public class RequirementsAllocationMatrixCommandIT {
 
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
+   
+   @Mock
+   private IRequirementsService requirementsService;
 
    private Path outputDir;
    private Path outputFilePath;
@@ -72,7 +83,7 @@ public class RequirementsAllocationMatrixCommandIT {
    @Before
    public void setup() throws IOException {
       parameters = new DefaultParameterCollection();
-      Mockito.when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
+      when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
 
       outputDir = Files.createTempDirectory(null);
       outputDir.toFile().deleteOnExit();
@@ -88,11 +99,12 @@ public class RequirementsAllocationMatrixCommandIT {
       IParsingResult result = sdService.parseFiles(sdFiles);
       Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
       ISystemDescriptor sd = result.getSystemDescriptor();
-      Mockito.when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(sd);
+      when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(sd);
    }
 
    @Test
    public void testCommandWithNoParameters() throws IOException {
+      when(requirementsService.getRequirements(any(IJellyFishCommandOptions.class), any(IModel.class))).thenReturn(new TreeSet<>());
       Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -187,7 +199,7 @@ public class RequirementsAllocationMatrixCommandIT {
          parameters.addParameter(new DefaultParameter<>(keyValues[n], keyValues[n + 1]));
       }
 
-      Mockito.when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
+      when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
 
       cmd.run(jellyFishCommandOptions);
    }
