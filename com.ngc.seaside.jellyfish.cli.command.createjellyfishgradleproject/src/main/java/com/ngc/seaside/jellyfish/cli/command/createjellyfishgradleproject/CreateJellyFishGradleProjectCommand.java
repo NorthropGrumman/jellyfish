@@ -39,6 +39,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
@@ -110,6 +112,18 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
          String version = promptService.prompt(VERSION_PROPERTY, "1.0-SNAPSHOT", null);
          collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
       }
+      
+      // Ensure ARTIFACT_ID_PROPERTY parameter is set
+      if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
+          String version = promptService.prompt(ARTIFACT_ID_PROPERTY, "mysystem.descriptor", null);
+          collection.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY).setValue(version));
+       }
+      
+      // Ensure MODEL_NAME_PROPERTY parameter is set
+      if (!collection.containsParameter(MODEL_NAME_PROPERTY)) {
+          String version = promptService.prompt(MODEL_NAME_PROPERTY, "com.ngc.seaside.MyModel", null);
+          collection.addParameter(new DefaultParameter<>(MODEL_NAME_PROPERTY).setValue(version));
+       }
 
       // Ensure CLEAN_PROPERTY parameter is set
       final boolean clean;
@@ -208,6 +222,10 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
          new DefaultParameter<>(VERSION_PROPERTY)
             .setDescription("The version to use for the Gradle project")
             .setRequired(false),
+            
+         CommonParameters.ARTIFACT_ID,
+         
+         CommonParameters.MODEL,
 
          CommonParameters.CLEAN);
    }

@@ -14,9 +14,26 @@ buildscript {
    dependencies {
       classpath 'com.ngc.blocs:gradle.plugin:0.4'
       classpath 'com.ngc.seaside:gradle.plugins:1.6'
+      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.5.1-SNAPSHOT'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
    }
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
+
+#set ( $d = "$")
+
+ext {
+    systemDescriptorProjectName = '${artifactId}'
+    systemDescriptorProjectVersion = '${version}'
+    systemDescriptorName = '${d}{systemDescriptorProjectName}-${d}{systemDescriptorProjectVersion}'
+    systemDescriptorLocation = "${d}{project.buildDir}/${d}{systemDescriptorDirectoryName}/${d}{systemDescriptorName}"
+    modelName = '${model}'
+}
+
+dependencies {
+	generate "${groupId}:${d}systemDescriptorProjectName:${d}systemDescriptorProjectVersion@zip"
 }
 
 subprojects {
@@ -49,3 +66,5 @@ subprojects {
         cucumberVersion = '1.2.5'
     }
 }
+
+unpacker.unpack()
