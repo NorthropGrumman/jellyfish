@@ -135,8 +135,6 @@ public class JellyFishCommandProviderTest {
 	}
       when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
             .thenReturn(collection);
-      when(parameterService.parseParameters(Collections.singletonList("-DrepositoryUrl=" + url)))
-      		.thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
       when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))

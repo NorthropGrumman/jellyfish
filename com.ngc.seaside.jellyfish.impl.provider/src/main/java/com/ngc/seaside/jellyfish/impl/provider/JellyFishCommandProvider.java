@@ -36,6 +36,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -384,23 +385,29 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       }
 
       IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
+      IParameter<?> urlParameter = userInputParameters.getParameter("repositoryUrl");
+      IParameter<?> gaveParameter = userInputParameters.getParameter("gave");
+      
+      String gaveValue;
       Path path;
-//      String url = userInputParameters.getParameter("repositoryUrl").toString();
-//      String gave = userInputParameters.getParameter("GAVE").toString();
-//      if(userInputParameters.containsParameter("repositoryUrl") && userInputParameters.containsParameter("GAVE")) {
-//    	  try {
-//			unpackArchiveFromUrl(url, gave);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-////    	  path = Paths.get(arg0);
-//      }
-      if (inputDir == null) {
-         path = Paths.get(System.getProperty("user.dir"));
+      File tempDir = null;
+      
+      if (urlParameter == null || gaveParameter == null) {
+    	  if (inputDir == null) {
+    		  path = Paths.get(System.getProperty("user.dir"));
+    	  } else {
+    		  path = Paths.get(inputDir.getStringValue());
+    	  }
       } else {
-         path = Paths.get(inputDir.getStringValue());
+          gaveValue = parseGave(gaveParameter.getValue().toString());
+          try {
+        	  tempDir = unpackArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
+          } catch (IOException e) {
+        	  e.printStackTrace();
+          }
+          path = Paths.get(tempDir.toURI());
       }
+      
       options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
       options.setSystemDescriptorProjectPath(path);
       return options;
@@ -494,22 +501,31 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @param url the string representation of the repository url
     * @param gave the string representation of the archive info
     */
-   public void unpackArchiveFromUrl(String url, String gave) throws IOException {
+   public File unpackArchiveFromUrl(String url, String gave) throws IOException {
 	   File tempDir = FileUtils.getTempDirectory();
 	   String[] fileName = gave.split("/");
 	   URL myUrl = new URL(url + gave);
 	   File file = new File(tempDir.toString() + "\\" + fileName[fileName.length - 1]);
 	   FileUtils.copyURLToFile(myUrl, file);
+
+	   //TODO add extract zip code
+	   return tempDir;
    }
    
    public String parseGave(String gave) {
-	   String gaveProperty;
+
 	   String[] splitter = gave.split(":");
 	   String[] temp;
 	   temp = splitter[0].split("\\.");
+	   String gaveProperty = temp[0] + "/";
 
-	   gaveProperty = temp[0] + "/" + temp[1] + "/" + temp[2] + "/" + temp[3] + "/" + splitter[1] + "/" + splitter[2] + 
-			   "/" + splitter[1] + "-" + splitter[2] + ".zip";
+	   for (int i = 1; i < temp.length; i++) {
+		   gaveProperty = gaveProperty + temp[i] + "/";
+	   }
+	   for (int i = 1; i < splitter.length; i++) {
+		   gaveProperty = gaveProperty + splitter[i] + "/";
+	   }
+	   gaveProperty = gaveProperty + splitter[1] + "-" + splitter[2] + ".zip";
 	   System.out.println("gaveProperty: " + gaveProperty);
 	   return gaveProperty;
    }
