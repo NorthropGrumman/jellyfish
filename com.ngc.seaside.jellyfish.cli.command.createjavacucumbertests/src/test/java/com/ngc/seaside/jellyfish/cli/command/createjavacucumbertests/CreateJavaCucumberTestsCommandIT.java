@@ -5,15 +5,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
+import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -37,10 +36,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.TreeMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
+   private static final PrintStreamLogService logger = new PrintStreamLogService();
+   private static final FeatureService featureService = new FeatureService();
 
    private CreateJavaCucumberTestsCommand command = new CreateJavaCucumberTestsCommand();
 
@@ -61,9 +61,6 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @Mock
    private IModel model;
-
-   @Mock
-   private ILogService logService;
    
    @Mock
    private IJavaServiceGenerationService generationService;
@@ -73,11 +70,7 @@ public class CreateJavaCucumberTestsCommandIT {
    
    @Mock
    private IPackageNamingService packageService;
-   
-   @Mock
-   private IFeatureService featureService;
-   
-   
+
    @Before
    public void setup() throws IOException {
       outputDirectory = tempFolder.newFolder().toPath();
@@ -96,12 +89,12 @@ public class CreateJavaCucumberTestsCommandIT {
       when(model.getParent()).thenReturn(mock(IPackage.class));
       
 
-      command.setLogService(logService);
+      command.setLogService(logger);
+      command.setFeatureService(featureService);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
       command.setJavaServiceGenerationService(generationService);
-      command.setFeatureService(featureService);
       command.activate();
    }
 
@@ -133,21 +126,6 @@ public class CreateJavaCucumberTestsCommandIT {
       EnumDto mockEnum = mock(EnumDto.class);
       when(generationService.getTransportTopicsDescription(any(), eq(model))).thenReturn(mockEnum);
       when(mockEnum.getFullyQualifiedName()).thenReturn(pkg + "." + name.toLowerCase() + ".transport.topics." + name + "TransportTopics");
-      
-      IFeatureInformation featureInfo0 = mock(IFeatureInformation.class);
-      Path relPath = Paths.get("com", "ngc", "seaside", "testeval", "HamburgerService.removeTheCheese.feature");
-      Path absPath = Paths.get("src", "test", "resources", "src", "test", "gherkin", "com", "ngc", "seaside", "testeval", "HamburgerService.removeTheCheese.feature").toAbsolutePath();
-      when(featureInfo0.getRelativePath()).thenReturn(relPath);
-      when(featureInfo0.getAbsolutePath()).thenReturn(absPath);
-      IFeatureInformation featureInfo1 = mock(IFeatureInformation.class);
-      relPath = Paths.get("com", "ngc", "seaside", "testeval", "HamburgerService.addBacon.feature");
-      absPath = Paths.get("src", "test", "resources", "src", "test", "gherkin", "com", "ngc", "seaside", "testeval", "HamburgerService.addBacon.feature").toAbsolutePath();     
-      when(featureInfo1.getRelativePath()).thenReturn(relPath);
-      when(featureInfo1.getAbsolutePath()).thenReturn(absPath);
-      TreeMap<String, IFeatureInformation> featureMap = new TreeMap<>();
-      featureMap.put("a", featureInfo0);
-      featureMap.put("b", featureInfo1);
-      when(featureService.getFeatures(any(), eq(model))).thenReturn(featureMap);
    }
 
    @Test
@@ -214,7 +192,6 @@ public class CreateJavaCucumberTestsCommandIT {
       Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
       Assert.assertTrue(Files.isRegularFile(addBacon));
       Assert.assertTrue(Files.isRegularFile(removeTheCheese));
-
    }
 
 }

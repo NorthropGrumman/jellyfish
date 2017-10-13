@@ -24,6 +24,8 @@ dependencies {
     testCompile project(":jellyfish.cli.command.testutils")
     testCompile project(":jellyfish.service.name.impl.namingservices")
     testCompile project(":jellyfish.service.codegen.impl.codegenservices")
+    testCompile project(":jellyfish.service.feature.impl.featureservice")
+    
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
