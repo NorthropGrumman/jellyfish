@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.eclipse.xtext.validation.Issue;
 
@@ -32,7 +33,7 @@ public class XTextParsingResult implements IParsingResult {
 
    @Override
    public boolean isSuccessful() {
-      return issues.isEmpty();
+      return issues.stream().noneMatch(issue -> issue.getSeverity().equals(Severity.ERROR));
    }
 
    @Override
