@@ -170,60 +170,11 @@ public class CreateJavaServiceProjectCommandTest {
    }
 
    @Test
-   public void testDoesCreateProjectWithNoParameters() throws Throwable {
-      String modelName = model.getFullyQualifiedName();
-
-      command.run(options);
-
-      ArgumentCaptor<IJellyFishCommandOptions> capture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateJellyFishGradleProjectCommand(capture.getValue(),
-                                                             model.getParent().getName(),
-                                                             model.getFullyQualifiedName().toLowerCase());
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_DOMAIN_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateDomainCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateEventsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateCucumberTestsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateDistributionCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceConfigCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceBaseCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      // Verify the build.gradle files were created in 4 generated-projects projects.
-      verify(templateService, times(4)).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-                                               any(IParameterCollection.class),
-                                               any(Path.class),
-                                               eq(false));
-   }
-
-   @Test
    public void testWithoutDomain() throws Throwable {
       String modelName = model.getFullyQualifiedName();
 
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectoryName));
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.MODEL_PROPERTY, modelName));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.CREATE_SERVICE_DOMAIN_PROPERTY,
                                                      "false"));
 
