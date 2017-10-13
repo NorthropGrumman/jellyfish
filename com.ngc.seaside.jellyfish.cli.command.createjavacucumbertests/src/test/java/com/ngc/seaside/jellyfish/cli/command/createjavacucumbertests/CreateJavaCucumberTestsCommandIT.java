@@ -12,6 +12,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -36,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
@@ -131,6 +133,21 @@ public class CreateJavaCucumberTestsCommandIT {
       EnumDto mockEnum = mock(EnumDto.class);
       when(generationService.getTransportTopicsDescription(any(), eq(model))).thenReturn(mockEnum);
       when(mockEnum.getFullyQualifiedName()).thenReturn(pkg + "." + name.toLowerCase() + ".transport.topics." + name + "TransportTopics");
+      
+      IFeatureInformation featureInfo0 = mock(IFeatureInformation.class);
+      Path relPath = Paths.get("com", "ngc", "seaside", "testeval", "HamburgerService.removeTheCheese.feature");
+      Path absPath = Paths.get("src", "test", "resources", "src", "test", "gherkin", "com", "ngc", "seaside", "testeval", "HamburgerService.removeTheCheese.feature").toAbsolutePath();
+      when(featureInfo0.getRelativePath()).thenReturn(relPath);
+      when(featureInfo0.getAbsolutePath()).thenReturn(absPath);
+      IFeatureInformation featureInfo1 = mock(IFeatureInformation.class);
+      relPath = Paths.get("com", "ngc", "seaside", "testeval", "HamburgerService.addBacon.feature");
+      absPath = Paths.get("src", "test", "resources", "src", "test", "gherkin", "com", "ngc", "seaside", "testeval", "HamburgerService.addBacon.feature").toAbsolutePath();     
+      when(featureInfo1.getRelativePath()).thenReturn(relPath);
+      when(featureInfo1.getAbsolutePath()).thenReturn(absPath);
+      TreeMap<String, IFeatureInformation> featureMap = new TreeMap<>();
+      featureMap.put("a", featureInfo0);
+      featureMap.put("b", featureInfo1);
+      when(featureService.getFeatures(any(), eq(model))).thenReturn(featureMap);
    }
 
    @Test
