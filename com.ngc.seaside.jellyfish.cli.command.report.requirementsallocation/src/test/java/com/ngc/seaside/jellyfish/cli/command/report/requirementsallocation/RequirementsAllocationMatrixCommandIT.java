@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @RunWith(MockitoJUnitRunner.class)
 public class RequirementsAllocationMatrixCommandIT {
    private static final PrintStreamLogService logger = new PrintStreamLogService();
-   private static final RequirementsService reqServiceImpl = new RequirementsService();
+   private static final RequirementsService requirementsService = new RequirementsService();
    private static final Injector injector = Guice.createInjector(getModules());
 
    private RequirementsAllocationMatrixCommand cmd = new RequirementsAllocationMatrixCommand();
@@ -66,7 +66,7 @@ public class RequirementsAllocationMatrixCommandIT {
          @Override
          protected void configure() {
             bind(ILogService.class).toInstance(logger);
-            bind(IRequirementsService.class).toInstance(reqServiceImpl);
+            bind(IRequirementsService.class).toInstance(requirementsService);
          }
       });
       return modules;
@@ -82,7 +82,7 @@ public class RequirementsAllocationMatrixCommandIT {
 
       // Setup class under test
       cmd.setLogService(logger);
-      cmd.setRequirementsService(reqServiceImpl);
+      cmd.setRequirementsService(requirementsService);
 
       // Setup mock system descriptor
       Path sdDir = Paths.get("src", "test", "resources", "sd");
