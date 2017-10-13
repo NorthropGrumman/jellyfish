@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.ModelUtils;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -54,6 +55,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    public static final String DEFAULT_OPERATOR_PROPERTY = "OR";
 
    private ILogService logService;
+   private IRequirementsService requirementsService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -180,6 +182,23 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+   
+   /**
+    * Sets requirements service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   public void setRequirementsService(IRequirementsService ref) {
+      this.requirementsService = ref;
+   }
+
+   /**
+    * Remove requirements service.
+    */
+   public void removeRequirementsService(IRequirementsService ref) {
+      setRequirementsService(null);
    }
 
    /**

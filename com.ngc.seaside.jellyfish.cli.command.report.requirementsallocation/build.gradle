@@ -3,6 +3,7 @@ apply plugin: 'com.ngc.seaside.command'
 dependencies {
 
     compile project(":jellyfish.api")
+    compile project(":jellyfish.service.api")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
