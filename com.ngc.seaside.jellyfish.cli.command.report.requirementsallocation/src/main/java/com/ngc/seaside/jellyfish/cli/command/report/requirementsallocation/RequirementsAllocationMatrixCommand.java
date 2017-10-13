@@ -128,9 +128,8 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
     * @param model the model to search for requirements
     * @param requirementsMap the requirements map to populate
     */
-   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model, Map<String, Requirement> requirementsMap) {
-      
-      Collection<String> requirementsSet = requirementsService.getRequirements(commandOptions, model);
+   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model, Map<String, Requirement> requirementsMap) {   
+      Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(commandOptions, requirementsService, model);
 
       requirementsSet.forEach(eachReqName -> {
          if (!requirementsMap.containsKey(eachReqName) || 
@@ -247,19 +246,6 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       }
 
       return output;
-   }
-
-   /**
-    * Retrieve the scope property value based on user input. Default is: {@value #DEFAULT_SCOPE_PROPERTY}
-    *
-    * @param commandOptions Jellyfish command options containing user params
-    */
-   private static String evaluateScope(IJellyFishCommandOptions commandOptions) {
-      String scope = DEFAULT_SCOPE_PROPERTY;
-      if (commandOptions.getParameters().containsParameter(SCOPE_PROPERTY)) {
-         scope = commandOptions.getParameters().getParameter(SCOPE_PROPERTY).getStringValue();
-      }
-      return scope;
    }
 
    /**

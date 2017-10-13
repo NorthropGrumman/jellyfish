@@ -1,9 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.inject.AbstractModule;
@@ -16,8 +13,8 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
+import com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice.RequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -28,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayOutputStream;
@@ -42,15 +38,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequirementsAllocationMatrixCommandIT {
    private static final PrintStreamLogService logger = new PrintStreamLogService();
+   private static final RequirementsService reqServiceImpl = new RequirementsService();
    private static final Injector injector = Guice.createInjector(getModules());
 
    private RequirementsAllocationMatrixCommand cmd = new RequirementsAllocationMatrixCommand();
@@ -59,9 +53,6 @@ public class RequirementsAllocationMatrixCommandIT {
 
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
-   
-   @Mock
-   private IRequirementsService requirementsService;
 
    private Path outputDir;
    private Path outputFilePath;
@@ -75,6 +66,7 @@ public class RequirementsAllocationMatrixCommandIT {
          @Override
          protected void configure() {
             bind(ILogService.class).toInstance(logger);
+            bind(IRequirementsService.class).toInstance(reqServiceImpl);
          }
       });
       return modules;
@@ -90,6 +82,7 @@ public class RequirementsAllocationMatrixCommandIT {
 
       // Setup class under test
       cmd.setLogService(logger);
+      cmd.setRequirementsService(reqServiceImpl);
 
       // Setup mock system descriptor
       Path sdDir = Paths.get("src", "test", "resources", "sd");
@@ -104,7 +97,6 @@ public class RequirementsAllocationMatrixCommandIT {
 
    @Test
    public void testCommandWithNoParameters() throws IOException {
-      when(requirementsService.getRequirements(any(IJellyFishCommandOptions.class), any(IModel.class))).thenReturn(new TreeSet<>());
       Path expectedOutputFilePath = expectedOutputFilesDir.resolve("expectedReqAllocationMatrix.txt");
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
