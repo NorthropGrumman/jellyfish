@@ -107,6 +107,8 @@ public class JellyFishCommandProviderTest {
    public void testRun() {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
+      when(command.getUsage()).thenReturn(mock(IUsage.class));
+      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
       Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
@@ -151,6 +153,8 @@ public class JellyFishCommandProviderTest {
    public void testDoesRunWithoutInvokingTemplateService() throws Throwable {
       IJellyFishCommand command = mock(NoTemplateJfCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
+      when(command.getUsage()).thenReturn(mock(IUsage.class));
+      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
 
       Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
@@ -190,6 +194,8 @@ public class JellyFishCommandProviderTest {
    public void testDoesNotRunCommandIfSystemDescriptorIsInvalid() {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
+      when(command.getUsage()).thenReturn(mock(IUsage.class));
+      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
 
       Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
@@ -228,6 +234,8 @@ public class JellyFishCommandProviderTest {
    public void testDoesRunCommandIfCommandAllowsForInvalidSystemDescriptor() {
       IJellyFishCommand command = mock(ToleratingInvalidSdJfCommand.class);
       when(command.getName()).thenReturn("create-java-bundle");
+      when(command.getUsage()).thenReturn(mock(IUsage.class));
+      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
 
       Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();

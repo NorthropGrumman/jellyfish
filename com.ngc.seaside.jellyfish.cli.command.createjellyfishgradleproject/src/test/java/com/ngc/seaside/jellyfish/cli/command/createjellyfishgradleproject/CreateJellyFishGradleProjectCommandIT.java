@@ -64,13 +64,6 @@ public class CreateJellyFishGradleProjectCommandIT {
       checkCommandOutput(projectName, group, version);
    }
 
-   @Test(expected = Exception.class)
-   public void testCommandWithoutSettings() throws IOException {
-      final String projectName = "test-project-3";
-
-      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName);
-   }
-
    @Test
    public void testWithoutClean() throws IOException {
       final String projectNameA = "test-project-4a";

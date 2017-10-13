@@ -101,20 +101,6 @@ public class CreateJellyFishCommandCommandIT {
    }
 
    @Test
-   public void testCommandWithoutCommandName() throws IOException {
-      createSettings();
-
-      final String command = "test-command-5";
-      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
-         command.replace("-", "").toLowerCase());
-      final String pkg = group + '.' + artifact;
-      final String classname = "TestCommand5Command";
-      runCommand();
-      checkCommandOutput(classname, group, artifact, pkg);
-   }
-
-   @Test
    public void testCommandClassname() throws IOException {
       createSettings();
 
