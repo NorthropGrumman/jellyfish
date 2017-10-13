@@ -31,14 +31,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.TreeMap;
 
@@ -295,7 +292,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          try {
             FileUtils.copyDirectory(dataFile.toFile(), dataDestination.toFile());
          } catch (IOException e) {
-            throw new CommandException("Failed to copy resoureces  to " + destination, e);
+            throw new CommandException("Failed to copy resources  to " + destination, e);
          }
       }
    }
