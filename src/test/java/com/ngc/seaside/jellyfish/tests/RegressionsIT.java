@@ -127,23 +127,24 @@ public class RegressionsIT {
       Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
 
       // Perform the 'gradle clean build -x test' command
+      // TODO: This build below is what was failing due to a "windows file path too long" bug. 
 
       System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
-//      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-//               .useInstallation(Paths.get(gradleHome).toFile())
-//               .forProjectDirectory(new File(givenProject))
-//               .connect();
-//
-//      try {
-//         BuildLauncher build = connectionToGivenProj.newBuild();
-//         build.forTasks("clean", "build");
-//         build.withArguments("-x", "test");
-//         build.setStandardError(System.err).setStandardOutput(System.out);
-//
-//         build.run();
-//      } finally {
-//         connectionToGivenProj.close();
-//      }
+      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
+               .useInstallation(Paths.get(gradleHome).toFile())
+               .forProjectDirectory(new File(givenProject))
+               .connect();
+
+      try {
+         BuildLauncher build = connectionToGivenProj.newBuild();
+         build.forTasks("clean", "build");
+         build.withArguments("-x", "test");
+         build.setStandardError(System.err).setStandardOutput(System.out);
+
+         build.run();
+      } finally {
+         connectionToGivenProj.close();
+      }
       
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
       // Perform the 'gradle clean build -x test' command
@@ -195,8 +196,10 @@ public class RegressionsIT {
       System.out.println("Default Project  : " + defaultProj);
       System.out.println("Generated Project: " + generated + "\n");
 
-//      Assert.assertTrue(!compareDirectories(defaultProj, genDir));
-      compareDirectories(defaultProj, genDir);
+      // TODO: There is a bug here. It does not fail when it encounters a mismatch. It just logs it and moves on. This is not
+      //    the expected behavior. 
+      Assert.assertTrue(compareDirectories(defaultProj, genDir));
+//      compareDirectories(defaultProj, genDir);
 
    }
 
@@ -205,7 +208,7 @@ public class RegressionsIT {
       boolean equality = true;
 
       Set<String> ignoreFiles = new HashSet<String>();
-      ignoreFiles.add(".gradle");
+      //ignoreFiles.add(".gradle");
 
       ArrayList<File> defaultFiles = new ArrayList<File>();
       ArrayList<File> genProjFiles = new ArrayList<File>();
