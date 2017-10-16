@@ -295,6 +295,76 @@ public class JellyFishCommandProviderTest {
       assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
    }
    
+   @Test
+   public void testDoesCreateJavaServiceProjectWithoutInputDir() {
+      IJellyFishCommand command = mock(IJellyFishCommand.class);
+      when(command.getName()).thenReturn("create-java-service-project");
+
+      Path outputDir = Paths.get("C:\\dev\\temp");
+      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0";
+      String model = "com.ngc.seaside.threateval.ThreatEvaluation";
+      DefaultParameterCollection collection = new DefaultParameterCollection();
+      collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
+      String gave1 = provider.parseGave(gave);
+      String url = "http://10.207.42.137/nexus/repository/maven-public/";
+      collection.addParameter(new DefaultParameter<>("repositoryUrl", url));
+      collection.addParameter(new DefaultParameter<>("gave", gave));
+      collection.addParameter(new DefaultParameter<>("model", model));
+      File tempDir = null;
+      
+      try {
+    	  tempDir = provider.getArchiveFromUrl(url, gave1);
+      } catch (IOException e) {
+    	  // TODO Auto-generated catch block
+    	  e.printStackTrace();
+      }	
+      when(parameterService.parseParameters(Collections.singletonList("-DrepositoryUrl=" + url + " -Dgave=" + gave + " -Dmodel=" + model)))
+            .thenReturn(collection);
+      when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
+
+      when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
+            .thenReturn(true);
+      ITemplateOutput output = new DefaultTemplateOutput()
+            .setOutputPath(outputDir)
+            .setProperties(new HashMap<>());
+      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
+                                  collection,
+                                  outputDir,
+                                  false)).thenReturn(output);
+
+      //we aren't testing the system descriptor service, just that it actually gets called
+      IParsingResult result = mock(IParsingResult.class);
+      when(result.isSuccessful()).thenReturn(true);
+      when(result.getSystemDescriptor()).thenReturn(null);
+      when(systemDescriptorService.parseProject(any())).thenReturn(result);
+
+      provider.addCommand(command);
+      provider.run(new String[]{"create-java-service-project", "-DrepositoryUrl=" + url + 
+    		  " -Dgave=" + gave + "-Dmodel=" + model});
+//      provider.run(new String[]{"create-java-service-project", "-DoutputDir=" + outputDir + " -DrepositoryUrl=" + url + 
+//    		  " -Dgave=" + gave + "-Dmodel=" + model});
+
+      ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
+      verify(command).run(optionsCapture.capture());
+
+      IJellyFishCommandOptions options = optionsCapture.getValue();
+
+      assertNotNull("The options must not be null", options);
+
+      //we set it to null above, ensure it really is null
+      assertEquals(null, options.getSystemDescriptor());
+      assertTrue(options.getParameters().containsParameter("outputDirectory"));
+      assertTrue(options.getParameters().containsParameter("repositoryUrl"));
+      assertTrue(options.getParameters().containsParameter("gave"));
+      assertTrue(options.getParameters().containsParameter("model"));
+      assertEquals(url, options.getParameters().getParameter("repositoryUrl").getStringValue());
+      assertEquals(gave, options.getParameters().getParameter("gave").getStringValue());
+      assertEquals(model, options.getParameters().getParameter("model").getStringValue());
+      assertEquals(tempDir.toString(),options.getSystemDescriptorProjectPath().toFile().toString());
+      assertNull(options.getParameters().getParameter("inputDir"));
+      
+   }
+   
 //   @Test
 //   public void testMakeURL() {
 //	   
