@@ -133,23 +133,23 @@ public class RegressionsIT {
       // Perform the 'gradle clean build -x test' command
       // TODO: This build below is what was failing due to a "windows file path too long" bug. 
 
-      System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
-      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile())
-               .forProjectDirectory(new File(givenProject))
-               .connect();
-
-
-      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
-         BuildLauncher build = connectionToGivenProj.newBuild();
-         build.forTasks("clean", "build");
-         build.withArguments("-x", "test");
-         build.setStandardError(log).setStandardOutput(log);
-
-         build.run();
-      } finally {
-         connectionToGivenProj.close();
-      }
+//      System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
+//      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
+//               .useInstallation(Paths.get(gradleHome).toFile())
+//               .forProjectDirectory(new File(givenProject))
+//               .connect();
+//
+//
+//      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
+//         BuildLauncher build = connectionToGivenProj.newBuild();
+//         build.forTasks("clean", "build");
+//         build.withArguments("-x", "test");
+//         build.setStandardError(log).setStandardOutput(log);
+//
+//         build.run();
+//      } finally {
+//         connectionToGivenProj.close();
+//      }
       
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
       // Perform the 'gradle clean build -x test' command
@@ -169,7 +169,7 @@ public class RegressionsIT {
          connectionToGeneratedProj.close();
       }
 
-      //diffDefaultAndGeneratedProjectTrees(generatedProj);
+      diffDefaultAndGeneratedProjectTrees(generatedProj);
    }
 
    /**
@@ -250,7 +250,7 @@ public class RegressionsIT {
             }
 
             if (subFileDefDir.isDirectory() && subFileGenDir.isDirectory()) {
-               compareDirectories(subFileDefDir, subFileGenDir);
+               equality = compareDirectories(subFileDefDir, subFileGenDir);
             }
          }
       }
@@ -279,7 +279,18 @@ public class RegressionsIT {
 
    private static boolean validFileDifferences(File defFile, File genFile) throws IOException {
       boolean noValidDifferencesFound = true;
-
+      
+      String[] extensionsToIgnore = {".*.bin$", ".*.jar$", ".*.lock$", ".*.class$", ".*.tar$", 
+               ".*.tar.gz$", ".*.html$"};
+      
+      for (String ext : extensionsToIgnore) {
+         if (defFile.getName().matches(ext) || genFile.getName().matches(ext)) {
+            // These files should be ignored in the diff. Don't treat differences found in
+            //    these files as valid differences. 
+            return true;
+         }
+      }
+      
       String generatedName = "generatedProject";
       ArrayList<String> defPath = new ArrayList<String>();
 
@@ -342,7 +353,7 @@ public class RegressionsIT {
    private static void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
             String defLine, String genLine)
       throws IOException {
-      System.out.println("--------------------\nFiles are not equal:");
+      System.out.println("--------------------\nFiles are not equal. Valid differences found:");
       System.out.println("Default File: " + defFile.getAbsolutePath());
       System.out.println("Generated File: " + genFile.getAbsolutePath() + "\n");
 
