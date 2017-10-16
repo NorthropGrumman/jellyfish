@@ -216,6 +216,9 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       Path output = outputFolder.resolve(inputFolder.relativize(input)).toAbsolutePath();
       StringWriter stringWriter = new StringWriter();
       String outputPath = output.toAbsolutePath().toString().replace("\\$", "\\\\$");
+      if (outputPath.endsWith(".vm")) {
+         outputPath = outputPath.substring(0, outputPath.length() - 3);
+      }
       try {
          engine.evaluate(context, stringWriter, "evaluate output", outputPath);
       } catch (IOException e) {

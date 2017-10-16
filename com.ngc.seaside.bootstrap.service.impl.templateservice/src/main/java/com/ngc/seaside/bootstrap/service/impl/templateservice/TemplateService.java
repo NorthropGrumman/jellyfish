@@ -173,6 +173,7 @@ public class TemplateService implements ITemplateService {
                entryDestination.getParentFile().mkdirs();
                OutputStream out = new FileOutputStream(entryDestination);
                IOUtils.copy(zis, out);
+               zis.closeEntry();
                out.close();
             }
             entry = zis.getNextEntry();
@@ -290,7 +291,7 @@ public class TemplateService implements ITemplateService {
     *                       being run.
     * @return the Path to the template or null if the file doesn't exists or if it is a directory.
     */
-   private Path getTemplatePath(String templatePrefix) {
+   protected Path getTemplatePath(String templatePrefix) {
       Path templateFile = null;
 
       Path templatesPath = Paths.get(resourceService.getResourceRootPath().toString(), TEMPLATES_DIRECTORY);
@@ -308,7 +309,7 @@ public class TemplateService implements ITemplateService {
 
             //must test to make sure all parts are actually equal and the last value doesn't just being with
             //the same word.
-            name = name.substring(0, pathname.getName().indexOf('-'));
+            name = name.substring(0, pathname.getName().indexOf('-', templatePrefix.length()));
             List<String> nameList = Arrays.asList(name.split("\\."));
             return nameList.size() >= templatePrefixList.size() &&
                    templatePrefixList.equals(nameList);
