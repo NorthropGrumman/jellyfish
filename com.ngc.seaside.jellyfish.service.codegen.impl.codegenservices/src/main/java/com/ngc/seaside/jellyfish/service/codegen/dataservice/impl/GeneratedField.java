@@ -19,58 +19,59 @@ import java.util.regex.Pattern;
 public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField {
 
    private static final Pattern UNDERSCORE_PATTERN = Pattern.compile("(?<=_|\\d)[a-zA-Z]");
-   private static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList("abstract",
-      "assert",
-      "boolean",
-      "break",
-      "byte",
-      "case",
-      "catch",
-      "char",
-      "class",
-      "const",
-      "continue",
-      "default",
-      "do",
-      "double",
-      "else",
-      "extends",
-      "false",
-      "final",
-      "finally",
-      "float",
-      "for",
-      "goto",
-      "if",
-      "implements",
-      "import",
-      "instanceof",
-      "int",
-      "interface",
-      "long",
-      "native",
-      "new",
-      "null",
-      "package",
-      "private",
-      "protected",
-      "public",
-      "return",
-      "short",
-      "static",
-      "strictfp",
-      "super",
-      "switch",
-      "synchronized",
-      "this",
-      "throw",
-      "throws",
-      "transient",
-      "true",
-      "try",
-      "void",
-      "volatile",
-      "while"));
+   private static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList(
+         "abstract",
+         "assert",
+         "boolean",
+         "break",
+         "byte",
+         "case",
+         "catch",
+         "char",
+         "class",
+         "const",
+         "continue",
+         "default",
+         "do",
+         "double",
+         "else",
+         "extends",
+         "false",
+         "final",
+         "finally",
+         "float",
+         "for",
+         "goto",
+         "if",
+         "implements",
+         "import",
+         "instanceof",
+         "int",
+         "interface",
+         "long",
+         "native",
+         "new",
+         "null",
+         "package",
+         "private",
+         "protected",
+         "public",
+         "return",
+         "short",
+         "static",
+         "strictfp",
+         "super",
+         "switch",
+         "synchronized",
+         "this",
+         "throw",
+         "throws",
+         "transient",
+         "true",
+         "try",
+         "void",
+         "volatile",
+         "while"));
 
    private final IDataField field;
    private final String javaType;
@@ -88,10 +89,19 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
 
    private final IGeneratedJavaProtoField protoJavaField = new GeneratedJavaProtoField();
 
-   private GeneratedField(IDataField field, String javaType, String javaFieldName, String javaGetterName,
-                          String javaSetterName, String protoType, String protoFieldName, String protoJavaType,
-                          String protoJavaGetterName, String protoJavaSetterName, String protoRepeatedJavaCountName,
-                          String protoRepeatedJavaAddName, String protoRepeatedJavaGetterName) {
+   private GeneratedField(IDataField field,
+                          String javaType,
+                          String javaFieldName,
+                          String javaGetterName,
+                          String javaSetterName,
+                          String protoType,
+                          String protoFieldName,
+                          String protoJavaType,
+                          String protoJavaGetterName,
+                          String protoJavaSetterName,
+                          String protoRepeatedJavaCountName,
+                          String protoRepeatedJavaAddName,
+                          String protoRepeatedJavaGetterName) {
       this.field = field;
       this.javaType = javaType;
       this.javaFieldName = javaFieldName;
@@ -107,60 +117,65 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       this.protoRepeatedJavaGetterName = protoRepeatedJavaGetterName;
    }
 
-   public static GeneratedField of(IDataField field, IJellyFishCommandOptions options,
-            IPackageNamingService packageNamingService) {
+   public static GeneratedField of(IDataField field,
+                                   IJellyFishCommandOptions options,
+                                   IPackageNamingService packageNamingService) {
       final String singleType;
       final String multipleType;
       final String protoType;
       final String protoSingleType;
       final String protoMultipleType;
       switch (field.getType()) {
-      case DATA:
-         IData dataReference = field.getReferencedDataType();
-         singleType = packageNamingService.getEventPackageName(options, dataReference) + "." + dataReference.getName();
-         multipleType = singleType;
-         protoType = packageNamingService.getMessagePackageName(options, dataReference) + "." + dataReference.getName();
-         protoSingleType = protoType;
-         protoMultipleType = protoSingleType;
-         break;
-      case ENUM:
-         IEnumeration enumReference = field.getReferencedEnumeration();
-         singleType = packageNamingService.getEventPackageName(options, enumReference) + "." + enumReference.getName();
-         multipleType = singleType;
-         protoType = packageNamingService.getMessagePackageName(options, enumReference) + "." + enumReference.getName();
-         protoSingleType = protoType;
-         protoMultipleType = protoSingleType;
-         break;
-      case STRING:
-         singleType = String.class.getCanonicalName();
-         multipleType = singleType;
-         protoType = "string";
-         protoSingleType = singleType;
-         protoMultipleType = protoSingleType;
-         break;
-      case BOOLEAN:
-         singleType = "boolean";
-         multipleType = Boolean.class.getCanonicalName();
-         protoType = "bool";
-         protoSingleType = singleType;
-         protoMultipleType = multipleType;
-         break;
-      case FLOAT:
-         singleType = "float";
-         multipleType = Float.class.getCanonicalName();
-         protoType = "float";
-         protoSingleType = singleType;
-         protoMultipleType = multipleType;
-         break;
-      case INT:
-         singleType = "int";
-         multipleType = Integer.class.getCanonicalName();
-         protoType = "sint32";
-         protoSingleType = singleType;
-         protoMultipleType = multipleType;
-         break;
-      default:
-         throw new IllegalStateException("Unknown type: " + field.getType());
+         case DATA:
+            IData dataReference = field.getReferencedDataType();
+            singleType =
+                  packageNamingService.getEventPackageName(options, dataReference) + "." + dataReference.getName();
+            multipleType = singleType;
+            protoType =
+                  packageNamingService.getMessagePackageName(options, dataReference) + "." + dataReference.getName();
+            protoSingleType = protoType;
+            protoMultipleType = protoSingleType;
+            break;
+         case ENUM:
+            IEnumeration enumReference = field.getReferencedEnumeration();
+            singleType =
+                  packageNamingService.getEventPackageName(options, enumReference) + "." + enumReference.getName();
+            multipleType = singleType;
+            protoType =
+                  packageNamingService.getMessagePackageName(options, enumReference) + "." + enumReference.getName();
+            protoSingleType = protoType;
+            protoMultipleType = protoSingleType;
+            break;
+         case STRING:
+            singleType = String.class.getCanonicalName();
+            multipleType = singleType;
+            protoType = "string";
+            protoSingleType = singleType;
+            protoMultipleType = protoSingleType;
+            break;
+         case BOOLEAN:
+            singleType = "boolean";
+            multipleType = Boolean.class.getCanonicalName();
+            protoType = "bool";
+            protoSingleType = singleType;
+            protoMultipleType = multipleType;
+            break;
+         case FLOAT:
+            singleType = "float";
+            multipleType = Float.class.getCanonicalName();
+            protoType = "float";
+            protoSingleType = singleType;
+            protoMultipleType = multipleType;
+            break;
+         case INT:
+            singleType = "int";
+            multipleType = Integer.class.getCanonicalName();
+            protoType = "sint32";
+            protoSingleType = singleType;
+            protoMultipleType = multipleType;
+            break;
+         default:
+            throw new IllegalStateException("Unknown type: " + field.getType());
       }
 
       final String originalFieldName = field.getName();
@@ -168,7 +183,7 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       Matcher m = UNDERSCORE_PATTERN.matcher(originalFieldName);
       while (m.find()) {
          if (buffer.length() == 0
-            && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
+             && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
             m.appendReplacement(buffer, m.group(0));
          } else {
             m.appendReplacement(buffer, m.group(0).toUpperCase());
@@ -191,12 +206,14 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
 
       if (field.getCardinality() == FieldCardinality.SINGLE) {
          return new GeneratedField(field, singleType, javaFieldName, "get" + capFieldName, "set" + capFieldName,
-            protoType, fieldName, protoSingleType, "get" + capFieldName, "set" + capFieldName, repeatedCountName,
-            repeatedAddName, repeatedGetterName);
+                                   protoType, fieldName, protoSingleType, "get" + capFieldName, "set" + capFieldName,
+                                   repeatedCountName,
+                                   repeatedAddName, repeatedGetterName);
       } else {
          return new GeneratedField(field, multipleType, javaFieldName, "get" + capFieldName, "set" + capFieldName,
-            protoType, fieldName, protoMultipleType, "get" + capFieldName + "List", "addAll" + capFieldName,
-            repeatedCountName, repeatedAddName, repeatedGetterName);
+                                   protoType, fieldName, protoMultipleType, "get" + capFieldName + "List",
+                                   "addAll" + capFieldName,
+                                   repeatedCountName, repeatedAddName, repeatedGetterName);
       }
    }
 
@@ -265,7 +282,7 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       @Override
       public String getJavaFieldName() {
          throw new UnsupportedOperationException(
-            "The java field name from the generated protocol buffer message is unsupported");
+               "The java field name from the generated protocol buffer message is unsupported");
       }
 
       @Override

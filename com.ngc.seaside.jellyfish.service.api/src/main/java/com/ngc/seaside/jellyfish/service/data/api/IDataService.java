@@ -17,19 +17,22 @@ import java.util.Map;
 public interface IDataService {
 
    /**
-    * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given data. This includes all fields and nested fields of any of the given data and any inherited classes of the
-    * aforementioned. The values of the returned map are true for a given key if the key is a field or nested field of any of the given data, and false if the key is exclusively an inherited class.
-    * 
+    * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given data. This includes all
+    * fields and nested fields of any of the given data and any inherited classes of the aforementioned. The values of
+    * the returned map are true for a given key if the key is a field or nested field of any of the given data, and
+    * false if the key is exclusively an inherited class.
+    *
     * @param data collection of data
     * @return set of all {@link IData} and {@link IEnumeration} associated with the given data
     */
    Map<INamedChild<IPackage>, Boolean> aggregateNestedFields(Collection<? extends IData> data);
 
    /**
-    * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given model's input and output data. This includes all fields and nested fields of any of the model's data and any
-    * inherited classes of the aforementioned. The values of the returned map are true for a given key if the key is a field or nested field of any of the given data, and false if the key is
-    * exclusively an inherited class.
-    * 
+    * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given model's input and output
+    * data. This includes all fields and nested fields of any of the model's data and any inherited classes of the
+    * aforementioned. The values of the returned map are true for a given key if the key is a field or nested field of
+    * any of the given data, and false if the key is exclusively an inherited class.
+    *
     * @param model model
     * @return set of all {@link IData} and {@link IEnumeration} associated with the given model's data
     */
