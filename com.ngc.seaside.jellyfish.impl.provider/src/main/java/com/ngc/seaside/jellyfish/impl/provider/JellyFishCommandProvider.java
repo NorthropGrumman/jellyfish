@@ -468,36 +468,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IJellyFishCommand lookupCommand(String cmd) {
       return commandMap.get(cmd);
    }
-   
-//   private String[] setInputDirectory(String[] arguments) {
-//	// TODO Auto-generated method stub
-//	   String[] validatedArgs;
-//   // If no input directory is provided, look in working directory
-//      if (arguments.length == 0) {
-//         throw new IllegalArgumentException("No command provided");
-//      } else {
-//         if (arguments.length == 1) {
-//        	 //TODO - should I remove this or leave it as backup if download fails
-//        	 //get the url and gave arguments - if there's no arguments, how do I have any?
-//        	 downloadSysDesProject();
-//             command.setPromptUserService(promptUserService);
-//        	 //concatenate
-//        	 //try download
-//        	 //set as inputdir
-//            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
-//         } else {
-//            validatedArgs = arguments;
-//         }
-//      }
-//	return validatedArgs;
-//}
-//
-//private void downloadSysDesProject() {
-//	// TODO Auto-generated method stub
-//  	 FileUtils.copyURLToFile(URL, file, 10000, 10000);
-//	
-//}
-   
+     
    /**
     * This method downloads an archive from the provided url and 
     * gave(group/artifact/version/extension) info
@@ -520,6 +491,12 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 	   return destination;
    }
    
+   /**
+    * This method parses the gave(group/artifact/version/extension) info
+    * to create a path and file string from the parameter input
+    * 
+    * @param gave the string representation of the archive info
+    */
    public String parseGave(String gave) {
 
 	   String[] splitter = gave.split(":");
@@ -537,18 +514,25 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 	   return gaveProperty;
    }
     
+   /**
+    * This method extracts a .zip file downloads an archive from the provided url and 
+    * gave(group/artifact/version/extension) info
+    *
+    * @param zipFile the string representation of the path to the zip file
+    * @param dest the string representation of the destination
+    */
    public void uZip(String zipFile, File dest) throws FileNotFoundException {
 	   byte[] buffer = new byte[1024];
 	   File folder = new File(dest.toString());
 	   if(!folder.exists()) {
 		   folder.mkdir();
+	   } else {
+		   return;
 	   }
 
 	   try {
 		   ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
 		   ZipEntry ze = zis.getNextEntry();
-		   String first = dest.toString() + File.separator + ze;
-		   File b = new File(first);
 		   
 		   while(ze != null) {
 			   if(ze.isDirectory()) {

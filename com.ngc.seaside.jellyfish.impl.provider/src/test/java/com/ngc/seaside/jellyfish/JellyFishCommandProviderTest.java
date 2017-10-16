@@ -117,7 +117,6 @@ public class JellyFishCommandProviderTest {
       when(command.getName()).thenReturn("create-java-bundle");
 
       Path outputDir = Paths.get(".");
-      String repo = "http://10.207.42.137/nexus/repository/maven-public/";
       String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
@@ -125,15 +124,16 @@ public class JellyFishCommandProviderTest {
       String url = "http://10.207.42.137/nexus/repository/maven-public/";
       collection.addParameter(new DefaultParameter<>("repositoryUrl", url));
       collection.addParameter(new DefaultParameter<>("gave", gave));
-     
+      File tempDir = null;
       
       try {
-		provider.getArchiveFromUrl(url, gave1);
+		tempDir = provider.getArchiveFromUrl(url, gave1);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir + 
+    		  " -DrepositoryUrl=" + url + " -Dgave=" + gave)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -154,8 +154,7 @@ public class JellyFishCommandProviderTest {
       when(systemDescriptorService.parseProject(any())).thenReturn(result);
 
       provider.addCommand(command);
-      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
-//      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir, "-DrepositoryUrl=" + repo});
+      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir + " -DrepositoryUrl=" + url + " -Dgave=" + gave});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -168,6 +167,11 @@ public class JellyFishCommandProviderTest {
       assertEquals(null, options.getSystemDescriptor());
       assertTrue(options.getParameters().containsParameter("outputDirectory"));
       assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
+      assertTrue(options.getParameters().containsParameter("repositoryUrl"));
+      assertTrue(options.getParameters().containsParameter("gave"));
+      assertEquals(url, options.getParameters().getParameter("repositoryUrl").getStringValue());
+      assertEquals(gave, options.getParameters().getParameter("gave").getStringValue());
+      assertEquals(tempDir.toString(),options.getSystemDescriptorProjectPath().toFile().toString());
    }
 
    @Test
