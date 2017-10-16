@@ -128,7 +128,7 @@ public class JellyFishCommandProviderTest {
      
       
       try {
-		provider.unpackArchiveFromUrl(url, gave1);
+		provider.getArchiveFromUrl(url, gave1);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
