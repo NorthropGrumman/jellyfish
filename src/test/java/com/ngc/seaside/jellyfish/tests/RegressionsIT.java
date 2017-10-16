@@ -25,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.fail;
+
 public class RegressionsIT {
 
    // Class variable to hold regressions directory
@@ -46,8 +48,8 @@ public class RegressionsIT {
 
       File[] subs = new File(regressionTestsDir).listFiles();
 
-      if (subs.length == 0) {
-         System.err.println("Error: There are no directories under the 'regressions' folder. This test"
+      if (subs == null || subs.length == 0) {
+         fail("Error: There are no directories under the 'regressions' folder. This test"
             + "looks for projects under the 'regressions' folder to perform tests.");
       } else {
 
@@ -169,8 +171,7 @@ public class RegressionsIT {
 
    /**
     * Perform a diff on the generated project and the given project. They should match
-    * 
-    * @param tmp - the directory of the newly generated regression test project
+    *
     * @throws IOException
     */
    private static void diffDefaultAndGeneratedProjectTrees(String generated) throws IOException {
@@ -389,7 +390,7 @@ public class RegressionsIT {
 
    private static Map<String, String> readJellyfishPropertiesFile(String dir) throws IOException {
       Map<String, String> props = new HashMap<String, String>();
-      File fin = new File(dir + "\\jellyfish.properties");
+      File fin = new File(dir, "jellyfish.properties");
       FileInputStream fis = new FileInputStream(fin);
 
       // Construct BufferedReader from InputStreamReader
