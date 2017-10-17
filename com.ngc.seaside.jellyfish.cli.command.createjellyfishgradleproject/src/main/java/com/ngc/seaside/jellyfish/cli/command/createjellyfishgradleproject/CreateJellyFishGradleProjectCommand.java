@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
+
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -24,7 +23,6 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.CreateJellyFishGradleProjectCommand;
 
 /**
@@ -38,6 +36,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
@@ -177,6 +176,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setDescription("The version to use for the Gradle project")
             .setRequired(false),
 
+         CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION,
+                	
          CommonParameters.CLEAN);
    }
 

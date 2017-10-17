@@ -26,6 +26,8 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -33,10 +35,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.*;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -449,12 +458,29 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       }
 
       IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
+      IParameter<?> urlParameter = userInputParameters.getParameter("repositoryUrl");
+      IParameter<?> gaveParameter = userInputParameters.getParameter("gave");
+      
+      String gaveValue;
       Path path;
-      if (inputDir == null) {
-         path = Paths.get(System.getProperty("user.dir"));
+      File tempDir = null;
+      
+      if (urlParameter == null || gaveParameter == null) {
+    	  if (inputDir == null) {
+    		  path = Paths.get(System.getProperty("user.dir"));
+    	  } else {
+    		  path = Paths.get(inputDir.getStringValue());
+    	  }
       } else {
-         path = Paths.get(inputDir.getStringValue());
+          gaveValue = parseGave(gaveParameter.getValue().toString());
+          try {
+        	  tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
+          } catch (IOException e) {
+        	  e.printStackTrace();
+          }
+          path = Paths.get(tempDir.toURI());
       }
+      
       options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
       options.setSystemDescriptorProjectPath(path);
       return options;
@@ -510,6 +536,105 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     */
    private IJellyFishCommand lookupCommand(String cmd) {
       return commandMap.get(cmd);
+   }
+     
+   /**
+    * This method downloads an archive from the provided url and 
+    * gave(group/artifact/version/extension) info
+    *
+    * @param url the string representation of the repository url
+    * @param gave the string representation of the archive info
+    */
+   public File getArchiveFromUrl(String url, String gave) throws IOException {
+	   File tempDir = FileUtils.getTempDirectory();
+	   String[] fileName = gave.split("/");
+	   URL myUrl = new URL(url + gave);
+	   String destDirFileName = fileName[fileName.length - 1];
+	   String nameOfNewDir = FilenameUtils.removeExtension(destDirFileName);
+	   File destination = new File(tempDir.toString() + File.separator + nameOfNewDir);
+	   File file = new File(tempDir.toString() + "\\" + destDirFileName);
+	   FileUtils.copyURLToFile(myUrl, file);
+
+	   // unzip the file to the given destination
+	   uZip(file.toString(), destination);
+	   
+	   logService.info(JellyFishCommandProvider.class, "temp archive location: " + destination);
+	   
+	   return destination;
+   }
+   
+   /**
+    * This method parses the gave(group/artifact/version/extension) info
+    * to create a path and file string from the parameter input
+    * 
+    * @param gave the string representation of the archive info
+    */
+   public String parseGave(String gave) {
+
+	   String[] splitter = gave.split(":");
+	   String[] temp;
+	   temp = splitter[0].split("\\.");
+	   String gaveProperty = temp[0] + "/";
+
+	   for (int i = 1; i < temp.length; i++) {
+		   gaveProperty = gaveProperty + temp[i] + "/";
+	   }
+	   for (int i = 1; i < splitter.length - 1; i++) {
+		   gaveProperty = gaveProperty + splitter[i] + "/";
+	   }
+	   gaveProperty = gaveProperty + splitter[1] + "-" + splitter[2] + "." + splitter[3];
+
+	   return gaveProperty;
+   }
+    
+   /**
+    * This method extracts a .zip file to a given destination
+    *
+    * @param zipFile the string representation of the path to the zip file
+    * @param dest the string representation of the destination
+    */
+   public void uZip(String zipFile, File dest) throws FileNotFoundException {
+	   byte[] buffer = new byte[1024];
+	   File folder = new File(dest.toString());
+	   if(!folder.exists()) {
+		   folder.mkdir();
+	   }
+
+	   try {
+		   ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+		   ZipEntry ze = zis.getNextEntry();
+		   
+		   while(ze != null) {
+			   
+			   // if zip entry is a directory - get next
+			   if(ze.isDirectory()) {
+				   ze = zis.getNextEntry();
+				   continue;
+			   }
+			   
+			   String fileName = ze.getName();
+			   File newFile = new File(dest + File.separator + fileName);
+			   System.out.println("file unzip: " + newFile.getAbsoluteFile());
+			   
+			   // make parent dirs
+			   new File(newFile.getParent()).mkdirs();
+			   
+			   FileOutputStream fos = new FileOutputStream(newFile);
+			   
+			   int len;
+			   while((len= zis.read(buffer)) > 0) {
+				   fos.write(buffer, 0,len);
+			   }
+			   fos.close();
+			   zis.closeEntry();
+			   ze = zis.getNextEntry();
+		   }
+		   zis.close();
+		   System.out.println("extraction completed...");
+	   } catch (IOException e ) {
+		   System.out.println("extraction failed...");
+		   e.printStackTrace();
+	}
    }
 
    private static boolean isCommandConfiguredForTemplateService(IJellyFishCommand command) {
