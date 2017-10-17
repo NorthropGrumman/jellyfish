@@ -89,7 +89,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	
 	/**
 	 * Validates that the user did not try to escape a keyword with ^ in any
-	 * field declaration.
+	 * requires declaration.
 	 * 
 	 * @param declaration is the OutputDeclaration to evaluate
 	 */	
@@ -105,6 +105,59 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 				
 	}
 	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * parts declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(PartDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the parts field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
+//	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * input declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(InputDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the input field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
+//	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * output declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(OutputDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the output field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
 	
 	/**
 	 * Validates that a require declaration is correct. Requires the containing
