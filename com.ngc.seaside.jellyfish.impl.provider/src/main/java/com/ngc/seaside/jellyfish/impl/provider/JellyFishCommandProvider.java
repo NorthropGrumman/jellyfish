@@ -403,7 +403,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     	  }
       } else {
           gaveValue = parseGave(gaveParameter.getValue().toString());
-          System.out.println("gaveValue: " + gaveValue);
           try {
         	  tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
           } catch (IOException e) {
@@ -507,10 +506,11 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 	   for (int i = 1; i < temp.length; i++) {
 		   gaveProperty = gaveProperty + temp[i] + "/";
 	   }
-	   for (int i = 1; i < splitter.length; i++) {
+	   for (int i = 1; i < splitter.length - 1; i++) {
 		   gaveProperty = gaveProperty + splitter[i] + "/";
 	   }
-	   gaveProperty = gaveProperty + splitter[1] + "-" + splitter[2] + ".zip";
+	   gaveProperty = gaveProperty + splitter[1] + "-" + splitter[2] + "." + splitter[3];
+
 	   return gaveProperty;
    }
     

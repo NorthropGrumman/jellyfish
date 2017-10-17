@@ -118,7 +118,7 @@ public class JellyFishCommandProviderTest {
       when(command.getName()).thenReturn("create-java-bundle");
 
       Path outputDir = Paths.get(".");
-      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0";
+      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0:zip";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
       String gave1 = provider.parseGave(gave);
@@ -302,7 +302,7 @@ public class JellyFishCommandProviderTest {
       when(command.getName()).thenReturn("create-java-service-project");
 
       Path outputDir = Paths.get(".");
-      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0";
+      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0:zip";
       String model = "com.ngc.seaside.threateval.ThreatEvaluation";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
@@ -365,21 +365,14 @@ public class JellyFishCommandProviderTest {
       assertEquals(tempDir.toString(),options.getSystemDescriptorProjectPath().toFile().toString());
    }
    
-//   @Test
-//   public void testMakeURL() {
-//	   
-//   }
-//   
-//   @Test
-//   public void testDownloadSysDesArtifact() {
-//	   
-//   }
-//   @Test
-//   public void testUnpackArchiveFromUrl() {
-//	   String a = "abc";
-//	   String b = "def";
-//	   unpackArchiveFromUrl();
-//   }
+   @Test
+   public void testParseGave() {
+	   String gaveParam = "group.group1.group2:artifact.artifact1:version:extension";
+	   String gaveResult = "group/group1/group2/artifact.artifact1/version/artifact.artifact1-version.extension";
+	   String gaveProp = provider.parseGave(gaveParam);
+	   System.out.println("gaveProp: " + gaveProp);
+	   assertEquals(gaveResult, gaveProp);  
+   }
 
    @JellyFishCommandConfiguration(autoTemplateProcessing = false)
    public interface NoTemplateJfCommand extends IJellyFishCommand {
