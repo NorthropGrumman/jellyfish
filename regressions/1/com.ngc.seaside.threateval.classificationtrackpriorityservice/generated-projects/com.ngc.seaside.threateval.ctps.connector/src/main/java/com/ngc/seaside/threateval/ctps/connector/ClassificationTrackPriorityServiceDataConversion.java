@@ -1,6 +1,7 @@
 package com.ngc.seaside.threateval.ctps.connector;
 
 public class ClassificationTrackPriorityServiceDataConversion {
+
    public static com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification convert(com.ngc.seaside.threateval.ctps.classifier.datatype.Classification from) {
       com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification to = new com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification();
 
@@ -9,6 +10,7 @@ public class ClassificationTrackPriorityServiceDataConversion {
 
       return to;
    }
+
    public static com.ngc.seaside.threateval.ctps.event.classifier.datatype.ClassificationEnum convert(com.ngc.seaside.threateval.ctps.classifier.datatype.ClassificationEnum from) {
       final com.ngc.seaside.threateval.ctps.event.classifier.datatype.ClassificationEnum to;
 
@@ -35,8 +37,8 @@ public class ClassificationTrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.ctps.datatype.TrackPriority convert(com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority from) {
       com.ngc.seaside.threateval.ctps.datatype.TrackPriority.Builder to = com.ngc.seaside.threateval.ctps.datatype.TrackPriority.newBuilder();
 
-      to.setTrackId(from.getTrackId());
       to.setSourceId(from.getSourceId());
+      to.setTrackId(from.getTrackId());
       to.setPriority(from.getPriority());
 
       return to.build();
