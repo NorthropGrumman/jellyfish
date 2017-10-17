@@ -17,7 +17,7 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 	@Check
 	public void checkUsageOfEscapeHatCharacter(Package p) {
 		// Verify the data name doesn't not have the escape hat	
-		if (p.getName().charAt(0) == '^') {
+		if (p.getName().indexOf('^') >= 0) {
 			String msg = String.format(
 					"Cannot use '^' to escape the package name %s.",
 					p.getName());

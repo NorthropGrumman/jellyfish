@@ -205,4 +205,29 @@ class PartsParsingTest {
 			null
 		)
 	}
+	
+	
+	@Test
+	def void testDoesNotParseModelWithEscapedPartsFieldName() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.sub.Gear
+			
+			model BigClock {
+				
+				parts {
+					Gear ^int
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PART_DECLARATION,
+			null
+		)
+	}
 }

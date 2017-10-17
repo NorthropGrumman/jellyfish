@@ -25,7 +25,7 @@ class PackageParsingTest {
 	
 	
 	@Test
-	def void testDoesNotAllowPackageNameKeywords() {
+	def void testDoesNotAllowPackageNameKeywords1() {
 		val source = '''
 			package ^foo.datatypes
 			
@@ -44,5 +44,28 @@ class PackageParsingTest {
 			SystemDescriptorPackage.Literals.PACKAGE,
 			null
 		)
-	}	
+	}
+	
+
+	@Test
+	def void testDoesNotAllowPackageNameKeywords2() {
+		val source = '''
+			package foo.^datatypes
+			
+			data Foo {
+				int i
+				float f
+			}
+
+		'''
+
+		val invalidResult = parseHelper.parse(source)
+		assertNotNull(invalidResult)
+		
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PACKAGE,
+			null
+		)
+	}		
 }

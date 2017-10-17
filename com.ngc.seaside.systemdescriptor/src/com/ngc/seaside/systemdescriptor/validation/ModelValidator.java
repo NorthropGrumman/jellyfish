@@ -78,14 +78,33 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	@Check
 	public void checkUsageOfEscapeHatCharacter(Model model) {
 		// Verify the data name doesn't not have the escape hat
-		if (model.getName().charAt(0) == '^') {
+		if (model.getName().indexOf('^') >= 0) {
 			String msg = String.format(
 					"Cannot use '^' to escape the model name %s.",
 					model.getName());
 			error(msg, model, SystemDescriptorPackage.Literals.ELEMENT__NAME);
 		}
-		
+				
 	}
+	
+	/**
+	 * Validates that the user did not try to escape a keyword with ^ in any
+	 * field declaration.
+	 * 
+	 * @param declaration is the OutputDeclaration to evaluate
+	 */	
+	@Check
+	public void checkUsageOfEscapeHatCharacter(FieldDeclaration declaration) {
+		// Verify the data name doesn't not have the escape hat
+		if (declaration.getName().indexOf('^') >= 0) {
+			String msg = String.format(
+					"Cannot use '^' to escape the field declaration name %s.",
+					declaration.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+		}
+				
+	}
+	
 	
 	/**
 	 * Validates that a require declaration is correct. Requires the containing
@@ -109,6 +128,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
+
 
 	/**
 	 * Validates that an input declaration is correct. Requires the containing

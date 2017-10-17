@@ -30,7 +30,7 @@ public class DataValidator extends AbstractSystemDescriptorValidator {
 	@Check
 	public void checkUsageOfEscapeHatCharacter(Data data) {
 		// Verify the data name doesn't not have the escape hat
-		if (data.getName().charAt(0) == '^') {
+		if (data.getName().indexOf('^') >= 0) {
 			String msg = String.format(
 					"Cannot use '^' to escape the data name %s.",
 					data.getName());
@@ -39,7 +39,7 @@ public class DataValidator extends AbstractSystemDescriptorValidator {
 		
 		// then loop through the fields and check the typename and the field name
 		for (DataFieldDeclaration f : data.getFields()) {
-			if (f.getName().charAt(0) == '^') {
+			if (f.getName().indexOf('^') >= 0) {
 				// Report error
 				String msg = String.format(
 						"Cannot use '^' to escape the field named %s in data %s.",

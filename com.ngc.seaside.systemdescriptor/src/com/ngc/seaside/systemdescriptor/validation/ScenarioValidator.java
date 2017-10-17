@@ -17,7 +17,7 @@ public class ScenarioValidator extends AbstractSystemDescriptorValidator {
 	@Check
 	public void checkUsageOfEscapeHatCharacter(Scenario scenario) {
 		// Verify the data name doesn't not have the escape hat
-		if (scenario.getName().charAt(0) == '^') {
+		if (scenario.getName().indexOf('^') >= 0) {
 			String msg = String.format(
 					"Cannot use '^' to escape the scenario name %s.",
 					scenario.getName());

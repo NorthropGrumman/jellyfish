@@ -234,4 +234,29 @@ class RequiresParsingTest {
 			null
 		)
 	}
+	
+	@Test
+	def void testDoesNotParseModelWithEscapedRequiresFieldName() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.hw.Speaker
+			
+			model Alarm {
+				
+				requires {
+				    Speaker ^int
+				 }
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.REQUIRE_DECLARATION,
+			null
+		)
+	}
+	
 }
