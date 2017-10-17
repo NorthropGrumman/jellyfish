@@ -6,7 +6,7 @@ import com.ngc.blocs.requestmodel.api.RequestThreadLocal;
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.service.monitoring.api.SessionlessRequirementAwareRequest;
+import com.ngc.seaside.request.api.ServiceRequest;
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
@@ -111,7 +111,7 @@ public class ClassificationTrackPriorityServiceConnector {
    }
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
-      RequestThreadLocal.setCurrentRequest(new SessionlessRequirementAwareRequest(
+      RequestThreadLocal.setCurrentRequest(new ServiceRequest<>(
          getRequirementsForTransportTopic(transportTopic), this));
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }

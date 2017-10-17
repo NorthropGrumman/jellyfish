@@ -1,7 +1,5 @@
 package com.ngc.seaside.classifier
 
-import com.ngc.seaside.common.datatype.SystemTrack
-
 model TrackClassifierService {
 	metadata {
 		"description": "Classifies a SystemTrack object as an ObjectType",

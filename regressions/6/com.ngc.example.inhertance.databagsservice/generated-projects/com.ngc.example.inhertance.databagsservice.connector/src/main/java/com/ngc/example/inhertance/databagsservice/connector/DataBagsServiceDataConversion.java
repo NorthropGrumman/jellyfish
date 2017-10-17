@@ -15,8 +15,8 @@ public class DataBagsServiceDataConversion {
    public static com.ngc.example.inhertance.databagsservice.event.datatype.C convert(com.ngc.example.inhertance.databagsservice.datatype.C from) {
       com.ngc.example.inhertance.databagsservice.event.datatype.C to = new com.ngc.example.inhertance.databagsservice.event.datatype.C();
 
-      to.setFieldD(from.getFieldD());
       to.setFieldC(from.getFieldC());
+      to.setFieldD(from.getFieldD());
 
       return to;
    }
@@ -24,8 +24,8 @@ public class DataBagsServiceDataConversion {
    public static com.ngc.example.inhertance.databagsservice.datatype.C convert(com.ngc.example.inhertance.databagsservice.event.datatype.C from) {
       com.ngc.example.inhertance.databagsservice.datatype.C.Builder to = com.ngc.example.inhertance.databagsservice.datatype.C.newBuilder();
 
-      to.setFieldD(from.getFieldD());
       to.setFieldC(from.getFieldC());
+      to.setFieldD(from.getFieldD());
 
       return to.build();
    }

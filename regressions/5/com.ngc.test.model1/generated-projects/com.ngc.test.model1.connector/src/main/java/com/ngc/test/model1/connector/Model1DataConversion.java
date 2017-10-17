@@ -1,6 +1,7 @@
 package com.ngc.test.model1.connector;
 
 public class Model1DataConversion {
+
    public static com.ngc.test.model1.event.Data1 convert(com.ngc.test.model1.Data1 from) {
       com.ngc.test.model1.event.Data1 to = new com.ngc.test.model1.event.Data1();
 
@@ -25,18 +26,21 @@ public class Model1DataConversion {
 
       return to;
    }
+
    public static com.ngc.test.model1.event.Data2 convert(com.ngc.test.model1.Data2 from) {
       com.ngc.test.model1.event.Data2 to = new com.ngc.test.model1.event.Data2();
 
 
       return to;
    }
+
    public static com.ngc.test.model1.event.test2.Data3 convert(com.ngc.test.model1.test2.Data3 from) {
       com.ngc.test.model1.event.test2.Data3 to = new com.ngc.test.model1.event.test2.Data3();
 
 
       return to;
    }
+
    public static com.ngc.test.model1.event.Enum1 convert(com.ngc.test.model1.Enum1 from) {
       com.ngc.test.model1.event.Enum1 to = new com.ngc.test.model1.event.Enum1();
 

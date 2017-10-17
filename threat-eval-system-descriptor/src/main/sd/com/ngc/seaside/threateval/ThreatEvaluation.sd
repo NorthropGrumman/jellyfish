@@ -7,7 +7,6 @@ import com.ngc.seaside.threateval.TrackPriorityService
 import com.ngc.seaside.common.datatype.SystemTrack
 import com.ngc.seaside.classifier.datatype.Classification
 import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus
-import com.ngc.seaside.common.datatype.SystemTrackIdentifier
 import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers
 import com.ngc.seaside.common.datatype.DroppedSystemTrack
 

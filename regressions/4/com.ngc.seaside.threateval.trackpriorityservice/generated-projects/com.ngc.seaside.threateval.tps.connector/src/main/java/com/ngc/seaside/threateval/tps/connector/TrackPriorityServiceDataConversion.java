@@ -1,6 +1,7 @@
 package com.ngc.seaside.threateval.tps.connector;
 
 public class TrackPriorityServiceDataConversion {
+
    public static com.ngc.seaside.threateval.tps.event.datatype.TrackPriority convert(com.ngc.seaside.threateval.tps.datatype.TrackPriority from) {
       com.ngc.seaside.threateval.tps.event.datatype.TrackPriority to = new com.ngc.seaside.threateval.tps.event.datatype.TrackPriority();
 
@@ -10,6 +11,7 @@ public class TrackPriorityServiceDataConversion {
 
       return to;
    }
+
    public static com.ngc.seaside.threateval.tps.event.common.datatype.DroppedSystemTrack convert(com.ngc.seaside.threateval.tps.common.datatype.DroppedSystemTrack from) {
       com.ngc.seaside.threateval.tps.event.common.datatype.DroppedSystemTrack to = new com.ngc.seaside.threateval.tps.event.common.datatype.DroppedSystemTrack();
 
@@ -17,6 +19,7 @@ public class TrackPriorityServiceDataConversion {
 
       return to;
    }
+
    public static com.ngc.seaside.threateval.tps.event.common.datatype.SystemTrackIdentifier convert(com.ngc.seaside.threateval.tps.common.datatype.SystemTrackIdentifier from) {
       com.ngc.seaside.threateval.tps.event.common.datatype.SystemTrackIdentifier to = new com.ngc.seaside.threateval.tps.event.common.datatype.SystemTrackIdentifier();
 

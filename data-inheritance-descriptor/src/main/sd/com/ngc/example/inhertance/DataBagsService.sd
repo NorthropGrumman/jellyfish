@@ -1,9 +1,7 @@
 package com.ngc.example.inhertance
 
-import com.ngc.example.inhertance.datatype.A
 import com.ngc.example.inhertance.datatype.B
 import com.ngc.example.inhertance.datatype.C
-import com.ngc.example.inhertance.datatype.D
 
 model DataBagsService {
   metadata {

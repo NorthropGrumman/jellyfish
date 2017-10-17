@@ -5,6 +5,7 @@
 .metadata
 bin/
 *.class
+!**/src/**/bin/
 
 # Package Files #
 *.war

@@ -1,0 +1,33 @@
+apply plugin: 'com.ngc.seaside.parent'
+
+group = 'com.ngc.seaside'
+version = '1.0.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+    dependencies {
+        classpath 'com.ngc.seaside:gradle.plugins:2.0.0'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+    }
+}
+
+ext {
+    jellyfishCliVersion = '1.5.1-SNAPSHOT'
+}
+
+dependencies {
+    testCompile gradleApi()
+    testCompile "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
+    // TODO TH: Remove the line below once this latest version of JellyFish CLI is released.  This is a workaround for
+    // now.
+    testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:1.7.2"
+	testCompile "org.mockito:mockito-core:2.7.14"
+    testCompile "junit:junit:4.12"
+ }

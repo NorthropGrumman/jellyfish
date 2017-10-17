@@ -25,7 +25,7 @@ public abstract class AbstractClassificationTrackPriorityService
 
    public final static String NAME = "service:com.ngc.seaside.threateval.ClassificationTrackPriorityService";
 
-   protected IContext context;
+   protected IContext<?> context;
 
    protected ServiceStatus status = ServiceStatus.DEACTIVATED;
 
@@ -61,12 +61,12 @@ public abstract class AbstractClassificationTrackPriorityService
    }
 
    @Override
-   public IContext getContext() {
+   public IContext<?> getContext() {
       return context;
    }
 
    @Override
-   public void setContext(IContext iContext) {
+   public void setContext(@SuppressWarnings("rawtypes") IContext iContext) {
       this.context = iContext;
    }
 

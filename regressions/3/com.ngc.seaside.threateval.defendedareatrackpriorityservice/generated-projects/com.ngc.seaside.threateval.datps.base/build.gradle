@@ -1,17 +1,1 @@
-
-dependencies {
-   compile project(':datps.events')
-
-   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
-   compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "com.google.guava:guava:$guavaVersion"
-}
-
-jar {
-   manifest {
-      attributes('Export-Package': 'com.ngc.seaside.threateval.datps.api.*, com.ngc.seaside.threateval.datps.base.impl.*, com.ngc.seaside.threateval.datps.transport.topic.*')
-   }
-}
+apply from: 'build.generated.gradle'
