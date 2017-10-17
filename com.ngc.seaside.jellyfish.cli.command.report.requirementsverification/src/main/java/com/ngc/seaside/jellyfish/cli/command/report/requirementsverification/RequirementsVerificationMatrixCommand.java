@@ -29,6 +29,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -157,14 +158,19 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       Collection<IModel> models = searchModels(commandOptions, values, operator);
       
       Map<String, IFeatureInformation> features = featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
+      ArrayList<String> fullyQualifiedFeatureNameList = new ArrayList<String>();   
+      for (Map.Entry<String, IFeatureInformation> featureInfo : features.entrySet()) {
+         fullyQualifiedFeatureNameList.add(featureInfo.getValue().getFullyQualifiedName());
+      }
+      Collections.sort(fullyQualifiedFeatureNameList, Collections.reverseOrder());
       
       Collection<Requirement> satisfiedRequirements = verifyRequirements(commandOptions, models, features);
 
       String report;
       if (outputFormat.equalsIgnoreCase("csv")) {
-         report = generateCsvVerificationMatrix(satisfiedRequirements, features.keySet());
+         report = generateCsvVerificationMatrix(satisfiedRequirements, fullyQualifiedFeatureNameList);
       } else {
-         report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, features.keySet()));
+         report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, fullyQualifiedFeatureNameList));
       }
 
       if (outputPath == null) {
@@ -247,7 +253,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
          IModel model = models.stream().filter(aModel -> featureInfo.getFullyQualifiedName().startsWith(aModel.getName()))
                   .findAny().orElse(null);
 
-
          if (model != null) {
 
             IScenario scenario = model.getScenarios().getByName(featureInfo.getName()).orElse(null);
@@ -257,15 +262,13 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
                
               for (String scenarioReq : requirementsService.getRequirements(commandOptions, scenario)) {
                  requirementsMap.put(scenarioReq, featureInfo.getFullyQualifiedName());
-              }
-              
+              }        
               for (String modelReq : requirementsService.getRequirements(commandOptions, model)) {
                  requirementsMap.put(modelReq, featureInfo.getFullyQualifiedName());
               }
             }
          }
       });
-
       return createVerifiedRequirements(requirementsMap);
    }
 
