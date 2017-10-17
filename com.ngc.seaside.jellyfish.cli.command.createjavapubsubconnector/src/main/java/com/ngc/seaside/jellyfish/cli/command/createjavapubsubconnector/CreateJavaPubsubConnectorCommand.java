@@ -65,7 +65,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    private static final Function<IData, Collection<IDataField>> FIELDS_FUNCTION = data -> {
-      Set<IDataField> fields = new HashSet<>();
+      Set<IDataField> fields = new LinkedHashSet<>();
       while (data != null) {
          fields.addAll(data.getFields());
          data = data.getSuperDataType().orElse(null);
