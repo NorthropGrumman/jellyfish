@@ -8,7 +8,6 @@ import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.guice.module.ThreadServiceModule;
 import com.ngc.seaside.service.transport.impl.defaultz.module.DefaultTransportServiceModule;
-import com.ngc.seaside.service.transport.impl.provider.multicast.module.MulticastTransportProviderModule;
 
 import cucumber.api.guice.CucumberModules;
 import cucumber.runtime.java.guice.InjectorSource;

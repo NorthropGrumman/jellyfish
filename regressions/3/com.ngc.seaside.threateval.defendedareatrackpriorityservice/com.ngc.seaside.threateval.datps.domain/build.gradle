@@ -8,7 +8,7 @@ generateDomain {
 jar {
    manifest {
       attributes('Export-Package': 
-         'com.ngc.seaside.threateval.datps.domain.common.datatype.*,' + 
-         'com.ngc.seaside.threateval.datps.domain.atype.*')
+         'com.ngc.seaside.threateval.datps.domain.atype.*,' + 
+         'com.ngc.seaside.threateval.datps.domain.common.datatype.*')
    }
 }
