@@ -29,8 +29,20 @@ import static org.junit.Assert.fail;
 
 public class RegressionsIT {
 
+   private static final String[] IGNORED_FILE_NAMES = {
+         ".*\\.bin$",
+         ".*\\.jar$",
+         ".*\\.lock$",
+         ".*\\.class$",
+         ".*\\.tar$",
+         ".*\\.tar\\.gz$",
+         ".*\\.html$",
+         ".*\\.zip$",
+         ".*javadoc.*"
+   };
+
    // Class variable to hold regressions directory
-   String regressionTestsDir = "";
+   private String regressionTestsDir = "";
 
    @Before
    public void setup() throws Throwable {
@@ -257,7 +269,6 @@ public class RegressionsIT {
       
       ArrayList<File> defaultFiles = new ArrayList<File>();
       ArrayList<File> genProjFiles = new ArrayList<File>();
-
       for (File file : defaultProj.listFiles()) {
          defaultFiles.add(file);
       }
@@ -265,6 +276,8 @@ public class RegressionsIT {
       for (File file : genProj.listFiles()) {
          genProjFiles.add(file);
       }
+      defaultFiles.sort(null);
+      genProjFiles.sort(null);
 
       // The trees must contain the same number of elements to be equal
       if (defaultFiles.size() != genProjFiles.size()) {
@@ -337,11 +350,8 @@ public class RegressionsIT {
    private static boolean validFileDifferences(File defFile, File genFile) throws IOException {
       boolean equalFiles = true;
       
-      String[] extensionsToIgnore = {".*.bin$", ".*.jar$", ".*.lock$", ".*.class$", ".*.tar$", 
-               ".*.tar.gz$", ".*.html$"};
-      
-      for (String ext : extensionsToIgnore) {
-         if (defFile.getName().matches(ext) || genFile.getName().matches(ext)) {
+      for (String pattern : IGNORED_FILE_NAMES) {
+         if (defFile.getName().matches(pattern) || genFile.getName().matches(pattern)) {
             // These files should be ignored in the diff. Don't treat differences found in
             //    these files as valid differences. 
             return true;
@@ -418,17 +428,17 @@ public class RegressionsIT {
    private static String removeComments(String fileLine) {
       if (fileLine.contains("#")) {
          String toRemove = fileLine.substring(fileLine.indexOf("#"), fileLine.length());
-         fileLine = fileLine.replaceAll(toRemove, "");
+         fileLine = fileLine.replace(toRemove, "");
       } 
 
       if (fileLine.contains("//")) {
          String toRemove = fileLine.substring(fileLine.indexOf("//"), fileLine.length());
-         fileLine = fileLine.replaceAll(toRemove, "");
+         fileLine = fileLine.replace(toRemove, "");
       }
       
       if (fileLine.contains("/*") && fileLine.contains("*/")) {
          String toRemove = fileLine.substring(fileLine.indexOf("/*"), fileLine.indexOf("*/"));
-         fileLine = fileLine.replaceAll(toRemove, "");
+         fileLine = fileLine.replace(toRemove, "");
       }
       
       return fileLine;
