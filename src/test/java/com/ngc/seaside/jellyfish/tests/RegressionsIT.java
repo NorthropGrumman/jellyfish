@@ -48,6 +48,9 @@ public class RegressionsIT {
    public void setup() throws Throwable {
       // Set the regressions directory variable
       regressionTestsDir = System.getProperty("user.dir") + File.separator + "regressions";
+      
+      // Start with fresh logs. Remove any previously generated projects
+      removeGeneratedProjects(regressionTestsDir);
    }
 
    /**
@@ -78,8 +81,38 @@ public class RegressionsIT {
          printRegressionSummary(regressionScore);         
       }
       
+      if (!regressionScore.containsValue(false)) {
+         // All the tests pass. No need to keep the generated files
+         removeGeneratedProjects(regressionTestsDir);
+      }
+      
       // The below Assert will check to see if there are any failures in the diff evaluation
       Assert.assertFalse(regressionScore.containsValue(false));
+   }
+
+   /**
+    * This method is called to remove 'generatedProject' folders in each regression test 
+    * @param regDir - the 'regressions' directory
+    */
+   private static void removeGeneratedProjects(String regDir) {
+      File[] subs = new File(regDir).listFiles();
+      
+      if (subs == null || subs.length == 0) {
+         fail("Error: There are no directories under the 'regressions' folder. This test"
+            + "looks for projects under the 'regressions' folder to perform tests.");
+      } else {
+
+         // Loop through the subdirectories under 'regressions' and delete any 'generatedProject' folders
+         for (File subDir : subs) {
+            if (subDir.isDirectory()) {
+               File generatedProj = new File(subDir.getAbsoluteFile() + File.separator + "generatedProject");
+               System.out.println("Cleaning up directory: " + generatedProj);
+               if (generatedProj.exists()) {
+                  deleteDir(generatedProj);
+               }
+            }
+         }
+      }
    }
 
    /**
@@ -104,7 +137,7 @@ public class RegressionsIT {
          sb.append("|\t" + regNum + "\t\t\t" + regressionScore.get(regNum) + "\n");
       }
          
-      sb.append("|\n+---------------------------------------");
+      sb.append("|\n+---------------------------------------\n");
       System.out.println(sb.toString());
    }
 
@@ -142,12 +175,6 @@ public class RegressionsIT {
       // At this point, the project has been generated. Now, run 'gradle clean build -x text' on each subproject
       boolean pass = runGradleCleanBuildOnProjects(directory.getAbsolutePath());
       return pass;
-      
-      // TODO: Clean up. I suppose it'd be best to return the folder to it's pre-build state. i.e. - remove
-      //    the build folders from each subdir, the .gradle folder, and possibly the generated project folder. 
-      
-//      cleanUpDirectories(directory);
-
    }
 
 
@@ -175,7 +202,7 @@ public class RegressionsIT {
       Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
 
       // Perform the 'gradle clean build -x test' command
-      // TODO: This build below is what was failing due to a "windows file path too long" bug. 
+      // NOTE: The below build fails on Windows due to the "windows file path too long" bug. 
 
       System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
       ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
@@ -196,7 +223,6 @@ public class RegressionsIT {
       }
       
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
-      // Perform the 'gradle clean build -x test' command
       ProjectConnection connectionToGeneratedProj = GradleConnector.newConnector()
                .useInstallation(Paths.get(gradleHome).toFile())
                .forProjectDirectory(new File(generatedProj))
@@ -246,7 +272,6 @@ public class RegressionsIT {
       System.out.println("Default Project  : " + defaultProj);
       System.out.println("Generated Project: " + generated + "\n");
 
-      // TODO: There may be a bug here.  
       boolean pass = compareDirectories(defaultProj, genDir);
       return pass;
 
@@ -474,35 +499,6 @@ public class RegressionsIT {
       } else {
          System.out.println("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
       }
-   }
-   
-   /**
-    * CleanUpDirectories - we need to revert the given project back to its pre-built state. T
-    * @param directory
-    */
-   private static void cleanUpDirectories(File directory) {
-      System.out.println("Cleaning up directory: " + directory);
-      String projName = "";
-      for (File file : directory.listFiles()) {
-         if (file.getName().contains("com.ngc")) {
-            projName = file.getName();
-            break;
-         }
-      }
-      
-      Assert.assertTrue(projName != "");
-      File givenProj = new File(directory.getAbsoluteFile() + File.separator + projName);
-      File generatedProj = new File(directory.getAbsoluteFile() + File.separator + "generatedProject");
-      Assert.assertTrue(givenProj.exists());
-      Assert.assertTrue(generatedProj.exists());
-      
-      for (File file : generatedProj.listFiles()) {
-         if (file.getName().equals(".gradle")) {
-            deleteDir(file);
-         }
-      }
-      
-      System.out.println("");      
    }
 
    /**
