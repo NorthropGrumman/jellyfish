@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -52,7 +51,7 @@ public class FeatureService implements IFeatureService {
               .map(Path::toAbsolutePath)
               .forEach(path -> features.put(path.toString(), new FeatureInformation(path, gherkin.relativize(path))));
       } catch (IOException e) {
-         throw new CommandException(e);
+         logService.warn(getClass(), "No feature files at %s", featureFilesRoot);
       }
       return features;
    
