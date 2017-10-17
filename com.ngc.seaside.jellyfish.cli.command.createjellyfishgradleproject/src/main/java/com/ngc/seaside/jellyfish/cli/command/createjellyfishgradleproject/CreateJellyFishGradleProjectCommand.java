@@ -114,7 +114,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       
       // Ensure GAVE_PROPERTY parameter is set
       if (!collection.containsParameter(GAVE_PROPERTY)) {
-    	  String gave = promptService.prompt(GAVE_PROPERTY, "com.ngc.seaside:mysystem.descriptor:1.0-SNAPSHOT:zip", null);
+    	  String gave = promptService.prompt(GAVE_PROPERTY, "com.ngc.seaside:mysystem.descriptor:1.0:zip", null);
     	  collection.addParameter(new DefaultParameter<>(GAVE_PROPERTY).setValue(gave));
       }
 

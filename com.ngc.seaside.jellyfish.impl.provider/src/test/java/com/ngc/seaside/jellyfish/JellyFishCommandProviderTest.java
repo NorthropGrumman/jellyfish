@@ -118,23 +118,10 @@ public class JellyFishCommandProviderTest {
       when(command.getName()).thenReturn("create-java-bundle");
 
       Path outputDir = Paths.get(".");
-      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0:zip";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
-      String gave1 = provider.parseGave(gave);
-      String url = "http://10.207.42.137/nexus/repository/maven-public/";
-      collection.addParameter(new DefaultParameter<>("repositoryUrl", url));
-      collection.addParameter(new DefaultParameter<>("gave", gave));
-      File tempDir = null;
-      
-      try {
-		tempDir = provider.getArchiveFromUrl(url, gave1);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir + 
-    		  " -DrepositoryUrl=" + url + " -Dgave=" + gave)))
+
+      when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -155,7 +142,8 @@ public class JellyFishCommandProviderTest {
       when(systemDescriptorService.parseProject(any())).thenReturn(result);
 
       provider.addCommand(command);
-      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir + " -DrepositoryUrl=" + url + " -Dgave=" + gave});
+
+      provider.run(new String[]{"create-java-bundle", "-DoutputDir=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -168,11 +156,6 @@ public class JellyFishCommandProviderTest {
       assertEquals(null, options.getSystemDescriptor());
       assertTrue(options.getParameters().containsParameter("outputDirectory"));
       assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
-      assertTrue(options.getParameters().containsParameter("repositoryUrl"));
-      assertTrue(options.getParameters().containsParameter("gave"));
-      assertEquals(url, options.getParameters().getParameter("repositoryUrl").getStringValue());
-      assertEquals(gave, options.getParameters().getParameter("gave").getStringValue());
-      assertEquals(tempDir.toString(),options.getSystemDescriptorProjectPath().toFile().toString());
    }
 
    @Test
@@ -306,19 +289,12 @@ public class JellyFishCommandProviderTest {
       String model = "com.ngc.seaside.threateval.ThreatEvaluation";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
-      String gave1 = provider.parseGave(gave);
       String url = "http://10.207.42.137/nexus/repository/maven-public/";
       collection.addParameter(new DefaultParameter<>("repositoryUrl", url));
       collection.addParameter(new DefaultParameter<>("gave", gave));
       collection.addParameter(new DefaultParameter<>("model", model));
       File tempDir = null;
       
-      try {
-		tempDir = provider.getArchiveFromUrl(url, gave1);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
       when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir + 
     		  " -DrepositoryUrl=" + url + " -Dgave=" + gave + " -Dmodel=" + model)))
             .thenReturn(collection);
@@ -362,7 +338,6 @@ public class JellyFishCommandProviderTest {
       assertEquals(url, options.getParameters().getParameter("repositoryUrl").getStringValue());
       assertEquals(gave, options.getParameters().getParameter("gave").getStringValue());
       assertEquals(model, options.getParameters().getParameter("model").getStringValue());
-      assertEquals(tempDir.toString(),options.getSystemDescriptorProjectPath().toFile().toString());
    }
    
    @Test
@@ -370,7 +345,6 @@ public class JellyFishCommandProviderTest {
 	   String gaveParam = "group.group1.group2:artifact.artifact1:version:extension";
 	   String gaveResult = "group/group1/group2/artifact.artifact1/version/artifact.artifact1-version.extension";
 	   String gaveProp = provider.parseGave(gaveParam);
-	   System.out.println("gaveProp: " + gaveProp);
 	   assertEquals(gaveResult, gaveProp);  
    }
 

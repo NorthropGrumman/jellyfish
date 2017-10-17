@@ -485,8 +485,11 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 	   File file = new File(tempDir.toString() + "\\" + destDirFileName);
 	   FileUtils.copyURLToFile(myUrl, file);
 
+	   // unzip the file to the given destination
 	   uZip(file.toString(), destination);
-
+	   
+	   logService.info(JellyFishCommandProvider.class, "temp archive location: " + destination);
+	   
 	   return destination;
    }
    
@@ -515,8 +518,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
     
    /**
-    * This method extracts a .zip file downloads an archive from the provided url and 
-    * gave(group/artifact/version/extension) info
+    * This method extracts a .zip file to a given destination
     *
     * @param zipFile the string representation of the path to the zip file
     * @param dest the string representation of the destination
@@ -526,8 +528,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 	   File folder = new File(dest.toString());
 	   if(!folder.exists()) {
 		   folder.mkdir();
-	   } else {
-		   return;
 	   }
 
 	   try {
@@ -535,13 +535,18 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 		   ZipEntry ze = zis.getNextEntry();
 		   
 		   while(ze != null) {
+			   
+			   // if zip entry is a directory - get next
 			   if(ze.isDirectory()) {
 				   ze = zis.getNextEntry();
 				   continue;
 			   }
+			   
 			   String fileName = ze.getName();
 			   File newFile = new File(dest + File.separator + fileName);
 			   System.out.println("file unzip: " + newFile.getAbsoluteFile());
+			   
+			   // make parent dirs
 			   new File(newFile.getParent()).mkdirs();
 			   
 			   FileOutputStream fos = new FileOutputStream(newFile);
@@ -557,6 +562,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 		   zis.close();
 		   System.out.println("extraction completed...");
 	   } catch (IOException e ) {
+		   System.out.println("extraction failed...");
 		   e.printStackTrace();
 	}
    }
