@@ -14,6 +14,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -52,6 +54,8 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    static final String DEFAULT_OPERATOR_PROPERTY = "OR";
 
    private ILogService logService;
+   private IFeatureService featureService;
+   private IRequirementsService requirementsService;
 
    /**
     * Create the usage for this command.
@@ -329,5 +333,39 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+   
+   /**
+    * Sets feature service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFeatureService")
+   public void setFeatureService(IFeatureService ref) {
+      this.featureService = ref;
+   }
+
+   /**
+    * Remove feature service.
+    */
+   public void removeFeatureService(IFeatureService ref) {
+      setFeatureService(null);
+   }
+   
+   /**
+    * Sets requirements service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   public void setRequirementsService(IRequirementsService ref) {
+      this.requirementsService = ref;
+   }
+
+   /**
+    * Remove requirements service.
+    */
+   public void removeRequiremensService(IRequirementsService ref) {
+      setRequirementsService(null);
    }
 }
