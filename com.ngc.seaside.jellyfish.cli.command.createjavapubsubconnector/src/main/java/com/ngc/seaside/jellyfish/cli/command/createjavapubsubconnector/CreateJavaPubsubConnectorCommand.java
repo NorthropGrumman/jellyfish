@@ -44,7 +44,6 @@ import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Queue;
@@ -234,7 +233,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
    private static void addNestedData(Set<INamedChild<IPackage>> data) {
       Queue<INamedChild<IPackage>> queue = new ArrayDeque<>(data);
-      Set<IData> superTypes = new HashSet<>();
+      Set<IData> superTypes = new LinkedHashSet<>();
       while (!queue.isEmpty()) {
          INamedChild<IPackage> value = queue.poll();
          IData datum;
