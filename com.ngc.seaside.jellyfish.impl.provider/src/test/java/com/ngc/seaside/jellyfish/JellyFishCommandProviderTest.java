@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish;
 
-import com.google.common.io.Files;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
@@ -24,7 +23,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
