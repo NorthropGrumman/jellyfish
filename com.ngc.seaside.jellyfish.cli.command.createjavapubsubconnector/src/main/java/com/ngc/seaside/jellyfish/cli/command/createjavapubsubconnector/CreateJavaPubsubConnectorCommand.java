@@ -43,7 +43,6 @@ import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Queue;
@@ -65,7 +64,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    private static final Function<IData, Collection<IDataField>> FIELDS_FUNCTION = data -> {
-      Set<IDataField> fields = new HashSet<>();
+      Set<IDataField> fields = new LinkedHashSet<>();
       while (data != null) {
          fields.addAll(data.getFields());
          data = data.getSuperDataType().orElse(null);
@@ -231,7 +230,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
    private static void addNestedData(Set<INamedChild<IPackage>> data) {
       Queue<INamedChild<IPackage>> queue = new ArrayDeque<>(data);
-      Set<IData> superTypes = new HashSet<>();
+      Set<IData> superTypes = new LinkedHashSet<>();
       while (!queue.isEmpty()) {
          INamedChild<IPackage> value = queue.poll();
          IData datum;
