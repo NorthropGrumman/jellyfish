@@ -39,6 +39,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
@@ -109,6 +110,12 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       if (!collection.containsParameter(VERSION_PROPERTY)) {
          String version = promptService.prompt(VERSION_PROPERTY, "1.0-SNAPSHOT", null);
          collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
+      }
+      
+      // Ensure GAVE_PROPERTY parameter is set
+      if (!collection.containsParameter(GAVE_PROPERTY)) {
+    	  String gave = promptService.prompt(GAVE_PROPERTY, "com.ngc.seaside:mysystem.descriptor:1.0-SNAPSHOT:zip", null);
+    	  collection.addParameter(new DefaultParameter<>(GAVE_PROPERTY).setValue(gave));
       }
 
       // Ensure CLEAN_PROPERTY parameter is set
@@ -209,6 +216,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setDescription("The version to use for the Gradle project")
             .setRequired(false),
 
+         CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION,
+                	
          CommonParameters.CLEAN);
    }
 

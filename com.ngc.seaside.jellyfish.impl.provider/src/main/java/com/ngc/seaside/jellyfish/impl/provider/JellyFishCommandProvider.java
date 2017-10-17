@@ -555,9 +555,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 			   ze = zis.getNextEntry();
 		   }
 		   zis.close();
-		   System.out.println("done...");
+		   System.out.println("extraction completed...");
 	   } catch (IOException e ) {
-		   // TODO Auto-generated catch block
 		   e.printStackTrace();
 	}
    }
