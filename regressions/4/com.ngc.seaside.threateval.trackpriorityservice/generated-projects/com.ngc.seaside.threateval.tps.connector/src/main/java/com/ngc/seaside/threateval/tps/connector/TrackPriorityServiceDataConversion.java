@@ -5,8 +5,8 @@ public class TrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.tps.event.datatype.TrackPriority convert(com.ngc.seaside.threateval.tps.datatype.TrackPriority from) {
       com.ngc.seaside.threateval.tps.event.datatype.TrackPriority to = new com.ngc.seaside.threateval.tps.event.datatype.TrackPriority();
 
-      to.setSourceId(from.getSourceId());
       to.setTrackId(from.getTrackId());
+      to.setSourceId(from.getSourceId());
       to.setPriority(from.getPriority());
 
       return to;

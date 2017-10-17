@@ -23,8 +23,8 @@ public class DefendedAreaTrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.datps.event.common.datatype.StateVector convert(com.ngc.seaside.threateval.datps.common.datatype.StateVector from) {
       com.ngc.seaside.threateval.datps.event.common.datatype.StateVector to = new com.ngc.seaside.threateval.datps.event.common.datatype.StateVector();
 
-      to.setEcefPosition(convert(from.getEcefPosition()));
       to.setValidityTime(convert(from.getValidityTime()));
+      to.setEcefPosition(convert(from.getEcefPosition()));
       to.setEcefVelocity(convert(from.getEcefVelocity()));
       to.setEcefAcc(convert(from.getEcefAcc()));
 
@@ -50,9 +50,9 @@ public class DefendedAreaTrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.datps.event.common.datatype.Vector3 convert(com.ngc.seaside.threateval.datps.common.datatype.Vector3 from) {
       com.ngc.seaside.threateval.datps.event.common.datatype.Vector3 to = new com.ngc.seaside.threateval.datps.event.common.datatype.Vector3();
 
+      to.setX(from.getX());
       to.setY(from.getY());
       to.setZ(from.getZ());
-      to.setX(from.getX());
 
       return to;
    }
@@ -60,8 +60,8 @@ public class DefendedAreaTrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.datps.atype.TrackPriority convert(com.ngc.seaside.threateval.datps.event.atype.TrackPriority from) {
       com.ngc.seaside.threateval.datps.atype.TrackPriority.Builder to = com.ngc.seaside.threateval.datps.atype.TrackPriority.newBuilder();
 
-      to.setSourceId(from.getSourceId());
       to.setTrackId(from.getTrackId());
+      to.setSourceId(from.getSourceId());
       to.setPriority(from.getPriority());
 
       return to.build();

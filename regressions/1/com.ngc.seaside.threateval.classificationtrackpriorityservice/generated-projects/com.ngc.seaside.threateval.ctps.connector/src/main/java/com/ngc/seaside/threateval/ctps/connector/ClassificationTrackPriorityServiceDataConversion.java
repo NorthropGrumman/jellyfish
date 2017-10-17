@@ -37,8 +37,8 @@ public class ClassificationTrackPriorityServiceDataConversion {
    public static com.ngc.seaside.threateval.ctps.datatype.TrackPriority convert(com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority from) {
       com.ngc.seaside.threateval.ctps.datatype.TrackPriority.Builder to = com.ngc.seaside.threateval.ctps.datatype.TrackPriority.newBuilder();
 
-      to.setSourceId(from.getSourceId());
       to.setTrackId(from.getTrackId());
+      to.setSourceId(from.getSourceId());
       to.setPriority(from.getPriority());
 
       return to.build();
