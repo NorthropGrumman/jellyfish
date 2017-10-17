@@ -3,7 +3,7 @@
     <config>
         <useVerboseImports>false</useVerboseImports>
     </config>
-    <object class="com.ngc.test.model1.event.Data1">
+    <object class="com.ngc.test.model1.event.Data1" generated="true" abstract="false">
         <property name="booleanField" type="boolean" multiple="false" abstract="false"/>
         <property name="manyBooleanField" type="boolean" multiple="true" abstract="false"/>
         <property name="intField" type="int" multiple="false" abstract="false"/>
@@ -17,7 +17,9 @@
         <property name="dataField" type="com.ngc.test.model1.event.Data2" multiple="false" abstract="false"/>
         <property name="manyDataField" type="com.ngc.test.model1.event.Data2" multiple="true" abstract="false"/>
     </object>
-    <object class="com.ngc.test.model1.event.Data2"/>
-    <object class="com.ngc.test.model1.event.Enum1"/>
-    <object class="com.ngc.test.model1.event.Data5"/>
+    <object class="com.ngc.test.model1.event.Data2" generated="true" abstract="false"/>
+    <object class="com.ngc.test.model1.event.test2.Data3" generated="true" abstract="false"/>
+    <object class="com.ngc.test.model1.event.test2.Data4" generated="true" abstract="false"/>
+    <object class="com.ngc.test.model1.event.Data5" generated="true" abstract="false"/>
+    <object class="com.ngc.test.model1.event.Enum1" generated="true" abstract="false"/>
 </ns2:domain>

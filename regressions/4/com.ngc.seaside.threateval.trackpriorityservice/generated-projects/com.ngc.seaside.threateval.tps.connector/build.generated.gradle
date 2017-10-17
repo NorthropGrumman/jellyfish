@@ -1,0 +1,17 @@
+
+dependencies {
+   compile project(":tps.base")
+   compile project(":tps.events")
+   compile project(":tps.messages")
+
+   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+   compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
+
+   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
+   compile "org.osgi:osgi.core:$osgiVersion"
+   compile "org.osgi:osgi.enterprise:$osgiVersion"
+
+   testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
