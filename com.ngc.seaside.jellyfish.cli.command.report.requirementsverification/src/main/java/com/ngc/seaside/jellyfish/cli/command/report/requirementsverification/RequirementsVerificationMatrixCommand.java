@@ -3,7 +3,6 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.CommandException;
@@ -14,6 +13,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -41,9 +41,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * The JSON key refereed in the metadata of a model to declare requirements.  The value is either a string or an
     * array of strings.
     */
-   private static final String REQUIREMENTS_MEMBER_NAME = "satisfies";
    private static final String NAME = "requirements-verification-matrix";
-   private static final String GHERKIN_URI = "src/test/gherkin";
    static final String OUTPUT_FORMAT_PROPERTY = "outputFormat";
    static final String DEFAULT_OUTPUT_FORMAT_PROPERTY = "DEFAULT";
    static final String OUTPUT_PROPERTY = "output";
@@ -158,8 +156,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String operator = evaluateOperator(commandOptions);
       Collection<IModel> models = searchModels(commandOptions, values, operator);
       
-      Map<String, Feature> features = getAllFeatures(commandOptions, models, GHERKIN_URI);
-      Collection<Requirement> satisfiedRequirements = verifyRequirements(models, features);
+      Map<String, IFeatureInformation> features = featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
+      
+      Collection<Requirement> satisfiedRequirements = verifyRequirements(commandOptions, models, features);
 
       String report;
       if (outputFormat.equalsIgnoreCase("csv")) {
@@ -181,18 +180,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
 
       logService.info(getClass(), "%s requirements verification matrix successfully created", values);
 
-   }
-
-   /**
-    * Retrieves a collection of features defined for a collection of system descriptor models
-    *
-    * @param commandOptions Jellyfish command options containing system descriptor
-    * @param models         collection of system descriptor models to be processed
-    * @param uri            location of feature files relative to the system descriptor
-    */
-   private Map<String, Feature> getAllFeatures(IJellyFishCommandOptions commandOptions, Collection<IModel> models,
-                                               String uri) {
-      return ModelUtils.getAllFeatures(commandOptions, models, uri);
    }
 
    /**
@@ -248,32 +235,34 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * Verifies which feature files meets which requirement.
     *
     * @param models     models to search through for requirements
-    * @param featureMap features to look for
+    * @param features features to look for
     * @return returns a Collection of {@link Requirement}s
     */
-   private Collection<Requirement> verifyRequirements(Collection<IModel> models, Map<String, Feature> featureMap) {
+   private Collection<Requirement> verifyRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models, Map<String, IFeatureInformation> features) {
       TreeMultimap<String, String>
                requirementsMap =
                TreeMultimap.create(Ordering.natural().reverse(), Ordering.natural());
 
-      featureMap.forEach((featureFileName, feature) -> {
-         IModel model = models.stream().filter(aModel -> feature.getFullyQualifiedName().startsWith(aModel.getName()))
+      features.forEach((featureFileName, featureInfo) -> {
+         IModel model = models.stream().filter(aModel -> featureInfo.getFullyQualifiedName().startsWith(aModel.getName()))
                   .findAny().orElse(null);
+
 
          if (model != null) {
 
-            IScenario scenario = model.getScenarios().getByName(feature.getName()).orElse(null);
+            IScenario scenario = model.getScenarios().getByName(featureInfo.getName()).orElse(null);
+            
             // A feature file should be considered to verify a requirement:
             if (scenario != null) {
-               // if the model that contains the scenario has a "satisfies" metadata file for some requirement
-               feature.addRequirements(ModelUtils.getRequirementsFromModel(model, REQUIREMENTS_MEMBER_NAME));
-
-               // if the scenario in the model has a "satisfies" metadata field
-               feature.addRequirements(
-                        ModelUtils.getRequirementsFromScenario(scenario, REQUIREMENTS_MEMBER_NAME));
+               
+              for (String scenarioReq : requirementsService.getRequirements(commandOptions, scenario)) {
+                 requirementsMap.put(scenarioReq, featureInfo.getFullyQualifiedName());
+              }
+              
+              for (String modelReq : requirementsService.getRequirements(commandOptions, model)) {
+                 requirementsMap.put(modelReq, featureInfo.getFullyQualifiedName());
+              }
             }
-            feature.getRequirements()
-                     .forEach(requirement -> requirementsMap.put(requirement, feature.getFullyQualifiedName()));
          }
       });
 
@@ -288,13 +277,13 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @return returns a Collection of {@link Requirement}s
     */
    private Collection<Requirement> createVerifiedRequirements(Multimap<String, String> requirementsMap) {
-      TreeSet<Requirement> features = new TreeSet<>(Collections.reverseOrder());
+      TreeSet<Requirement> requirements = new TreeSet<>(Collections.reverseOrder());
       requirementsMap.keySet().forEach(requirement -> {
          Requirement helper = new Requirement(requirement);
          helper.addFeatures(requirementsMap.get(requirement));
-         features.add(helper);
+         requirements.add(helper);
       });
-      return features;
+      return requirements;
    }
 
    /**

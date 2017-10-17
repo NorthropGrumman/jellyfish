@@ -25,18 +25,19 @@ public class ModelUtilsIT {
       Mockito.when(jellyFishCommandOptions.getSystemDescriptorProjectPath()).thenReturn(Paths.get("src/test/resources"));
    }
 
-   @Test
-   public void givenFeatureFolderWithNonFeatureFiles_whenGetAllFeatures_thenNoExceptionThrown() {
-      IPackage mockPackage = Mockito.mock(IPackage.class);         
-      IModel mockModel = Mockito.mock(IModel.class);         
-
-      Mockito.when(mockPackage.getName()).thenReturn("com.ngc.seaside.testeval3");
-      Mockito.when(mockModel.getParent()).thenReturn(mockPackage);
-      
-      // Need at least one model
-      Collection<IModel> models = new ArrayList<>();
-      models.add(mockModel);
-      
-      ModelUtils.getAllFeatures(jellyFishCommandOptions, models, "src/test/gherkin");
-   }
+//   @Test
+//   public void givenFeatureFolderWithNonFeatureFiles_whenGetAllFeatures_thenNoExceptionThrown() {
+//      IPackage mockPackage = Mockito.mock(IPackage.class);         
+//      IModel mockModel = Mockito.mock(IModel.class);         
+//
+//      Mockito.when(mockPackage.getName()).thenReturn("com.ngc.seaside.testeval3");
+//      Mockito.when(mockModel.getParent()).thenReturn(mockPackage);
+//      
+//      // Need at least one model
+//      Collection<IModel> models = new ArrayList<>();
+//      models.add(mockModel);
+//      
+//      
+//      ModelUtils.getAllFeatures(jellyFishCommandOptions, models, "src/test/gherkin");
+//   }
 }
