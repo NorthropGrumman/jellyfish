@@ -1,9 +1,12 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
@@ -33,6 +36,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.Create
  */
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
+
    private static final String NAME = "create-jellyfish-gradle-project";
    private static final IUsage USAGE = createUsage();
 
@@ -45,8 +49,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
-   public static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
-   public static final String SYSTEM_DESCRIPTOR_VERSION_PROPERTY = "systemDescriptorVersion";
+   static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
+   static final String SYSTEM_DESCRIPTOR_VERSION_PROPERTY = "systemDescriptorVersion";
+   static final Pattern GAVE_REGEX = Pattern.compile("(.+):(.+):(.+)@(.+)");
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -124,9 +129,12 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       
       // parse the parameters to get the system descriptor artifact id
       String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
-      String[] gaveStrs = gaveStr.split(":");
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY).setValue(gaveStrs[1]));
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY).setValue(gaveStrs[2]));
+      Matcher matcher = GAVE_REGEX.matcher(gaveStr);
+      Preconditions.checkArgument(matcher.matches(),
+                                  "GAVE string must be of the format group:artifact:version@extension, got %s!",
+                                  gaveStr);
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, matcher.group(2)));
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, matcher.group(3)));
       
       // Ensure MODEL_NAME_PROPERTY parameter is set
       if (!collection.containsParameter(MODEL_NAME_PROPERTY)) {
@@ -221,21 +229,15 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       return new DefaultUsage(
          "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
          CommonParameters.OUTPUT_DIRECTORY,
-
          new DefaultParameter<>(PROJECT_NAME_PROPERTY)
             .setDescription("The name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
             .setRequired(false),
-
          CommonParameters.GROUP_ID,
-
          new DefaultParameter<>(VERSION_PROPERTY)
             .setDescription("The version to use for the Gradle project")
             .setRequired(false),
-            
          CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION,
-         
          CommonParameters.MODEL,
-
          CommonParameters.CLEAN);
    }
 

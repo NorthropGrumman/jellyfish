@@ -33,7 +33,7 @@ ext {
 }
 
 dependencies {
-	generate "${gave}@zip"
+	generate "${gave}"
 }
 
 subprojects {

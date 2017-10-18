@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.regex.Matcher;
 
 public class CreateJellyFishGradleProjectCommandIT {
 
@@ -39,7 +40,8 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    @Before
    public void setup() throws IOException {
-      outputDir = Files.createTempDirectory(null);
+      //outputDir = Files.createTempDirectory(null);
+      outputDir = Files.createDirectories(Paths.get("build/test-out"));
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockTemplateService);
@@ -49,7 +51,7 @@ public class CreateJellyFishGradleProjectCommandIT {
    public void testCommand() throws IOException {
       final String projectName = "test-project-1";
       final String version = "1.0";
-      final String sdgave = "com.ngc.seasid.system1:system.descriptor:1.0-SNAPSHOT";
+      final String sdgave = "com.ngc.seasid.system1:system.descriptor:1.0-SNAPSHOT@zip";
       final String model = "com.ngc.seaside.Model1";
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
@@ -64,7 +66,7 @@ public class CreateJellyFishGradleProjectCommandIT {
       final String projectName = "test-project-2";
       final String version = "1.0";
       final String group = "com.ngc.test";
-      final String sdgave = "com.ngc.seasid.system2:system.descriptor:1.0-SNAPSHOT";
+      final String sdgave = "com.ngc.seasid.system2:system.descriptor:1.0-SNAPSHOT@zip";
       final String model = "com.ngc.seaside.Model2";
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
@@ -87,7 +89,7 @@ public class CreateJellyFishGradleProjectCommandIT {
       final String projectNameA = "test-project-4a";
       final String projectNameB = "test-project-4b";
       final String version = "1.0";
-      final String sdgave = "com.ngc.seasid.system4:system.descriptor:1.0-SNAPSHOT";
+      final String sdgave = "com.ngc.seasid.system4:system.descriptor:1.0-SNAPSHOT@zip";
       final String model = "com.ngc.seaside.Model4";
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameA,
@@ -111,7 +113,7 @@ public class CreateJellyFishGradleProjectCommandIT {
       final String projectNameA = "test-project-5a";
       final String projectNameB = "test-project-5b";
       final String version = "1.0";
-      final String sdgave = "com.ngc.seasid.system5:system.descriptor:1.0-SNAPSHOT";
+      final String sdgave = "com.ngc.seasid.system5:system.descriptor:1.0-SNAPSHOT@zip";
       final String model = "com.ngc.seaside.Model5";
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameA,
@@ -192,12 +194,13 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean groupMatch = buildFileContent.stream().anyMatch(line -> line.contains(groupStringToMatch));
       Assert.assertTrue("build.gradle group is incorrect", groupMatch);
 
-      String[] gaveStrs = expectedGaveId.split(":");
-      String artifactStringToMatch = "systemDescriptorProjectName = '" + gaveStrs[1] + "'";
+      Matcher matcher = CreateJellyFishGradleProjectCommand.GAVE_REGEX.matcher(expectedGaveId);
+      matcher.matches();
+      String artifactStringToMatch = "systemDescriptorProjectName = '" + matcher.group(2) + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
       Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
       
-      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + gaveStrs[2] + "'";
+      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + matcher.group(3) + "'";
       boolean SDversionMatch = buildFileContent.stream().anyMatch(line -> line.contains(SDversionStringToMatch));
       Assert.assertTrue("build.gradle system descriptor version is incorrect", SDversionMatch);
 
@@ -205,7 +208,7 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean modelStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(modelStringToMatch));
       Assert.assertTrue("build.gradle model name is incorrect", modelStringMatch);
 
-      String depStringToMatch = "generate \"" + expectedGaveId + "@zip\"";
+      String depStringToMatch = "generate \"" + expectedGaveId + "\"";
       boolean depStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(depStringToMatch));
       Assert.assertTrue("build.gradle generate dependencies is incorrect", depStringMatch);
 
@@ -219,6 +222,6 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    @After
    public void cleanup() throws IOException {
-      FileUtils.deleteQuietly(outputDir.toFile());
+      //FileUtils.deleteQuietly(outputDir.toFile());
    }
 }
