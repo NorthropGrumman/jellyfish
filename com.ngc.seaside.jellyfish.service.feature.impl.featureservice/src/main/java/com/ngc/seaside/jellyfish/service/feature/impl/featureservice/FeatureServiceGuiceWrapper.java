@@ -10,7 +10,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NavigableMap;
-import java.util.TreeMap;
 
 public class FeatureServiceGuiceWrapper implements IFeatureService {
 
