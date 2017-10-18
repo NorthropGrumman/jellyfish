@@ -12,6 +12,10 @@ import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
+import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
+import com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice.RequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -46,6 +50,8 @@ import static org.junit.Assert.assertEquals;
 public class RequirementsVerificationMatrixCommandStdFileOutIT {
 
    private static final PrintStreamLogService logger = new PrintStreamLogService();
+   private static final FeatureService featureService = new FeatureService();
+   private static final RequirementsService requirementsService = new RequirementsService();
    private static final Injector injector = Guice.createInjector(getModules());
    private static final String TESTFOLDER = "build/test/verification-matrix/results/";
    private static final String TESTREGEX = "([\\n\\r]+\\s*)*$";
@@ -63,6 +69,8 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
          @Override
          protected void configure() {
             bind(ILogService.class).toInstance(logger);
+            bind(IFeatureService.class).toInstance(featureService);
+            bind(IRequirementsService.class).toInstance(requirementsService);
          }
       });
       return modules;
@@ -100,7 +108,9 @@ public class RequirementsVerificationMatrixCommandStdFileOutIT {
          }
       };
       cmd.setLogService(logger);
-
+      cmd.setRequirementsService(requirementsService);
+      cmd.setFeatureService(featureService);
+      
       // Setup mock system descriptor
       Path sdDir = Paths.get("src", "test", "resources");
       PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");

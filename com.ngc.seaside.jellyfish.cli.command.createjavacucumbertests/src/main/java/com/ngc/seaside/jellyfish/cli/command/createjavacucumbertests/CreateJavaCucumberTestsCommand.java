@@ -14,6 +14,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -29,16 +31,13 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.TreeMap;
+import java.util.NavigableMap;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
@@ -60,6 +59,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
    private IJavaServiceGenerationService generationService;
+   private IFeatureService featureService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -196,6 +196,23 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    }
    
    /**
+    * Sets feature service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFeatureService")
+   public void setFeatureService(IFeatureService ref) {
+      this.featureService = ref;
+   }
+
+   /**
+    * Remove feature service.
+    */
+   public void removeFeatureService(IFeatureService ref) {
+      setFeatureService(null);
+   }
+   
+   /**
     * Sets java service generation service.
     *
     * @param ref the ref
@@ -249,32 +266,12 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     */
    private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
             Path generatedProjectDirectory, boolean clean) {
-
-      // First, find the feature files that apply to the model.
-      TreeMap<String, FeatureFile> features = new TreeMap<>(Collections.reverseOrder());
-      final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
-      final Path gherkin = commandOptions.getSystemDescriptorProjectPath()
-                                         .resolve(Paths.get("src", "test", "gherkin"))
-                                         .toAbsolutePath();
+      
+      NavigableMap<String, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
+      
       final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
-                                          .resolve(Paths.get("src", "test", "resources", "data"))
-                                          .toAbsolutePath();
-
-      String packages = model.getParent().getName();
-      Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
-
-      Path featureFilesRoot = gherkin.resolve(modelPath);
-
-      try {
-         Files.list(featureFilesRoot)
-              .filter(Files::isRegularFile)
-              .filter(matcher::matches)
-              .filter(f -> f.getFileName().toString().startsWith(model.getName() + '.'))
-              .map(Path::toAbsolutePath)
-              .forEach(path -> features.put(path.toString(), new FeatureFile(path, gherkin.relativize(path))));
-      } catch (IOException e) {
-         throw new CommandException(e);
-      }
+               .resolve(Paths.get("src", "test", "resources", "data"))
+               .toAbsolutePath();
 
       final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
       final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
@@ -282,23 +279,20 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       deleteDir(destination.resolve(model.getParent().getName()).toFile());
       deleteDir(dataDestination.toFile());
 
-      for (FeatureFile feature : features.values()) {
-         Path featureDestination = destination.resolve(feature.getRelativePath());
+      for (IFeatureInformation featureInfo : features.values()) {
+         Path featureDestination = destination.resolve(featureInfo.getRelativePath());
          try {
             Files.createDirectories(featureDestination.getParent());
-            Files.copy(feature.getAbsolutePath(), featureDestination, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(featureInfo.getAbsolutePath(), featureDestination, StandardCopyOption.REPLACE_EXISTING);
          } catch (IOException e) {
-            throw new CommandException("Failed to copy " + feature.getAbsolutePath() + " to " + featureDestination, e);
+            throw new CommandException("Failed to copy " + featureInfo.getAbsolutePath() + " to " + featureDestination, e);
          }
       }
       if (Files.isDirectory(dataFile)) {
-
          try {
-
             FileUtils.copyDirectory(dataFile.toFile(), dataDestination.toFile());
-
          } catch (IOException e) {
-            throw new CommandException("Failed to copy resoureces  to " + destination, e);
+            throw new CommandException("Failed to copy resources  to " + destination, e);
          }
       }
    }

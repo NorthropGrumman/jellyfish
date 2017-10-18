@@ -77,3 +77,7 @@ project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationse
 
 include 'com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice'
 project(':com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice').name = 'jellyfish.service.requirements.impl.requirementsservice'
+
+include 'com.ngc.seaside.jellyfish.service.feature.impl.featureservice'
+project(':com.ngc.seaside.jellyfish.service.feature.impl.featureservice').name = 'jellyfish.service.feature.impl.featureservice'
+
