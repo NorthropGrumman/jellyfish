@@ -1,4 +1,4 @@
-rootProject.name = 'com.ngc.seaside.threateval.engagementtrackpriorityservice'
+rootProject.name = 'generatedProject'
 
 include 'com.ngc.seaside.threateval.etps.domain'
 project(':com.ngc.seaside.threateval.etps.domain').name = 'etps.domain'

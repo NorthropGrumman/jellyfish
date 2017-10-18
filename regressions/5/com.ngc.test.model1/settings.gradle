@@ -1,4 +1,4 @@
-rootProject.name = 'com.ngc.test.model1'
+rootProject.name = 'generatedProject'
 
 include 'com.ngc.test.model1.domain'
 project(':com.ngc.test.model1.domain').name = 'model1.domain'
