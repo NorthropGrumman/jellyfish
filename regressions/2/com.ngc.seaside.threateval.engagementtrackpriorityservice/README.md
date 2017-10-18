@@ -1,5 +1,5 @@
-# com.ngc.seaside.threateval.engagementtrackpriorityservice
+# generatedProject
 
-This repository consist of the com.ngc.seaside.threateval.engagementtrackpriorityservice.
+This repository consist of the generatedProject.
 
 http://10.207.42.43/confluence/display/SEAS/JellyFish+Implementation

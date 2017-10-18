@@ -1,5 +1,5 @@
-# com.ngc.test.model1
+# generatedProject
 
-This repository consist of the com.ngc.test.model1.
+This repository consist of the generatedProject.
 
 http://10.207.42.43/confluence/display/SEAS/JellyFish+Implementation

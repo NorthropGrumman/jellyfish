@@ -161,8 +161,11 @@ public class RegressionsIT {
       generatorArguments.put("version", propertiesValues.get("version"));
       generatorArguments.put("model", propertiesValues.get("model"));
       generatorArguments.put("projectName", "generatedProject");
+      generatorArguments.put("groupId", propertiesValues.get("groupId"));
+      generatorArguments.put("gave", propertiesValues.get("gave"));
 
       // Create the generation project object
+    		  
       Logger log = Mockito.mock(Logger.class);
       JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log)
                .setCommand(propertiesValues.get("command"))
