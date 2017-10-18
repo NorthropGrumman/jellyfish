@@ -283,17 +283,18 @@ public class JellyFishCommandProviderTest {
    public void testDoesCreateJavaServiceProjectWithoutInputDir() {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
       when(command.getName()).thenReturn("create-java-service-project");
+      when(command.getUsage()).thenReturn(mock(IUsage.class));
+      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
 
       Path outputDir = Paths.get(".");
       String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0:zip";
-      String model = "com.ngc.seaside.threateval.ThreatEvaluation";
+      String model = "com.ngc.seaside.threateval.TrackPriorityService";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
       String url = "http://10.207.42.137/nexus/repository/maven-public/";
       collection.addParameter(new DefaultParameter<>("repositoryUrl", url));
       collection.addParameter(new DefaultParameter<>("gave", gave));
       collection.addParameter(new DefaultParameter<>("model", model));
-      File tempDir = null;
       
       when(parameterService.parseParameters(Collections.singletonList("-DoutputDir=" + outputDir + 
     		  " -DrepositoryUrl=" + url + " -Dgave=" + gave + " -Dmodel=" + model)))
@@ -334,7 +335,6 @@ public class JellyFishCommandProviderTest {
       assertTrue(options.getParameters().containsParameter("repositoryUrl"));
       assertTrue(options.getParameters().containsParameter("gave"));
       assertTrue(options.getParameters().containsParameter("model"));
-      assertFalse(options.getParameters().containsParameter("inputDir"));
       assertEquals(url, options.getParameters().getParameter("repositoryUrl").getStringValue());
       assertEquals(gave, options.getParameters().getParameter("gave").getStringValue());
       assertEquals(model, options.getParameters().getParameter("model").getStringValue());

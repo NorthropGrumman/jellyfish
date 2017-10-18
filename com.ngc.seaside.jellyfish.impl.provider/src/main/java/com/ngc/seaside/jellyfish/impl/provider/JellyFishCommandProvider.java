@@ -1,5 +1,31 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -25,27 +51,6 @@ import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.*;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -171,13 +176,9 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       // If no input directory is provided, look in working directory
       if (arguments.length == 0) {
          throw new IllegalArgumentException("No command provided");
-      } else {
-         if (arguments.length == 1) {
-            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
-         } else {
-            validatedArgs = arguments;
-         }
       }
+      
+      validatedArgs = arguments;
 
       String commandName = validatedArgs[0];
       logService.trace(getClass(), "Running command '%s'", commandName);
@@ -448,14 +449,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
 
-      if (templateParameters == null) {
-         options.setParameters(userInputParameters);
-      } else {
-         DefaultParameterCollection all = new DefaultParameterCollection();
-         all.addParameters(userInputParameters.getAllParameters());
-         all.addParameters(templateParameters.getAllParameters());
-         options.setParameters(all);
-      }
+      
 
       IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
       IParameter<?> urlParameter = userInputParameters.getParameter("repositoryUrl");
@@ -480,6 +474,16 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
           }
           path = Paths.get(tempDir.toURI());
       }
+      
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      if (inputDir == null) {
+    	  parameters.addParameter(new DefaultParameter<>("inputDir", path));
+      }
+      parameters.addParameters(userInputParameters.getAllParameters());
+      if (templateParameters != null) {
+    	  parameters.addParameters(templateParameters.getAllParameters());
+      }
+      options.setParameters(parameters);
       
       options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
       options.setSystemDescriptorProjectPath(path);
