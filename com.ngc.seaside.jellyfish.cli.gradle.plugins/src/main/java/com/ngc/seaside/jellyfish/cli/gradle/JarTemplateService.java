@@ -39,10 +39,14 @@ public class JarTemplateService extends TemplateService {
 
    @Override
    protected InputStream getTemplateInputStream(String templateName) throws IOException, TemplateServiceException {
+      int index = templateName.indexOf('-');
+      String templatePrefix = index < 0 ? templateName : templateName.substring(0, index);
+      String templateEnding = index < 0 ? "" : templateName.substring(index);
       InputStream is;
-      is = getClass().getClassLoader().getResourceAsStream(String.format("templates/%s-%s-template.zip",
-                                                                         templateName,
-                                                                         version));
+      is = getClass().getClassLoader().getResourceAsStream(String.format("templates/%s-%s-template%s.zip",
+                                                                         templatePrefix,
+                                                                         version,
+                                                                         templateEnding));
       if (is == null) {
          throw new TemplateServiceException("no template named " + templateName + " found!");
       }
