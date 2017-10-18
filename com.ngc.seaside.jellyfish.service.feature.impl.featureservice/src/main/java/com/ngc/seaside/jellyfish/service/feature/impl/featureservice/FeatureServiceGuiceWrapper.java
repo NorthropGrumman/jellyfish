@@ -9,6 +9,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class FeatureServiceGuiceWrapper implements IFeatureService {
@@ -22,17 +23,17 @@ public class FeatureServiceGuiceWrapper implements IFeatureService {
    }
 
    @Override
-   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
+   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
       return delegate.getFeatures(sdPath, model);
    }
 
    @Override
-   public TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
+   public NavigableMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
       return delegate.getAllFeatures(sdPath, models);
    }
 
    @Override
-   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
+   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
       return delegate.getFeatures(sdPath, scenario);
    }
 }

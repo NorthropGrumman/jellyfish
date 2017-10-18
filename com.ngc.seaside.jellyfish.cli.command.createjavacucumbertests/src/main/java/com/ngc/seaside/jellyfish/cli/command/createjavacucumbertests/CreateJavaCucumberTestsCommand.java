@@ -37,7 +37,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.TreeMap;
+import java.util.NavigableMap;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
@@ -267,7 +267,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
             Path generatedProjectDirectory, boolean clean) {
       
-      TreeMap<String, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
+      NavigableMap<String, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
       
       final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
                .resolve(Paths.get("src", "test", "resources", "data"))

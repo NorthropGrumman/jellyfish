@@ -23,6 +23,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 @Component(service = IFeatureService.class)
@@ -31,7 +32,7 @@ public class FeatureService implements IFeatureService {
    private ILogService logService;
 
    @Override
-   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
+   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
    
@@ -59,14 +60,14 @@ public class FeatureService implements IFeatureService {
    }
 
    @Override
-   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
+   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");   
       return getFeatures(sdPath, scenario.getParent()); 
    }
 
    @Override
-   public TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
+   public NavigableMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
       TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
 
       models.forEach(model -> {

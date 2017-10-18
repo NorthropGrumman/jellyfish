@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.NavigableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeatureServiceTest {
@@ -55,7 +55,7 @@ public class FeatureServiceTest {
       Path sdPath = Paths.get("src", "test", "resources");
       setupModel("com.ngc.seaside.testeval", "HamburgerService");
 
-      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
+      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
 
       assertEquals(actualFeatures.size(), 2);
 
@@ -72,7 +72,7 @@ public class FeatureServiceTest {
 
       IScenario scenario = mock(IScenario.class);
       when(scenario.getParent()).thenReturn(model);
-      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
+      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
 
       assertEquals(actualFeatures.size(), 2);
 
@@ -100,7 +100,7 @@ public class FeatureServiceTest {
          "MilkShakeService.melt.feature");
 
       Path expectedRelativePath = Paths.get("com", "ngc", "seaside", "testeval", "MilkShakeService.melt.feature");
-      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
+      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
       assertEquals(actualFeatures.size(), 1);
 
       for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
@@ -119,7 +119,7 @@ public class FeatureServiceTest {
    public void testDoesObtainFeatureFilesForMultipleModels() {
       Path sdPath = Paths.get("src", "test", "resources");
       Collection<IModel> models = setupMultipleModels();  
-      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);    
+      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);    
       assertEquals(actualFeatures.size(), 4);
    }
 
