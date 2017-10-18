@@ -195,7 +195,11 @@ public class CreateJellyFishGradleProjectCommandIT {
       String[] gaveStrs = expectedGaveId.split(":");
       String artifactStringToMatch = "systemDescriptorProjectName = '" + gaveStrs[1] + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
-      Assert.assertTrue("build.gradle artifact id is incorrect", artifactNameMatch);
+      Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
+      
+      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + gaveStrs[2] + "'";
+      boolean SDversionMatch = buildFileContent.stream().anyMatch(line -> line.contains(SDversionStringToMatch));
+      Assert.assertTrue("build.gradle system descriptor version is incorrect", SDversionMatch);
 
       String modelStringToMatch = "modelName = '" + expectedModelName + "'";
       boolean modelStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(modelStringToMatch));

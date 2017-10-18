@@ -46,6 +46,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String VERSION_PROPERTY = "version";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    public static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
+   public static final String SYSTEM_DESCRIPTOR_VERSION_PROPERTY = "systemDescriptorVersion";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -125,6 +126,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
       String[] gaveStrs = gaveStr.split(":");
       collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY).setValue(gaveStrs[1]));
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY).setValue(gaveStrs[2]));
       
       // Ensure MODEL_NAME_PROPERTY parameter is set
       if (!collection.containsParameter(MODEL_NAME_PROPERTY)) {
