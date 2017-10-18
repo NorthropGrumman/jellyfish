@@ -71,15 +71,17 @@ public class FeatureServiceTest {
       setupModel("com.ngc.seaside.testeval", "HamburgerService");
 
       IScenario scenario = mock(IScenario.class);
+      when(scenario.getName()).thenReturn("addBacon");
       when(scenario.getParent()).thenReturn(model);
       NavigableMap<Path, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
 
-      assertEquals(actualFeatures.size(), 2);
+      assertEquals("should return only 1 feature file!",
+                   actualFeatures.size(),
+                   1);
 
-      for (Entry<Path, IFeatureInformation> entry : actualFeatures.entrySet()) {
-         Path key = entry.getKey();
-         assertTrue(key.toString().contains("HamburgerService"));
-      }
+      assertEquals("feature is not correct!",
+                   "HamburgerService.addBacon",
+                   actualFeatures.values().iterator().next().getFullyQualifiedName());
    }
 
    @Test

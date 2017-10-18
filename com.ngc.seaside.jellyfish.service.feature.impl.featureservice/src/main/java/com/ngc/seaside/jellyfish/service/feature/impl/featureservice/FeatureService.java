@@ -62,8 +62,14 @@ public class FeatureService implements IFeatureService {
    @Override
    public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
-      Preconditions.checkNotNull(scenario, "scenario may not be null!");   
-      return getFeatures(sdPath, scenario.getParent()); 
+      Preconditions.checkNotNull(scenario, "scenario may not be null!");
+      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>();
+      for (IFeatureInformation feature : getFeatures(sdPath, scenario.getParent()).values()) {
+         if(feature.getName().equals(scenario.getName())) {
+            features.put(feature.getAbsolutePath(), feature);
+         }
+      }
+      return features;
    }
 
    @Override
