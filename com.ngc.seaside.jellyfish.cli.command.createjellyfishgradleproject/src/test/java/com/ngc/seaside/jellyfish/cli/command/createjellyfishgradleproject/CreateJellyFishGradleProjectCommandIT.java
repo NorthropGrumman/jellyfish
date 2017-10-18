@@ -40,8 +40,7 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    @Before
    public void setup() throws IOException {
-      //outputDir = Files.createTempDirectory(null);
-      outputDir = Files.createDirectories(Paths.get("build/test-out"));
+      outputDir = Files.createTempDirectory(null);
       cmd.setLogService(logger);
       cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockTemplateService);
@@ -222,6 +221,6 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    @After
    public void cleanup() throws IOException {
-      //FileUtils.deleteQuietly(outputDir.toFile());
+      FileUtils.deleteQuietly(outputDir.toFile());
    }
 }
