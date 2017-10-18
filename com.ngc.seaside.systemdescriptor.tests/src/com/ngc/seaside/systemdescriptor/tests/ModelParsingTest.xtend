@@ -456,4 +456,81 @@ class ModelParsingTest {
 			null
 		)
 	}
+	
+
+	@Test
+	def void testDoesNotAllowModelNameKeywords() {
+		val source = '''
+			package clocks.models
+			
+			model ^Timer {
+				
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.ELEMENT,
+			null
+		)
+	}
+	
+
+	@Test
+	def void testDoesNotParseModelWithEscapedInputFieldNames() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				input {
+					Time ^int
+				}
+				
+				output {
+					Time outT
+			    }
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.INPUT_DECLARATION,
+			null
+		)
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithEscapedOutputFieldNames() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.Time
+			
+			model ClockDisplay {
+				
+				input {
+					Time inT
+				}
+				
+				output {
+					Time ^float
+			    }
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
+			null
+		)
+	}
 }

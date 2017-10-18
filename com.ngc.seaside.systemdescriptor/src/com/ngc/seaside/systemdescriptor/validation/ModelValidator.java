@@ -19,6 +19,7 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
@@ -69,6 +70,96 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 	// the part declaration is the duplicate (not the requires declaration).
 
 	/**
+	 * Validates that the user did not try to escape a keyword with ^ in the
+	 * name of the model.
+	 * 
+	 * @param model is the model to evaluate
+	 */	
+	@Check
+	public void checkUsageOfEscapeHatCharacter(Model model) {
+		// Verify the data name doesn't not have the escape hat
+		if (model.getName().indexOf('^') >= 0) {
+			String msg = String.format(
+					"Cannot use '^' to escape the model name %s.",
+					model.getName());
+			error(msg, model, SystemDescriptorPackage.Literals.ELEMENT__NAME);
+		}
+				
+	}
+	
+	/**
+	 * Validates that the user did not try to escape a keyword with ^ in any
+	 * requires declaration.
+	 * 
+	 * @param declaration is the OutputDeclaration to evaluate
+	 */	
+	@Check
+	public void checkUsageOfEscapeHatCharacter(FieldDeclaration declaration) {
+		// Verify the data name doesn't not have the escape hat
+		if (declaration.getName().indexOf('^') >= 0) {
+			String msg = String.format(
+					"Cannot use '^' to escape the field declaration name %s.",
+					declaration.getName());
+			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+		}
+				
+	}
+	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * parts declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(PartDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the parts field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
+//	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * input declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(InputDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the input field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
+//	
+//	/**
+//	 * Validates that the user did not try to escape a keyword with ^ in any
+//	 * output declaration.
+//	 * 
+//	 * @param declaration is the OutputDeclaration to evaluate
+//	 */	
+//	@Check
+//	public void checkUsageOfEscapeHatCharacter(OutputDeclaration declaration) {
+//		// Verify the data name doesn't not have the escape hat
+//		if (declaration.getName().indexOf('^') >= 0) {
+//			String msg = String.format(
+//					"Cannot use '^' to escape the output field declaration name %s.",
+//					declaration.getName());
+//			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+//		}
+//				
+//	}
+	
+	/**
 	 * Validates that a require declaration is correct. Requires the containing
 	 * model not contain another requirement with the same name.
 	 * 
@@ -90,6 +181,7 @@ public class ModelValidator extends AbstractSystemDescriptorValidator {
 			error(msg, declaration, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}
+
 
 	/**
 	 * Validates that an input declaration is correct. Requires the containing
