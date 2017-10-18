@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.feature.api;
 
 import java.nio.file.Path;
-import java.util.Collection;
 
 public interface IFeatureInformation {
    /**

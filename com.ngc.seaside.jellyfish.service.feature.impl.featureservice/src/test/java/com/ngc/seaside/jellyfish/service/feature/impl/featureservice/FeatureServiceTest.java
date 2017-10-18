@@ -11,6 +11,7 @@ import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,23 @@ public class FeatureServiceTest {
       setupModel("com.ngc.seaside.testeval", "HamburgerService");
 
       TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
+
+      assertEquals(actualFeatures.size(), 2);
+
+      for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
+         String key = entry.getKey();
+         assertTrue(key.contains("HamburgerService"));
+      }
+   }
+   
+   @Test
+   public void testDoesObtainFeatureFilesForScenario() {
+      Path sdPath = Paths.get("src", "test", "resources");
+      setupModel("com.ngc.seaside.testeval", "HamburgerService");
+
+      IScenario scenario = mock(IScenario.class);
+      when(scenario.getParent()).thenReturn(model);
+      TreeMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
 
       assertEquals(actualFeatures.size(), 2);
 

@@ -17,7 +17,7 @@ public interface IFeatureService {
     * Gets a map of all the features for the given system descriptor path and model
     * @param sdPath the path to the system descriptor
     * @param model the model
-    * @return a map of the feature information
+    * @return a map of the feature information keyed by the absolute path to each feature file
     */
    TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model);
 
@@ -25,7 +25,7 @@ public interface IFeatureService {
     * Gets a map of all the features for the given scenario.
     * @param sdPath the path to the system descriptor
     * @param scenario the scenario to get the features for
-    * @return a map of the feature information for the given scenario
+    * @return a map of the feature information for the given scenario keyed by the absolute path to each feature file
     */
    TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario);
 
@@ -33,7 +33,7 @@ public interface IFeatureService {
     * Gets a map of all the features for the given system descriptor path and a collection of models
     * @param sdPath the path to the system descriptor
     * @param models the collection of models
-    * @return map of the feature information
+    * @return map of the feature information keyed by the absolute path to each feature file
     */
    TreeMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models);
 }

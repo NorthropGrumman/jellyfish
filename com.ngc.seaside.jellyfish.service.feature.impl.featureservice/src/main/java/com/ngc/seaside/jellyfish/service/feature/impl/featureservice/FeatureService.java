@@ -5,6 +5,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -55,6 +56,13 @@ public class FeatureService implements IFeatureService {
       }
       return features;
    
+   }
+
+   @Override
+   public TreeMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
+      Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
+      Preconditions.checkNotNull(scenario, "scenario may not be null!");   
+      return getFeatures(sdPath, scenario.getParent()); 
    }
 
    @Override
