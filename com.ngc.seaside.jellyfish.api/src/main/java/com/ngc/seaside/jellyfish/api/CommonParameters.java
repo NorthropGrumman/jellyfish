@@ -17,7 +17,8 @@ public enum CommonParameters implements IParameter<String> {
    PACKAGE("package", "The project's default package"),
    PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
-                                                 + " settings.gradle file");
+                                                 + " settings.gradle file"),
+   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project");
 
    private final String description;
    private final String name;
