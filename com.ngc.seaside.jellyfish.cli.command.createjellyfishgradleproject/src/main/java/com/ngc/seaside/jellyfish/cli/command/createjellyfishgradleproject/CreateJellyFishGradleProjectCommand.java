@@ -39,12 +39,13 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
-   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
+   public static final String SYSTEM_DESCRIPTOR_GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
+   public static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
 
    private ILogService logService;
    private IPromptUserService promptService;
@@ -92,7 +93,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
       final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
 
-      // Create project directory
+      // Create project directorythreatevaluation
       final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
       final Path projectDirectory = outputDirectory.resolve(projectName);
       try {
@@ -113,11 +114,17 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
          collection.addParameter(new DefaultParameter<>(VERSION_PROPERTY).setValue(version));
       }
       
-      // Ensure ARTIFACT_ID_PROPERTY parameter is set
-      if (!collection.containsParameter(ARTIFACT_ID_PROPERTY)) {
-          String version = promptService.prompt(ARTIFACT_ID_PROPERTY, "mysystem.descriptor", null);
-          collection.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY).setValue(version));
+      // Ensure SYSTEM_DESCRIPTOR_GAVE_PROPERTY parameter is set
+      if (!collection.containsParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY)) {
+          String gave = promptService.prompt(SYSTEM_DESCRIPTOR_GAVE_PROPERTY, "mysystem.descriptor", null);
+          collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).setValue(gave));
        }
+      
+      
+      // parse the parameters to get the system descriptor artifact id
+      String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
+      String[] gaveStrs = gaveStr.split(":");
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY).setValue(gaveStrs[1]));
       
       // Ensure MODEL_NAME_PROPERTY parameter is set
       if (!collection.containsParameter(MODEL_NAME_PROPERTY)) {
@@ -223,7 +230,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setDescription("The version to use for the Gradle project")
             .setRequired(false),
             
-         CommonParameters.ARTIFACT_ID,
+         CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION,
          
          CommonParameters.MODEL,
 

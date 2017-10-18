@@ -25,7 +25,7 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 #set ( $d = "$")
 
 ext {
-    systemDescriptorProjectName = '${artifactId}'
+    systemDescriptorProjectName = '${systemDescriptorArtifactId}'
     systemDescriptorProjectVersion = '${version}'
     systemDescriptorName = '${d}{systemDescriptorProjectName}-${d}{systemDescriptorProjectVersion}'
     systemDescriptorLocation = "${d}{project.buildDir}/${d}{systemDescriptorDirectoryName}/${d}{systemDescriptorName}"
@@ -33,7 +33,7 @@ ext {
 }
 
 dependencies {
-	generate "${groupId}:${d}systemDescriptorProjectName:${d}systemDescriptorProjectVersion@zip"
+	generate "${gave}@zip"
 }
 
 subprojects {
