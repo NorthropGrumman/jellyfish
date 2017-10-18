@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,13 +55,13 @@ public class FeatureServiceTest {
       Path sdPath = Paths.get("src", "test", "resources");
       setupModel("com.ngc.seaside.testeval", "HamburgerService");
 
-      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
+      NavigableMap<Path, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
 
       assertEquals(actualFeatures.size(), 2);
 
-      for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
-         String key = entry.getKey();
-         assertTrue(key.contains("HamburgerService"));
+      for (Entry<Path, IFeatureInformation> entry : actualFeatures.entrySet()) {
+         Path key = entry.getKey();
+         assertTrue(key.toString().contains("HamburgerService"));
       }
    }
    
@@ -72,13 +72,13 @@ public class FeatureServiceTest {
 
       IScenario scenario = mock(IScenario.class);
       when(scenario.getParent()).thenReturn(model);
-      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
+      NavigableMap<Path, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, scenario);
 
       assertEquals(actualFeatures.size(), 2);
 
-      for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
-         String key = entry.getKey();
-         assertTrue(key.contains("HamburgerService"));
+      for (Entry<Path, IFeatureInformation> entry : actualFeatures.entrySet()) {
+         Path key = entry.getKey();
+         assertTrue(key.toString().contains("HamburgerService"));
       }
    }
 
@@ -100,13 +100,13 @@ public class FeatureServiceTest {
          "MilkShakeService.melt.feature");
 
       Path expectedRelativePath = Paths.get("com", "ngc", "seaside", "testeval", "MilkShakeService.melt.feature");
-      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
+      NavigableMap<Path, IFeatureInformation> actualFeatures = featureService.getFeatures(sdPath, model);
       assertEquals(actualFeatures.size(), 1);
 
-      for (Map.Entry<String, IFeatureInformation> entry : actualFeatures.entrySet()) {
-         String key = entry.getKey();
+      for (Entry<Path, IFeatureInformation> entry : actualFeatures.entrySet()) {
+         Path key = entry.getKey();
          IFeatureInformation value = entry.getValue();
-         assertTrue(key.contains("MilkShakeService"));
+         assertTrue(key.toString().contains("MilkShakeService"));
          assertTrue(value.getAbsolutePath().toString().contains(expectedAbsolutePath.toString()));
          assertEquals("MilkShakeService.melt.feature", value.getFileName());
          assertEquals("MilkShakeService.melt", value.getFullyQualifiedName());
@@ -119,7 +119,7 @@ public class FeatureServiceTest {
    public void testDoesObtainFeatureFilesForMultipleModels() {
       Path sdPath = Paths.get("src", "test", "resources");
       Collection<IModel> models = setupMultipleModels();  
-      NavigableMap<String, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);    
+      NavigableMap<Path, IFeatureInformation> actualFeatures = featureService.getAllFeatures(sdPath, models);    
       assertEquals(actualFeatures.size(), 4);
    }
 

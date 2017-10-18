@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 @Component(service = IJellyFishCommand.class)
@@ -157,9 +158,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String operator = evaluateOperator(commandOptions);
       Collection<IModel> models = searchModels(commandOptions, values, operator);
       
-      Map<String, IFeatureInformation> features = featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
+      Map<Path, IFeatureInformation> features = featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
       ArrayList<String> fullyQualifiedFeatureNameList = new ArrayList<String>();   
-      for (Map.Entry<String, IFeatureInformation> featureInfo : features.entrySet()) {
+      for (Entry<Path, IFeatureInformation> featureInfo : features.entrySet()) {
          fullyQualifiedFeatureNameList.add(featureInfo.getValue().getFullyQualifiedName());
       }
       Collections.sort(fullyQualifiedFeatureNameList, Collections.reverseOrder());
@@ -244,7 +245,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param features features to look for
     * @return returns a Collection of {@link Requirement}s
     */
-   private Collection<Requirement> verifyRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models, Map<String, IFeatureInformation> features) {
+   private Collection<Requirement> verifyRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models, Map<Path, IFeatureInformation> features) {
       TreeMultimap<String, String>
                requirementsMap =
                TreeMultimap.create(Ordering.natural().reverse(), Ordering.natural());
