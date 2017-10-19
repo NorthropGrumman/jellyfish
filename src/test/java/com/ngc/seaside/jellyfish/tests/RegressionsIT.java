@@ -50,7 +50,7 @@ public class RegressionsIT {
       regressionTestsDir = System.getProperty("user.dir") + File.separator + "regressions";
       
       // Start with fresh logs. Remove any previously generated 'build' folders in the 
-      //    provided projects
+      //    given projects
       removeGivenProjectsBuildFolder(regressionTestsDir);
       
       // Start with fresh logs. Remove any previously generated projects
@@ -120,7 +120,7 @@ public class RegressionsIT {
    }
    
    /**
-    * This method is called to remove 'generatedProject' folders in each regression test 
+    * This method is called to remove 'build' folders in the given project of each regression test 
     * @param regDir - the 'regressions' directory
     */
    private static void removeGivenProjectsBuildFolder(String regDir) {
