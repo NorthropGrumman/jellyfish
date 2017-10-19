@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.ngc.seaside.threateval.etps.datatype;
+
+option java_multiple_files = true;
+
+message TrackPriority {
+
+   sint32 trackId = 1;
+   string sourceId = 2;
+   float priority = 3;
+
+}
