@@ -4,11 +4,9 @@ import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.Requirement;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementItemFormat;
-import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementsAllocationMatrixCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -15,10 +14,8 @@ public class CreateJellyFishGradleProjectCommandGuiceWrapper implements IJellyFi
    private final CreateJellyFishGradleProjectCommand delegate = new CreateJellyFishGradleProjectCommand();
 
    @Inject
-   public CreateJellyFishGradleProjectCommandGuiceWrapper(ILogService logService, IPromptUserService promptService,
-            ITemplateService templateService) {
+   public CreateJellyFishGradleProjectCommandGuiceWrapper(ILogService logService, ITemplateService templateService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
    }
 
