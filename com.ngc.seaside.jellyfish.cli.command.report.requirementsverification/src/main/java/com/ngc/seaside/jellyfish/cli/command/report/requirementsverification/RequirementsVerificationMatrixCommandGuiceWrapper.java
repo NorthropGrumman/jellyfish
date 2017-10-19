@@ -6,6 +6,8 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class RequirementsVerificationMatrixCommandGuiceWrapper implements IJellyFishCommand {
@@ -13,8 +15,12 @@ public class RequirementsVerificationMatrixCommandGuiceWrapper implements IJelly
    private final RequirementsVerificationMatrixCommand delegate = new RequirementsVerificationMatrixCommand();
 
    @Inject
-   public RequirementsVerificationMatrixCommandGuiceWrapper(ILogService logService) {
+   public RequirementsVerificationMatrixCommandGuiceWrapper(ILogService logService, 
+                                                            IFeatureService featureService,
+                                                            IRequirementsService requirementsService) {
       delegate.setLogService(logService);
+      delegate.setFeatureService(featureService);
+      delegate.setRequirementsService(requirementsService);
    }
 
    @Override

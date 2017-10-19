@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
@@ -47,9 +46,6 @@ public class CreateJavaServiceProjectCommandTest {
 
    @Mock
    private ILogService logService;
-
-   @Mock
-   private IPromptUserService promptUserService;
 
    @Mock
    private ITemplateService templateService;
@@ -105,7 +101,6 @@ public class CreateJavaServiceProjectCommandTest {
 
       command = new CreateJavaServiceProjectCommand();
       command.setLogService(logService);
-      command.setPromptUserService(promptUserService);
       command.setJellyFishCommandProvider(commandProvider);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectNamingService);
@@ -123,6 +118,11 @@ public class CreateJavaServiceProjectCommandTest {
                                                      "my.group"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY,
                                                      "my-project"));
+      //TODO remove or refactor
+//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.REPOSITORY_URL, 
+//    		  "http://10.207.42.137/nexus/repository/maven-public/"));
+//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.GROUP_ARTIFACT_VERSION_EXTENSION, 
+//    		  "com.ngc.seaside. threateval:threatevaluation.descriptor:2.0.0"));
 
       command.run(options);
 
@@ -175,79 +175,13 @@ public class CreateJavaServiceProjectCommandTest {
    }
 
    @Test
-   public void testDoesCreateProjectWithNoParameters() throws Throwable {
-      String modelName = model.getFullyQualifiedName();
-      when(promptUserService.prompt(eq(CreateJavaServiceProjectCommand.MODEL_PROPERTY),
-                                    eq(null),
-                                    any()))
-            .thenReturn(modelName);
-      when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
-                                    null))
-            .thenReturn(outputDirectoryName);
-
-      command.run(options);
-
-      ArgumentCaptor<IJellyFishCommandOptions> capture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateJellyFishGradleProjectCommand(capture.getValue(),
-                                                             model.getParent().getName(),
-                                                             model.getFullyQualifiedName().toLowerCase());
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_DOMAIN_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateDomainCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateEventsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateCucumberTestsCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateDistributionCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceConfigCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateServiceBaseCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateConnectorCommand(capture.getValue(), model.getFullyQualifiedName().toLowerCase());
-
-      // Verify the build.gradle files were created in 4 generated-projects projects.
-      verify(templateService, times(4)).unpack(eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-                                               any(IParameterCollection.class),
-                                               any(Path.class),
-                                               eq(false));
-   }
-
-   @Test
    public void testWithoutDomain() throws Throwable {
       String modelName = model.getFullyQualifiedName();
 
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectoryName));
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.MODEL_PROPERTY, modelName));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.CREATE_SERVICE_DOMAIN_PROPERTY,
                                                      "false"));
-
-      when(promptUserService.prompt(eq(CreateJavaServiceProjectCommand.MODEL_PROPERTY),
-                                    eq(null),
-                                    any()))
-            .thenReturn(modelName);
-      when(promptUserService.prompt(CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                    CreateJavaServiceProjectCommand.DEFAULT_OUTPUT_DIRECTORY,
-                                    null))
-            .thenReturn(outputDirectoryName);
 
       command.run(options);
 

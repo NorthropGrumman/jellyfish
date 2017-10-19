@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -40,6 +39,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
+   static final String URL_PROPERTY = CommonParameters.REPOSITORY_URL.getName();
+   static final String GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
 
    static final String DEFAULT_OUTPUT_DIRECTORY = ".";
 
@@ -65,7 +66,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    public static final String NAME = "create-java-service-project";
 
    private ILogService logService;
-   private IPromptUserService promptUserService;
    private IJellyFishCommandProvider jellyFishCommandProvider;
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
@@ -100,6 +100,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                                    new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
                                          .setDescription("Whether or not to create the service's domain model")
                                          .setRequired(false));
+               usageParameters.put(GAVE_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION);
+               usageParameters.put(URL_PROPERTY, CommonParameters.REPOSITORY_URL);
                IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
                USAGE = new DefaultUsage("Create a new Java service project for a particular model.", parameters);
             }
@@ -165,17 +167,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
    public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
       setJellyFishCommandProvider(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePromptUserService")
-   public void setPromptUserService(IPromptUserService ref) {
-      this.promptUserService = ref;
-   }
-
-   public void removePromptUserService(IPromptUserService ref) {
-      setPromptUserService(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
@@ -298,29 +289,17 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       ctx.originalCommandOptions = commandOptions;
 
       // Get the fully qualified model name.
-      if (commandOptions.getParameters().containsParameter(MODEL_PROPERTY)) {
-         ctx.modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
-      } else {
-         ctx.modelName = promptUserService.prompt(MODEL_PROPERTY,
-                                                  null,
-                                                  m -> commandOptions.getSystemDescriptor().findModel(m).isPresent());
-      }
+      ctx.modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
+
       // Find the actual model.
       ctx.model = commandOptions.getSystemDescriptor()
             .findModel(ctx.modelName)
             .orElseThrow(() -> new CommandException(String.format("model %s not found!", ctx.modelName)));
 
       // Get the directory that will contain the project directory.
-      if (commandOptions.getParameters().containsParameter(OUTPUT_DIRECTORY_PROPERTY)) {
-         ctx.rootOutputDirectory = Paths.get(
-               commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue())
-               .toFile();
-      } else {
-         // Ask the user if needed.
-         ctx.rootOutputDirectory = Paths.get(
-               promptUserService.prompt(OUTPUT_DIRECTORY_PROPERTY, DEFAULT_OUTPUT_DIRECTORY, null))
-               .toFile();
-      }
+      ctx.rootOutputDirectory = Paths.get(
+              commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue())
+              .toFile();
 
       ctx.createDomain =
             CommonParameters

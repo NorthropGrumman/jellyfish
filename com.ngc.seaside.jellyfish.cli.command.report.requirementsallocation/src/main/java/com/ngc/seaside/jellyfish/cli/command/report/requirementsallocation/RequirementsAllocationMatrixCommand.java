@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.ModelUtils;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -54,6 +55,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    public static final String DEFAULT_OPERATOR_PROPERTY = "OR";
 
    private ILogService logService;
+   private IRequirementsService requirementsService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -69,7 +71,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
          }         
       });
       models.addAll(ModelUtils.searchModels(commandOptions, values, operator));
-      Collection<Requirement> requirements = searchForRequirements(models);
+      Collection<Requirement> requirements = searchForRequirements(commandOptions, models);
 
       String report = "";
       if (outputFormat.equalsIgnoreCase("csv")) {
@@ -106,26 +108,28 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
 
    /**
     * Searches a collection of models for all requirements satisfied
+    * @param commandOptions 
     * 
     * @param models the list of models to search for requirements
+    * @param commandOptions the command options
     * @return colletion of all requirements satisfied
     */
-   private Collection<Requirement> searchForRequirements(Collection<IModel> models) {
+   private Collection<Requirement> searchForRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models) {
       final Map<String, Requirement> requirementsMap = new TreeMap<>();
 
-      models.forEach(m -> searchForRequirements(m, requirementsMap));
+      models.forEach(m -> searchForRequirements(commandOptions, m, requirementsMap));
 
       return requirementsMap.values();
    }
 
    /**
     * Populates a map with all requirements that a given model satisfies
-    * 
+    * @param commandOptions the command options
     * @param model the model to search for requirements
     * @param requirementsMap the requirements map to populate
     */
-   private void searchForRequirements(IModel model, Map<String, Requirement> requirementsMap) {
-      Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(model);
+   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model, Map<String, Requirement> requirementsMap) {   
+      Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(commandOptions, requirementsService, model);
 
       requirementsSet.forEach(eachReqName -> {
          if (!requirementsMap.containsKey(eachReqName) || 
@@ -181,6 +185,23 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
+   
+   /**
+    * Sets requirements service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   public void setRequirementsService(IRequirementsService ref) {
+      this.requirementsService = ref;
+   }
+
+   /**
+    * Remove requirements service.
+    */
+   public void removeRequirementsService(IRequirementsService ref) {
+      setRequirementsService(null);
+   }
 
    /**
     * Create the usage for this command.
@@ -225,19 +246,6 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       }
 
       return output;
-   }
-
-   /**
-    * Retrieve the scope property value based on user input. Default is: {@value #DEFAULT_SCOPE_PROPERTY}
-    *
-    * @param commandOptions Jellyfish command options containing user params
-    */
-   private static String evaluateScope(IJellyFishCommandOptions commandOptions) {
-      String scope = DEFAULT_SCOPE_PROPERTY;
-      if (commandOptions.getParameters().containsParameter(SCOPE_PROPERTY)) {
-         scope = commandOptions.getParameters().getParameter(SCOPE_PROPERTY).getStringValue();
-      }
-      return scope;
    }
 
    /**

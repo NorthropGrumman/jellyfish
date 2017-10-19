@@ -59,6 +59,7 @@ dependencies {
     compile project(":jellyfish.service.data.impl.dataservice")
     compile project(":jellyfish.service.config.impl.transportconfigurationservice")
     compile project(":jellyfish.service.requirements.impl.requirementsservice")
+    compile project(":jellyfish.service.feature.impl.featureservice")
 
     compile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
 
