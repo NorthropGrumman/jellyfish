@@ -613,7 +613,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
             String fileName = ze.getName();
             File newFile = new File(dest + File.separator + fileName);
-            System.out.println("file unzip: " + newFile.getAbsoluteFile());
 
             // make parent dirs
             new File(newFile.getParent()).mkdirs();
@@ -629,10 +628,11 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
             ze = zis.getNextEntry();
          }
          zis.close();
+         logService.debug(getClass(), "Extraction of SD project complete.");
          System.out.println("extraction completed...");
       } catch (IOException e) {
-         System.out.println("extraction failed...");
-         e.printStackTrace();
+         logService.error(getClass(), "Extraction of SD project failed!", e);
+         throw new RuntimeException(e.getMessage(), e);
       }
    }
 
