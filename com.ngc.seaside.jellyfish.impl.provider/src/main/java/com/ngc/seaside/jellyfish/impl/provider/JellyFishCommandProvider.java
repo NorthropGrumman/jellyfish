@@ -629,7 +629,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          }
          zis.close();
          logService.debug(getClass(), "Extraction of SD project complete.");
-         System.out.println("extraction completed...");
       } catch (IOException e) {
          logService.error(getClass(), "Extraction of SD project failed!", e);
          throw new RuntimeException(e.getMessage(), e);
