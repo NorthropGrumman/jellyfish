@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package com.ngc.seaside.threateval.datps.common.datatype;
+
+option java_multiple_files = true;
+
+message Covariance {
+
+
+}
