@@ -550,7 +550,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       String destDirFileName = fileName[fileName.length - 1];
       String nameOfNewDir = FilenameUtils.removeExtension(destDirFileName);
       File destination = new File(tempDir.toString() + File.separator + nameOfNewDir);
-      File file = new File(tempDir.toString() + "\\" + destDirFileName);
+      File file = new File(tempDir, destDirFileName);
       FileUtils.copyURLToFile(myUrl, file);
 
       // unzip the file to the given destination
