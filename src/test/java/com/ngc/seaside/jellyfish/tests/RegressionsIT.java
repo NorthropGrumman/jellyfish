@@ -254,23 +254,23 @@ public class RegressionsIT {
       // Perform the 'gradle clean build -x test' command
       // NOTE: The below build fails on Windows due to the "windows file path too long" bug. 
 
-//      System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
-//      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-//               .useInstallation(Paths.get(gradleHome).toFile())
-//               .forProjectDirectory(new File(givenProject))
-//               .connect();
-//
-//
-//      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
-//         BuildLauncher build = connectionToGivenProj.newBuild();
-//         build.forTasks("clean", "build");
-//         build.withArguments("-x", "test");
-//         build.setStandardError(log).setStandardOutput(log);
-//
-//         build.run();
-//      } finally {
-//         connectionToGivenProj.close();
-//      }
+      System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
+      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
+               .useInstallation(Paths.get(gradleHome).toFile())
+               .forProjectDirectory(new File(givenProject))
+               .connect();
+
+
+      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
+         BuildLauncher build = connectionToGivenProj.newBuild();
+         build.forTasks("clean", "build");
+         build.withArguments("-x", "test");
+         build.setStandardError(log).setStandardOutput(log);
+
+         build.run();
+      } finally {
+         connectionToGivenProj.close();
+      }
       
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
       ProjectConnection connectionToGeneratedProj = GradleConnector.newConnector()
