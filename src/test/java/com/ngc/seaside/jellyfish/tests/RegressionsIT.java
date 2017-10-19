@@ -153,24 +153,23 @@ public class RegressionsIT {
 
       // Parse the properties file and store the relevant data
       Map<String, String> propertiesValues = readJellyfishPropertiesFile(directory.getAbsolutePath());
-      String relPath = File.separator + propertiesValues.get("inputDir").replace('/', File.separatorChar);
-      String fullInputDirPath = directory + relPath;
 
-      Map<String, String> generatorArguments = new HashMap<String, String>();
+      Map<String, String> generatorArguments = new HashMap<>(propertiesValues);
+      // Set these default properties.
       generatorArguments.put("outputDirectory", directory.getAbsolutePath());
-      generatorArguments.put("version", propertiesValues.get("version"));
-      generatorArguments.put("model", propertiesValues.get("model"));
       generatorArguments.put("projectName", "generatedProject");
-      generatorArguments.put("groupId", propertiesValues.get("groupId"));
-      generatorArguments.put("gave", propertiesValues.get("gave"));
 
       // Create the generation project object
     		  
       Logger log = Mockito.mock(Logger.class);
       JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log)
                .setCommand(propertiesValues.get("command"))
-               .setInputDir(fullInputDirPath)
                .setArguments(generatorArguments);
+
+      if(propertiesValues.containsKey("inputDir")) {
+         String relPath = File.separator + propertiesValues.get("inputDir").replace('/', File.separatorChar);
+         proj.setInputDir(directory + relPath);
+      }
 
       // Generate the object with a firey passion
       proj.generate();
