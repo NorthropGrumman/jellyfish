@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
@@ -33,56 +32,56 @@ public class FeatureService implements IFeatureService {
    private ILogService logService;
 
    @Override
-   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
+   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
-
-      TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
+   
+      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
       final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
       final Path gherkin = sdPath.resolve(Paths.get("src", "test", "gherkin"))
-            .toAbsolutePath();
+                                         .toAbsolutePath();
       String packages = model.getParent().getName();
       Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
-
+   
       Path featureFilesRoot = gherkin.resolve(modelPath);
-
+   
       try {
          Files.list(featureFilesRoot)
-               .filter(Files::isRegularFile)
-               .filter(matcher::matches)
-               .filter(f -> f.getFileName().toString().startsWith(model.getName() + '.'))
-               .map(Path::toAbsolutePath)
-               .forEach(path -> features.put(path.toString(), new FeatureInformation(path, gherkin.relativize(path))));
+              .filter(Files::isRegularFile)
+              .filter(matcher::matches)
+              .filter(f -> f.getFileName().toString().startsWith(model.getName() + '.'))
+              .map(Path::toAbsolutePath)
+              .forEach(path -> features.put(path, new FeatureInformation(path, gherkin.relativize(path))));
       } catch (IOException e) {
          logService.warn(getClass(), "No feature files at %s", featureFilesRoot);
       }
       return features;
-
+   
    }
 
    @Override
-   public NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
+   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
       Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");
-      NavigableMap<String, IFeatureInformation> features = new TreeMap<>();
+      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>();
       for (IFeatureInformation feature : getFeatures(sdPath, scenario.getParent()).values()) {
          if(feature.getName().equals(scenario.getName())) {
-            features.put(feature.getAbsolutePath().toString(), feature);
+            features.put(feature.getAbsolutePath(), feature);
          }
       }
       return features;
    }
 
    @Override
-   public NavigableMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
-      TreeMap<String, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
+   public NavigableMap<Path, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
+      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
 
       models.forEach(model -> {
          features.putAll(getFeatures(sdPath, model));
       });
       return features;
    }
-
+   
    @Activate
    public void activate() {
       logService.debug(getClass(), "activated");
@@ -101,6 +100,7 @@ public class FeatureService implements IFeatureService {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
+
 
 
 }

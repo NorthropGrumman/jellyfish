@@ -267,7 +267,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
             Path generatedProjectDirectory, boolean clean) {
       
-      NavigableMap<String, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
+      NavigableMap<Path, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
       
       final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
                .resolve(Paths.get("src", "test", "resources", "data"))

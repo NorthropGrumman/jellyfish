@@ -19,7 +19,7 @@ public interface IFeatureService {
     * @param model the model
     * @return a map of the feature information keyed by the absolute path to each feature file
     */
-   NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IModel model);
+   NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IModel model);
 
    /**
     * Gets a map of all the features for the given scenario.
@@ -27,7 +27,7 @@ public interface IFeatureService {
     * @param scenario the scenario to get the features for
     * @return a map of the feature information for the given scenario keyed by the absolute path to each feature file
     */
-   NavigableMap<String, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario);
+   NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario);
 
    /**
     * Gets a map of all the features for the given system descriptor path and a collection of models
@@ -35,5 +35,5 @@ public interface IFeatureService {
     * @param models the collection of models
     * @return map of the feature information keyed by the absolute path to each feature file
     */
-   NavigableMap<String, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models);
+   NavigableMap<Path, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models);
 }
