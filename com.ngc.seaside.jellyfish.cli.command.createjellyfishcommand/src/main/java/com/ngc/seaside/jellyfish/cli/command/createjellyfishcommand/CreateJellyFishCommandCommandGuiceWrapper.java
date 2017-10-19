@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -15,10 +14,8 @@ public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishComm
    private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
 
    @Inject
-   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, IPromptUserService promptService,
-            ITemplateService templateService) {
+   public CreateJellyFishCommandCommandGuiceWrapper(ILogService logService, ITemplateService templateService) {
       delegate.setLogService(logService);
-      delegate.setPromptService(promptService);
       delegate.setTemplateService(templateService);
    }
 

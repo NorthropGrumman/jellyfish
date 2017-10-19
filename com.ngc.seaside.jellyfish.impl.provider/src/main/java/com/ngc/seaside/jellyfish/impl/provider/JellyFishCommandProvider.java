@@ -1,9 +1,11 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
@@ -14,6 +16,7 @@ import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -25,6 +28,8 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -32,12 +37,21 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
@@ -50,10 +64,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    private IParameterService parameterService;
    private ISystemDescriptorService sdService;
    private ITemplateService templateService;
+   private IPromptUserService promptService;
 
    /**
-    * Ensure the dynamic references are added only after the activation of this
-    * Component.
+    * Ensure the dynamic references are added only after the activation of this Component.
     */
    private DeferredDynamicReference<IJellyFishCommand> commands = new DeferredDynamicReference<IJellyFishCommand>() {
       @Override
@@ -79,8 +93,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
    @Override
    public IUsage getUsage() {
-      return new DefaultUsage("JellyFish Description",
-                              Collections.singletonList(new DefaultParameter<>("inputDir").setRequired(false)));
+      List<IParameter<?>> parameters = new ArrayList<>();
+      parameters.add(new DefaultParameter<>("inputDir").setRequired(false));
+      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.required());
+      return new DefaultUsage("JellyFish Description", parameters);
    }
 
    @Override
@@ -104,6 +120,55 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       commands.remove(command);
    }
 
+   private IParameterCollection getParameters(IParameterCollection givenParamCollection, IJellyFishCommand command) {
+      List<IParameter<?>> givenParams = givenParamCollection.getAllParameters();
+
+      List<IParameter<?>> requiredParams = command.getUsage().getRequiredParameters();
+      List<IParameter<?>> allParams = command.getUsage().getAllParameters();
+
+      int numRequiredParams = requiredParams.size();
+      String[] requiredParamNames = new String[numRequiredParams];
+      // populate required parameter names
+      for (int i = 0; i < numRequiredParams; i++) {
+         requiredParamNames[i] = requiredParams.get(i).getName();
+      }
+
+      ArrayList<String> requiredParamNamesFound = new ArrayList<String>();
+      // track required parameters found in given parameters
+      for (int i = 0; i < givenParams.size(); i++) {
+         String name = givenParams.get(i).getName();
+
+         if (Arrays.asList(requiredParamNames).contains(name)) {
+            requiredParamNamesFound.add(name);
+         }
+      }
+
+      if (requiredParamNamesFound.size() != numRequiredParams) {
+         DefaultParameterCollection newParamCollection = new DefaultParameterCollection();
+         // Populating new parameter collection with already given parameters
+         for (int i = 0; i < givenParams.size(); i++) {
+            newParamCollection.addParameter(givenParams.get(i));
+         }
+
+         // Adding any missing required parameters via prompt to the new parameter collection
+         for (int i = 0; i < numRequiredParams; i++) {
+            IParameter<?> requiredParam = requiredParams.get(i);
+            if (!requiredParamNamesFound.contains(requiredParam.getName())) {
+               IParameter newParam = promptForParameter(requiredParam);
+               newParamCollection.addParameter(newParam);
+            }
+         }
+         return newParamCollection;
+      } else {
+         return givenParamCollection;
+      }
+   }
+
+   private IParameter<?> promptForParameter(IParameter<?> paramDesired) {  // TODO: Syntax?
+      String paramValue = promptService.prompt(paramDesired.getName(), null, null);
+      return new DefaultParameter<>(paramDesired.getName(), paramValue);
+   }
+
    @Override
    public void run(String[] arguments) {
       Preconditions.checkNotNull(arguments, "Arguments must not be null.");
@@ -113,13 +178,9 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       // If no input directory is provided, look in working directory
       if (arguments.length == 0) {
          throw new IllegalArgumentException("No command provided");
-      } else {
-         if (arguments.length == 1) {
-            validatedArgs = new String[]{arguments[0], "-DinputDir=" + System.getProperty("user.dir")};
-         } else {
-            validatedArgs = arguments;
-         }
       }
+
+      validatedArgs = arguments;
 
       String commandName = validatedArgs[0];
       logService.trace(getClass(), "Running command '%s'", commandName);
@@ -132,6 +193,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       IParameterCollection userInputParameters = parameterService.parseParameters(
             Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
+
+      userInputParameters = getParameters(userInputParameters, command);
 
       IParameterCollection templateParameters = null;
       if (isCommandConfiguredForTemplateService(command)) {
@@ -190,6 +253,25 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
+   }
+
+   /**
+    * Sets prompt service.
+    *
+    * @param ref the ref
+    */
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptService")
+   public void setPromptService(IPromptUserService ref) {
+      this.promptService = ref;
+   }
+
+   /**
+    * Remove prompt service.
+    */
+   public void removePromptService(IPromptUserService ref) {
+      setPromptService(null);
    }
 
    /**
@@ -256,9 +338,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method is required due to an issue when BND tries to resolve the
-    * dependencies and the IBootstrapCommand extends an interface that is
-    * typed.
+    * This method is required due to an issue when BND tries to resolve the dependencies and the IBootstrapCommand
+    * extends an interface that is typed.
     */
    @Reference(unbind = "removeCommandOSGi",
          service = IJellyFishCommand.class,
@@ -273,8 +354,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * Unpack the templateContent if it exists. If not, just return an empty
-    * collection of parameters.
+    * Unpack the templateContent if it exists. If not, just return an empty collection of parameters.
     *
     * @param command                the command.
     * @param userSuppliedParameters the parameters the user passed in. These should overwrite any properties that exists
@@ -312,8 +392,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * Convert the templateContent output to a parameter collection. This
-    * includes the templateFinalOutputDir.
+    * Convert the templateContent output to a parameter collection. This includes the templateFinalOutputDir.
     *
     * @param output the templateContent service's output
     * @return the collection of parameters.
@@ -324,7 +403,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       DefaultParameter<?> outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
       DefaultParameter<?> templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
-                                                                  output.getOutputPath().toString());
+                                                                     output.getOutputPath().toString());
       collection.addParameter(outputDir);
       collection.addParameter(templateOutputDir);
 
@@ -336,11 +415,9 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * Return the prefix used in order to look the command's templateContent up
-    * within the templates resource directory. Currently this assumes that the
-    * naming convention for the command's package includes the same name used
-    * for creating the templateContent zip. This is actually done for us using
-    * the correct build tools.
+    * Return the prefix used in order to look the command's templateContent up within the templates resource directory.
+    * Currently this assumes that the naming convention for the command's package includes the same name used for
+    * creating the templateContent zip. This is actually done for us using the correct build tools.
     *
     * @param command the command in which to create the prefix
     * @return the String representation of the command's package.
@@ -350,12 +427,12 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method converts into an {@link IJellyFishCommandOptions} object. The input directory should
-    * be the root directory of a system descriptor project. At minimum, the project root should contain
-    * the directories of src/main/sd and src/test/gherkin. If these requirements are met and the
-    * system descriptor files are valid syntactically, the {@link ISystemDescriptor} model will be loaded
-    * into the {@link IJellyFishCommandOptions} object. Otherwise, the application will exit with a
-    * thrown exception of {@link IllegalArgumentException} for illegal directory structure
+    * This method converts into an {@link IJellyFishCommandOptions} object. The input directory should be the root
+    * directory of a system descriptor project. At minimum, the project root should contain the directories of
+    * src/main/sd and src/test/gherkin. If these requirements are met and the system descriptor files are valid
+    * syntactically, the {@link ISystemDescriptor} model will be loaded into the {@link IJellyFishCommandOptions}
+    * object. Otherwise, the application will exit with a thrown exception of {@link IllegalArgumentException} for
+    * illegal directory structure
     *
     * @param userInputParameters the parameters that the user input on the command line
     * @param templateParameters  the parameters that were fulfilled by the templateContent.properties file in the
@@ -369,30 +446,49 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
 
-      if (templateParameters == null) {
-         options.setParameters(userInputParameters);
+      IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
+      IParameter<?> urlParameter = userInputParameters.getParameter("repositoryUrl");
+      IParameter<?> gaveParameter = userInputParameters
+            .getParameter(CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName());
+
+      String gaveValue;
+      Path path;
+      File tempDir = null;
+
+      if (urlParameter == null || gaveParameter == null) {
+         if (inputDir == null) {
+            path = Paths.get(System.getProperty("user.dir"));
+         } else {
+            path = Paths.get(inputDir.getStringValue());
+         }
       } else {
-         DefaultParameterCollection all = new DefaultParameterCollection();
-         all.addParameters(userInputParameters.getAllParameters());
-         all.addParameters(templateParameters.getAllParameters());
-         options.setParameters(all);
+         gaveValue = parseGave(gaveParameter.getValue().toString());
+         try {
+            tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+         path = Paths.get(tempDir.toURI());
       }
 
-      IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
-      Path path;
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
       if (inputDir == null) {
-         path = Paths.get(System.getProperty("user.dir"));
-      } else {
-         path = Paths.get(inputDir.getStringValue());
+         parameters.addParameter(new DefaultParameter<>("inputDir", path));
       }
+      parameters.addParameters(userInputParameters.getAllParameters());
+      if (templateParameters != null) {
+         parameters.addParameters(templateParameters.getAllParameters());
+      }
+      options.setParameters(parameters);
+
       options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
       options.setSystemDescriptorProjectPath(path);
       return options;
    }
 
    /**
-    * This method uses the {@link ISystemDescriptorService} to parse the provided project.
-    * If errors occur, a {@link ParsingException} is thrown along with a list of issues.
+    * This method uses the {@link ISystemDescriptorService} to parse the provided project. If errors occur, a {@link
+    * ParsingException} is thrown along with a list of issues.
     *
     * @param path                      system descriptor project path
     * @param isValidDescriptorRequired if true and they system descriptor is invalid, a {@code CommandException} is
@@ -432,14 +528,111 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method looks up the {@link IJellyFishCommand} corresponding with the given
-    * string.
+    * This method looks up the {@link IJellyFishCommand} corresponding with the given string.
     *
     * @param cmd the string representation of a JellyFish command
     * @return the JellyFish command
     */
    private IJellyFishCommand lookupCommand(String cmd) {
       return commandMap.get(cmd);
+   }
+
+   /**
+    * This method downloads an archive from the provided url and gave(group/artifact/version/extension) info
+    *
+    * @param url  the string representation of the repository url
+    * @param gave the string representation of the archive info
+    */
+   public File getArchiveFromUrl(String url, String gave) throws IOException {
+      File tempDir = FileUtils.getTempDirectory();
+      String[] fileName = gave.split("/");
+      URL myUrl = new URL(url + gave);
+      String destDirFileName = fileName[fileName.length - 1];
+      String nameOfNewDir = FilenameUtils.removeExtension(destDirFileName);
+      File destination = new File(tempDir.toString() + File.separator + nameOfNewDir);
+      File file = new File(tempDir.toString() + "\\" + destDirFileName);
+      FileUtils.copyURLToFile(myUrl, file);
+
+      // unzip the file to the given destination
+      uZip(file.toString(), destination);
+
+      logService.info(JellyFishCommandProvider.class, "temp archive location: " + destination);
+
+      return destination;
+   }
+
+   /**
+    * This method parses the gave(group/artifact/version/extension) info to create a path and file string from the
+    * parameter input
+    *
+    * @param gave the string representation of the archive info
+    */
+   public String parseGave(String gave) {
+      String[] parsed = CommonParameters.parseGave(gave);
+      String group = parsed[0];
+      String artifact = parsed[1];
+      String version = parsed[2];
+      String extension = parsed[3];
+
+      String[] temp = group.split("\\.");
+      String url = temp[0] + "/";
+      for (int i = 1; i < temp.length; i++) {
+         url = url + temp[i] + "/";
+      }
+
+      url += artifact + "/" + version + "/";
+      url += artifact + "-" + version + "." + extension;
+
+      return url;
+   }
+
+   /**
+    * This method extracts a .zip file to a given destination
+    *
+    * @param zipFile the string representation of the path to the zip file
+    * @param dest    the string representation of the destination
+    */
+   public void uZip(String zipFile, File dest) throws FileNotFoundException {
+      byte[] buffer = new byte[1024];
+      File folder = new File(dest.toString());
+      if (!folder.exists()) {
+         folder.mkdir();
+      }
+
+      try {
+         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+         ZipEntry ze = zis.getNextEntry();
+
+         while (ze != null) {
+
+            // if zip entry is a directory - get next
+            if (ze.isDirectory()) {
+               ze = zis.getNextEntry();
+               continue;
+            }
+
+            String fileName = ze.getName();
+            File newFile = new File(dest + File.separator + fileName);
+
+            // make parent dirs
+            new File(newFile.getParent()).mkdirs();
+
+            FileOutputStream fos = new FileOutputStream(newFile);
+
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+               fos.write(buffer, 0, len);
+            }
+            fos.close();
+            zis.closeEntry();
+            ze = zis.getNextEntry();
+         }
+         zis.close();
+         logService.debug(getClass(), "Extraction of SD project complete.");
+      } catch (IOException e) {
+         logService.error(getClass(), "Extraction of SD project failed!", e);
+         throw new RuntimeException(e.getMessage(), e);
+      }
    }
 
    private static boolean isCommandConfiguredForTemplateService(IJellyFishCommand command) {

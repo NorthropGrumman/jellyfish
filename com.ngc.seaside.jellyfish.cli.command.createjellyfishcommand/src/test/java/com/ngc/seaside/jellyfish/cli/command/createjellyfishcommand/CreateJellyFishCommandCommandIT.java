@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -27,8 +26,6 @@ public class CreateJellyFishCommandCommandIT {
 
    private PrintStreamLogService logger = new PrintStreamLogService();
 
-   private IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
-
    private MockedTemplateService mockedTemplateService;
 
    private Path outputDir;
@@ -42,7 +39,6 @@ public class CreateJellyFishCommandCommandIT {
       outputDir = Files.createTempDirectory(null);
       outputDir.toFile().deleteOnExit();
       cmd.setLogService(logger);
-      cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockedTemplateService);
    }
 
@@ -101,22 +97,6 @@ public class CreateJellyFishCommandCommandIT {
       final String classname = "TestCommand4Command";
       runCommand(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY, command,
          CreateJellyFishCommandCommand.PACKAGE_PROPERTY, pkg);
-      checkCommandOutput(classname, group, artifact, pkg);
-   }
-
-   @Test
-   public void testCommandWithoutCommandName() throws IOException {
-      createSettings();
-
-      final String command = "test-command-5";
-      final String group = CreateJellyFishCommandCommand.DEFAULT_GROUP_ID;
-      final String artifact = String.format(CreateJellyFishCommandCommand.DEFAULT_ARTIFACT_ID_FORMAT,
-         command.replace("-", "").toLowerCase());
-      final String pkg = group + '.' + artifact;
-      final String classname = "TestCommand5Command";
-      Mockito.when(mockPromptService.prompt(Mockito.eq(CreateJellyFishCommandCommand.COMMAND_NAME_PROPERTY),
-         Mockito.any(), Mockito.any())).thenReturn(command);
-      runCommand();
       checkCommandOutput(classname, group, artifact, pkg);
    }
 

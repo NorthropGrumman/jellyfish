@@ -1,10 +1,10 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.regex.Matcher;
 
 public class CreateJellyFishGradleProjectCommandIT {
 
@@ -28,7 +27,6 @@ public class CreateJellyFishGradleProjectCommandIT {
 
    private CreateJellyFishGradleProjectCommand cmd = new CreateJellyFishGradleProjectCommand();
    private PrintStreamLogService logger = new PrintStreamLogService();
-   private IPromptUserService mockPromptService = Mockito.mock(IPromptUserService.class);
    private ITemplateService mockTemplateService = new MockedTemplateService()
          .useRealPropertyService()
          .useDefaultUserValues(true)
@@ -42,7 +40,6 @@ public class CreateJellyFishGradleProjectCommandIT {
    public void setup() throws IOException {
       outputDir = Files.createTempDirectory(null);
       cmd.setLogService(logger);
-      cmd.setPromptService(mockPromptService);
       cmd.setTemplateService(mockTemplateService);
    }
 
@@ -76,13 +73,6 @@ public class CreateJellyFishGradleProjectCommandIT {
       checkCommandOutput(projectName, group, version, sdgave, model);
    }
 
-   @Test(expected = Exception.class)
-   public void testCommandWithoutSettings() throws IOException {
-      final String projectName = "test-project-3";
-
-      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName);
-   }
-
    @Test
    public void testWithoutClean() throws IOException {
       final String projectNameA = "test-project-4a";
@@ -93,13 +83,13 @@ public class CreateJellyFishGradleProjectCommandIT {
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameA,
                  CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version,
-                 CreateJellyFishGradleProjectCommand.CLEAN_PROPERTY, "false",
+                 CommonParameters.CLEAN.getName(), "false",
                  CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
                  CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model);
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameB,
                  CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version,
-                 CreateJellyFishGradleProjectCommand.CLEAN_PROPERTY, "false",
+                 CommonParameters.CLEAN.getName(), "false",
                  CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
                  CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model);
 
@@ -117,13 +107,13 @@ public class CreateJellyFishGradleProjectCommandIT {
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameA,
                  CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version,
-                 CreateJellyFishGradleProjectCommand.CLEAN_PROPERTY, "true",
+                 CommonParameters.CLEAN.getName(), "true",
                  CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
                  CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model);
 
       runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectNameB,
                  CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version,
-                 CreateJellyFishGradleProjectCommand.CLEAN_PROPERTY, "true",
+                 CommonParameters.CLEAN.getName(), "true",
                  CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
                  CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model);
 
@@ -156,7 +146,7 @@ public class CreateJellyFishGradleProjectCommandIT {
    }
 
    private void checkCommandOutput(String expectedProjectName, String expectedGroupId, String expectedVersion,
-		   String expectedGaveId, String expectedModelName) throws IOException {
+                                   String expectedGaveId, String expectedModelName) throws IOException {
       // Check project directory
       Assert.assertTrue("project directory not created", Files.isDirectory(outputDir.resolve(expectedProjectName)));
 
@@ -193,13 +183,12 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean groupMatch = buildFileContent.stream().anyMatch(line -> line.contains(groupStringToMatch));
       Assert.assertTrue("build.gradle group is incorrect", groupMatch);
 
-      Matcher matcher = CreateJellyFishGradleProjectCommand.GAVE_REGEX.matcher(expectedGaveId);
-      matcher.matches();
-      String artifactStringToMatch = "systemDescriptorProjectName = '" + matcher.group(2) + "'";
+      String[] parsedGave = CommonParameters.parseGave(expectedGaveId);
+      String artifactStringToMatch = "systemDescriptorProjectName = '" + parsedGave[1] + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
       Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
-      
-      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + matcher.group(3) + "'";
+
+      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + parsedGave[2] + "'";
       boolean SDversionMatch = buildFileContent.stream().anyMatch(line -> line.contains(SDversionStringToMatch));
       Assert.assertTrue("build.gradle system descriptor version is incorrect", SDversionMatch);
 

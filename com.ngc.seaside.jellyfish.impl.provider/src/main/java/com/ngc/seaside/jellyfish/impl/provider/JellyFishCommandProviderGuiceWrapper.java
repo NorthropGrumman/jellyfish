@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
+import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -41,12 +42,14 @@ public class JellyFishCommandProviderGuiceWrapper implements IJellyFishCommandPr
    public JellyFishCommandProviderGuiceWrapper(
          ILogService logService,
          ITemplateService templateService,
+         IPromptUserService promptService,
          IParameterService parameterService,
          ISystemDescriptorService systemDescriptorService,
          Set<IJellyFishCommand> commands) {
       delegate.setLogService(logService);
       delegate.setParameterService(parameterService);
       delegate.setTemplateService(templateService);
+      delegate.setPromptService(promptService);
       delegate.setSystemDescriptorService(systemDescriptorService);
       // Note we can't call commands.forEach(delegate::addCommand) because they may throw a Guice exception if a
       // command requires the IJellyFishCommandProvider to be injected into it.  If this is the case, Guice creates a

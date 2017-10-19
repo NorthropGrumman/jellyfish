@@ -5,8 +5,10 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
-public enum CommonParameters implements IParameter<String> {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+public enum CommonParameters implements IParameter<String> {
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
@@ -18,8 +20,10 @@ public enum CommonParameters implements IParameter<String> {
    PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
+   REPOSITORY_URL("repositoryUrl", "The url of a repository"),
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project");
 
+   private static final Pattern GAVE_REGEX = java.util.regex.Pattern.compile("(.+):(.+):(.+)@(.+)");
    private final String description;
    private final String name;
 
@@ -54,6 +58,18 @@ public enum CommonParameters implements IParameter<String> {
    }
 
    /**
+    * Returns a copy of the current parameter whose required value is true.
+    *
+    * @return a required version of the current parameter
+    */
+   public IParameter<String> required() {
+      DefaultParameter<String> parameter = new DefaultParameter<>(name);
+      parameter.setDescription(description);
+      parameter.setRequired(true);
+      return parameter;
+   }
+
+   /**
     * Returns the boolean value of the given parameter if it was set, false otherwise.
     *
     * @param parameters command parameters
@@ -73,7 +89,8 @@ public enum CommonParameters implements IParameter<String> {
     * @return the boolean value of the parameter
     * @throws CommandException if the value is neither 'true' nor 'false'
     */
-   public static boolean evaluateBooleanParameter(IParameterCollection parameters, String parameter,
+   public static boolean evaluateBooleanParameter(IParameterCollection parameters,
+                                                  String parameter,
                                                   boolean defaultValue) {
       if (parameters.containsParameter(parameter)) {
          String value = parameters.getParameter(parameter).getStringValue().toLowerCase();
@@ -88,10 +105,31 @@ public enum CommonParameters implements IParameter<String> {
       }
    }
 
-   public IParameter<String> required() {
-      DefaultParameter<String> parameter = new DefaultParameter<>(name);
-      parameter.setDescription(description);
-      parameter.setRequired(true);
-      return parameter;
+   /**
+    * Parses the given group/artifact/version/extension identifier.  The GAVE should be in the format
+    * <pre>
+    *    groupId:artifactId:version@extension
+    * </pre>
+    * If the GAVE is not in this format, an {@code IllegalArgumentException} is thrown.
+    * @param gave the GAVE to parse
+    * @return an array that contains the parsed group ID, artifact ID, version, and extension in that order
+    * @throws IllegalArgumentException {@code gave} is {@code null}, empty, or does not match the format above
+    */
+   public static String[] parseGave(String gave) {
+      if(gave == null || gave.trim().isEmpty()) {
+         throw new IllegalArgumentException("GAVE may not be null or empty!");
+      }
+      Matcher matcher = GAVE_REGEX.matcher(gave);
+      if (!matcher.matches()) {
+         throw new IllegalArgumentException("GAVE string must be of the format group:artifact:version@extension, got "
+                                            + gave
+                                            + "!");
+      }
+      return new String[]{
+            matcher.group(1),
+            matcher.group(2),
+            matcher.group(3),
+            matcher.group(4),
+            };
    }
 }
