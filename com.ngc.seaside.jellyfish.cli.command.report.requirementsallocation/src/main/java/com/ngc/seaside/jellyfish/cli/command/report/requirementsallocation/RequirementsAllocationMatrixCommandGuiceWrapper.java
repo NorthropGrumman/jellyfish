@@ -6,6 +6,7 @@ import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class RequirementsAllocationMatrixCommandGuiceWrapper implements IJellyFishCommand {
@@ -13,8 +14,10 @@ public class RequirementsAllocationMatrixCommandGuiceWrapper implements IJellyFi
    private final RequirementsAllocationMatrixCommand delegate = new RequirementsAllocationMatrixCommand();
 
    @Inject
-   public RequirementsAllocationMatrixCommandGuiceWrapper(ILogService logService) {
+   public RequirementsAllocationMatrixCommandGuiceWrapper(ILogService logService,
+                                                          IRequirementsService requirementsService) {
       delegate.setLogService(logService);
+      delegate.setRequirementsService(requirementsService);
    }
 
    @Override

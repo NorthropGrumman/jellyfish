@@ -3,18 +3,15 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
  * POJO for a requirement
  */
-public class Requirement implements Comparable {
+public class Requirement implements Comparable<Object> {
    private String ID;
    private TreeSet<IModel> models = new TreeSet<IModel>(new Comparator<IModel>() {
       public int compare(IModel obj1, IModel obj2)

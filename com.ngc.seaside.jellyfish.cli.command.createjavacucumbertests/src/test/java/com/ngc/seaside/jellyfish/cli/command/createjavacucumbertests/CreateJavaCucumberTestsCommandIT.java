@@ -5,13 +5,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -38,6 +39,8 @@ import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
+   private static final PrintStreamLogService logger = new PrintStreamLogService();
+   private static final FeatureService featureService = new FeatureService();
 
    private CreateJavaCucumberTestsCommand command = new CreateJavaCucumberTestsCommand();
 
@@ -58,9 +61,6 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @Mock
    private IModel model;
-
-   @Mock
-   private ILogService logService;
    
    @Mock
    private IJavaServiceGenerationService generationService;
@@ -70,8 +70,7 @@ public class CreateJavaCucumberTestsCommandIT {
    
    @Mock
    private IPackageNamingService packageService;
-   
-   
+
    @Before
    public void setup() throws IOException {
       outputDirectory = tempFolder.newFolder().toPath();
@@ -88,8 +87,10 @@ public class CreateJavaCucumberTestsCommandIT {
 
       // Setup mock model
       when(model.getParent()).thenReturn(mock(IPackage.class));
+      
 
-      command.setLogService(logService);
+      command.setLogService(logger);
+      command.setFeatureService(featureService);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
@@ -191,7 +192,6 @@ public class CreateJavaCucumberTestsCommandIT {
       Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
       Assert.assertTrue(Files.isRegularFile(addBacon));
       Assert.assertTrue(Files.isRegularFile(removeTheCheese));
-
    }
 
 }
