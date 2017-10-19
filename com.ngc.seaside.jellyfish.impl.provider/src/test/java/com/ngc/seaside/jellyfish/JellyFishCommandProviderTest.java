@@ -287,7 +287,7 @@ public class JellyFishCommandProviderTest {
       when(command.getUsage().getRequiredParameters()).thenReturn(Collections.emptyList());
 
       Path outputDir = Paths.get(".");
-      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0:zip";
+      String gave = "com.ngc.seaside.threateval:threatevaluation.descriptor:2.0.0@zip";
       String model = "com.ngc.seaside.threateval.TrackPriorityService";
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>("outputDir", outputDir));
@@ -342,7 +342,7 @@ public class JellyFishCommandProviderTest {
    
    @Test
    public void testParseGave() {
-	   String gaveParam = "group.group1.group2:artifact.artifact1:version:extension";
+	   String gaveParam = "group.group1.group2:artifact.artifact1:version@extension";
 	   String gaveResult = "group/group1/group2/artifact.artifact1/version/artifact.artifact1-version.extension";
 	   String gaveProp = provider.parseGave(gaveParam);
 	   assertEquals(gaveResult, gaveProp);  

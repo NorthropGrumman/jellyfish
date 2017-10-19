@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.regex.Matcher;
 
 public class CreateJellyFishGradleProjectCommandIT {
 
@@ -147,7 +146,7 @@ public class CreateJellyFishGradleProjectCommandIT {
    }
 
    private void checkCommandOutput(String expectedProjectName, String expectedGroupId, String expectedVersion,
-		   String expectedGaveId, String expectedModelName) throws IOException {
+                                   String expectedGaveId, String expectedModelName) throws IOException {
       // Check project directory
       Assert.assertTrue("project directory not created", Files.isDirectory(outputDir.resolve(expectedProjectName)));
 
@@ -184,13 +183,12 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean groupMatch = buildFileContent.stream().anyMatch(line -> line.contains(groupStringToMatch));
       Assert.assertTrue("build.gradle group is incorrect", groupMatch);
 
-      Matcher matcher = CreateJellyFishGradleProjectCommand.GAVE_REGEX.matcher(expectedGaveId);
-      matcher.matches();
-      String artifactStringToMatch = "systemDescriptorProjectName = '" + matcher.group(2) + "'";
+      String[] parsedGave = CommonParameters.parseGave(expectedGaveId);
+      String artifactStringToMatch = "systemDescriptorProjectName = '" + parsedGave[1] + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
       Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
-      
-      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + matcher.group(3) + "'";
+
+      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + parsedGave[2] + "'";
       boolean SDversionMatch = buildFileContent.stream().anyMatch(line -> line.contains(SDversionStringToMatch));
       Assert.assertTrue("build.gradle system descriptor version is incorrect", SDversionMatch);
 

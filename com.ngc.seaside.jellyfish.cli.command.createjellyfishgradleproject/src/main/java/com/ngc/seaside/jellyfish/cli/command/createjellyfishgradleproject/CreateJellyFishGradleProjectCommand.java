@@ -47,7 +47,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
    static final String SYSTEM_DESCRIPTOR_VERSION_PROPERTY = "systemDescriptorVersion";
-   static final Pattern GAVE_REGEX = Pattern.compile("(.+):(.+):(.+)@(.+)");
 
    private ILogService logService;
    private ITemplateService templateService;
@@ -105,12 +104,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
       // parse the parameters to get the system descriptor artifact id
       String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
-      Matcher matcher = GAVE_REGEX.matcher(gaveStr);
-      Preconditions.checkArgument(matcher.matches(),
-                                  "GAVE string must be of the format group:artifact:version@extension, got %s!",
-                                  gaveStr);
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, matcher.group(2)));
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, matcher.group(3)));
+      String[] parsedGave = CommonParameters.parseGave(gaveStr);
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, parsedGave[1]));
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, parsedGave[2]));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
