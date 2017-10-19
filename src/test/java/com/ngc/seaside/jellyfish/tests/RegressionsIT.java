@@ -36,6 +36,7 @@ public class RegressionsIT {
          ".*\\.class$",
          ".*\\.tar$",
          ".*\\.tar\\.gz$",
+         ".*\\.tgz",
          ".*\\.html$",
          ".*\\.zip$",
          ".*javadoc.*"
