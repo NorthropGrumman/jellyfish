@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.ngc.example.inhertance.databagsservice.datatype;
+
+option java_multiple_files = true;
+
+message C {
+
+   sint32 fieldD = 1;
+   sint32 fieldC = 2;
+
+}
