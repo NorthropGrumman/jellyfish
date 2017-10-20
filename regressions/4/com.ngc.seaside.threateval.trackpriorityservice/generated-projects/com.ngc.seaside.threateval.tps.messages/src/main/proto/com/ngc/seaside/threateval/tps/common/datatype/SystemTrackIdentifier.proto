@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.ngc.seaside.threateval.tps.common.datatype;
+
+option java_multiple_files = true;
+
+message SystemTrackIdentifier {
+
+   sint32 identifier = 1;
+
+}
