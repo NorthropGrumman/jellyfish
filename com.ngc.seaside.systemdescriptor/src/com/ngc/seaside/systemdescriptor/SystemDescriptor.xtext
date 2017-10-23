@@ -233,7 +233,7 @@ Requires
  * a "handler" registered to interpret it.
  */
 ScenarioKeyword
-	: ID
+	: QualifiedName
 	;
 /*
  * Declares a generic parameter that is used by a particular keyword.

@@ -228,4 +228,37 @@ class ScenarioParsingTest {
 			null
 		)
 	}
+	
+	@Test
+	def void testScenarioWithQualifiedCharacter() {
+		val source = '''
+			package clocks.models
+			 
+			model TestModel {
+			  scenario calculateConsolidatedTrackPriority {
+			          when receiving trackPriority
+			          then willBeginCorrelationEvent identified by prioritizedSystemTracks.header.correlationEventId
+			           and willPublish prioritizedSystemTracks
+			           and willBeCompleted within 500 milliseconds
+			      }
+			}
+		'''
+		
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		assertFalse(
+			"did not parse scenario!",
+			model.scenarios.empty
+		)
+		
+		val scenario = model.scenarios.get(0)
+		assertEquals(
+			"scenario name not correct!",
+			"calculateConsolidatedTrackPriority",
+			scenario.name
+		)
+	}
 }

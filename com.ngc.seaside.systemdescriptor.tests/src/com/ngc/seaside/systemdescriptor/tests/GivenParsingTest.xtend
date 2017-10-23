@@ -134,4 +134,40 @@ class GivenParsingTest {
 			given.steps.size
 		)
 	}
+	
+	@Test
+	def void testDoesParseScenarioWithMultipleQualifiedGiven() {
+		val source = '''
+			package clocks.models
+			 
+			import clocks.datatypes.Time
+			 
+			model Alarm {
+			  input {
+			  	Time currentTime
+			  	Time alarmTime
+			  }
+			  
+			  scenario triggerAlert {
+			  	given SecretSpaceTime.alarmTime hasBeenReceived
+			  	and SecretSpaceTime.alarmTime hasBeenValidated
+			  	when validating alarmTime
+			  	then doSomething
+			  }
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val scenario = model.scenarios.get(0)
+		val given = scenario.given
+		assertEquals(
+			"did not parse all given steps!",
+			2,
+			given.steps.size
+		)
+	}
 }

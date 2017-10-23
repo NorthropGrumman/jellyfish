@@ -132,4 +132,39 @@ class WhenParsingTest {
 			when.steps.size
 		)
 	}
+	
+	@Test
+	def void testDoesParseScenarioWithMultipleQualifiedWhens() {
+		val source = '''
+			package clocks.models
+			 
+			import clocks.datatypes.Time
+			 
+			model Alarm {
+			  input {
+			  	Time currentTime
+			  	Time alarmTime
+			  }
+			  
+			  scenario triggerAlert {
+			  	when receiving Time.alarmTime
+			  	and talkingWith Person.yoda
+			  	then doSomething
+			  }
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val scenario = model.scenarios.get(0)
+		val when = scenario.when
+		assertEquals(
+			"did not parse all when fragments!",
+			2,
+			when.steps.size
+		)
+	}
 }
