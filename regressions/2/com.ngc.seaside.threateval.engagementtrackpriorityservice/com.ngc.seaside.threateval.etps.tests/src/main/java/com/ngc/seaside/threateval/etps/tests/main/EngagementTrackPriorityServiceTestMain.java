@@ -1,10 +1,12 @@
 package com.ngc.seaside.threateval.etps.tests.main;
 
+import com.ngc.seaside.threateval.etps.tests.steps.EngagementTrackPriorityServiceSteps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.seaside.threateval.etps.tests.steps.EngagementTrackPriorityServiceSteps EngagementTrackPriorityServiceSteps}.
+ * This application runs the {@link EngagementTrackPriorityServiceSteps}.
  */
 public class EngagementTrackPriorityServiceTestMain {
 
@@ -23,7 +25,7 @@ public class EngagementTrackPriorityServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", EngagementTrackPriorityServiceTestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", EngagementTrackPriorityServiceSteps.class.getPackage().getName(),
                                   featurePath };
          }
 

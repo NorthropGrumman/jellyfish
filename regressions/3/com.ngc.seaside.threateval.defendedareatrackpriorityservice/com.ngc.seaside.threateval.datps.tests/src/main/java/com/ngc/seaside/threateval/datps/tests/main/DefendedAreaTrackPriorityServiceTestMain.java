@@ -1,10 +1,12 @@
 package com.ngc.seaside.threateval.datps.tests.main;
 
+import com.ngc.seaside.threateval.datps.tests.steps.DefendedAreaTrackPriorityServiceSteps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.seaside.threateval.datps.tests.steps.DefendedAreaTrackPriorityServiceSteps DefendedAreaTrackPriorityServiceSteps}.
+ * This application runs the {@link DefendedAreaTrackPriorityServiceSteps}.
  */
 public class DefendedAreaTrackPriorityServiceTestMain {
 
@@ -23,7 +25,7 @@ public class DefendedAreaTrackPriorityServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", DefendedAreaTrackPriorityServiceTestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", DefendedAreaTrackPriorityServiceSteps.class.getPackage().getName(),
                                   featurePath };
          }
 

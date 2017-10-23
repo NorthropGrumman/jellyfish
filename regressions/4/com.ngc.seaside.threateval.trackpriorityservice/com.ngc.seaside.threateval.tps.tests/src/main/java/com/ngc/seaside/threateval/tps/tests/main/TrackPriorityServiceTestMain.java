@@ -1,10 +1,12 @@
 package com.ngc.seaside.threateval.tps.tests.main;
 
+import com.ngc.seaside.threateval.tps.tests.steps.TrackPriorityServiceSteps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.seaside.threateval.tps.tests.steps.TrackPriorityServiceSteps TrackPriorityServiceSteps}.
+ * This application runs the {@link TrackPriorityServiceSteps}.
  */
 public class TrackPriorityServiceTestMain {
 
@@ -23,7 +25,7 @@ public class TrackPriorityServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", TrackPriorityServiceTestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", TrackPriorityServiceSteps.class.getPackage().getName(),
                                   featurePath };
          }
 
