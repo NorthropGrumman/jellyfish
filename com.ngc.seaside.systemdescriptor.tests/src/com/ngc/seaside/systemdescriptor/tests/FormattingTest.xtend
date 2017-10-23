@@ -105,11 +105,11 @@ class FormattingTest {
 					scenario calculateTrackPriority { when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks
 						and willBeCompleted within 1 seconds }
 				
-					links { link systemTrack to defendedAreaTrackPriorityService.systemTrack
-						link systemTrackClassification to classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus to engagementTrackPriorityService.trackEngagementStatus
-						link prioritizedSystemTracks to trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-						link classificationTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-						link engagementTrackPriorityService.trackPriority to trackPriorityService.trackPriority }
+					links { link systemTrack -> defendedAreaTrackPriorityService.systemTrack
+						link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
+						link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+						link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+						link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority }
 				
 				}
 			'''
@@ -120,7 +120,7 @@ class FormattingTest {
 		assertFormatted[
 			expectation = formattedExample2
 			toBeFormatted = '''
-				package com.ngc.seaside.threateval import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService import com.ngc.seaside.threateval.ClassificationTrackPriorityService import com.ngc.seaside.threateval.EngagementTrackPriorityService import com.ngc.seaside.threateval.TrackPriorityService import com.ngc.seaside.common.datatype.SystemTrack import com.ngc.seaside.classifier.datatype.Classification import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus import com.ngc.seaside.common.datatype.SystemTrackIdentifier import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers model ThreatEvaluation { metadata { "description": "Prioritizes system tracks into a list of System Track Identifiers", "stereotypes": ["virtual", "system"], "satisfies": ["TE001"] } input { SystemTrack systemTrack { "satisfies": ["TE001"] } Classification systemTrackClassification { "satisfies": ["TE001"] } TrackEngagementStatus trackEngagementStatus { "satisfies": ["TE001"] } } output { PrioritizedSystemTrackIdentifiers prioritizedSystemTracks { "satisfies": ["TE001"] } } parts { DefendedAreaTrackPriorityService defendedAreaTrackPriorityService ClassificationTrackPriorityService classificationTrackPriorityService EngagementTrackPriorityService engagementTrackPriorityService TrackPriorityService trackPriorityService } scenario calculateTrackPriority { when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks and willBeCompleted within 1 seconds } links { link systemTrack to defendedAreaTrackPriorityService.systemTrack link systemTrackClassification to classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus to engagementTrackPriorityService.trackEngagementStatus link prioritizedSystemTracks to trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority to trackPriorityService.trackPriority link classificationTrackPriorityService.trackPriority to trackPriorityService.trackPriority link engagementTrackPriorityService.trackPriority to trackPriorityService.trackPriority }  }
+				package com.ngc.seaside.threateval import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService import com.ngc.seaside.threateval.ClassificationTrackPriorityService import com.ngc.seaside.threateval.EngagementTrackPriorityService import com.ngc.seaside.threateval.TrackPriorityService import com.ngc.seaside.common.datatype.SystemTrack import com.ngc.seaside.classifier.datatype.Classification import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus import com.ngc.seaside.common.datatype.SystemTrackIdentifier import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers model ThreatEvaluation { metadata { "description": "Prioritizes system tracks into a list of System Track Identifiers", "stereotypes": ["virtual", "system"], "satisfies": ["TE001"] } input { SystemTrack systemTrack { "satisfies": ["TE001"] } Classification systemTrackClassification { "satisfies": ["TE001"] } TrackEngagementStatus trackEngagementStatus { "satisfies": ["TE001"] } } output { PrioritizedSystemTrackIdentifiers prioritizedSystemTracks { "satisfies": ["TE001"] } } parts { DefendedAreaTrackPriorityService defendedAreaTrackPriorityService ClassificationTrackPriorityService classificationTrackPriorityService EngagementTrackPriorityService engagementTrackPriorityService TrackPriorityService trackPriorityService } scenario calculateTrackPriority { when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks and willBeCompleted within 1 seconds } links { link systemTrack -> defendedAreaTrackPriorityService.systemTrack link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority }  }
 			'''
 		]
 	}
@@ -256,13 +256,13 @@ class FormattingTest {
 			}
 		
 			links {
-				link systemTrack to defendedAreaTrackPriorityService.systemTrack
-				link systemTrackClassification to classificationTrackPriorityService.systemTrackClassification
-				link trackEngagementStatus to engagementTrackPriorityService.trackEngagementStatus
-				link prioritizedSystemTracks to trackPriorityService.prioritizedSystemTracks
-				link defendedAreaTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-				link classificationTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-				link engagementTrackPriorityService.trackPriority to trackPriorityService.trackPriority
+				link systemTrack -> defendedAreaTrackPriorityService.systemTrack
+				link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
+				link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
+				link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks
+				link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+				link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+				link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
 			}
 		
 		}
