@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package $domain.packagename;
+
+option java_multiple_files = true;
+
+#set ($properties = [])
+#set ($discard = $properties.addAll($domain.superClassProperties))
+#set ($discard = $properties.addAll($domain.properties))
+#set ($imports = {})
+#foreach ($property in $properties)
+#if ($property.type != $property.shortType)
+#set ($discard = $imports.put($property.type, false))
+#end
+#end
+#set ($discard = $imports.remove("${domain.packagename}.${domain.classname}"))
+#foreach ($import in $imports.keySet())
+import "${import.replace('.', '/')}.proto";
+#end
+#if (! $imports.isEmpty())
+
+#end
+## Generate an enumeration
+#if($domain.enumType)
+enum $domain.classname {
+#set($i = 0)
+#set($size = $domain.getEnumValues().size())
+#foreach ($value in $domain.enumValues)
+	$value = $i;
+#set ($i = $i+1)
+#end
+#else
+message $domain.classname {
+#set ($properties = [])
+#set ($discard = $properties.addAll($domain.superClassProperties))
+#set ($discard = $properties.addAll($domain.properties))
+#set ($index = 1)
+#foreach ($property in $properties)
+#if ($property.type == "boolean")
+#set ($type = "bool")
+#elseif ($property.type == "float")
+#set ($type = "float")
+#elseif ($property.type == "int")
+#set ($type = "sint32")
+#elseif ($property.type == "String")
+#set ($type = "string")
+#else
+#set ($type = $property.type)
+#end
+#if ($property.multiple)
+#set ($cardinality = "repeated ")
+#else
+#set ($cardinality = "")
+#end
+   ${cardinality}$type $property.name = $index;
+#set ($index = $index + 1)
+#end
+#end
+}

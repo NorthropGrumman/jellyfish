@@ -1,0 +1,206 @@
+/**
+***************************************** UNCLASSIFIED ******************************************
+*************************************************************************************************
+************************* Copyright 2017 Northrop Grumman Corporation ***************************
+* Author: Generated
+*/
+package $domain.packagename;
+
+## Imports
+#foreach( $import in $domain.imports )
+import $import;
+#end
+
+##determine if the type is a class or enum
+#if(! $domain.enumType)
+import java.util.Objects;
+
+ #set($type = "class")
+#else
+ #set($type = "enum")
+#end
+
+#if($domain.hasMultipleProperty)
+import java.util.List;
+#end
+#if($domain.hasArrayProperty)
+import java.util.Arrays;
+#end
+
+#if($type == "class")
+import com.ngc.blocs.service.event.api.EventTopic;
+import com.ngc.blocs.service.event.api.IEventTopic;
+#end
+
+/**
+ * This file has been generated and should not be edited directly.
+ * @author Generated
+ **/
+#if($domain.abstraction)
+#set($modifier = " abstract")
+#else##not an abstraction
+#set($modifier = "")
+#end
+#if(! $domain.extended)
+public${modifier} $type ${domain.classname} {
+#else
+public${modifier} $type ${domain.classname} extends $domain.extendedClassShort {
+#end
+
+## Generate an enumeration
+#if($type == "enum")
+#set($size = $domain.getEnumValues().size())
+#foreach ($value in $domain.enumValues)
+#if($velocityCount == $size)
+	$value
+#else
+	$value,
+#end
+#end
+}
+
+## Generate the class
+#else
+
+##Topic and Name
+
+  public static final String TOPIC_NAME = "/data/${domain.packagename}.${domain.classname}";
+
+  public static final IEventTopic<${domain.classname}> TOPIC = EventTopic.of(TOPIC_NAME, ${domain.classname}.class);
+
+#foreach ($property in $domain.properties)
+#if ($property.type == "boolean")
+#set ($type = "Boolean")
+#elseif ($property.type == "float")
+#set ($type = "Float")
+#elseif ($property.type == "int")
+#set ($type = "Integer")
+#else
+#set ($type = $property.type)
+#end
+#if(! $property.abstraction)
+#if(! $property.value)
+#if(! $property.multiple)
+  private $property.shortType $property.name;
+#else##is multiple
+  private List<$type> $property.name;
+#end##end multiple
+#else##has a value
+#if(! $property.multiple)
+  private $property.shortType $property.name = $property.value;
+#else##is multiple
+  private List<$type> $property.name = $property.value;
+#end##is multiple
+#end##has value
+#end##is abstraction
+#end##property definitions
+
+  public ${domain.classname}() {
+    super();
+  }
+
+#foreach ($property in $domain.properties)
+#if ($property.type == "boolean")
+#set ($type = "Boolean")
+#elseif ($property.type == "float")
+#set ($type = "Float")
+#elseif ($property.type == "int")
+#set ($type = "Integer")
+#else
+#set ($type = $property.type)
+#end
+#if(! $property.multiple)
+#if(! $property.abstraction)
+  public $property.shortType get${property.methodString}() {
+    return $property.name;
+  }
+
+  public ${domain.classname} set$property.getMethodString()($property.shortType $property.name) {
+    this.$property.name = $property.name;
+    return this;
+  }
+#end
+#else
+#if(! $property.abstraction)
+  public List<$type> get${property.methodString}() {
+    return $property.name;
+  }
+
+  public ${domain.classname} set$property.getMethodString()(List<$type> $property.name) {
+    this.$property.name = $property.name;
+    return this;
+  }
+#end
+#end
+
+#end##end properties
+#set($size = ${domain.nonAbstractProperties.size()})
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+#if($domain.extended)
+#if($domain.properties.isEmpty())
+      super.hashCode()
+#else
+      super.hashCode(),
+#end##empty properties
+#end##extended
+#foreach ($property in $domain.nonAbstractProperties)
+#if($velocityCount == $size)
+       $property.name
+#else
+       $property.name,
+#end
+#end##end property loop
+    );
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj == this) {
+      return true;
+    }
+
+    if(!(obj instanceof ${domain.classname})) {
+        return false;
+    }
+#if(${domain.properties.isEmpty()})
+    return super.equals(obj);
+#else
+    ${domain.classname} that = (${domain.classname})obj;
+#if($domain.extended)
+    return super.equals(obj) &&
+#else
+    return
+#end
+#foreach ($property in $domain.nonAbstractProperties)
+#if($property.arrayType)
+#set($equalObj = "Arrays")
+#else
+#set($equalObj = "Objects")
+#end
+#if($velocityCount == $size)
+      ${equalObj}.equals($property.name, that.$property.name)
+#else
+      ${equalObj}.equals($property.name, that.$property.name) &&
+#end
+#end
+    ;
+#end
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+#if($domain.extended)
+    builder.append(super.toString());
+#else
+	builder.append(getClass().getSimpleName()).append(" - ");
+#end
+#foreach ($property in $domain.nonAbstractProperties)
+    builder.append("[${property.name}=").append(${property.name}).append("]");
+#end
+    return builder.toString();
+  }
+}
+#end

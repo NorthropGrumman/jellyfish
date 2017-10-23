@@ -25,14 +25,14 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
 ext {
     systemDescriptorProjectName = 'threatevaluation.descriptor'
-    systemDescriptorProjectVersion = '1.2-SNAPSHOT'
+    systemDescriptorProjectVersion = '1.0.0-SNAPSHOT'
     systemDescriptorName = '${systemDescriptorProjectName}-${systemDescriptorProjectVersion}'
     systemDescriptorLocation = "${project.buildDir}/${systemDescriptorDirectoryName}/${systemDescriptorName}"
     modelName = 'com.ngc.seaside.threateval.DefendedAreaTrackPriorityService'
 }
 
 dependencies {
-	generate "com.ngc.seaside.threateval:threatevaluation.descriptor:1.2-SNAPSHOT@zip"
+	generate "com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:1.0.0-SNAPSHOT@zip"
 }
 
 subprojects {
