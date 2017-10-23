@@ -76,7 +76,6 @@ public class WrappedSystemDescriptorIT {
       TerminalsStandaloneSetup.doSetup();
       Injector injector = Guice.createInjector(new SystemDescriptorRuntimeModule());
       new SystemDescriptorStandaloneSetup().register(injector);
-      //Injector injector = new SystemDescriptorStandaloneSetup().createInjectorAndDoEMFRegistration();
       injector.injectMembers(this);
 
       resourceSet = new XtextResourceSet();
