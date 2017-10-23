@@ -44,6 +44,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
       IScenarioStep step = context.getObject();
+      String keyword = step.getKeyword();
+      
       List<String> parameters = step.getParameters();
       if (parameters.size() != 3) {
          context.declare(Severity.ERROR,
@@ -55,15 +57,26 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          leftData = getCorrelationArg(step, 0);
          validateToArgument(context, step, 1);
          rightData = getCorrelationArg(step, 2);
-
-         // The first parameter should be an operand.
-         // validateOperand(context, step, parameters.get(0));
-         // The second parameter should be a number (double).
-         // validateDuration(context, step, parameters.get(1));
-         // The third parameter should be a time unit.
-         // validateTimeUnit(context, step, parameters.get(2));
+         
+         //TODO Ensure the data is in of format  <inputField|outputField>.<dataField>
+         //validateLeftDataFormat(context, step, leftData);
+         //validateRightDataFormat(context, step, rightData);
+         
+         //TODO Validate that vboth field types are the same
+         //validateFieldType(context, step, leftData, rightData);
+         
+         if (keyword.equals(PRESENT.getVerb())) {
+            //TODO With PRESENT verb, data is required to be an input
+            //verifyDataIsOnlyInput(context, step, leftData);
+            //verifyDataIsOnlyInput(context, step, rightData);
+         } else if (keyword.equals(FUTURE.getVerb())) {
+            //TODO With FUTURE verb, the data has to reference exactly one input field and one output field
+            //     The order does not matter.
+            //verifyDataIsExclusive(context, step, leftData, rightData);
+         } else {
+            declareOrThrowError(context, step, "PAST verb hasn't been implemented yet.");
+         }
       }
-
    }
 
    private String getCorrelationArg(IScenarioStep step, int argPosition) {
