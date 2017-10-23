@@ -1,6 +1,6 @@
 package ${dto.packageName}.main;
 
-import ${dto.packageName}.steps;
+import ${dto.packageName}.steps.${dto.className}Steps;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
