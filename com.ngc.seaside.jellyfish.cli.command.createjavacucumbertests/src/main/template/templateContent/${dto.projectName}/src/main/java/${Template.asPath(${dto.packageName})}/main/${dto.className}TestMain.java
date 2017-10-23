@@ -1,10 +1,12 @@
 package ${dto.packageName}.main;
 
+import ${dto.packageName}.steps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link ${dto.packageName}.steps.${dto.className}Steps ${dto.className}Steps}.
+ * This application runs the {@link ${dto.className}Steps}.
  */
 public class ${dto.className}TestMain {
 
@@ -23,7 +25,7 @@ public class ${dto.className}TestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", ${dto.className}TestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", ${dto.className}Steps.class.getPackage().getName(),
                                   featurePath };
          }
 
