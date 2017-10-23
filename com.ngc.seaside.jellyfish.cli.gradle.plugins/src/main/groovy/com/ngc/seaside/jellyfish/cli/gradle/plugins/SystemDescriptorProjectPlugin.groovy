@@ -34,6 +34,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
+                inputDir = "${project.projectDir}"
             }
 
             // Copy all files to build for more processing.
