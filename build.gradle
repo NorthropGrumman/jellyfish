@@ -13,22 +13,19 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.seaside:gradle.plugins:2.0.0'
+        classpath 'com.ngc.seaside:gradle.plugins:2.0.3'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
 
 ext {
-    jellyfishCliVersion = '1.6.0'
+    jellyfishCliVersion = '1.7.0-SNAPSHOT'
 }
 
 dependencies {
     testCompile gradleApi()
     testCompile "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
-    // TODO TH: Remove the line below once this latest version of JellyFish CLI is released.  This is a workaround for
-    // now.
-    testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:1.7.2"
-	testCompile "org.mockito:mockito-core:2.7.14"
+    testCompile "org.mockito:mockito-core:2.7.14"
     testCompile "junit:junit:4.12"
 }
 
