@@ -120,7 +120,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to alarm.myTime
+					link currentTime -> alarm.myTime
 				}
 			}
 		'''
@@ -170,7 +170,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarm.myTime to currentTime
+					link alarm.myTime -> currentTime
 				}
 			}
 		'''
@@ -202,7 +202,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to alarm.myTime
+					link currentTime -> alarm.myTime
 				}
 			}
 		'''
@@ -252,7 +252,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarm.myTime to currentTime
+					link alarm.myTime -> currentTime
 				}
 			}
 		'''
@@ -284,7 +284,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarmTime to alarm.fooTime
+					link alarmTime -> alarm.fooTime
 				}
 			}
 		'''
@@ -314,7 +314,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarm.fooTime to alarmTime
+					link alarm.fooTime -> alarmTime
 				}
 			}
 		'''
@@ -346,7 +346,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarmTime to alarm.fooTime
+					link alarmTime -> alarm.fooTime
 				}
 			}
 		'''
@@ -376,7 +376,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarm.fooTime to alarmTime
+					link alarm.fooTime -> alarmTime
 				}
 			}
 		'''
@@ -413,7 +413,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link speaker to alarm.speaker
+					link speaker -> alarm.speaker
 				}
 			}
 		'''
@@ -448,7 +448,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link alarm.speaker to speaker
+					link alarm.speaker -> speaker
 				}
 			}
 		'''
@@ -472,7 +472,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to currentTime
+					link currentTime -> currentTime
 				}
 			}
 		'''
@@ -501,7 +501,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to otherTime
+					link currentTime -> otherTime
 				}
 			}
 		'''
@@ -530,7 +530,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to otherTime
+					link currentTime -> otherTime
 				}
 			}
 		'''
@@ -564,7 +564,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link a1 to a2
+					link a1 -> a2
 				}
 			}
 		'''
@@ -601,7 +601,7 @@ class LinkParsingTest {
 				}
 				
 				links {
-					link currentTime to alarm.fooTime
+					link currentTime -> alarm.fooTime
 				}
 			}
 		'''

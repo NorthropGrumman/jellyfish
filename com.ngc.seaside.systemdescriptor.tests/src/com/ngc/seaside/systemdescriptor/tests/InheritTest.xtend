@@ -658,7 +658,7 @@ class InheritTest {
 			  	A a
 			  }
 			  links {
-			    link a to thing.a
+			    link a -> thing.a
 			  }
 			 }
 		'''
@@ -740,7 +740,7 @@ class InheritTest {
 			  	A a
 			  }
 			  links {
-			    link a to thing.a
+			    link a -> thing.a
 			  }
 			 }
 		'''
@@ -822,7 +822,7 @@ class InheritTest {
 			  	A a
 			  }
 			  links {
-			    link a to thing.a
+			    link a -> thing.a
 			  }
 			 }
 		'''
@@ -904,7 +904,7 @@ class InheritTest {
 			  	A a
 			  }
 			  links {
-			    link a to thing.a
+			    link a -> thing.a
 			  }
 			 }
 		'''

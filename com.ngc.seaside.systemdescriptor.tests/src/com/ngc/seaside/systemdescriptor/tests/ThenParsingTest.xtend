@@ -132,4 +132,39 @@ class ThenParsingTest {
 			then.steps.size
 		)
 	}
+	
+	@Test
+	def void testDoesParseScenarioWithMultipleQualifiedThens() {
+		val source = '''
+			package clocks.models
+			 
+			import clocks.datatypes.Time
+			 
+			model Alarm {
+			  input {
+			  	Time currentTime
+			  	Time alarmTime
+			  }
+			  
+			  scenario triggerAlert {
+			  	when receiving alarmTime
+			  	then Important.doSomething
+			  	and NotSoImportant.doSomethingElse
+			  }
+			}
+		'''
+
+		val result = parseHelper.parse(source, dataResource.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val scenario = model.scenarios.get(0)
+		val then = scenario.then
+		assertEquals(
+			"did not parse all then fragments!",
+			2,
+			then.steps.size
+		)
+	}
 }

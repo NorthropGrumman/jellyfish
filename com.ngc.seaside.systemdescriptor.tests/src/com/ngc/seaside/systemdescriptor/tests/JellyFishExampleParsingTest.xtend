@@ -201,10 +201,10 @@ class JellyFishExampleParsingTest {
 		  }
 		  
 		  links {
-		      link timer.currentTime to display.currentTime
-		      link timer.currentTime to alarm.currentTime
-		      link speaker to alarm.speaker
-		      link alarmTimes to alarm.alarmTimes
+		      link timer.currentTime -> display.currentTime
+		      link timer.currentTime -> alarm.currentTime
+		      link speaker -> alarm.speaker
+		      link alarmTimes -> alarm.alarmTimes
 		  }
 		}
 		'''
