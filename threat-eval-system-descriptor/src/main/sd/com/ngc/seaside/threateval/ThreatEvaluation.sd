@@ -58,14 +58,14 @@ model ThreatEvaluation {
 	}
 	
 	links {
-		link systemTrack to defendedAreaTrackPriorityService.systemTrack
-		link systemTrackClassification to classificationTrackPriorityService.systemTrackClassification
-		link trackEngagementStatus to engagementTrackPriorityService.trackEngagementStatus
-		link prioritizedSystemTracks to trackPriorityService.prioritizedSystemTracks
-		link defendedAreaTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-		link classificationTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-		link engagementTrackPriorityService.trackPriority to trackPriorityService.trackPriority
-		link droppedSystemTrack to trackPriorityService.droppedSystemTrack 
+		link systemTrack -> defendedAreaTrackPriorityService.systemTrack
+		link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
+		link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
+		link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks
+		link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link droppedSystemTrack -> trackPriorityService.droppedSystemTrack 
 	}
 	
 }
