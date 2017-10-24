@@ -6,7 +6,6 @@ configurations {
 }
 
 dependencies {
-	compile project(":jellyfish")
     compile "com.ngc.seaside:gradle.plugins:$seasideGradlePluginsVersion"
     // Note we have this compile time dependency to provide an alternate implementation for the Gradle version of
     // JellyFish.
@@ -14,6 +13,7 @@ dependencies {
 
     compile gradleApi()
     compile localGroovy()
+    compile project(":jellyfish")
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.guava:guava:$guavaVersion"
 
