@@ -28,10 +28,13 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
 
             // This plugin requires the maven plugin to enable uploads to Nexus.
             plugins.apply 'maven'
+            // This is required to install a model project locally.
+            plugins.apply 'java'
 
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
+                inputDir = "${project.projectDir}"
             }
 
             // Copy all files to build for more processing.
@@ -72,6 +75,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 // Configure the name of the distribution.  We do this here so that properties are evaluated correctly.
                 tasks.getByName(
                       'sdDistribution').archiveName = "${project.group}.${project.name}-${project.version}.zip"
+
 
                 // Set the default tasks.
                 defaultTasks = ['build']
