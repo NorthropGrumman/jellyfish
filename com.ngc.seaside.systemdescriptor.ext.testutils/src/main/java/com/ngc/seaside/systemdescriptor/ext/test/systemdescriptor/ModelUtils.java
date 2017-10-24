@@ -1,10 +1,11 @@
 package com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -74,6 +75,10 @@ public class ModelUtils {
        */
       public void addOutput(IDataReferenceField field) {
          outputs.add(field);
+      }
+
+      public void addScenario(IScenario scenario) {
+         scenarios.add(scenario);
       }
 
       /**
@@ -290,8 +295,8 @@ public class ModelUtils {
    }
 
    /**
-    * Adds mocking to the given data for the given superData type and fields. The each data field is specified in the parameters as follows: [String] [FieldCardinality] (IData|IEnumeration|DataTypes). That is, an
-    * optional String for the field name, an optional cardinality, and either an IData, IEnumeration or DataTypes instance.
+    * Adds mocking to the given data for the given superData type and fields. Each data field can be an {@link IDataField} or the fields can be specified with the parameters as follows: [String]
+    * [FieldCardinality] (IData|IEnumeration|DataTypes). That is, an optional String for the field name, an optional cardinality, and either an IData, IEnumeration or DataTypes instance.
     * 
     * @param data data add mocking
     * @param superData super data type (can be null)
@@ -301,7 +306,9 @@ public class ModelUtils {
       when(data.getSuperDataType()).thenReturn(Optional.ofNullable(superData));
       NamedChildCollection<IData, IDataField> collection = new NamedChildCollection<>(data, IDataField.class);
       for (int n = 0; n < fields.length; n++) {
-         if (fields[n] instanceof String) {
+         if (fields[n] instanceof IDataField) {
+            collection.add((IDataField) fields[n]);
+         } else if (fields[n] instanceof String) {
             assertNotEquals(n + 1, fields.length);
             Object o = fields[n + 1];
             if (o instanceof FieldCardinality) {
@@ -456,18 +463,9 @@ public class ModelUtils {
          return (T) field;
       }
 
-      /**
-       * Adds a mocked wrapper of this element to the collection. If the element does not return a parent, this method will mock the parent.
-       * <p>
-       * {@inheritDoc}
-       */
       @Override
       public boolean add(T element) {
-         T mockedElement = spy(element);
-         if (mockedElement.getParent() == null) {
-            when(mockedElement.getParent()).thenReturn(parent);
-         }
-         map.put(mockedElement.getName(), element);
+         map.put(element.getName(), element);
          return true;
       }
 

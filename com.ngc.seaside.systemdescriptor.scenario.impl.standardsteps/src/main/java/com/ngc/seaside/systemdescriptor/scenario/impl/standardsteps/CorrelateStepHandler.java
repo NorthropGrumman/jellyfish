@@ -1,6 +1,10 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
@@ -45,7 +49,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
 
       IScenarioStep step = context.getObject();
       String keyword = step.getKeyword();
-      
+
       List<String> parameters = step.getParameters();
       if (parameters.size() != 3) {
          context.declare(Severity.ERROR,
@@ -57,27 +61,40 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          leftData = getCorrelationArg(step, 0);
          validateToArgument(context, step, 1);
          rightData = getCorrelationArg(step, 2);
-         
-         //TODO Ensure the data is in of format  <inputField|outputField>.<dataField>
-         //validateLeftDataFormat(context, step, leftData);
-         //validateRightDataFormat(context, step, rightData);
-         
-         //TODO Validate that vboth field types are the same
-         //validateFieldType(context, step, leftData, rightData);
-         
+
+         // TODO Ensure the data is in of format <inputField|outputField>.<dataField>
+         // validateLeftDataFormat(context, step, leftData);
+         // validateRightDataFormat(context, step, rightData);
+
+         // TODO Validate that vboth field types are the same
+         // validateFieldType(context, step, leftData, rightData);
+
          if (keyword.equals(PRESENT.getVerb())) {
-            //TODO With PRESENT verb, data is required to be an input
-            //verifyDataIsOnlyInput(context, step, leftData);
-            //verifyDataIsOnlyInput(context, step, rightData);
+            // TODO With PRESENT verb, data is required to be an input
+            // verifyDataIsOnlyInput(context, step, leftData);
+            // verifyDataIsOnlyInput(context, step, rightData);
          } else if (keyword.equals(FUTURE.getVerb())) {
-            //TODO With FUTURE verb, the data has to reference exactly one input field and one output field
-            //     The order does not matter.
-            //verifyDataIsExclusive(context, step, leftData, rightData);
+            // TODO With FUTURE verb, the data has to reference exactly one input field and one output field
+            // The order does not matter.
+            // verifyDataIsExclusive(context, step, leftData, rightData);
          } else {
             declareOrThrowError(context, step, "PAST verb hasn't been implemented yet.");
          }
       }
    }
+   
+//   public IDataField getCorrelationDataField(IScenarioStep step, int argPosition) {
+//      Preconditions.checkNotNull(step, "step may not be null!");
+//      String keyword = step.getKeyword();
+//      Preconditions.checkArgument(
+//         keyword.equals(PRESENT.getVerb())
+//            || keyword.equals(FUTURE.getVerb()),
+//         "the step cannot be processed by this handler!");
+//
+//      
+//      
+//      
+//   }
 
    private String getCorrelationArg(IScenarioStep step, int argPosition) {
       Preconditions.checkNotNull(step, "step may not be null!");
@@ -86,6 +103,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          keyword.equals(PRESENT.getVerb())
             || keyword.equals(FUTURE.getVerb()),
          "the step cannot be processed by this handler!");
+      
       return step.getParameters().get(argPosition);
    }
 
@@ -96,12 +114,36 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             step,
             String.format("Expected parameter to be 'to'"));
       }
-   
+
    }
 
-   private static void declareOrThrowError(IValidationContext<IScenarioStep> context, 
-                                           IScenarioStep step,
-                                           String errMessage) {
+   public INamedChildCollection<IModel, IDataReferenceField> getInputs(IScenarioStep step) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(
+         keyword.equals(PRESENT.getVerb())
+            || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
+
+      IModel model = step.getParent().getParent();
+      return model.getInputs();
+   }
+
+   public INamedChildCollection<IModel, IDataReferenceField> getOutputs(IScenarioStep step) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(
+         keyword.equals(PRESENT.getVerb())
+            || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
+
+      IModel model = step.getParent().getParent();
+      return model.getOutputs();
+   }
+
+   private static void declareOrThrowError(IValidationContext<IScenarioStep> context,
+            IScenarioStep step,
+            String errMessage) {
       if (context != null) {
          context.declare(Severity.ERROR, errMessage, step).getKeyword();
       } else {
