@@ -30,6 +30,8 @@ subprojects {
       guavaVersion = '21.0'
       guiceVersion = '3.0'
       blocsCoreVersion = '2.1'
+	  commonsIOVersion = '2.5'
+      commonsLangVersion = '2.6'
       glassfishJsonVersion = '1.1'
       emfVersion = '2.12.0'
       xtextVersion = '2.10.0'
