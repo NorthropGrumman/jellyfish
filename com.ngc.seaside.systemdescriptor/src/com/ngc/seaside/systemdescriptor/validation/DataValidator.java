@@ -1,24 +1,50 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import org.eclipse.xtext.validation.Check;
+import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.validation.Check;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class DataValidator extends AbstractSystemDescriptorValidator {
 
+   /**
+    * A provider that is used to get the IResourceDescriptions which serves as
+    * the main index or cache for Xtext. This is used do reverse lookups to
+    * elements using their qualified names.
+    */
+   @Inject
+   private IQualifiedNameProvider nameProvider;
+   
+	/**
+    * Validates that a Data object does not extend itself.
+    * 
+    * @param data data object to evaluate
+    */
 	@Check
 	public void checkHierarchy(Data data) {
-	
-	}
-	
-	@Check
-	public void checkBaseDataObject(Data data) {
-		// Ensure that the model does not already have a part with the same
-		// name.
-//		System.out.println("Psssst! data");
-//		System.out.println(data);
-//		System.out.println(data.eContainingFeature().getClass());
+	   Set<QualifiedName> superClasses = new HashSet<>();
+	   
+	   final QualifiedName name = nameProvider.getFullyQualifiedName(data);
+	   Data parent = data.getSuperclass();
+	   while (parent != null) {
+	      QualifiedName parentName = nameProvider.getFullyQualifiedName(parent);
+	      if (parentName.equals(name)) {
+	         String msg = String.format("Cycle detected: a cycle exists in the type hierarchy of %s", name.getLastSegment());
+            error(msg, data, SystemDescriptorPackage.Literals.DATA__SUPERCLASS);
+            return;
+	      }
+	      if (!superClasses.add(nameProvider.getFullyQualifiedName(parent))) {
+	         return;
+	      }
+	      parent = parent.getSuperclass();
+	   }
 	}
 	
 	/**
