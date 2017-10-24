@@ -106,9 +106,16 @@ public class CorrelateStepHandlerTest {
       INamedChildCollection<IModel, IDataReferenceField> inputs = handler.getInputs(step);
       INamedChildCollection<IModel, IDataReferenceField> outputs = handler.getOutputs(step);
       
+      IDataReferenceField dataRefFieldInput = inputs.getByName("input0").get();
+      IDataReferenceField dataRefFieldOutput = outputs.getByName("output0").get();
       
-      Optional<IDataReferenceField> dataRefFieldInput = inputs.getByName("input0");
-      Optional<IDataReferenceField> dataRefFieldOutput = outputs.getByName("output0");
+      IData inputData = dataRefFieldInput.getType();
+      System.out.println(inputData.getName());
+      
+      for (IDataField val : inputData.getFields()) {
+         System.out.println(val.getName());
+         System.out.println(val.getType());
+      }
       
 
       System.out.println();
