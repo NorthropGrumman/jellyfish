@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.ngc.seaside.threateval.etps.engagementplanning.datatype;
+
+option java_multiple_files = true;
+
+message TrackEngagementStatus {
+
+   sint32 trackId = 1;
+   sint32 plannedEngagementCount = 2;
+   float probabilityOfKill = 3;
+
+}

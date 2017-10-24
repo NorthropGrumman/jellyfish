@@ -1,13 +1,17 @@
-
-apply plugin: 'com.ngc.blocs.gradle.plugin.domain'
-
-generateDomain {
-   domainGenProperty('template.list', file('src/main/resources/velocity/proto-messages.vm'))
-   domainGenProperty('extension.list', 'proto')
-}
+apply plugin: 'com.google.protobuf'
 
 dependencies {
-   compile "com.ngc.blocs:service.api:$blocsDomainVersion"
+   compile "com.google.protobuf:protobuf-java:$protobufVersion"
+}
+
+protobuf {
+   protoc {
+      artifact = "com.google.protobuf:protoc:$protobufVersion"
+   }
+}
+
+sourceSets.all {
+   java.srcDir "${protobuf.generatedFilesBaseDir}/$name/java"
 }
 
 jar {
@@ -17,26 +21,3 @@ jar {
    }
 }
 
-apply plugin: 'com.google.protobuf'
-
-protobuf {
-   protoc {
-      artifact = "com.google.protobuf:protoc:$protobufVersion"
-   }
-}
-
-sourceSets {
-   main {
-     proto {
-       srcDir generateDomain.outputDirectory
-     }
-   }
-}
-
-sourceSets.all {
-   java.srcDir "${protobuf.generatedFilesBaseDir}/$name/java"
-}
-
-dependencies {
-   compile "com.google.protobuf:protobuf-java:$protobufVersion"
-}
