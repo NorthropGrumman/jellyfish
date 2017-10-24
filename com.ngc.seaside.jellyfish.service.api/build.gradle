@@ -3,6 +3,7 @@ dependencies {
 
     compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    compile "com.google.protobuf:protobuf-java:$protobufVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"

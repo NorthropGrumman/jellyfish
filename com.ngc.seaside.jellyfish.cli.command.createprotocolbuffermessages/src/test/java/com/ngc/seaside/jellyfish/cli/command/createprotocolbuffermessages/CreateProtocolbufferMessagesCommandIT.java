@@ -1,196 +1,240 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.ngc.blocs.domain.impl.common.generated.Tdomain;
-import com.ngc.blocs.domain.impl.common.generated.Tobject;
-import com.ngc.blocs.guice.module.LogServiceModule;
-import com.ngc.blocs.guice.module.ResourceServiceModule;
-import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.cli.command.test.systemdescriptor.ModelUtils;
+import com.ngc.seaside.jellyfish.cli.command.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateProtocolbufferMessagesCommandIT {
 
-   private IJellyFishCommand cmd;
+   private final IJellyFishCommand command = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
 
-   private MockedResourceService resourceService;
-   private Path outputDir;
-   private Path velocityPath;
-
-   @Mock
-   private IJellyFishCommandOptions options;
+   @Rule
+   public final TemporaryFolder outputDirectory = new TemporaryFolder();
 
    @Before
-   public void setup() throws IOException {
-      outputDir = Files.createTempDirectory(null);
-      outputDir.toFile().deleteOnExit();
-      velocityPath = Paths.get("src", "test", "resources", "proto-messages.vm").toAbsolutePath();
-
-      resourceService = new MockedResourceService()
-            .onNextReadDrain(
-                  CreateProtocolbufferMessagesCommandIT.class
-                        .getClassLoader()
-                        .getResourceAsStream(CreateProtocolbufferMessagesCommand.TEMPLATE_FILE));
-
-      Injector injector = Guice.createInjector(getModules());
-      cmd = injector.getInstance(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
-
-      Path sdDir = Paths.get("src", "test", "sd");
-      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.sd");
-      Collection<Path> sdFiles = Files.walk(sdDir).filter(matcher::matches).collect(Collectors.toSet());
-      ISystemDescriptorService sdService = injector.getInstance(ISystemDescriptorService.class);
-      IParsingResult result = sdService.parseFiles(sdFiles);
-      Assert.assertTrue(result.getIssues().toString(), result.isSuccessful());
-      ISystemDescriptor sd = result.getSystemDescriptor();
-      Mockito.when(options.getParsingResult()).thenReturn(result);
-      Mockito.when(options.getSystemDescriptor()).thenReturn(sd);
-   }
+   public void setup() {}
 
    @Test
-   public void testCommand() throws IOException {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY, "com.ngc.Model1",
-                 CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString(),
-                 CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath.toString());
+   public void testCommand() throws Exception {
+      IData[] data = new IData[6];
+      IData[] superData = new IData[3];
+      for (int n = 0; n < data.length; n++) {
+         data[n] = ModelUtils.getMockNamedChild(IData.class, "test" + n + ".Data" + n);
+      }
+      for (int n = 0; n < superData.length; n++) {
+         superData[n] = ModelUtils.getMockNamedChild(IData.class, "test" + (data.length + n) + ".SuperData" + n);
+      }
+      IEnumeration[] enums = new IEnumeration[5];
+      for (int n = 0; n < enums.length; n++) {
+         enums[n] = ModelUtils.getMockNamedChild(IEnumeration.class, "test" + n + ".Enum" + n);
+      }
+      ModelUtils.mockData(data[0],
+         superData[0],
+         "intField",
+         DataTypes.INT,
+         "manyIntField",
+         FieldCardinality.MANY,
+         DataTypes.INT,
+         "floatField",
+         DataTypes.FLOAT,
+         "manyFloatField",
+         FieldCardinality.MANY,
+         DataTypes.FLOAT,
+         "booleanField",
+         DataTypes.BOOLEAN,
+         "manyBooleanField",
+         FieldCardinality.MANY,
+         DataTypes.BOOLEAN,
+         "stringField",
+         DataTypes.STRING,
+         "manyStringField",
+         FieldCardinality.MANY,
+         DataTypes.STRING,
+         "dataField",
+         data[1],
+         "manyDataField",
+         FieldCardinality.MANY,
+         data[1],
+         "enumField",
+         enums[0],
+         "manyEnumField",
+         FieldCardinality.MANY,
+         enums[0]);
 
-      Path projectDir = outputDir.resolve("generated-projects/com.ngc.model1.messages");
-      Assert.assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.blocs.gradle.plugin.domain");
-      checkVelocity(projectDir);
-      List<Tdomain> domains = getDomain(projectDir);
-      domains.forEach(domain -> {
-         assertNotNull(domain.getConfig());
-         assertNotNull(domain.getConfig().isUseVerboseImports());
-         assertTrue(domain.getConfig().isUseVerboseImports());
+      ModelUtils.mockData(data[1],
+         superData[2],
+         "nestedField",
+         DataTypes.INT,
+         "nestedDataField",
+         data[3]);
+
+      ModelUtils.mockData(data[2], null, "nestedSuperField", DataTypes.INT, "nstedSuperEnumField", enums[1]);
+
+      ModelUtils.mockData(data[3], null, "nestedNestedField", DataTypes.INT, "nestedNestedEnumField", enums[3]);
+      ModelUtils.mockData(data[4], null, "superSuperNestedField", DataTypes.INT, "superSuperNestedEnumField", enums[4]);
+
+      ModelUtils.mockData(data[5], null);
+
+      ModelUtils.mockData(superData[0],
+         superData[1],
+         "superField",
+         DataTypes.INT,
+         "superDataField",
+         data[2]);
+
+      ModelUtils.mockData(superData[1],
+         null,
+         "superSuperField",
+         DataTypes.INT,
+         "superSuperDataField",
+         data[4]);
+
+      ModelUtils.mockData(superData[2], null, "superNestedField", DataTypes.INT, "superNestedEnumField", enums[2]);
+
+      PubSubModel model = new PubSubModel("com.Model");
+      model.addInput("input1", data[0]);
+      model.addOutput("output1", data[5]);
+
+      runCommand(model);
+
+      Path outputDirectory = this.outputDirectory.getRoot().toPath();
+      Path projectDirectory = outputDirectory.resolve("generated-projects").resolve("com.model.messages");
+
+      assertTrue(
+         "Project directory incorrect: "
+            + Files.list(outputDirectory).map(Object::toString).collect(Collectors.joining(", ")),
+         Files.isDirectory(projectDirectory));
+
+      Path gradleBuild = projectDirectory.resolve("build.generated.gradle");
+      assertTrue(Files.isRegularFile(gradleBuild));
+
+      Path sourceDirectory = projectDirectory.resolve(Paths.get("src", "main", "proto"));
+      assertTrue(Files.isDirectory(sourceDirectory));
+
+      Map<String, List<Path>> fileMap = Files.walk(sourceDirectory)
+                                             .filter(Files::isRegularFile)
+                                             .peek(
+                                                file -> assertTrue(file.toString(), file.toString().endsWith(".proto")))
+                                             .collect(Collectors.groupingBy(file -> {
+                                                String name = ((Path) file).getFileName().toString();
+                                                name = name.substring(0, name.lastIndexOf('.'));
+                                                return name;
+                                             }));
+
+      Map<String, Path> files = new HashMap<>();
+      fileMap.forEach((name, list) -> {
+         assertEquals("Unexpected duplicate files: " + list, 1, list.size());
+         files.put(name, list.get(0));
       });
-      Map<String, Tobject> objects = getDomainObjects(projectDir);
-      assertFalse(objects.get("com.ngc.model1.b0.Base0").isGenerated());
-      assertFalse(objects.get("com.ngc.model1.b1.Base1").isGenerated());
-      assertFalse(objects.get("com.ngc.model1.b2.Base2").isGenerated());
-      assertTrue(objects.get("com.ngc.model1.c1.Child1").isGenerated());
-      assertTrue(objects.get("com.ngc.model1.c2.Child2").isGenerated());
-      assertTrue(objects.get("com.ngc.model1.d1.Data1").isGenerated());
-      assertTrue(objects.get("com.ngc.model1.e1.Enum1").isGenerated());
+
+      assertEquals("Invalid number of files generated: ", data.length + enums.length, files.size());
+
+      IntStream.range(0, data.length).forEach(i -> assertTrue(files.containsKey("Data" + i)));
+      IntStream.range(0, enums.length).forEach(i -> assertTrue(files.containsKey("Enum" + i)));
+
    }
 
-   private void runCommand(Object... keyValues) {
+   private void runCommand(IModel model, String... keyValues) throws IOException {
+      IJellyFishCommandOptions mockOptions = Mockito.mock(IJellyFishCommandOptions.class);
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
-      for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         collection.addParameter(new DefaultParameter<>((String) keyValues[n]).setValue(keyValues[n + 1]));
+      collection.addParameter(new DefaultParameter<>(
+         CreateProtocolbufferMessagesCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDirectory.getRoot().toPath()));
+      collection.addParameter(new DefaultParameter<>(
+         CreateProtocolbufferMessagesCommand.MODEL_PROPERTY,
+         model.getFullyQualifiedName()));
+
+      for (int n = 0; n < keyValues.length; n += 2) {
+         collection.addParameter(new DefaultParameter<String>(keyValues[n]).setValue(keyValues[n + 1]));
       }
-      Mockito.when(options.getParameters()).thenReturn(collection);
-      cmd.run(options);
+
+      when(mockOptions.getParameters()).thenReturn(collection);
+      when(mockOptions.getSystemDescriptor()).thenReturn(mock(ISystemDescriptor.class));
+      when(mockOptions.getSystemDescriptor().findModel(model.getFullyQualifiedName())).thenReturn(Optional.of(model));
+
+      command.run(mockOptions);
    }
 
-   private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {
-      Path buildFile = projectDir.resolve("build.generated.gradle");
-      Assert.assertTrue("build.generated.gradle is missing", Files.isRegularFile(buildFile));
-      String contents = new String(Files.readAllBytes(buildFile));
-      Assert.assertTrue(contents.contains(velocityPath.getFileName().toString()));
-      for (String content : fileContents) {
-         Assert.assertTrue("Expected \"" + content + "\" in build.generated.gradle", contents.contains(content));
-      }
-   }
-
-   private void checkVelocity(Path projectDir) {
-      Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
-      Assert.assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
-      Assert.assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
-                        Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
-   }
-
-   private List<Tdomain> getDomain(Path projectDir) throws IOException {
-      Path domainDir = projectDir.resolve(Paths.get("src", "main", "resources", "domain"));
-      assertTrue(Files.isDirectory(domainDir));
-      List<Tdomain> domains = Files.list(domainDir)
-                                   .filter(Files::isRegularFile)
-                                   .filter(f -> f.toAbsolutePath().toString().endsWith(".xml"))
-                                   .map(f -> {
-                                      try {
-                                         return JAXBUtilities.load(f.toFile(), Tdomain.class);
-                                      } catch (IOException e) {
-                                         throw new AssertionError(e);
-                                      }
-                                   })
-                                   .collect(Collectors.toList());
-      return domains;
-   }
-
-   private Map<String, Tobject> getDomainObjects(Path projectDir) throws IOException {
-      List<Tdomain> domains = getDomain(projectDir);
-      Map<String, Tobject> objects = new HashMap<>();
-      domains.forEach(domain -> {
-         domain.getObject().forEach(object -> objects.put(object.getClazz(), object));
-      });
-      return objects;
-   }
-
-   private final Module testServiceModule = new AbstractModule() {
+   private static final Module TEST_SERVICE_MODULE = new AbstractModule() {
       @Override
       protected void configure() {
-         bind(ILogService.class).to(PrintStreamLogService.class);
-         MockedTemplateService mockedTemplateService = new MockedTemplateService()
-               .useRealPropertyService()
-               .useDefaultUserValues(true)
-               .setTemplateDirectory(
-                     CreateProtocolbufferMessagesCommand.class.getPackage().getName(),
-                     Paths.get("src/main/template"));
-
+         bind(ILogService.class).toInstance(mock(ILogService.class));
+         MockedTemplateService mockedTemplateService = new MockedTemplateService().useRealPropertyService()
+                                                                                  .setTemplateDirectory(
+                                                                                     CreateProtocolbufferMessagesCommand.class.getPackage()
+                                                                                                                              .getName()
+                                                                                        + CreateProtocolbufferMessagesCommand.MESSAGES_BUILD_TEMPLATE_SUFFIX,
+                                                                                     Paths.get("src",
+                                                                                        "main",
+                                                                                        "templates",
+                                                                                        CreateProtocolbufferMessagesCommand.MESSAGES_BUILD_TEMPLATE_SUFFIX.substring(
+                                                                                           1)))
+                                                                                  .setTemplateDirectory(
+                                                                                     CreateProtocolbufferMessagesCommand.class.getPackage()
+                                                                                                                              .getName()
+                                                                                        + CreateProtocolbufferMessagesCommand.MESSAGES_PROTO_TEMPLATE_SUFFIX,
+                                                                                     Paths.get("src",
+                                                                                        "main",
+                                                                                        "templates",
+                                                                                        CreateProtocolbufferMessagesCommand.MESSAGES_PROTO_TEMPLATE_SUFFIX.substring(
+                                                                                           1)));
          bind(ITemplateService.class).toInstance(mockedTemplateService);
-         bind(IResourceService.class).toInstance(resourceService);
       }
    };
 
-   private Collection<Module> getModules() {
+   private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
-      modules.add(testServiceModule);
+      modules.add(TEST_SERVICE_MODULE);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         if (!(dynamicModule instanceof LogServiceModule) && !(dynamicModule instanceof ResourceServiceModule)
-             && !(dynamicModule instanceof TemplateServiceGuiceModule)) {
+         if (!(dynamicModule instanceof TemplateServiceGuiceModule || dynamicModule instanceof PrintStreamLogService)) {
             modules.add(dynamicModule);
          }
       }
@@ -199,5 +243,7 @@ public class CreateProtocolbufferMessagesCommandIT {
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       return modules;
    }
+
+   private static final Injector injector = Guice.createInjector(getModules());
 
 }

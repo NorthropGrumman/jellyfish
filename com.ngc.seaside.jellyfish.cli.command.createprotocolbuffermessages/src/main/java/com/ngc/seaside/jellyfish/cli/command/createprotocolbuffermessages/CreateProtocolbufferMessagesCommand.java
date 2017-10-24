@@ -1,29 +1,28 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.utilities.resource.ITemporaryFileResource;
-import com.ngc.seaside.bootstrap.utilities.resource.TemporaryFileResource;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
-import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.cli.command.createdomain.CreateDomainCommand;
+import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDataDto;
+import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -33,34 +32,34 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * This command generates the message IDL and gradle project structure that will
  * produce the protocol buffer message bundle.
- *
- * @author bperkins
  */
 @Component(service = IJellyFishCommand.class)
 public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    static final String NAME = "create-protocolbuffer-messages";
-   static final String CREATE_DOMAIN_COMMAND = "create-domain";
-   static final String TEMPLATE_FILE = "proto-messages.vm";
-   static final String DEFAULT_EXT_PROPERTY = "proto";
    static final IUsage USAGE = createUsage();
 
+   static final String MESSAGES_BUILD_TEMPLATE_SUFFIX = "-build";
+   static final String MESSAGES_PROTO_TEMPLATE_SUFFIX = "-proto";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+
    private ILogService logService;
-   private IJellyFishCommandProvider jellyfishCommandProvider;
-   private IResourceService resourceService;
-   private IPackageNamingService packageNamingService;
    private IProjectNamingService projectNamingService;
+   private IPackageNamingService packageNamingService;
+   private IDataFieldGenerationService dataFieldGenerationService;
+   private IDataService dataService;
+   private ITemplateService templateService;
 
    @Override
    public String getName() {
@@ -73,70 +72,67 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    }
 
    @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
-      final IModel model = evaluateModelParameter(commandOptions);
-      IProjectInformation messageProjectName = projectNamingService.getMessageProjectName(commandOptions, model);
-      String artifactId = messageProjectName.getArtifactId();
+   public void run(IJellyFishCommandOptions options) {
+      IModel model = evaluateModelParameter(options);
 
-      // Unpack the velocity template to a temporary directory.
-      final ITemporaryFileResource velocityTemplate = TemporaryFileResource.forClasspathResource(
-         CreateProtocolbufferMessagesCommand.class,
-         TEMPLATE_FILE);
-      resourceService.readResource(velocityTemplate);
-      final String domainTemplate = velocityTemplate.getTemporaryFile().toAbsolutePath().toString();
+      Path outputDirectory = Paths.get(
+         options.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      boolean clean = CommonParameters.evaluateBooleanParameter(options.getParameters(), CLEAN_PROPERTY);
 
-      Function<INamedChild<IPackage>, String> packageGenerator = (d) -> packageNamingService.getMessagePackageName(
-         commandOptions, d);
-      Supplier<IProjectInformation> messageProjectNamer = () -> messageProjectName;
-      Predicate<INamedChild<IPackage>> predicate = child -> isGenerated(model, child);
+      IProjectInformation projectInfo = projectNamingService.getMessageProjectName(options, model);
 
-      jellyfishCommandProvider.run(CREATE_DOMAIN_COMMAND,
-         DefaultJellyFishCommandOptions.mergeWith(commandOptions,
-            new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, domainTemplate),
-            new DefaultParameter<>(CreateDomainCommand.ARTIFACT_ID_PROPERTY, artifactId),
-            new DefaultParameter<>(CreateDomainCommand.PACKAGE_GENERATOR_PROPERTY, packageGenerator),
-            new DefaultParameter<>(CreateDomainCommand.EXTENSION_PROPERTY, DEFAULT_EXT_PROPERTY),
-            new DefaultParameter<>(CreateDomainCommand.BUILD_GRADLE_TEMPLATE_PROPERTY,
-               CreateProtocolbufferMessagesCommand.class.getPackage().getName()),
-            new DefaultParameter<>(CreateDomainCommand.USE_VERBOSE_IMPORTS_PROPERTY, true),
-            new DefaultParameter<>(CreateDomainCommand.PROJECT_NAMER_PROPERTY, messageProjectNamer),
-            new DefaultParameter<>(CreateDomainCommand.GENERATED_OBJECT_PREDICATE_PROPERTY, predicate)));
-   }
-   
-   private static boolean isGenerated(IModel model, INamedChild<IPackage> child) {
-      if (child instanceof IData) {
-         IData data = (IData) child;
-         Queue<IData> queue = new ArrayDeque<>();
-         model.getInputs().forEach(field -> queue.add(field.getType()));
-         model.getOutputs().forEach(field -> queue.add(field.getType()));
-         Set<IData> checked = new HashSet<>();
-         Set<IData> generated = new HashSet<>(queue);
-         while (!queue.isEmpty()) {
-            IData next = queue.poll();
-            if (data == next && generated.contains(data)) {
-               return true;
-            }
-            if (checked.add(next)) {
-               next.getFields()
-                   .stream()
-                   .filter(field -> field.getType() == DataTypes.DATA)
-                   .map(IDataField::getReferencedDataType)
-                   .peek(queue::add)
-                   .forEach(generated::add);
-               IData parent = next.getSuperDataType().orElse(null);
-               while (parent != null) {
-                  if (checked.add(parent)) {
-                     queue.add(parent);
-                  } else {
-                     break;
-                  }
-               }
-            }
+      Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
+
+      Map<INamedChild<IPackage>, Boolean> map = dataService.aggregateNestedFields(model);
+
+      MessagesDto messagesDto = new MessagesDto();
+      messagesDto.setProjectName(projectInfo.getDirectoryName());
+      messagesDto.setExportedPackages(map.keySet()
+                                         .stream()
+                                         .map(child -> packageNamingService.getMessagePackageName(options, child))
+                                         .collect(Collectors.toCollection(TreeSet::new)));
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
+      templateService.unpack(
+         CreateProtocolbufferMessagesCommand.class.getPackage().getName() + MESSAGES_BUILD_TEMPLATE_SUFFIX,
+         parameters,
+         outputDirectory,
+         clean);
+
+      map.forEach((child, normal) -> {
+         if (normal) {
+            MessagesDataDto dataDto = new MessagesDataDto();
+            dataDto.setPackageName(packageNamingService.getMessagePackageName(options, child));
+            dataDto.setClassName(child.getName());
+            dataDto.setData(child);
+            dataDto.setDataService(field -> dataFieldGenerationService.getMessagesField(options, field));
+            DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+            dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
+            templateService.unpack(
+               CreateProtocolbufferMessagesCommand.class.getPackage().getName() + MESSAGES_PROTO_TEMPLATE_SUFFIX,
+               dataParameters,
+               projectDirectory,
+               false);
          }
-         return false;
-      }
+      });
 
-      return true;
+      updateGradleDotSettings(outputDirectory, projectInfo);
+   }
+
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
+         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ID.getName(), info.getGroupId()));
+      updatedParameters.addParameter(
+         new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), info.getArtifactId()));
+      try {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("failed to update settings.gradle!", e);
+      }
    }
 
    @Activate
@@ -149,67 +145,16 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       logService.trace(getClass(), "Deactivated");
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
-   /**
-    * Remove log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
-   /**
-    * Sets the JellyFish Command Provider
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeJellyFishCommandProvider")
-   public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
-      this.jellyfishCommandProvider = ref;
-   }
-
-   /**
-    * Remove the JellyFish Command Provider
-    */
-   public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
-      setJellyFishCommandProvider(null);
-   }
-
-   /**
-    * Sets the resource service
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeResourceService")
-   public void setResourceService(IResourceService ref) {
-      this.resourceService = ref;
-   }
-
-   /**
-    * Remove the resource service
-    */
-   public void removeResourceService(IResourceService ref) {
-      setResourceService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePackageNamingService")
-   public void setPackageNamingService(IPackageNamingService ref) {
-      this.packageNamingService = ref;
-   }
-
-   public void removePackageNamingService(IPackageNamingService ref) {
-      setPackageNamingService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
    }
@@ -218,10 +163,50 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
       setProjectNamingService(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setPackageNamingService(IPackageNamingService ref) {
+      this.packageNamingService = ref;
+
+   }
+
+   public void removePackageNamingService(IPackageNamingService ref) {
+      setPackageNamingService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setDataFieldGenerationService(IDataFieldGenerationService ref) {
+      this.dataFieldGenerationService = ref;
+
+   }
+
+   public void removeDataFieldGenerationService(IDataFieldGenerationService ref) {
+      setDataFieldGenerationService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setDataService(IDataService ref) {
+      this.dataService = ref;
+
+   }
+
+   public void removeDataService(IDataService ref) {
+      setDataService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+
+   }
+
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
       IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName = parameters.getParameter(CreateDomainCommand.MODEL_PROPERTY).getStringValue();
+      final String modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 

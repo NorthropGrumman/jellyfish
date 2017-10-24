@@ -1,14 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
@@ -22,17 +22,17 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
 
    @Inject
    public CreateProtocolbufferMessagesCommandGuiceWrapper(ILogService logService,
-                                                          IJellyFishCommandProvider jellyfishCommandProvider,
-                                                          IResourceService resourceService,
-                                                          IJellyFishCommandProvider provider,
+                                                          IProjectNamingService projectNamingService,
                                                           IPackageNamingService packageNamingService,
-                                                          IProjectNamingService projectNamingService) {
+                                                          ITemplateService templateService,
+                                                          IDataService dataService,
+                                                          IDataFieldGenerationService dataFieldGenerationService) {
       delegate.setLogService(logService);
-      delegate.setJellyFishCommandProvider(jellyfishCommandProvider);
-      delegate.setResourceService(resourceService);
-      delegate.setJellyFishCommandProvider(provider);
-      delegate.setPackageNamingService(packageNamingService);
       delegate.setProjectNamingService(projectNamingService);
+      delegate.setPackageNamingService(packageNamingService);
+      delegate.setTemplateService(templateService);
+      delegate.setDataService(dataService);
+      delegate.setDataFieldGenerationService(dataFieldGenerationService);
       delegate.activate();
    }
 

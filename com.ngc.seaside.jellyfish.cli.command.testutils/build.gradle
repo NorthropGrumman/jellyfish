@@ -1,4 +1,8 @@
 dependencies {
+   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+   compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+   compile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+   
    compile "com.ngc.blocs:blocs-core:$blocsVersion"
    compile "com.ngc.blocs:service.api:$blocsVersion"
    compile "commons-io:commons-io:$commonsIOVersion"

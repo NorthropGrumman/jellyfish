@@ -72,6 +72,9 @@ project(':com.ngc.seaside.jellyfish.service.name.impl.namingservices').name = 'j
 include 'com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice'
 project(':com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice').name = 'jellyfish.service.scenario.impl.scenarioservice'
 
+include 'com.ngc.seaside.jellyfish.service.data.impl.dataservice'
+project(':com.ngc.seaside.jellyfish.service.data.impl.dataservice').name = 'jellyfish.service.data.impl.dataservice'
+
 include 'com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice'
 project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice').name = 'jellyfish.service.config.impl.transportconfigurationservice'
 

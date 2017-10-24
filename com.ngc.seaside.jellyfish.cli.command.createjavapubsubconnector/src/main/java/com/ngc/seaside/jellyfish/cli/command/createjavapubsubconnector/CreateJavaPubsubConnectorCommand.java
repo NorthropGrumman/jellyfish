@@ -13,6 +13,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto.ConnectorDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
@@ -80,6 +81,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    private IPackageNamingService packageService;
    private IProjectNamingService projectService;
    private IJavaServiceGenerationService generationService;
+   private IDataFieldGenerationService dataFieldService;
 
    @Override
    public String getName() {
@@ -90,7 +92,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    public IUsage getUsage() {
       return USAGE;
    }
-
+   
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       final Path outputDirectory = Paths.get(commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
@@ -110,8 +112,9 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(packageName);
       dto.setModel(model);
-      dto.setEventsPackageName(value -> packageService.getEventPackageName(commandOptions, value));
-      dto.setMessagesPackageName(value -> packageService.getMessagePackageName(commandOptions, value));
+      dto.setOptions(commandOptions);
+      dto.setPackageService(packageService);
+      dto.setDataFieldService(dataFieldService);
       dto.setFields(FIELDS_FUNCTION);
       EnumDto<?> transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
@@ -289,140 +292,85 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       logService.trace(getClass(), "Deactivated");
    }
 
-   /**
-    * Sets template service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
 
-   /**
-    * Remove template service.
-    */
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
-   /**
-    * Remove log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
-   /**
-    * Sets scenario service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setScenarioService(IScenarioService ref) {
       this.scenarioService = ref;
    }
 
-   /**
-    * Remove scenario service.
-    */
    public void removeScenarioService(IScenarioService ref) {
       setLogService(null);
    }
 
-   /**
-    * Sets transport configuration service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setTransportConfigurationService(ITransportConfigurationService ref) {
       this.transportConfigService = ref;
    }
 
-   /**
-    * Remove transport configuration service.
-    */
    public void removeTransportConfigurationService(ITransportConfigurationService ref) {
       setTransportConfigurationService(null);
    }
 
-   /**
-    * Sets requirements service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setRequirementsService(IRequirementsService ref) {
       this.requirementsService = ref;
    }
 
-   /**
-    * Remove requirements service.
-    */
    public void removeRequirementsService(IRequirementsService ref) {
       setRequirementsService(null);
    }
 
-   /**
-    * Sets package naming service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageService = ref;
    }
 
-   /**
-    * Remove package naming service.
-    */
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
    }
 
-   /**
-    * Sets project naming service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectService = ref;
    }
 
-   /**
-    * Remove project naming service.
-    */
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
 
-   /**
-    * Sets java service generation service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
       this.generationService = ref;
    }
 
-   /**
-    * Remove java service generation service.
-    */
    public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
       setJavaServiceGenerationService(null);
+   }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setDataFieldGenerationService(IDataFieldGenerationService ref) {
+      this.dataFieldService = ref;
+   }
+
+   public void removeDataFieldGenerationService(IDataFieldGenerationService ref) {
+      setDataFieldGenerationService(null);
    }
 
    /**
