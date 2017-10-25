@@ -1,0 +1,5 @@
+package test1
+
+data Data1 {
+	float field1
+}

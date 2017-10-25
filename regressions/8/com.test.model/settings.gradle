@@ -1,0 +1,28 @@
+rootProject.name = 'generatedProject'
+
+include 'com.ngc.test.model.domain'
+project(':com.ngc.test.model.domain').name = 'model.domain'
+
+include 'generated-projects/test.model.events'
+project(':generated-projects/test.model.events').name = 'model.events'
+
+include 'com.ngc.test.model.tests'
+project(':com.ngc.test.model.tests').name = 'model.tests'
+
+include 'com.ngc.test.model.distribution'
+project(':com.ngc.test.model.distribution').name = 'model.distribution'
+
+include 'test.model.impl'
+project(':test.model.impl').name = 'model.impl'
+
+include 'test.model.config'
+project(':test.model.config').name = 'model.config'
+
+include 'generated-projects/test.model.base'
+project(':generated-projects/test.model.base').name = 'model.base'
+
+include 'generated-projects/test.model.connector'
+project(':generated-projects/test.model.connector').name = 'model.connector'
+
+include 'generated-projects/test.model.messages'
+project(':generated-projects/test.model.messages').name = 'model.messages'

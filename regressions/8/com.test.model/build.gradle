@@ -1,0 +1,69 @@
+/**
+ * generatedProject
+ */
+
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+   dependencies {
+      classpath 'com.ngc.blocs:gradle.plugin:0.4'
+      classpath 'com.ngc.seaside:gradle.plugins:1.6'
+      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.6.0'
+      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+      classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+   }
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
+
+
+ext {
+    systemDescriptorProjectName = 'qualified.names.systemdescriptor'
+    systemDescriptorProjectVersion = '1.0.0-SNAPSHOT'
+    systemDescriptorName = '${systemDescriptorProjectName}-${systemDescriptorProjectVersion}'
+    systemDescriptorLocation = "${project.buildDir}/${systemDescriptorDirectoryName}/${systemDescriptorName}"
+    modelName = 'test.Model'
+}
+
+dependencies {
+	generate "com.ngc.seaside.jellyfish.examples:qualified.names.systemdescriptor:1.0.0-SNAPSHOT@zip"
+}
+
+subprojects {
+
+   // Do not apply the parent plugin to the distribution project.
+   if(!name.endsWith('.distribution')
+       && !name.endsWith('.docker')) {
+      apply plugin: 'com.ngc.seaside.parent'
+    }
+
+    group = 'com.ngc.test'
+    version = '1.0-SNAPSHOT'
+
+    ext {
+        starfishCoreVersion = '1.4.0'
+        transportServiceVersion = '1.3'
+        multicastTransportVersion = '1.1.1'
+        seasideBootstrapVersion = '1.5'
+
+        blocsCoreVersion = '2.1'
+        blocsDomainVersion = '2.1'
+
+        guiceVersion = '4.1.0'
+        osgiVersion =  '6.0.0'
+        guavaVersion = '22.0'
+        protobufVersion = '3.2.0'
+
+        junitVersion = '4.12'
+        mockitoVersion = '2.7.14'
+        cucumberVersion = '1.2.5'
+    }
+}
+
+unpacker.unpack()
