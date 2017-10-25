@@ -1,10 +1,12 @@
 package com.ngc.test.model1.tests.main;
 
+import com.ngc.test.model1.tests.steps.Model1Steps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.test.model1.tests.steps.Model1Steps Model1Steps}.
+ * This application runs the {@link Model1Steps}.
  */
 public class Model1TestMain {
 
@@ -23,7 +25,7 @@ public class Model1TestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", Model1TestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", Model1Steps.class.getPackage().getName(),
                                   featurePath };
          }
 

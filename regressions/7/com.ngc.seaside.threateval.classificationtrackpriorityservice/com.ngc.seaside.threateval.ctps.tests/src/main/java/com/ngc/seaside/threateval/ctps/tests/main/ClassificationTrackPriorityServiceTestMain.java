@@ -1,10 +1,12 @@
 package com.ngc.seaside.threateval.ctps.tests.main;
 
+import com.ngc.seaside.threateval.ctps.tests.steps.ClassificationTrackPriorityServiceSteps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.seaside.threateval.ctps.tests.steps.ClassificationTrackPriorityServiceSteps ClassificationTrackPriorityServiceSteps}.
+ * This application runs the {@link ClassificationTrackPriorityServiceSteps}.
  */
 public class ClassificationTrackPriorityServiceTestMain {
 
@@ -23,7 +25,7 @@ public class ClassificationTrackPriorityServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", ClassificationTrackPriorityServiceTestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", ClassificationTrackPriorityServiceSteps.class.getPackage().getName(),
                                   featurePath };
          }
 

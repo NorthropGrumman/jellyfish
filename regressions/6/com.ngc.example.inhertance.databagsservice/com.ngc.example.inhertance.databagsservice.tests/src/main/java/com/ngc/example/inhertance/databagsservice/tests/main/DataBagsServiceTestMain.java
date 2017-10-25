@@ -1,10 +1,12 @@
 package com.ngc.example.inhertance.databagsservice.tests.main;
 
+import com.ngc.example.inhertance.databagsservice.tests.steps.DataBagsServiceSteps;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * This application runs the {@link com.ngc.example.inhertance.databagsservice.tests.steps.DataBagsServiceSteps DataBagsServiceSteps}.
+ * This application runs the {@link DataBagsServiceSteps}.
  */
 public class DataBagsServiceTestMain {
 
@@ -23,7 +25,7 @@ public class DataBagsServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", DataBagsServiceTestMain.class.getPackage().getName(),
+            args = new String[] { "--glue", DataBagsServiceSteps.class.getPackage().getName(),
                                   featurePath };
          }
 
