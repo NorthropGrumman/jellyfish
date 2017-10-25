@@ -6,13 +6,25 @@ public class Model1DataConversion {
       com.ngc.test.model1.event.Data1 to = new com.ngc.test.model1.event.Data1();
 
       to.setBooleanField(from.getBooleanField());
-      to.setManyBooleanField(new java.util.ArrayList<>(from.getManyBooleanFieldList()));
+      to.setManyBooleanField(new java.util.ArrayList<>(from.getManyBooleanFieldCount()));
+      for (java.lang.Boolean value : from.getManyBooleanFieldList()) {
+         to.getManyBooleanField().add(value);
+      }
       to.setIntField(from.getIntField());
-      to.setManyIntField(new java.util.ArrayList<>(from.getManyIntFieldList()));
+      to.setManyIntField(new java.util.ArrayList<>(from.getManyIntFieldCount()));
+      for (java.lang.Integer value : from.getManyIntFieldList()) {
+         to.getManyIntField().add(value);
+      }
       to.setFloatField(from.getFloatField());
-      to.setManyFloatField(new java.util.ArrayList<>(from.getManyFloatFieldList()));
+      to.setManyFloatField(new java.util.ArrayList<>(from.getManyFloatFieldCount()));
+      for (java.lang.Float value : from.getManyFloatFieldList()) {
+         to.getManyFloatField().add(value);
+      }
       to.setStringField(from.getStringField());
-      to.setManyStringField(new java.util.ArrayList<>(from.getManyStringFieldList()));
+      to.setManyStringField(new java.util.ArrayList<>(from.getManyStringFieldCount()));
+      for (java.lang.String value : from.getManyStringFieldList()) {
+         to.getManyStringField().add(value);
+      }
       to.setEnumField(convert(from.getEnumField()));
       to.setManyEnumField(new java.util.ArrayList<>(from.getManyEnumFieldCount()));
       for (com.ngc.test.model1.Enum1 value : from.getManyEnumFieldList()) {
@@ -52,13 +64,21 @@ public class Model1DataConversion {
       com.ngc.test.model1.Data1.Builder to = com.ngc.test.model1.Data1.newBuilder();
 
       to.setBooleanField(from.getBooleanField());
-      to.addAllManyBooleanField(from.getManyBooleanField());
+      for (java.lang.Boolean value : from.getManyBooleanField()) {
+         to.addManyBooleanField(value);
+      }
       to.setIntField(from.getIntField());
-      to.addAllManyIntField(from.getManyIntField());
+      for (java.lang.Integer value : from.getManyIntField()) {
+         to.addManyIntField(value);
+      }
       to.setFloatField(from.getFloatField());
-      to.addAllManyFloatField(from.getManyFloatField());
+      for (java.lang.Float value : from.getManyFloatField()) {
+         to.addManyFloatField(value);
+      }
       to.setStringField(from.getStringField());
-      to.addAllManyStringField(from.getManyStringField());
+      for (java.lang.String value : from.getManyStringField()) {
+         to.addManyStringField(value);
+      }
       to.setEnumField(convert(from.getEnumField()));
       for (com.ngc.test.model1.event.Enum1 value : from.getManyEnumField()) {
          to.addManyEnumField(convert(value));

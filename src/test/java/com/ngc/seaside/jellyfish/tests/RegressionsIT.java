@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.tests;
 
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
+
 import org.gradle.api.logging.Logger;
 import org.gradle.internal.impldep.org.apache.commons.io.FileUtils;
 import org.gradle.tooling.BuildLauncher;
@@ -29,6 +30,12 @@ import static org.junit.Assert.fail;
 
 public class RegressionsIT {
 
+   private static final String[] SYSTEM_DESCRIPTOR_PROJECTS = {
+         "threat-eval-system-descriptor",
+         "data-inheritance-descriptor",
+         "pubsub-system-descriptor"
+   };
+
    private static final String[] IGNORED_FILE_NAMES = {
          ".*\\.bin$",
          ".*\\.jar$",
@@ -49,29 +56,30 @@ public class RegressionsIT {
    public void setup() throws Throwable {
       // Set the regressions directory variable
       regressionTestsDir = System.getProperty("user.dir") + File.separator + "regressions";
-      
+
       // Start with fresh logs. Remove any previously generated 'build' folders in the 
       //    given projects
       removeGivenProjectsBuildFolder(regressionTestsDir);
-      
+
       // Start with fresh logs. Remove any previously generated projects
       removeGeneratedProjects(regressionTestsDir);
    }
 
    /**
     * This is the start method for the regression test
-    * 
+    *
     * @throws IOException - Looking through directories and File reading
     */
    @Test
    public void testGenerationAndDiff() throws IOException {
+      buildAndInstallSdProjects();
 
       File[] subs = new File(regressionTestsDir).listFiles();
       Map<String, Boolean> regressionScore = new HashMap<String, Boolean>();
 
       if (subs == null || subs.length == 0) {
          fail("Error: There are no directories under the 'regressions' folder. This test"
-            + "looks for projects under the 'regressions' folder to perform tests.");
+              + "looks for projects under the 'regressions' folder to perform tests.");
       } else {
 
          // Loop through the subdirectories under 'regressions' and perform operations
@@ -82,29 +90,56 @@ public class RegressionsIT {
                regressionScore.put(subDir.getName(), generateJellyfishProject(subDir));
             }
          }
-         
-         printRegressionSummary(regressionScore);         
+
+         printRegressionSummary(regressionScore);
       }
-      
+
       if (!regressionScore.containsValue(false)) {
          // All the tests pass. No need to keep the generated files
          removeGeneratedProjects(regressionTestsDir);
       }
-      
+
       // The below Assert will check to see if there are any failures in the diff evaluation
       Assert.assertFalse(regressionScore.containsValue(false));
    }
 
+   private void buildAndInstallSdProjects() throws IOException {
+      String gradleHome = System.getenv("GRADLE_HOME");
+      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
+
+      File mainDir = new File(System.getProperty("user.dir"));
+      for (String sdProject : SYSTEM_DESCRIPTOR_PROJECTS) {
+         File projectDir = new File(mainDir, sdProject);
+         System.out.println("Running 'gradle clean build install' on SD project: " + sdProject);
+
+         ProjectConnection connection = GradleConnector.newConnector()
+               .useInstallation(Paths.get(gradleHome).toFile())
+               .forProjectDirectory(projectDir)
+               .connect();
+
+         try(OutputStream out = Files.newOutputStream(Paths.get("build", "gradle-" + sdProject + ".log"))) {
+            connection.newBuild()
+                  .forTasks("clean", "build", "install")
+                  .setStandardOutput(out)
+                  .setStandardError(out)
+                  .run();
+         } finally {
+            connection.close();
+         }
+      }
+   }
+
    /**
-    * This method is called to remove 'generatedProject' folders in each regression test 
+    * This method is called to remove 'generatedProject' folders in each regression test
+    *
     * @param regDir - the 'regressions' directory
     */
    private static void removeGeneratedProjects(String regDir) {
       File[] subs = new File(regDir).listFiles();
-      
+
       if (subs == null || subs.length == 0) {
          fail("Error: There are no directories under the 'regressions' folder. This test"
-            + "looks for projects under the 'regressions' folder to perform tests.");
+              + "looks for projects under the 'regressions' folder to perform tests.");
       } else {
 
          // Loop through the subdirectories under 'regressions' and delete any 'generatedProject' folders
@@ -119,17 +154,18 @@ public class RegressionsIT {
          }
       }
    }
-   
+
    /**
-    * This method is called to remove 'build' folders in the given project of each regression test 
+    * This method is called to remove 'build' folders in the given project of each regression test
+    *
     * @param regDir - the 'regressions' directory
     */
    private static void removeGivenProjectsBuildFolder(String regDir) {
       File[] subs = new File(regDir).listFiles();
-      
+
       if (subs == null || subs.length == 0) {
          fail("Error: There are no directories under the 'regressions' folder. This test"
-            + "looks for projects under the 'regressions' folder to perform tests.");
+              + "looks for projects under the 'regressions' folder to perform tests.");
       } else {
 
          // Loop through the subdirectories under 'regressions' and delete any 'build' folders under the 
@@ -139,7 +175,7 @@ public class RegressionsIT {
 
                // regressionTestFolder is regressions\1\, regressions\2\, etc.
                for (File regressionTestSubFolder : regressionTestFolder.listFiles()) {
-                  
+
                   // find the given project
                   if (regressionTestSubFolder.getName().matches("^com.ngc.*$")) {
                      removeBuildFolders(regressionTestSubFolder);
@@ -151,7 +187,8 @@ public class RegressionsIT {
    }
 
    /**
-    * Recursive method to search for folders named 'build' and delete them. 
+    * Recursive method to search for folders named 'build' and delete them.
+    *
     * @param regressionTestSubFolder - the current folder
     */
    private static void removeBuildFolders(File regressionTestSubFolder) {
@@ -163,41 +200,38 @@ public class RegressionsIT {
             removeBuildFolders(subFile);
          }
       }
-      
+
    }
 
    /**
     * Simple method to display an organized summary at the end of the build.
-    * @param regressionScore
     */
    private static void printRegressionSummary(Map<String, Boolean> regressionScore) {
       StringBuilder sb = new StringBuilder();
       sb.append("\n\n+---------------------------------------");
       sb.append("\n| REGRESSION TEST: ");
-      
+
       if (regressionScore.containsValue(false)) { //if any regression test failed
          sb.append("FAILED");
       } else {
          sb.append("PASSED");
       }
-      
+
       sb.append("\n+------------------------\n|\n");
       sb.append("|\tRegression Test:\tSuccess:\n");
-      
+
       for (String regNum : regressionScore.keySet()) {
          sb.append("|\t" + regNum + "\t\t\t" + regressionScore.get(regNum) + "\n");
       }
-         
+
       sb.append("|\n+---------------------------------------\n");
       System.out.println(sb.toString());
    }
 
    /**
     * Run Jellyfish using .properties file information
-    * 
+    *
     * @param directory - the directory of the regression test (ex: 1, 2, etc)
-    * @return 
-    * @throws IOException
     */
    private static boolean generateJellyfishProject(File directory) throws IOException {
       System.out.println("Generating jelly fish project in directory: " + directory);
@@ -211,20 +245,20 @@ public class RegressionsIT {
       generatorArguments.put("projectName", "generatedProject");
 
       // Create the generation project object
-    		  
+
       Logger log = Mockito.mock(Logger.class);
       JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log)
-               .setCommand(propertiesValues.get("command"))
-               .setArguments(generatorArguments);
+            .setCommand(propertiesValues.get("command"))
+            .setArguments(generatorArguments);
 
-      if(propertiesValues.containsKey("inputDir")) {
+      if (propertiesValues.containsKey("inputDir")) {
          String relPath = File.separator + propertiesValues.get("inputDir").replace('/', File.separatorChar);
          proj.setInputDir(directory + relPath);
       }
 
       // Generate the object with a firey passion
       proj.generate();
-      
+
       // At this point, the project has been generated. Now, run 'gradle clean build -x text' on each subproject
       boolean pass = runGradleCleanBuildOnProjects(directory.getAbsolutePath());
       return pass;
@@ -233,13 +267,11 @@ public class RegressionsIT {
 
    /**
     * Run 'gradle clean build -x test' command for the generated subproject
-    * 
+    *
     * @param directory - the directory of the newly generated regression test project
-    * @return 
-    * @throws IOException
     */
    private static boolean runGradleCleanBuildOnProjects(String directory) throws IOException {
-      
+
       String givenProject = "";
       for (File file : new File(directory).listFiles()) {
          if (file.getName().contains("com.ngc")) {
@@ -247,10 +279,10 @@ public class RegressionsIT {
             break;
          }
       }
-      
+
       Assert.assertTrue(givenProject != "");
       String generatedProj = directory + File.separator + "generatedProject";
-      
+
       String gradleHome = System.getenv("GRADLE_HOME");
       Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
 
@@ -259,12 +291,11 @@ public class RegressionsIT {
 
       System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
       ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile())
-               .forProjectDirectory(new File(givenProject))
-               .connect();
+            .useInstallation(Paths.get(gradleHome).toFile())
+            .forProjectDirectory(new File(givenProject))
+            .connect();
 
-
-      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
+      try (OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
          BuildLauncher build = connectionToGivenProj.newBuild();
          build.forTasks("clean", "build");
          build.withArguments("-x", "test");
@@ -274,14 +305,14 @@ public class RegressionsIT {
       } finally {
          connectionToGivenProj.close();
       }
-      
+
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
       ProjectConnection connectionToGeneratedProj = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile())
-               .forProjectDirectory(new File(generatedProj))
-               .connect();
+            .useInstallation(Paths.get(gradleHome).toFile())
+            .forProjectDirectory(new File(generatedProj))
+            .connect();
 
-      try(OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.generated.log"))) {
+      try (OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.generated.log"))) {
          BuildLauncher build = connectionToGeneratedProj.newBuild();
          build.forTasks("clean", "build");
          build.withArguments("-x", "test");
@@ -298,9 +329,6 @@ public class RegressionsIT {
 
    /**
     * Perform a diff on the generated project and the given project. They should match
-    * @return 
-    *
-    * @throws IOException
     */
    private static boolean diffDefaultAndGeneratedProjectTrees(String generated) throws IOException {
       String base = generated.replace(File.separator + "generatedProject", "");
@@ -315,7 +343,7 @@ public class RegressionsIT {
       }
 
       Assert.assertNotNull("Error - Missing 'com.ngc...' subdirectory under " + base,
-         defaultProj);
+                           defaultProj);
 
       Assert.assertTrue("Generated folder doesn't exist: " + generated, new File(generated).exists());
       Assert.assertTrue("Given folder doesn't exist: " + defaultProj, defaultProj.exists());
@@ -331,10 +359,11 @@ public class RegressionsIT {
    }
 
    /**
-    * Recursively search through the project tree, comparing directories and files along the way. Return a 
-    *    false value if a mismatch is found. 
+    * Recursively search through the project tree, comparing directories and files along the way. Return a false value
+    * if a mismatch is found.
+    *
     * @param defaultProj the File corresponding to the provided project
-    * @param genProj the File corresponding to the project that was just generated in generateJellyfishProject()
+    * @param genProj     the File corresponding to the project that was just generated in generateJellyfishProject()
     * @return a boolean value indicating that the directory tree is equal
     * @throws IOException Working with FileUtils library
     */
@@ -344,7 +373,7 @@ public class RegressionsIT {
       boolean typeEquality = true;
       boolean fileEquality = true;
       boolean dirEquality = true;
-      
+
       ArrayList<File> defaultFiles = new ArrayList<File>();
       ArrayList<File> genProjFiles = new ArrayList<File>();
       for (File file : defaultProj.listFiles()) {
@@ -368,7 +397,7 @@ public class RegressionsIT {
             File subFileGenDir = genProjFiles.get(i);
 
             if (subFileDefDir.isFile() && subFileGenDir.isDirectory() ||
-               subFileDefDir.isDirectory() && subFileGenDir.isFile()) {
+                subFileDefDir.isDirectory() && subFileGenDir.isFile()) {
                prettyPrintFilesDifferentType(subFileDefDir, subFileGenDir);
                typeEquality = false;
             }
@@ -382,7 +411,7 @@ public class RegressionsIT {
             if (subFileDefDir.isDirectory() && subFileGenDir.isDirectory()) {
                dirEquality = compareDirectories(subFileDefDir, subFileGenDir);
             }
-            
+
             if (!(typeEquality && fileEquality && dirEquality)) {
                break;
             }
@@ -393,8 +422,9 @@ public class RegressionsIT {
    }
 
    /**
-    * Method to display a user friendly message indicating that the directory arguments do not contain the 
-    *    same number of elements
+    * Method to display a user friendly message indicating that the directory arguments do not contain the same number
+    * of elements
+    *
     * @param defProj - the given project
     * @param genProj - the generated project
     */
@@ -418,16 +448,17 @@ public class RegressionsIT {
    }
 
    /**
-    * This method is called to check that unequal files are indeed "different". Differences in files with 
-    *    certain file types and on lines in comments can be ignored.  
+    * This method is called to check that unequal files are indeed "different". Differences in files with certain file
+    * types and on lines in comments can be ignored.
+    *
     * @param defFile - the given project
     * @param genFile - the generated project
     * @return a boolean value indicating whether or not the files are indeed equal (contain no valid differences)
-    * @throws IOException working with the FileReader library. 
+    * @throws IOException working with the FileReader library.
     */
    private static boolean validFileDifferences(File defFile, File genFile) throws IOException {
       boolean equalFiles = true;
-      
+
       for (String pattern : IGNORED_FILE_NAMES) {
          if (defFile.getName().matches(pattern) || genFile.getName().matches(pattern)) {
             // These files should be ignored in the diff. Don't treat differences found in
@@ -435,7 +466,7 @@ public class RegressionsIT {
             return true;
          }
       }
-      
+
       String generatedName = "generatedProject";
       ArrayList<String> defPath = new ArrayList<String>();
 
@@ -462,12 +493,12 @@ public class RegressionsIT {
          String generatedFileLine;
          int lineNum = 0;
          while ((defaultFileLine = defaultBr.readLine()) != null
-            && (generatedFileLine = generateBr.readLine()) != null) {
+                && (generatedFileLine = generateBr.readLine()) != null) {
             lineNum++;
 
             defaultFileLine = removeComments(defaultFileLine);
             generatedFileLine = removeComments(generatedFileLine);
-            
+
             // It isn't really an error if the only difference is the project name not matching with "generateProject".
             // This is expected. So let's work around this by temporarily changing the generatedProject files
             // to say the default project name, rather than 'generatedProject'.
@@ -499,7 +530,8 @@ public class RegressionsIT {
    }
 
    /**
-    * Removes the comments from the lines. Differences in comments can be ignored. 
+    * Removes the comments from the lines. Differences in comments can be ignored.
+    *
     * @param fileLine the string line to remove the comments from
     * @return the fileLine with comments replaced with ""
     */
@@ -507,31 +539,32 @@ public class RegressionsIT {
       if (fileLine.contains("#")) {
          String toRemove = fileLine.substring(fileLine.indexOf("#"), fileLine.length());
          fileLine = fileLine.replace(toRemove, "");
-      } 
+      }
 
       if (fileLine.contains("//")) {
          String toRemove = fileLine.substring(fileLine.indexOf("//"), fileLine.length());
          fileLine = fileLine.replace(toRemove, "");
       }
-      
+
       if (fileLine.contains("/*") && fileLine.contains("*/")) {
          String toRemove = fileLine.substring(fileLine.indexOf("/*"), fileLine.indexOf("*/"));
          fileLine = fileLine.replace(toRemove, "");
       }
-      
+
       return fileLine;
    }
 
    /**
     * Method to display a user friendly message indicating that the files do not contain equal contents
-    * @param defFile - the evaluated file in the given project
-    * @param genFile - the evaluated file in the generated project
+    *
+    * @param defFile     - the evaluated file in the given project
+    * @param genFile     - the evaluated file in the generated project
     * @param diffLineNum - the line number where the difference was observed
-    * @param defLine - the contents of the evaluated line in the given project
-    * @param genLine - the contents of the evaluated line in the generated project
+    * @param defLine     - the contents of the evaluated line in the given project
+    * @param genLine     - the contents of the evaluated line in the generated project
     */
    private static void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
-            String defLine, String genLine) {
+                                                String defLine, String genLine) {
       System.out.println("--------------------\nFiles are not equal. Valid differences found:");
       System.out.println("Default File: " + defFile.getAbsolutePath());
       System.out.println("Generated File: " + genFile.getAbsolutePath() + "\n");
@@ -543,6 +576,7 @@ public class RegressionsIT {
 
    /**
     * Method to display a user friendly message indicating that the files under investigation are of different types
+    *
     * @param file1 - a file in the given project
     * @param file2 - a file in the generated project
     */
@@ -556,7 +590,8 @@ public class RegressionsIT {
 
    /**
     * Convenience method to read the provided Jellyfish Properties file
-    * @param dir  directory of the properties file
+    *
+    * @param dir directory of the properties file
     * @return a map with property name keys and the corresponding property values
     * @throws IOException working with libraries to read a file on the filesystem
     */
@@ -582,16 +617,17 @@ public class RegressionsIT {
 
    /**
     * Convenience method to delete a directory
+    *
     * @param file the directory to delete
     */
    static void deleteDir(File file) {
       File[] contents = file.listFiles();
       if (contents != null) {
-          for (File f : contents) {
-              deleteDir(f);
-          }
+         for (File f : contents) {
+            deleteDir(f);
+         }
       }
       file.delete();
-  }
-   
+   }
+
 }

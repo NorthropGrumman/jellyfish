@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.ngc.seaside.threateval.datps.common.datatype;
+
+option java_multiple_files = true;
+
+import "com/ngc/seaside/threateval/datps/common/datatype/GPSTime.proto";
+import "com/ngc/seaside/threateval/datps/common/datatype/Vector3.proto";
+
+message StateVector {
+
+   com.ngc.seaside.threateval.datps.common.datatype.GPSTime validityTime = 1;
+   com.ngc.seaside.threateval.datps.common.datatype.Vector3 ecefPosition = 2;
+   com.ngc.seaside.threateval.datps.common.datatype.Vector3 ecefVelocity = 3;
+   com.ngc.seaside.threateval.datps.common.datatype.Vector3 ecefAcc = 4;
+
+}

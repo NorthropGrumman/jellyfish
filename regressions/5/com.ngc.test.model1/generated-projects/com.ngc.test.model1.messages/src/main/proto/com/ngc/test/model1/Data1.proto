@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.ngc.test.model1;
+
+option java_multiple_files = true;
+
+import "com/ngc/test/model1/Data2.proto";
+import "com/ngc/test/model1/Enum1.proto";
+
+message Data1 {
+
+   bool booleanField = 1;
+   repeated bool manyBooleanField = 2;
+   sint32 intField = 3;
+   repeated sint32 manyIntField = 4;
+   float floatField = 5;
+   repeated float manyFloatField = 6;
+   string stringField = 7;
+   repeated string manyStringField = 8;
+   com.ngc.test.model1.Enum1 enumField = 9;
+   repeated com.ngc.test.model1.Enum1 manyEnumField = 10;
+   com.ngc.test.model1.Data2 dataField = 11;
+   repeated com.ngc.test.model1.Data2 manyDataField = 12;
+
+}
