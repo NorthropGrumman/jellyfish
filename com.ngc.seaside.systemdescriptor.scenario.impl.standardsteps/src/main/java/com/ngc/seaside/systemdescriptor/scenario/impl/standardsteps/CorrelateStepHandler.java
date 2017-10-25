@@ -53,9 +53,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       List<String> parameters = step.getParameters();
       if (parameters.size() != 3) {
          context.declare(Severity.ERROR,
-            "Expected parameters of the form: within <number/double> <time unit>",
-            step)
-                .getKeyword();
+            "Expected parameters of the form: <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>",
+            step).getKeyword();
       } else {
 
          leftData = getCorrelationArg(step, 0);

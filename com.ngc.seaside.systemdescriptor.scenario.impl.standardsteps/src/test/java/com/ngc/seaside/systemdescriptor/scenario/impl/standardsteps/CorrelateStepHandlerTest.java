@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.atLeastOnce;
 
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
@@ -69,22 +70,74 @@ public class CorrelateStepHandlerTest {
 //      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
 //   }
    
+ //   @Test
+   //   public void testDoesValidateValidUsage() throws Throwable {
+   //      step = new ScenarioStep();
+   //      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+   //      when(context.getObject()).thenReturn(step);
+   //
+   //      step.getParameters().addAll(Arrays.asList("a.foo", "to", "b.foo"));
+   //      handler.doValidateStep(context);
+   //      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
+   //   }
+      
+   @Test
+   public void testInvalidNumberOfArgs() throws Throwable {
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("a.foo", "to"));
+      when(context.getObject()).thenReturn(step);
+
+      IScenarioStep mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      //Method to test
+      handler.doValidateStep(context);
+      
+      //Result
+      verify(mockedStep).getKeyword();
+   }
+
    @Test
    public void testValidPresentInputToInput() throws Throwable {
+
+      // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
       step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
-      
+
+      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
+      IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
+
+      ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
+      ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
+
+      PubSubModel model = new PubSubModel("com.ModelName");
+      model.addInput("input0", inputDataType0);
+      model.addInput("input1", inputDataType1);
+      IScenario scenarioParent = mock(IScenario.class);
+      when(scenarioParent.getParent()).thenReturn(model);
+      model.addScenario(scenarioParent);
+      step.setParent(scenarioParent);
+      when(context.getObject()).thenReturn(step);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Results
+      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
+
    }
-   
-   @Test 
+
+   @Test
    public void testInvalidPresentInputToInputWrongType() throws Throwable {
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
       step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.stringField0"));
-      
+
    }
-   
+
    @Test
    public void testInvalidPresentInputToSameInputData() throws Throwable {
       step = new ScenarioStep();
@@ -161,7 +214,18 @@ public class CorrelateStepHandlerTest {
    
    
 
-   @Test
+   //   @Test
+   //   public void testDoesValidateValidUsage() throws Throwable {
+   //      step = new ScenarioStep();
+   //      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+   //      when(context.getObject()).thenReturn(step);
+   //
+   //      step.getParameters().addAll(Arrays.asList("a.foo", "to", "b.foo"));
+   //      handler.doValidateStep(context);
+   //      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
+   //   }
+      
+      @Test
    public void testMySanity() throws Throwable {
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
