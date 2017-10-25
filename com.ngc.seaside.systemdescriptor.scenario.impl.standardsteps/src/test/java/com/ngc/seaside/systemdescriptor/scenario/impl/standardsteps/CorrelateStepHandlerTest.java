@@ -68,12 +68,104 @@ public class CorrelateStepHandlerTest {
 //      handler.doValidateStep(context);
 //      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
 //   }
-
+   
    @Test
-   public void testValidPresentVerb() throws Throwable {
+   public void testValidPresentInputToInput() throws Throwable {
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-      step.getParameters().addAll(Arrays.asList("InputDataType0.intField0", "to", "InputDataType1.intField1"));
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
+      
+   }
+   
+   @Test 
+   public void testInvalidPresentInputToInputWrongType() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.stringField0"));
+      
+   }
+   
+   @Test
+   public void testInvalidPresentInputToSameInputData() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input0.intField1"));
+   }
+   
+   @Test
+   public void testInvalidPresentInputToOutput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "output0.intField2"));
+   }
+   
+   @Test
+   public void testInvalidPresentOutputToInput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("output0.intField2", "to", "input0.intField0"));
+   }
+   
+   @Test
+   public void testInvalidPresentCorrelateSameField() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input0.intField0"));
+      
+   }
+   
+   @Test
+   public void testValidFutureInputToOutput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "output0.intField2"));
+   }
+   
+   @Test
+   public void testValidFutureOutputToInput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("output0.intField2", "to", "input0.intField0"));
+      
+   }
+   
+   @Test
+   public void testInvalidFutureInputToInput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
+      
+   }
+   
+   @Test
+   public void testInvalidFutureOutputToOutput() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("output0.intField2", "to", "output1.intField3"));
+   }
+   
+   @Test
+   public void testInvalidFutureInputToOutputWrongType() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "output0.stringField0"));
+   }
+   
+   @Test
+   public void testInvalidFutureOutputToInputWrongType() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("output0.stringField0", "to", "input0.intField0"));
+   }
+   
+   
+   
+
+   @Test
+   public void testMySanity() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
       
       
       IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
@@ -89,12 +181,14 @@ public class CorrelateStepHandlerTest {
       
       //ModelUtils.mockData(data[0], null, field0, "intField1", DataTypes.INT);
       ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
-      ModelUtils.mockData(outputDataType0, null, "intField2", DataTypes.INT);
+      ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
+      ModelUtils.mockData(outputDataType0, null, "intField3", DataTypes.INT);
       
 
       
-      PubSubModel model = new PubSubModel("com.Model");
+      PubSubModel model = new PubSubModel("com.ModelName");
       model.addInput("input0", inputDataType0);
+      model.addInput("input1", inputDataType1);
       model.addOutput("output0", outputDataType0);
       IScenario scenarioParent = mock(IScenario.class);
       when(scenarioParent.getParent()).thenReturn(model);
@@ -106,13 +200,34 @@ public class CorrelateStepHandlerTest {
       INamedChildCollection<IModel, IDataReferenceField> inputs = handler.getInputs(step);
       INamedChildCollection<IModel, IDataReferenceField> outputs = handler.getOutputs(step);
       
-      IDataReferenceField dataRefFieldInput = inputs.getByName("input0").get();
-      IDataReferenceField dataRefFieldOutput = outputs.getByName("output0").get();
+      IDataReferenceField dataRefFieldInput0 = inputs.getByName("input0").get();
+      IDataReferenceField dataRefFieldInput1 = inputs.getByName("input1").get();
+      IDataReferenceField dataRefFieldOutput0 = outputs.getByName("output0").get();
       
-      IData inputData = dataRefFieldInput.getType();
-      System.out.println(inputData.getName());
+      IData inputData0 = dataRefFieldInput0.getType();
+      System.out.println(inputData0.getName());
       
-      for (IDataField val : inputData.getFields()) {
+      for (IDataField val : inputData0.getFields()) {
+         System.out.println(val.getName());
+         System.out.println(val.getType());
+      }
+      
+      System.out.println();
+      
+      IData inputData1 = dataRefFieldInput1.getType();
+      System.out.println(inputData1.getName());
+      
+      for (IDataField val : inputData1.getFields()) {
+         System.out.println(val.getName());
+         System.out.println(val.getType());
+      }
+      
+      System.out.println();
+      
+      IData outputData0 = dataRefFieldOutput0.getType();
+      System.out.println(outputData0.getName());
+      
+      for (IDataField val : outputData0.getFields()) {
          System.out.println(val.getName());
          System.out.println(val.getType());
       }
