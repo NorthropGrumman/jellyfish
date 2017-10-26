@@ -1,14 +1,12 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.MetadataNames;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -18,11 +16,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.Optional;
-
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Component(service = IPackageNamingService.class)
 public class PackageNamingService implements IPackageNamingService {
@@ -182,12 +177,16 @@ public class PackageNamingService implements IPackageNamingService {
             !modelPackageName.equals(dataPackageName),
             "modelPackageName and dataPackageName can't be equal when calling getPackageNameMinusCommonPart!");
 
+      String[] modelParts = modelPackageName.split("\\.");
+      String[] dataParts = dataPackageName.split("\\.");
+      
       // Find the point in the package names where they begin to be different.
-      int maxLen = Math.min(modelPackageName.length(), dataPackageName.length());
+      int maxLen = Math.min(modelParts.length, dataParts.length);
       int positionOfFirstDiff = -1;
-      for (int i = 0; i < maxLen && positionOfFirstDiff < 0; i++) {
-         if (modelPackageName.charAt(i) != dataPackageName.charAt(i)) {
+      for (int i = 0; i < maxLen; i++) {
+         if (!modelParts[i].equals(dataParts[i])) {
             positionOfFirstDiff = i;
+            break;
          }
       }
 
@@ -197,7 +196,7 @@ public class PackageNamingService implements IPackageNamingService {
          // package.  In this case, don't add anything.
          name = "";
       } else {
-         name = "." + dataPackageName.substring(positionOfFirstDiff);
+         name = "." + Arrays.asList(dataParts).subList(positionOfFirstDiff, dataParts.length).stream().collect(Collectors.joining("."));
       }
       return name;
    }
