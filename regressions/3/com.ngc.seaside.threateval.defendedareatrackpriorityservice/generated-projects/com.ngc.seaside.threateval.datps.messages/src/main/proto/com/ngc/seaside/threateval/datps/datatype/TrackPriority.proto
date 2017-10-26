@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.ngc.seaside.threateval.datps.atype;
+package com.ngc.seaside.threateval.datps.datatype;
 
 option java_multiple_files = true;
 

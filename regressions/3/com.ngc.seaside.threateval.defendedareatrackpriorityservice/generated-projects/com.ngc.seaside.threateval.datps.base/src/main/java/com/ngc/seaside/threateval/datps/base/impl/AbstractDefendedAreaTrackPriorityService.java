@@ -17,8 +17,8 @@ import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.seaside.threateval.datps.api.IDefendedAreaTrackPriorityService;
-import com.ngc.seaside.threateval.datps.event.atype.TrackPriority;
 import com.ngc.seaside.threateval.datps.event.common.datatype.SystemTrack;
+import com.ngc.seaside.threateval.datps.event.datatype.TrackPriority;
 
 public abstract class AbstractDefendedAreaTrackPriorityService
    implements IServiceModule, IDefendedAreaTrackPriorityService {
