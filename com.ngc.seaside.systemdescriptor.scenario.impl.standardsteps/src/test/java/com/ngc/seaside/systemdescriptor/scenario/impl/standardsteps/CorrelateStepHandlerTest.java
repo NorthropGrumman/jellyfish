@@ -103,7 +103,7 @@ public class CorrelateStepHandlerTest {
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-      step.getParameters().addAll(Arrays.asList("foo", "to", "b.foo"));
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);

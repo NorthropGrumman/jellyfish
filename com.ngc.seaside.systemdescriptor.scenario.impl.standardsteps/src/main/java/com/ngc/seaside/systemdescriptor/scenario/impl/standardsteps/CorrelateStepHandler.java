@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -25,23 +26,28 @@ import java.util.regex.Pattern;
  * </pre>
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
+   public static enum InputOutputEnum {
+      INPUT, OUTPUT;
+   }
+   
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
-   final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))");
+   final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
+      Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
-   private String leftData;
-   private String rightData;
-
+   private InputOutputDataField leftData;
+   private InputOutputDataField rightData;
+   
    public CorrelateStepHandler() {
       register(PRESENT, FUTURE);
    }
 
-   public String getLeftData() {
-      return leftData;
+   public IDataField getLeftData() {
+      return leftData.getDataField();
    }
 
-   public String getRightData() {
-      return rightData;
+   public IDataField getRightData() {
+      return rightData.getDataField();
    }
 
    @Override
@@ -49,6 +55,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       String leftDataString;
       String rightDataString;
 
+      InputOutputDataField inOutDataType;
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
       IScenarioStep step = context.getObject();
@@ -70,9 +77,15 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(context, step, 2);
 
-         // TODO Ensure the data is in of format <inputField|outputField>.<dataField>
-         // validateLeftDataFormat(context, step, leftData);
-         // validateRightDataFormat(context, step, rightData);
+         leftData = evaluateDataField(context, step, leftDataString);
+         rightData = evaluateDataField(context, step, rightDataString);
+         System.out.println(leftData.getDataField().getName());
+         System.out.println(leftData.getDataField().getType().name());
+         System.out.println();
+         
+         System.out.println(rightData.getDataField().getName());
+         System.out.println(rightData.getDataField().getType().name());
+         System.out.println(rightData.getInputOutputLocation());
 
          // TODO Validate that vboth field types are the same
          // validateFieldType(context, step, leftData, rightData);
@@ -91,25 +104,98 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
-//   public IDataField getCorrelationDataField(IScenarioStep step, int argPosition) {
-//      Preconditions.checkNotNull(step, "step may not be null!");
-//      String keyword = step.getKeyword();
-//      Preconditions.checkArgument(
-//         keyword.equals(PRESENT.getVerb())
-//            || keyword.equals(FUTURE.getVerb()),
-//         "the step cannot be processed by this handler!");
-//
-//      
-//      
-//      
-//   }
+   private InputOutputDataField evaluateDataField(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            String leftDataString) {
+      Preconditions.checkNotNull(context, "context may not be null!");
+      Preconditions.checkNotNull(step, "step may not be null!");
+      
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(
+         keyword.equals(PRESENT.getVerb())
+            || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
+
+      InputOutputDataField inOutDataField = null;
+      IDataField dataField = null;
+      String[] splitInOutFieldDataField = leftDataString.split("\\.");
+      String inOutFieldStr = splitInOutFieldDataField[0];
+      String dataFieldStr = splitInOutFieldDataField[1];
+
+      IModel model = step.getParent().getParent();
+
+      IDataReferenceField dataRefField;
+
+      // Left data field can only be input in present tense
+      if (keyword.equals(PRESENT.getVerb())) {
+
+         if (model.getInputs().getByName(inOutFieldStr).isPresent()) {
+            dataRefField = model.getInputs().getByName(inOutFieldStr).get();
+            dataField = searchModelForDataField(dataRefField, dataFieldStr);
+            if (dataField != null) {
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);    
+            }
+            
+         } else {
+            declareOrThrowError(context, step, leftDataString + "isn't an input field");
+         }
+         
+         // Left data field can be input or output in future tense
+      } else {
+
+         if (model.getInputs().getByName(inOutFieldStr).isPresent()) {
+            dataRefField = model.getInputs().getByName(inOutFieldStr).get();
+            dataField = searchModelForDataField(dataRefField, dataFieldStr);
+            if (dataField != null) {
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);   
+            }
+            
+         } else if (model.getOutputs().getByName(inOutFieldStr).isPresent()) {
+            dataRefField = model.getOutputs().getByName(inOutFieldStr).get();
+            dataField = searchModelForDataField(dataRefField, dataFieldStr);     
+            if (dataField != null) {
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT);   
+            }
+            
+         } else {
+            declareOrThrowError(context, step, leftDataString + "isn't an input or output field");
+         } 
+      }
+      if (inOutDataField == null) {
+         declareOrThrowError(context,
+            step,
+            "First parameter doesn't correspond with a valid data field.");
+      }
+      return inOutDataField;
+   }
+
+   private IDataField searchModelForDataField(IDataReferenceField dataRefField, String dataFieldStr) {
+      IDataField dataField = null;
+      IData dataType = dataRefField.getType();
+
+      // Check data type for field
+      if (dataType.getFields().getByName(dataFieldStr).isPresent()) {
+         dataField = dataType.getFields().getByName(dataFieldStr).get();
+      } else {
+
+         // Check super data types if original data type didn't contain field
+         boolean found = false;
+         while (dataType.getSuperDataType().isPresent() && !found) {
+            dataType = dataType.getSuperDataType().get();
+            if (dataType.getFields().getByName(dataFieldStr).isPresent()) {
+               dataField = dataType.getFields().getByName(dataFieldStr).get();
+               found = true;
+            }
+         }
+      }
+      return dataField;
+   }
 
    private String getCorrelationArg(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
       Preconditions.checkNotNull(step, "step may not be null!");
       String argument = step.getParameters().get(argPosition).trim();
-      if(!PATTERN.matcher(argument).matches()) {
+      if (!PATTERN.matcher(argument).matches()) {
          declareOrThrowError(context, step, argument + "isn't of format <inputField|outputField>.<dataField>");
-      }  
+      }
       return argument;
    }
 
@@ -154,5 +240,27 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       } else {
          throw new IllegalArgumentException(errMessage);
       }
+   }
+   protected class InputOutputDataField {
+      private IDataField dataField;
+      private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
+      
+      public InputOutputDataField(IDataField dataField, InputOutputEnum inputOutputLocation) {
+         this.dataField = dataField;
+         this.inputOutputLocation = inputOutputLocation;
+      }
+      public IDataField getDataField() {
+         return dataField;
+      }
+      public void setDataField(IDataField dataField) {
+         this.dataField = dataField;
+      }
+      public CorrelateStepHandler.InputOutputEnum getInputOutputLocation() {
+         return inputOutputLocation;
+      }
+      public void setInputOutputLocation(CorrelateStepHandler.InputOutputEnum inputOutputLocation) {
+         this.inputOutputLocation = inputOutputLocation;
+      }
+      
    }
 }
