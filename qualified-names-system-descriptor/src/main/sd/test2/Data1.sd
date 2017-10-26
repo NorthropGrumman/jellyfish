@@ -1,5 +1,0 @@
-package test2
-
-data Data1 {
-	float field2
-}

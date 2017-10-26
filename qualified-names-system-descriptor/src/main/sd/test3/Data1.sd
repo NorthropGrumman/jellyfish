@@ -1,5 +1,0 @@
-package test3
-
-enum Data1 {
-	FIELD
-}
