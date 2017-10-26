@@ -286,6 +286,45 @@ public class CorrelateStepHandlerTest {
    }
 
    @Test
+   public void testValidPresentInputToInputSuper() throws Throwable {
+   
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.superSuperField0", "to", "input1.intField2"));
+   
+      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
+      IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
+      IData superDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.SuperDataType0");
+      IData superSuperDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.SuperSuperDataType0");
+      
+      
+      ModelUtils.mockData(superSuperDataType0, null, "superSuperField0", DataTypes.INT); 
+      ModelUtils.mockData(superDataType0, superSuperDataType0, "superField0", DataTypes.INT);
+   
+      ModelUtils.mockData(inputDataType0, superDataType0, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
+      ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
+   
+      PubSubModel model = new PubSubModel("com.ModelName");
+      model.addInput("input0", inputDataType0);
+      model.addInput("input1", inputDataType1);
+      IScenario scenarioParent = mock(IScenario.class);
+      when(scenarioParent.getParent()).thenReturn(model);
+      model.addScenario(scenarioParent);
+      step.setParent(scenarioParent);
+      when(context.getObject()).thenReturn(step);
+   
+      // Method to test
+      handler.doValidateStep(context);
+   
+      // Results
+      verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
+   
+      fail("Not yet implemented");
+   
+   }
+
+   @Test
    public void testValidFutureInputToOutput() throws Throwable {
       // Setup
       step = new ScenarioStep();
@@ -481,7 +520,7 @@ public class CorrelateStepHandlerTest {
       // Results
       verify(mockedStep).getKeyword();
    }
-
+   
    @Test
    public void testMySanity() throws Throwable {
       step = new ScenarioStep();
