@@ -97,6 +97,87 @@ public class CorrelateStepHandlerTest {
       // Result
       verify(mockedStep).getKeyword();
    }
+   
+   @Test
+   public void testInvalidLeftArg() throws Throwable {
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("foo", "to", "b.foo"));
+      when(context.getObject()).thenReturn(step);
+
+      IScenarioStep mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Result
+      verify(mockedStep).getKeyword();
+      
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("&*&(.foo", "to", "b.foo"));
+      when(context.getObject()).thenReturn(step);
+
+      mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Result
+      verify(mockedStep).getKeyword();
+      
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("a.", "to", "b.foo"));
+      when(context.getObject()).thenReturn(step);
+
+      mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Result
+      verify(mockedStep).getKeyword();
+   }
+   
+   @Test
+   public void testInvalidRightArg() throws Throwable {
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("a.foo", "to", "asfd"));
+      when(context.getObject()).thenReturn(step);
+
+      IScenarioStep mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Result
+      verify(mockedStep).getKeyword();
+      
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
+      step.getParameters().addAll(Arrays.asList("a.foo", "to", ".foo"));
+      when(context.getObject()).thenReturn(step);
+
+      mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      // Method to test
+      handler.doValidateStep(context);
+
+      // Result
+      verify(mockedStep).getKeyword();
+   }
 
    @Test
    public void testValidPresentInputToInput() throws Throwable {

@@ -12,6 +12,7 @@ import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Implements the "correlate" verb which is used to indicate multiple pieces of data must be correlated together.
@@ -26,6 +27,7 @@ import java.util.List;
 public class CorrelateStepHandler extends AbstractStepHandler {
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
+   final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))");
 
    private String leftData;
    private String rightData;
@@ -44,11 +46,18 @@ public class CorrelateStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
+      String leftDataString;
+      String rightDataString;
 
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
       IScenarioStep step = context.getObject();
       String keyword = step.getKeyword();
+
+      Preconditions.checkArgument(
+         keyword.equals(PRESENT.getVerb())
+            || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
 
       List<String> parameters = step.getParameters();
       if (parameters.size() != 3) {
@@ -57,9 +66,9 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             step).getKeyword();
       } else {
 
-         leftData = getCorrelationArg(step, 0);
+         leftDataString = getCorrelationArg(context, step, 0);
          validateToArgument(context, step, 1);
-         rightData = getCorrelationArg(step, 2);
+         rightDataString = getCorrelationArg(context, step, 2);
 
          // TODO Ensure the data is in of format <inputField|outputField>.<dataField>
          // validateLeftDataFormat(context, step, leftData);
@@ -81,7 +90,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          }
       }
    }
-   
+
 //   public IDataField getCorrelationDataField(IScenarioStep step, int argPosition) {
 //      Preconditions.checkNotNull(step, "step may not be null!");
 //      String keyword = step.getKeyword();
@@ -95,15 +104,13 @@ public class CorrelateStepHandler extends AbstractStepHandler {
 //      
 //   }
 
-   private String getCorrelationArg(IScenarioStep step, int argPosition) {
+   private String getCorrelationArg(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
       Preconditions.checkNotNull(step, "step may not be null!");
-      String keyword = step.getKeyword();
-      Preconditions.checkArgument(
-         keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
-      
-      return step.getParameters().get(argPosition);
+      String argument = step.getParameters().get(argPosition).trim();
+      if(!PATTERN.matcher(argument).matches()) {
+         declareOrThrowError(context, step, argument + "isn't of format <inputField|outputField>.<dataField>");
+      }  
+      return argument;
    }
 
    private void validateToArgument(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
@@ -113,7 +120,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             step,
             String.format("Expected parameter to be 'to'"));
       }
-
    }
 
    public INamedChildCollection<IModel, IDataReferenceField> getInputs(IScenarioStep step) {
