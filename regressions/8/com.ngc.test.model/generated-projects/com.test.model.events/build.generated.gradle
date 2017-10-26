@@ -6,7 +6,7 @@ dependencies {
 jar {
    manifest {
       attributes('Export-Package':
-         'com.test.model.event.1.*,' +
-         'com.test.model.event.2.*')
+         'com.test.model.event.test1.*,' +
+         'com.test.model.event.test2.*')
    }
 }

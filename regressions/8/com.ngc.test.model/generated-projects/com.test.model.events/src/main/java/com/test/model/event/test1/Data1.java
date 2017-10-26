@@ -4,7 +4,7 @@
 ************************* Copyright 2017 Northrop Grumman Corporation ***************************
 * Author: Generated
 */
-package com.test.model.event.1;
+package com.test.model.event.test1;
 
 /**
  * This file has been generated and should not be edited directly.
@@ -12,7 +12,7 @@ package com.test.model.event.1;
  */
 public class Data1 {
 
-   public static final String TOPIC_NAME = "/data/com.test.model.event.1.Data1";
+   public static final String TOPIC_NAME = "/data/com.test.model.event.test1.Data1";
 
    public static final com.ngc.blocs.service.event.api.IEventTopic<Data1> TOPIC = 
       com.ngc.blocs.service.event.api.EventTopic.of(TOPIC_NAME, Data1.class);

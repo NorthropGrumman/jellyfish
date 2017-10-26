@@ -3,10 +3,10 @@
     <config>
         <useVerboseImports>false</useVerboseImports>
     </config>
-    <object class="com.test.model.domain.1.Data1" generated="true" abstract="false">
+    <object class="com.test.model.domain.test1.Data1" generated="true" abstract="false">
         <property name="field1" type="float" multiple="false" abstract="false"/>
     </object>
-    <object class="com.test.model.domain.2.Data1" generated="true" abstract="false">
+    <object class="com.test.model.domain.test2.Data1" generated="true" abstract="false">
         <property name="field2" type="float" multiple="false" abstract="false"/>
     </object>
 </ns2:domain>

@@ -17,8 +17,8 @@ sourceSets.all {
 jar {
    manifest {
       attributes('Export-Package': 
-         'com.test.model.1.*,' + 
-         'com.test.model.2.*')
+         'com.test.model.test1.*,' + 
+         'com.test.model.test2.*')
    }
 }
 

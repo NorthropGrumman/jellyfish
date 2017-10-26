@@ -8,7 +8,7 @@ generateDomain {
 jar {
    manifest {
       attributes('Export-Package': 
-         'com.test.model.domain.1.*,' + 
-         'com.test.model.domain.2.*')
+         'com.test.model.domain.test1.*,' + 
+         'com.test.model.domain.test2.*')
    }
 }
