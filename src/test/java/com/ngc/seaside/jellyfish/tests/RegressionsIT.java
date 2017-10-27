@@ -269,7 +269,7 @@ public class RegressionsIT {
     *
     * @param directory - the directory of the regression test (ex: 1, 2, etc)
     */
-   private static boolean generateJellyfishProject(File directory) throws IOException {
+   private boolean generateJellyfishProject(File directory) throws IOException {
       System.out.println("Generating jelly fish project in directory: " + directory);
 
       // Parse the properties file and store the relevant data
@@ -306,7 +306,7 @@ public class RegressionsIT {
     *
     * @param directory - the directory of the newly generated regression test project
     */
-   private static boolean runGradleCleanBuildOnProjects(String directory) throws IOException {
+   private boolean runGradleCleanBuildOnProjects(String directory) throws IOException {
 
       String givenProject = "";
       for (File file : new File(directory).listFiles()) {
@@ -319,15 +319,14 @@ public class RegressionsIT {
       Assert.assertTrue(givenProject != "");
       String generatedProj = directory + File.separator + "generatedProject";
 
-      String gradleHome = System.getenv("GRADLE_HOME");
-      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
+      File gradleInstall = getGradleInstallPath();
 
       // Perform the 'gradle clean build -x test' command
       // NOTE: The below build fails on Windows due to the "windows file path too long" bug. 
 
       System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
       ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-            .useInstallation(Paths.get(gradleHome).toFile())
+            .useInstallation(gradleInstall)
             .forProjectDirectory(new File(givenProject))
             .connect();
 
@@ -344,7 +343,7 @@ public class RegressionsIT {
 
       System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
       ProjectConnection connectionToGeneratedProj = GradleConnector.newConnector()
-            .useInstallation(Paths.get(gradleHome).toFile())
+            .useInstallation(gradleInstall)
             .forProjectDirectory(new File(generatedProj))
             .connect();
 
