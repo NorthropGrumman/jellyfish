@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
@@ -345,7 +345,7 @@ public class CorrelateStepHandlerTest {
       handler.doValidateStep(context);
 
       // Results
-      verify(mockedStep).getKeyword();
+      verify(mockedStep, times(2)).getKeyword();
 
    }
 
@@ -576,76 +576,4 @@ public class CorrelateStepHandlerTest {
       // Results
       verify(mockedStep).getKeyword();
    }
-   
-   @Test
-   public void testMySanity() throws Throwable {
-      step = new ScenarioStep();
-      step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
-
-      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
-      IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
-      IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
-
-      IDataField field0 = mock(IDataField.class);
-
-      // TODO add this and repeat for all fields passed in below
-      // mock(field1.getReferencedDataType()).thenReturn();
-      // mock(field1.getName()).thenReturn();
-
-      // ModelUtils.mockData(data[0], null, field0, "intField1", DataTypes.INT);
-      ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
-      ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
-      ModelUtils.mockData(outputDataType0, null, "intField3", DataTypes.INT);
-
-      PubSubModel model = new PubSubModel("com.ModelName");
-      model.addInput("input0", inputDataType0);
-      model.addInput("input1", inputDataType1);
-      model.addOutput("output0", outputDataType0);
-      IScenario scenarioParent = mock(IScenario.class);
-      when(scenarioParent.getParent()).thenReturn(model);
-      model.addScenario(scenarioParent);
-      step.setParent(scenarioParent);
-      when(context.getObject()).thenReturn(step);
-
-      INamedChildCollection<IModel, IDataReferenceField> inputs = handler.getInputs(step);
-      INamedChildCollection<IModel, IDataReferenceField> outputs = handler.getOutputs(step);
-
-      IDataReferenceField dataRefFieldInput0 = inputs.getByName("input0").get();
-      IDataReferenceField dataRefFieldInput1 = inputs.getByName("input1").get();
-      IDataReferenceField dataRefFieldOutput0 = outputs.getByName("output0").get();
-
-      IData inputData0 = dataRefFieldInput0.getType();
-      System.out.println(inputData0.getName());
-
-      for (IDataField val : inputData0.getFields()) {
-         System.out.println(val.getName());
-         System.out.println(val.getType());
-      }
-
-      System.out.println();
-
-      IData inputData1 = dataRefFieldInput1.getType();
-      System.out.println(inputData1.getName());
-
-      for (IDataField val : inputData1.getFields()) {
-         System.out.println(val.getName());
-         System.out.println(val.getType());
-      }
-
-      System.out.println();
-
-      IData outputData0 = dataRefFieldOutput0.getType();
-      System.out.println(outputData0.getName());
-
-      for (IDataField val : outputData0.getFields()) {
-         System.out.println(val.getName());
-         System.out.println(val.getType());
-      }
-
-      System.out.println();
-      System.out.println();
-
-   }
-
 }

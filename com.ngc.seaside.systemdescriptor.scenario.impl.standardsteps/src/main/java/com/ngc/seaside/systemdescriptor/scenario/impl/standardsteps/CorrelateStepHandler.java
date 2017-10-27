@@ -78,7 +78,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          leftDataString = getCorrelationArg(null, step, 0);
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(null, step, 2);
-         
+
          verifyDataStringsDontMatch(context, step, leftDataString, rightDataString);
 
          // Retrieve data fields and whether they are input or output
@@ -86,7 +86,9 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          rightData = evaluateDataField(context, step, rightDataString);
 
          if (leftData != null && rightData != null) {
-            
+
+            // Validate input/output fields are different
+            validateInOutFieldDifferent(context, step, leftData, rightData);
 
             // Validate that both field types are the same
             validateFieldType(context, step, leftData, rightData);
@@ -97,13 +99,27 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
+   private void validateInOutFieldDifferent(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      if (leftData.getInputOutputLocation() == rightData.getInputOutputLocation()) {
+         String inOutFieldLeft = leftData.getDataFieldArg().split("\\.")[0];
+         String inOutFieldRight = rightData.getDataFieldArg().split("\\.")[0];
+
+         if (inOutFieldLeft.equals(inOutFieldRight)) {
+            declareOrThrowError(context,
+               step,
+               "Can't reference the same field.");
+         }
+      }
+   }
+
    private void verifyDataStringsDontMatch(IValidationContext<IScenarioStep> context, IScenarioStep step,
             String leftDataString, String rightDataString) {
       if (leftDataString.equals(rightDataString)) {
          declareOrThrowError(context,
             step,
             "Can't correlate a data field to itself");
-      }   
+      }
    }
 
    private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
@@ -164,9 +180,10 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             dataRefField = model.getInputs().getByName(inOutFieldStr).get();
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT, dataFieldString);
             } else {
-               errorMessage = "The " + dataFieldStr + " can't be found in the model inputs for the present tense correlation";
+               errorMessage = "The " + dataFieldStr
+                  + " can't be found in the model inputs for the present tense correlation";
             }
 
          } else {
@@ -180,18 +197,20 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             dataRefField = model.getInputs().getByName(inOutFieldStr).get();
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT, dataFieldString);
             } else {
-               errorMessage = "The " + dataFieldStr + " can't be found in the model inputs for the future tense correlation.";
+               errorMessage = "The " + dataFieldStr
+                  + " can't be found in the model inputs for the future tense correlation.";
             }
 
          } else if (model.getOutputs().getByName(inOutFieldStr).isPresent()) {
             dataRefField = model.getOutputs().getByName(inOutFieldStr).get();
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT);
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT, dataFieldString);
             } else {
-               errorMessage = "The " + dataFieldStr + " can't be found in the model outputs for the future tense correlation.";
+               errorMessage = "The " + dataFieldStr
+                  + " can't be found in the model outputs for the future tense correlation.";
             }
 
          } else {
@@ -291,10 +310,12 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    protected class InputOutputDataField {
       private IDataField dataField;
       private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
+      private String dataFieldArg;
 
-      public InputOutputDataField(IDataField dataField, InputOutputEnum inputOutputLocation) {
+      public InputOutputDataField(IDataField dataField, InputOutputEnum inputOutputLocation, String dataFieldArg) {
          this.dataField = dataField;
          this.inputOutputLocation = inputOutputLocation;
+         this.dataFieldArg = dataFieldArg;
       }
 
       public IDataField getDataField() {
@@ -313,5 +334,12 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          this.inputOutputLocation = inputOutputLocation;
       }
 
+      public String getDataFieldArg() {
+         return dataFieldArg;
+      }
+
+      public void setDataFieldArg(String dataFieldArg) {
+         this.dataFieldArg = dataFieldArg;
+      }
    }
 }
