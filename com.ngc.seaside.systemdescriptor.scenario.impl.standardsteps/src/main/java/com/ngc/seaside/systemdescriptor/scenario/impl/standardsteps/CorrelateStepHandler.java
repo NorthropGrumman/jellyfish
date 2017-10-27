@@ -79,15 +79,18 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(null, step, 2);
 
-         //Retrieve data fields and whether they are input or output
+         // Retrieve data fields and whether they are input or output
          leftData = evaluateDataField(context, step, leftDataString);
          rightData = evaluateDataField(context, step, rightDataString);
 
-         // Validate that both field types are the same
-         validateFieldType(context, step, leftData, rightData);
+         if (leftData != null && rightData != null) {
 
-         // Verify the correct combination of input and output based on verb tense
-         validateInputOutputTense(context, step, leftData, rightData);
+            // Validate that both field types are the same
+            validateFieldType(context, step, leftData, rightData);
+
+            // Verify the correct combination of input and output based on verb tense
+            validateInputOutputTense(context, step, leftData, rightData);
+         }
       }
    }
 
@@ -119,7 +122,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    }
 
    private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            InputOutputDataField leftData, InputOutputDataField rightData) {  
+            InputOutputDataField leftData, InputOutputDataField rightData) {
       if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
          declareOrThrowError(context,
             step,
@@ -140,6 +143,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       String keyword = step.getKeyword();
       IModel model = step.getParent().getParent();
       IDataReferenceField dataRefField;
+      String errorMessage = "";
 
       // Data field can only be input in present tense
       if (keyword.equals(PRESENT.getVerb())) {
@@ -149,10 +153,12 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
                inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
+            } else {
+               errorMessage = "The " + dataFieldStr + " can't be found in the model inputs for the present tense correlation";
             }
 
          } else {
-            declareOrThrowError(context, step, dataFieldString + "isn't a valid input field");
+            errorMessage = dataFieldString + " isn't a valid input field";
          }
 
          // Data field can be input or output in future tense
@@ -163,6 +169,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
                inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
+            } else {
+               errorMessage = "The " + dataFieldStr + " can't be found in the model inputs for the future tense correlation.";
             }
 
          } else if (model.getOutputs().getByName(inOutFieldStr).isPresent()) {
@@ -170,16 +178,18 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
                inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT);
+            } else {
+               errorMessage = "The " + dataFieldStr + " can't be found in the model outputs for the future tense correlation.";
             }
 
          } else {
-            declareOrThrowError(context, step, dataFieldString + "isn't an input or output field");
+            errorMessage = dataFieldString + " isn't an input or output field.";
          }
       }
       if (inOutDataField == null) {
          declareOrThrowError(context,
             step,
-            dataFieldString + " argument doesn't correspond with a valid data field.");
+            errorMessage);
       }
       return inOutDataField;
    }
