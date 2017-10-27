@@ -481,7 +481,7 @@ public class CorrelateStepHandlerTest {
    public void testInvalidFutureOutputToOutput() throws Throwable {
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
-      step.getParameters().addAll(Arrays.asList("output0.intField2", "to", "output1.intField3"));
+      step.getParameters().addAll(Arrays.asList("output0.intField3", "to", "output1.intField5"));
 
       IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
       IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
@@ -496,8 +496,8 @@ public class CorrelateStepHandlerTest {
       PubSubModel model = new PubSubModel("com.ModelName");
       model.addInput("input0", inputDataType0);
       model.addInput("input1", inputDataType1);
-      model.addInput("output0", outputDataType0);
-      model.addInput("output1", outputDataType1);
+      model.addOutput("output0", outputDataType0);
+      model.addOutput("output1", outputDataType1);
 
       IScenario scenarioParent = mock(IScenario.class);
       when(scenarioParent.getParent()).thenReturn(model);
