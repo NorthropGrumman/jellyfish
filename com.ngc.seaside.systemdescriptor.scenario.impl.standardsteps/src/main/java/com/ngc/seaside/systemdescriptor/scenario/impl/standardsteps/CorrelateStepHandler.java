@@ -75,9 +75,9 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             "Expected parameters of the form: <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>",
             step).getKeyword();
       } else {
-         leftDataString = getCorrelationArg(context, step, 0);
+         leftDataString = getCorrelationArg(null, step, 0);
          validateToArgument(context, step, 1);
-         rightDataString = getCorrelationArg(context, step, 2);
+         rightDataString = getCorrelationArg(null, step, 2);
 
          //Retrieve data fields and whether they are input or output
          leftData = evaluateDataField(context, step, leftDataString);
@@ -210,7 +210,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       Preconditions.checkNotNull(step, "step may not be null!");
       String argument = step.getParameters().get(argPosition).trim();
       if (!PATTERN.matcher(argument).matches()) {
-         declareOrThrowError(context, step, argument + "isn't of format <inputField|outputField>.<dataField>");
+         declareOrThrowError(context, step, argument + " isn't of format <inputField|outputField>.<dataField>");
       }
       return argument;
    }

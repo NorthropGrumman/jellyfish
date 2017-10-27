@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
@@ -103,17 +104,14 @@ public class CorrelateStepHandlerTest {
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "input1.intField2"));
+      step.getParameters().addAll(Arrays.asList("foo", "to", "input1.intField2"));
       when(context.getObject()).thenReturn(step);
 
-      IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-
       // Method to test
-      handler.doValidateStep(context);
-
-      // Result
-      verify(mockedStep).getKeyword();
+      try {
+         handler.doValidateStep(context);
+         fail("Expected illegal argument exception.");
+      } catch (IllegalArgumentException e) {}
       
       // Setup
       step = new ScenarioStep();
@@ -121,14 +119,11 @@ public class CorrelateStepHandlerTest {
       step.getParameters().addAll(Arrays.asList("&*&(.foo", "to", "b.foo"));
       when(context.getObject()).thenReturn(step);
 
-      mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-
       // Method to test
-      handler.doValidateStep(context);
-
-      // Result
-      verify(mockedStep).getKeyword();
+      try {
+         handler.doValidateStep(context);
+         fail("Expected illegal argument exception.");
+      } catch (IllegalArgumentException e) {}
       
       // Setup
       step = new ScenarioStep();
@@ -136,14 +131,11 @@ public class CorrelateStepHandlerTest {
       step.getParameters().addAll(Arrays.asList("a.", "to", "b.foo"));
       when(context.getObject()).thenReturn(step);
 
-      mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-
       // Method to test
-      handler.doValidateStep(context);
-
-      // Result
-      verify(mockedStep).getKeyword();
+      try {
+         handler.doValidateStep(context);
+         fail("Expected illegal argument exception.");
+      } catch (IllegalArgumentException e) {}
    }
    
    @Test
@@ -154,14 +146,11 @@ public class CorrelateStepHandlerTest {
       step.getParameters().addAll(Arrays.asList("a.foo", "to", "asfd"));
       when(context.getObject()).thenReturn(step);
 
-      IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-
       // Method to test
-      handler.doValidateStep(context);
-
-      // Result
-      verify(mockedStep).getKeyword();
+      try {
+         handler.doValidateStep(context);
+         fail("Expected illegal argument exception.");
+      } catch (IllegalArgumentException e) {}
       
       // Setup
       step = new ScenarioStep();
@@ -169,14 +158,11 @@ public class CorrelateStepHandlerTest {
       step.getParameters().addAll(Arrays.asList("a.foo", "to", ".foo"));
       when(context.getObject()).thenReturn(step);
 
-      mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
-
       // Method to test
-      handler.doValidateStep(context);
-
-      // Result
-      verify(mockedStep).getKeyword();
+      try {
+         handler.doValidateStep(context);
+         fail("Expected illegal argument exception.");
+      } catch (IllegalArgumentException e) {}
    }
 
    @Test
