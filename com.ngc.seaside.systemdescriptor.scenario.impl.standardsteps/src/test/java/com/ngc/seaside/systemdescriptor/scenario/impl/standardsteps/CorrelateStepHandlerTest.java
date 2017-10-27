@@ -396,7 +396,7 @@ public class CorrelateStepHandlerTest {
       IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
 
       ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
-      ModelUtils.mockData(outputDataType0, null, "intField3", DataTypes.INT);
+      ModelUtils.mockData(outputDataType0, null, "intField2", DataTypes.INT);
 
       PubSubModel model = new PubSubModel("com.ModelName");
       model.addInput("input0", inputDataType0);
