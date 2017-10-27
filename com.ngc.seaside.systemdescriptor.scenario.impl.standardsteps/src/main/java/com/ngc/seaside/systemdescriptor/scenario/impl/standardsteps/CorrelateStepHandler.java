@@ -29,15 +29,12 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    public static enum InputOutputEnum {
       INPUT, OUTPUT;
    }
-   
+
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
    final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
       Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
-   private InputOutputDataField leftData;
-   private InputOutputDataField rightData;
-   
    public CorrelateStepHandler() {
       register(PRESENT, FUTURE);
    }
@@ -46,7 +43,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       requireStepUsesHandlerVerb(step);
       List<String> parameters = step.getParameters();
       Preconditions.checkArgument(parameters.size() == 3,
-                                  "invalid step!");
+         "invalid step!");
       String leftData = getCorrelationArg(null, step, 0);
       return evaluateDataField(null, step, leftData).getDataField();
    }
@@ -55,7 +52,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       requireStepUsesHandlerVerb(step);
       List<String> parameters = step.getParameters();
       Preconditions.checkArgument(parameters.size() == 3,
-                                  "invalid step!");
+         "invalid step!");
       String leftData = getCorrelationArg(null, step, 2);
       return evaluateDataField(null, step, leftData).getDataField();
    }
@@ -65,16 +62,14 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       String leftDataString;
       String rightDataString;
 
+      InputOutputDataField leftData;
+      InputOutputDataField rightData;
+
       InputOutputDataField inOutDataType;
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
       IScenarioStep step = context.getObject();
-      String keyword = step.getKeyword();
-
-      Preconditions.checkArgument(
-         keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
+      requireStepUsesHandlerVerb(step);
 
       List<String> parameters = step.getParameters();
       if (parameters.size() != 3) {
@@ -82,7 +77,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             "Expected parameters of the form: <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>",
             step).getKeyword();
       } else {
-
+         String keyword = step.getKeyword();
          leftDataString = getCorrelationArg(context, step, 0);
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(context, step, 2);
@@ -92,13 +87,13 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          System.out.println(leftData.getDataField().getName());
          System.out.println(leftData.getDataField().getType().name());
          System.out.println();
-         
+
          System.out.println(rightData.getDataField().getName());
          System.out.println(rightData.getDataField().getType().name());
          System.out.println(rightData.getInputOutputLocation());
 
          // TODO Validate that vboth field types are the same
-         // validateFieldType(context, step, leftData, rightData);
+         validateFieldType(context, step, leftData, rightData);
 
          if (keyword.equals(PRESENT.getVerb())) {
             // TODO With PRESENT verb, data is required to be an input
@@ -114,65 +109,68 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
+   private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
+         declareOrThrowError(context,
+            step,
+            "Argument types don't match. Left argument is of type: "
+               + leftData.getDataField().getType() + ". Right data is of type: " + rightData.getDataField().getType());
+      }
+   }
+
    private InputOutputDataField evaluateDataField(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            String leftDataString) {
+            String dataFieldString) {
       Preconditions.checkNotNull(step, "step may not be null!");
-      
-      String keyword = step.getKeyword();
-      Preconditions.checkArgument(
-         keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
 
       InputOutputDataField inOutDataField = null;
       IDataField dataField = null;
-      String[] splitInOutFieldDataField = leftDataString.split("\\.");
+      String[] splitInOutFieldDataField = dataFieldString.split("\\.");
       String inOutFieldStr = splitInOutFieldDataField[0];
       String dataFieldStr = splitInOutFieldDataField[1];
-
+      String keyword = step.getKeyword();
       IModel model = step.getParent().getParent();
-
       IDataReferenceField dataRefField;
 
-      // Left data field can only be input in present tense
+      // Data field can only be input in present tense
       if (keyword.equals(PRESENT.getVerb())) {
 
          if (model.getInputs().getByName(inOutFieldStr).isPresent()) {
             dataRefField = model.getInputs().getByName(inOutFieldStr).get();
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);    
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
             }
-            
+
          } else {
-            declareOrThrowError(context, step, leftDataString + "isn't an input field");
+            declareOrThrowError(context, step, dataFieldString + "isn't a valid input field");
          }
-         
-         // Left data field can be input or output in future tense
+
+         // Data field can be input or output in future tense
       } else {
 
          if (model.getInputs().getByName(inOutFieldStr).isPresent()) {
             dataRefField = model.getInputs().getByName(inOutFieldStr).get();
             dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);   
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT);
             }
-            
+
          } else if (model.getOutputs().getByName(inOutFieldStr).isPresent()) {
             dataRefField = model.getOutputs().getByName(inOutFieldStr).get();
-            dataField = searchModelForDataField(dataRefField, dataFieldStr);     
+            dataField = searchModelForDataField(dataRefField, dataFieldStr);
             if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT);   
+               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT);
             }
-            
+
          } else {
-            declareOrThrowError(context, step, leftDataString + "isn't an input or output field");
-         } 
+            declareOrThrowError(context, step, dataFieldString + "isn't an input or output field");
+         }
       }
       if (inOutDataField == null) {
          declareOrThrowError(context,
             step,
-            "First parameter doesn't correspond with a valid data field.");
+            dataFieldString + " argument doesn't correspond with a valid data field.");
       }
       return inOutDataField;
    }
@@ -216,7 +214,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             String.format("Expected parameter to be 'to'"));
       }
    }
-   
+
    private static void requireStepUsesHandlerVerb(IScenarioStep step) {
       Preconditions.checkNotNull(step, "step may not be null!");
       String keyword = step.getKeyword();
@@ -258,26 +256,31 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          throw new IllegalArgumentException(errMessage);
       }
    }
+
    protected class InputOutputDataField {
       private IDataField dataField;
       private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
-      
+
       public InputOutputDataField(IDataField dataField, InputOutputEnum inputOutputLocation) {
          this.dataField = dataField;
          this.inputOutputLocation = inputOutputLocation;
       }
+
       public IDataField getDataField() {
          return dataField;
       }
+
       public void setDataField(IDataField dataField) {
          this.dataField = dataField;
       }
+
       public CorrelateStepHandler.InputOutputEnum getInputOutputLocation() {
          return inputOutputLocation;
       }
+
       public void setInputOutputLocation(CorrelateStepHandler.InputOutputEnum inputOutputLocation) {
          this.inputOutputLocation = inputOutputLocation;
       }
-      
+
    }
 }
