@@ -78,12 +78,15 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          leftDataString = getCorrelationArg(null, step, 0);
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(null, step, 2);
+         
+         verifyDataStringsDontMatch(context, step, leftDataString, rightDataString);
 
          // Retrieve data fields and whether they are input or output
          leftData = evaluateDataField(context, step, leftDataString);
          rightData = evaluateDataField(context, step, rightDataString);
 
          if (leftData != null && rightData != null) {
+            
 
             // Validate that both field types are the same
             validateFieldType(context, step, leftData, rightData);
@@ -92,6 +95,15 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             validateInputOutputTense(context, step, leftData, rightData);
          }
       }
+   }
+
+   private void verifyDataStringsDontMatch(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            String leftDataString, String rightDataString) {
+      if (leftDataString.equals(rightDataString)) {
+         declareOrThrowError(context,
+            step,
+            "Can't correlate a data field to itself");
+      }   
    }
 
    private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
