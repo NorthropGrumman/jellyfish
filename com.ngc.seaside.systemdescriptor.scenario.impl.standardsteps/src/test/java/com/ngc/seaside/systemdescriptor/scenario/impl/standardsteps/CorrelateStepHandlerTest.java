@@ -6,20 +6,18 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.data.DataField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
@@ -32,6 +30,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CorrelateStepHandlerTest {
@@ -193,6 +193,41 @@ public class CorrelateStepHandlerTest {
 
       // Results
       verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
+   }
+   
+   @Test
+   public void testGetters() throws Throwable {
+
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.intField0", "to", "output0.stringField0"));
+
+      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
+      IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
+
+      ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
+      ModelUtils.mockData(outputDataType0, null, "stringField0", DataTypes.STRING);
+
+      PubSubModel model = new PubSubModel("com.ModelName");
+      model.addInput("input0", inputDataType0);
+      model.addOutput("output0", outputDataType0);
+      IScenario scenarioParent = mock(IScenario.class);
+      when(scenarioParent.getParent()).thenReturn(model);
+      model.addScenario(scenarioParent);
+      step.setParent(scenarioParent);
+      when(context.getObject()).thenReturn(step);
+
+      //Methods to test
+      IDataField leftResult = handler.getLeftData(step);
+      IDataField rightResult = handler.getRightData(step);
+      
+      //Results
+      assertEquals("Incorrect Data field returned", "intField0", leftResult.getName());
+      assertEquals("Incorrect Data field returned", DataTypes.INT, leftResult.getType());
+
+      assertEquals("Incorrect Data field returned", "stringField0", rightResult.getName());
+      assertEquals("Incorrect Data field returned", DataTypes.STRING, rightResult.getType());
    }
 
    @Test
