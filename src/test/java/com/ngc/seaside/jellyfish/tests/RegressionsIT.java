@@ -2,17 +2,23 @@ package com.ngc.seaside.jellyfish.tests;
 
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
 
+import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.logging.Logger;
 import org.gradle.internal.impldep.org.apache.commons.io.FileUtils;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -20,11 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
@@ -50,12 +52,14 @@ public class RegressionsIT {
    };
 
    // Class variable to hold regressions directory
+   private String rootDir = "";
    private String regressionTestsDir = "";
 
    @Before
    public void setup() throws Throwable {
+      rootDir = System.getProperty("user.dir");
       // Set the regressions directory variable
-      regressionTestsDir = System.getProperty("user.dir") + File.separator + "regressions";
+      regressionTestsDir = rootDir + File.separator + "regressions";
 
       // Start with fresh logs. Remove any previously generated 'build' folders in the 
       //    given projects
@@ -104,8 +108,7 @@ public class RegressionsIT {
    }
 
    private void buildAndInstallSdProjects() throws IOException {
-      String gradleHome = System.getenv("GRADLE_HOME");
-      Assert.assertNotNull("GRADLE_HOME not set", gradleHome);
+      File gradleInstall = getGradleInstallPath();
 
       File mainDir = new File(System.getProperty("user.dir"));
       for (String sdProject : SYSTEM_DESCRIPTOR_PROJECTS) {
@@ -113,11 +116,11 @@ public class RegressionsIT {
          System.out.println("Running 'gradle clean build install' on SD project: " + sdProject);
 
          ProjectConnection connection = GradleConnector.newConnector()
-               .useInstallation(Paths.get(gradleHome).toFile())
+               .useInstallation(gradleInstall)
                .forProjectDirectory(projectDir)
                .connect();
 
-         try(OutputStream out = Files.newOutputStream(Paths.get("build", "gradle-" + sdProject + ".log"))) {
+         try (OutputStream out = Files.newOutputStream(Paths.get("build", "gradle-" + sdProject + ".log"))) {
             connection.newBuild()
                   .forTasks("clean", "build", "install")
                   .setStandardOutput(out)
@@ -127,6 +130,39 @@ public class RegressionsIT {
             connection.close();
          }
       }
+   }
+
+   private File getGradleInstallPath() throws IOException {
+      File gradle = null;
+      String gradleHome = System.getenv("GRADLE_HOME");
+      String gradleUserHome = System.getenv("GRADLE_USER_HOME");
+      if (gradleHome != null) {
+         gradle = Paths.get(gradleHome).toFile();
+      } else if (gradleUserHome != null) {
+         Properties wrapperProps = new Properties();
+         try (InputStream is = Files.newInputStream(Paths.get(rootDir,
+                                                              "gradle",
+                                                              "wrapper",
+                                                              "gradle-wrapper.properties"))) {
+            wrapperProps.load(is);
+         }
+
+         String version = wrapperProps.getProperty("distributionUrl");
+         version = FilenameUtils.removeExtension(version.substring(version.lastIndexOf('/')));
+         gradle = Paths.get(gradleUserHome,
+                            wrapperProps.getProperty("distributionPath"),
+                            version)
+               .toFile();
+         gradle = new File(gradle.listFiles()[0], version.replace("-bin", ""));
+      }
+
+      Assert.assertNotNull(
+            "unable find a gradle installation; set the env variable GRADLE_HOME to a gradle installation directory",
+            gradle);
+      Assert.assertTrue(
+            "unable find a gradle installation; set the env variable GRADLE_HOME to a gradle installation directory",
+            gradle.isDirectory());
+      return gradle;
    }
 
    /**
