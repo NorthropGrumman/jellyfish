@@ -42,12 +42,22 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       register(PRESENT, FUTURE);
    }
 
-   public IDataField getLeftData() {
-      return leftData.getDataField();
+   public IDataField getLeftData(IScenarioStep step) {
+      requireStepUsesHandlerVerb(step);
+      List<String> parameters = step.getParameters();
+      Preconditions.checkArgument(parameters.size() == 3,
+                                  "invalid step!");
+      String leftData = getCorrelationArg(null, step, 0);
+      return evaluateDataField(null, step, leftData).getDataField();
    }
 
-   public IDataField getRightData() {
-      return rightData.getDataField();
+   public IDataField getRightData(IScenarioStep step) {
+      requireStepUsesHandlerVerb(step);
+      List<String> parameters = step.getParameters();
+      Preconditions.checkArgument(parameters.size() == 3,
+                                  "invalid step!");
+      String leftData = getCorrelationArg(null, step, 2);
+      return evaluateDataField(null, step, leftData).getDataField();
    }
 
    @Override
@@ -106,7 +116,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
 
    private InputOutputDataField evaluateDataField(IValidationContext<IScenarioStep> context, IScenarioStep step,
             String leftDataString) {
-      Preconditions.checkNotNull(context, "context may not be null!");
       Preconditions.checkNotNull(step, "step may not be null!");
       
       String keyword = step.getKeyword();
@@ -206,6 +215,14 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             step,
             String.format("Expected parameter to be 'to'"));
       }
+   }
+   
+   private static void requireStepUsesHandlerVerb(IScenarioStep step) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(keyword.equals(PRESENT.getVerb())
+         || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
    }
 
    public INamedChildCollection<IModel, IDataReferenceField> getInputs(IScenarioStep step) {
