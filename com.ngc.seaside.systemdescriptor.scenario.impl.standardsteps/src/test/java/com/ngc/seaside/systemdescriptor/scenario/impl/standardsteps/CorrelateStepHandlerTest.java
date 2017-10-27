@@ -426,14 +426,14 @@ public class CorrelateStepHandlerTest {
    public void testValidFutureOutputToInput() throws Throwable {
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
-      step.getParameters().addAll(Arrays.asList("output0.intField2", "to", "input0.intField0"));
+      step.getParameters().addAll(Arrays.asList("output0.intField3", "to", "input0.intField0"));
 
       IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
       IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
       IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
 
       ModelUtils.mockData(inputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
-      ModelUtils.mockData(inputDataType1, null, "intField0", DataTypes.INT);
+      ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
       ModelUtils.mockData(outputDataType0, null, "intField3", DataTypes.INT);
 
       PubSubModel model = new PubSubModel("com.ModelName");
@@ -451,9 +451,6 @@ public class CorrelateStepHandlerTest {
 
       // Results
       verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
-
-      fail("Not yet implemented");
-
    }
 
    @Test

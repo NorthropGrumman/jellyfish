@@ -119,7 +119,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    }
 
    private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            InputOutputDataField leftData, InputOutputDataField rightData) {
+            InputOutputDataField leftData, InputOutputDataField rightData) {  
       if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
          declareOrThrowError(context,
             step,
