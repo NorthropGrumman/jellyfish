@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -26,10 +25,6 @@ import java.util.regex.Pattern;
  * </pre>
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
-   public static enum InputOutputEnum {
-      INPUT, OUTPUT;
-   }
-
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
    final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
@@ -273,30 +268,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          "the step cannot be processed by this handler!");
    }
 
-   public INamedChildCollection<IModel, IDataReferenceField> getInputs(IScenarioStep step) {
-      Preconditions.checkNotNull(step, "step may not be null!");
-      String keyword = step.getKeyword();
-      Preconditions.checkArgument(
-         keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
-
-      IModel model = step.getParent().getParent();
-      return model.getInputs();
-   }
-
-   public INamedChildCollection<IModel, IDataReferenceField> getOutputs(IScenarioStep step) {
-      Preconditions.checkNotNull(step, "step may not be null!");
-      String keyword = step.getKeyword();
-      Preconditions.checkArgument(
-         keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
-
-      IModel model = step.getParent().getParent();
-      return model.getOutputs();
-   }
-
    private static void declareOrThrowError(IValidationContext<IScenarioStep> context,
             IScenarioStep step,
             String errMessage) {
@@ -307,6 +278,17 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
+   /*
+    * Enum to designate what is an input or output
+    */
+   private static enum InputOutputEnum {
+      INPUT, OUTPUT;
+   }
+
+   /*
+    * This is a helper class to store an IDataField, whether it was input or output, and the original argument
+    * supplied to retrieve the IDataField.
+    */
    protected class InputOutputDataField {
       private IDataField dataField;
       private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
