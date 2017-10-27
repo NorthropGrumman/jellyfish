@@ -61,11 +61,9 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
       String leftDataString;
       String rightDataString;
-
       InputOutputDataField leftData;
       InputOutputDataField rightData;
 
-      InputOutputDataField inOutDataType;
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
       IScenarioStep step = context.getObject();
@@ -77,35 +75,46 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             "Expected parameters of the form: <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>",
             step).getKeyword();
       } else {
-         String keyword = step.getKeyword();
          leftDataString = getCorrelationArg(context, step, 0);
          validateToArgument(context, step, 1);
          rightDataString = getCorrelationArg(context, step, 2);
 
+         //Retrieve data fields and whether they are input or output
          leftData = evaluateDataField(context, step, leftDataString);
          rightData = evaluateDataField(context, step, rightDataString);
-         System.out.println(leftData.getDataField().getName());
-         System.out.println(leftData.getDataField().getType().name());
-         System.out.println();
 
-         System.out.println(rightData.getDataField().getName());
-         System.out.println(rightData.getDataField().getType().name());
-         System.out.println(rightData.getInputOutputLocation());
-
-         // TODO Validate that vboth field types are the same
+         // Validate that both field types are the same
          validateFieldType(context, step, leftData, rightData);
 
-         if (keyword.equals(PRESENT.getVerb())) {
-            // TODO With PRESENT verb, data is required to be an input
-            // verifyDataIsOnlyInput(context, step, leftData);
-            // verifyDataIsOnlyInput(context, step, rightData);
-         } else if (keyword.equals(FUTURE.getVerb())) {
-            // TODO With FUTURE verb, the data has to reference exactly one input field and one output field
-            // The order does not matter.
-            // verifyDataIsExclusive(context, step, leftData, rightData);
-         } else {
-            declareOrThrowError(context, step, "PAST verb hasn't been implemented yet.");
+         // Verify the correct combination of input and output based on verb tense
+         validateInputOutputTense(context, step, leftData, rightData);
+      }
+   }
+
+   private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      String keyword = step.getKeyword();
+
+      if (keyword.equals(PRESENT.getVerb())) {
+         if (leftData.getInputOutputLocation() != InputOutputEnum.INPUT
+            || rightData.getInputOutputLocation() != InputOutputEnum.INPUT) {
+            declareOrThrowError(context,
+               step,
+               "In present tense of correlation verb, both arguments must be input types.");
          }
+      } else if (keyword.equals(FUTURE.getVerb())) {
+         if ((leftData.getInputOutputLocation() == InputOutputEnum.INPUT
+            && rightData.getInputOutputLocation() == InputOutputEnum.INPUT)
+            || leftData.getInputOutputLocation() == InputOutputEnum.OUTPUT
+               && rightData.getInputOutputLocation() == InputOutputEnum.OUTPUT) {
+            declareOrThrowError(context,
+               step,
+               "In future tense of correlation verb, one argument must be an input type and the other must be of output type.");
+         }
+      } else {
+         declareOrThrowError(context,
+            step,
+            keyword + " is not a valid verb");
       }
    }
 
