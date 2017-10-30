@@ -8,6 +8,7 @@ import org.gradle.internal.impldep.org.apache.commons.io.FileUtils;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,12 +56,16 @@ public class RegressionsIT {
    // Class variable to hold regressions directory
    private String rootDir = "";
    private String regressionTestsDir = "";
+   private String jellyFishVersion = VersionUtil.getJellyfishVersion();
+   private BuildScriptUpdater scriptUpdater;
 
    @Before
    public void setup() throws Throwable {
       rootDir = System.getProperty("user.dir");
       // Set the regressions directory variable
       regressionTestsDir = rootDir + File.separator + "regressions";
+
+      scriptUpdater = new BuildScriptUpdater();
 
       // Start with fresh logs. Remove any previously generated 'build' folders in the 
       //    given projects
@@ -80,7 +85,7 @@ public class RegressionsIT {
       buildAndInstallSdProjects();
 
       File[] subs = new File(regressionTestsDir).listFiles();
-      Map<String, Boolean> regressionScore = new HashMap<String, Boolean>();
+      Map<String, Boolean> regressionScore = new HashMap<>();
 
       if (subs == null || subs.length == 0) {
          fail("Error: There are no directories under the 'regressions' folder. This test"
@@ -108,6 +113,11 @@ public class RegressionsIT {
       Assert.assertFalse(regressionScore.containsValue(false));
    }
 
+   @After
+   public void cleanUp() throws Throwable {
+      scriptUpdater.restoreAllScripts();
+   }
+
    private void buildAndInstallSdProjects() throws IOException {
       File gradleInstall = getGradleInstallPath();
 
@@ -116,11 +126,13 @@ public class RegressionsIT {
          File projectDir = new File(mainDir, sdProject);
          System.out.println("Running 'gradle clean build install' on SD project: " + sdProject);
 
+         scriptUpdater.updateJellyFishGradlePluginsVersion(new File(projectDir, "build.gradle").toPath(),
+                                                           jellyFishVersion);
+
          ProjectConnection connection = GradleConnector.newConnector()
                .useInstallation(gradleInstall)
                .forProjectDirectory(projectDir)
                .connect();
-
          try (OutputStream out = Files.newOutputStream(Paths.get("build", "gradle-" + sdProject + ".log"))) {
             connection.newBuild()
                   .forTasks("clean", "build", "install")
@@ -280,7 +292,7 @@ public class RegressionsIT {
       // Set these default properties.
       generatorArguments.put("outputDirectory", directory.getAbsolutePath());
       generatorArguments.put("projectName", "generatedProject");
-      generatorArguments.put("jellyfishGradlePluginsVersion", VersionUtil.getJellyfishVersion());
+      generatorArguments.put("jellyfishGradlePluginsVersion", jellyFishVersion);
 
       // Create the generation project object
 
@@ -333,10 +345,14 @@ public class RegressionsIT {
             .connect();
 
       try (OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
+         scriptUpdater.updateJellyFishGradlePluginsVersion(Paths.get(givenProject, "build.gradle"),
+                                                           jellyFishVersion);
+
          BuildLauncher build = connectionToGivenProj.newBuild();
          build.forTasks("clean", "build");
          build.withArguments("-x", "test");
-         build.setStandardError(log).setStandardOutput(log);
+         build.setStandardError(log).
+               setStandardOutput(log);
 
          build.run();
       } finally {

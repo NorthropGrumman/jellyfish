@@ -8,12 +8,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BuildScriptUpdater {
 
    private static final String BACKUP_FILENAME_SUFFIX = ".bk";
+
+   private final Collection<Path> scriptsUpdated = new ArrayList<>();
 
    public void updateJellyFishGradlePluginsVersion(Path scriptFile, String version) throws IOException {
       Preconditions.checkNotNull(scriptFile, "scriptFile may not be null!");
@@ -44,6 +48,7 @@ public class BuildScriptUpdater {
                                                                   StandardOpenOption.TRUNCATE_EXISTING))) {
          lines.forEach(os::println);
       }
+      scriptsUpdated.add(scriptFile);
    }
 
    public void restoreScriptFile(Path scriptFile) throws IOException {
@@ -59,4 +64,13 @@ public class BuildScriptUpdater {
       Files.move(backupFile, scriptFile);
    }
 
+   public void restoreAllScripts() throws IOException {
+      scriptsUpdated.forEach(s -> {
+         try {
+            restoreScriptFile(s);
+         } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+         }
+      });
+   }
 }
