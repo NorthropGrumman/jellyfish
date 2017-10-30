@@ -50,7 +50,8 @@ public class RegressionsIT {
          ".*\\.tgz",
          ".*\\.html$",
          ".*\\.zip$",
-         ".*javadoc.*"
+         ".*javadoc.*",
+         "*\\.bk$"
    };
 
    // Class variable to hold regressions directory
