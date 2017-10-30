@@ -8,16 +8,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BuildScriptUpdater {
 
    private static final String BACKUP_FILENAME_SUFFIX = ".bk";
 
-   private final Collection<Path> scriptsUpdated = new ArrayList<>();
+   private final Map<Path, Path> scriptsUpdated = new HashMap<>();
 
    public void updateJellyFishGradlePluginsVersion(Path scriptFile, String version) throws IOException {
       Preconditions.checkNotNull(scriptFile, "scriptFile may not be null!");
@@ -25,8 +25,9 @@ public class BuildScriptUpdater {
       Preconditions.checkArgument(!version.trim().isEmpty(), "version may not be an empty string!");
       Preconditions.checkArgument(Files.isRegularFile(scriptFile), "%s is not a file!", scriptFile);
 
-      String backupFileName = scriptFile.getFileName().toString() + BACKUP_FILENAME_SUFFIX;
-      Path backupFile = scriptFile.getParent().resolve(backupFileName);
+      Path backupFile = Files.createTempFile(scriptFile.getFileName().toString(),
+                                             BACKUP_FILENAME_SUFFIX);
+      backupFile.toFile().deleteOnExit();
 
       // Create a copy of the file.
       Files.copy(scriptFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
@@ -48,14 +49,14 @@ public class BuildScriptUpdater {
                                                                   StandardOpenOption.TRUNCATE_EXISTING))) {
          lines.forEach(os::println);
       }
-      scriptsUpdated.add(scriptFile);
+      scriptsUpdated.put(scriptFile, backupFile);
    }
 
    public void restoreScriptFile(Path scriptFile) throws IOException {
       Preconditions.checkNotNull(scriptFile, "scriptFile may not be null!");
 
-      String backupFileName = scriptFile.getFileName().toString() + BACKUP_FILENAME_SUFFIX;
-      Path backupFile = scriptFile.getParent().resolve(backupFileName);
+      Path backupFile = scriptsUpdated.get(scriptFile);
+      Preconditions.checkState(backupFile != null, "%s was not modified, no backup was created!", scriptFile);
       Preconditions.checkState(Files.isRegularFile(backupFile), "no backup file found for %s!", scriptFile);
 
       // Remove the modified file.
@@ -65,7 +66,7 @@ public class BuildScriptUpdater {
    }
 
    public void restoreAllScripts() throws IOException {
-      scriptsUpdated.forEach(s -> {
+      scriptsUpdated.keySet().forEach(s -> {
          try {
             restoreScriptFile(s);
          } catch (IOException e) {
