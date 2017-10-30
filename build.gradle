@@ -13,7 +13,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.seaside:gradle.plugins:2.0.3'
+        classpath 'com.ngc.seaside:gradle.plugins:2.1.0-SNAPSHOT'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
@@ -25,6 +25,7 @@ ext {
 dependencies {
     testCompile gradleApi()
     testCompile "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
+    testCompile "commons-io:commons-io:2.5"
     testCompile "org.mockito:mockito-core:2.7.14"
     testCompile "junit:junit:4.12"
 }
@@ -33,4 +34,8 @@ test {
    testLogging {
       showStandardStreams = true  
    }
+}
+
+processTestResources {
+    expand(jellyfishCliVersion: "${jellyfishCliVersion}")
 }
