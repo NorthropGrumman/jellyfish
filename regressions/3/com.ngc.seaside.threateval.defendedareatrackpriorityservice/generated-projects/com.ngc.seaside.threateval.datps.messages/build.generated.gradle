@@ -17,8 +17,8 @@ sourceSets.all {
 jar {
    manifest {
       attributes('Export-Package': 
-         'com.ngc.seaside.threateval.datps.atype.*,' + 
-         'com.ngc.seaside.threateval.datps.common.datatype.*')
+         'com.ngc.seaside.threateval.datps.common.datatype.*,' + 
+         'com.ngc.seaside.threateval.datps.datatype.*')
    }
 }
 

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.test.model.test2;
+
+option java_multiple_files = true;
+
+message Data1 {
+
+   float field2 = 1;
+
+}

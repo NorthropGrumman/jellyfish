@@ -6,7 +6,7 @@ dependencies {
 jar {
    manifest {
       attributes('Export-Package':
-         'com.ngc.seaside.threateval.datps.event.atype.*,' +
-         'com.ngc.seaside.threateval.datps.event.common.datatype.*')
+         'com.ngc.seaside.threateval.datps.event.common.datatype.*,' +
+         'com.ngc.seaside.threateval.datps.event.datatype.*')
    }
 }

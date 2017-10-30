@@ -38,7 +38,7 @@ public class DefendedAreaTrackPriorityServiceConnector {
          com.ngc.seaside.threateval.datps.transport.topic.DefendedAreaTrackPriorityServiceTransportTopics.SYSTEM_TRACK);
 
       eventService.addSubscriber(this::sendTrackPriority,
-         com.ngc.seaside.threateval.datps.event.atype.TrackPriority.TOPIC);
+         com.ngc.seaside.threateval.datps.event.datatype.TrackPriority.TOPIC);
 
       logService.debug(getClass(), "Activated.");
    }
@@ -50,7 +50,7 @@ public class DefendedAreaTrackPriorityServiceConnector {
          com.ngc.seaside.threateval.datps.transport.topic.DefendedAreaTrackPriorityServiceTransportTopics.SYSTEM_TRACK);
 
       eventService.removeSubscriber(this::sendTrackPriority,
-         com.ngc.seaside.threateval.datps.event.atype.TrackPriority.TOPIC);
+         com.ngc.seaside.threateval.datps.event.datatype.TrackPriority.TOPIC);
 
       logService.debug(getClass(), "Deactivated.");
    }
@@ -98,10 +98,10 @@ public class DefendedAreaTrackPriorityServiceConnector {
       return ITransportReceiver.EMPTY_RESPONSE;
    }
 
-   private void sendTrackPriority(IEvent<com.ngc.seaside.threateval.datps.event.atype.TrackPriority> event) {
+   private void sendTrackPriority(IEvent<com.ngc.seaside.threateval.datps.event.datatype.TrackPriority> event) {
       preSendMessage(com.ngc.seaside.threateval.datps.transport.topic.DefendedAreaTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
-      com.ngc.seaside.threateval.datps.event.atype.TrackPriority from = event.getSource();
-      com.ngc.seaside.threateval.datps.atype.TrackPriority to = DefendedAreaTrackPriorityServiceDataConversion.convert(from);
+      com.ngc.seaside.threateval.datps.event.datatype.TrackPriority from = event.getSource();
+      com.ngc.seaside.threateval.datps.datatype.TrackPriority to = DefendedAreaTrackPriorityServiceDataConversion.convert(from);
       try {
          transportService.send(ITransportObject.withPayload(to.toByteArray()),
             com.ngc.seaside.threateval.datps.transport.topic.DefendedAreaTrackPriorityServiceTransportTopics.TRACK_PRIORITY);
