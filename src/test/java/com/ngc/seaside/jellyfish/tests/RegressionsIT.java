@@ -35,7 +35,8 @@ public class RegressionsIT {
    private static final String[] SYSTEM_DESCRIPTOR_PROJECTS = {
          "threat-eval-system-descriptor",
          "data-inheritance-descriptor",
-         "pubsub-system-descriptor"
+         "pubsub-system-descriptor",
+         "qualified-names-system-descriptor"
    };
 
    private static final String[] IGNORED_FILE_NAMES = {

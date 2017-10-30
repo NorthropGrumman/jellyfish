@@ -8,8 +8,8 @@ import com.ngc.blocs.service.thread.api.IThreadService;
 
 import com.ngc.seaside.threateval.datps.api.IDefendedAreaTrackPriorityService;
 import com.ngc.seaside.threateval.datps.base.impl.AbstractDefendedAreaTrackPriorityService;
-import com.ngc.seaside.threateval.datps.event.atype.TrackPriority;
 import com.ngc.seaside.threateval.datps.event.common.datatype.SystemTrack;
+import com.ngc.seaside.threateval.datps.event.datatype.TrackPriority;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

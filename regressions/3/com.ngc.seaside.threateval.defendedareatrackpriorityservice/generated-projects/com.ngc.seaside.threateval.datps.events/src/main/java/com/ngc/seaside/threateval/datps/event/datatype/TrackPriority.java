@@ -4,7 +4,7 @@
 ************************* Copyright 2017 Northrop Grumman Corporation ***************************
 * Author: Generated
 */
-package com.ngc.seaside.threateval.datps.event.atype;
+package com.ngc.seaside.threateval.datps.event.datatype;
 
 /**
  * This file has been generated and should not be edited directly.
@@ -12,7 +12,7 @@ package com.ngc.seaside.threateval.datps.event.atype;
  */
 public class TrackPriority {
 
-   public static final String TOPIC_NAME = "/data/com.ngc.seaside.threateval.datps.event.atype.TrackPriority";
+   public static final String TOPIC_NAME = "/data/com.ngc.seaside.threateval.datps.event.datatype.TrackPriority";
 
    public static final com.ngc.blocs.service.event.api.IEventTopic<TrackPriority> TOPIC = 
       com.ngc.blocs.service.event.api.EventTopic.of(TOPIC_NAME, TrackPriority.class);

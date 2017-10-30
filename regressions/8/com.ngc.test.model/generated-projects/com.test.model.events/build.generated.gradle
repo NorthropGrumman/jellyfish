@@ -1,0 +1,12 @@
+
+dependencies {
+	compile "com.ngc.blocs:service.api:$blocsDomainVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package':
+         'com.test.model.event.test1.*,' +
+         'com.test.model.event.test2.*')
+   }
+}

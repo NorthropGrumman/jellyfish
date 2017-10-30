@@ -8,7 +8,7 @@
         <property name="state" type="com.ngc.seaside.threateval.datps.domain.common.datatype.StateVector" multiple="false" abstract="false"/>
         <property name="cov" type="com.ngc.seaside.threateval.datps.domain.common.datatype.Covariance" multiple="false" abstract="false"/>
     </object>
-    <object class="com.ngc.seaside.threateval.datps.domain.atype.TrackPriority" generated="true" abstract="false">
+    <object class="com.ngc.seaside.threateval.datps.domain.datatype.TrackPriority" generated="true" abstract="false">
         <property name="trackId" type="int" multiple="false" abstract="false"/>
         <property name="sourceId" type="String" multiple="false" abstract="false"/>
         <property name="priority" type="float" multiple="false" abstract="false"/>

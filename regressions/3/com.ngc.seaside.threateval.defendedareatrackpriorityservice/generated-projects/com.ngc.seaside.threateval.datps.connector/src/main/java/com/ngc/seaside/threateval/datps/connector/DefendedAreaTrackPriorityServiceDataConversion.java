@@ -57,8 +57,8 @@ public class DefendedAreaTrackPriorityServiceDataConversion {
       return to;
    }
 
-   public static com.ngc.seaside.threateval.datps.atype.TrackPriority convert(com.ngc.seaside.threateval.datps.event.atype.TrackPriority from) {
-      com.ngc.seaside.threateval.datps.atype.TrackPriority.Builder to = com.ngc.seaside.threateval.datps.atype.TrackPriority.newBuilder();
+   public static com.ngc.seaside.threateval.datps.datatype.TrackPriority convert(com.ngc.seaside.threateval.datps.event.datatype.TrackPriority from) {
+      com.ngc.seaside.threateval.datps.datatype.TrackPriority.Builder to = com.ngc.seaside.threateval.datps.datatype.TrackPriority.newBuilder();
 
       to.setTrackId(from.getTrackId());
       to.setSourceId(from.getSourceId());
