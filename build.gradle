@@ -11,7 +11,7 @@ buildscript {
 	}
 	dependencies {
 		classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
-		classpath 'com.ngc.seaside:gradle.plugins:2.0.3'
+		classpath 'com.ngc.seaside:gradle.plugins:2.1.0-SNAPSHOT'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
 	}
 }
@@ -51,6 +51,7 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'com.ngc.seaside.ci'
 	if(name == 'systemdescriptor.ui') {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
