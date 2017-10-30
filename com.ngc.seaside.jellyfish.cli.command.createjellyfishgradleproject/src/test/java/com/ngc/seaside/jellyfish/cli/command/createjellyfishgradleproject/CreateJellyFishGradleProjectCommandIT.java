@@ -55,6 +55,24 @@ public class CreateJellyFishGradleProjectCommandIT {
                  CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
                  CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model);
       checkCommandOutput(projectName, DEFAULT_GROUP, version, sdgave, model);
+      checkJellyfishGradlePluginsVersion(projectName, "1.2.3"); // 1.2.3 is loaded from test/resources/properties file.
+   }
+
+   @Test
+   public void testCommandWithJellyfishGradlePluginsVersion() throws Throwable {
+      final String projectName = "test-project-1";
+      final String version = "1.0";
+      final String sdgave = "com.ngc.seasid.system1:system.descriptor:1.0-SNAPSHOT@zip";
+      final String model = "com.ngc.seaside.Model1";
+      final String jfPluginsVersion = "1.6.0";
+
+      runCommand(CreateJellyFishGradleProjectCommand.PROJECT_NAME_PROPERTY, projectName,
+                 CreateJellyFishGradleProjectCommand.VERSION_PROPERTY, version,
+                 CreateJellyFishGradleProjectCommand.SYSTEM_DESCRIPTOR_GAVE_PROPERTY, sdgave,
+                 CreateJellyFishGradleProjectCommand.MODEL_NAME_PROPERTY, model,
+                 CreateJellyFishGradleProjectCommand.JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY, jfPluginsVersion);
+      checkCommandOutput(projectName, DEFAULT_GROUP, version, sdgave, model);
+      checkJellyfishGradlePluginsVersion(projectName, jfPluginsVersion);
    }
 
    @Test
@@ -125,6 +143,11 @@ public class CreateJellyFishGradleProjectCommandIT {
       }
 
       checkCommandOutput(projectNameB, DEFAULT_GROUP, version, sdgave, model);
+   }
+
+   @After
+   public void cleanup() throws IOException {
+      FileUtils.deleteQuietly(outputDir.toFile());
    }
 
    private void runCommand(String... keyValues) throws IOException {
@@ -208,8 +231,13 @@ public class CreateJellyFishGradleProjectCommandIT {
       Assert.assertTrue("settings.gradle root project name is incorrect", projectNameMatch);
    }
 
-   @After
-   public void cleanup() throws IOException {
-      FileUtils.deleteQuietly(outputDir.toFile());
+   private void checkJellyfishGradlePluginsVersion(String expectedProjectName, String pluginsVersion)
+         throws IOException {
+      Path buildFilePath = outputDir.resolve(Paths.get(expectedProjectName, "build.gradle"));
+      List<String> buildFileContent = Files.readAllLines(buildFilePath);
+
+      String lineToMatch = String.format("classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:%s'", pluginsVersion);
+      Assert.assertTrue("did not use correct Jellyfish plugins version!",
+                        buildFileContent.stream().anyMatch(l -> l.contains(lineToMatch)));
    }
 }

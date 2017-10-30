@@ -30,3 +30,7 @@ dependencies {
     
     testCompile project(":jellyfish.cli.command.testutils")
 }
+
+processResources {
+    expand(version: version)
+}

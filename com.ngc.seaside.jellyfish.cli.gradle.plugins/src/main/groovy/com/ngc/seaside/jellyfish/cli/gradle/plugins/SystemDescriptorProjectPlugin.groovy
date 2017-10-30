@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
-import com.ngc.seaside.gradle.plugins.util.GradleUtil
+import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
