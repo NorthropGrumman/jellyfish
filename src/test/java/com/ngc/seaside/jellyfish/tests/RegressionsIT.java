@@ -280,6 +280,7 @@ public class RegressionsIT {
       // Set these default properties.
       generatorArguments.put("outputDirectory", directory.getAbsolutePath());
       generatorArguments.put("projectName", "generatedProject");
+      generatorArguments.put("jellyfishGradlePluginsVersion", VersionUtil.getJellyfishVersion());
 
       // Create the generation project object
 
