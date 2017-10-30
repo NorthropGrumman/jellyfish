@@ -78,6 +78,11 @@ public class PackageNamingServiceTest {
       assertEquals("message name not correct!",
                    "com.ngc.seaside.threateval.threatevaluation",
                    service.getMessagePackageName(options, data));
+      
+      data = newData("StateVector", "com.ngc.seaside.threateval2");
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.threateval.threatevaluation.threateval2",
+                   service.getMessagePackageName(options, data));
    }
 
    @Test
@@ -147,6 +152,11 @@ public class PackageNamingServiceTest {
       assertEquals("domain name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.domain",
                    service.getDomainPackageName(options, data));
+      
+      data = newData("StateVector", "com.ngc.seaside.threateval2");
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.domain.threateval2",
+                   service.getDomainPackageName(options, data));
    }
 
    @Test
@@ -178,8 +188,13 @@ public class PackageNamingServiceTest {
       assertEquals("event name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.event",
                    service.getEventPackageName(options, data));
+      
+      data = newData("StateVector", "com.ngc.seaside.threateval2");
+      assertEquals("event name not correct!",
+                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.threateval2",
+                   service.getEventPackageName(options, data));
    }
-
+   
    @Test
    public void testDoesGetFullyQualifiedNameForConnector() throws Throwable {
       Model model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
