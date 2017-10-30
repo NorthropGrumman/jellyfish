@@ -13,7 +13,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.tjh:gradle.plugins:2.2.0-SNAPSHOT'
+        classpath 'com.ngc.seaside:gradle.plugins:2.1.0-SNAPSHOT'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
