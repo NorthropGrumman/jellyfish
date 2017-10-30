@@ -374,6 +374,47 @@ class DataParsingTest {
 		)
 	}
 	
+	def void testDoesParseQualifiedDataAsFields() {
+		val dataSource1 = '''
+			package com.test1
+			data Data1 {}
+		''';
+		
+		val dataResource1 = resourceHelper.resource(dataSource1, URI.createURI("datatypes.sd"))
+		validationTester.assertNoIssues(dataResource1)
+		
+		val dataSource2 = '''
+			package com.test2
+			enum Data1 {}
+		''';
+		
+		val dataResource2 = resourceHelper.resource(dataSource2, dataResource1.resourceSet)
+		validationTester.assertNoIssues(dataResource2)
+		
+		val dataSource3 = '''
+			package com.test3
+			data Data1 {}
+		''';
+		
+		val dataResource3 = resourceHelper.resource(dataSource3, dataResource1.resourceSet)
+		validationTester.assertNoIssues(dataResource3)
+
+		val dataSource4 = '''
+			package com.test4
+			import com.test3.Data1
+			data Data : com.test1.Data1 {
+			  com.test1.Data1 data1
+			  com.test2.Data1 data2
+			  Data1 data3
+			  
+			}
+		'''
+
+		val result = parseHelper.parse(dataSource4, dataResource1.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)	
+	}
+	
 	@Test
 	def void testDoesNotAllowDataNameKeywords() {
 		val source = '''

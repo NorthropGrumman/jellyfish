@@ -6,11 +6,17 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.IResourceDescriptionsProvider;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.validation.IssueCodes;
 
@@ -43,6 +49,12 @@ public class ImportValidator extends AbstractSystemDescriptorValidator {
     */
    @Inject
    private IQualifiedNameConverter qualifiedNameConverter;
+   
+   /**
+    * A provider that is used to determine the location of elements in a document.
+    */
+   @Inject
+   private ILocationInFileProvider locationInFileProvider;
 
    @Check
    public void checkImports(Package pkg) {
@@ -56,8 +68,20 @@ public class ImportValidator extends AbstractSystemDescriptorValidator {
 
       final Set<QualifiedName> packageResources = new HashSet<>();
       pkg.eAllContents().forEachRemaining(element -> {
-         for (EObject reference : element.eCrossReferences()) {
-            for (IEObjectDescription description : resourceDescriptions.getExportedObjectsByObject(reference)) {
+
+         for (FeatureIterator<EObject> iter = (FeatureIterator<EObject>) element.eCrossReferences()
+                                                                                .iterator(); iter.hasNext();) {
+            EObject referencedElement = iter.next();
+            EStructuralFeature feature = iter.feature();
+            
+            String referencedName = getReferencedType(element, feature, pkg);
+            
+            if (referencedName.isEmpty() || referencedName.indexOf('.') >= 0) {
+               // Ignore references that use fully-qualified names
+               continue;
+            }
+            
+            for (IEObjectDescription description : resourceDescriptions.getExportedObjectsByObject(referencedElement)) {
                packageResources.add(description.getQualifiedName());
             }
          }
@@ -116,4 +140,23 @@ public class ImportValidator extends AbstractSystemDescriptorValidator {
 
    }
 
+   /**
+    * Returns the actual text of a reference.
+    * 
+    * @param resource resource containing text
+    * @param region region of reference
+    * @return actual text of reference
+    */
+   private String getReferencedType(EObject element, EStructuralFeature feature, Package pkg) {
+      XtextResource resource = (XtextResource) pkg.eResource();
+      ITextRegion region = locationInFileProvider.getSignificantTextRegion(element, feature, 0);
+      
+      IParseResult parseResult = resource.getParseResult();
+      if (parseResult != null && region != null) {
+         return parseResult.getRootNode().getText().substring(region.getOffset(),
+            region.getOffset() + region.getLength());
+      }
+      return "";
+   }
+   
 }

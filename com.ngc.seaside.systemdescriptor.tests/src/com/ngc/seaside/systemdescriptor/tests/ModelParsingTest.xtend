@@ -457,6 +457,89 @@ class ModelParsingTest {
 		)
 	}
 	
+	@Test
+	def void testDoesParseQualifiedFields() {
+		val dataSource1 = '''
+			package com.test1
+			data Data1 {}
+		''';
+		
+		val dataResource1 = resourceHelper.resource(dataSource1, URI.createURI("datatypes.sd"))
+		validationTester.assertNoIssues(dataResource1)
+		
+		val dataSource2 = '''
+			package com.test2
+			data Data1 {}
+		''';
+		
+		val dataResource2 = resourceHelper.resource(dataSource2, dataResource1.resourceSet)
+		validationTester.assertNoIssues(dataResource2)
+		
+		val dataSource3 = '''
+			package com.test3
+			data Data1 {}
+		''';
+		
+		val dataResource3 = resourceHelper.resource(dataSource3, dataResource1.resourceSet)
+		validationTester.assertNoIssues(dataResource3)
+		
+		val modelSource1 = '''
+			package com.test1
+			model Model1 {}
+		''';
+		
+		val modelResource1 = resourceHelper.resource(modelSource1, dataResource1.resourceSet)
+		validationTester.assertNoIssues(modelResource1)
+		
+		val modelSource2 = '''
+			package com.test2
+			model Model1 {}
+		''';
+		
+		val modelResource2 = resourceHelper.resource(modelSource2, dataResource1.resourceSet)
+		validationTester.assertNoIssues(modelResource2)
+		
+		val modelSource3 = '''
+			package com.test3
+			model Model1 {}
+		''';
+		
+		val modelResource3 = resourceHelper.resource(modelSource3, dataResource1.resourceSet)
+		validationTester.assertNoIssues(modelResource3)
+
+		val modelSource4 = '''
+			package com.test4
+			import com.test3.Data1
+			import com.test3.Model1
+			model Model {
+			  input {
+			    com.test1.Data1 input1
+			    com.test2.Data1 input2
+			    Data1 input3
+			  }
+			  output {
+			    com.test1.Data1 output1
+			  	com.test2.Data1 output2
+			  	Data1 output3
+			  }
+			  requires {
+			  	com.test1.Model1 require1
+			  	com.test2.Model1 require2
+			  	Model1 require3
+			  }
+			  parts {
+			    com.test1.Model1 part1
+			    com.test2.Model1 part2
+			    Model1 part3
+			  }
+			}
+		'''
+
+		val result = parseHelper.parse(modelSource4, dataResource1.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)	
+	}
+	
 
 	@Test
 	def void testDoesNotAllowModelNameKeywords() {
