@@ -17,7 +17,6 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.data.DataField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
@@ -30,8 +29,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
-
-import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CorrelateStepHandlerTest {

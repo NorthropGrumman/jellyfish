@@ -23,17 +23,30 @@ import java.util.regex.Pattern;
  *     (correlating|willCorrelate) <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>
  *    }
  * </pre>
+ * 
+ * NOTE: The "PAST" tense is not currently supported.
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
+
+   // Regular expression representing <inputField|outputField>.<dataField>
    final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
       Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
+   /**
+    * Default constructor
+    */
    public CorrelateStepHandler() {
       register(PRESENT, FUTURE);
    }
 
+   /**
+    * Get the the data field referenced on the left side of the "to".
+    * 
+    * @param step the scenario step
+    * @return the left data field
+    */
    public IDataField getLeftData(IScenarioStep step) {
       requireStepUsesHandlerVerb(step);
       List<String> parameters = step.getParameters();
@@ -43,6 +56,12 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       return evaluateDataField(null, step, leftData).getDataField();
    }
 
+   /**
+    * Get the the data field referenced on the right side of the "to".
+    * 
+    * @param step the scenario step
+    * @return the right data field
+    */
    public IDataField getRightData(IScenarioStep step) {
       requireStepUsesHandlerVerb(step);
       List<String> parameters = step.getParameters();
@@ -94,66 +113,34 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
-   private void validateInOutFieldDifferent(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            InputOutputDataField leftData, InputOutputDataField rightData) {
-      if (leftData.getInputOutputLocation() == rightData.getInputOutputLocation()) {
-         String inOutFieldLeft = leftData.getDataFieldArg().split("\\.")[0];
-         String inOutFieldRight = rightData.getDataFieldArg().split("\\.")[0];
-
-         if (inOutFieldLeft.equals(inOutFieldRight)) {
-            declareOrThrowError(context,
-               step,
-               "Can't reference the same field.");
-         }
-      }
-   }
-
-   private void verifyDataStringsDontMatch(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            String leftDataString, String rightDataString) {
-      if (leftDataString.equals(rightDataString)) {
-         declareOrThrowError(context,
-            step,
-            "Can't correlate a data field to itself");
-      }
-   }
-
-   private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            InputOutputDataField leftData, InputOutputDataField rightData) {
-      String keyword = step.getKeyword();
-
-      if (keyword.equals(PRESENT.getVerb())) {
-         if (leftData.getInputOutputLocation() != InputOutputEnum.INPUT
-            || rightData.getInputOutputLocation() != InputOutputEnum.INPUT) {
-            declareOrThrowError(context,
-               step,
-               "In present tense of correlation verb, both arguments must be input types.");
-         }
-      } else if (keyword.equals(FUTURE.getVerb())) {
-         if ((leftData.getInputOutputLocation() == InputOutputEnum.INPUT
-            && rightData.getInputOutputLocation() == InputOutputEnum.INPUT)
-            || leftData.getInputOutputLocation() == InputOutputEnum.OUTPUT
-               && rightData.getInputOutputLocation() == InputOutputEnum.OUTPUT) {
-            declareOrThrowError(context,
-               step,
-               "In future tense of correlation verb, one argument must be an input type and the other must be of output type.");
-         }
+   /**
+    * This method should be used to declare errors (if processing can continue) or throw
+    * and exception if an illegal argument is used.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param errMessage the error message to display
+    */
+   private static void declareOrThrowError(IValidationContext<IScenarioStep> context,
+            IScenarioStep step,
+            String errMessage) {
+      if (context != null) {
+         context.declare(Severity.ERROR, errMessage, step).getKeyword();
       } else {
-         declareOrThrowError(context,
-            step,
-            keyword + " is not a valid verb");
+         throw new IllegalArgumentException(errMessage);
       }
    }
 
-   private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
-            InputOutputDataField leftData, InputOutputDataField rightData) {
-      if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
-         declareOrThrowError(context,
-            step,
-            "Argument types don't match. Left argument is of type: "
-               + leftData.getDataField().getType() + ". Right data is of type: " + rightData.getDataField().getType());
-      }
-   }
-
+   /**
+    * This method retrieves the data field from the model using the provided step arguments. The {@link IDataField}
+    * object is wrapped by an {@link InputOutputDataField} which contains more information about the data field
+    * pertaining to how it was used in the context of the step.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param dataFieldString the argument in the step in format <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>
+    * @return the evaluated data field
+    */
    private InputOutputDataField evaluateDataField(IValidationContext<IScenarioStep> context, IScenarioStep step,
             String dataFieldString) {
       Preconditions.checkNotNull(step, "step may not be null!");
@@ -220,6 +207,45 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       return inOutDataField;
    }
 
+   /**
+    * Gets the correlation string argument provided in the step based on position
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param argPosition the position of the argument
+    * @return the correlation string argument
+    */
+   private String getCorrelationArg(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String argument = step.getParameters().get(argPosition).trim();
+      if (!PATTERN.matcher(argument).matches()) {
+         declareOrThrowError(context, step, argument + " isn't of format <inputField|outputField>.<dataField>");
+      }
+      return argument;
+   }
+
+   /**
+    * Verifies that the step uses the correct verb
+    * 
+    * @param step the current step
+    */
+   private static void requireStepUsesHandlerVerb(IScenarioStep step) {
+      Preconditions.checkNotNull(step, "step may not be null!");
+      String keyword = step.getKeyword();
+      Preconditions.checkArgument(keyword.equals(PRESENT.getVerb())
+         || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
+   }
+
+   /**
+    * This method searches the model for the referenced data field. If the data field does not match
+    * the initial data type provided in the input, the super data types are searched to support inheritance.
+    * If the data field is never found, null is returned.
+    * 
+    * @param dataRefField the data reference field to search
+    * @param dataFieldStr the data field key to search for
+    * @return the data field
+    */
    private IDataField searchModelForDataField(IDataReferenceField dataRefField, String dataFieldStr) {
       IDataField dataField = null;
       IData dataType = dataRefField.getType();
@@ -242,15 +268,93 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       return dataField;
    }
 
-   private String getCorrelationArg(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
-      Preconditions.checkNotNull(step, "step may not be null!");
-      String argument = step.getParameters().get(argPosition).trim();
-      if (!PATTERN.matcher(argument).matches()) {
-         declareOrThrowError(context, step, argument + " isn't of format <inputField|outputField>.<dataField>");
+   /**
+    * This method ensures that the types of two data fields are the same otherwise correlation
+    * cannot occur.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param leftData the datafield from the left of the "to"
+    * @param rightData the datafield from the right of the "to"
+    */
+   private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
+         declareOrThrowError(context,
+            step,
+            "Argument types don't match. Left argument is of type: "
+               + leftData.getDataField().getType() + ". Right data is of type: " + rightData.getDataField().getType());
       }
-      return argument;
    }
 
+   /**
+    * Verify that the <inputField|outputField> arguments on each side of the "to" are not the same.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param leftData the datafield from the left of the "to"
+    * @param rightData the datafield from the right of the "to"
+    */
+   private void validateInOutFieldDifferent(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      if (leftData.getInputOutputLocation() == rightData.getInputOutputLocation()) {
+         String inOutFieldLeft = leftData.getDataFieldArg().split("\\.")[0];
+         String inOutFieldRight = rightData.getDataFieldArg().split("\\.")[0];
+
+         if (inOutFieldLeft.equals(inOutFieldRight)) {
+            declareOrThrowError(context,
+               step,
+               "Can't reference the same field.");
+         }
+      }
+   }
+
+   /**
+    * This method verifies that the correct combination of input and output fields
+    * are used depending on the verb tense.
+    * 
+    * If the verb is PRESENT, only model inputs may be used.
+    * If the verb is FUTURE, exactly one model input and one model output must be referenced.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param leftData the datafield from the left of the "to"
+    * @param rightData the datafield from the right of the "to"
+    */
+   private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            InputOutputDataField leftData, InputOutputDataField rightData) {
+      String keyword = step.getKeyword();
+
+      if (keyword.equals(PRESENT.getVerb())) {
+         if (leftData.getInputOutputLocation() != InputOutputEnum.INPUT
+            || rightData.getInputOutputLocation() != InputOutputEnum.INPUT) {
+            declareOrThrowError(context,
+               step,
+               "In present tense of correlation verb, both arguments must be input types.");
+         }
+      } else if (keyword.equals(FUTURE.getVerb())) {
+         if ((leftData.getInputOutputLocation() == InputOutputEnum.INPUT
+            && rightData.getInputOutputLocation() == InputOutputEnum.INPUT)
+            || (leftData.getInputOutputLocation() == InputOutputEnum.OUTPUT
+               && rightData.getInputOutputLocation() == InputOutputEnum.OUTPUT)) {
+            declareOrThrowError(context,
+               step,
+               "In future tense of correlation verb, one argument must be an input type and the other must be of output type.");
+         }
+      } else {
+         declareOrThrowError(context,
+            step,
+            keyword + " is not a valid verb");
+      }
+   }
+
+   /**
+    * Validates that the second argument is "to"
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param argPosition the position of the argument
+    */
    private void validateToArgument(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
       Preconditions.checkNotNull(step, "step may not be null!");
       if (step.getParameters().get(argPosition) != "to") {
@@ -260,21 +364,20 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
-   private static void requireStepUsesHandlerVerb(IScenarioStep step) {
-      Preconditions.checkNotNull(step, "step may not be null!");
-      String keyword = step.getKeyword();
-      Preconditions.checkArgument(keyword.equals(PRESENT.getVerb())
-         || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
-   }
-
-   private static void declareOrThrowError(IValidationContext<IScenarioStep> context,
-            IScenarioStep step,
-            String errMessage) {
-      if (context != null) {
-         context.declare(Severity.ERROR, errMessage, step).getKeyword();
-      } else {
-         throw new IllegalArgumentException(errMessage);
+   /**
+    * This method ensures that correlation cannot occur between the same fields.
+    * 
+    * @param context the context
+    * @param step the current step
+    * @param leftDataString the data string from the left of the "to"
+    * @param rightDataString the data string from the right of the "to"
+    */
+   private void verifyDataStringsDontMatch(IValidationContext<IScenarioStep> context, IScenarioStep step,
+            String leftDataString, String rightDataString) {
+      if (leftDataString.equals(rightDataString)) {
+         declareOrThrowError(context,
+            step,
+            "Can't correlate a data field to itself");
       }
    }
 
