@@ -14,7 +14,7 @@ buildscript {
    dependencies {
       classpath 'com.ngc.blocs:gradle.plugin:0.4'
       classpath 'com.ngc.seaside:gradle.plugins:1.6'
-      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:1.6.0'
+      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:${jellyfishGradlePluginsVersion}'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
    }

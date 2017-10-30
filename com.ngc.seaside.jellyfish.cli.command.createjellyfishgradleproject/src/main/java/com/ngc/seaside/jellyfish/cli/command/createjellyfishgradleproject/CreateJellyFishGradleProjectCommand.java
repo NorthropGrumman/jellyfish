@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
-import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.CommandException;
@@ -24,8 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -38,12 +34,13 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   public static final String SYSTEM_DESCRIPTOR_GAVE_PROPERTY =
-         CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
+   public static final String SYSTEM_DESCRIPTOR_GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.
+         getName();
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
+   public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    static final String SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY = "systemDescriptorArtifactId";
    static final String SYSTEM_DESCRIPTOR_VERSION_PROPERTY = "systemDescriptorVersion";
@@ -78,16 +75,13 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
       // Ensure OUTPUT_DIR_PROPERTY parameter is set
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
-         collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY)
-                                       .setValue(
-                                             Paths.get(".")
-                                                   .toAbsolutePath()
-                                                   .toString()));
+         collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY).setValue(
+               Paths.get(".").toAbsolutePath().toString()));
       }
 
       final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
 
-      // Create project directorythreatevaluation
+      // Create project directory.
       final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
       final Path projectDirectory = outputDirectory.resolve(projectName);
       try {
@@ -97,12 +91,18 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
 
-      // Ensure GROUP_ID_PROPERTY parameter is set
+      // Ensure GROUP_ID_PROPERTY parameter is set.
       if (!collection.containsParameter(GROUP_ID_PROPERTY)) {
          collection.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY).setValue(DEFAULT_GROUP_ID));
       }
 
-      // parse the parameters to get the system descriptor artifact id
+      // Set the version to use for the Jellyfish Gradle plugins.
+      if(!collection.containsParameter(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)) {
+         collection.addParameter(new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY,
+                                                        VersionUtil.getCurrentJellyfishVersion()));
+      }
+
+      // parse the parameters to get the system descriptor artifact id.
       String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
       String[] parsedGave = CommonParameters.parseGave(gaveStr);
       collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, parsedGave[1]));
@@ -120,7 +120,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -137,7 +139,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -156,11 +160,16 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
+            "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output"
+            + " directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
             CommonParameters.OUTPUT_DIRECTORY.required(),
             new DefaultParameter<>(PROJECT_NAME_PROPERTY)
-                  .setDescription(
-                        "The name of the Gradle project. This should use hyphens and lower case letters. i.e.  my-project")
+                  .setDescription("The name of the Gradle project. This should use hyphens and lower case letters,"
+                                  + " (ie my-project)")
+                  .setRequired(false),
+            new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
+                  .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
+                                  + "  Defaults to the current version of Jellyfish.")
                   .setRequired(false),
             CommonParameters.GROUP_ID,
             new DefaultParameter<>(VERSION_PROPERTY)
