@@ -56,28 +56,6 @@ public class CorrelateStepHandlerTest {
          handler.getVerbs().get(VerbTense.FUTURE_TENSE));
    }
 
-   // @Test
-   // public void testDoesValidateValidUsage() throws Throwable {
-   // step = new ScenarioStep();
-   // step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-   // when(context.getObject()).thenReturn(step);
-   //
-   // step.getParameters().addAll(Arrays.asList("a.foo", "to", "b.foo"));
-   // handler.doValidateStep(context);
-   // verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
-   // }
-
-   // @Test
-   // public void testDoesValidateValidUsage() throws Throwable {
-   // step = new ScenarioStep();
-   // step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-   // when(context.getObject()).thenReturn(step);
-   //
-   // step.getParameters().addAll(Arrays.asList("a.foo", "to", "b.foo"));
-   // handler.doValidateStep(context);
-   // verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
-   // }
-
    @Test
    public void testInvalidNumberOfArgs() throws Throwable {
       // Setup
