@@ -357,10 +357,10 @@ public class CorrelateStepHandler extends AbstractStepHandler {
     */
    private void validateToArgument(IValidationContext<IScenarioStep> context, IScenarioStep step, int argPosition) {
       Preconditions.checkNotNull(step, "step may not be null!");
-      if (step.getParameters().get(argPosition) != "to") {
+      if (!"to".equals(step.getParameters().get(argPosition))) {
          declareOrThrowError(context,
             step,
-            String.format("Expected parameter to be 'to'"));
+            "Expected parameter to be 'to'");
       }
    }
 
@@ -381,14 +381,14 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
-   /*
+   /**
     * Enum to designate what is an input or output
     */
-   private static enum InputOutputEnum {
-      INPUT, OUTPUT;
+   private enum InputOutputEnum {
+      INPUT, OUTPUT
    }
 
-   /*
+   /**
     * This is a helper class to store an IDataField, whether it was input or output, and the original argument
     * supplied to retrieve the IDataField.
     */
