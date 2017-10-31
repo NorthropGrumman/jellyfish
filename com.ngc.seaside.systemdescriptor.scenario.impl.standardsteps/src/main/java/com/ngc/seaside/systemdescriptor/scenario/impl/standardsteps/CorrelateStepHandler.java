@@ -31,7 +31,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
    // Regular expression representing <inputField|outputField>.<dataField>
-   final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
+   private final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
       Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
    /**

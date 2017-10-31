@@ -69,8 +69,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       Multibinder<ISystemDescriptorValidator> multibinder = Multibinder.newSetBinder(
             binder(),
             ISystemDescriptorValidator.class);
-      // TODO TH: Re-enable this validator once CEAC-864 is ready.
-      //multibinder.addBinding().to(ScenarioStepValidator.class);
+      multibinder.addBinding().to(ScenarioStepValidator.class);
    }
 
    /**
