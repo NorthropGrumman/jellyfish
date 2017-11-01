@@ -37,13 +37,15 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
-   // Regular expression representing <inputField|outputField>.<dataField>
-//   private final Pattern PATTERN = Pattern.compile("((?:[a-z][a-z0-9_]*))(\\.)((?:[a-z][a-z0-9_]*))",
-//      Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+   /**
+    * Enum to designate what is an input or output
+    */
+   private enum InputOutputEnum {
+      INPUT, OUTPUT
+   }
 
-   private final Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
+   private final static Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
                                                    Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-
    /**
     * Default constructor
     */
@@ -193,30 +195,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
                                             splitInOutFieldDataField[0]);
             }
          }
-
-//         if (model.getInputs().getByName(inOutFieldStr).isPresent()) {
-//            dataRefField = model.getInputs().getByName(inOutFieldStr).get();
-//            dataField = searchModelForDataField(dataRefField, dataFieldStr);
-//            if (dataField != null) {
-//               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT, dataFieldString);
-//            } else {
-//               errorMessage = "The " + dataFieldStr
-//                              + " can't be found in the model inputs for the future tense correlation.";
-//            }
-//
-//         } else if (model.getOutputs().getByName(inOutFieldStr).isPresent()) {
-//            dataRefField = model.getOutputs().getByName(inOutFieldStr).get();
-//            dataField = searchModelForDataField(dataRefField, dataFieldStr);
-//            if (dataField != null) {
-//               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT, dataFieldString);
-//            } else {
-//               errorMessage = "The " + dataFieldStr
-//                              + " can't be found in the model outputs for the future tense correlation.";
-//            }
-//
-//         } else {
-//            errorMessage = dataFieldString + " isn't an input or output field.";
-//         }
       }
       if (inOutDataField == null) {
          declareOrThrowError(context,
@@ -224,36 +202,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
                              errorMessage);
       }
       return inOutDataField;
-   }
-
-   private static IDataField resolve(INamedChildCollection<?, IDataReferenceField> dataRefFields, String[] path) {
-      IDataField field = null;
-      IDataReferenceField ref = dataRefFields.getByName(path[0]).orElse(null);
-      if (ref != null) {
-         field = resolve(ref.getType(), Arrays.copyOfRange(path, 1, path.length));
-      }
-      return field;
-   }
-
-   private static IDataField resolve(IData dataType, String[] path) {
-      Deque<IDataField> fields = new ArrayDeque<>(path.length);
-      IData currentDataType = dataType;
-
-      for (String fieldName : path) {
-         if (currentDataType != null) {
-            IDataField field = getDataField(currentDataType, fieldName);
-            if (field == null) {
-               currentDataType = null;
-            } else {
-               fields.push(field);
-               currentDataType = SystemDescriptors.isPrimitiveDataFieldDeclaration(field)
-                                 ? null
-                                 : field.getReferencedDataType();
-            }
-         }
-      }
-
-      return fields.size() == path.length ? fields.pop() : null;
    }
 
    /**
@@ -429,18 +377,41 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       }
    }
 
-   /**
-    * Enum to designate what is an input or output
-    */
-   private enum InputOutputEnum {
-      INPUT, OUTPUT
+   private static IDataField resolve(INamedChildCollection<?, IDataReferenceField> dataRefFields, String[] path) {
+      IDataField field = null;
+      IDataReferenceField ref = dataRefFields.getByName(path[0]).orElse(null);
+      if (ref != null) {
+         field = resolve(ref.getType(), Arrays.copyOfRange(path, 1, path.length));
+      }
+      return field;
+   }
+
+   private static IDataField resolve(IData dataType, String[] path) {
+      Deque<IDataField> fields = new ArrayDeque<>(path.length);
+      IData currentDataType = dataType;
+
+      for (String fieldName : path) {
+         if (currentDataType != null) {
+            IDataField field = getDataField(currentDataType, fieldName);
+            if (field == null) {
+               currentDataType = null;
+            } else {
+               fields.push(field);
+               currentDataType = SystemDescriptors.isPrimitiveDataFieldDeclaration(field)
+                                 ? null
+                                 : field.getReferencedDataType();
+            }
+         }
+      }
+
+      return fields.size() == path.length ? fields.pop() : null;
    }
 
    /**
     * This is a helper class to store an IDataField, whether it was input or output, and the original argument supplied
     * to retrieve the IDataField.
     */
-   protected class InputOutputDataField {
+   private class InputOutputDataField {
 
       private IDataField dataField;
       private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
