@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
 
+   public final static ScenarioStepVerb PAST = ScenarioStepVerb.presentTense("hasCorrelated");
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
@@ -45,12 +46,13 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    }
 
    private final static Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
-                                                   Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                                                          Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
    /**
     * Default constructor
     */
    public CorrelateStepHandler() {
-      register(PRESENT, FUTURE);
+      register(PAST, PRESENT, FUTURE);
    }
 
    /**
