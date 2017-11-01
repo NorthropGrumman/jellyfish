@@ -6,6 +6,7 @@ import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.AskStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.BeginCorrleationEventStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CompleteStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
@@ -27,6 +28,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       bind(PublishStepHandler.class).in(Singleton.class);
       bind(CompleteStepHandler.class).in(Singleton.class);
       bind(CorrelateStepHandler.class).in(Singleton.class);
+      bind(BeginCorrleationEventStepHandler.class).in(Singleton.class);
 
       Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
             binder(),
@@ -36,6 +38,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       handlers.addBinding().to(PublishStepHandler.class);
       handlers.addBinding().to(CompleteStepHandler.class);
       handlers.addBinding().to(CorrelateStepHandler.class);
+      handlers.addBinding().to(BeginCorrleationEventStepHandler.class);
 
       // These handlers are also validators.
       Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
@@ -46,6 +49,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       validators.addBinding().to(AskStepHandler.class);
       validators.addBinding().to(CompleteStepHandler.class);
       validators.addBinding().to(CorrelateStepHandler.class);
+      validators.addBinding().to(BeginCorrleationEventStepHandler.class);
    }
 
    @Override

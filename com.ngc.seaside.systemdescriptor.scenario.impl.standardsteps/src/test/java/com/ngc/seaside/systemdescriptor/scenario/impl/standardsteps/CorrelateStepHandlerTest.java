@@ -206,6 +206,47 @@ public class CorrelateStepHandlerTest {
    }
 
    @Test
+   public void testGettersWithNestedFields() throws Throwable {
+
+      // Setup
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+      step.getParameters().addAll(Arrays.asList("input0.complex0.intField0", "to", "output0.complex0.stringField0"));
+
+      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
+      IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
+
+      IData complexInputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.ComplexInputDataType0");
+      IData complexOutputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.ComplexOutputDataType0");
+
+      ModelUtils.mockData(complexInputDataType0, null, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
+      ModelUtils.mockData(complexOutputDataType0, null, "stringField0", DataTypes.STRING);
+
+      ModelUtils.mockData(inputDataType0, null, "complex0", complexInputDataType0);
+      ModelUtils.mockData(outputDataType0, null, "complex0", complexOutputDataType0);
+
+      PubSubModel model = new PubSubModel("com.ModelName");
+      model.addInput("input0", inputDataType0);
+      model.addOutput("output0", outputDataType0);
+      IScenario scenarioParent = mock(IScenario.class);
+      when(scenarioParent.getParent()).thenReturn(model);
+      model.addScenario(scenarioParent);
+      step.setParent(scenarioParent);
+      when(context.getObject()).thenReturn(step);
+
+      //Methods to test
+      IDataField leftResult = handler.getLeftData(step);
+      IDataField rightResult = handler.getRightData(step);
+
+      //Results
+      assertEquals("Incorrect Data field returned", "intField0", leftResult.getName());
+      assertEquals("Incorrect Data field returned", DataTypes.INT, leftResult.getType());
+
+      assertEquals("Incorrect Data field returned", "stringField0", rightResult.getName());
+      assertEquals("Incorrect Data field returned", DataTypes.STRING, rightResult.getType());
+   }
+
+   @Test
    public void testInvalidPresentInputToInputWrongType() throws Throwable {
       // Setup
       step = new ScenarioStep();
