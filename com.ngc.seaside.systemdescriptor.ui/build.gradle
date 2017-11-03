@@ -1,4 +1,4 @@
-import com.ngc.seaside.gradle.plugins.util.Versions
+import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
 
 sourceSets {
