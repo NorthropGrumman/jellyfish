@@ -13,13 +13,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.ngc.seaside:gradle.plugins:2.1.0-SNAPSHOT'
+        classpath 'com.ngc.seaside:gradle.plugins:2.1.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
 
 ext {
-    jellyfishCliVersion = '1.7.0-SNAPSHOT'
+    jellyfishCliVersion = '1.7.0'
 }
 
 dependencies {
