@@ -51,7 +51,7 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'com.ngc.seaside.ci'
+        apply plugin: 'com.ngc.seaside.ci'
 	if(name == 'systemdescriptor.ui') {
 	   // We have to apply the maven plugin here instead of in the build.gradle for 
 	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
