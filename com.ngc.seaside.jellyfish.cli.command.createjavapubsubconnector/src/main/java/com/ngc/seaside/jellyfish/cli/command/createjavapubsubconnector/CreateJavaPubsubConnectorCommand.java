@@ -103,7 +103,6 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
 
       IProjectInformation info = projectService.getConnectorProjectName(commandOptions, model);
-      doAddProject(outputDirectory, info);
 
       ConnectorDto dto = new ConnectorDto();
 
@@ -264,21 +263,6 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
                queue.add(datum);
             }
          }
-      }
-   }
-
-   private void doAddProject(Path outputDirectory, IProjectInformation info) {
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory.resolve(info.getDirectoryName())));
-      parameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      parameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
       }
    }
 
