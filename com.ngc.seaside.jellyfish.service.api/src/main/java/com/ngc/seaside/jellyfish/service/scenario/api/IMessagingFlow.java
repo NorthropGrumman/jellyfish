@@ -1,6 +1,9 @@
 package com.ngc.seaside.jellyfish.service.scenario.api;
 
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+
+import java.util.Optional;
 
 /**
  * A messaging flow represents a logical flow of inputs and outputs through a component.  Flows are derived from {@link
@@ -27,4 +30,12 @@ public interface IMessagingFlow {
     * @return the scenario this messaging flow was generated from
     */
    IScenario getScenario();
+
+   /**
+    * Gets the correlation description for this scenario provided this scenario involves correlation.  If this scenario
+    * does not involve correlation, the returned optional is empty.
+    *
+    * @return the correlation description for this scenario as a potentially empty optional
+    */
+   Optional<ICorrelationDescription> getCorrelationDescription();
 }
