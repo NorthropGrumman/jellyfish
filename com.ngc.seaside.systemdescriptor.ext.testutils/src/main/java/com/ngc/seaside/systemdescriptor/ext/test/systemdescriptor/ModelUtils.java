@@ -23,7 +23,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -122,10 +124,12 @@ public class ModelUtils {
        * @param name name of scenario
        * @param receiving receiving field
        * @param publishing publishing field
+       * @param correlations pairs of correlation statements
        * @return the mocked pub sub {@link IScenario}
        */
-      public IScenario addPubSub(String name, IDataReferenceField receiving, IDataReferenceField publishing) {
-         return addPubSub(name, 0, 1, 1, receiving, publishing);
+      public IScenario addPubSub(String name, IDataReferenceField receiving, IDataReferenceField publishing,
+               String... correlations) {
+         return addPubSub(name, 0, 1, 1, receiving, publishing, correlations);
       }
 
       /**
@@ -138,17 +142,30 @@ public class ModelUtils {
        * @param receiving type of receiving field
        * @param publishingName name of publishing field
        * @param publishing type of publishing field
+       * @param correlations pairs of correlation statements
        * @return the mocked pub sub {@link IScenario}
        */
       public IScenario addPubSub(String name, String receivingName, IData receiving, String publishingName,
-               IData publishing) {
-         return addPubSub(name, 0, 1, 1, receivingName, receiving, publishingName, publishing);
+               IData publishing, String... correlations) {
+         assertEquals("Correlations must be given in pairs", 0, correlations.length % 2);
+         IScenario scenario = addPubSub(name, 0, 1, 1, receivingName, receiving, publishingName, publishing);
+         for (int i = 0; i < correlations.length; i += 2) {
+            correlate(name, correlations[i], correlations[i + 1]);
+         }
+         return scenario;
       }
 
       /**
-       * Creates a mocked pub sub {@link IScenario} with the given name. The step parameters supplied should be ordered by given statements first, followed by when statement, followed by then
-       * statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}. This method adds the scenario to this model's scenarios and
-       * data types to this model's inputs and outputs.
+       * Creates a mocked pub sub {@link IScenario} with the given name.
+       * 
+       * <p>
+       * The step parameters supplied should be ordered by given statements first, followed by when statement, followed by then
+       * statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}.
+       * <p>
+       * The given and when steps will be treated as {@link ReceiveStepHandler receive} steps, and then steps will be treated as {@link PublishStepHandler publish} steps.
+       * 
+       * <p>
+       * This method adds the scenario to this model's scenarios and data types to this model's inputs and outputs.
        * 
        * @param name
        * @param givens number of given steps
@@ -159,6 +176,9 @@ public class ModelUtils {
        */
       public IScenario addPubSub(String name, int givens, int whens, int thens, Object... stepParameters) {
          IScenario scenario = mock(IScenario.class);
+         when(scenario.getName()).thenReturn(name);
+         when(scenario.getParent()).thenReturn(this);
+         when(scenario.getSteps(any(), any())).thenCallRealMethod();
 
          List<IScenarioStep> steps = new ArrayList<>(givens + whens + thens);
          List<IDataReferenceField> references = new ArrayList<>();
@@ -185,31 +205,58 @@ public class ModelUtils {
          references.forEach(reference -> {
             IScenarioStep step = mock(IScenarioStep.class);
             when(step.getParent()).thenReturn(scenario);
-            when(step.getParameters()).thenReturn(Collections.singletonList(reference.getName()));
+            String referenceName = reference.getName();
+            when(step.getParameters()).thenReturn(Collections.singletonList(referenceName));
             steps.add(step);
          });
 
          steps.subList(0, givens).forEach(step -> {
-            when(step.getKeyword()).thenReturn(PublishStepHandler.PAST.getVerb());
+            when(step.getKeyword()).thenReturn(ReceiveStepHandler.PAST.getVerb());
          });
 
          steps.subList(givens, givens + whens).forEach(step -> {
-            when(step.getKeyword()).thenReturn(PublishStepHandler.PRESENT.getVerb());
+            when(step.getKeyword()).thenReturn(ReceiveStepHandler.PRESENT.getVerb());
          });
 
          steps.subList(givens + whens, givens + whens + thens).forEach(step -> {
             when(step.getKeyword()).thenReturn(PublishStepHandler.FUTURE.getVerb());
          });
 
-         when(scenario.getGivens()).thenReturn(steps.subList(0, givens));
-         when(scenario.getWhens()).thenReturn(steps.subList(givens, givens + whens));
-         when(scenario.getThens()).thenReturn(steps.subList(givens + whens, givens + whens + thens));
+         when(scenario.getGivens()).thenReturn(new ArrayList<>(steps.subList(0, givens)));
+         when(scenario.getWhens()).thenReturn(new ArrayList<>(steps.subList(givens, givens + whens)));
+         when(scenario.getThens()).thenReturn(new ArrayList<>(steps.subList(givens + whens, givens + whens + thens)));
 
          scenarios.add(scenario);
          inputs.addAll(references.subList(0, givens + whens));
          outputs.addAll(references.subList(givens + whens, givens + whens + thens));
 
          return scenario;
+      }
+
+      /**
+       * Adds a correlation to the given scenario.
+       * 
+       * @param scenario name of scenario
+       * @param from first correlation statement
+       * @param to second correlation statement
+       */
+      public void correlate(String scenario, String from, String to) {
+         IScenario sc = this.getScenarios().getByName(scenario).orElseThrow(
+            () -> new AssertionError("Scenario " + scenario + " has not been defined"));
+         String[] first = from.split("\\.");
+         String[] second = to.split("\\.");
+         assertTrue("Invalid correlation: " + from, first.length > 1);
+         assertTrue("Invalid correlation: " + to, second.length > 1);
+         IScenarioStep correlationStep = mock(IScenarioStep.class);
+         when(correlationStep.getParameters()).thenReturn(Arrays.asList(from, "to", to));
+         when(correlationStep.getParent()).thenReturn(sc);
+         if (inputs.getByName(first[0]).isPresent() && inputs.getByName(second[0]).isPresent()) {
+            when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.PRESENT.getVerb());
+            sc.getWhens().add(correlationStep);
+         } else {
+            when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.FUTURE.getVerb());
+            sc.getThens().add(correlationStep);
+         }
       }
 
       @Override
