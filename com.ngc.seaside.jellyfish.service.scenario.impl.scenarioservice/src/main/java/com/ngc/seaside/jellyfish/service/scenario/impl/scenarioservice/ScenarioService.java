@@ -12,6 +12,7 @@ import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor.PubSubProcessor;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
@@ -39,6 +40,7 @@ public class ScenarioService implements IScenarioService {
 
    private ReceiveStepHandler receiveStepHandler;
    private PublishStepHandler publishStepHandler;
+   private CorrelateStepHandler correlateStepHandler;
    private ILogService logService;
 
    @Override
@@ -78,8 +80,8 @@ public class ScenarioService implements IScenarioService {
 
    @Activate
    public void activate() {
-      if (this.publishStepHandler != null && this.receiveStepHandler != null) {
-         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler);
+      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
+         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
       }
       logService.debug(getClass(), "activated");
    }
@@ -104,8 +106,8 @@ public class ScenarioService implements IScenarioService {
          target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
    public void setReceiveStepHandler(IScenarioStepHandler ref) {
       this.receiveStepHandler = (ReceiveStepHandler) ref;
-      if (this.publishStepHandler != null && this.receiveStepHandler != null) {
-         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler);
+      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
+         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
       }
    }
 
@@ -119,8 +121,8 @@ public class ScenarioService implements IScenarioService {
          target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
    public void setPublishStepHandler(IScenarioStepHandler ref) {
       this.publishStepHandler = (PublishStepHandler) ref;
-      if (this.publishStepHandler != null && this.receiveStepHandler != null) {
-         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler);
+      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
+         this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
       }
    }
 
@@ -128,4 +130,19 @@ public class ScenarioService implements IScenarioService {
       this.publishStepHandler = null;
       this.pubSubProcessor = null;
    }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
+      public void setCorrelationStepHandler(IScenarioStepHandler ref) {
+         this.correlateStepHandler = (CorrelateStepHandler) ref;
+         if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
+            this.pubSubProcessor = new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
+         }
+      }
+
+      public void removeCorrelationStepHandler(IScenarioStepHandler ref) {
+         this.publishStepHandler = null;
+         this.pubSubProcessor = null;
+      }
 }

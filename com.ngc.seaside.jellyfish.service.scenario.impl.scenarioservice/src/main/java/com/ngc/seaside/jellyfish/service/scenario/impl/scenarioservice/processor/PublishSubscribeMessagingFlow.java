@@ -20,6 +20,8 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
    private final FlowType flowType;
 
    private IScenario scenario;
+   
+   private ICorrelationDescription correlationDescription;
 
    public PublishSubscribeMessagingFlow(
          FlowType flowType) {
@@ -58,6 +60,11 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       this.scenario = scenario;
       return this;
    }
+   
+   public PublishSubscribeMessagingFlow setCorrelationDescriptor(ICorrelationDescription description) {
+      this.correlationDescription = description;
+      return this;
+   }
 
    @Override
    public boolean equals(Object o) {
@@ -84,6 +91,6 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
 
    @Override
    public Optional<ICorrelationDescription> getCorrelationDescription() {
-      throw new UnsupportedOperationException("Unimplemented");
+      return Optional.ofNullable(correlationDescription);
    }
 }
