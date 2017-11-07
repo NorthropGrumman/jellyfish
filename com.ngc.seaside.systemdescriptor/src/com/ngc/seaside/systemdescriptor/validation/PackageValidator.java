@@ -1,12 +1,9 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.validation.Check;
-
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
@@ -33,19 +30,36 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 	
 	
 	/**
+	 * Validates that the package properly matches the path of the file.
 	 * 
+	 * @param p is the provided Package to check
 	 */
 	@Check
 	public void validatePackageMatchesFilePath(Package p) {
-		// p.name() is "com.ngc"
-		List<String> resourceUriPath = p.eResource().getURI().segmentsList(); // [resource, Test, bin, com, ngc, TestModel.sd]
-		List<String> packageElements = Arrays.asList(p.getName().split("\\.")); // [com, ngc]
+
+		List<String> resourceUriPath = p.eResource().getURI().segmentsList();
+		List<String> packageElements = Arrays.asList(p.getName().split("\\."));
 				
 		int indexLast = resourceUriPath.size() - 1;
-		if (resourceUriPath.get(indexLast).indexOf(".sd") > 0 && p.eResource().getURI().scheme().equals("platform")) { // Confirm that the last element is an .sd file
+		
+		// Continue if the package is part of an .sd file and if the 'file' has a valid scheme. Scheme is null if 
+		//	the URI is synthetic (ie. the URI was created as part of a unit test. 
+		if (resourceUriPath.get(indexLast).indexOf(".sd") > 0 && !p.eResource().getURI().scheme().equals("null")) {
+			
 			int numElements = packageElements.size();
+			
+			// Error out if the package name is longer than the URI allows
+			if (indexLast - numElements < 0) {
+				StringBuffer sb = new StringBuffer();
+				sb.append("Array Size mismatch error:\n");
+				sb.append("Last Index of resourceUriPath: " + indexLast + "\n");
+				sb.append("Number of Elements in the package elements: " + numElements);
+				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__ELEMENT);
+			}
+			
 			List<String> uriSublist = resourceUriPath.subList(indexLast - numElements, indexLast);
 			
+			// Error out if the package elements are not present in the URI directly infront of the .sd file
 			if (!uriSublist.equals(packageElements)) {
 				StringBuffer sb = new StringBuffer();
 				sb.append("Package and File Path do not match:\n");
