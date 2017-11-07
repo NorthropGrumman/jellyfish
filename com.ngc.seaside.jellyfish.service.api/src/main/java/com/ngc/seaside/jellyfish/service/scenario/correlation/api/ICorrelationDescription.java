@@ -1,30 +1,10 @@
 package com.ngc.seaside.jellyfish.service.scenario.correlation.api;
 
-import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 
 import java.util.Collection;
 
 public interface ICorrelationDescription {
-
-   /**
-    * Gets the data type of the correlation event ID as defined by this correlation.  If the value is {@link
-    * DataTypes#DATA} or {@link DataTypes#ENUM}, {@link #getCorrelationEventIdReferenceType()} can be used to obtain the
-    * details of the complex type.  Otherwise, the type of the correlation event ID is a primitive.
-    *
-    * @return the data type of the correlation event ID used by this correlation
-    */
-   DataTypes getCorrelationEventIdType();
-
-   /**
-    * Gets the complex type of the ID of the correlation event used by this correlation.  This value is only set if
-    * {@link #getCorrelationEventIdType()} returns {@link DataTypes#DATA} or {@link DataTypes#ENUM}.
-    *
-    * @return the complex type of this correlation event's ID
-    */
-   INamedChild<IPackage> getCorrelationEventIdReferenceType();
 
    /**
     * Gets a collection of the correlation expressions that must be satisfied in order for the correlation to be
