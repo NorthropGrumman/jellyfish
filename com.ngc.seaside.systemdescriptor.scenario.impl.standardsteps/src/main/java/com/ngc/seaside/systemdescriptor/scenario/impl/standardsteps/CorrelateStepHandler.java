@@ -1,12 +1,8 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
-
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
@@ -14,9 +10,6 @@ import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -38,13 +31,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
-   /**
-    * Enum to designate what is an input or output
-    */
-   private enum InputOutputEnum {
-      INPUT, OUTPUT
-   }
-
    private final static Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
                                                           Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
@@ -56,41 +42,61 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    }
 
    /**
-    * Get the the data field referenced on the left side of the "to".
+    * Get the data path referenced on the left side of the "to".
     *
     * @param step the scenario step
-    * @return the left data field
+    * @return the left data path
     */
-   public IDataField getLeftData(IScenarioStep step) {
+   public IDataPath getLeftPath(IScenarioStep step) {
       requireStepUsesHandlerVerb(step);
       List<String> parameters = step.getParameters();
       Preconditions.checkArgument(parameters.size() == 3,
                                   "invalid step!");
       String leftData = getCorrelationArg(null, step, 0);
-      return evaluateDataField(null, step, leftData).getDataField();
+      return evaluatePath(null, step, leftData);
    }
 
    /**
-    * Get the the data field referenced on the right side of the "to".
+    * Get the data path referenced on the right side of the "to".
+    *
+    * @param step the scenario step
+    * @return the right data path
+    */
+   public IDataPath getRightPath(IScenarioStep step) {
+      requireStepUsesHandlerVerb(step);
+      List<String> parameters = step.getParameters();
+      Preconditions.checkArgument(parameters.size() == 3,
+                                  "invalid step!");
+      String rightData = getCorrelationArg(null, step, 2);
+      return evaluatePath(null, step, rightData);
+   }
+
+   /**
+    * Get the data field referenced on the left side of the "to".
+    *
+    * @param step the scenario step
+    * @return the left data field
+    */
+   public IDataField getLeftData(IScenarioStep step) {
+      return getLeftPath(step).getEnd();
+   }
+
+   /**
+    * Get the data field referenced on the right side of the "to".
     *
     * @param step the scenario step
     * @return the right data field
     */
    public IDataField getRightData(IScenarioStep step) {
-      requireStepUsesHandlerVerb(step);
-      List<String> parameters = step.getParameters();
-      Preconditions.checkArgument(parameters.size() == 3,
-                                  "invalid step!");
-      String leftData = getCorrelationArg(null, step, 2);
-      return evaluateDataField(null, step, leftData).getDataField();
+      return getRightPath(step).getEnd();
    }
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
       String leftDataString;
       String rightDataString;
-      InputOutputDataField leftData;
-      InputOutputDataField rightData;
+      IDataPath leftData;
+      IDataPath rightData;
 
       requireStepParameters(context, "The 'correlate' verb requires parameters!");
 
@@ -111,8 +117,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          verifyDataStringsDontMatch(context, step, leftDataString, rightDataString);
 
          // Retrieve data fields and whether they are input or output
-         leftData = evaluateDataField(context, step, leftDataString);
-         rightData = evaluateDataField(context, step, rightDataString);
+         leftData = evaluatePath(context, step, leftDataString);
+         rightData = evaluatePath(context, step, rightDataString);
 
          if (leftData != null && rightData != null) {
 
@@ -147,7 +153,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    }
 
    /**
-    * This method retrieves the data field from the model using the provided step arguments. The {@link IDataField}
+    * This method retrieves the data path from the model using the provided step arguments. The {@link IDataField}
     * object is wrapped by an {@link InputOutputDataField} which contains more information about the data field
     * pertaining to how it was used in the context of the step.
     *
@@ -155,55 +161,26 @@ public class CorrelateStepHandler extends AbstractStepHandler {
     * @param step            the current step
     * @param dataFieldString the argument in the step in format {@code <inputField|outputField>(.<dataField>)+ to
     *                        <inputField|outputField>(.<dataField>)+}
-    * @return the evaluated data field
+    * @return the evaluated data path
     */
-   private InputOutputDataField evaluateDataField(IValidationContext<IScenarioStep> context, IScenarioStep step,
-                                                  String dataFieldString) {
+   private IDataPath evaluatePath(IValidationContext<IScenarioStep> context, IScenarioStep step,
+                                  String dataFieldString) {
       Preconditions.checkNotNull(step, "step may not be null!");
+      Preconditions.checkNotNull(dataFieldString, "dataFieldString may not be null!");
 
-      IDataField dataField;
-      InputOutputDataField inOutDataField = null;
-      String[] splitInOutFieldDataField = dataFieldString.split("\\.");
-
-      String keyword = step.getKeyword();
       IModel model = step.getParent().getParent();
-      String errorMessage = "";
 
-      // Data field can only be input in present tense
-      if (keyword.equals(PRESENT.getVerb())) {
-         dataField = resolve(model.getInputs(), splitInOutFieldDataField);
-         if (dataField != null) {
-            inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT, dataFieldString);
-         } else {
-            errorMessage = String.format("Unable to resolve '%s'; is '%s' an input?",
-                                         dataFieldString,
-                                         splitInOutFieldDataField[0]);
-         }
-      } else {
-         // Data field can be input or output in future tense
-         // Try inputs.
-         dataField = resolve(model.getInputs(), splitInOutFieldDataField);
-         if (dataField != null) {
-            inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.INPUT, dataFieldString);
-         } else {
-            // Try outputs.
-            dataField = resolve(model.getOutputs(), splitInOutFieldDataField);
-            if (dataField != null) {
-               inOutDataField = new InputOutputDataField(dataField, InputOutputEnum.OUTPUT, dataFieldString);
-            } else {
-               // Give up.
-               errorMessage = String.format("Unable to resolve '%s'; is '%s' an input or output?",
-                                            dataFieldString,
-                                            splitInOutFieldDataField[0]);
-            }
-         }
-      }
-      if (inOutDataField == null) {
+      IDataPath path;
+      try {
+         path = IDataPath.of(model, dataFieldString);
+      } catch(RuntimeException e) {
          declareOrThrowError(context,
                              step,
-                             errorMessage);
+                             e.getMessage());
+         return null;
       }
-      return inOutDataField;
+      
+      return path;
    }
 
    /**
@@ -232,56 +209,26 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       Preconditions.checkNotNull(step, "step may not be null!");
       String keyword = step.getKeyword();
       Preconditions.checkArgument(keyword.equals(PRESENT.getVerb())
-                                  || keyword.equals(FUTURE.getVerb()),
-                                  "the step cannot be processed by this handler!");
+         || keyword.equals(FUTURE.getVerb()),
+         "the step cannot be processed by this handler!");
    }
 
    /**
-    * This method searches the model for the referenced data field. If the data field does not match the initial data
-    * type provided in the input, the super data types are searched to support inheritance. If the data field is never
-    * found, null is returned.
-    *
-    * @param dataType     the data type to search
-    * @param dataFieldStr the data field key to search for
-    * @return the data field
-    */
-   private static IDataField getDataField(IData dataType, String dataFieldStr) {
-      IDataField dataField = null;
-
-      // Check data type for field
-      if (dataType.getFields().getByName(dataFieldStr).isPresent()) {
-         dataField = dataType.getFields().getByName(dataFieldStr).get();
-      } else {
-         // Check super data types if original data type didn't contain field
-         boolean found = false;
-         while (dataType.getSuperDataType().isPresent() && !found) {
-            dataType = dataType.getSuperDataType().get();
-            if (dataType.getFields().getByName(dataFieldStr).isPresent()) {
-               dataField = dataType.getFields().getByName(dataFieldStr).get();
-               found = true;
-            }
-         }
-      }
-
-      return dataField;
-   }
-
-   /**
-    * This method ensures that the types of two data fields are the same otherwise correlation cannot occur.
+    * This method ensures that the types of two data paths are the same otherwise correlation cannot occur.
     *
     * @param context   the context
     * @param step      the current step
-    * @param leftData  the datafield from the left of the "to"
-    * @param rightData the datafield from the right of the "to"
+    * @param leftPath  the data path from the left of the "to"
+    * @param rightPath the data path from the right of the "to"
     */
    private void validateFieldType(IValidationContext<IScenarioStep> context, IScenarioStep step,
-                                  InputOutputDataField leftData, InputOutputDataField rightData) {
-      if (leftData.getDataField().getType() != rightData.getDataField().getType()) {
+                                  IDataPath leftPath, IDataPath rightPath) {
+      if (leftPath.getEnd().getType() != rightPath.getEnd().getType()) {
          declareOrThrowError(context,
                              step,
                              "Argument types don't match. Left argument is of type: "
-                             + leftData.getDataField().getType() + ". Right data is of type: " + rightData
-                                   .getDataField().getType());
+                             + leftPath.getEnd().getType() + ". Right data is of type: " + rightPath
+                                   .getEnd().getType());
       }
    }
 
@@ -290,14 +237,14 @@ public class CorrelateStepHandler extends AbstractStepHandler {
     *
     * @param context   the context
     * @param step      the current step
-    * @param leftData  the datafield from the left of the "to"
-    * @param rightData the datafield from the right of the "to"
+    * @param leftPath  the data path from the left of the "to"
+    * @param rightPath the data path from the right of the "to"
     */
    private void validateInOutFieldDifferent(IValidationContext<IScenarioStep> context, IScenarioStep step,
-                                            InputOutputDataField leftData, InputOutputDataField rightData) {
-      if (leftData.getInputOutputLocation() == rightData.getInputOutputLocation()) {
-         String inOutFieldLeft = leftData.getDataFieldArg().split("\\.")[0];
-         String inOutFieldRight = rightData.getDataFieldArg().split("\\.")[0];
+                                            IDataPath leftPath, IDataPath rightPath) {
+      if (leftPath.isOutput() == rightPath.isOutput()) {
+         String inOutFieldLeft = leftPath.getStart().getName();
+         String inOutFieldRight = rightPath.getStart().getName();
 
          if (inOutFieldLeft.equals(inOutFieldRight)) {
             declareOrThrowError(context,
@@ -316,25 +263,21 @@ public class CorrelateStepHandler extends AbstractStepHandler {
     *
     * @param context   the context
     * @param step      the current step
-    * @param leftData  the datafield from the left of the "to"
-    * @param rightData the datafield from the right of the "to"
+    * @param leftPath  the data path from the left of the "to"
+    * @param rightPath the data path from the right of the "to"
     */
    private void validateInputOutputTense(IValidationContext<IScenarioStep> context, IScenarioStep step,
-                                         InputOutputDataField leftData, InputOutputDataField rightData) {
+                                         IDataPath leftPath, IDataPath rightPath) {
       String keyword = step.getKeyword();
 
       if (keyword.equals(PRESENT.getVerb())) {
-         if (leftData.getInputOutputLocation() != InputOutputEnum.INPUT
-             || rightData.getInputOutputLocation() != InputOutputEnum.INPUT) {
+         if (leftPath.isOutput() || rightPath.isOutput()) {
             declareOrThrowError(context,
                                 step,
                                 "In present tense of correlation verb, both arguments must be input types.");
          }
       } else if (keyword.equals(FUTURE.getVerb())) {
-         if ((leftData.getInputOutputLocation() == InputOutputEnum.INPUT
-              && rightData.getInputOutputLocation() == InputOutputEnum.INPUT)
-             || (leftData.getInputOutputLocation() == InputOutputEnum.OUTPUT
-                 && rightData.getInputOutputLocation() == InputOutputEnum.OUTPUT)) {
+         if (leftPath.isOutput() == rightPath.isOutput()) {
             declareOrThrowError(context,
                                 step,
                                 "In future tense of correlation verb, one argument must be an input type and the other must be of output type.");
@@ -376,77 +319,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          declareOrThrowError(context,
                              step,
                              "Can't correlate a data field to itself");
-      }
-   }
-
-   private static IDataField resolve(INamedChildCollection<?, IDataReferenceField> dataRefFields, String[] path) {
-      IDataField field = null;
-      IDataReferenceField ref = dataRefFields.getByName(path[0]).orElse(null);
-      if (ref != null) {
-         field = resolve(ref.getType(), Arrays.copyOfRange(path, 1, path.length));
-      }
-      return field;
-   }
-
-   private static IDataField resolve(IData dataType, String[] path) {
-      Deque<IDataField> fields = new ArrayDeque<>(path.length);
-      IData currentDataType = dataType;
-
-      for (String fieldName : path) {
-         if (currentDataType != null) {
-            IDataField field = getDataField(currentDataType, fieldName);
-            if (field == null) {
-               currentDataType = null;
-            } else {
-               fields.push(field);
-               currentDataType = SystemDescriptors.isPrimitiveDataFieldDeclaration(field)
-                                 ? null
-                                 : field.getReferencedDataType();
-            }
-         }
-      }
-
-      return fields.size() == path.length ? fields.pop() : null;
-   }
-
-   /**
-    * This is a helper class to store an IDataField, whether it was input or output, and the original argument supplied
-    * to retrieve the IDataField.
-    */
-   private class InputOutputDataField {
-
-      private IDataField dataField;
-      private CorrelateStepHandler.InputOutputEnum inputOutputLocation;
-      private String dataFieldArg;
-
-      public InputOutputDataField(IDataField dataField, InputOutputEnum inputOutputLocation, String dataFieldArg) {
-         this.dataField = dataField;
-         this.inputOutputLocation = inputOutputLocation;
-         this.dataFieldArg = dataFieldArg;
-      }
-
-      public IDataField getDataField() {
-         return dataField;
-      }
-
-      public void setDataField(IDataField dataField) {
-         this.dataField = dataField;
-      }
-
-      public CorrelateStepHandler.InputOutputEnum getInputOutputLocation() {
-         return inputOutputLocation;
-      }
-
-      public void setInputOutputLocation(CorrelateStepHandler.InputOutputEnum inputOutputLocation) {
-         this.inputOutputLocation = inputOutputLocation;
-      }
-
-      public String getDataFieldArg() {
-         return dataFieldArg;
-      }
-
-      public void setDataFieldArg(String dataFieldArg) {
-         this.dataFieldArg = dataFieldArg;
       }
    }
 }

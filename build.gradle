@@ -26,7 +26,7 @@ subprojects {
 
    ext {
       jellyfishDslVersion = '0.11.0'
-      jellyfishApiVersion = '1.4.0'
+      jellyfishApiVersion = '1.4.1-SNAPSHOT'
       guavaVersion = '21.0'
       guiceVersion = '3.0'
       blocsCoreVersion = '2.1'
