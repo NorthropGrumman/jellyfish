@@ -12,6 +12,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -58,6 +59,7 @@ public class ScenarioServiceIT {
       service.setLogService(logService);
       service.setPublishStepHandler(new PublishStepHandler());
       service.setReceiveStepHandler(new ReceiveStepHandler());
+      service.setCorrelationStepHandler(new CorrelateStepHandler());
       service.activate();
    }
 
