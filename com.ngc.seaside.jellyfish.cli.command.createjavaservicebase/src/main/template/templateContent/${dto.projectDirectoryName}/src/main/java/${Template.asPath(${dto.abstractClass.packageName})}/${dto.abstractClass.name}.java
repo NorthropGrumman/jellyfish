@@ -51,7 +51,6 @@ public abstract class ${dto.abstractClass.name}
 #set ($publishMethod = $entry.value)
       try {
 #if ($publishMethod)
-	#set ($scnName = "$scenarioName")
          ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
          logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
         		 "$scenarioName", 
