@@ -105,7 +105,6 @@ class PackageParsingTest {
 			null
 		)
 		
-		
 		val dateSourceInvalid2 = '''
 			package foo
 			

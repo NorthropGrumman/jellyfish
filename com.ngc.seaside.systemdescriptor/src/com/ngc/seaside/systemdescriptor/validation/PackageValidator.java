@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,9 +63,7 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 			// Error out if the package elements are not present in the URI directly infront of the .sd file
 			if (!uriSublist.equals(packageElements)) {
 				StringBuffer sb = new StringBuffer();
-				sb.append("Package and File Path do not match:\n");
-				sb.append("Package: " + p.getName() + "\n");
-				sb.append("File URI: " + p.eResource().getURI());
+				sb.append("The System Descriptor package and file path do not match.\n\n");
 				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__ELEMENT);
 			}
 		}
