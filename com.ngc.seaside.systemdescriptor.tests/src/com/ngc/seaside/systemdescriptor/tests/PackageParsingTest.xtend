@@ -74,7 +74,7 @@ class PackageParsingTest {
 	}		
 	
 	@Test
-	def void testPackageAndURIMatch() {
+	def void testPackageAndFilePathMatch() {
 		val dateSourceValid = '''
 			package com.ngc.seaside.common
 			
