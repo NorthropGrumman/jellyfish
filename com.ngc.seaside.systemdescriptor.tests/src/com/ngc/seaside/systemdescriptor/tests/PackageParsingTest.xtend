@@ -13,6 +13,7 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.*
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.validation.SdIssueCodes
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -102,7 +103,7 @@ class PackageParsingTest {
 		validationTester.assertError(
 			invalidDataResource1,
 			SystemDescriptorPackage.Literals.PACKAGE,
-			null
+			SdIssueCodes.MISMATCHED_PACKAGE
 		)
 		
 		val dateSourceInvalid2 = '''
@@ -119,7 +120,7 @@ class PackageParsingTest {
 		validationTester.assertError(
 			invalidDataResource2,
 			SystemDescriptorPackage.Literals.PACKAGE,
-			null
+			SdIssueCodes.MISMATCHED_PACKAGE
 		)
 		
 	}

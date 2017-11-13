@@ -1,13 +1,12 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.eclipse.xtext.validation.Check;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import java.util.Arrays;
+import java.util.List;
 
 public class PackageValidator extends AbstractSystemDescriptorValidator {
 
@@ -24,7 +23,7 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 			String msg = String.format(
 					"Cannot use '^' to escape the package name %s.",
 					p.getName());
-			error(msg, p, SystemDescriptorPackage.Literals.PACKAGE__ELEMENT);
+			error(msg, p, SystemDescriptorPackage.Literals.PACKAGE__NAME);
 		}
 		
 	}
@@ -55,7 +54,7 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 				sb.append("Array Size mismatch error:\n");
 				sb.append("Last Index of resourceUriPath: " + indexLast + "\n");
 				sb.append("Number of Elements in the package elements: " + numElements);
-				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__ELEMENT);
+				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__NAME, SdIssueCodes.MISMATCHED_PACKAGE);
 			}
 			
 			List<String> uriSublist = resourceUriPath.subList(indexLast - numElements, indexLast);
@@ -64,7 +63,7 @@ public class PackageValidator extends AbstractSystemDescriptorValidator {
 			if (!uriSublist.equals(packageElements)) {
 				StringBuffer sb = new StringBuffer();
 				sb.append("The System Descriptor package and file path do not match.\n\n");
-				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__ELEMENT);
+				error(sb.toString(), p, SystemDescriptorPackage.Literals.PACKAGE__NAME, SdIssueCodes.MISMATCHED_PACKAGE);
 			}
 		}
 	}
