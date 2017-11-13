@@ -2,12 +2,17 @@ package com.ngc.seaside.systemdescriptor.ui.quickfix;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.ui.quickfix.imports.ImportQuickfixProvider;
+import com.ngc.seaside.systemdescriptor.ui.quickfix.pkg.PackageQuickfixProvider;
 
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
 import org.eclipse.xtext.validation.Issue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Custom quickfixes.
@@ -17,16 +22,33 @@ import java.util.List;
 public class SystemDescriptorQuickfixProvider implements IssueResolutionProvider {
 
    @Inject
-   private ImportQuickfixProvider provider;
-
+   private ImportQuickfixProvider importProvider;
+   
+   @Inject
+   private PackageQuickfixProvider packageProvider;
+   
+   public Set<IssueResolutionProvider> getProviders() {
+      Set<IssueResolutionProvider> providers = new LinkedHashSet<>(Arrays.asList(importProvider, packageProvider));
+      providers.remove(null);
+      return providers;
+   }
+   
    @Override
    public List<IssueResolution> getResolutions(Issue issue) {
-      return provider.getResolutions(issue);
+      List<IssueResolution> list = new ArrayList<>();
+      for (IssueResolutionProvider provider : getProviders()) {
+         list.addAll(provider.getResolutions(issue));
+      }
+      return list;
    }
 
    @Override
    public boolean hasResolutionFor(String issue) {
-      return provider.hasResolutionFor(issue);
+      boolean resolution = false;
+      for (IssueResolutionProvider provider : getProviders()) {
+         resolution |= provider.hasResolutionFor(issue);
+      }
+      return resolution;
    }
 
 }

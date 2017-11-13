@@ -16,6 +16,7 @@ import com.google.inject.ImplementedBy;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.ui.quickfix.IDocumentWriter;
 
 /**
  * Interface for organizing imports in a document.
