@@ -58,6 +58,10 @@ public abstract class ${dto.abstractClass.name}
         		 ${scenarioName}(${argument.name}.getSource()));
 #else
          ${scenarioName}(${argument.name}.getSource());
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "$scenarioName", 
+        		 ${argument.name}.getSource(), 
+        		 ${scenarioName}(${argument.name}.getSource()));
 #end
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
