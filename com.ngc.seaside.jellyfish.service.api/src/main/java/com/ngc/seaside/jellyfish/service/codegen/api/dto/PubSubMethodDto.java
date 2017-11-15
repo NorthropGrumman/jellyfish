@@ -64,6 +64,11 @@ public class PubSubMethodDto extends MethodDto {
       return this;
    }
    
-   
-
+   public boolean hasCorrelation() {
+      if (!inputInputCorrelations.isEmpty() ||  !inputOutputCorrelations.isEmpty()) {
+         return true;
+      } else {
+         return false;
+      }
+   }
 }

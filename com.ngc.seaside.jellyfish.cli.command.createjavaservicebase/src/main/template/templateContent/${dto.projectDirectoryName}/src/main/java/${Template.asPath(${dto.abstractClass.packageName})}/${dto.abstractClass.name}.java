@@ -33,18 +33,37 @@ public abstract class ${dto.abstractClass.name}
    protected ILogService logService;
 
    protected IFaultManagementService faultManagementService;
-
+   
    protected IThreadService threadService;
 
    protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
+   
+#foreach($method in $dto.abstractClass.methods) 
+#if ($method.hasCorrelation())
+   protected ICorrelationService correlationService;
+
+   protected ICorrelationTrigger<String> calculateTrackPriorityCorrelationTrigger; 
+#break
+#end
+#end
 
 #foreach($method in $dto.abstractClass.methods)
 #if (!$method.isPublisher())
-#set ($argument = $method.arguments.get(0))
+#foreach($argument in $method.arguments)
+ 
 #set ($type = $argument.types.get(0).name)
    @Subscriber(${type}.TOPIC_NAME)
    public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
       Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
+      
+      #if ($method.hasCorrelation()) 
+         correlationService.correlate(event.getSource())
+         .stream()
+         .filter(ICorrelationStatus::isCorrelationComplete)
+         .filter(c -> c.getTrigger() == ${method.name}CorrelationTrigger)
+         .forEach(this::${method.name}Method);
+      #end
+#end
 
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
