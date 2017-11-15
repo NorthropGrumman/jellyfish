@@ -48,22 +48,22 @@ public abstract class ${dto.abstractClass.name}
 #end
 
 #foreach($method in $dto.abstractClass.methods)
-#if (!$method.isPublisher())
-#foreach($argument in $method.arguments)
+   #if (!$method.isPublisher())
+      #foreach($argument in $method.arguments)
  
-#set ($type = $argument.types.get(0).name)
-   @Subscriber(${type}.TOPIC_NAME)
-   public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
-      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
+         #set ($type = $argument.types.get(0).name)
+         @Subscriber(${type}.TOPIC_NAME)
+         public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
+         Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
       
-      #if ($method.hasCorrelation()) 
-         correlationService.correlate(event.getSource())
-         .stream()
-         .filter(ICorrelationStatus::isCorrelationComplete)
-         .filter(c -> c.getTrigger() == ${method.name}CorrelationTrigger)
-         .forEach(this::${method.name}Method);
-      #end
-#end
+         #if ($method.hasCorrelation()) 
+            correlationService.correlate(event.getSource())
+            .stream()
+            .filter(ICorrelationStatus::isCorrelationComplete)
+            .filter(c -> c.getTrigger() == ${method.name}CorrelationTrigger)
+            .forEach(this::${method.name}Method);
+         #end
+      
 
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
@@ -85,6 +85,7 @@ public abstract class ${dto.abstractClass.name}
 #end
    }
 
+#end
 #end
 #end
    @Override

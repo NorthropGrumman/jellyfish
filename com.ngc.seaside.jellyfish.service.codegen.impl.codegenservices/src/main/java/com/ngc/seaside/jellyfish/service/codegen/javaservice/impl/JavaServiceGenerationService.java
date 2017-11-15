@@ -254,8 +254,34 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          return null;
       }
 
-      IDataReferenceField input = flow.getInputs().iterator().next();
+      Collection<IDataReferenceField> inputs = flow.getInputs();
       IDataReferenceField output = flow.getOutputs().iterator().next();
+      
+      // Create an Input Argument list, loop through flow.getInputs() and build a collection of IDataReferenceFIelds 
+      List<ArgumentDto> interfaceMethodArgList = new ArrayList<ArgumentDto>();
+      for (IDataReferenceField arg : inputs) {
+         interfaceMethodArgList.add(new ArgumentDto()
+            .setName(arg.getName())
+            .setTypeName(arg.getType().getName())
+            .setPackageName(packageNamingService.getEventPackageName(
+               options, arg.getType())));
+      }
+      
+      // Create an Input Argument list, loop through flow.getInputs() and build a collection of IDataReferenceFIelds 
+      List<ArgumentDto> subscriberMethodArgList = new ArrayList<ArgumentDto>();
+      for (IDataReferenceField arg : inputs) {
+         subscriberMethodArgList.add(new ArgumentDto().setName("event")
+            .setTypeName("IEvent")
+            .setPackageName(
+               "com.ngc.blocs.service.event.api")
+            .setTypes(Collections.singletonList(
+               new ClassDto<>().setTypeName(
+                  arg.getType().getName())
+                               .setPackageName(
+                                  packageNamingService.getEventPackageName(
+                                     options,
+                                     arg.getType())))));
+      }
       
       Collection<ICorrelationExpression> inputInputCorrelations = Collections.emptyList();
       Collection<ICorrelationExpression> inputOutputCorrelations = Collections.emptyList();
@@ -275,15 +301,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                         packageNamingService.getEventPackageName(
                                                                            options,
                                                                            output.getType())))
-                                                 .setArguments(
-                                                    Collections.singletonList(
-                                                       new ArgumentDto().setName(
-                                                          input.getName())
-                                                                        .setTypeName(input.getType().getName())
-                                                                        .setPackageName(
-                                                                           packageNamingService.getEventPackageName(
-                                                                              options,
-                                                                              input.getType()))));
+                                                 .setArguments(interfaceMethodArgList);
       
       MethodDto publisherMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
                                                        .setInputOutputCorrelations(inputOutputCorrelations)
@@ -305,21 +323,11 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                         .setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(),
                                                               publisherMethod))
-                                                        .setName("receive" + input.getType().getName())
+//                                                        .setName("receive" + input.getType().getName())
+                                                        .setName("receive" + inputs.iterator().next().getType().getName())
                                                         .setOverride(false)
                                                         .setReturns(false)
-                                                        .setArguments(Collections.singletonList(
-                                                           new ArgumentDto().setName("event")
-                                                                            .setTypeName("IEvent")
-                                                                            .setPackageName(
-                                                                               "com.ngc.blocs.service.event.api")
-                                                                            .setTypes(Collections.singletonList(
-                                                                               new ClassDto<>().setTypeName(
-                                                                                  input.getType().getName())
-                                                                                               .setPackageName(
-                                                                                                  packageNamingService.getEventPackageName(
-                                                                                                     options,
-                                                                                                     input.getType()))))));
+                                                        .setArguments(subscriberMethodArgList);
 
       return new MethodDto[] { interfaceMethod, publisherMethod, subscriberMethod };
    }
@@ -329,7 +337,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
     */
    private MethodDto[] getMethodForPubSubFlowSink(IJellyFishCommandOptions options,
             IPublishSubscribeMessagingFlow flow) {
-      IDataReferenceField input = flow.getInputs().iterator().next();
+      Collection<IDataReferenceField> inputs = flow.getInputs();
       
       Collection<ICorrelationExpression> inputInputCorrelations = Collections.emptyList();
       Collection<ICorrelationExpression> inputOutputCorrelations = Collections.emptyList();
@@ -338,40 +346,50 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          inputInputCorrelations = flow.getCorrelationDescription().get().getCompletenessExpressions();
          inputOutputCorrelations = flow.getCorrelationDescription().get().getCorrelationExpressions();   
       }
+      
+      // Create an Input Argument list, loop through flow.getInputs() and build a collection of IDataReferenceFIelds 
+      List<ArgumentDto> interfaceMethodArgList = new ArrayList<ArgumentDto>();
+      for (IDataReferenceField arg : inputs) {
+         interfaceMethodArgList.add(new ArgumentDto()
+            .setName(arg.getName())
+            .setTypeName(arg.getType().getName())
+            .setPackageName(
+               packageNamingService.getEventPackageName(
+                  options,
+                  arg.getType())));
+      }
+      
+      // Create an Input Argument list, loop through flow.getInputs() and build a collection of IDataReferenceFIelds 
+      List<ArgumentDto> subscriberMethodArgList = new ArrayList<ArgumentDto>();
+      for (IDataReferenceField arg : inputs) {
+         subscriberMethodArgList.add(new ArgumentDto().setName("event")
+            .setTypeName("IEvent")
+            .setPackageName(
+               "com.ngc.blocs.service.event.api")
+            .setTypes(Collections.singletonList(
+               new ClassDto<>().setTypeName(
+                  arg.getType().getName())
+                               .setPackageName(
+                                  packageNamingService.getEventPackageName(
+                                     options,
+                                     arg.getType())))));
+      }
 
 
       MethodDto interfaceMethod = new MethodDto()
                                                  .setName(flow.getScenario().getName())
                                                  .setOverride(false)
                                                  .setReturns(false)
-                                                 .setArguments(Collections.singletonList(
-                                                    new ArgumentDto()
-                                                                     .setName(input.getName())
-                                                                     .setTypeName(input.getType().getName())
-                                                                     .setPackageName(
-                                                                        packageNamingService.getEventPackageName(
-                                                                           options,
-                                                                           input.getType()))));
+                                                 .setArguments(interfaceMethodArgList);
 
       MethodDto subscriberMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
                                                         .setInputOutputCorrelations(inputOutputCorrelations)
                                                         .setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(), null))
-                                                        .setName("receive" + input.getType().getName())
+                                                        .setName("receive" + inputs.iterator().next().getType().getName())
                                                         .setOverride(false)
                                                         .setReturns(false)
-                                                        .setArguments(Collections.singletonList(
-                                                           new ArgumentDto().setName("event")
-                                                                            .setTypeName("IEvent")
-                                                                            .setPackageName(
-                                                                               "com.ngc.blocs.service.event.api")
-                                                                            .setTypes(Collections.singletonList(
-                                                                               new ClassDto<>().setTypeName(
-                                                                                  input.getType().getName())
-                                                                                               .setPackageName(
-                                                                                                  packageNamingService.getEventPackageName(
-                                                                                                     options,
-                                                                                                     input.getType()))))));
+                                                        .setArguments(subscriberMethodArgList);
 
       return new MethodDto[] { interfaceMethod, subscriberMethod };
    }
