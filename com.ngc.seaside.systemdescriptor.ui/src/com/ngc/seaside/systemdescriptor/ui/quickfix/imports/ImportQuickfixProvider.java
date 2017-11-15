@@ -18,6 +18,7 @@ import org.eclipse.xtext.xbase.validation.IssueCodes;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
+import com.ngc.seaside.systemdescriptor.ui.quickfix.IDocumentWriter;
 
 public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 

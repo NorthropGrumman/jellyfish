@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
+package com.ngc.seaside.systemdescriptor.ui.quickfix;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSession;
