@@ -58,10 +58,11 @@ public class PackageQuickfixProvider extends DefaultQuickfixProvider {
       
       String packagePath = pack.toString();
 
-      acceptor.accept(issue,
-         String.format("Move '%s.sd' to '%s'", pkg.getElement().getName(), pkg.getName()), "", "", context -> {
-            pkg.setName(packagePath);
-         });
+//      TODO: Implement this fix
+//      acceptor.accept(issue,
+//         String.format("Move '%s.sd' to '%s'", pkg.getElement().getName(), pkg.getName()), "", "", context -> {
+//            pkg.setName(packagePath);
+//         });
 
       acceptor.accept(issue, String.format("Change package declaration to '%s'", packagePath), "", "", context -> {
          IXtextDocument document = context.getXtextDocument();
