@@ -15,6 +15,8 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -174,7 +176,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          method.setReturns(first.isReturns());
          method.setReturnArgument(first.getReturnArgument());
          method.setArguments(first.getArguments());
-         method.setPublishingTopic(first.getPublishingTopic());
+         method.setPublishingTopic(first.getPublishingTopic());        
+         method.setInputInputCorrelations(first.getInputInputCorrelations());
+         method.setInputOutputCorrelations(first.getInputOutputCorrelations());
          Map<String, MethodDto> publishers = new HashMap<>();
          for (PubSubMethodDto receiver : entry.getValue()) {
             if (receiver.getPublishMethods() != null) {
@@ -196,6 +200,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
       for (IPublishSubscribeMessagingFlow flow : scenarioService.getPubSubMessagingFlows(options, scenario)) {
          MethodDto[] method = null;
+       
 
          switch (flow.getFlowType()) {
          case PATH:
@@ -239,10 +244,10 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
    private MethodDto[] getMethodForPubSubFlowPath(IJellyFishCommandOptions options,
             IPublishSubscribeMessagingFlow flow) {
       // TODO TH: handle data aggregation as part of a future story.
-      if (flow.getInputs().size() > 1 || flow.getOutputs().size() > 1) {
+      if (flow.getOutputs().size() > 1) {
          logService.warn(
             getClass(),
-            "Pub/sub flow paths with of multiple inputs or outputs are not currently supported.  Encountered on"
+            "Pub/sub flow paths with of multiple outputs are not currently supported.  Encountered on"
                + " scenario %s of model %s.",
             flow.getScenario().getName(),
             flow.getScenario().getParent().getFullyQualifiedName());
@@ -251,6 +256,14 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
       IDataReferenceField input = flow.getInputs().iterator().next();
       IDataReferenceField output = flow.getOutputs().iterator().next();
+      
+      Collection<ICorrelationExpression> inputInputCorrelations = Collections.emptyList();
+      Collection<ICorrelationExpression> inputOutputCorrelations = Collections.emptyList();
+      
+      if (flow.getCorrelationDescription().isPresent()) {
+         inputInputCorrelations = flow.getCorrelationDescription().get().getCompletenessExpressions();
+         inputOutputCorrelations = flow.getCorrelationDescription().get().getCorrelationExpressions();   
+      }
 
       MethodDto interfaceMethod = new MethodDto().setName(flow.getScenario().getName())
                                                  .setOverride(false)
@@ -271,8 +284,10 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                            packageNamingService.getEventPackageName(
                                                                               options,
                                                                               input.getType()))));
-
-      MethodDto publisherMethod = new PubSubMethodDto().setPublishingTopic(output.getType().getName() + ".TOPIC")
+      
+      MethodDto publisherMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
+                                                       .setInputOutputCorrelations(inputOutputCorrelations)
+                                                       .setPublishingTopic(output.getType().getName() + ".TOPIC")
                                                        .setName("publish" + output.getType().getName())
                                                        .setOverride(false)
                                                        .setReturns(false)
@@ -285,7 +300,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                                  options,
                                                                                  output.getType()))));
 
-      MethodDto subscriberMethod = new PubSubMethodDto().setPublishMethods(
+      MethodDto subscriberMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
+                                                        .setInputOutputCorrelations(inputOutputCorrelations)
+                                                        .setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(),
                                                               publisherMethod))
                                                         .setName("receive" + input.getType().getName())
@@ -312,18 +329,16 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
     */
    private MethodDto[] getMethodForPubSubFlowSink(IJellyFishCommandOptions options,
             IPublishSubscribeMessagingFlow flow) {
-      // TODO TH: handle data aggregation as part of a future story.
-      if (flow.getInputs().size() > 1) {
-         logService.warn(
-            getClass(),
-            "Pub/sub flow sinks with of multiple inputs are not currently supported.  Encountered on"
-               + " scenario %s of model %s.",
-            flow.getScenario().getName(),
-            flow.getScenario().getParent().getFullyQualifiedName());
-         return null;
+      IDataReferenceField input = flow.getInputs().iterator().next();
+      
+      Collection<ICorrelationExpression> inputInputCorrelations = Collections.emptyList();
+      Collection<ICorrelationExpression> inputOutputCorrelations = Collections.emptyList();
+      
+      if (flow.getCorrelationDescription().isPresent()) {
+         inputInputCorrelations = flow.getCorrelationDescription().get().getCompletenessExpressions();
+         inputOutputCorrelations = flow.getCorrelationDescription().get().getCorrelationExpressions();   
       }
 
-      IDataReferenceField input = flow.getInputs().iterator().next();
 
       MethodDto interfaceMethod = new MethodDto()
                                                  .setName(flow.getScenario().getName())
@@ -338,7 +353,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                            options,
                                                                            input.getType()))));
 
-      MethodDto subscriberMethod = new PubSubMethodDto().setPublishMethods(
+      MethodDto subscriberMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
+                                                        .setInputOutputCorrelations(inputOutputCorrelations)
+                                                        .setPublishMethods(
                                                            Collections.singletonMap(flow.getScenario().getName(), null))
                                                         .setName("receive" + input.getType().getName())
                                                         .setOverride(false)
@@ -374,6 +391,15 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
             flow.getScenario().getParent().getFullyQualifiedName());
          return null;
       }
+      
+      Collection<ICorrelationExpression> inputInputCorrelations = Collections.emptyList();
+      Collection<ICorrelationExpression> inputOutputCorrelations = Collections.emptyList();
+      
+      if (flow.getCorrelationDescription().isPresent()) {
+         inputInputCorrelations = flow.getCorrelationDescription().get().getCompletenessExpressions();
+         inputOutputCorrelations = flow.getCorrelationDescription().get().getCorrelationExpressions();   
+      }
+
 
       IDataReferenceField output = flow.getOutputs().iterator().next();
 
@@ -394,7 +420,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                                                options,
                                                                                                output.getType()))))));
 
-      MethodDto publisherMethod = new PubSubMethodDto().setPublishMethods(
+      MethodDto publisherMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
+                                                       .setInputOutputCorrelations(inputOutputCorrelations)
+                                                       .setPublishMethods(
                                                           Collections.singletonMap(flow.getScenario().getName(),
                                                              null))
                                                        .setPublishingTopic(output.getType().getName() + ".TOPIC")
