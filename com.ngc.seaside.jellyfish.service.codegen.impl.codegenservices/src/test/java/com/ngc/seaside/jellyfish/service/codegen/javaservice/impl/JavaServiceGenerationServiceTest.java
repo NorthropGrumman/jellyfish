@@ -20,6 +20,8 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
@@ -31,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -58,6 +61,18 @@ public class JavaServiceGenerationServiceTest {
    @Mock
    private ITransportConfigurationService transportConfService;
 
+   @Mock
+   private Collection<ICorrelationExpression> inputInputCorrelations;
+   
+   @Mock
+   private Collection<ICorrelationExpression> inputOutputCorrelations;
+   
+   @Mock
+   private ICorrelationDescription correlationService;
+   
+   @Mock
+   private ICorrelationDescription test;
+   
    @Before
    public void setup() throws Throwable {
       when(model.getName()).thenReturn("EngagementTrackPriorityService");
@@ -102,6 +117,7 @@ public class JavaServiceGenerationServiceTest {
          "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
          dto.getPackageName());
       assertEquals("incorrect number of methods!", 1, dto.getMethods().size());
+     
 
       MethodDto method = dto.getMethods().get(0);
       assertEquals("method name not correct!", "calculateTrackPriority", method.getName());
@@ -131,7 +147,8 @@ public class JavaServiceGenerationServiceTest {
          PubSubMethodDto temp = subscriber;
          subscriber = publisher;
          publisher = temp;
-      }
+      }      
+      
       assertEquals("method name not correct!", "receiveTestDataInput", subscriber.getName());
       assertFalse("method should not override!", subscriber.isOverride());
       assertFalse("method should not return!", subscriber.isReturns());
@@ -215,6 +232,8 @@ public class JavaServiceGenerationServiceTest {
          subscriber.getPublishMethods().entrySet().iterator().next().getKey());
       assertNull("subscriber has not publisher!",
          subscriber.getPublishMethods().entrySet().iterator().next().getValue());
+      assertTrue("The inputInputCorrelations list is not empty!", subscriber.getInputInputCorrelations().isEmpty());
+      assertTrue("The inputOutputCorrelations list is not empty!", subscriber.getInputOutputCorrelations().isEmpty());
 
       assertTrue("missing import!",
          baseDto.getImports()
@@ -276,6 +295,105 @@ public class JavaServiceGenerationServiceTest {
          publisher.getPublishMethods().entrySet().iterator().next().getValue());
       assertEquals("publishing topic not correct!", "TestDataOutput.TOPIC", publisher.getPublishingTopic());
 
+      assertTrue("missing import!",
+         baseDto.getImports()
+                .contains("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output.TestDataOutput"));
+   }
+   
+   @Test
+   public void testDoesCreateInterfaceDescriptionForPubSubFlowPathWithCorrelation() throws Throwable {
+      IPublishSubscribeMessagingFlow flow = FlowFactory.newPubSubFlowPath("calculateTrackPriority");
+      
+      when(flow.getCorrelationDescription().isPresent()).thenReturn(true);
+      when(test.getCompletenessExpressions()).thenReturn(inputInputCorrelations);
+      when(test.getCorrelationExpressions()).thenReturn(inputOutputCorrelations);
+      
+      model.getScenarios().add(flow.getScenario());
+
+      when(packageNamingService.getEventPackageName(options, flow.getInputs().iterator().next().getType()))
+                                                                                                           .thenReturn(
+                                                                                                              "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.input");
+      when(packageNamingService.getEventPackageName(options, flow.getOutputs().iterator().next().getType()))
+                                                                                                            .thenReturn(
+                                                                                                               "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output");
+
+      when(scenarioService.getMessagingParadigms(options, flow.getScenario()))
+                                                                              .thenReturn(EnumSet.of(
+                                                                                 MessagingParadigm.PUBLISH_SUBSCRIBE));
+      when(scenarioService.getPubSubMessagingFlows(options, flow.getScenario()))
+                                                                                .thenReturn(
+                                                                                   Collections.singletonList(flow));
+
+      ClassDto<MethodDto> dto = service.getServiceInterfaceDescription(options, model);
+      assertNotNull("dto is null!", dto);
+      assertEquals("interface name not correct!", "I" + model.getName(), dto.getName());
+      assertEquals("package name not correct!",
+         "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
+         dto.getPackageName());
+      assertEquals("incorrect number of methods!", 1, dto.getMethods().size());
+     
+
+      MethodDto method = dto.getMethods().get(0);
+      assertEquals("method name not correct!", "calculateTrackPriority", method.getName());
+      assertFalse("method should not override!", method.isOverride());
+      assertTrue("method should return!", method.isReturns());
+      assertEquals("return not correct!", "TestDataOutput", method.getReturnSnippet());
+      assertEquals("argument list not correct!", "TestDataInput inputField", method.getArgumentsListSnippet());
+      System.out.println(dto.getImports());
+      assertTrue("missing import!",
+         dto.getImports()
+            .contains("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.input.TestDataInput"));
+      assertTrue("missing import!",
+         dto.getImports()
+            .contains("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output.TestDataOutput"));
+
+      ClassDto<PubSubMethodDto> baseDto = service.getBaseServiceDescription(options, model);
+      assertNotNull("dto is null!", baseDto);
+      assertEquals("base name not correct!", "Abstract" + model.getName(), baseDto.getName());
+      assertEquals("package name not correct!",
+         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
+         baseDto.getPackageName());
+      assertEquals("incorrect number of methods!", 2, baseDto.getMethods().size());
+
+      PubSubMethodDto subscriber = baseDto.getMethods().get(0);
+      PubSubMethodDto publisher = baseDto.getMethods().get(1);
+      if (subscriber.isPublisher()) {
+         PubSubMethodDto temp = subscriber;
+         subscriber = publisher;
+         publisher = temp;
+      }      
+      
+      //TODO: mock out the publisher and subscriber correlation values
+      Collection<ICorrelationExpression> a = subscriber.getInputInputCorrelations();
+      Collection<ICorrelationExpression> b = subscriber.getInputOutputCorrelations();
+      
+      Collection<ICorrelationExpression> c = publisher.getInputInputCorrelations();
+      Collection<ICorrelationExpression> d = publisher.getInputOutputCorrelations();
+      
+      assertEquals("method name not correct!", "receiveTestDataInput", subscriber.getName());
+      assertFalse("method should not override!", subscriber.isOverride());
+      assertFalse("method should not return!", subscriber.isReturns());
+      assertEquals("argument list not correct!", "IEvent<TestDataInput> event", subscriber.getArgumentsListSnippet());
+      assertFalse("method should be a subscriber!", subscriber.isPublisher());
+      assertEquals("subscriber's publishers not correct!", 1, subscriber.getPublishMethods().size());
+      assertEquals("subscriber's publishers not correct!",
+         "calculateTrackPriority",
+         subscriber.getPublishMethods().entrySet().iterator().next().getKey());
+      assertEquals("subscriber's publishers not correct!",
+         publisher.getMethodSignature(),
+         subscriber.getPublishMethods().entrySet().iterator().next().getValue().getMethodSignature());
+
+      assertEquals("method name not correct!", "publishTestDataOutput", publisher.getName());
+      assertFalse("method should not override!", publisher.isOverride());
+      assertFalse("method should not return!", publisher.isReturns());
+      assertEquals("argument list not correct!", "TestDataOutput outputField", publisher.getArgumentsListSnippet());
+      assertTrue("method should be a publisher!", publisher.isPublisher());
+      assertTrue("method should not have publishing methods!", publisher.getPublishMethods().isEmpty());
+      assertEquals("publishing topic not correct!", "TestDataOutput.TOPIC", publisher.getPublishingTopic());
+
+      assertTrue("missing import!",
+         baseDto.getImports()
+                .contains("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.input.TestDataInput"));
       assertTrue("missing import!",
          baseDto.getImports()
                 .contains("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output.TestDataOutput"));
