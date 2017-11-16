@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor;
 
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessagingFlow {
 
@@ -18,6 +20,8 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
    private final FlowType flowType;
 
    private IScenario scenario;
+   
+   private ICorrelationDescription correlationDescription;
 
    public PublishSubscribeMessagingFlow(
          FlowType flowType) {
@@ -56,6 +60,11 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       this.scenario = scenario;
       return this;
    }
+   
+   public PublishSubscribeMessagingFlow setCorrelationDescriptor(ICorrelationDescription description) {
+      this.correlationDescription = description;
+      return this;
+   }
 
    @Override
    public boolean equals(Object o) {
@@ -78,5 +87,10 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
                           outputs,
                           flowType,
                           scenario);
+   }
+
+   @Override
+   public Optional<ICorrelationDescription> getCorrelationDescription() {
+      return Optional.ofNullable(correlationDescription);
    }
 }

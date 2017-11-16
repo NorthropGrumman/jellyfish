@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceFiel
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
@@ -38,6 +39,9 @@ public class PubSubProcessorTest {
 
    @Mock
    private ReceiveStepHandler receiveStepHandler;
+   
+   @Mock
+   private CorrelateStepHandler correlateStepHandler;
 
    @Before
    public void setup() throws Throwable {
@@ -68,7 +72,7 @@ public class PubSubProcessorTest {
       publishStep.setParent(scenario);
       scenario.addThen(publishStep);
 
-      processor = new PubSubProcessor(publishStepHandler, receiveStepHandler);
+      processor = new PubSubProcessor(publishStepHandler, receiveStepHandler, correlateStepHandler);
 
       when(receiveStepHandler.getInputs(receiveStep)).thenReturn(input);
       when(publishStepHandler.getOutputs(publishStep)).thenReturn(output);
