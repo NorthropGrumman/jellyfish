@@ -46,6 +46,10 @@ public abstract class AbstractTrackPriorityService
 
       try {
          publishPrioritizedSystemTrackIdentifiers(calculateConsolidatedTrackPriorityWhenTrackDropped(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "calculateConsolidatedTrackPriorityWhenTrackDropped", 
+        		 event.getSource(), 
+        		 calculateConsolidatedTrackPriorityWhenTrackDropped(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack)' generated fault, dispatching to fault management service.",
@@ -62,6 +66,10 @@ public abstract class AbstractTrackPriorityService
 
       try {
          publishPrioritizedSystemTrackIdentifiers(calculateConsolidatedTrackPriority(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "calculateConsolidatedTrackPriority", 
+        		 event.getSource(), 
+        		 calculateConsolidatedTrackPriority(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.calculateConsolidatedTrackPriority(TrackPriority)' generated fault, dispatching to fault management service.",
