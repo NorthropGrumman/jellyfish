@@ -45,6 +45,10 @@ public abstract class AbstractDataBagsService
 
       try {
          publishC(publish(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "publish", 
+        		 event.getSource(), 
+        		 publish(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.publish(B)' generated fault, dispatching to fault management service.",

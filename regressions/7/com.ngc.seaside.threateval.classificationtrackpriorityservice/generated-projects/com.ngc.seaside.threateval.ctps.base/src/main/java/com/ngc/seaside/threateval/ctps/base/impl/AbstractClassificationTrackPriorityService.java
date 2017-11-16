@@ -45,6 +45,10 @@ public abstract class AbstractClassificationTrackPriorityService
 
       try {
          publishTrackPriority(calculateTrackPriority(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "calculateTrackPriority", 
+        		 event.getSource(), 
+        		 calculateTrackPriority(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.calculateTrackPriority(Classification)' generated fault, dispatching to fault management service.",

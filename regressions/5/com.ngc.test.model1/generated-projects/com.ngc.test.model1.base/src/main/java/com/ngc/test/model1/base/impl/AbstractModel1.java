@@ -48,6 +48,9 @@ public abstract class AbstractModel1
 
       try {
          duplicateSink(event.getSource());
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s;", 
+        		 "duplicateSink", 
+        		 event.getSource());
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.duplicateSink(Data1)' generated fault, dispatching to fault management service.",
@@ -58,6 +61,9 @@ public abstract class AbstractModel1
 
       try {
          sink1(event.getSource());
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s;", 
+        		 "sink1", 
+        		 event.getSource());
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.sink1(Data1)' generated fault, dispatching to fault management service.",
@@ -68,6 +74,10 @@ public abstract class AbstractModel1
 
       try {
          publishData1(pubsub1(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "pubsub1", 
+        		 event.getSource(), 
+        		 pubsub1(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.pubsub1(Data1)' generated fault, dispatching to fault management service.",
@@ -78,6 +88,10 @@ public abstract class AbstractModel1
 
       try {
          publishData1(duplicatePubsub(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "duplicatePubsub", 
+        		 event.getSource(), 
+        		 duplicatePubsub(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.duplicatePubsub(Data1)' generated fault, dispatching to fault management service.",
@@ -94,6 +108,10 @@ public abstract class AbstractModel1
 
       try {
          publishData4(pubsub2(event.getSource()));
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
+        		 "pubsub2", 
+        		 event.getSource(), 
+        		 pubsub2(event.getSource()));
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.pubsub2(Data2)' generated fault, dispatching to fault management service.",
@@ -110,6 +128,9 @@ public abstract class AbstractModel1
 
       try {
          sink2(event.getSource());
+         logService.info(getClass(), "ELK - Scenario: %s; Input: %s;", 
+        		 "sink2", 
+        		 event.getSource());
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '%s.sink2(Data3)' generated fault, dispatching to fault management service.",
