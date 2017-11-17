@@ -14,7 +14,15 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-
+#foreach($method in $dto.abstractClass.methods) 
+#if ($method.hasCorrelation())
+import com.ngc.seaside.service.correlation.api.ICorrelationService;
+import com.ngc.seaside.service.correlation.api.ICorrelationStatus;
+import com.ngc.seaside.service.correlation.api.ICorrelationTrigger;
+import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
+#break
+#end
+#end
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -41,38 +49,44 @@ public abstract class ${dto.abstractClass.name}
 #foreach($method in $dto.abstractClass.methods) 
 #if ($method.hasCorrelation())
    protected ICorrelationService correlationService;
-
-   protected ICorrelationTrigger<String> calculateTrackPriorityCorrelationTrigger; 
 #break
 #end
 #end
 
 #foreach($method in $dto.abstractClass.methods)
-   #if (!$method.isPublisher())
-      #foreach($argument in $method.arguments)
- 
-         #set ($type = $argument.types.get(0).name)
-         @Subscriber(${type}.TOPIC_NAME)
-         public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
-         Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
-      
-         #if ($method.hasCorrelation()) 
-            correlationService.correlate(event.getSource())
-            .stream()
-            .filter(ICorrelationStatus::isCorrelationComplete)
-            .filter(c -> c.getTrigger() == ${method.name}CorrelationTrigger)
-            .forEach(this::${method.name}Method);
-         #end
-      
+#if ($method.hasCorrelation()) 
+#foreach ($entry in $method.publishMethods.entrySet())
+#set ($scenarioName = $entry.key)
+   protected ICorrelationTrigger<String> ${scenarioName}CorrelationTrigger; 
+#end
+#end
+#end
 
+#foreach($method in $dto.abstractClass.methods)
+#if (!$method.isPublisher())
+#foreach($argument in $method.arguments)
+ 
+#set ($type = $argument.types.get(0).name)
+   @Subscriber(${type}.TOPIC_NAME)
+   public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
+      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
 #set ($publishMethod = $entry.value)
+               
+#if ($method.hasCorrelation()) 
+      correlationService.correlate(event.getSource())
+         .stream()
+         .filter(ICorrelationStatus::isCorrelationComplete)
+         .filter(c -> c.getTrigger() == ${scenarioName}CorrelationTrigger)
+         .forEach(this::${scenarioName}Method);
+#else     
+               
       try {
 #if ($publishMethod)
-         ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
+      ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
 #else
-         ${scenarioName}(${argument.name}.getSource());
+      ${scenarioName}(${argument.name}.getSource());
 #end
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
@@ -80,12 +94,12 @@ public abstract class ${dto.abstractClass.name}
             getClass().getName());
          faultManagementService.handleFault(fault);
          // Consume exception.
-      }
-
+      }   
+#end
 #end
    }
-
 #end
+
 #end
 #end
    @Override
