@@ -1,8 +1,0 @@
-package com.ngc.seaside.classifier.datatype
-
-import com.ngc.seaside.classifier.datatype.ClassificationEnum
-
-data Classification {
-	int trackId
-	ClassificationEnum objectType
-}
