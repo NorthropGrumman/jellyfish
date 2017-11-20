@@ -154,7 +154,50 @@ class FormattingTest {
 			'''
 		]
 	}
+
+	@Test def void testJumbledExample4() {
+		assertFormatted[
+			expectation = formattedExample4
+			toBeFormatted = '''
+			package com.ngc.test
+				enum Enumeration{
+							FIELD1 FIELD2
+			FIELD3
+			{
+				"name":null
+			} FIELD4
+				}
+			'''
+		]
+	}
+
+	@Test def void testOneLineExample4() {
+		assertFormatted[
+			expectation = formattedExample4
+			toBeFormatted = '''
+			package com.ngc.test
+			
+			enum Enumeration {
+				FIELD1
+				FIELD2
+				FIELD3 {
+					"name": null
+				}
+				FIELD4
+			}
+			'''
+		]
+	}
 	
+	@Test def void testAlreadyFormattedExample4() {
+		assertFormatted[
+			expectation = formattedExample4
+			toBeFormatted = '''
+			package com.ngc.test enum Enumeration{FIELD1 FIELD2 FIELD3{"name":null} FIELD4}
+			'''
+		]
+	}
+
 	var formattedExample1 = '''
 		package com.ngc.seaside.threateval
 		
@@ -282,6 +325,18 @@ class FormattingTest {
 			Vector3 ecefVelocity
 		}
 	'''
-	
+
+	var formattedExample4 = '''
+		package com.ngc.test
+
+		enum Enumeration {
+			FIELD1
+			FIELD2
+			FIELD3 {
+				"name": null
+			}
+			FIELD4
+		}
+	'''
 
 }

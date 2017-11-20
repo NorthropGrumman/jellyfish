@@ -32,6 +32,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFiel
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 class SystemDescriptorFormatter extends AbstractFormatter2 {
 
@@ -41,15 +42,13 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		extension IFormattableDocument document) {
 
 		_package.regionFor.keyword('package').prepend[noIndentation]
-		
+		_package.regionFor.feature(SystemDescriptorPackage.Literals.PACKAGE__NAME).append[setNewLines(2)]
+
 		if (_package.getImports().size != 0) {
 			
 			for (Import imports : _package.getImports()) {
 				if (imports == _package.getImports().last) {
 					imports.append[setNewLines(2)];
-				} else if (imports == _package.getImports().get(0)) {
-					imports.prepend[setNewLines(2)];
-					imports.append[setNewLines(1)];
 				} else {
 					imports.append[setNewLines(1)];
 				}
@@ -61,7 +60,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(Enumeration enumeration, extension IFormattableDocument document) {
 		debugLog("Entering method: format(ENUM)")
 		enumeration.regionFor.keyword('enum').prepend[noIndentation]
-		enumeration.regionFor.keyword('{').append[newLine]
+		enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 		
 		if (enumeration.metadata !== null) {
 			enumeration.metadata.format
@@ -69,6 +68,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		
 		for (EnumerationValueDeclaration value : enumeration.values) {
 			value.format
+			value.regionFor.keyword(',').prepend[noSpace]
 			value.append[newLine]
 		}
 		
@@ -81,6 +81,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		extension IFormattableDocument document) {
 		if (value.metadata !== null) {
 			value.metadata.format;
+			value.metadata.prepend[oneSpace]
 		}
 	}
 
