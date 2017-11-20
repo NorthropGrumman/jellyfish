@@ -58,6 +58,7 @@ public abstract class ${dto.abstractClass.name}
 #foreach ($entry in $method.publishMethods.entrySet())
 #set ($scenarioName = $entry.key)
    protected ICorrelationTrigger<String> ${scenarioName}CorrelationTrigger; 
+#break
 #end
 #end
 #end

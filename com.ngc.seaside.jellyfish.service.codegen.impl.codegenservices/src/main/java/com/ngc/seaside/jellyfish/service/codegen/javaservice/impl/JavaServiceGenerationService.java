@@ -29,6 +29,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -169,8 +170,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                       .collect(Collectors.groupingBy(
                                                                          MethodDto::getMethodSignature));
       List<PubSubMethodDto> combinedMethods = new ArrayList<>(aggregated.size());
+      
       for (Map.Entry<String, List<PubSubMethodDto>> entry : aggregated.entrySet()) {
-         PubSubMethodDto first = entry.getValue().get(0);
+         PubSubMethodDto first = entry.getValue().get(0);      
          PubSubMethodDto method = new PubSubMethodDto();
          method.setName(first.getName());
          method.setReturns(first.isReturns());
@@ -254,6 +256,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          return null;
       }
 
+      ArrayList<MethodDto> methodList = new ArrayList<>();
       Collection<IDataReferenceField> inputs = flow.getInputs();
       IDataReferenceField output = flow.getOutputs().iterator().next();
       
@@ -318,18 +321,25 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
                                                                                  options,
                                                                                  output.getType()))));
 
-      MethodDto subscriberMethod = new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
-                                                        .setInputOutputCorrelations(inputOutputCorrelations)
-                                                        .setPublishMethods(
-                                                           Collections.singletonMap(flow.getScenario().getName(),
-                                                              publisherMethod))
-//                                                        .setName("receive" + input.getType().getName())
-                                                        .setName("receive" + inputs.iterator().next().getType().getName())
-                                                        .setOverride(false)
-                                                        .setReturns(false)
-                                                        .setArguments(subscriberMethodArgList);
-
-      return new MethodDto[] { interfaceMethod, publisherMethod, subscriberMethod };
+      ArrayList<MethodDto> subscriberMethodList = new ArrayList<>();   
+      for (ArgumentDto argDto : subscriberMethodArgList) {
+         subscriberMethodList.add(
+            new PubSubMethodDto().setInputInputCorrelations(inputInputCorrelations)
+            .setInputOutputCorrelations(inputOutputCorrelations)
+            .setPublishMethods(
+               Collections.singletonMap(flow.getScenario().getName(),
+                  publisherMethod))
+            .setName("receive" + argDto.getTypes().get(0).getTypeName())
+            .setOverride(false)
+            .setReturns(false)
+            .setArguments(Collections.singletonList(argDto)));
+      }
+      
+      methodList.add(interfaceMethod);
+      methodList.add(publisherMethod);
+      methodList.addAll(subscriberMethodList);
+      
+      return methodList.toArray(new MethodDto[methodList.size()]);
    }
 
    /**
