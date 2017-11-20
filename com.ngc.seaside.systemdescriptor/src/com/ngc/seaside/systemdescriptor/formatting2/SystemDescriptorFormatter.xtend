@@ -31,6 +31,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDecla
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration
 
 class SystemDescriptorFormatter extends AbstractFormatter2 {
 
@@ -56,10 +57,31 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		}
 		_package.getElement.format;
 	}
+	
+	def dispatch void format(Enumeration enumeration, extension IFormattableDocument document) {
+		debugLog("Entering method: format(ENUM)")
+		enumeration.regionFor.keyword('enum').prepend[noIndentation]
+		enumeration.regionFor.keyword('{').append[newLine]
+		
+		if (enumeration.metadata !== null) {
+			enumeration.metadata.format
+		}
+		
+		for (EnumerationValueDeclaration value : enumeration.values) {
+			value.format
+			value.append[newLine]
+		}
+		
+		var begin = enumeration.regionFor.keyword('enum')
+		var end = enumeration.regionFor.keyword('}')
+		interior(begin, end)[indent]
+	}
 
-	def dispatch void format(EnumerationValueDeclaration enumerationValueDeclaration,
+	def dispatch void format(EnumerationValueDeclaration value,
 		extension IFormattableDocument document) {
-		enumerationValueDeclaration.getMetadata.format;
+		if (value.metadata !== null) {
+			value.metadata.format;
+		}
 	}
 
 	def dispatch void format(Model model, extension IFormattableDocument document) {
