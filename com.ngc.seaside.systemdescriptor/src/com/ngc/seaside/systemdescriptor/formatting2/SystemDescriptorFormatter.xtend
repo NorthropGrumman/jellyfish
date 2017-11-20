@@ -90,7 +90,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		model.regionFor.keyword('model').prepend[noIndentation]
 		model.regionFor.keyword('{').append[newLine]
 
-		if (model.getMetadata() != null) {
+		if (model.getMetadata() !== null) {
 			model.getMetadata().format;
 		}
 
@@ -161,7 +161,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		for (InputDeclaration dec : input.getDeclarations()) {
 			dec.format;
-			if (dec != input.getDeclarations.last && dec.getMetadata() != null) {
+			if (dec != input.getDeclarations.last && dec.getMetadata() !== null) {
 				dec.append[setNewLines(2)]
 			} else {
 				dec.append[newLine]
@@ -176,7 +176,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(InputDeclaration inputDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(INPUT_DECLARATION)");
 
-		if (inputDec.getMetadata() != null) {
+		if (inputDec.getMetadata() !== null) {
 			inputDec.getMetadata().format
 		}
 	}
@@ -191,7 +191,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		for (OutputDeclaration dec : output.getDeclarations()) {
 			dec.format;
-			if (dec != output.getDeclarations.last && dec.getMetadata() != null) {
+			if (dec != output.getDeclarations.last && dec.getMetadata() !== null) {
 				dec.append[setNewLines(2)]
 			} else {
 				dec.append[newLine]
@@ -207,7 +207,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(OutputDeclaration outputDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(OUTPUT_DECLARATION)");
 
-		if (outputDec.getMetadata() != null) {
+		if (outputDec.getMetadata() !== null) {
 			outputDec.getMetadata.format
 		}
 	}
@@ -217,19 +217,19 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		scenario.regionFor.keyword('{').append[newLine]
 
-		if (scenario.getMetadata() != null) {
+		if (scenario.getMetadata() !== null) {
 			scenario.getMetadata().format;
 		}
 
-		if (scenario.getGiven() != null) {
+		if (scenario.getGiven() !== null) {
 			scenario.getGiven().format;
 		}
 
-		if (scenario.getWhen() != null) {
+		if (scenario.getWhen() !== null) {
 			scenario.getWhen().format;
 		}
 
-		if (scenario.getThen() != null) {
+		if (scenario.getThen() !== null) {
 			scenario.getThen().format;
 		}
 
@@ -333,7 +333,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		
 		data.prepend[setNewLines(2)]
 
-		if (data.getMetadata() != null) {
+		if (data.getMetadata() !== null) {
 			data.getMetadata().format;
 		}
 
@@ -347,7 +347,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(PrimitiveDataFieldDeclaration pDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(PRIMITITVE_DATA_FIELD_DECLARATION)")
-		if (pDec.getMetadata() != null) {
+		if (pDec.getMetadata() !== null) {
 			pDec.getMetadata().format
 		}
 		
