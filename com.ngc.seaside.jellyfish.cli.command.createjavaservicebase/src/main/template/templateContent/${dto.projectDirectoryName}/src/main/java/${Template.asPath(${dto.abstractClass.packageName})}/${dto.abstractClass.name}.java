@@ -1,5 +1,11 @@
 package ${dto.abstractClass.packageName};
 
+#foreach($method in $dto.abstractClass.methods) 
+#if ($method.hasCorrelation())
+#set ($correlationMode = true)
+#break
+#end
+#end
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,14 +20,11 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-#foreach($method in $dto.abstractClass.methods) 
-#if ($method.hasCorrelation())
+#if ($correlationMode == true)
 import com.ngc.seaside.service.correlation.api.ICorrelationService;
 import com.ngc.seaside.service.correlation.api.ICorrelationStatus;
 import com.ngc.seaside.service.correlation.api.ICorrelationTrigger;
 import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
-#break
-#end
 #end
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
@@ -46,11 +49,8 @@ public abstract class ${dto.abstractClass.name}
 
    protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
    
-#foreach($method in $dto.abstractClass.methods) 
-#if ($method.hasCorrelation())
+#if ($correlationMode == true)
    protected ICorrelationService correlationService;
-#break
-#end
 #end
 
 #foreach($method in $dto.abstractClass.methods)
