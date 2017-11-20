@@ -25,7 +25,7 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
 ext {
     systemDescriptorProjectName = 'threatevaluation.descriptor'
-    systemDescriptorProjectVersion = '2.1.0'
+    systemDescriptorProjectVersion = '2.2.2'
     systemDescriptorName = '${systemDescriptorProjectName}-${systemDescriptorProjectVersion}'
     systemDescriptorLocation = "${project.buildDir}/${systemDescriptorDirectoryName}/${systemDescriptorName}"
     modelName = 'com.ngc.seaside.threateval.ClassificationTrackPriorityService'
