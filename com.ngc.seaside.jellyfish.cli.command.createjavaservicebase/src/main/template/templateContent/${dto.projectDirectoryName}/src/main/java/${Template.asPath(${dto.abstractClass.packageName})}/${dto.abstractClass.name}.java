@@ -132,7 +132,6 @@ public abstract class ${dto.abstractClass.name}
 
    protected void activate() {
       eventService.addSubscriber(this);
-
 #foreach ($method in $dto.abstractClass.methods)
 #if ($method.isPublisher())
 #foreach ($entry in $method.publishMethods.entrySet())
@@ -154,11 +153,17 @@ public abstract class ${dto.abstractClass.name}
 #end
 #end
 #end
+#if ($correlationMode == true)
+      registerCorrelationTriggers();
+#end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
    }
 
    protected void deactivate() {
+#if ($correlationMode == true)
+      unregisterCorrelationTriggers();
+#end
       eventService.removeSubscriber(this);
       threads.values().forEach(ISubmittedLongLivingTask::cancel);
       threads.clear();
@@ -181,6 +186,15 @@ public abstract class ${dto.abstractClass.name}
    public void removeEventService(IEventService ref) {
       setEventService(null);
    }
+#if ($correlationMode == true)   
+   public void setCorrelationService(ICorrelationService ref) {
+      this.correlationService = ref;
+   }
+   
+   public void removeCorrelationService(ICorrelationService ref) {
+      setCorrelationService(null);
+   }
+#end
 
    public void setFaultManagementService(IFaultManagementService ref) {
       this.faultManagementService = ref;
@@ -197,7 +211,6 @@ public abstract class ${dto.abstractClass.name}
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
-
 #foreach($method in $dto.abstractClass.methods)
 #if ($method.isPublisher())
 #set ($argument = $method.arguments.get(0))
@@ -207,5 +220,21 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
+#end
+#if ($correlationMode == true)   
+   @SuppressWarnings("unchecked")
+   private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof ServiceRequest) {
+         ((ServiceRequest) request).setLocalCorrelationEvent(event);
+      }
+   }
+
+   private void clearCorrelationFromRequest() {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof ServiceRequest) {
+         ((ServiceRequest) request).clearLocalCorrelationEvent();
+      }
+   }  
 #end
 }
