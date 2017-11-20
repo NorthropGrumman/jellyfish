@@ -10,7 +10,7 @@ package com.ngc.seaside.threateval.ctps.event.datatype;
  * This file has been generated and should not be edited directly.
  * @author Generated
  */
-public class TrackPriority {
+public class TrackPriority extends com.ngc.seaside.threateval.ctps.event.common.datatype.BaseData {
 
    public static final String TOPIC_NAME = "/data/com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority";
 
@@ -51,7 +51,7 @@ public class TrackPriority {
    @Override
    public int hashCode() {
       return java.util.Objects.hash(
-         this.trackId,         this.sourceId,         this.priority      );
+      super.hashCode(),         this.trackId,         this.sourceId,         this.priority      );
    }
 
    @Override
@@ -66,13 +66,13 @@ public class TrackPriority {
 
       TrackPriority that = (TrackPriority) obj;
 
-      return          java.util.Objects.equals(this.trackId, that.trackId) &&         java.util.Objects.equals(this.sourceId, that.sourceId) &&         java.util.Objects.equals(this.priority, that.priority)      ;
+      return super.equals(obj) &&         java.util.Objects.equals(this.trackId, that.trackId) &&         java.util.Objects.equals(this.sourceId, that.sourceId) &&         java.util.Objects.equals(this.priority, that.priority)      ;
    }
 
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-	  builder.append(getClass().getSimpleName()).append(" - ");
+      builder.append(super.toString());
       builder.append("[trackId=").append(trackId).append("]");
       builder.append("[sourceId=").append(sourceId).append("]");
       builder.append("[priority=").append(priority).append("]");

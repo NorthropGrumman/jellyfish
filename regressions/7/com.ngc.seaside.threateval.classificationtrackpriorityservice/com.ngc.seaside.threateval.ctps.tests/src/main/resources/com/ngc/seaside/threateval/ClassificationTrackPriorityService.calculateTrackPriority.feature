@@ -7,10 +7,12 @@ Feature: ClassificationTrackPriorityService calculateTrackPriority
     Given a Classification object
     And the trackId is <id>
     And the objectType is <type>
+    And the correlationEventId is "correlation-1"
     When the Classification object is received by the service
     Then the service should respond with a TrackPriority object
     And the priority should be <priority>
     And the sourceId should be "service:com.ngc.seaside.threateval.ClassificationTrackPriorityService"
+    And the correlationEventId should be "correlation-1"
 
     Examples: 
       | id | type      | priority |

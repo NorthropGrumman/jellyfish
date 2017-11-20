@@ -4,10 +4,13 @@ package com.ngc.seaside.threateval.ctps.datatype;
 
 option java_multiple_files = true;
 
+import "com/ngc/seaside/threateval/ctps/common/datatype/Metadata.proto";
+
 message TrackPriority {
 
-   sint32 trackId = 1;
-   string sourceId = 2;
-   float priority = 3;
+   com.ngc.seaside.threateval.ctps.common.datatype.Metadata header = 1;
+   sint32 trackId = 2;
+   string sourceId = 3;
+   float priority = 4;
 
 }

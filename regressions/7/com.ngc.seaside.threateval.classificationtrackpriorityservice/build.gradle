@@ -32,7 +32,7 @@ ext {
 }
 
 dependencies {
-	generate "com.ngc.seaside.threateval:threatevaluation.descriptor:2.1.0@zip"
+	generate "com.ngc.seaside.threateval:threatevaluation.descriptor:2.2.2@zip"
 }
 
 subprojects {
