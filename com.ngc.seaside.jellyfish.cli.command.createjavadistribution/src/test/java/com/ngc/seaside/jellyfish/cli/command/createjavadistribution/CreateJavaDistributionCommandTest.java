@@ -49,6 +49,7 @@ public class CreateJavaDistributionCommandTest {
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
+      when(options.getParameters()).thenReturn(mock(IParameterCollection.class));
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
       
       //Setup mock project naming service
@@ -121,7 +122,6 @@ public class CreateJavaDistributionCommandTest {
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, "/just/a/mock/path");
 
       // Verify mocked behaviors
-      verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
       verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
@@ -148,7 +148,6 @@ public class CreateJavaDistributionCommandTest {
                  CreateJavaDistributionCommand.GROUP_ID_PROPERTY, "com.ngc.seaside.test");
 
       // Verify mocked behaviors
-      verify(options, times(1)).getParameters();
       verify(options, times(1)).getSystemDescriptor();
       verify(model, times(1)).getName();
       verify(model, times(1)).getParent();
