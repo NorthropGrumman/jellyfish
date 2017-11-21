@@ -1,5 +1,5 @@
 #set( $D = '$' )
-apply plugin: 'com.ngc.seaside.distribution'
+apply plugin: 'com.ngc.seaside.service-distribution'
 
 seasideDistribution {
     buildDir = 'build'
