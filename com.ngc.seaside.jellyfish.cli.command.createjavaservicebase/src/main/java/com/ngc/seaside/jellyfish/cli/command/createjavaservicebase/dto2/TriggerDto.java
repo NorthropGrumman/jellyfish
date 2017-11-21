@@ -3,107 +3,132 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2;
 import java.util.List;
 
 public class TriggerDto {
-   public String getTriggerType() {
+	
+	private String triggerType;
+	private String correlationMethod;
+	private String name;
+	private List<EventDto> eventProducers;
+	private List<CompletenessDto> completionStatements;
+	private List<InputDto> inputs;
+	
+	public String getTriggerType() {
 		return triggerType;
 	}
 
-	public void setTriggerType(String triggerType) {
+	public TriggerDto setTriggerType(String triggerType) {
 		this.triggerType = triggerType;
+		return this;
 	}
 
 	public String getCorrelationMethod() {
 		return correlationMethod;
 	}
 
-	public void setCorrelationMethod(String correlationMethod) {
+	public TriggerDto setCorrelationMethod(String correlationMethod) {
 		this.correlationMethod = correlationMethod;
+		return this;
 	}
 
 	public List<EventDto> getEventProducers() {
 		return eventProducers;
 	}
 
-	public void setEventProducers(List<EventDto> eventProducers) {
+	public TriggerDto setEventProducers(List<EventDto> eventProducers) {
 		this.eventProducers = eventProducers;
+		return this;
 	}
 
 	public List<CompletenessDto> getCompletionStatements() {
 		return completionStatements;
 	}
 
-	public void setCompletionStatements(List<CompletenessDto> completionStatements) {
+	public TriggerDto setCompletionStatements(List<CompletenessDto> completionStatements) {
 		this.completionStatements = completionStatements;
+		return this;
 	}
 
 	public List<InputDto> getInputs() {
 		return inputs;
 	}
 
-	public void setInputs(List<InputDto> inputs) {
+	public TriggerDto setInputs(List<InputDto> inputs) {
 		this.inputs = inputs;
+		return this;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
-   private String triggerType;
-   private String correlationMethod;
-   private String name;
-   
-   public String getName() {
-	return name;
-}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-public void setName(String name) {
-	this.name = name;
-}
+	
+	public static class CompletenessDto {
+		private String input1Type;
+		private String input2Type;
+		private String input1GetterSnippet;
+		private String input2GetterSnippet;
+		
+		public String getInput1Type() {
+			return input1Type;
+		}
 
-private List<EventDto> eventProducers;
-   private List<CompletenessDto> completionStatements;
-   private List<InputDto> inputs;
-   
-   public static class CompletenessDto {
-      private String input1Type;
-      private String input2Type;
-      public String getInput1Type() {
-		return input1Type;
+		public CompletenessDto setInput1Type(String input1Type) {
+			this.input1Type = input1Type;
+			return this;
+		}
+
+		public String getInput2Type() {
+			return input2Type;
+		}
+
+		public CompletenessDto setInput2Type(String input2Type) {
+			this.input2Type = input2Type;
+			return this;
+		}
+
+		public String getInput1GetterSnippet() {
+			return input1GetterSnippet;
+		}
+
+		public CompletenessDto setInput1GetterSnippet(String input1GetterSnippet) {
+			this.input1GetterSnippet = input1GetterSnippet;
+			return this;
+		}
+
+		public String getInput2GetterSnippet() {
+			return input2GetterSnippet;
+		}
+
+		public CompletenessDto setInput2GetterSnippet(String input2GetterSnippet) {
+			this.input2GetterSnippet = input2GetterSnippet;
+			return this;
+		}
 	}
-	public void setInput1Type(String input1Type) {
-		this.input1Type = input1Type;
+
+	public static class EventDto {
+		private String type;
+		private String getterSnippet;
+
+		public String getType() {
+			return type;
+		}
+
+		public EventDto setType(String type) {
+			this.type = type;
+			return this;
+		}
+
+		public String getGetterSnippet() {
+			return getterSnippet;
+		}
+
+		public EventDto setGetterSnippet(String getterSnippet) {
+			this.getterSnippet = getterSnippet;
+			return this;
+		}
+
 	}
-	public String getInput2Type() {
-		return input2Type;
-	}
-	public void setInput2Type(String input2Type) {
-		this.input2Type = input2Type;
-	}
-	public String getInput1GetterSnippet() {
-		return input1GetterSnippet;
-	}
-	public void setInput1GetterSnippet(String input1GetterSnippet) {
-		this.input1GetterSnippet = input1GetterSnippet;
-	}
-	public String getInput2GetterSnippet() {
-		return input2GetterSnippet;
-	}
-	public void setInput2GetterSnippet(String input2GetterSnippet) {
-		this.input2GetterSnippet = input2GetterSnippet;
-	}
-	private String input1GetterSnippet;
-      private String input2GetterSnippet;
-   }
-   
-   public static class EventDto {
-      private String type;
-      public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getGetterSnippet() {
-		return getterSnippet;
-	}
-	public void setGetterSnippet(String getterSnippet) {
-		this.getterSnippet = getterSnippet;
-	}
-	private String getterSnippet;
-   }
 }
