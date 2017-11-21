@@ -21,7 +21,7 @@ public class BaseServiceDto {
    private IModel model;
    private List<ReceiveDto> receiveMethods;
    private List<PublishDto> publishMethods;
-   private List<BasicPubSubDto> basicPubSubMethods;
+   private List<BasicPubSubDto> basicPubSubMethods; 
    private List<BasicPubSubDto> basicSinkMethods;
    private List<CorrelationDto> correlationMethods;
    private List<TriggerDto> triggerRegistrationMethods;
