@@ -87,7 +87,7 @@ public class BaseServiceDtoFactory {
          CorrelationDto correlation = new CorrelationDto();
          correlation.setName("do" + scenario.getName().substring(0, 1).toUpperCase() + scenario.getName().substring(1));
          IData output = flow.getOutputs().iterator().next().getType();
-         TypeDto<?> outputField = dataService.getEventsClass(options, output);
+         TypeDto<?> outputField = dataService.getEventClass(options, output);
          correlation.setOutputType(outputField.getTypeName());
          dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
 
@@ -102,7 +102,7 @@ public class BaseServiceDtoFactory {
 
          correlation.setInputs(flow.getInputs()
                                    .stream()
-                                   .map(input -> dataService.getEventsClass(options, input.getType()))
+                                   .map(input -> dataService.getEventClass(options, input.getType()))
                                    .map(type -> {
                                       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
                                       return new InputDto().setType(type.getTypeName())
@@ -161,7 +161,7 @@ public class BaseServiceDtoFactory {
          case DATA:
          case ENUM:
             INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
-            TypeDto<?> type = dataService.getEventsClass(options, element);
+            TypeDto<?> type = dataService.getEventClass(options, element);
             correlation.setCorrelationType(type.getTypeName());
             dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
             break;

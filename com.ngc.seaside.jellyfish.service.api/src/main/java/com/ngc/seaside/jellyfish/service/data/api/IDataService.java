@@ -18,11 +18,24 @@ import java.util.Map;
  */
 public interface IDataService {
 
-   default TypeDto<?> getEventsClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
-      // TODO
-      return null;
-   }
+   /**
+    * Returns the generated java events type (package and name) for the given {@link IData} or {@link IEnumeration}.
+    * 
+    * @param options the options the current command is being executed with
+    * @param data the data or enumeration
+    * @return the generated java events type
+    */
+   TypeDto<?> getEventClass(IJellyFishCommandOptions options, INamedChild<IPackage> data);
    
+   /**
+    * Returns the generated java message type (package and name) for the given {@link IData} or {@link IEnumeration}.
+    * 
+    * @param options the options the current command is being executed with
+    * @param data the data or enumeration
+    * @return the generated java type
+    */
+   TypeDto<?> getMessageClass(IJellyFishCommandOptions options, INamedChild<IPackage> data);
+
    /**
     * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given data. This includes all
     * fields and nested fields of any of the given data and any inherited classes of the aforementioned. The values of
