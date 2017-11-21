@@ -1,11 +1,5 @@
 package ${dto.abstractClass.packageName};
 
-#foreach($method in $dto.abstractClass.methods) 
-#if ($method.hasCorrelation())
-#set ($correlationMode = true)
-#break
-#end
-#end
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,12 +14,10 @@ import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-#if ($correlationMode == true)
 import com.ngc.seaside.service.correlation.api.ICorrelationService;
 import com.ngc.seaside.service.correlation.api.ICorrelationStatus;
 import com.ngc.seaside.service.correlation.api.ICorrelationTrigger;
 import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
-#end
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -47,62 +39,138 @@ public abstract class ${dto.abstractClass.name}
    
    protected IThreadService threadService;
 
-   protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
-   
-#if ($correlationMode == true)
    protected ICorrelationService correlationService;
-#end
 
-#foreach($method in $dto.abstractClass.methods)
-#if ($method.hasCorrelation()) 
-#foreach ($entry in $method.publishMethods.entrySet())
-#set ($scenarioName = $entry.key)
-   protected ICorrelationTrigger<String> ${scenarioName}CorrelationTrigger; 
-#break
-#end
-#end
-#end
+   protected Map<ICorrelationTrigger, Collection<Consumer<ICorrelationStatus<?>>>> triggers = new ConcurrentHashMap<>();
+   
+########## Receive methods ##########
+#foreach($method in $dto.receiveMethods)
+   @Subscriber(${method.topic})
+   public void ${method.name}(IEvent<${method.eventType> event) {
+      ${method.eventType} source = event.getSource();
 
-#foreach($method in $dto.abstractClass.methods)
-#if (!$method.isPublisher())
-#foreach($argument in $method.arguments)
- 
-#set ($type = $argument.types.get(0).name)
-   @Subscriber(${type}.TOPIC_NAME)
-   public ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
-      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
-#foreach ($entry in $method.publishMethods.entrySet())
-#set ($scenarioName = $entry.key)
-#set ($publishMethod = $entry.value)
-               
-#if ($method.hasCorrelation()) 
-      correlationService.correlate(event.getSource())
+## Assume scenario is method that we can call for a basic single input scenario
+#foreach($scenario in $method.basicScenarios)
+      ${scenario}(source);
+#end
+#if($method.hasCorrelations())
+      correlationService.correlate(source)
          .stream()
          .filter(ICorrelationStatus::isCorrelationComplete)
-         .filter(c -> c.getTrigger() == ${scenarioName}CorrelationTrigger)
-         .forEach(this::${scenarioName}Method);
-#else     
-               
-      try {
-#if ($publishMethod)
-      ${publishMethod.name}(${scenarioName}(${argument.name}.getSource()));
-#else
-      ${scenarioName}(${argument.name}.getSource());
-#end
-      } catch (ServiceFaultException fault) {
-         logService.error(getClass(),
-            "Invocation of '%s.${scenarioName}(${type})' generated fault, dispatching to fault management service.",
-            getClass().getName());
-         faultManagementService.handleFault(fault);
-         // Consume exception.
-      }   
-#end
-#end
+         .forEach(status -> {
+            triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status))
+         });
+#end 
    }
-#end
 
 #end
+########## Publish methods ##########
+#foreach($method in $dto.publishMethods)
+   private void ${method.name}(${method.type) value) {
+      Preconditions.checkNotNull(value, "${method.type} value may not be null!");
+      eventService.publish(value, ${method.topic});
+   }
+
 #end
+########## Basic 1-input 1-output pubsub methods ##########
+#foreach($method in $dto.basicPubSubMethods)
+   private void ${method.name}(${method.inputType} input) {
+      ${method.outputType} output;
+      try {
+         output = ${method.serviceMethod}(input);
+      } catch(ServiceFaultException fault) {
+         // TODO
+         return;
+      }
+#foreach($correlation in $method.inputOutputCorrelations)
+      output.${correlation.setterSnippet}(${correlation.getterSnippet);
+#end
+      logService.info(getClass(), "TODO", input, output);
+      ${method.publishMethod}(output);
+   }
+   
+#end
+########## Basic 1-input 0-output sink methods ##########
+#foreach($method in $dto.basicSinkMethods)
+   private void ${method.name}(${method.inputType} input) {
+      try {
+         ${method.serviceMethod}(input);
+      } catch(ServiceFaultException fault) {
+         // TODO
+         return;
+      }
+      logService.info(getClass(), "TODO", input);
+   }
+
+#end
+########## Multi-input 1-output methods with input-input correlation ##########
+#foreach($method in $dto.correlationMethods)
+   private void ${method.name}(ICorrelationStatus<?> status) {
+      updateRequestWithCorrelation(status.getEvent());
+      try {
+         @SuppressWarnings("unchecked")
+         ${method.outputType} output = ${method.serviceName}(
+#foreach($input in $method.inputs)
+               status.getData(${input.type}.class),
+#end
+               (ILocalCorrelationEvent<${method.correlationType}>) status.getEvent());
+#foreach($correlation in $method.inputOutputCorrelations)
+         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
+#end
+         logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: ${method.inputLogFormat}; Output: %s;", 
+#foreach($input in $method.inputs)
+            status.getData(${input.type}.class).toString(),
+#end
+            output.toString());
+         ${method.publishMethod}(output);
+      } catch (ServiceFaultException fault) {
+         logService.error(getClass(),
+                          "Invocation of '%s.${method.serviceName}' generated fault, dispatching to fault management service.",
+                          getClass().getName());
+         faultManagementService.handleFault(fault);
+      } finally {
+         clearCorrelationFromRequest();
+      }
+   }
+
+#end
+########## Trigger Registrations ##########
+#foreach($method in $dto.triggerRegistrationMethods)
+   private void ${method.name}() {
+      ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType})
+#foreach($eventDto in $method.eventProducers)
+            .addEventIdProducer(${eventDto.type}.class, a -> a.${eventDto.getterSnippet})
+#end
+#foreach($completenessDto in $method.completionStatements)
+            .addCompletenessCondition(${completenessDto.input1Type}.class, ${completenessDto.input2Type}.class, (a, b) -> 
+               a.${completenessDto.input1GetterSnippet}.equals(b.${completenessDto.input2GetterSnippet}))
+#end
+            .register();
+#foreach($input in $method.inputs)
+      triggers.get(trigger).add(this::${input.correlationMethod});
+#end
+   }
+
+#end
+########## Activate ##########
+protected void activate() {
+#foreach($method in $dto.triggerRegistrationMethods)   
+   ${method.name}();
+#end
+   eventService.addSubscriber(this);
+   setStatus(ServiceStatus.ACTIVATED);
+   logService.info(getClass(), "activated");
+}
+
+########## Deactivate ##########
+   protected void deactivate() {
+      eventService.removeSubscriber(this);
+      triggers.keySet().forEach(ICorrelationTrigger::unregister);
+      triggers.clear();
+      setStatus(ServiceStatus.DEACTIVATED);
+      logService.info(getClass(), "deactivated");
+   }
+
    @Override
    public String getName() {
       return NAME;
@@ -130,47 +198,6 @@ public abstract class ${dto.abstractClass.name}
       return true;
    }
 
-   protected void activate() {
-      eventService.addSubscriber(this);
-#foreach ($method in $dto.abstractClass.methods)
-#if ($method.isPublisher())
-#foreach ($entry in $method.publishMethods.entrySet())
-#set ($scenarioName = $entry.key)
-      threads.put("${scenarioName}::${method.name}", threadService.executeLongLivingTask("${scenarioName}::${method.name}", () -> {
-         try {
-            ${scenarioName}(${dto.abstractClass.name}.this::${method.name});
-         } catch (ServiceFaultException fault) {
-            logService.error(getClass(),
-               "Invocation of '%s.${scenarioName}(Consumer<${method.arguments.get(0).name}>)' generated fault, dispatching to fault management service.",
-               getClass().getName());
-            faultManagementService.handleFault(fault);
-            // Consume exception.
-         } finally {
-            threads.remove("${scenarioName}::${method.name}");
-         }
-      }));
-
-#end
-#end
-#end
-#if ($correlationMode == true)
-      registerCorrelationTriggers();
-#end
-      setStatus(ServiceStatus.ACTIVATED);
-      logService.info(getClass(), "activated");
-   }
-
-   protected void deactivate() {
-#if ($correlationMode == true)
-      unregisterCorrelationTriggers();
-#end
-      eventService.removeSubscriber(this);
-      threads.values().forEach(ISubmittedLongLivingTask::cancel);
-      threads.clear();
-      setStatus(ServiceStatus.DEACTIVATED);
-      logService.info(getClass(), "deactivated");
-   }
-
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -186,7 +213,6 @@ public abstract class ${dto.abstractClass.name}
    public void removeEventService(IEventService ref) {
       setEventService(null);
    }
-#if ($correlationMode == true)   
    public void setCorrelationService(ICorrelationService ref) {
       this.correlationService = ref;
    }
@@ -194,7 +220,6 @@ public abstract class ${dto.abstractClass.name}
    public void removeCorrelationService(ICorrelationService ref) {
       setCorrelationService(null);
    }
-#end
 
    public void setFaultManagementService(IFaultManagementService ref) {
       this.faultManagementService = ref;
@@ -211,17 +236,7 @@ public abstract class ${dto.abstractClass.name}
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
-#foreach($method in $dto.abstractClass.methods)
-#if ($method.isPublisher())
-#set ($argument = $method.arguments.get(0))
-   private ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) {
-      Preconditions.checkNotNull(${argument.name}, "${argument.name} may not be null!");
-      eventService.publish(${argument.name}, ${method.publishingTopic});
-   }
 
-#end
-#end
-#if ($correlationMode == true)   
    @SuppressWarnings("unchecked")
    private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
       IRequest request = Requests.getCurrentRequest();
@@ -235,6 +250,5 @@ public abstract class ${dto.abstractClass.name}
       if (request instanceof ServiceRequest) {
          ((ServiceRequest) request).clearLocalCorrelationEvent();
       }
-   }  
-#end
+   }
 }
