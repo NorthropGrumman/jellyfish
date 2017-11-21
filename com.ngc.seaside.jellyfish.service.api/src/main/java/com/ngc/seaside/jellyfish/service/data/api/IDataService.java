@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.service.data.api;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -16,6 +18,11 @@ import java.util.Map;
  */
 public interface IDataService {
 
+   default TypeDto<?> getEventsClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
+      // TODO
+      return null;
+   }
+   
    /**
     * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given data. This includes all
     * fields and nested fields of any of the given data and any inherited classes of the aforementioned. The values of

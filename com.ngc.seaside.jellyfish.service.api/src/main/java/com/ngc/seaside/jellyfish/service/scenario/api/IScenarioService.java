@@ -32,6 +32,11 @@ public interface IScenarioService {
    Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(IJellyFishCommandOptions options,
                                                                       IScenario scenario);
 
+   default IPublishSubscribeMessagingFlow getPubSubMessagingFlow(IJellyFishCommandOptions options,
+                                                                      IScenario scenario) {
+      return null;
+   }
+   
    /**
     * Gets a collection of request/response messaging flows that the given scenario declares.  Each flow is either a
     * {@link IRequestResponseMessagingFlow.FlowType#CLIENT client flow} or a {@link
@@ -52,4 +57,5 @@ public interface IScenarioService {
     * @return a collection of timing constraints that have been applied to the given scenario
     */
    Collection<ITimingConstraint> getTimingConstraints(IJellyFishCommandOptions options, IScenario scenario);
+   
 }
