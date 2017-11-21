@@ -17,6 +17,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -58,11 +59,59 @@ public class BaseServiceDtoFactory {
    }
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-
+	   List<ReceiveDto> receiveDtos = new ArrayList<>();
+	   for (IDataReferenceField input : model.getInputs()) {
+		   List<String> basicScenarios = new ArrayList<>();
+		   ReceiveDto receive = new ReceiveDto();
+		   TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
+		   receive.setEventType(inputField.getTypeName());
+		   
+		   receive.setTopic(inputField.getTypeName() + ".TOPIC");
+		   
+		   receive.setName("receive" + inputField.getTypeName());
+		   
+		   for (IScenario scenario : model.getScenarios()) {
+			   Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
+			            scenario);
+			
+			   if (!flowOptional.isPresent()) {
+				   continue;
+			   }
+			   
+			   IPublishSubscribeMessagingFlow flow = flowOptional.get();
+			   if (!flow.getInputs().contains(input)) {
+				   continue;
+			   }
+			   
+			   // scenario has this input
+			   if (flow.getCorrelationDescription().isPresent() && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+				   receive.setHasCorrelations(true);
+			   }
+			   
+			   // check for basic scenario
+			   if (flow.getInputs().size() == 1 && flow.getOutputs().size() <= 1) {
+				   basicScenarios.add("do" + StringUtils.capitalize(scenario.getName()));
+			   }
+		   }
+		   receive.setBasicScenarios(basicScenarios);
+		   receiveDtos.add(receive);
+	   }
+	   dto.setReceiveMethods(receiveDtos);
    }
 
    private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-
+	   
+	   List<PublishDto> publishDtos = new ArrayList<>();
+	   for (IDataReferenceField output : model.getOutputs()) {
+		   PublishDto publish = new PublishDto();
+		   TypeDto<?> outputField = dataService.getEventClass(options, output.getType());
+		   publish.setType(outputField.getTypeName());
+		   publish.setTopic(outputField.getTypeName() + ".TOPIC");
+		   publish.setName("publish" + outputField.getTypeName());   
+		   publishDtos.add(publish);
+	   }
+	   
+	   dto.setPublishMethods(publishDtos);
    }
 
    private void setBasicPubSubMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
