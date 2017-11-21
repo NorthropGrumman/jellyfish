@@ -41,11 +41,15 @@ public class BaseServiceDtoFactory {
    public BaseServiceDtoFactory(IProjectNamingService projectService,
                                 IPackageNamingService packageService,
                                 IJavaServiceGenerationService generateService,
-                                IScenarioService scenarioService) {
+                                IScenarioService scenarioService,
+                                IDataService dataService,
+                                IDataFieldGenerationService dataFieldGenerationService) {
       this.projectService = projectService;
       this.packageService = packageService;
       this.generateService = generateService;
       this.scenarioService = scenarioService;
+      this.dataService = dataService;
+      this.dataFieldGenerationService = dataFieldGenerationService;
    }
 
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
