@@ -94,4 +94,58 @@ public class BaseServiceDto {
       return this;
    }
 
+   public List<ReceiveDto> getReceiveMethods() {
+      return receiveMethods;
+   }
+
+   public BaseServiceDto setReceiveMethods(List<ReceiveDto> receiveMethods) {
+      this.receiveMethods = receiveMethods;
+      return this;
+   }
+
+   public List<PublishDto> getPublishMethods() {
+      return publishMethods;
+   }
+
+   public BaseServiceDto setPublishMethods(List<PublishDto> publishMethods) {
+      this.publishMethods = publishMethods;
+      return this;
+   }
+
+   public List<BasicPubSubDto> getBasicPubSubMethods() {
+      return basicPubSubMethods;
+   }
+
+   public BaseServiceDto setBasicPubSubMethods(List<BasicPubSubDto> basicPubSubMethods) {
+      this.basicPubSubMethods = basicPubSubMethods;
+      return this;
+   }
+
+   public List<BasicPubSubDto> getBasicSinkMethods() {
+      return basicSinkMethods;
+   }
+
+   public BaseServiceDto setBasicSinkMethods(List<BasicPubSubDto> basicSinkMethods) {
+      this.basicSinkMethods = basicSinkMethods;
+      return this;
+   }
+
+   public List<CorrelationDto> getCorrelationMethods() {
+      return correlationMethods;
+   }
+
+   public BaseServiceDto setCorrelationMethods(List<CorrelationDto> correlationMethods) {
+      this.correlationMethods = correlationMethods;
+      return this;
+   }
+
+   public List<TriggerDto> getTriggerRegistrationMethods() {
+      return triggerRegistrationMethods;
+   }
+
+   public BaseServiceDto setTriggerRegistrationMethods(List<TriggerDto> triggerRegistrationMethods) {
+      this.triggerRegistrationMethods = triggerRegistrationMethods;
+      return this;
+   }
+
 }

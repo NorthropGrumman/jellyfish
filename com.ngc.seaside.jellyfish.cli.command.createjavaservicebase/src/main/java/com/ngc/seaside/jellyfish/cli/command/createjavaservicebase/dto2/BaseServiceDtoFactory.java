@@ -23,7 +23,32 @@ public class BaseServiceDtoFactory {
    }
 
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
+      BaseServiceDto dto = new BaseServiceDto();
       return null;
+   }
+
+   private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
+   }
+
+   private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
+   }
+   
+   private void setBasicPubSubMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
+   }
+   
+   private void setBasicSinkMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
+   }
+   
+   private void setCorrelationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
+   }
+   
+   private void setTriggerRegistrationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+
    }
 
 }

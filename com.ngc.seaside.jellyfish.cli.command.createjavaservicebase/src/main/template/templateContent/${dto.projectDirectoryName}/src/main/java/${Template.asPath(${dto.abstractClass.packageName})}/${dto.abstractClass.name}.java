@@ -46,10 +46,10 @@ public abstract class ${dto.abstractClass.name}
 ########## Receive methods ##########
 #foreach($method in $dto.receiveMethods)
    @Subscriber(${method.topic})
-   public void ${method.name}(IEvent<${method.eventType> event) {
+   public void ${method.name}(IEvent<${method.eventType}> event) {
       ${method.eventType} source = event.getSource();
 
-## Assume scenario is method that we can call for a basic single input scenario
+## The methods created in the Basic pubsub and sink method sections
 #foreach($scenario in $method.basicScenarios)
       ${scenario}(source);
 #end
@@ -66,7 +66,7 @@ public abstract class ${dto.abstractClass.name}
 #end
 ########## Publish methods ##########
 #foreach($method in $dto.publishMethods)
-   private void ${method.name}(${method.type) value) {
+   private void ${method.name}(${method.type}) value) {
       Preconditions.checkNotNull(value, "${method.type} value may not be null!");
       eventService.publish(value, ${method.topic});
    }
@@ -83,7 +83,7 @@ public abstract class ${dto.abstractClass.name}
          return;
       }
 #foreach($correlation in $method.inputOutputCorrelations)
-      output.${correlation.setterSnippet}(${correlation.getterSnippet);
+      output.${correlation.setterSnippet}(${correlation.getterSnippet});
 #end
       logService.info(getClass(), "TODO", input, output);
       ${method.publishMethod}(output);
