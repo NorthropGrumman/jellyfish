@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -64,6 +64,23 @@ public class ScenarioService implements IScenarioService {
       Collection<IPublishSubscribeMessagingFlow> flows = new ArrayList<>();
       flows.addAll(pubSubProcessor.getFlows(scenario));
       return Collections.unmodifiableCollection(flows);
+   }
+   
+   @Override
+   public Optional<IPublishSubscribeMessagingFlow> getPubSubMessagingFlow(IJellyFishCommandOptions options,
+                                                                             IScenario scenario) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(scenario, "scenario may not be null!");
+
+      Collection<IPublishSubscribeMessagingFlow> flows = new ArrayList<>();
+      flows.addAll(pubSubProcessor.getFlows(scenario));
+      if (flows.size() > 1) {
+         throw new IllegalStateException("Received multiple publish/subscribe messaging flows for scenario " + scenario.getName());
+      }
+      if (flows.isEmpty()) {
+         return Optional.empty();
+      }
+      return Optional.of(flows.iterator().next());
    }
 
    @Override
