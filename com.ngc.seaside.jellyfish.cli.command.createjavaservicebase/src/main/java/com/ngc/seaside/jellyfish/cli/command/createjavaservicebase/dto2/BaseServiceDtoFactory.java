@@ -11,15 +11,20 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -67,25 +72,36 @@ public class BaseServiceDtoFactory {
    private void setCorrelationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
       List<CorrelationDto> dtos = new ArrayList<>();
       for (IScenario scenario : model.getScenarios()) {
-         IPublishSubscribeMessagingFlow flow = scenarioService.getPubSubMessagingFlow(options, scenario);
-         // Ignore scenarios without correlations
-         if (!flow.getCorrelationDescription().isPresent()) {
+         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
+            scenario);
+
+         if (!flowOptional.isPresent()) {
             continue;
          }
-         // Ignore scenarios without input-input correlations
-         if (flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
-            continue;
-         }
+
+         IPublishSubscribeMessagingFlow flow = flowOptional.get();
+
          // Ignore scenarios with multiple outputs
-         if (flow.getOutputs().size() != 1) {
+         // Ignore scenarios without correlations
+         if (flow.getOutputs().size() != 1 || !flow.getCorrelationDescription().isPresent()) {
             continue;
          }
-         // Ignore correlations with inputs of the same type
+
+         // Ignore flows with inputs of the same type
          if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
             continue;
          }
+
+         ICorrelationDescription description = flow.getCorrelationDescription().get();
+
+         // Ignore scenarios without input-input correlations
+         if (description.getCompletenessExpressions().isEmpty()) {
+            continue;
+         }
+
          CorrelationDto correlation = new CorrelationDto();
-         correlation.setName("do" + scenario.getName().substring(0, 1).toUpperCase() + scenario.getName().substring(1));
+
+         correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
          IData output = flow.getOutputs().iterator().next().getType();
          TypeDto<?> outputField = dataService.getEventClass(options, output);
          correlation.setOutputType(outputField.getTypeName());
@@ -98,7 +114,7 @@ public class BaseServiceDtoFactory {
                      .mapToObj(i -> "%s")
                      .collect(Collectors.joining(", ")));
 
-         correlation.setPublishMethod("publish" + outputField.getTypeName());
+         correlation.setPublishMethod("publish" + StringUtils.capitalize(outputField.getTypeName()));
 
          correlation.setInputs(flow.getInputs()
                                    .stream()
@@ -110,53 +126,42 @@ public class BaseServiceDtoFactory {
                                    })
                                    .collect(Collectors.toList()));
 
-         correlation.setInputOutputCorrelations(flow.getCorrelationDescription()
-                                                    .get()
-                                                    .getCompletenessExpressions()
-                                                    .stream()
-                                                    .map(expression -> {
-                                                       IOCorrelationDto correlationDto = new IOCorrelationDto();
-                                                       correlationDto.setGetterSnippet(expression.getLeftHandOperand()
-                                                                                                 .getElements()
-                                                                                                 .stream()
-                                                                                                 .map(
-                                                                                                    field -> dataFieldGenerationService.getEventsField(
-                                                                                                       options, field)
-                                                                                                                                       .getJavaGetterName()
-                                                                                                       + "()")
-                                                                                                 .collect(
-                                                                                                    Collectors.joining(
-                                                                                                       ".")));
-                                                       correlationDto.setSetterSnippet(expression.getRightHandOperand()
-                                                                                                 .getElements()
-                                                                                                 .subList(0,
-                                                                                                    expression.getRightHandOperand()
-                                                                                                              .getElements()
-                                                                                                              .size()
-                                                                                                       - 1)
-                                                                                                 .stream()
-                                                                                                 .map(
-                                                                                                    field -> dataFieldGenerationService.getEventsField(
-                                                                                                       options, field)
-                                                                                                                                       .getJavaGetterName()
-                                                                                                       + "()")
-                                                                                                 .collect(
-                                                                                                    Collectors.joining(
-                                                                                                       "."))
-                                                          + "." + dataFieldGenerationService
-                                                                                            .getEventsField(options,
-                                                                                               expression.getRightHandOperand()
-                                                                                                         .getEnd())
-                                                                                            .getJavaSetterName());
-                                                       return correlationDto;
-                                                    })
-                                                    .collect(Collectors.toList()));
+         correlation.setInputOutputCorrelations(description.getCompletenessExpressions()
+                                                           .stream()
+                                                           .map(expression -> {
+                                                              IDataPath left = expression.getLeftHandOperand();
+                                                              IDataPath right = expression.getRightHandOperand();
+                                                              IOCorrelationDto correlationDto = new IOCorrelationDto();
+                                                              correlationDto.setGetterSnippet(
+                                                                 left.getElements()
+                                                                     .stream()
+                                                                     .map(
+                                                                        field -> dataFieldGenerationService.getEventsField(
+                                                                           options, field).getJavaGetterName() + "()")
+                                                                     .collect(Collectors.joining(".")));
 
-         ICorrelationExpression completeness = flow.getCorrelationDescription()
-                                                   .get()
-                                                   .getCompletenessExpressions()
-                                                   .iterator()
-                                                   .next();
+                                                              correlationDto.setSetterSnippet(
+                                                                 right.getElements()
+                                                                      .subList(0, right.getElements().size() - 1)
+                                                                      .stream()
+                                                                      .map(
+                                                                         field -> dataFieldGenerationService.getEventsField(
+                                                                            options, field).getJavaGetterName() + "()")
+                                                                      .collect(Collectors.joining("."))
+                                                                    + "." + dataFieldGenerationService.getEventsField(
+                                                                       options,
+                                                                       expression.getRightHandOperand()
+                                                                                 .getEnd()).getJavaSetterName());
+
+                                                              correlationDto.setInputType(dataService.getEventClass(
+                                                                 options, left.getStart().getType()).getTypeName());
+                                                              return correlationDto;
+                                                           })
+                                                           .collect(Collectors.toList()));
+
+         ICorrelationExpression completeness = description.getCompletenessExpressions()
+                                                          .iterator()
+                                                          .next();
          switch (completeness.getCorrelationEventIdType()) {
          case DATA:
          case ENUM:
@@ -179,7 +184,9 @@ public class BaseServiceDtoFactory {
             break;
          }
 
+         dtos.add(correlation);
       }
+      dto.setCorrelationMethods(dtos);
    }
 
    private void setTriggerRegistrationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {

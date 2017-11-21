@@ -57,13 +57,11 @@ public interface ICorrelationExpression {
 
    /**
     * Gets the left hand operand used by this expression. If the correlation contained 1 input and 1 output, then this returns the data path for the input.
-    * TODO
     */
    IDataPath getLeftHandOperand();
 
    /**
     * Gets the right hand operand used by this expression. If the correlation contained 1 input and 1 output, then this returns the data path for the output.
-    * TODO
     */
    IDataPath getRightHandOperand();
 

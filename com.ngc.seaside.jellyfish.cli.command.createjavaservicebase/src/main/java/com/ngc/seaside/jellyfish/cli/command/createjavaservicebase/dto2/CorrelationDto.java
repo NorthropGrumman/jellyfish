@@ -2,6 +2,10 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2;
 
 import java.util.List;
 
+/**
+ * A dto for generating that method that handles the logic when the correlation expressions for a scenario are completed. This involves calling the corresponding service interface method, catching any
+ * service fault exceptions from it, logging the inputs and outputs, and publishing the outputs.
+ */
 public class CorrelationDto {
    private String name;
    private String outputType;
@@ -12,6 +16,9 @@ public class CorrelationDto {
    private List<InputDto> inputs;
    private List<IOCorrelationDto> inputOutputCorrelations;
 
+   /**
+    * Returns the name of the method for this dto. The method is called when its correlations are completed.
+    */
    public String getName() {
       return name;
    }
@@ -20,6 +27,9 @@ public class CorrelationDto {
       this.name = name;
    }
 
+   /**
+    * Returns the generated java events type of the output for the scenario this dto refers to.
+    */
    public String getOutputType() {
       return outputType;
    }
@@ -28,6 +38,9 @@ public class CorrelationDto {
       this.outputType = outputType;
    }
 
+   /**
+    * Returns the name of the method for the service interface that the method for this dto will call.
+    */
    public String getServiceName() {
       return serviceName;
    }
@@ -36,6 +49,9 @@ public class CorrelationDto {
       this.serviceName = serviceName;
    }
 
+   /**
+    * Returns the generated java events type being correlated for this dto.
+    */
    public String getCorrelationType() {
       return correlationType;
    }
@@ -44,6 +60,9 @@ public class CorrelationDto {
       this.correlationType = correlationType;
    }
 
+   /**
+    * Returns the input log format used for logging the inputs to the method for this dto.
+    */
    public String getInputLogFormat() {
       return inputLogFormat;
    }
@@ -52,6 +71,9 @@ public class CorrelationDto {
       this.inputLogFormat = inputLogFormat;
    }
 
+   /**
+    * Returns the method that should be called to publish the scenario's output.
+    */
    public String getPublishMethod() {
       return publishMethod;
    }
@@ -60,6 +82,9 @@ public class CorrelationDto {
       this.publishMethod = publishMethod;
    }
 
+   /**
+    * Returns the list of inputs to this scenario.
+    */
    public List<InputDto> getInputs() {
       return inputs;
    }
@@ -68,6 +93,9 @@ public class CorrelationDto {
       this.inputs = inputs;
    }
 
+   /**
+    * Returns the list of input-output correlations for the scenario.
+    */
    public List<IOCorrelationDto> getInputOutputCorrelations() {
       return inputOutputCorrelations;
    }
@@ -81,6 +109,9 @@ public class CorrelationDto {
       private String setterSnippet;
       private String inputType;
 
+      /**
+       * Returns the snippet of code used to get the input field that is being correlated. This typically is a chain of getter methods.
+       */
       public String getGetterSnippet() {
          return getterSnippet;
       }
@@ -90,6 +121,9 @@ public class CorrelationDto {
          return this;
       }
 
+      /**
+       * Returns the snippet of code used to set the output field that is being correlated. This typically is a chain of getter methods following by the name of the setter method.
+       */
       public String getSetterSnippet() {
          return setterSnippet;
       }
@@ -99,6 +133,9 @@ public class CorrelationDto {
          return this;
       }
 
+      /**
+       * Returns the generated java events type for the input.
+       */
       public String getInputType() {
          return inputType;
       }
