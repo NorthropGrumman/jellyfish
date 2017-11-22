@@ -124,10 +124,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -213,10 +213,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -253,10 +253,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -306,10 +306,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
