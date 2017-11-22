@@ -410,7 +410,23 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          inputDir = new DefaultParameter<>(inputDirName, ".");
       }
 
-      if (inputDir != null) {
+      if (urlParameter != null) {
+         String gaveValue;
+         if (gaveParameter == null) {
+            gaveValue = promptService.prompt(gaveName, null, null);
+            gaveParameter = new DefaultParameter<>(gaveName, gaveValue);
+         } else {
+            gaveValue = gaveParameter.getStringValue();
+         }
+         gaveValue = parseGave(gaveValue);
+         File tempDir;
+         try {
+            tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
+         } catch (IOException e) {
+            throw new CommandException(e);
+         }
+         inputDir = new DefaultParameter<>(inputDirName, tempDir.getAbsolutePath());
+      } else if (inputDir != null) {
          String dir = inputDir.getStringValue();
          if (gaveParameter == null) {
             Path projectInfo = Paths.get(dir, "build", "resources", "main", "project-info.properties");
@@ -430,22 +446,6 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          if (gaveParameter != null) {
             CommonParameters.parseGave(gaveParameter.getStringValue());
          }
-      } else if (urlParameter != null) {
-         String gaveValue;
-         if (gaveParameter == null) {
-            gaveValue = promptService.prompt(gaveName, null, null);
-            gaveParameter = new DefaultParameter<>(gaveName, gaveValue);
-         } else {
-            gaveValue = gaveParameter.getStringValue();
-         }
-         gaveValue = parseGave(gaveValue);
-         File tempDir;
-         try {
-            tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
-         } catch (IOException e) {
-            throw new CommandException(e);
-         }
-         inputDir = new DefaultParameter<>(inputDirName, tempDir.getAbsolutePath());
       }
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
