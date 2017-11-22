@@ -95,7 +95,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    @Override
    public IUsage getUsage() {
       List<IParameter<?>> parameters = new ArrayList<>();
-      parameters.add(new DefaultParameter<>("inputDir").setRequired(false));
+      parameters.add(CommonParameters.INPUT_DIRECTORY);
       parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.required());
       return new DefaultUsage("JellyFish Description", parameters);
    }
@@ -399,7 +399,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @return
     */
    private IParameterCollection resolveImportantParameters(IParameterCollection userInputParameters, IJellyFishCommand command) {
-      String inputDirName = "inputDir";
+      String inputDirName = CommonParameters.INPUT_DIRECTORY.getName();
       String repositoryUrlName = CommonParameters.REPOSITORY_URL.getName();
       String gaveName = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
       
@@ -480,7 +480,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
 
-      IParameter<?> inputDir = userInputParameters.getParameter("inputDir");
+      IParameter<?> inputDir = userInputParameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(userInputParameters.getAllParameters());
