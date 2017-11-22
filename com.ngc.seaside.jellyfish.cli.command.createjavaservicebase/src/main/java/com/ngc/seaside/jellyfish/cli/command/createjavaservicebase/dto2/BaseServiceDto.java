@@ -25,6 +25,7 @@ public class BaseServiceDto {
    private List<BasicPubSubDto> basicSinkMethods;
    private List<CorrelationDto> correlationMethods;
    private List<TriggerDto> triggerRegistrationMethods;
+   private List<ComplexScenarioDto> complexScenarios;
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -145,6 +146,15 @@ public class BaseServiceDto {
 
    public BaseServiceDto setTriggerRegistrationMethods(List<TriggerDto> triggerRegistrationMethods) {
       this.triggerRegistrationMethods = triggerRegistrationMethods;
+      return this;
+   }
+
+   public List<ComplexScenarioDto> getComplexScenarios() {
+      return complexScenarios;
+   }
+
+   public BaseServiceDto setComplexScenarios(List<ComplexScenarioDto> complexScenarios) {
+      this.complexScenarios = complexScenarios;
       return this;
    }
 

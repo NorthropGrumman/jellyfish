@@ -13,11 +13,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.ngc.blocs.service.thread.api.IThreadService;
-import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-import com.ngc.seaside.service.correlation.api.ICorrelationService;
-import com.ngc.seaside.service.correlation.api.ICorrelationStatus;
-import com.ngc.seaside.service.correlation.api.ICorrelationTrigger;
-import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -39,21 +34,28 @@ public abstract class ${dto.abstractClass.name}
    
    protected IThreadService threadService;
 
+#if (!$dto.correlationMethods.isEmpty())
    protected ICorrelationService correlationService;
 
    protected Map<ICorrelationTrigger, Collection<Consumer<ICorrelationStatus<?>>>> triggers = new ConcurrentHashMap<>();
-   
-########## Receive methods ##########
+
+#end
+#if (!$dto.complexScenarios.isEmpty())
+   private Map<Class<?>, Collection<Queue<?>>> queues = new ConcurrentHashMap<>();
+
+   private Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
+
+#end
+############################### Receive methods ###############################
 #foreach($method in $dto.receiveMethods)
    @Subscriber(${method.topic})
    public void ${method.name}(IEvent<${method.eventType}> event) {
       ${method.eventType} source = event.getSource();
 
-## The methods created in the Basic pubsub and sink method sections
 #foreach($scenario in $method.basicScenarios)
       ${scenario}(source);
 #end
-#if($method.hasCorrelations())
+#if ($method.hasCorrelations())
       correlationService.correlate(source)
          .stream()
          .filter(ICorrelationStatus::isCorrelationComplete)
@@ -61,10 +63,13 @@ public abstract class ${dto.abstractClass.name}
             triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status))
          });
 #end 
+#if ($method.hasComplexScenarios())
+      queues.getOrDefault(${method.eventType}.class, Collections.emptyList()).forEach(queue -> queue.add(source));
+#end
    }
 
 #end
-########## Publish methods ##########
+############################### Publish methods ###############################
 #foreach($method in $dto.publishMethods)
    private void ${method.name}(${method.type}) value) {
       Preconditions.checkNotNull(value, "${method.type} value may not be null!");
@@ -72,7 +77,7 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
-########## Basic 1-input 1-output pubsub methods ##########
+#################### Basic 1-input 1-output pubsub methods ####################
 #foreach($method in $dto.basicPubSubMethods)
    private void ${method.name}(${method.inputType} input) {
       ${method.outputType} output;
@@ -90,7 +95,7 @@ public abstract class ${dto.abstractClass.name}
    }
    
 #end
-########## Basic 1-input 0-output sink methods ##########
+##################### Basic 1-input 0-output sink methods #####################
 #foreach($method in $dto.basicSinkMethods)
    private void ${method.name}(${method.inputType} input) {
       try {
@@ -134,7 +139,7 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
-########## Trigger Registrations ##########
+############################ Trigger Registrations ############################
 #foreach($method in $dto.triggerRegistrationMethods)
    private void ${method.name}() {
       ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType})
@@ -152,17 +157,49 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
-########## Activate ##########
+############ Multi-input multi-output methods without correlation #############
+#foreach($scenario in $dto.complexScenarios)
+#set ($serviceArguments = "")
+#foreach($input in $scenario.inputs)
+#set ($serviceArguments = "${serviceArguments}, input${velocityCount}Queue")
+#end
+#foreach($output in $scenario.outputs)
+#set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.publishMethod}")
+#end
+#set ($serviceArguments = $serviceArguments.substring(2))
+   private void ${scenario.startMethod}() {
+      threads.put("${scenario.name}", threadService.executeLongLivingTask("${scenario.name}", () {
+#foreach($input in $scenario.inputs)
+         final BlockingQueue<${input.type}> input${velocityCount}Queue = new LinkedBlockingQueue<>();
+#end
+#foreach($input in $scenario.inputs)
+         queues.putIfAbsent(${input.type}.getClass(), __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
+#end
+         try {
+            ${scenario.serviceMethod}(${serviceArguments});
+         } finally {
+            threads.remove("${scenario.name}");
+#foreach($input in $scenario.inputs)
+            queues.getOrDefault(${input.type}.class, Collections.emptySet()).remove(input${velocityCount}Queue);
+#end
+         }
+      }));
+   }
+#end
+################################## Activate ###################################
 protected void activate() {
 #foreach($method in $dto.triggerRegistrationMethods)   
    ${method.name}();
+#end
+#foreach($scenario in $dto.complexScenarios)
+   ${scenario.startMethod}();
 #end
    eventService.addSubscriber(this);
    setStatus(ServiceStatus.ACTIVATED);
    logService.info(getClass(), "activated");
 }
 
-########## Deactivate ##########
+################################# Deactivate ##################################
    protected void deactivate() {
       eventService.removeSubscriber(this);
       triggers.keySet().forEach(ICorrelationTrigger::unregister);
@@ -213,6 +250,8 @@ protected void activate() {
    public void removeEventService(IEventService ref) {
       setEventService(null);
    }
+   
+#if (!$dto.correlationMethods.isEmpty())   
    public void setCorrelationService(ICorrelationService ref) {
       this.correlationService = ref;
    }
@@ -221,6 +260,7 @@ protected void activate() {
       setCorrelationService(null);
    }
 
+#end
    public void setFaultManagementService(IFaultManagementService ref) {
       this.faultManagementService = ref;
    }
