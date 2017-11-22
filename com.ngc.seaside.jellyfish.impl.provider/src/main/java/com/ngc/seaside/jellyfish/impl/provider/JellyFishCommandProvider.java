@@ -516,6 +516,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
             result.getIssues()
                   .stream()
                   .filter(issue -> issue.getSeverity() == Severity.ERROR)
+                  .map(issue -> String.format("ERROR at line %d of %s: %s", issue.getLineNumber(), issue.getOffendingFile(), issue.getMessage()))
                   .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
             throw new CommandException("Command requires a valid SystemDescriptor but errors were encountered!");
          }
