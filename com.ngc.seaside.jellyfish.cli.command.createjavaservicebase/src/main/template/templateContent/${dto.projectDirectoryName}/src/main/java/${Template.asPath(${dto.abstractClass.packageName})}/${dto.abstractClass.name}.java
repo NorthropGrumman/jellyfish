@@ -2,6 +2,8 @@ package ${dto.abstractClass.packageName};
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
@@ -50,8 +52,9 @@ public abstract class ${dto.abstractClass.name}
 #foreach($method in $dto.receiveMethods)
    @Subscriber(${method.topic})
    public void ${method.name}(IEvent<${method.eventType}> event) {
-      ${method.eventType} source = event.getSource();
-
+      Preconditions.checkNotNull(event, "event may not be null!");
+      ${method.eventType} source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
+      
 #foreach($scenario in $method.basicScenarios)
       ${scenario}(source);
 #end
@@ -60,7 +63,7 @@ public abstract class ${dto.abstractClass.name}
          .stream()
          .filter(ICorrelationStatus::isCorrelationComplete)
          .forEach(status -> {
-            triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status))
+            triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status));
          });
 #end 
 #if (!$dto.complexScenarios.isEmpty())
@@ -71,7 +74,7 @@ public abstract class ${dto.abstractClass.name}
 #end
 ############################### Publish methods ###############################
 #foreach($method in $dto.publishMethods)
-   private void ${method.name}(${method.type}) value) {
+   private void ${method.name}(${method.type} value) {
       Preconditions.checkNotNull(value, "${method.type} value may not be null!");
       eventService.publish(value, ${method.topic});
    }
@@ -152,7 +155,7 @@ public abstract class ${dto.abstractClass.name}
 #end
             .register();
 #foreach($input in $method.inputs)
-      triggers.get(trigger).add(this::${input.correlationMethod});
+      triggers.computeIfAbsent(trigger, __ -> new ArrayList<>()).add(this::${input.correlationMethod});
 #end
    }
 
@@ -173,7 +176,7 @@ public abstract class ${dto.abstractClass.name}
          final BlockingQueue<${input.type}> input${velocityCount}Queue = new LinkedBlockingQueue<>();
 #end
 #foreach($input in $scenario.inputs)
-         queues.putIfAbsent(${input.type}.getClass(), __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
+         queues.computeIfAbsent(${input.type}.getClass(), __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
 #end
          try {
             ${scenario.serviceMethod}(${serviceArguments});
@@ -187,17 +190,17 @@ public abstract class ${dto.abstractClass.name}
    }
 #end
 ################################## Activate ###################################
-protected void activate() {
+   protected void activate() {
 #foreach($method in $dto.triggerRegistrationMethods)   
-   ${method.name}();
+      ${method.name}();
 #end
 #foreach($scenario in $dto.complexScenarios)
-   ${scenario.startMethod}();
+      ${scenario.startMethod}();
 #end
-   eventService.addSubscriber(this);
-   setStatus(ServiceStatus.ACTIVATED);
-   logService.info(getClass(), "activated");
-}
+      eventService.addSubscriber(this);
+      setStatus(ServiceStatus.ACTIVATED);
+      logService.info(getClass(), "activated");
+   }
 
 ################################# Deactivate ##################################
    protected void deactivate() {
