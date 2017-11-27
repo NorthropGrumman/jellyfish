@@ -7,8 +7,22 @@ import ${i};
 
 public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) extends ${dto.interface.implementedInterface.name}#end {
 
-#foreach ($method in $dto.interface.methods)
-   ${method.returnSnippet} ${method.name}(${method.argumentsListSnippet}) throws ServiceFaultException;
+#foreach ($method in $dto.basicPubSubMethods)
+   ${method.outputType} ${method.serviceName}(${method.inputType} input) throws ServiceFaultException;
+   
+#end
+
+#foreach ($method in $dto.basicSinkMethods)
+   void ${method.outputType} ${method.serviceName}(${method.inputType} input) throws ServiceFaultException;
 
 #end
+
+#foreach ($method in $dto.correlationMethods)
+   ${method.output.type} ${method.serviceName}(
+#foreach ($input in $method.inputs)
+      ${input.type} ${input.inputArgumentString},
+#end
+      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException;
+#end
+
 }
