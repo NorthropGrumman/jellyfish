@@ -521,6 +521,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    private void setComplexScenarios(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
 
       boolean hasComplexScenarios = false;
+      
+      List<ComplexScenarioDto> dtos = new ArrayList<>();
+      
       for (IScenario scenario : model.getScenarios()) {
          Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
             scenario);
@@ -579,7 +582,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                        return output;
                                     })
                                     .collect(Collectors.toList()));
+         dtos.add(scenarioDto);
       }
+      dto.setComplexScenarios(dtos);
       
       if (hasComplexScenarios) {
          dto.getAbstractClass().getImports().add(BlockingQueue.class.getName());
@@ -591,7 +596,5 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
          dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
       }
-
    }
-
 }
