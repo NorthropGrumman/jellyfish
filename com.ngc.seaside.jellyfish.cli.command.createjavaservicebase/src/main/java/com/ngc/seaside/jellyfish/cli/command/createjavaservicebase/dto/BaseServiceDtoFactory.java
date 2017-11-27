@@ -299,6 +299,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          CorrelationDto correlation = new CorrelationDto();
 
          correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
+         correlation.setScenarioName(scenario.getName());
          IData output = flow.getOutputs().iterator().next().getType();
          TypeDto<?> outputField = dataService.getEventClass(options, output);
          correlation.setOutputType(outputField.getTypeName());

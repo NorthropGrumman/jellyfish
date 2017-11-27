@@ -10,12 +10,12 @@ public class CorrelationDto {
    private String name;
    private String outputType;
    private String serviceName;
+   private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
    private String publishMethod;
    private List<InputDto> inputs;
    private List<IOCorrelationDto> inputOutputCorrelations;
-
    /**
     * Returns the name of the method for this dto. The method is called when its correlations are completed.
     */
@@ -102,5 +102,15 @@ public class CorrelationDto {
 
    public void setInputOutputCorrelations(List<IOCorrelationDto> inputOutputCorrelations) {
       this.inputOutputCorrelations = inputOutputCorrelations;
+   }
+
+   /**
+    * Returns the scenario name
+    */
+   public String getScenarioName() {
+      return scenarioName;
+   }
+   public void setScenarioName(String scenarioName) {
+      this.scenarioName = scenarioName;  
    }
 }
