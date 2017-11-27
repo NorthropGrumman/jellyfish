@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
 public class IOCorrelationDto {
       private String getterSnippet;

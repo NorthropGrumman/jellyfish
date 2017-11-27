@@ -6,6 +6,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,13 @@ public class BaseServiceDto {
    private Set<String> exportedPackages;
    private EnumDto<?> topics;
    private IModel model;
+   private List<ReceiveDto> receiveMethods;
+   private List<PublishDto> publishMethods;
+   private List<BasicPubSubDto> basicPubSubMethods; 
+   private List<BasicPubSubDto> basicSinkMethods;
+   private List<CorrelationDto> correlationMethods;
+   private List<TriggerDto> triggerRegistrationMethods;
+   private List<ComplexScenarioDto> complexScenarios;
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -84,6 +92,69 @@ public class BaseServiceDto {
 
    public BaseServiceDto setModel(IModel model) {
       this.model = model;
+      return this;
+   }
+
+   public List<ReceiveDto> getReceiveMethods() {
+      return receiveMethods;
+   }
+
+   public BaseServiceDto setReceiveMethods(List<ReceiveDto> receiveMethods) {
+      this.receiveMethods = receiveMethods;
+      return this;
+   }
+
+   public List<PublishDto> getPublishMethods() {
+      return publishMethods;
+   }
+
+   public BaseServiceDto setPublishMethods(List<PublishDto> publishMethods) {
+      this.publishMethods = publishMethods;
+      return this;
+   }
+
+   public List<BasicPubSubDto> getBasicPubSubMethods() {
+      return basicPubSubMethods;
+   }
+
+   public BaseServiceDto setBasicPubSubMethods(List<BasicPubSubDto> basicPubSubMethods) {
+      this.basicPubSubMethods = basicPubSubMethods;
+      return this;
+   }
+
+   public List<BasicPubSubDto> getBasicSinkMethods() {
+      return basicSinkMethods;
+   }
+
+   public BaseServiceDto setBasicSinkMethods(List<BasicPubSubDto> basicSinkMethods) {
+      this.basicSinkMethods = basicSinkMethods;
+      return this;
+   }
+
+   public List<CorrelationDto> getCorrelationMethods() {
+      return correlationMethods;
+   }
+
+   public BaseServiceDto setCorrelationMethods(List<CorrelationDto> correlationMethods) {
+      this.correlationMethods = correlationMethods;
+      return this;
+   }
+
+   public List<TriggerDto> getTriggerRegistrationMethods() {
+      return triggerRegistrationMethods;
+   }
+
+   public BaseServiceDto setTriggerRegistrationMethods(List<TriggerDto> triggerRegistrationMethods) {
+      this.triggerRegistrationMethods = triggerRegistrationMethods;
+      return this;
+   }
+
+   public List<ComplexScenarioDto> getComplexScenarios() {
+      return complexScenarios;
+   }
+
+   public BaseServiceDto setComplexScenarios(List<ComplexScenarioDto> complexScenarios) {
+      this.complexScenarios = complexScenarios;
       return this;
    }
 
