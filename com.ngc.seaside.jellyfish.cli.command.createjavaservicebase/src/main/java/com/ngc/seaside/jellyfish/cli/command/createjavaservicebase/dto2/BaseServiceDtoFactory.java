@@ -3,10 +3,15 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2;
 import com.google.inject.Inject;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2.TriggerDto.CompletenessDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto2.TriggerDto.EventDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
 import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -26,13 +31,16 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,7 +48,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class BaseServiceDtoFactory {
+public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    private IProjectNamingService projectService;
    private IPackageNamingService packageService;
@@ -64,9 +72,34 @@ public class BaseServiceDtoFactory {
       this.dataFieldGenerationService = dataFieldGenerationService;
    }
 
+   @Override
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
+      Set<String> projectDependencies = Collections.singleton(
+         projectService.getEventsProjectName(options, model).getArtifactId());
+      ClassDto<? extends MethodDto> interfaceDto = generateService.getServiceInterfaceDescription(options, model);
+      ClassDto<? extends PubSubMethodDto> abstractClassDto = generateService.getBaseServiceDescription(options, model);
+      EnumDto<?> topicsDto = generateService.getTransportTopicsDescription(options, model);
+      
       BaseServiceDto dto = new BaseServiceDto();
-      return null;
+      dto.setProjectDirectoryName(projectService.getBaseServiceProjectName(options, model).getDirectoryName());
+      dto.setProjectDependencies(projectDependencies);  
+      dto.setAbstractClass(abstractClassDto);
+      dto.setInterface(interfaceDto);
+      dto.setExportedPackages(new LinkedHashSet<>(
+               Arrays.asList(packageService.getServiceInterfacePackageName(options, model) + ".*",
+                  packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
+                  packageService.getTransportTopicsPackageName(options, model) + ".*")));
+      dto.setModel(model);
+      dto.setTopicsEnum(topicsDto);
+      
+      setReceiveMethods(dto, options, model);
+      setPublishMethods(dto, options, model);
+      setBasicPubSubMethods(dto, options, model);
+      setBasicSinkMethods(dto, options, model);
+      setCorrelationMethods(dto, options, model);
+      setTriggerRegistrationMethods(dto, options, model);
+      setComplexScenarios(dto, options, model);  
+      return dto;
    }
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
