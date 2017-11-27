@@ -15,15 +15,18 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
@@ -79,6 +82,15 @@ public class CreateJavaServiceBaseCommandIT {
 
    @Mock
    private IJavaServiceGenerationService generatorService;
+   
+   @Mock
+   private IScenarioService scenarioService;
+
+   @Mock
+   private IDataService dataService;
+
+   @Mock
+   private IDataFieldGenerationService dataFieldGenerationService;
 
    private IModel model = newModelForTesting();
 
@@ -112,7 +124,7 @@ public class CreateJavaServiceBaseCommandIT {
                   CreateJavaServiceBaseCommand.class.getPackage().getName(),
                   Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService);
+      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
