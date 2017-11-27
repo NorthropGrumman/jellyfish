@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand implements IJellyFishCommand {
@@ -43,6 +43,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
    public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    private static final String NAME = "create-java-distribution";
    private static final IUsage USAGE = createUsage();
@@ -107,15 +108,20 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(pkg);
       dto.setModel(model);
-      dto.setProjectDependencies(new LinkedHashSet<String>(
-         Arrays.asList(
-            projectNamingService.getEventsProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getDomainProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getConnectorProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getConfigProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getMessageProjectName(commandOptions, model).getArtifactId(),
-            projectNamingService.getServiceProjectName(commandOptions, model).getArtifactId())));
+      
+      Set<String> projectDependencies = new LinkedHashSet<String>();
+      projectDependencies.add(projectNamingService.getEventsProjectName(commandOptions, model).getArtifactId());
+      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true)) {
+         projectDependencies.add(projectNamingService.getDomainProjectName(commandOptions, model).getArtifactId());
+      }
+      projectDependencies.add(projectNamingService.getConnectorProjectName(commandOptions, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getConfigProjectName(commandOptions, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getMessageProjectName(commandOptions, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getServiceProjectName(commandOptions, model).getArtifactId());
+      dto.setProjectDependencies(projectDependencies);
+      
+      
       
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
