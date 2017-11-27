@@ -110,7 +110,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
          receive.setEventType(inputField.getTypeName());
 
-         receive.setTopic(inputField.getTypeName() + ".TOPIC");
+         receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
 
          receive.setName("receive" + inputField.getTypeName());
 
@@ -151,7 +151,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          PublishDto publish = new PublishDto();
          TypeDto<?> outputField = dataService.getEventClass(options, output.getType());
          publish.setType(outputField.getTypeName());
-         publish.setTopic(outputField.getTypeName() + ".TOPIC");
+         publish.setTopic(outputField.getTypeName() + ".TOPIC_NAME");
          publish.setName("publish" + outputField.getTypeName());
          publishDtos.add(publish);
       }
@@ -389,6 +389,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationStatus");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationTrigger");
+         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
+         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
+         dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
+         dto.getAbstractClass().getImports().add("java.util.function.Consumer");
          dto.getInterface().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
       }
@@ -578,7 +582,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                        PublishDto output = new PublishDto();
                                        TypeDto<?> type = dataService.getEventClass(options, dataType);
                                        output.setType(type.getTypeName());
-                                       output.setTopic(type.getTypeName() + ".TOPIC");
+                                       output.setTopic(type.getTypeName() + ".TOPIC_NAME");
                                        output.setName("publish" + type.getTypeName());
                                        dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
                                        return output;

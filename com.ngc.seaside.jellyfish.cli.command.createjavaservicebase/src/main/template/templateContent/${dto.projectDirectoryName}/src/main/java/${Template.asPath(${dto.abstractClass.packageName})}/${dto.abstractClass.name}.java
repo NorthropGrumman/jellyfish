@@ -145,7 +145,7 @@ public abstract class ${dto.abstractClass.name}
 ############################ Trigger Registrations ############################
 #foreach($method in $dto.triggerRegistrationMethods)
    private void ${method.name}() {
-      ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType})
+      ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType}.class)
 #foreach($eventDto in $method.eventProducers)
             .addEventIdProducer(${eventDto.type}.class, a -> a.${eventDto.getterSnippet})
 #end
