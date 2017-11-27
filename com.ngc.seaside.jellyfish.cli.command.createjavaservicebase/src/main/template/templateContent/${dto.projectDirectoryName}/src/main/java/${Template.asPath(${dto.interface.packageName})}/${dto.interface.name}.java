@@ -16,7 +16,7 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 
 #end
 #foreach ($method in $dto.correlationMethods)
-   ${method.output.type} ${method.serviceName}(
+   ${method.outputType} ${method.serviceName}(
 #foreach ($input in $method.inputs)
       ${input.type} ${input.inputArgumentString},
 #end
@@ -26,11 +26,11 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 #foreach ($scenario in $dto.complexScenarios)
    void ${scenario.serviceName}(
 #foreach ($input in $scenario.inputs)
-#set ($lastParam = ${velocityCount == scenario.inputs.size() && scenario.outputs.isEmpty()})
+#set ($lastParam = $velocityCount == $scenario.inputs.size() && $scenario.outputs.isEmpty())
       BlockingQueue<${input.type}> input${velocityCount}Queue#if ($lastParam));#{else},#end
 #end
 #foreach ($output in $scenario.outputs)
-#set ($lastParam = ${velocityCount == scenario.outputs.size()})
+#set ($lastParam = $velocityCount == $scenario.outputs.size())
       Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam));#{else},#end
 #end
 
