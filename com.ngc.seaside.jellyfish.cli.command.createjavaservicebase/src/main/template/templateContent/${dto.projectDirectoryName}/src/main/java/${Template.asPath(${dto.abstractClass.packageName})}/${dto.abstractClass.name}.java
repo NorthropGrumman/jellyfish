@@ -63,7 +63,7 @@ public abstract class ${dto.abstractClass.name}
             triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status))
          });
 #end 
-#if ($method.hasComplexScenarios())
+#if (!$dto.complexScenarios.isEmpty())
       queues.getOrDefault(${method.eventType}.class, Collections.emptyList()).forEach(queue -> queue.add(source));
 #end
    }
