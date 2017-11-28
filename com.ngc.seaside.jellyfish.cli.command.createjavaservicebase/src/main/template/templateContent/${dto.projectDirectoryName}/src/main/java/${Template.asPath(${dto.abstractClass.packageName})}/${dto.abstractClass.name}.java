@@ -206,8 +206,15 @@ public abstract class ${dto.abstractClass.name}
 ################################# Deactivate ##################################
    protected void deactivate() {
       eventService.removeSubscriber(this);
+#if (!$dto.correlationMethods.isEmpty())
       triggers.keySet().forEach(ICorrelationTrigger::unregister);
       triggers.clear();
+#end
+#if (!$dto.complexScenarios.isEmpty())
+      queues.clear();
+      threads.values().forEach(ISubmittedLongLivingTask::cancel);
+      threads.clear();
+#end
       setStatus(ServiceStatus.DEACTIVATED);
       logService.info(getClass(), "deactivated");
    }
