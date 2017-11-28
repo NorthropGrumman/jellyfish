@@ -12,7 +12,9 @@ public enum CommonParameters implements IParameter<String> {
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
+   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
+   INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
    MODEL("model", "The fully qualified path to the system descriptor model"),
    MODEL_OBJECT("modelObject", "The fully qualified name of the model to generate connectors for"),
    OUTPUT_DIRECTORY("outputDirectory", "Base directory in which to output the project"),
@@ -20,8 +22,7 @@ public enum CommonParameters implements IParameter<String> {
    PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
-   REPOSITORY_URL("repositoryUrl", "The url of a repository"),
-   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project");
+   REPOSITORY_URL("repositoryUrl", "The url of a system descriptor repository. If specified, " + GROUP_ARTIFACT_VERSION_EXTENSION.getName() + " parameter is required");
 
    private static final Pattern GAVE_REGEX = java.util.regex.Pattern.compile("(.+):(.+):(.+)@(.+)");
    private final String description;

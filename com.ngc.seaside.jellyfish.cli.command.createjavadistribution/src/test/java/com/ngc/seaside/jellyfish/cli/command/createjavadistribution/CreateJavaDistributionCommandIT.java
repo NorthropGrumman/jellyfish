@@ -165,7 +165,6 @@ public class CreateJavaDistributionCommandIT {
       runCommand(CreateJavaDistributionCommand.MODEL_PROPERTY, "com.ngc.seaside.test.Model",
                  CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDir.toString());
 
-      Mockito.verify(options, Mockito.times(13)).getParameters();
       Mockito.verify(options, Mockito.atLeastOnce()).getSystemDescriptor();
       System.out.println(printDirectoryTree(outputDir.toFile()));
       checkGradleBuild(outputDir);

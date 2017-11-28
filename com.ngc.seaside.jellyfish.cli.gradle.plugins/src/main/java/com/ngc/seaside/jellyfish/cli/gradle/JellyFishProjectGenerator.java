@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.gradle;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+
 import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 
@@ -101,7 +103,7 @@ public class JellyFishProjectGenerator {
          inputDir = new File(".").getAbsolutePath();
       }
 
-      arguments.put("inputDir", inputDir);
+      arguments.put(CommonParameters.INPUT_DIRECTORY.getName(), inputDir);
       List<String> stringArgs = arguments.entrySet()
             .stream()
             .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))

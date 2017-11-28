@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.gradle.tasks;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.cli.gradle.GradleJellyFishRunner;
 
 import org.gradle.api.GradleException;
@@ -29,7 +30,7 @@ public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
          inputDir = new File(".").getAbsolutePath();
       }
 
-      arguments.put("inputDir", inputDir);
+      arguments.put(CommonParameters.INPUT_DIRECTORY.getName(), inputDir);
       List<String> stringArgs = arguments.entrySet()
             .stream()
             .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))
