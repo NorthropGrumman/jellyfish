@@ -1,0 +1,5 @@
+package com
+
+data NestedOutputData {
+	string field6
+}

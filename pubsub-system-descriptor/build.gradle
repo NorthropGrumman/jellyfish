@@ -15,4 +15,4 @@ buildscript {
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
 
 group = 'com.ngc.seaside.jellyfish.examples'
-version = '1.0.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
