@@ -9,12 +9,11 @@ import java.util.List;
  */
 public class CorrelationDto {
    private String name;
-   private String outputType;
+   private PublishDto output;
    private String serviceMethod;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
-   private String publishMethod;
    private List<InputDto> inputs = new ArrayList<>();
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
    /**
@@ -31,12 +30,12 @@ public class CorrelationDto {
    /**
     * Returns the generated java events type of the output for the scenario this dto refers to.
     */
-   public String getOutputType() {
-      return outputType;
+   public PublishDto getOutput() {
+      return output;
    }
 
-   public void setOutputType(String outputType) {
-      this.outputType = outputType;
+   public void setOutput(PublishDto output) {
+      this.output = output;
    }
 
    /**
@@ -70,17 +69,6 @@ public class CorrelationDto {
 
    public void setInputLogFormat(String inputLogFormat) {
       this.inputLogFormat = inputLogFormat;
-   }
-
-   /**
-    * Returns the method that should be called to publish the scenario's output.
-    */
-   public String getPublishMethod() {
-      return publishMethod;
-   }
-
-   public void setPublishMethod(String publishMethod) {
-      this.publishMethod = publishMethod;
    }
 
    /**

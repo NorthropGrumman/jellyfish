@@ -82,8 +82,8 @@ public abstract class ${dto.abstractClass.name}
 #end
 #################### Basic 1-input 1-output pubsub methods ####################
 #foreach($method in $dto.basicPubSubMethods)
-   private void ${method.name}(${method.inputType} input) {
-      ${method.outputType} output;
+   private void ${method.name}(${method.input.type} input) {
+      ${method.output.type} output;
       try {
          output = ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
@@ -95,13 +95,13 @@ public abstract class ${dto.abstractClass.name}
       output.${correlation.setterSnippet}(${correlation.getterSnippet});
 #end
       logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
-      ${method.publishMethod}(output);
+      ${method.output.name}(output);
    }
    
 #end
 ##################### Basic 1-input 0-output sink methods #####################
 #foreach($method in $dto.basicSinkMethods)
-   private void ${method.name}(${method.inputType} input) {
+   private void ${method.name}(${method.input.type} input) {
       try {
          ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
@@ -119,7 +119,7 @@ public abstract class ${dto.abstractClass.name}
       updateRequestWithCorrelation(status.getEvent());
       try {
          @SuppressWarnings("unchecked")
-         ${method.outputType} output = ${method.serviceMethod}(
+         ${method.output.type} output = ${method.serviceMethod}(
 #foreach($input in $method.inputs)
                status.getData(${input.type}.class),
 #end
@@ -132,7 +132,7 @@ public abstract class ${dto.abstractClass.name}
             status.getData(${input.type}.class).toString(),
 #end
             output.toString());
-         ${method.publishMethod}(output);
+         ${method.output.name}(output);
       } catch (ServiceFaultException fault) {
          logService.error(getClass(), 
                   "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");

@@ -4,6 +4,7 @@ public class PublishDto {
    private String type;
    private String name;
    private String topic;
+   private String fieldName;
    
 	public String getType() {
 		return type;
@@ -22,6 +23,15 @@ public class PublishDto {
 		this.name = name;
 		return this;
 	}
+	
+	public String getFieldName() {
+      return fieldName;
+   }
+
+   public PublishDto setFieldName(String fieldName) {
+      this.fieldName = fieldName;
+      return this;
+   }
 	
 	public String getTopic() {
 		return topic;

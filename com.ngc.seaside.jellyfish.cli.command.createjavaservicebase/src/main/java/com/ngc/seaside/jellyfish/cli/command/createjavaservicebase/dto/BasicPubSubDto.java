@@ -6,10 +6,9 @@ import java.util.List;
 public class BasicPubSubDto {
 
    private String name;
-   private String inputType;
-   private String outputType;
+   private InputDto input;
+   private PublishDto output;
    private String serviceMethod;
-   private String publishMethod;
    private String scenarioName;
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
    
@@ -22,21 +21,21 @@ public class BasicPubSubDto {
 		return this;
 	}
 	
-	public String getInputType() {
-		return inputType;
+	public InputDto getInput() {
+		return input;
 	}
 	
-	public BasicPubSubDto setInputType(String inputType) {
-		this.inputType = inputType;
+	public BasicPubSubDto setInput(InputDto input) {
+		this.input = input;
 		return this;
 	}
 	
-	public String getOutputType() {
-		return outputType;
+	public PublishDto getOutput() {
+		return output;
 	}
 	
-	public BasicPubSubDto setOutputType(String outputType) {
-		this.outputType = outputType;
+	public BasicPubSubDto setOutput(PublishDto output) {
+		this.output = output;
 		return this;
 	}
 	
@@ -46,15 +45,6 @@ public class BasicPubSubDto {
 	
 	public BasicPubSubDto setServiceMethod(String serviceMethod) {
 		this.serviceMethod = serviceMethod;
-		return this;
-	}
-	
-	public String getPublishMethod() {
-		return publishMethod;
-	}
-	
-	public BasicPubSubDto setPublishMethod(String publishMethod) {
-		this.publishMethod = publishMethod;
 		return this;
 	}
 	

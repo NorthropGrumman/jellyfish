@@ -39,7 +39,6 @@ public class ${serviceDto.service.name}Test {
    }
 
 #end
-
    @After
    public void cleanup() throws Throwable {
       service.deactivate();

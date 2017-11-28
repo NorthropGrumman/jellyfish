@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 public class InputDto {
    private String type;
    private String correlationMethod;
-   private String inputArgumentString;
+   private String fieldName;
 
    /**
     * Returns the name of the generated java event type for this input.
@@ -14,12 +14,16 @@ public class InputDto {
 
    public InputDto setType(String type) {
       this.type = type;
-      inputArgumentString = type.substring(0, 1).toLowerCase() + type.substring(1);
       return this;
    }
    
-   public String getInputArgumentString() {
-      return inputArgumentString;
+   public String getFieldName() {
+      return fieldName;
+   }
+
+   public InputDto setFieldName(String fieldName) {
+      this.fieldName = fieldName;
+      return this;
    }
 
    /**

@@ -222,17 +222,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       pubSub.setScenarioName(scenario.getName());
       pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
 
-      TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
-      TypeDto<?> outputField = dataService.getEventClass(options, flow.getOutputs().iterator().next().getType());
-      pubSub.setInputType(inputField.getTypeName());
-      pubSub.setOutputType(outputField.getTypeName());
-      dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
-      dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
-      dto.getInterface().getImports().add(inputField.getFullyQualifiedName());
-      dto.getInterface().getImports().add(outputField.getFullyQualifiedName());
+      pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
+      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
 
       pubSub.setServiceMethod(scenario.getName());
-      pubSub.setPublishMethod("publish" + outputField.getTypeName());
 
       List<IOCorrelationDto> ioCorrelations = new ArrayList<>();
 
@@ -259,10 +252,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       BasicPubSubDto pubSub = new BasicPubSubDto();
       pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
 
-      TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
-      pubSub.setInputType(inputField.getTypeName());
-      dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
-      dto.getInterface().getImports().add(inputField.getFullyQualifiedName());
+      pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
 
       pubSub.setServiceMethod(scenario.getName());
       return Optional.of(pubSub);
@@ -293,10 +283,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
       correlation.setScenarioName(scenario.getName());
-      IData output = flow.getOutputs().iterator().next().getType();
-      TypeDto<?> outputField = dataService.getEventClass(options, output);
-      correlation.setOutputType(outputField.getTypeName());
-      dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
+      correlation.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
 
       correlation.setServiceMethod(scenario.getName());
 
@@ -304,8 +291,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          IntStream.range(0, flow.getInputs().size())
                   .mapToObj(i -> "%s")
                   .collect(Collectors.joining(", ")));
-
-      correlation.setPublishMethod("publish" + StringUtils.capitalize(outputField.getTypeName()));
 
       correlation.setInputs(flow.getInputs()
                                 .stream()
@@ -510,6 +495,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       InputDto input = new InputDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
       input.setType(type.getTypeName());
+      input.setFieldName(field.getName());
       dto.getInterface().getImports().add(type.getFullyQualifiedName());
       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       return input;
@@ -521,6 +507,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       output.setType(type.getTypeName());
       output.setTopic(type.getTypeName() + ".TOPIC");
       output.setName("publish" + type.getTypeName());
+      output.setFieldName(field.getName());
       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       dto.getInterface().getImports().add(type.getFullyQualifiedName());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
