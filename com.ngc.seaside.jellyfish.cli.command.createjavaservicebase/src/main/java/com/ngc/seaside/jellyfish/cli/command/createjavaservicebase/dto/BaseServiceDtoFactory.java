@@ -26,7 +26,6 @@ import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDe
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -202,10 +201,29 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       List<PublishDto> publishDtos = new ArrayList<>();
       Set<String> methods = new HashSet<>();
       for (IDataReferenceField output : model.getOutputs()) {
-         PublishDto publish = getPublishDto(output, dto, options);
-         if (methods.add(publish.getName())) {
-            publishDtos.add(publish);
+         for (IScenario scenario : model.getScenarios()) {
+            
+            Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
+               scenario);
+
+            if (!flowOptional.isPresent()) {
+               continue;
+            }
+
+            IPublishSubscribeMessagingFlow flow = flowOptional.get();
+            if (!flow.getOutputs().contains(output)) {
+               continue;
+            }
+            
+            PublishDto publish = getPublishDto(output, dto, options);
+            
+            
+            if (methods.add(publish.getName())) {
+               publishDtos.add(publish);
+            }
+            break;
          }
+         
       }
       dto.setPublishMethods(publishDtos);
    }
