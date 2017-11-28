@@ -199,10 +199,14 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    }
 
    private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-      List<PublishDto> publishDtos = model.getOutputs()
-                                          .stream()
-                                          .map(field -> getPublishDto(field, dto, options))
-                                          .collect(Collectors.toList());
+      List<PublishDto> publishDtos = new ArrayList<>();
+      Set<String> methods = new HashSet<>();
+      for (IDataReferenceField output : model.getOutputs()) {
+         PublishDto publish = getPublishDto(output, dto, options);
+         if (methods.add(publish.getName())) {
+            publishDtos.add(publish);
+         }
+      }
       dto.setPublishMethods(publishDtos);
    }
 

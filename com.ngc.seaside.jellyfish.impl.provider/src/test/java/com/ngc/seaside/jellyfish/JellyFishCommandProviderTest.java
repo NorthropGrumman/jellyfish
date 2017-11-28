@@ -1,5 +1,21 @@
 package com.ngc.seaside.jellyfish;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
@@ -7,7 +23,11 @@ import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.command.api.*;
+import com.ngc.seaside.command.api.CommandException;
+import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
@@ -20,23 +40,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -124,10 +131,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -213,10 +220,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -253,10 +260,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
@@ -306,10 +313,10 @@ public class JellyFishCommandProviderTest {
       ITemplateOutput output = new DefaultTemplateOutput()
             .setOutputPath(outputDir)
             .setProperties(new HashMap<>());
-      when(templateService.unpack(TEMPLATE_PACKAGE_NAME,
-                                  collection,
-                                  outputDir,
-                                  false)).thenReturn(output);
+      when(templateService.unpack(eq(TEMPLATE_PACKAGE_NAME),
+                                  any(),
+                                  eq(outputDir),
+                                  eq(false))).thenReturn(output);
 
       //we aren't testing the system descriptor service, just that it actually gets called
       IParsingResult result = mock(IParsingResult.class);
