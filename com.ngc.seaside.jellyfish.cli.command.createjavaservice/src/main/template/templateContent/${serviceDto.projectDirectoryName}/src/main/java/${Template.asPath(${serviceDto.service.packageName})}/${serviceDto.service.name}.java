@@ -26,6 +26,7 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
 #foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Override
    public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 #end

@@ -9,7 +9,7 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 
 #foreach ($method in $dto.basicPubSubMethods)
    ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
-   
+
 #end
 #foreach ($method in $dto.basicSinkMethods)
    void ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;

@@ -8,11 +8,12 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ServiceDtoFactory implements IServiceDtoFactory {
 
@@ -38,28 +39,12 @@ public class ServiceDtoFactory implements IServiceDtoFactory {
       Set<String> projectDependencies = new LinkedHashSet<>();
       projectDependencies.add(projectService.getEventsProjectName(options, model).getArtifactId());
       projectDependencies.add(projectService.getBaseServiceProjectName(options, model).getArtifactId());
-      
-      List<MethodDto> methods = new ArrayList<>();
-      baseDto.getBasicPubSubMethods().forEach(method -> {
-         MethodDto methodDto = new MethodDto();
-         methodDto.setName(method.getName());
-         methods.add(methodDto);
-      });
-      baseDto.getBasicSinkMethods().forEach(method -> {
-         MethodDto methodDto = new MethodDto();
-         methodDto.setName(method.getName());
-         methods.add(methodDto);
-      });
-      baseDto.getCorrelationMethods().forEach(method -> {
-         MethodDto methodDto = new MethodDto();
-         methodDto.setName(method.getName());
-         methods.add(methodDto);
-      });
-      baseDto.getComplexScenarios().forEach(method -> {
-         MethodDto methodDto = new MethodDto();
-         methodDto.setName(method.getName());
-         methods.add(methodDto);
-      });
+
+      List<MethodDto> methods = model.getScenarios()
+                                     .stream()
+                                     .map(IScenario::getName)
+                                     .map(scenario -> new MethodDto().setName(scenario))
+                                     .collect(Collectors.toList());
 
       ClassDto<MethodDto> classDto = new ClassDto<>();
       classDto.setName(model.getName())
