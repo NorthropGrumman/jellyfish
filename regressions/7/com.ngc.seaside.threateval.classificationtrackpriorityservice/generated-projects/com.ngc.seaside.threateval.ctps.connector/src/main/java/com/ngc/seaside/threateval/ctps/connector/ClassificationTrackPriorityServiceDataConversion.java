@@ -7,6 +7,7 @@ public class ClassificationTrackPriorityServiceDataConversion {
 
       to.setTrackId(from.getTrackId());
       to.setObjectType(convert(from.getObjectType()));
+      to.setHeader(convert(from.getHeader()));
 
       return to;
    }
@@ -34,12 +35,29 @@ public class ClassificationTrackPriorityServiceDataConversion {
       return to;
    }
 
+   public static com.ngc.seaside.threateval.ctps.event.common.datatype.Metadata convert(com.ngc.seaside.threateval.ctps.common.datatype.Metadata from) {
+      com.ngc.seaside.threateval.ctps.event.common.datatype.Metadata to = new com.ngc.seaside.threateval.ctps.event.common.datatype.Metadata();
+
+      to.setCorrelationEventId(from.getCorrelationEventId());
+
+      return to;
+   }
+
    public static com.ngc.seaside.threateval.ctps.datatype.TrackPriority convert(com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority from) {
       com.ngc.seaside.threateval.ctps.datatype.TrackPriority.Builder to = com.ngc.seaside.threateval.ctps.datatype.TrackPriority.newBuilder();
 
       to.setTrackId(from.getTrackId());
       to.setSourceId(from.getSourceId());
       to.setPriority(from.getPriority());
+      to.setHeader(convert(from.getHeader()));
+
+      return to.build();
+   }
+
+   public static com.ngc.seaside.threateval.ctps.common.datatype.Metadata convert(com.ngc.seaside.threateval.ctps.event.common.datatype.Metadata from) {
+      com.ngc.seaside.threateval.ctps.common.datatype.Metadata.Builder to = com.ngc.seaside.threateval.ctps.common.datatype.Metadata.newBuilder();
+
+      to.setCorrelationEventId(from.getCorrelationEventId());
 
       return to.build();
    }

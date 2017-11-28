@@ -10,7 +10,7 @@ package com.ngc.seaside.threateval.ctps.event.classifier.datatype;
  * This file has been generated and should not be edited directly.
  * @author Generated
  */
-public class Classification {
+public class Classification extends com.ngc.seaside.threateval.ctps.event.common.datatype.BaseData {
 
    public static final String TOPIC_NAME = "/data/com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification";
 
@@ -41,7 +41,7 @@ public class Classification {
    @Override
    public int hashCode() {
       return java.util.Objects.hash(
-         this.trackId,         this.objectType      );
+      super.hashCode(),         this.trackId,         this.objectType      );
    }
 
    @Override
@@ -56,13 +56,13 @@ public class Classification {
 
       Classification that = (Classification) obj;
 
-      return          java.util.Objects.equals(this.trackId, that.trackId) &&         java.util.Objects.equals(this.objectType, that.objectType)      ;
+      return super.equals(obj) &&         java.util.Objects.equals(this.trackId, that.trackId) &&         java.util.Objects.equals(this.objectType, that.objectType)      ;
    }
 
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-	  builder.append(getClass().getSimpleName()).append(" - ");
+      builder.append(super.toString());
       builder.append("[trackId=").append(trackId).append("]");
       builder.append("[objectType=").append(objectType).append("]");
       return builder.toString();
