@@ -32,7 +32,8 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 #end
 #foreach ($output in $scenario.outputs)
 #set ($lastParam = $velocityCount == $scenario.outputs.size())
-      Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam));#{else},#end
+      Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam));#{else},
+#end
 #end
 
 #end
