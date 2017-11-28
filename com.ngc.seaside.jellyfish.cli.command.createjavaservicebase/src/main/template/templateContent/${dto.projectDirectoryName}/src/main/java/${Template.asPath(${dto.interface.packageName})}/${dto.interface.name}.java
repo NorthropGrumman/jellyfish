@@ -1,6 +1,6 @@
 package ${dto.interface.packageName};
 
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
+#set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
 #foreach ($i in $dto.interface.imports)
 import ${i};
 #end
@@ -35,6 +35,7 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
       Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam));#{else},
 #end
 #end
+
 
 #end
 }
