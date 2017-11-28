@@ -440,6 +440,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
                      gaveParameter = new DefaultParameter<>(gaveName, gaveValue);
                   }
                } catch (IOException e) {
+                  // If loading fails, don't do anything.  Use the default be
                }
             }
          }
@@ -561,6 +562,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       String nameOfNewDir = FilenameUtils.removeExtension(destDirFileName);
       File destination = new File(tempDir.toString() + File.separator + nameOfNewDir);
       File file = new File(tempDir, destDirFileName);
+      logService.info(JellyFishCommandProvider.class, "Downloading %s.", myUrl);
       FileUtils.copyURLToFile(myUrl, file);
 
       // unzip the file to the given destination
