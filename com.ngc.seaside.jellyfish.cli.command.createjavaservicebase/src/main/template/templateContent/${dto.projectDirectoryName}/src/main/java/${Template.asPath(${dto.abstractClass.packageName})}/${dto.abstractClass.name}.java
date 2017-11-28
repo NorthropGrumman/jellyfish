@@ -87,13 +87,14 @@ public abstract class ${dto.abstractClass.name}
       try {
          output = ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
-         // TODO
+         logService.error(getClass(), 
+            "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          return;
       }
 #foreach($correlation in $method.inputOutputCorrelations)
       output.${correlation.setterSnippet}(${correlation.getterSnippet});
 #end
-      logService.info(getClass(), "TODO", input, output);
+      logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
       ${method.publishMethod}(output);
    }
    
@@ -104,10 +105,11 @@ public abstract class ${dto.abstractClass.name}
       try {
          ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
-         // TODO
+         logService.error(getClass(), 
+            "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          return;
       }
-      logService.info(getClass(), "TODO", input);
+      logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: ;", input);
    }
 
 #end
@@ -132,9 +134,8 @@ public abstract class ${dto.abstractClass.name}
             output.toString());
          ${method.publishMethod}(output);
       } catch (ServiceFaultException fault) {
-         logService.error(getClass(),
-                          "Invocation of '%s.${method.serviceMethod}' generated fault, dispatching to fault management service.",
-                          getClass().getName());
+         logService.error(getClass(), 
+                  "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          faultManagementService.handleFault(fault);
       } finally {
          clearCorrelationFromRequest();
