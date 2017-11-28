@@ -124,7 +124,7 @@ public class CreateJavaServiceBaseCommandIT {
                   CreateJavaServiceBaseCommand.class.getPackage().getName(),
                   Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService);
+      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
