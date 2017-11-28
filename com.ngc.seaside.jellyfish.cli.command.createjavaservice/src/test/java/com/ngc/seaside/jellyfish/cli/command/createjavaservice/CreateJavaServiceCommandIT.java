@@ -111,7 +111,7 @@ public class CreateJavaServiceCommandIT {
                                                       CreateJavaServiceCommand.class.getPackage().getName(),
                                                       Paths.get("src", "main", "template"));
 
-      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService, generatorService);
+      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService);
 
       baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
       
