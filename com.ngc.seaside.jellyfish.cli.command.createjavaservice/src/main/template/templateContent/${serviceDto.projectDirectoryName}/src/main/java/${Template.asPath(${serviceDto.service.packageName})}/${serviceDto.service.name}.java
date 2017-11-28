@@ -1,24 +1,24 @@
 package ${serviceDto.service.packageName};
 
-import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.service.fault.api.IFaultManagementService;
-import com.ngc.blocs.service.thread.api.IThreadService;
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.api.IServiceModule"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.event.api.IEventService"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
 #if (!$baseServiceDto.correlationMethods.isEmpty())
-import com.ngc.seaside.service.correlation.api.ICorrelationService;
-import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.correlation.api.ICorrelationService"))
+#set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent"))
 #end
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.Activate"))
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.Component"))
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.Deactivate"))
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.Reference"))
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.ReferenceCardinality"))
+#set ($ignore = $serviceDto.service.imports.add("org.osgi.service.component.annotations.ReferencePolicy"))
 #foreach ($i in $serviceDto.service.imports)
 import ${i};
 #end
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(service = {#if($serviceDto.service.implementedInterface)${serviceDto.service.implementedInterface.name}.class, #{end}IServiceModule.class}, immediate = true)
 public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extends ${serviceDto.service.baseClass.name}#elseif($serviceDto.service.implementedInterface) implements ${serviceDto.service.implementedInterface.name}#end {
@@ -51,15 +51,21 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
 #end
 #foreach ($scenario in $baseServiceDto.complexScenarios)
    @Override
-   void ${scenario.serviceMethod}(
+   public void ${scenario.serviceMethod}(
 #foreach ($input in $scenario.inputs)
 #set ($lastParam = $velocityCount == $scenario.inputs.size() && $scenario.outputs.isEmpty())
-      BlockingQueue<${input.type}> input${velocityCount}Queue#if ($lastParam));#{else},#end
+      BlockingQueue<${input.type}> input${velocityCount}Queue#if ($lastParam)) {#{else},
+#end
 #end
 #foreach ($output in $scenario.outputs)
 #set ($lastParam = $velocityCount == $scenario.outputs.size())
-      Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam));#{else},#end
+      Consumer<${output.type}> output${velocityCount}Consumer#if ($lastParam)) {#{else},
 #end
+#end
+
+      //TODO: implement this
+      throw new UnsupportedOperationException("not implemented");
+   }
 
 #end
 

@@ -57,8 +57,8 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       IProjectInformation projectInfo = projectNamingService.getServiceProjectName(commandOptions, model);
 
-      ServiceDto serviceDto = serviceTemplateDaoFactory.newDto(commandOptions, model);
       BaseServiceDto baseServiceDto = baseServiceTemplateDaoFactory.newDto(commandOptions, model);
+      ServiceDto serviceDto = serviceTemplateDaoFactory.newDto(commandOptions, model, baseServiceDto);
       
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
