@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -146,6 +147,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
       List<ReceiveDto> receiveDtos = new ArrayList<>();
+      Set<String> methods = new HashSet<>();
       for (IDataReferenceField input : model.getInputs()) {
          List<String> basicScenarios = new ArrayList<>();
          ReceiveDto receive = new ReceiveDto();
@@ -184,7 +186,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             }
          }
 
-         if (inScenario) {
+         if (inScenario && methods.add(receive.getName())) {
             receive.setBasicScenarios(basicScenarios);
             receiveDtos.add(receive);
             dto.getAbstractClass().getImports().add(IEvent.class.getName());
