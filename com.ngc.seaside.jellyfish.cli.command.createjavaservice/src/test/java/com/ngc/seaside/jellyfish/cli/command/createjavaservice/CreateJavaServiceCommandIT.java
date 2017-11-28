@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,14 +12,24 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.CorrelationDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
@@ -43,6 +54,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
@@ -53,7 +65,9 @@ public class CreateJavaServiceCommandIT {
 
    private MockedTemplateService templateService;
 
-   private IServiceDtoFactory templateDaoFactory;
+   private IServiceDtoFactory serviceTemplateDaoFactory;
+   
+   private IBaseServiceDtoFactory baseServiceTemplateDaoFactory;
 
    private DefaultParameterCollection parameters;
 
@@ -77,7 +91,16 @@ public class CreateJavaServiceCommandIT {
 
    @Mock
    private ClassDto<?> interfaceDto;
+   
+   @Mock
+   private IScenarioService scenarioService;
 
+   @Mock
+   private IDataService dataService;
+
+   @Mock
+   private IDataFieldGenerationService dataFieldGenerationService;
+   
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
@@ -88,8 +111,10 @@ public class CreateJavaServiceCommandIT {
                                                       CreateJavaServiceCommand.class.getPackage().getName(),
                                                       Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new ServiceDtoFactory(projectService, packageService, generatorService);
+      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService, generatorService);
 
+      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
          Optional.of(newModelForTesting()));
@@ -100,7 +125,8 @@ public class CreateJavaServiceCommandIT {
 
       command = new CreateJavaServiceCommand();
       command.setLogService(logService);
-      command.setTemplateDaoFactory(templateDaoFactory);
+      command.setServiceTemplateDaoFactory(serviceTemplateDaoFactory);
+      command.setBaseServiceTemplateDaoFactory(baseServiceTemplateDaoFactory);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
 
@@ -113,6 +139,7 @@ public class CreateJavaServiceCommandIT {
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
+         when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".base");
          when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
          return information;
       });
@@ -156,15 +183,23 @@ public class CreateJavaServiceCommandIT {
                         "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
          return interfaceDto;
       });
-      when(generatorService.getBaseServiceDescription(any(), any())).thenAnswer(args -> {
-         IJellyFishCommandOptions options = args.getArgument(0);
-         IModel model = args.getArgument(1);
-         ClassDto<?> abstractClassDto = new ClassDto<>();
-         abstractClassDto.setName("Abstract" + model.getName())
-                         .setPackageName(packageService.getServiceBaseImplementationPackageName(options, model));
-         return abstractClassDto;
-      });
+ 
+      IModel model = newModelForTesting();
+      ClassDto<PubSubMethodDto> abstractClassDto = new ClassDto<>();
+      abstractClassDto.setName("Abstract" + model.getName())
+            .setPackageName(packageService.getServiceBaseImplementationPackageName(null, model))
+            .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
 
+      when(generatorService.getBaseServiceDescription(any(), any())).thenReturn(abstractClassDto);
+      when(dataService.getEventClass(any(), any())).thenAnswer(args -> {
+         TypeDto<?> typeDto = new ArgumentDto();
+         typeDto.setPackageName("packageName");
+         typeDto.setTypeName("typeName");
+         return typeDto;
+      });
    }
 
    @Test
@@ -198,6 +233,8 @@ public class CreateJavaServiceCommandIT {
          "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
       assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
+      
+      //TODO These two assertions are incorrect
       assertFileContains(servicePath, "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(");
       assertFileContains(servicePath, "\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
       
