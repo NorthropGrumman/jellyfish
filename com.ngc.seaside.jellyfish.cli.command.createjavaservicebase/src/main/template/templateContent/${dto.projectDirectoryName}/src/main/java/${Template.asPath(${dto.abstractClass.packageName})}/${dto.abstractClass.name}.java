@@ -29,7 +29,7 @@ public abstract class ${dto.abstractClass.name}
    protected ILogService logService;
 
    protected IFaultManagementService faultManagementService;
-   
+
    protected IThreadService threadService;
 
 #if (!$dto.correlationMethods.isEmpty())
@@ -50,7 +50,7 @@ public abstract class ${dto.abstractClass.name}
    public void ${method.name}(IEvent<${method.eventType}> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
       ${method.eventType} source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
-      
+
 #foreach($scenario in $method.basicScenarios)
       ${scenario}(source);
 #end
@@ -61,7 +61,7 @@ public abstract class ${dto.abstractClass.name}
          .forEach(status -> {
             triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status));
          });
-#end 
+#end
 #if (!$dto.complexScenarios.isEmpty())
       queues.getOrDefault(${method.eventType}.class, Collections.emptyList()).forEach(queue -> {
          @SuppressWarnings("unchecked")
@@ -87,7 +87,7 @@ public abstract class ${dto.abstractClass.name}
       try {
          output = ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
-         logService.error(getClass(), 
+         logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          return;
       }
@@ -97,7 +97,7 @@ public abstract class ${dto.abstractClass.name}
       logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
       ${method.output.name}(output);
    }
-   
+
 #end
 ##################### Basic 1-input 0-output sink methods #####################
 #foreach($method in $dto.basicSinkMethods)
@@ -105,7 +105,7 @@ public abstract class ${dto.abstractClass.name}
       try {
          ${method.serviceMethod}(input);
       } catch(ServiceFaultException fault) {
-         logService.error(getClass(), 
+         logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          return;
       }
@@ -127,14 +127,14 @@ public abstract class ${dto.abstractClass.name}
 #foreach($correlation in $method.inputOutputCorrelations)
          output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
 #end
-         logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: ${method.inputLogFormat}; Output: %s;", 
+         logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: ${method.inputLogFormat}; Output: %s;",
 #foreach($input in $method.inputs)
             status.getData(${input.type}.class).toString(),
 #end
             output.toString());
          ${method.output.name}(output);
       } catch (ServiceFaultException fault) {
-         logService.error(getClass(), 
+         logService.error(getClass(),
                   "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
          faultManagementService.handleFault(fault);
       } finally {
@@ -151,7 +151,7 @@ public abstract class ${dto.abstractClass.name}
             .addEventIdProducer(${eventDto.type}.class, a -> a.${eventDto.getterSnippet})
 #end
 #foreach($completenessDto in $method.completionStatements)
-            .addCompletenessCondition(${completenessDto.input1Type}.class, ${completenessDto.input2Type}.class, (a, b) -> 
+            .addCompletenessCondition(${completenessDto.input1Type}.class, ${completenessDto.input2Type}.class, (a, b) ->
                Objects.equal(a.${completenessDto.input1GetterSnippet}, b.${completenessDto.input2GetterSnippet}))
 #end
             .register();
@@ -192,7 +192,7 @@ public abstract class ${dto.abstractClass.name}
 #end
 ################################## Activate ###################################
    protected void activate() {
-#foreach($method in $dto.triggerRegistrationMethods)   
+#foreach($method in $dto.triggerRegistrationMethods)
       ${method.name}();
 #end
 #foreach($scenario in $dto.complexScenarios)
@@ -261,12 +261,12 @@ public abstract class ${dto.abstractClass.name}
    public void removeEventService(IEventService ref) {
       setEventService(null);
    }
-   
-#if (!$dto.correlationMethods.isEmpty())   
+
+#if (!$dto.correlationMethods.isEmpty())
    public void setCorrelationService(ICorrelationService ref) {
       this.correlationService = ref;
    }
-   
+
    public void removeCorrelationService(ICorrelationService ref) {
       setCorrelationService(null);
    }

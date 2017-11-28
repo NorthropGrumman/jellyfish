@@ -34,7 +34,7 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
    @Override
    public void ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
       // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");  
+      throw new UnsupportedOperationException("not implemented");
    }
 
 #end
@@ -124,14 +124,14 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
    }
-   
-#if (!$baseServiceDto.correlationMethods.isEmpty()) 
+
+#if (!$baseServiceDto.correlationMethods.isEmpty())
    @Override
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeCorrelationService")
    public void setCorrelationService(ICorrelationService ref) {
       this.correlationService = ref;
    }
-      
+
    @Override
    public void removeCorrelationService(ICorrelationService ref) {
       setCorrelationService(null);
