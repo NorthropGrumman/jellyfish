@@ -24,7 +24,7 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 
 #end
 #foreach ($scenario in $dto.complexScenarios)
-   void ${scenario.serviceName}(
+   void ${scenario.serviceMethod}(
 #foreach ($input in $scenario.inputs)
 #set ($lastParam = $velocityCount == $scenario.inputs.size() && $scenario.outputs.isEmpty())
       BlockingQueue<${input.type}> input${velocityCount}Queue#if ($lastParam));#{else},#end

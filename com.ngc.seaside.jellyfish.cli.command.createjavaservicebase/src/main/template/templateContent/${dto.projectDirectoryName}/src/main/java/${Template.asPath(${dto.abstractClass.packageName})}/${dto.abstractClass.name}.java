@@ -151,7 +151,7 @@ public abstract class ${dto.abstractClass.name}
 #end
 #foreach($completenessDto in $method.completionStatements)
             .addCompletenessCondition(${completenessDto.input1Type}.class, ${completenessDto.input2Type}.class, (a, b) -> 
-               a.${completenessDto.input1GetterSnippet}.equals(b.${completenessDto.input2GetterSnippet}))
+               Objects.equal(a.${completenessDto.input1GetterSnippet}, b.${completenessDto.input2GetterSnippet}))
 #end
             .register();
 #foreach($input in $method.inputs)
@@ -167,16 +167,16 @@ public abstract class ${dto.abstractClass.name}
 #set ($serviceArguments = "${serviceArguments}, input${velocityCount}Queue")
 #end
 #foreach($output in $scenario.outputs)
-#set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.publishMethod}")
+#set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.name}")
 #end
 #set ($serviceArguments = $serviceArguments.substring(2))
    private void ${scenario.startMethod}() {
-      threads.put("${scenario.name}", threadService.executeLongLivingTask("${scenario.name}", () {
+      threads.put("${scenario.name}", threadService.executeLongLivingTask("${scenario.name}", () -> {
 #foreach($input in $scenario.inputs)
          final BlockingQueue<${input.type}> input${velocityCount}Queue = new LinkedBlockingQueue<>();
 #end
 #foreach($input in $scenario.inputs)
-         queues.computeIfAbsent(${input.type}.getClass(), __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
+         queues.computeIfAbsent(${input.type}.class, __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
 #end
          try {
             ${scenario.serviceMethod}(${serviceArguments});
