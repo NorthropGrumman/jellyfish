@@ -25,13 +25,13 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
 
 #foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Override
-   public ${method.outputType} ${method.serviceName}(${method.inputType} input) throws ServiceFaultException {
+   public ${method.outputType} ${method.serviceMethod}(${method.inputType} input) throws ServiceFaultException {
       throw new UnsupportedOperationException("not implemented");
    }
 #end
 #foreach ($method in $baseServiceDto.basicSinkMethods)
    @Override
-   public void ${method.serviceName}(${method.inputType} input) throws ServiceFaultException {
+   public void ${method.serviceMethod}(${method.inputType} input) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");  
    }
@@ -39,7 +39,7 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
 #end
 #foreach ($method in $baseServiceDto.correlationMethods)
    @Override
-   public ${method.outputType} ${method.serviceName}(
+   public ${method.outputType} ${method.serviceMethod}(
 #foreach ($input in $method.inputs)
       ${input.type} ${input.inputArgumentString},
 #end
@@ -51,7 +51,7 @@ public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extend
 #end
 #foreach ($scenario in $baseServiceDto.complexScenarios)
    @Override
-   void ${scenario.serviceName}(
+   void ${scenario.serviceMethod}(
 #foreach ($input in $scenario.inputs)
 #set ($lastParam = $velocityCount == $scenario.inputs.size() && $scenario.outputs.isEmpty())
       BlockingQueue<${input.type}> input${velocityCount}Queue#if ($lastParam));#{else},#end

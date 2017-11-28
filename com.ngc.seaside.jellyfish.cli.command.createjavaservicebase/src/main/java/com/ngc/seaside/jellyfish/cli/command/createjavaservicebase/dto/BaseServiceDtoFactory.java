@@ -504,6 +504,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       InputDto input = new InputDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
       input.setType(type.getTypeName());
+      dto.getInterface().getImports().add(type.getFullyQualifiedName());
       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       return input;
    }
@@ -515,6 +516,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       output.setTopic(type.getTypeName() + ".TOPIC");
       output.setName("publish" + type.getTypeName());
       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+      dto.getInterface().getImports().add(type.getFullyQualifiedName());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       return output;
    }
