@@ -154,7 +154,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          PublishDto publish = new PublishDto();
          TypeDto<?> outputField = dataService.getEventClass(options, output.getType());
          publish.setType(outputField.getTypeName());
-         publish.setTopic(outputField.getTypeName() + ".TOPIC_NAME");
+         publish.setTopic(outputField.getTypeName() + ".TOPIC");
          publish.setName("publish" + outputField.getTypeName());
          publishDtos.add(publish);
       }
