@@ -151,7 +151,7 @@ public abstract class ${dto.abstractClass.name}
 #end
 #foreach($completenessDto in $method.completionStatements)
             .addCompletenessCondition(${completenessDto.input1Type}.class, ${completenessDto.input2Type}.class, (a, b) -> 
-               Objects.equals(a.${completenessDto.input1GetterSnippet}, b.${completenessDto.input2GetterSnippet})
+               Objects.equals(a.${completenessDto.input1GetterSnippet}, b.${completenessDto.input2GetterSnippet}))
 #end
             .register();
 #foreach($input in $method.inputs)
