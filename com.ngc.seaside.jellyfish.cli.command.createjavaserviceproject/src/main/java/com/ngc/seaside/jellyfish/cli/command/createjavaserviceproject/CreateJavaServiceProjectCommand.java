@@ -82,16 +82,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
             if (USAGE == null) {
                Map<String, IParameter<?>> usageParameters = new HashMap<>();
 
-               for (String subcommand : SUBCOMMANDS) {
-                  List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
-                        .getAllParameters();
-                  for (IParameter<?> parameter : parameters) {
-                     if (parameter.getName() != null && parameter.getDescription() != null) {
-                        usageParameters.put(parameter.getName(), parameter);
-                     }
-                  }
-               }
-
                usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
                usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
                usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
@@ -102,6 +92,20 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                                          .setRequired(false));
                usageParameters.put(GAVE_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION);
                usageParameters.put(URL_PROPERTY, CommonParameters.REPOSITORY_URL);
+               
+               for (String subcommand : SUBCOMMANDS) {
+                  List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
+                        .getAllParameters();
+                  for (IParameter<?> parameter : parameters) {
+                     if (parameter.getName() != null && parameter.getDescription() != null) {
+                        IParameter<?> previous = usageParameters.get(parameter.getName());
+                        if (previous == null || !previous.isRequired()) {
+                           usageParameters.put(parameter.getName(), parameter);
+                        }
+                     }
+                  }
+               }
+
                IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
                USAGE = new DefaultUsage("Create a new Java service project for a particular model.", parameters);
             }
