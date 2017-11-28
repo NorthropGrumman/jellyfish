@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,13 +10,13 @@ import java.util.List;
 public class CorrelationDto {
    private String name;
    private String outputType;
-   private String serviceName;
+   private String serviceMethod;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
    private String publishMethod;
-   private List<InputDto> inputs;
-   private List<IOCorrelationDto> inputOutputCorrelations;
+   private List<InputDto> inputs = new ArrayList<>();
+   private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
    /**
     * Returns the name of the method for this dto. The method is called when its correlations are completed.
     */
@@ -41,12 +42,12 @@ public class CorrelationDto {
    /**
     * Returns the name of the method for the service interface that the method for this dto will call.
     */
-   public String getServiceName() {
-      return serviceName;
+   public String getServiceMethod() {
+      return serviceMethod;
    }
 
-   public void setServiceName(String serviceName) {
-      this.serviceName = serviceName;
+   public void setServiceMethod(String serviceName) {
+      this.serviceMethod = serviceName;
    }
 
    /**

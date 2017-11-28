@@ -1,10 +1,13 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.ngc.blocs.service.event.api.IEvent;
+import com.ngc.blocs.service.event.api.Subscriber;
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.CompletenessDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.EventDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
@@ -53,6 +56,7 @@ import java.util.stream.Stream;
 
 public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
+   private ILogService logService;
    private IProjectNamingService projectService;
    private IPackageNamingService packageService;
    private IJavaServiceGenerationService generateService;
@@ -66,13 +70,14 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                 IJavaServiceGenerationService generateService,
                                 IScenarioService scenarioService,
                                 IDataService dataService,
-                                IDataFieldGenerationService dataFieldGenerationService) {
+                                IDataFieldGenerationService dataFieldGenerationService, ILogService logService) {
       this.projectService = projectService;
       this.packageService = packageService;
       this.generateService = generateService;
       this.scenarioService = scenarioService;
       this.dataService = dataService;
       this.dataFieldGenerationService = dataFieldGenerationService;
+      this.logService = logService;
    }
 
    @Override
@@ -97,11 +102,45 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       setReceiveMethods(dto, options, model);
       setPublishMethods(dto, options, model);
-      setBasicPubSubMethods(dto, options, model);
-      setBasicSinkMethods(dto, options, model);
-      setCorrelationMethods(dto, options, model);
-      setTriggerRegistrationMethods(dto, options, model);
-      setComplexScenarios(dto, options, model);
+
+      for (IScenario scenario : model.getScenarios()) {
+         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
+            scenario);
+         if (!flowOptional.isPresent()) {
+            continue;
+         }
+         IPublishSubscribeMessagingFlow flow = flowOptional.get();
+
+         Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
+         if (pubSub.isPresent()) {
+            dto.getBasicPubSubMethods().add(pubSub.get());
+            continue;
+         }
+         Optional<BasicPubSubDto> sink = getBasicSinkMethod(scenario, flow, dto, options);
+         if (sink.isPresent()) {
+            dto.getBasicSinkMethods().add(sink.get());
+            continue;
+         }
+         Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
+         if (trigger.isPresent()) {
+            dto.getTriggerRegistrationMethods().add(trigger.get());
+         }
+         Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
+         if (correlation.isPresent()) {
+            dto.getCorrelationMethods().add(correlation.get());
+            continue;
+         }
+         Optional<ComplexScenarioDto> complex = getComplexScenario(scenario, flow, dto, options);
+         if (complex.isPresent()) {
+            dto.getComplexScenarios().add(complex.get());
+            continue;
+         }
+         logService.warn(getClass(),
+            "Could not handle the publish/subscribe steps for scenario %s:%s",
+            model.getFullyQualifiedName(),
+            scenario.getName());
+      }
+
       return dto;
    }
 
@@ -112,11 +151,12 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          ReceiveDto receive = new ReceiveDto();
          TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
          receive.setEventType(inputField.getTypeName());
+         dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
 
          receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
 
          receive.setName("receive" + inputField.getTypeName());
-
+         boolean inScenario = false;
          for (IScenario scenario : model.getScenarios()) {
             Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
                scenario);
@@ -130,6 +170,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                continue;
             }
 
+            inScenario = true;
+
             // scenario has this input
             if (flow.getCorrelationDescription().isPresent()
                && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
@@ -141,457 +183,377 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                basicScenarios.add("do" + StringUtils.capitalize(scenario.getName()));
             }
          }
-         receive.setBasicScenarios(basicScenarios);
-         receiveDtos.add(receive);
+
+         if (inScenario) {
+            receive.setBasicScenarios(basicScenarios);
+            receiveDtos.add(receive);
+            dto.getAbstractClass().getImports().add(IEvent.class.getName());
+            dto.getAbstractClass().getImports().add(Subscriber.class.getName());
+            dto.getAbstractClass().getImports().add(Preconditions.class.getName());
+            dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
+         }
       }
       dto.setReceiveMethods(receiveDtos);
    }
 
    private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-
-      List<PublishDto> publishDtos = new ArrayList<>();
-      for (IDataReferenceField output : model.getOutputs()) {
-         PublishDto publish = new PublishDto();
-         TypeDto<?> outputField = dataService.getEventClass(options, output.getType());
-         publish.setType(outputField.getTypeName());
-         publish.setTopic(outputField.getTypeName() + ".TOPIC_NAME");
-         publish.setName("publish" + outputField.getTypeName());
-         publishDtos.add(publish);
-      }
-
+      List<PublishDto> publishDtos = model.getOutputs()
+                                          .stream()
+                                          .map(field -> getPublishDto(field, dto, options))
+                                          .collect(Collectors.toList());
       dto.setPublishMethods(publishDtos);
    }
 
-   private void setBasicPubSubMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+   private Optional<BasicPubSubDto> getBasicPubSubMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+            BaseServiceDto dto, IJellyFishCommandOptions options) {
 
-      List<BasicPubSubDto> pubSubDtos = new ArrayList<>();
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-            scenario);
-
-         if (!flowOptional.isPresent()) {
-            continue;
-         }
-
-         IPublishSubscribeMessagingFlow flow = flowOptional.get();
-
-         // check for basic scenario
-         if (flow.getInputs().size() != 1 || flow.getOutputs().size() != 1) {
-            continue;
-         }
-
-         BasicPubSubDto pubSub = new BasicPubSubDto();
-         pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
-
-         TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
-         TypeDto<?> outputField = dataService.getEventClass(options, flow.getOutputs().iterator().next().getType());
-         pubSub.setInputType(inputField.getTypeName());
-         pubSub.setOutputType(outputField.getTypeName());
-
-         pubSub.setServiceMethod(scenario.getName());
-         pubSub.setPublishMethod("publish" + outputField.getTypeName());
-
-         List<IOCorrelationDto> ioCorrelations = new ArrayList<>();
-
-         if (flow.getCorrelationDescription().isPresent()) {
-            Collection<ICorrelationExpression> ioCorrelation = flow.getCorrelationDescription()
-                                                                   .get()
-                                                                   .getCorrelationExpressions();
-
-            for (ICorrelationExpression expression : ioCorrelation) {
-               IDataPath left = expression.getLeftHandOperand();
-               IDataPath right = expression.getRightHandOperand();
-               IOCorrelationDto correlationDto = new IOCorrelationDto();
-               correlationDto.setGetterSnippet(getGetterSnippet(left, options));
-               correlationDto.setSetterSnippet(getSetterSnippet(right, options));
-               correlationDto.setInputType(dataService.getEventClass(
-                  options, left.getStart().getType()).getTypeName());
-               ioCorrelations.add(correlationDto);
-            }
-
-         }
-
-         pubSub.setInputOutputCorrelations(ioCorrelations);
-
+      // check for basic scenario
+      if (flow.getInputs().size() != 1 || flow.getOutputs().size() != 1) {
+         return Optional.empty();
       }
 
-      dto.setBasicPubSubMethods(pubSubDtos);
+      BasicPubSubDto pubSub = new BasicPubSubDto();
+      pubSub.setScenarioName(scenario.getName());
+      pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
+
+      TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
+      TypeDto<?> outputField = dataService.getEventClass(options, flow.getOutputs().iterator().next().getType());
+      pubSub.setInputType(inputField.getTypeName());
+      pubSub.setOutputType(outputField.getTypeName());
+      dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
+      dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
+      dto.getInterface().getImports().add(inputField.getFullyQualifiedName());
+      dto.getInterface().getImports().add(outputField.getFullyQualifiedName());
+
+      pubSub.setServiceMethod(scenario.getName());
+      pubSub.setPublishMethod("publish" + outputField.getTypeName());
+
+      List<IOCorrelationDto> ioCorrelations = new ArrayList<>();
+
+      if (flow.getCorrelationDescription().isPresent()) {
+         pubSub.setInputOutputCorrelations(
+            getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+      }
+
+      pubSub.setInputOutputCorrelations(ioCorrelations);
+
+      
+      
+      return Optional.of(pubSub);
    }
 
-   private void setBasicSinkMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+   private Optional<BasicPubSubDto> getBasicSinkMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+            BaseServiceDto dto, IJellyFishCommandOptions options) {
 
-      List<BasicPubSubDto> pubSubDtos = new ArrayList<>();
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-            scenario);
-
-         if (!flowOptional.isPresent()) {
-            continue;
-         }
-
-         IPublishSubscribeMessagingFlow flow = flowOptional.get();
-
-         // check for basic scenario
-         if (flow.getInputs().size() != 1 || flow.getOutputs().size() != 0) {
-            continue;
-         }
-
-         BasicPubSubDto pubSub = new BasicPubSubDto();
-         pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
-
-         TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
-         pubSub.setInputType(inputField.getTypeName());
-
-         pubSub.setServiceMethod(scenario.getName());
+      // check for basic scenario
+      if (flow.getInputs().size() != 1 || flow.getOutputs().size() != 0) {
+         return Optional.empty();
       }
 
-      dto.setBasicSinkMethods(pubSubDtos);
+      BasicPubSubDto pubSub = new BasicPubSubDto();
+      pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
+
+      TypeDto<?> inputField = dataService.getEventClass(options, flow.getInputs().iterator().next().getType());
+      pubSub.setInputType(inputField.getTypeName());
+      dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
+      dto.getInterface().getImports().add(inputField.getFullyQualifiedName());
+
+      pubSub.setServiceMethod(scenario.getName());
+      return Optional.of(pubSub);
    }
 
-   private void setCorrelationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-      boolean hasCorrelationMethods = false;
-      List<CorrelationDto> dtos = new ArrayList<>();
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-            scenario);
+   private Optional<CorrelationDto> getCorrelationMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+            BaseServiceDto dto, IJellyFishCommandOptions options) {
 
-         if (!flowOptional.isPresent()) {
-            continue;
-         }
-
-         IPublishSubscribeMessagingFlow flow = flowOptional.get();
-
-         // Ignore scenarios with multiple outputs
-         // Ignore scenarios without correlations
-         if (flow.getOutputs().size() != 1 || !flow.getCorrelationDescription().isPresent()) {
-            continue;
-         }
-
-         // Ignore flows with inputs of the same type
-         if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
-            continue;
-         }
-
-         ICorrelationDescription description = flow.getCorrelationDescription().get();
-
-         // Ignore scenarios without input-input correlations
-         if (description.getCompletenessExpressions().isEmpty()) {
-            continue;
-         }
-         hasCorrelationMethods = true;
-
-         CorrelationDto correlation = new CorrelationDto();
-
-         correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
-         correlation.setScenarioName(scenario.getName());
-         IData output = flow.getOutputs().iterator().next().getType();
-         TypeDto<?> outputField = dataService.getEventClass(options, output);
-         correlation.setOutputType(outputField.getTypeName());
-         dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
-
-         correlation.setServiceName(scenario.getName());
-
-         correlation.setInputLogFormat(
-            IntStream.range(0, flow.getInputs().size())
-                     .mapToObj(i -> "%s")
-                     .collect(Collectors.joining(", ")));
-
-         correlation.setPublishMethod("publish" + StringUtils.capitalize(outputField.getTypeName()));
-
-         correlation.setInputs(flow.getInputs()
-                                   .stream()
-                                   .map(input -> dataService.getEventClass(options, input.getType()))
-                                   .map(type -> {
-                                      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-                                      return new InputDto().setType(type.getTypeName())
-                                                           .setCorrelationMethod(correlation.getName());
-                                   })
-                                   .collect(Collectors.toList()));
-
-         correlation.setInputOutputCorrelations(description.getCompletenessExpressions()
-                                                           .stream()
-                                                           .map(expression -> {
-                                                              IDataPath left = expression.getLeftHandOperand();
-                                                              IDataPath right = expression.getRightHandOperand();
-                                                              IOCorrelationDto correlationDto = new IOCorrelationDto();
-                                                              correlationDto.setGetterSnippet(
-                                                                 left.getElements()
-                                                                     .stream()
-                                                                     .map(
-                                                                        field -> dataFieldGenerationService.getEventsField(
-                                                                           options, field).getJavaGetterName() + "()")
-                                                                     .collect(Collectors.joining(".")));
-
-                                                              correlationDto.setSetterSnippet(
-                                                                 right.getElements()
-                                                                      .subList(0, right.getElements().size() - 1)
-                                                                      .stream()
-                                                                      .map(
-                                                                         field -> dataFieldGenerationService.getEventsField(
-                                                                            options, field).getJavaGetterName() + "()")
-                                                                      .collect(Collectors.joining("."))
-                                                                    + "." + dataFieldGenerationService.getEventsField(
-                                                                       options,
-                                                                       expression.getRightHandOperand()
-                                                                                 .getEnd()).getJavaSetterName());
-
-                                                              correlationDto.setInputType(dataService.getEventClass(
-                                                                 options, left.getStart().getType()).getTypeName());
-                                                              return correlationDto;
-                                                           })
-                                                           .collect(Collectors.toList()));
-
-         ICorrelationExpression completeness = description.getCompletenessExpressions()
-                                                          .iterator()
-                                                          .next();
-         switch (completeness.getCorrelationEventIdType()) {
-         case DATA:
-         case ENUM:
-            INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
-            TypeDto<?> type = dataService.getEventClass(options, element);
-            correlation.setCorrelationType(type.getTypeName());
-            dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-            break;
-         case BOOLEAN:
-            correlation.setCorrelationType("Boolean");
-            break;
-         case FLOAT:
-            correlation.setCorrelationType("Float");
-            break;
-         case INT:
-            correlation.setCorrelationType("Integer");
-            break;
-         case STRING:
-            correlation.setCorrelationType("String");
-            break;
-         }
-
-         dtos.add(correlation);
+      // Ignore scenarios with multiple outputs
+      // Ignore scenarios without correlations
+      if (flow.getOutputs().size() != 1 || !flow.getCorrelationDescription().isPresent()) {
+         return Optional.empty();
       }
-      dto.setCorrelationMethods(dtos);
-      if (hasCorrelationMethods) {
-         dto.getAbstractClass().getImports().add(Objects.class.getName());
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationStatus");
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationTrigger");
-         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
-         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
-         dto.getAbstractClass().getImports().add(Consumer.class.getName());
-         dto.getInterface().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
+
+      // Ignore flows with inputs of the same type
+      if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
+         return Optional.empty();
       }
+
+      ICorrelationDescription description = flow.getCorrelationDescription().get();
+
+      // Ignore scenarios without input-input correlations
+      if (description.getCompletenessExpressions().isEmpty()) {
+         return Optional.empty();
+      }
+
+      CorrelationDto correlation = new CorrelationDto();
+
+      correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
+      correlation.setScenarioName(scenario.getName());
+      IData output = flow.getOutputs().iterator().next().getType();
+      TypeDto<?> outputField = dataService.getEventClass(options, output);
+      correlation.setOutputType(outputField.getTypeName());
+      dto.getAbstractClass().getImports().add(outputField.getFullyQualifiedName());
+
+      correlation.setServiceMethod(scenario.getName());
+
+      correlation.setInputLogFormat(
+         IntStream.range(0, flow.getInputs().size())
+                  .mapToObj(i -> "%s")
+                  .collect(Collectors.joining(", ")));
+
+      correlation.setPublishMethod("publish" + StringUtils.capitalize(outputField.getTypeName()));
+
+      correlation.setInputs(flow.getInputs()
+                                .stream()
+                                .map(field -> getInputDto(field, dto, options))
+                                .map(input -> input.setCorrelationMethod(correlation.getName()))
+                                .collect(Collectors.toList()));
+
+      correlation.setInputOutputCorrelations(getInputOutputCorrelations(description, dto, options));
+
+      ICorrelationExpression completeness = description.getCompletenessExpressions()
+                                                       .iterator()
+                                                       .next();
+      switch (completeness.getCorrelationEventIdType()) {
+      case DATA:
+      case ENUM:
+         INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
+         TypeDto<?> type = dataService.getEventClass(options, element);
+         correlation.setCorrelationType(type.getTypeName());
+         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+         break;
+      case BOOLEAN:
+         correlation.setCorrelationType("Boolean");
+         break;
+      case FLOAT:
+         correlation.setCorrelationType("Float");
+         break;
+      case INT:
+         correlation.setCorrelationType("Integer");
+         break;
+      case STRING:
+         correlation.setCorrelationType("String");
+         break;
+      }
+
+      dto.getAbstractClass().getImports().add(Collection.class.getName());
+      dto.getAbstractClass().getImports().add(ArrayList.class.getName());
+      dto.getAbstractClass().getImports().add(Objects.class.getName());
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationStatus");
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationTrigger");
+      dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
+      dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
+      dto.getAbstractClass().getImports().add(Consumer.class.getName());
+      dto.getInterface().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
+
+      return Optional.of(correlation);
+
    }
 
-   private void setTriggerRegistrationMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
-      List<TriggerDto> dtos = new ArrayList<>();
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-            scenario);
+   private Optional<TriggerDto> getTriggerRegistrationMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+            BaseServiceDto dto, IJellyFishCommandOptions options) {
 
-         if (!flowOptional.isPresent()) {
-            continue;
-         }
-
-         IPublishSubscribeMessagingFlow flow = flowOptional.get();
-
-         // Ignore scenarios with multiple outputs
-         // Ignore scenarios without correlations
-         if (flow.getOutputs().size() != 1 || !flow.getCorrelationDescription().isPresent()) {
-            continue;
-         }
-
-         // Ignore flows with inputs of the same type
-         if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
-            continue;
-         }
-
-         ICorrelationDescription description = flow.getCorrelationDescription().get();
-
-         // Ignore scenarios without input-input correlations
-         if (description.getCompletenessExpressions().isEmpty()) {
-            continue;
-         }
-
-         TriggerDto trigger = new TriggerDto();
-
-         trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
-         trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
-
-         trigger.setInputs(flow.getInputs()
-                               .stream()
-                               .map(input -> dataService.getEventClass(options, input.getType()))
-                               .map(type -> {
-                                  dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-                                  return new InputDto().setType(type.getTypeName())
-                                                       .setCorrelationMethod(trigger.getCorrelationMethod());
-                               })
-                               .collect(Collectors.toList()));
-
-         trigger.setEventProducers(description.getCompletenessExpressions()
-                                              .stream()
-                                              .flatMap(expression -> Stream.of(expression.getLeftHandOperand(),
-                                                 expression.getRightHandOperand()))
-                                              .distinct()
-                                              .map(left -> {
-                                                 EventDto eventDto = new EventDto();
-                                                 eventDto.setGetterSnippet(
-                                                    left.getElements()
-                                                        .stream()
-                                                        .map(
-                                                           field -> dataFieldGenerationService.getEventsField(
-                                                              options, field).getJavaGetterName() + "()")
-                                                        .collect(Collectors.joining(".")));
-
-                                                 eventDto.setType(dataService.getEventClass(
-                                                    options, left.getStart().getType()).getTypeName());
-                                                 return eventDto;
-                                              })
-                                              .collect(Collectors.toList()));
-
-         trigger.setCompletionStatements(description.getCompletenessExpressions()
-                                                    .stream()
-                                                    .map(expression -> {
-                                                       IDataPath left = expression.getLeftHandOperand();
-                                                       IDataPath right = expression.getRightHandOperand();
-                                                       CompletenessDto completenessDto = new CompletenessDto();
-                                                       completenessDto.setInput1GetterSnippet(
-                                                          getGetterSnippet(left, options));
-                                                       completenessDto.setInput1Type(dataService.getEventClass(
-                                                          options, left.getStart().getType()).getTypeName());
-                                                       completenessDto.setInput2GetterSnippet(
-                                                          getGetterSnippet(right, options));
-                                                       completenessDto.setInput2Type(dataService.getEventClass(
-                                                          options, right.getStart().getType()).getTypeName());
-                                                       return completenessDto;
-                                                    })
-                                                    .collect(Collectors.toList()));
-
-         ICorrelationExpression completeness = description.getCompletenessExpressions()
-                                                          .iterator()
-                                                          .next();
-         switch (completeness.getCorrelationEventIdType()) {
-         case DATA:
-         case ENUM:
-            INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
-            TypeDto<?> type = dataService.getEventClass(options, element);
-            trigger.setTriggerType(type.getTypeName());
-            dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-            break;
-         case BOOLEAN:
-            trigger.setTriggerType("Boolean");
-            break;
-         case FLOAT:
-            trigger.setTriggerType("Float");
-            break;
-         case INT:
-            trigger.setTriggerType("Integer");
-            break;
-         case STRING:
-            trigger.setTriggerType("String");
-            break;
-         }
-
-         dtos.add(trigger);
+      // Ignore scenarios with multiple outputs
+      // Ignore scenarios without correlations
+      if (flow.getOutputs().size() != 1 || !flow.getCorrelationDescription().isPresent()) {
+         return Optional.empty();
       }
-      dto.setTriggerRegistrationMethods(dtos);
+
+      // Ignore flows with inputs of the same type
+      if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
+         return Optional.empty();
+      }
+
+      ICorrelationDescription description = flow.getCorrelationDescription().get();
+
+      // Ignore scenarios without input-input correlations
+      if (description.getCompletenessExpressions().isEmpty()) {
+         return Optional.empty();
+      }
+
+      TriggerDto trigger = new TriggerDto();
+
+      trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
+      trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
+
+      trigger.setInputs(flow.getInputs()
+                            .stream()
+                            .map(field -> getInputDto(field, dto, options))
+                            .map(input -> input.setCorrelationMethod(trigger.getCorrelationMethod()))
+                            .collect(Collectors.toList()));
+
+      trigger.setEventProducers(description.getCompletenessExpressions()
+                                           .stream()
+                                           .flatMap(expression -> Stream.of(expression.getLeftHandOperand(),
+                                              expression.getRightHandOperand()))
+                                           .distinct()
+                                           .map(left -> {
+                                              EventDto eventDto = new EventDto();
+                                              eventDto.setGetterSnippet(
+                                                 left.getElements()
+                                                     .stream()
+                                                     .map(
+                                                        field -> dataFieldGenerationService.getEventsField(
+                                                           options, field).getJavaGetterName() + "()")
+                                                     .collect(Collectors.joining(".")));
+
+                                              eventDto.setType(dataService.getEventClass(
+                                                 options, left.getStart().getType()).getTypeName());
+                                              return eventDto;
+                                           })
+                                           .collect(Collectors.toList()));
+
+      trigger.setCompletionStatements(description.getCompletenessExpressions()
+                                                 .stream()
+                                                 .map(expression -> {
+                                                    IDataPath left = expression.getLeftHandOperand();
+                                                    IDataPath right = expression.getRightHandOperand();
+                                                    CompletenessDto completenessDto = new CompletenessDto();
+                                                    completenessDto.setInput1GetterSnippet(
+                                                       getGetterSnippet(left, options));
+                                                    completenessDto.setInput1Type(dataService.getEventClass(
+                                                       options, left.getStart().getType()).getTypeName());
+                                                    completenessDto.setInput2GetterSnippet(
+                                                       getGetterSnippet(right, options));
+                                                    completenessDto.setInput2Type(dataService.getEventClass(
+                                                       options, right.getStart().getType()).getTypeName());
+                                                    return completenessDto;
+                                                 })
+                                                 .collect(Collectors.toList()));
+
+      ICorrelationExpression completeness = description.getCompletenessExpressions()
+                                                       .iterator()
+                                                       .next();
+      switch (completeness.getCorrelationEventIdType()) {
+      case DATA:
+      case ENUM:
+         INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
+         TypeDto<?> type = dataService.getEventClass(options, element);
+         trigger.setTriggerType(type.getTypeName());
+         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+         break;
+      case BOOLEAN:
+         trigger.setTriggerType("Boolean");
+         break;
+      case FLOAT:
+         trigger.setTriggerType("Float");
+         break;
+      case INT:
+         trigger.setTriggerType("Integer");
+         break;
+      case STRING:
+         trigger.setTriggerType("String");
+         break;
+      }
+
+      return Optional.of(trigger);
    }
 
-   private void setComplexScenarios(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+   private Optional<ComplexScenarioDto> getComplexScenario(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+            BaseServiceDto dto, IJellyFishCommandOptions options) {
 
-      boolean hasComplexScenarios = false;
-
-      List<ComplexScenarioDto> dtos = new ArrayList<>();
-
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-            scenario);
-
-         if (!flowOptional.isPresent()) {
-            continue;
-         }
-
-         IPublishSubscribeMessagingFlow flow = flowOptional.get();
-
-         // Ignore simple flows
-         if (flow.getInputs().size() == 1 && flow.getOutputs().size() <= 1) {
-            continue;
-         }
-
-         // Ignore flows with input-input correlations
-         if (flow.getCorrelationDescription().isPresent()
-            && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
-            continue;
-         }
-
-         // Ignore flows with inputs of the same type
-         if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
-            continue;
-         }
-
-         hasComplexScenarios = true;
-
-         ComplexScenarioDto scenarioDto = new ComplexScenarioDto();
-         scenarioDto.setName(scenario.getName());
-         scenarioDto.setServiceMethod(scenario.getName());
-         scenarioDto.setStartMethod("start" + StringUtils.capitalize(scenario.getName()));
-
-         scenarioDto.setInputs(flow.getInputs()
-                                   .stream()
-                                   .map(IDataReferenceField::getType)
-                                   .map(dataType -> {
-                                      InputDto input = new InputDto();
-                                      TypeDto<?> type = dataService.getEventClass(options, dataType);
-                                      input.setType(type.getTypeName());
-                                      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-                                      return input;
-                                   })
-                                   .collect(Collectors.toList()));
-
-         scenarioDto.setOutputs(flow.getOutputs()
-                                    .stream()
-                                    .map(IDataReferenceField::getType)
-                                    .map(dataType -> {
-                                       PublishDto output = new PublishDto();
-                                       TypeDto<?> type = dataService.getEventClass(options, dataType);
-                                       output.setType(type.getTypeName());
-                                       output.setTopic(type.getTypeName() + ".TOPIC_NAME");
-                                       output.setName("publish" + type.getTypeName());
-                                       dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-                                       return output;
-                                    })
-                                    .collect(Collectors.toList()));
-         dtos.add(scenarioDto);
+      // Ignore simple flows
+      if (flow.getInputs().size() == 1 && flow.getOutputs().size() <= 1) {
+         return Optional.empty();
       }
-      dto.setComplexScenarios(dtos);
 
-      if (hasComplexScenarios) {
-         dto.getAbstractClass().getImports().add(BlockingQueue.class.getName());
-         dto.getAbstractClass().getImports().add(LinkedBlockingQueue.class.getName());
-         dto.getAbstractClass().getImports().add(Queue.class.getName());
-         dto.getAbstractClass().getImports().add(IdentityHashMap.class.getName());
-         dto.getAbstractClass().getImports().add(Collections.class.getName());
-         dto.getAbstractClass().getImports().add(Map.class.getName());
-         dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
-         dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
+      // Ignore flows with input-input correlations
+      if (flow.getCorrelationDescription().isPresent()
+         && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+         return Optional.empty();
       }
+
+      // Ignore flows with inputs of the same type
+      if (flow.getInputs().stream().map(input -> input.getType()).distinct().count() != flow.getInputs().size()) {
+         return Optional.empty();
+      }
+
+      ComplexScenarioDto scenarioDto = new ComplexScenarioDto();
+      scenarioDto.setName(scenario.getName());
+      scenarioDto.setServiceMethod(scenario.getName());
+      scenarioDto.setStartMethod("start" + StringUtils.capitalize(scenario.getName()));
+
+      scenarioDto.setInputs(flow.getInputs()
+                                .stream()
+                                .map(field -> getInputDto(field, dto, options))
+                                .collect(Collectors.toList()));
+
+      scenarioDto.setOutputs(flow.getOutputs()
+                                 .stream()
+                                 .map(field -> getPublishDto(field, dto, options))
+                                 .collect(Collectors.toList()));
+
+      dto.getInterface().getImports().add(Consumer.class.getName());
+      dto.getInterface().getImports().add(BlockingQueue.class.getName());
+
+      dto.getAbstractClass().getImports().add(Collection.class.getName());
+      dto.getAbstractClass().getImports().add(BlockingQueue.class.getName());
+      dto.getAbstractClass().getImports().add(LinkedBlockingQueue.class.getName());
+      dto.getAbstractClass().getImports().add(Queue.class.getName());
+      dto.getAbstractClass().getImports().add(IdentityHashMap.class.getName());
+      dto.getAbstractClass().getImports().add(Collections.class.getName());
+      dto.getAbstractClass().getImports().add(Map.class.getName());
+      dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
+      dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
+
+      return Optional.of(scenarioDto);
+   }
+
+   private InputDto getInputDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
+      InputDto input = new InputDto();
+      TypeDto<?> type = dataService.getEventClass(options, field.getType());
+      input.setType(type.getTypeName());
+      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+      return input;
+   }
+
+   private PublishDto getPublishDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
+      PublishDto output = new PublishDto();
+      TypeDto<?> type = dataService.getEventClass(options, field.getType());
+      output.setType(type.getTypeName());
+      output.setTopic(type.getTypeName() + ".TOPIC");
+      output.setName("publish" + type.getTypeName());
+      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+      dto.getAbstractClass().getImports().add(Preconditions.class.getName());
+      return output;
    }
 
    private String getSetterSnippet(IDataPath path, IJellyFishCommandOptions options) {
       List<IDataField> elements = path.getElements();
-      return Stream.concat(elements.subList(0, elements.size() - 1)
-                                   .stream()
-                                   .map(field -> dataFieldGenerationService.getEventsField(
-                                      options, field).getJavaGetterName() + "()"),
+      String snippet = Stream.concat(elements.subList(0, elements.size() - 1)
+                                             .stream()
+                                             .map(field -> dataFieldGenerationService.getEventsField(
+                                                options, field).getJavaGetterName() + "()"),
          Stream.of(dataFieldGenerationService.getEventsField(options, path.getEnd()).getJavaSetterName()))
-                   .collect(Collectors.joining("."));
+                             .collect(Collectors.joining("."));
+      return snippet;
    }
 
    private String getGetterSnippet(IDataPath path, IJellyFishCommandOptions options) {
-      return path.getElements()
-                 .stream()
-                 .map(field -> dataFieldGenerationService.getEventsField(
-                    options, field).getJavaGetterName() + "()")
-                 .collect(Collectors.joining("."));
+      String snippet = path.getElements()
+                           .stream()
+                           .map(field -> dataFieldGenerationService.getEventsField(
+                              options, field).getJavaGetterName() + "()")
+                           .collect(Collectors.joining("."));
+      return snippet;
+   }
+
+   private List<IOCorrelationDto> getInputOutputCorrelations(ICorrelationDescription description, BaseServiceDto dto,
+            IJellyFishCommandOptions options) {
+      List<IOCorrelationDto> ioCorrelations = new ArrayList<>();
+
+      for (ICorrelationExpression expression : description.getCorrelationExpressions()) {
+         IDataPath left = expression.getLeftHandOperand();
+         IDataPath right = expression.getRightHandOperand();
+         IOCorrelationDto correlationDto = new IOCorrelationDto();
+         correlationDto.setGetterSnippet(getGetterSnippet(left, options));
+         correlationDto.setSetterSnippet(getSetterSnippet(right, options));
+         correlationDto.setInputType(dataService.getEventClass(
+            options, left.getStart().getType()).getTypeName());
+         ioCorrelations.add(correlationDto);
+      }
+
+      return ioCorrelations;
    }
 }

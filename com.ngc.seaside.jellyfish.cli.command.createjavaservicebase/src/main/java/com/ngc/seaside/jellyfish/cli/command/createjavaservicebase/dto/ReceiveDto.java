@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiveDto {
@@ -7,7 +8,7 @@ public class ReceiveDto {
    private String topic;
    private String name;
    private String eventType;
-   private List<String> basicScenarios;
+   private List<String> basicScenarios = new ArrayList<>();
    private boolean hasCorrelations;
    
 	public String getTopic() {

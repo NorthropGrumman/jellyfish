@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BasicPubSubDto {
@@ -9,7 +10,8 @@ public class BasicPubSubDto {
    private String outputType;
    private String serviceMethod;
    private String publishMethod;
-   private List<IOCorrelationDto> inputOutputCorrelations;
+   private String scenarioName;
+   private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
    
 	public String getName() {
 		return name;
@@ -56,6 +58,15 @@ public class BasicPubSubDto {
 		return this;
 	}
 	
+	public String getScenarioName() {
+      return scenarioName;
+   }
+
+   public BasicPubSubDto setScenarioName(String scenarioName) {
+      this.scenarioName = scenarioName;
+      return this;
+   }
+	
 	public List<IOCorrelationDto> getInputOutputCorrelations() {
 		return inputOutputCorrelations;
 	}
@@ -64,6 +75,5 @@ public class BasicPubSubDto {
 		this.inputOutputCorrelations = inputOutputCorrelations;
 		return this;
 	}
-   
-   
+
 }

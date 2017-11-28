@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TriggerDto {
@@ -7,9 +8,9 @@ public class TriggerDto {
 	private String triggerType;
 	private String correlationMethod;
 	private String name;
-	private List<EventDto> eventProducers;
-	private List<CompletenessDto> completionStatements;
-	private List<InputDto> inputs;
+	private List<EventDto> eventProducers = new ArrayList<>();
+	private List<CompletenessDto> completionStatements = new ArrayList<>();
+	private List<InputDto> inputs = new ArrayList<>();
 	
 	public String getTriggerType() {
 		return triggerType;

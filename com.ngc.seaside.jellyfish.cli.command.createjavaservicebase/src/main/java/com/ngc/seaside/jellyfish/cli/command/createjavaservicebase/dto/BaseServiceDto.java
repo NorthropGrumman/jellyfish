@@ -6,6 +6,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,13 +20,13 @@ public class BaseServiceDto {
    private Set<String> exportedPackages;
    private EnumDto<?> topics;
    private IModel model;
-   private List<ReceiveDto> receiveMethods;
-   private List<PublishDto> publishMethods;
-   private List<BasicPubSubDto> basicPubSubMethods; 
-   private List<BasicPubSubDto> basicSinkMethods;
-   private List<CorrelationDto> correlationMethods;
-   private List<TriggerDto> triggerRegistrationMethods;
-   private List<ComplexScenarioDto> complexScenarios;
+   private List<ReceiveDto> receiveMethods = new ArrayList<>();
+   private List<PublishDto> publishMethods = new ArrayList<>();
+   private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>(); 
+   private List<BasicPubSubDto> basicSinkMethods = new ArrayList<>();
+   private List<CorrelationDto> correlationMethods = new ArrayList<>();
+   private List<TriggerDto> triggerRegistrationMethods = new ArrayList<>();
+   private List<ComplexScenarioDto> complexScenarios = new ArrayList<>();
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()

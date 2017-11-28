@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,9 +14,9 @@ public class ComplexScenarioDto {
    
    private String serviceMethod;
    
-   private List<InputDto> inputs;
+   private List<InputDto> inputs = new ArrayList<>();
    
-   private List<PublishDto> outputs;
+   private List<PublishDto> outputs = new ArrayList<>();
 
    public String getName() {
       return name;

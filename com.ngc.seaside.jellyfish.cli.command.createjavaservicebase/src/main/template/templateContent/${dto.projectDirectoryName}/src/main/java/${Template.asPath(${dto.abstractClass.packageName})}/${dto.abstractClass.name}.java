@@ -1,20 +1,16 @@
 package ${dto.abstractClass.packageName};
 
-import com.google.common.base.Preconditions;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import com.ngc.blocs.api.IContext;
-import com.ngc.blocs.api.IStatus;
-import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.api.ServiceStatus;
-import com.ngc.blocs.service.event.api.IEventService;
-import com.ngc.blocs.service.event.api.Subscriber;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.service.fault.api.IFaultManagementService;
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
-import com.ngc.blocs.service.thread.api.IThreadService;
+#set ($ignore = $dto.abstractClass.imports.add("com.google.common.base.Preconditions"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.api.IContext"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.api.IStatus"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.api.IServiceModule"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.api.ServiceStatus"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.event.api.IEventService"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.event.api.Subscriber"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -39,7 +35,7 @@ public abstract class ${dto.abstractClass.name}
 #if (!$dto.correlationMethods.isEmpty())
    protected ICorrelationService correlationService;
 
-   protected Map<ICorrelationTrigger, Collection<Consumer<ICorrelationStatus<?>>>> triggers = new ConcurrentHashMap<>();
+   protected Map<ICorrelationTrigger<?>, Collection<Consumer<ICorrelationStatus<?>>>> triggers = new ConcurrentHashMap<>();
 
 #end
 #if (!$dto.complexScenarios.isEmpty())
@@ -67,7 +63,11 @@ public abstract class ${dto.abstractClass.name}
          });
 #end 
 #if (!$dto.complexScenarios.isEmpty())
-      queues.getOrDefault(${method.eventType}.class, Collections.emptyList()).forEach(queue -> queue.add(source));
+      queues.getOrDefault(${method.eventType}.class, Collections.emptyList()).forEach(queue -> {
+         @SuppressWarnings("unchecked")
+         Collection<${method.eventType}> q = (Collection<${method.eventType}>) queue;
+         q.add(source);
+      });
 #end
    }
 
@@ -117,7 +117,7 @@ public abstract class ${dto.abstractClass.name}
       updateRequestWithCorrelation(status.getEvent());
       try {
          @SuppressWarnings("unchecked")
-         ${method.outputType} output = ${method.serviceName}(
+         ${method.outputType} output = ${method.serviceMethod}(
 #foreach($input in $method.inputs)
                status.getData(${input.type}.class),
 #end
@@ -133,7 +133,7 @@ public abstract class ${dto.abstractClass.name}
          ${method.publishMethod}(output);
       } catch (ServiceFaultException fault) {
          logService.error(getClass(),
-                          "Invocation of '%s.${method.serviceName}' generated fault, dispatching to fault management service.",
+                          "Invocation of '%s.${method.serviceMethod}' generated fault, dispatching to fault management service.",
                           getClass().getName());
          faultManagementService.handleFault(fault);
       } finally {
@@ -222,8 +222,8 @@ public abstract class ${dto.abstractClass.name}
    }
 
    @Override
-   public void setContext(@SuppressWarnings("rawtypes") IContext iContext) {
-      this.context = iContext;
+   public void setContext(@SuppressWarnings("rawtypes") IContext context) {
+      this.context = context;
    }
 
    @Override
@@ -232,9 +232,9 @@ public abstract class ${dto.abstractClass.name}
    }
 
    @Override
-   public boolean setStatus(IStatus<ServiceStatus> iStatus) {
-      Preconditions.checkNotNull(iStatus, "iStatus may not be null!");
-      this.status = iStatus.getStatus();
+   public boolean setStatus(IStatus<ServiceStatus> status) {
+      Preconditions.checkNotNull(status, "status may not be null!");
+      this.status = status.getStatus();
       return true;
    }
 
@@ -279,8 +279,9 @@ public abstract class ${dto.abstractClass.name}
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
+#if (!$dto.correlationMethods.isEmpty())
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
       IRequest request = Requests.getCurrentRequest();
       if (request instanceof ServiceRequest) {
@@ -288,10 +289,12 @@ public abstract class ${dto.abstractClass.name}
       }
    }
 
+   @SuppressWarnings("rawtypes")
    private void clearCorrelationFromRequest() {
       IRequest request = Requests.getCurrentRequest();
       if (request instanceof ServiceRequest) {
          ((ServiceRequest) request).clearLocalCorrelationEvent();
       }
    }
+#end
 }
