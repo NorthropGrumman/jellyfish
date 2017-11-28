@@ -1,7 +1,7 @@
 #set( $D = '$' )
 
 dependencies {
-#foreach ($project in  $dto.projectDependencies)
+#foreach ($project in  $serviceDto.projectDependencies)
    compile project(':${project}')
 #end
 

@@ -20,6 +20,6 @@ public class CreateJavaServiceCommandGuiceModule extends AbstractModule {
             .addBinding()
             .to(CreateJavaServiceCommandGuiceWrapper.class);
       bind(IServiceDtoFactory.class)
-            .to(ServiceDtoFactory.class).asEagerSingleton();;
+            .to(ServiceDtoFactory.class).asEagerSingleton();
    }
 }

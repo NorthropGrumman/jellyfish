@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
@@ -18,11 +19,13 @@ public class CreateJavaServiceCommandGuiceWrapper implements IJellyFishCommand {
    @Inject
    public CreateJavaServiceCommandGuiceWrapper(ILogService logService,
                                                ITemplateService templateService,
-                                               IServiceDtoFactory templateDaoFactory,
+                                               IServiceDtoFactory serviceTemplateDaoFactory,
+                                               IBaseServiceDtoFactory serviceBaseTemplateDaoFactory,
                                                IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
-      delegate.setTemplateDaoFactory(templateDaoFactory);
+      delegate.setServiceTemplateDaoFactory(serviceTemplateDaoFactory);
+      delegate.setBaseServiceTemplateDaoFactory(serviceBaseTemplateDaoFactory);
       delegate.setProjectNamingService(projectNamingService);
       delegate.activate();
    }
