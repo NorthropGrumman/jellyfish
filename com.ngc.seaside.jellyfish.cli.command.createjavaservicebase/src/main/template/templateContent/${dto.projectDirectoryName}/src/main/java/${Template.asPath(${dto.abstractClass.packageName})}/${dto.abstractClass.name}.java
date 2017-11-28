@@ -167,7 +167,7 @@ public abstract class ${dto.abstractClass.name}
 #set ($serviceArguments = "${serviceArguments}, input${velocityCount}Queue")
 #end
 #foreach($output in $scenario.outputs)
-#set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.publishMethod}")
+#set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.name}")
 #end
 #set ($serviceArguments = $serviceArguments.substring(2))
    private void ${scenario.startMethod}() {
