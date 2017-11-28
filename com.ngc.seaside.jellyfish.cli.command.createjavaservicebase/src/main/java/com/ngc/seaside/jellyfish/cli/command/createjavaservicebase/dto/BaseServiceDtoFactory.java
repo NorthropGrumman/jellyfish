@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -23,6 +24,7 @@ import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationEx
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -44,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -79,26 +82,26 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       ClassDto<? extends MethodDto> interfaceDto = generateService.getServiceInterfaceDescription(options, model);
       ClassDto<? extends PubSubMethodDto> abstractClassDto = generateService.getBaseServiceDescription(options, model);
       EnumDto<?> topicsDto = generateService.getTransportTopicsDescription(options, model);
-      
+
       BaseServiceDto dto = new BaseServiceDto();
       dto.setProjectDirectoryName(projectService.getBaseServiceProjectName(options, model).getDirectoryName());
-      dto.setProjectDependencies(projectDependencies);  
+      dto.setProjectDependencies(projectDependencies);
       dto.setAbstractClass(abstractClassDto);
       dto.setInterface(interfaceDto);
       dto.setExportedPackages(new LinkedHashSet<>(
-               Arrays.asList(packageService.getServiceInterfacePackageName(options, model) + ".*",
-                  packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
-                  packageService.getTransportTopicsPackageName(options, model) + ".*")));
+         Arrays.asList(packageService.getServiceInterfacePackageName(options, model) + ".*",
+            packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
+            packageService.getTransportTopicsPackageName(options, model) + ".*")));
       dto.setModel(model);
       dto.setTopicsEnum(topicsDto);
-      
+
       setReceiveMethods(dto, options, model);
       setPublishMethods(dto, options, model);
       setBasicPubSubMethods(dto, options, model);
       setBasicSinkMethods(dto, options, model);
       setCorrelationMethods(dto, options, model);
       setTriggerRegistrationMethods(dto, options, model);
-      setComplexScenarios(dto, options, model);  
+      setComplexScenarios(dto, options, model);
       return dto;
    }
 
@@ -199,27 +202,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                IDataPath left = expression.getLeftHandOperand();
                IDataPath right = expression.getRightHandOperand();
                IOCorrelationDto correlationDto = new IOCorrelationDto();
-               correlationDto.setGetterSnippet(
-                  left.getElements()
-                      .stream()
-                      .map(
-                         field -> dataFieldGenerationService.getEventsField(
-                            options, field).getJavaGetterName() + "()")
-                      .collect(Collectors.joining(".")));
-
-               correlationDto.setSetterSnippet(
-                  right.getElements()
-                       .subList(0, right.getElements().size() - 1)
-                       .stream()
-                       .map(
-                          field -> dataFieldGenerationService.getEventsField(
-                             options, field).getJavaGetterName() + "()")
-                       .collect(Collectors.joining("."))
-                     + "." + dataFieldGenerationService.getEventsField(
-                        options,
-                        expression.getRightHandOperand()
-                                  .getEnd()).getJavaSetterName());
-
+               correlationDto.setGetterSnippet(getGetterSnippet(left, options));
+               correlationDto.setSetterSnippet(getSetterSnippet(right, options));
                correlationDto.setInputType(dataService.getEventClass(
                   options, left.getStart().getType()).getTypeName());
                ioCorrelations.add(correlationDto);
@@ -295,7 +279,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             continue;
          }
          hasCorrelationMethods = true;
-         
+
          CorrelationDto correlation = new CorrelationDto();
 
          correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
@@ -386,13 +370,14 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       }
       dto.setCorrelationMethods(dtos);
       if (hasCorrelationMethods) {
+         dto.getAbstractClass().getImports().add(Objects.class.getName());
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationStatus");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationTrigger");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
-         dto.getAbstractClass().getImports().add("java.util.function.Consumer");
+         dto.getAbstractClass().getImports().add(Consumer.class.getName());
          dto.getInterface().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
       }
@@ -471,23 +456,11 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                        IDataPath right = expression.getRightHandOperand();
                                                        CompletenessDto completenessDto = new CompletenessDto();
                                                        completenessDto.setInput1GetterSnippet(
-                                                          left.getElements()
-                                                              .stream()
-                                                              .map(
-                                                                 field -> dataFieldGenerationService.getEventsField(
-                                                                    options, field).getJavaGetterName() + "()")
-                                                              .collect(Collectors.joining(".")));
-
+                                                          getGetterSnippet(left, options));
                                                        completenessDto.setInput1Type(dataService.getEventClass(
                                                           options, left.getStart().getType()).getTypeName());
                                                        completenessDto.setInput2GetterSnippet(
-                                                          right.getElements()
-                                                               .stream()
-                                                               .map(
-                                                                  field -> dataFieldGenerationService.getEventsField(
-                                                                     options, field).getJavaGetterName() + "()")
-                                                               .collect(Collectors.joining(".")));
-
+                                                          getGetterSnippet(right, options));
                                                        completenessDto.setInput2Type(dataService.getEventClass(
                                                           options, right.getStart().getType()).getTypeName());
                                                        return completenessDto;
@@ -527,9 +500,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    private void setComplexScenarios(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
 
       boolean hasComplexScenarios = false;
-      
+
       List<ComplexScenarioDto> dtos = new ArrayList<>();
-      
+
       for (IScenario scenario : model.getScenarios()) {
          Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
             scenario);
@@ -591,7 +564,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dtos.add(scenarioDto);
       }
       dto.setComplexScenarios(dtos);
-      
+
       if (hasComplexScenarios) {
          dto.getAbstractClass().getImports().add(BlockingQueue.class.getName());
          dto.getAbstractClass().getImports().add(LinkedBlockingQueue.class.getName());
@@ -602,5 +575,23 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
          dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
       }
+   }
+
+   private String getSetterSnippet(IDataPath path, IJellyFishCommandOptions options) {
+      List<IDataField> elements = path.getElements();
+      return Stream.concat(elements.subList(0, elements.size() - 1)
+                                   .stream()
+                                   .map(field -> dataFieldGenerationService.getEventsField(
+                                      options, field).getJavaGetterName() + "()"),
+         Stream.of(dataFieldGenerationService.getEventsField(options, path.getEnd()).getJavaSetterName()))
+                   .collect(Collectors.joining("."));
+   }
+
+   private String getGetterSnippet(IDataPath path, IJellyFishCommandOptions options) {
+      return path.getElements()
+                 .stream()
+                 .map(field -> dataFieldGenerationService.getEventsField(
+                    options, field).getJavaGetterName() + "()")
+                 .collect(Collectors.joining("."));
    }
 }
