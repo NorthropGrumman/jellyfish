@@ -55,6 +55,7 @@ public class ScenarioService implements IScenarioService {
       return Collections.unmodifiableCollection(paradigms);
    }
 
+   @Deprecated
    @Override
    public Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(IJellyFishCommandOptions options,
                                                                              IScenario scenario) {
@@ -72,15 +73,7 @@ public class ScenarioService implements IScenarioService {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");
 
-      Collection<IPublishSubscribeMessagingFlow> flows = new ArrayList<>();
-      flows.addAll(pubSubProcessor.getFlows(scenario));
-      if (flows.size() > 1) {
-         throw new IllegalStateException("Received multiple publish/subscribe messaging flows for scenario " + scenario.getName());
-      }
-      if (flows.isEmpty()) {
-         return Optional.empty();
-      }
-      return Optional.of(flows.iterator().next());
+      return pubSubProcessor.getFlow(scenario);
    }
 
    @Override
