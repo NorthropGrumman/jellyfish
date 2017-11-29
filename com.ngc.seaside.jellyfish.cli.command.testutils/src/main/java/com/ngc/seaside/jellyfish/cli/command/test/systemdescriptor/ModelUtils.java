@@ -180,7 +180,8 @@ public class ModelUtils {
          references.forEach(reference -> {
             IScenarioStep step = mock(IScenarioStep.class);
             when(step.getParent()).thenReturn(scenario);
-            when(step.getParameters()).thenReturn(Collections.singletonList(reference.getName()));
+            String stepName = reference.getName();
+            when(step.getParameters()).thenReturn(Collections.singletonList(stepName));
             steps.add(step);
          });
 
