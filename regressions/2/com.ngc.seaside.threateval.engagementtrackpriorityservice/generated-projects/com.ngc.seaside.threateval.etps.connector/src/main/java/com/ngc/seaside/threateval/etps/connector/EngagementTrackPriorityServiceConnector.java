@@ -2,10 +2,13 @@ package com.ngc.seaside.threateval.etps.connector;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import com.ngc.blocs.requestmodel.api.IRequest;
 import com.ngc.blocs.requestmodel.api.RequestThreadLocal;
+import com.ngc.blocs.requestmodel.api.Requests;
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.time.api.Time;
 import com.ngc.seaside.request.api.ServiceRequest;
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
@@ -111,8 +114,10 @@ public class EngagementTrackPriorityServiceConnector {
    }
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
-      RequestThreadLocal.setCurrentRequest(new ServiceRequest<>(
-         getRequirementsForTransportTopic(transportTopic), this));
+      ServiceRequest<ITransportTopic> request = new ServiceRequest<>(getRequirementsForTransportTopic(transportTopic),
+                                                                     transportTopic);
+      RequestThreadLocal.setCurrentRequest(request);
+      logService.debug(getClass(), "Request begins.");
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }
 
@@ -126,6 +131,13 @@ public class EngagementTrackPriorityServiceConnector {
 
    private void postSendMessage(ITransportTopic transportTopic) {
       logService.debug(getClass(), "Sent message on transport application topic %s.", transportTopic);
+      IRequest request = Requests.getCurrentRequest();
+      if(request != null) {
+         Time now = Time.getCurrentTime();
+         logService.debug(getClass(), "Request ends in %d ms.", now.subtract(request.getCreationTime()).getLongMsec());
+      } else {
+         logService.debug(getClass(), "Request ends.");
+      }
       RequestThreadLocal.clear();
    }
 
