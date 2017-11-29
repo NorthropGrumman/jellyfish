@@ -11,6 +11,7 @@ import org.gradle.tooling.ProjectConnection;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -97,6 +98,42 @@ public class RegressionsIT {
             if (subDir.isDirectory()) {
 
                // Call to method that runs jellyfish, and record the return value 
+               regressionScore.put(subDir.getName(), generateJellyfishProject(subDir));
+            }
+         }
+
+         printRegressionSummary(regressionScore);
+      }
+
+      if (!regressionScore.containsValue(false)) {
+         // All the tests pass. No need to keep the generated files
+         removeGeneratedProjects(regressionTestsDir);
+      }
+
+      // The below Assert will check to see if there are any failures in the diff evaluation
+      Assert.assertFalse(regressionScore.containsValue(false));
+   }
+
+   @Test
+   @Ignore("This test is only used from the IDE to run a particular example or test case.")
+   public void testSingleCase() throws IOException {
+      String testCaseName = "8";
+
+      buildAndInstallSdProjects();
+
+      File[] subs = new File(regressionTestsDir).listFiles();
+      Map<String, Boolean> regressionScore = new HashMap<>();
+
+      if (subs == null || subs.length == 0) {
+         fail("Error: There are no directories under the 'regressions' folder. This test"
+              + "looks for projects under the 'regressions' folder to perform tests.");
+      } else {
+
+         // Loop through the subdirectories under 'regressions' and perform operations
+         for (File subDir : subs) {
+            if (subDir.isDirectory() && subDir.getName().equals(testCaseName)) {
+
+               // Call to method that runs jellyfish, and record the return value
                regressionScore.put(subDir.getName(), generateJellyfishProject(subDir));
             }
          }
