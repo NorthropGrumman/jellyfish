@@ -31,15 +31,38 @@ public class ${serviceDto.service.name}Test {
       service.activate();
    }
 
-#foreach ($method in $serviceDto.service.methods)
+#foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Test
-   public void ${method.name}Test(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void ${method.serviceMethod}Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
 #end
+#foreach ($method in $baseServiceDto.basicSinkMethods)
+   @Test
+   public void ${method.serviceMethod}Test() throws Exception {
+   // TODO: implement this
+      fail("not implemented");
+   }
 
+#end
+#foreach ($method in $baseServiceDto.correlationMethods)
+   @Test
+   public void ${method.serviceMethod}Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+   }
+
+#end
+#foreach ($method in $baseServiceDto.complexScenarios)
+   @Test
+   public void ${method.serviceMethod}Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+   }
+
+#end
    @After
    public void cleanup() throws Throwable {
       service.deactivate();

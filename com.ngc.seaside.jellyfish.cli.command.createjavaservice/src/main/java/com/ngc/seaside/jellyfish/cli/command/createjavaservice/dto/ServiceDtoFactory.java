@@ -40,17 +40,10 @@ public class ServiceDtoFactory implements IServiceDtoFactory {
       projectDependencies.add(projectService.getEventsProjectName(options, model).getArtifactId());
       projectDependencies.add(projectService.getBaseServiceProjectName(options, model).getArtifactId());
 
-      List<MethodDto> methods = model.getScenarios()
-                                     .stream()
-                                     .map(IScenario::getName)
-                                     .map(scenario -> new MethodDto().setName(scenario))
-                                     .collect(Collectors.toList());
-
       ClassDto<MethodDto> classDto = new ClassDto<>();
       classDto.setName(model.getName())
               .setPackageName(packageService.getServiceImplementationPackageName(options, model))
               .setBaseClass(baseDto.getAbstractClass())
-              .setMethods(methods)
               .setImplementedInterface(baseDto.getInterface())
               .setImports(imports);
 
