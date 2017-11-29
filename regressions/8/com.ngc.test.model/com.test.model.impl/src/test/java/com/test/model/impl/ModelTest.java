@@ -31,7 +31,6 @@ public class ModelTest {
       service.activate();
    }
 
-
    @After
    public void cleanup() throws Throwable {
       service.deactivate();

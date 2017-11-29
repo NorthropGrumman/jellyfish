@@ -32,11 +32,10 @@ public class DataBagsServiceTest {
    }
 
    @Test
-   public void publishTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void publishTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
-
 
    @After
    public void cleanup() throws Throwable {

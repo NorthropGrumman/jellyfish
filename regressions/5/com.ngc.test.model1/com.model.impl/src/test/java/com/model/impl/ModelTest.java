@@ -32,77 +32,46 @@ public class ModelTest {
    }
 
    @Test
-   public void basicPubSubTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void basicPubSubTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void basicSinkTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void basicSinkTest() throws Exception {
+   // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void multiOutputPubSubTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void singleOutputCorrelationTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void complexPubSubTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void multiOutputPubSubTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void basicSourceTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void complexPubSubTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void multiSourceTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void basicSourceTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void sinkCorrelationTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void multiSourceTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
-
-   @Test
-   public void singleOutputCorrelationTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
-   }
-
-   @Test
-   public void multiOutputCorrelationTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
-   }
-
-   @Test
-   public void multiOutputCorrelationSameTypeTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
-   }
-
-   @Test
-   public void complexCorrelationTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
-   }
-
-   @Test
-   public void complexCorrelationSameTypeTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
-   }
-
 
    @After
    public void cleanup() throws Throwable {

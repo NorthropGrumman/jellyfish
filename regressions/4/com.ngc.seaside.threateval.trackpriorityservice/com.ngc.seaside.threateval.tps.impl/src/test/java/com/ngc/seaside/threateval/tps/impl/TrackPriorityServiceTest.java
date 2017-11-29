@@ -32,17 +32,16 @@ public class TrackPriorityServiceTest {
    }
 
    @Test
-   public void calculateConsolidatedTrackPriorityTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void calculateConsolidatedTrackPriorityTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
 
    @Test
-   public void calculateConsolidatedTrackPriorityWhenTrackDroppedTest(){
-       // TODO Auto-generated method stub
-       fail("not implemented");
+   public void calculateConsolidatedTrackPriorityWhenTrackDroppedTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
    }
-
 
    @After
    public void cleanup() throws Throwable {
