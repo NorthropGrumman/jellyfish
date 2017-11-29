@@ -159,7 +159,7 @@ public class ${dto.model.name}Connector {
       logService.debug(getClass(), "Sent message on transport application topic %s.", transportTopic);
       IRequest request = Requests.getCurrentRequest();
       if(request != null) {
-      Time now = Time.getCurrentTime();
+         Time now = Time.getCurrentTime();
          logService.debug(getClass(), "Request ends in %d ms.", now.subtract(request.getCreationTime()).getLongMsec());
       } else {
          logService.debug(getClass(), "Request ends.");
