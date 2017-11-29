@@ -28,7 +28,7 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
 
     testCompile project(":jellyfish.service.codegen.impl.codegenservices")
-    testCompile project(":jellyfish.cli.command.testutils")
+    testCompile "com.ngc.seaside:systemdescriptor.ext.testutils:$jellyfishEXTVersion"
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
