@@ -1,28 +1,28 @@
 rootProject.name = 'generatedProject'
 
-include 'com.ngc.test.model1.domain'
-project(':com.ngc.test.model1.domain').name = 'model1.domain'
+include 'com.ngc.test.model.domain'
+project(':com.ngc.test.model.domain').name = 'model.domain'
 
-include 'generated-projects/com.ngc.test.model1.events'
-project(':generated-projects/com.ngc.test.model1.events').name = 'model1.events'
+include 'generated-projects/com.model.events'
+project(':generated-projects/com.model.events').name = 'model.events'
 
-include 'com.ngc.test.model1.tests'
-project(':com.ngc.test.model1.tests').name = 'model1.tests'
+include 'com.ngc.test.model.tests'
+project(':com.ngc.test.model.tests').name = 'model.tests'
 
-include 'com.ngc.test.model1.distribution'
-project(':com.ngc.test.model1.distribution').name = 'model1.distribution'
+include 'com.ngc.test.model.distribution'
+project(':com.ngc.test.model.distribution').name = 'model.distribution'
 
-include 'com.ngc.test.model1.impl'
-project(':com.ngc.test.model1.impl').name = 'model1.impl'
+include 'com.model.impl'
+project(':com.model.impl').name = 'model.impl'
 
-include 'com.ngc.test.model1.config'
-project(':com.ngc.test.model1.config').name = 'model1.config'
+include 'com.model.config'
+project(':com.model.config').name = 'model.config'
 
-include 'generated-projects/com.ngc.test.model1.base'
-project(':generated-projects/com.ngc.test.model1.base').name = 'model1.base'
+include 'generated-projects/com.model.base'
+project(':generated-projects/com.model.base').name = 'model.base'
 
-include 'generated-projects/com.ngc.test.model1.connector'
-project(':generated-projects/com.ngc.test.model1.connector').name = 'model1.connector'
+include 'generated-projects/com.model.connector'
+project(':generated-projects/com.model.connector').name = 'model.connector'
 
-include 'generated-projects/com.ngc.test.model1.messages'
-project(':generated-projects/com.ngc.test.model1.messages').name = 'model1.messages'
+include 'generated-projects/com.model.messages'
+project(':generated-projects/com.model.messages').name = 'model.messages'

@@ -1,0 +1,56 @@
+
+apply plugin: 'application'
+apply plugin: 'java'
+
+mainClassName = "com.model.tests.main.ModelTestMain"
+
+distributions {
+    main {
+        contents {
+            from('src/main/resources') {
+                into 'resources'
+            }
+        }
+    }
+}
+
+dependencies {
+    compile project(":model.messages")
+    compile project(":model.base")
+
+    compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+    compile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+    compile "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
+
+    compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:$transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.testutils:$transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.topic.multicast:$multicastTransportVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast:$multicastTransportVersion"
+
+    compile "com.ngc.seaside:guice.modules:$seasideBootstrapVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$transportServiceVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$multicastTransportVersion"
+
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "info.cukes:cucumber-java:$cucumberVersion"
+    compile "info.cukes:cucumber-guice:$cucumberVersion"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "com.model.tests.ModelTestMain"
+    }
+}
+
+// Provide the app home directory has a system property.
+applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
+
+// Set the property to the value in the script (windows vs *nix).
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+    }
+}

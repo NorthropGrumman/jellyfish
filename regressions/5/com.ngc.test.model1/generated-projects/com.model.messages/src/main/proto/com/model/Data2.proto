@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.model;
+
+option java_multiple_files = true;
+
+import "com/model/NestedInputData.proto";
+
+message Data2 {
+
+   sint32 field1 = 1;
+   com.model.NestedInputData field3 = 2;
+   sint32 field5 = 3;
+   sint32 field6 = 4;
+   sint32 field7 = 5;
+
+}
