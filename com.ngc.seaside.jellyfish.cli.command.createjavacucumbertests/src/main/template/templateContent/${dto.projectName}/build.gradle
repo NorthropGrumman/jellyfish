@@ -29,7 +29,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': "${dto.packageName}.${dto.className}TestMain"
+        attributes 'Main-Class': "${dto.packageName}.main.${dto.className}TestMain"
     }
 }
 
