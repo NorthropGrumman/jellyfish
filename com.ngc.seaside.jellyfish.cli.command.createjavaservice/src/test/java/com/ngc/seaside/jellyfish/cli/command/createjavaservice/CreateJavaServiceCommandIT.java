@@ -13,7 +13,6 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFa
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
@@ -28,10 +27,12 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -45,14 +46,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateJavaServiceCommandIT {
 
    private CreateJavaServiceCommand command;
@@ -129,20 +129,24 @@ public class CreateJavaServiceCommandIT {
       when(projectService.getServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase());
+         String qualName = model.getFullyQualifiedName().toLowerCase();
+         when(information.getDirectoryName()).thenReturn(qualName);
          return information;
       });
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".base");
-         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
+         String qualName = model.getFullyQualifiedName().toLowerCase();
+         String name = model.getName().toLowerCase();
+         when(information.getDirectoryName()).thenReturn(qualName + ".base");
+         when(information.getArtifactId()).thenReturn(name + ".base");
          return information;
       });
       when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".events");
+         String name = model.getName().toLowerCase();
+         when(information.getArtifactId()).thenReturn(name + ".events");
          return information;
       });
       when(packageService.getServiceBaseImplementationPackageName(any(), any())).thenAnswer(args -> {
@@ -199,7 +203,12 @@ public class CreateJavaServiceCommandIT {
       
       IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);  
       IScenario scenario = testModel.getScenarios().getByName("calculateTrackPriority").get();
+      IDataReferenceField input = testModel.getInputs().iterator().next();
+      IDataReferenceField output = testModel.getOutputs().iterator().next();
       when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getInputs()).thenReturn(Collections.singleton(input));
+      when(flow.getOutputs()).thenReturn(Collections.singleton(output));
+      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
       when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
    }
 
@@ -235,7 +244,6 @@ public class CreateJavaServiceCommandIT {
       assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
       assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
       
-      //TODO These two assertions are incorrect
       assertFileContains(servicePath, "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(");
       
       Path testPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(), "com.ngc.seaside.threateval.engagementtrackpriorityservice",
@@ -256,10 +264,4 @@ public class CreateJavaServiceCommandIT {
       return model;
    }
 
-   @SafeVarargs
-   private static <T> ArrayList<T> listOf(T... things) {
-      // TODO TH:
-      // Fix the basic model impl. ArrayList SHOULD NOT be in the signature.
-      return new ArrayList<>(Arrays.asList(things));
-   }
 }
