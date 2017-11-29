@@ -29,7 +29,7 @@ public class ${dto.className}TestMain {
             String cucumberResultsDir = "build/test-results/cucumber/";
 
             args = new String[] {
-              "--glue", ClassificationTrackPriorityServiceSteps.class.getPackage().getName(),
+              "--glue", ${dto.className}Steps.class.getPackage().getName(),
               "--plugin", "pretty",
               "--plugin", "html:" + cucumberResultsDir + "html",
               "--plugin", "junit:" + cucumberResultsDir + "cucumber-results.xml",
