@@ -1,18 +1,5 @@
 
-apply plugin: 'application'
-apply plugin: 'java'
-
-mainClassName = "com.ngc.seaside.threateval.tps.tests.main.TrackPriorityServiceTestMain"
-
-distributions {
-    main {
-        contents {
-            from('src/main/resources') {
-                into 'resources'
-            }
-        }
-    }
-}
+apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
     compile project(":tps.messages")
@@ -40,17 +27,23 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': "com.ngc.seaside.threateval.tps.tests.TrackPriorityServiceTestMain"
+        attributes 'Main-Class': "com.ngc.seaside.threateval.tps.tests.main.TrackPriorityServiceTestMain"
     }
 }
 
-// Provide the app home directory has a system property.
-applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
 
-// Set the property to the value in the script (windows vs *nix).
-startScripts {
-    doLast {
-        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+seasideApplication {
+    mainClassName = "com.ngc.seaside.threateval.tps.tests.main.TrackPriorityServiceTestMain"
+    includeDistributionDirs = ['src/main/resources/']
+    appHomeVarName = 'appHome'
+    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    distributionName = "${project.name}-${project.version}"
+    installationDir = "build/distributions/${project.name}-${project.version}"
+
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
     }
 }
