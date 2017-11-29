@@ -1,16 +1,15 @@
 package com.ngc.seaside.threateval.ctps.impl;
 
+import com.ngc.seaside.threateval.ctps.api.IClassificationTrackPriorityService;
+import com.ngc.seaside.threateval.ctps.base.impl.AbstractClassificationTrackPriorityService;
+import com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification;
+import com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
-
-import com.ngc.seaside.threateval.ctps.api.IClassificationTrackPriorityService;
-import com.ngc.seaside.threateval.ctps.base.impl.AbstractClassificationTrackPriorityService;
-import com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification;
-import com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority;
-
+import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -22,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ClassificationTrackPriorityService extends AbstractClassificationTrackPriorityService {
 
    @Override
-   public TrackPriority calculateTrackPriority(Classification systemTrackClassification) {
+   public TrackPriority calculateTrackPriority(Classification systemTrackClassification) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -81,4 +80,5 @@ public class ClassificationTrackPriorityService extends AbstractClassificationTr
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
    }
+
 }
