@@ -1,16 +1,15 @@
 package com.ngc.example.inhertance.databagsservice.impl;
 
+import com.ngc.example.inhertance.databagsservice.api.IDataBagsService;
+import com.ngc.example.inhertance.databagsservice.base.impl.AbstractDataBagsService;
+import com.ngc.example.inhertance.databagsservice.event.datatype.B;
+import com.ngc.example.inhertance.databagsservice.event.datatype.C;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
-
-import com.ngc.example.inhertance.databagsservice.api.IDataBagsService;
-import com.ngc.example.inhertance.databagsservice.base.impl.AbstractDataBagsService;
-import com.ngc.example.inhertance.databagsservice.event.datatype.B;
-import com.ngc.example.inhertance.databagsservice.event.datatype.C;
-
+import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -22,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class DataBagsService extends AbstractDataBagsService {
 
    @Override
-   public C publish(B b) {
+   public C publish(B b) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -81,4 +80,5 @@ public class DataBagsService extends AbstractDataBagsService {
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
    }
+
 }
