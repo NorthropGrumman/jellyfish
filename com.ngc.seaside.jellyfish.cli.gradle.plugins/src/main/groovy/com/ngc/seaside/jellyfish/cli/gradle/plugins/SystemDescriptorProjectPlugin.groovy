@@ -6,6 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
+import java.util.Properties
 
 /**
  * A plugin that can be applied to a System Descriptor project.  When a build is executed, the System Descriptor project
@@ -30,7 +31,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             plugins.apply 'maven'
             // This is required to install a model project locally.
             plugins.apply 'java'
-
+            
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
@@ -46,6 +47,26 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             // Zip up the files.
             task('sdDistribution', type: Zip, dependsOn: [copyDistributionFiles]) {
                 from { "${project.distsDir}/stage" }
+            }
+            
+            task('generateProjectInfo', description: 'Creates a properties file project info like group, artifact, and version') {
+                doLast {
+                    def projectInfo = new File("${p.buildDir}/resources/main/project-info.properties")
+                    projectInfo.parentFile.mkdirs()
+                    projectInfo.withWriter { w ->
+                        def properties = new Properties();
+                        properties['group'] = p.group.toString()
+                        properties['groupId'] = p.group.toString()
+                        properties['name'] = p.name.toString()
+                        properties['artifact'] = p.name.toString()
+                        properties['artifactId'] = p.name.toString()
+                        properties['version'] = p.version.toString()
+                        properties['gav'] = "${p.group}:${p.name}:${p.version}".toString()
+                        properties['gave'] = "${p.group}:${p.name}:${p.version}@zip".toString()
+                        properties.store w, null
+                    }
+                }
+                install.dependsOn it
             }
 
             afterEvaluate {
