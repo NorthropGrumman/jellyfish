@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDe
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -100,9 +101,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       dto.setModel(model);
       dto.setTopicsEnum(topicsDto);
 
-      setReceiveMethods(dto, options, model);
-      setPublishMethods(dto, options, model);
-
+      Set<IDataReferenceField> inputs = new LinkedHashSet<>();
+      Set<IDataReferenceField> outputs = new LinkedHashSet<>();
       for (IScenario scenario : model.getScenarios()) {
          Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
             scenario);
@@ -114,11 +114,15 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
          if (pubSub.isPresent()) {
             dto.getBasicPubSubMethods().add(pubSub.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
             continue;
          }
          Optional<BasicPubSubDto> sink = getBasicSinkMethod(scenario, flow, dto, options);
          if (sink.isPresent()) {
             dto.getBasicSinkMethods().add(sink.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
             continue;
          }
          Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
@@ -128,11 +132,15 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
          if (correlation.isPresent()) {
             dto.getCorrelationMethods().add(correlation.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
             continue;
          }
          Optional<ComplexScenarioDto> complex = getComplexScenario(scenario, flow, dto, options);
          if (complex.isPresent()) {
             dto.getComplexScenarios().add(complex.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
             continue;
          }
          logService.warn(getClass(),
@@ -140,6 +148,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             model.getFullyQualifiedName(),
             scenario.getName());
       }
+      
+      setReceiveMethods(dto, options, inputs);
+      setPublishMethods(dto, options, outputs);
+
 
       return dto;
    }
@@ -160,14 +172,16 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       return false;
    }
 
-   private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+   private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, Collection<IDataReferenceField> inputs) {
       List<ReceiveDto> receiveDtos = new ArrayList<>();
-      Set<String> methods = new HashSet<>();
-      for (IDataReferenceField input : model.getInputs()) {
+      Set<IData> inputTypes = new HashSet<>();
+      for (IDataReferenceField input : inputs) {
+         if (!inputTypes.add(input.getType())) {
+            continue;
+         }
          List<String> basicScenarios = new ArrayList<>();
          ReceiveDto receive = new ReceiveDto();
-         boolean inScenario = false;
-         for (IScenario scenario : model.getScenarios()) {
+         for (IScenario scenario : input.getParent().getScenarios()) {
             Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
                scenario);
 
@@ -179,8 +193,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             if (!flow.getInputs().contains(input)) {
                continue;
             }
-
-            inScenario = true;
 
             // scenario has this input
             if (flow.getCorrelationDescription().isPresent()
@@ -194,50 +206,32 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             }
          }
 
-         if (inScenario && methods.add(receive.getName())) {
-            TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
-            receive.setEventType(inputField.getTypeName());
+         TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
+         receive.setEventType(inputField.getTypeName());
 
-            receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
+         receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
 
-            receive.setName("receive" + inputField.getTypeName().replace('.', '_'));
+         receive.setName("receive" + inputField.getTypeName().replace('.', '_'));
 
-            receive.setBasicScenarios(basicScenarios);
-            receiveDtos.add(receive);
-            dto.getAbstractClass().getImports().add(IEvent.class.getName());
-            dto.getAbstractClass().getImports().add(Subscriber.class.getName());
-            dto.getAbstractClass().getImports().add(Preconditions.class.getName());
-         }
+         receive.setBasicScenarios(basicScenarios);
+         receiveDtos.add(receive);
+         dto.getAbstractClass().getImports().add(IEvent.class.getName());
+         dto.getAbstractClass().getImports().add(Subscriber.class.getName());
+         dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       }
       dto.setReceiveMethods(receiveDtos);
    }
 
-   private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
+   private void setPublishMethods(BaseServiceDto dto, IJellyFishCommandOptions options, Collection<IDataReferenceField> outputs) {
       List<PublishDto> publishDtos = new ArrayList<>();
-      Set<String> methods = new HashSet<>();
-      for (IDataReferenceField output : model.getOutputs()) {
-         for (IScenario scenario : model.getScenarios()) {
-
-            Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
-               scenario);
-
-            if (!flowOptional.isPresent()) {
-               continue;
-            }
-
-            IPublishSubscribeMessagingFlow flow = flowOptional.get();
-            if (!flow.getOutputs().contains(output)) {
-               continue;
-            }
-
-            PublishDto publish = getPublishDto(output, dto, options);
-
-            if (methods.add(publish.getName())) {
-               publishDtos.add(publish);
-            }
-            break;
+      Set<IData> outputTypes = new HashSet<>();
+      for (IDataReferenceField output : outputs) {
+         if (!outputTypes.add(output.getType())) {
+            continue;
          }
+         PublishDto publish = getPublishDto(output, dto, options);
 
+         publishDtos.add(publish);
       }
       dto.setPublishMethods(publishDtos);
    }
@@ -354,6 +348,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          break;
       }
 
+      dto.getAbstractClass().getImports().add(Map.class.getName());
+      dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
       dto.getAbstractClass().getImports().add(Collection.class.getName());
       dto.getAbstractClass().getImports().add(ArrayList.class.getName());
       dto.getAbstractClass().getImports().add(Objects.class.getName());
