@@ -144,6 +144,22 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       return dto;
    }
 
+   /**
+    * Returns true if the model uses two types with the same name, but different packages (e.g., com.Data and org.Data).
+    */
+   private boolean hasDuplicateTypeNames(IJellyFishCommandOptions options, IModel model) {
+      Set<String> names = new HashSet<>();
+      Set<String> qualifiedNames = new HashSet<>();
+      for (IDataReferenceField field : model.getInputs()) {
+         TypeDto<?> dto = dataService.getEventClass(options, field.getType());
+         if (qualifiedNames.add(dto.getFullyQualifiedName()) && !names.add(dto.getTypeName())) {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options, IModel model) {
       List<ReceiveDto> receiveDtos = new ArrayList<>();
       Set<String> methods = new HashSet<>();
@@ -156,7 +172,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
          receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
 
-         receive.setName("receive" + inputField.getTypeName());
+         receive.setName("receive" + inputField.getTypeName().replace('.', '_'));
          boolean inScenario = false;
          for (IScenario scenario : model.getScenarios()) {
             Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
@@ -202,7 +218,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       Set<String> methods = new HashSet<>();
       for (IDataReferenceField output : model.getOutputs()) {
          for (IScenario scenario : model.getScenarios()) {
-            
+
             Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
                scenario);
 
@@ -214,16 +230,15 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             if (!flow.getOutputs().contains(output)) {
                continue;
             }
-            
+
             PublishDto publish = getPublishDto(output, dto, options);
-            
-            
+
             if (methods.add(publish.getName())) {
                publishDtos.add(publish);
             }
             break;
          }
-         
+
       }
       dto.setPublishMethods(publishDtos);
    }
@@ -254,8 +269,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       pubSub.setInputOutputCorrelations(ioCorrelations);
 
-      
-      
       return Optional.of(pubSub);
    }
 
@@ -512,23 +525,33 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    private InputDto getInputDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
       InputDto input = new InputDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
-      input.setType(type.getTypeName());
+      if (hasDuplicateTypeNames(options, field.getParent())) {
+         input.setType(type.getFullyQualifiedName());
+      } else {
+         input.setType(type.getTypeName());
+         dto.getInterface().getImports().add(type.getFullyQualifiedName());
+         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+      }
       input.setFieldName(field.getName());
-      dto.getInterface().getImports().add(type.getFullyQualifiedName());
-      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       return input;
    }
 
    private PublishDto getPublishDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
       PublishDto output = new PublishDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
-      output.setType(type.getTypeName());
-      output.setTopic(type.getTypeName() + ".TOPIC");
-      output.setName("publish" + type.getTypeName());
-      output.setFieldName(field.getName());
-      dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
-      dto.getInterface().getImports().add(type.getFullyQualifiedName());
+      if (hasDuplicateTypeNames(options, field.getParent())) {
+         output.setType(type.getFullyQualifiedName());
+         output.setTopic(type.getFullyQualifiedName() + ".TOPIC");
+         output.setName("publish" + type.getFullyQualifiedName().replace('.', '_'));
+      } else {
+         output.setType(type.getTypeName());
+         output.setTopic(type.getTypeName() + ".TOPIC");
+         output.setName("publish" + type.getTypeName());
+         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
+         dto.getInterface().getImports().add(type.getFullyQualifiedName());
+      }
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
+      output.setFieldName(field.getName());
       return output;
    }
 
