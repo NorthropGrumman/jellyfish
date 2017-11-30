@@ -166,12 +166,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       for (IDataReferenceField input : model.getInputs()) {
          List<String> basicScenarios = new ArrayList<>();
          ReceiveDto receive = new ReceiveDto();
-         TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
-         receive.setEventType(inputField.getTypeName());
-
-         receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
-
-         receive.setName("receive" + inputField.getTypeName().replace('.', '_'));
          boolean inScenario = false;
          for (IScenario scenario : model.getScenarios()) {
             Optional<IPublishSubscribeMessagingFlow> flowOptional = scenarioService.getPubSubMessagingFlow(options,
@@ -201,6 +195,13 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          }
 
          if (inScenario && methods.add(receive.getName())) {
+            TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
+            receive.setEventType(inputField.getTypeName());
+
+            receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
+
+            receive.setName("receive" + inputField.getTypeName().replace('.', '_'));
+
             receive.setBasicScenarios(basicScenarios);
             receiveDtos.add(receive);
             dto.getAbstractClass().getImports().add(IEvent.class.getName());
