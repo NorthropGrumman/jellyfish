@@ -25,14 +25,14 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
 ext {
     systemDescriptorProjectName = 'pubsub.systemdescriptor'
-    systemDescriptorProjectVersion = '1.0.0-SNAPSHOT'
+    systemDescriptorProjectVersion = '2.0.0-SNAPSHOT'
     systemDescriptorName = '${systemDescriptorProjectName}-${systemDescriptorProjectVersion}'
     systemDescriptorLocation = "${project.buildDir}/${systemDescriptorDirectoryName}/${systemDescriptorName}"
     modelName = 'com.Model'
 }
 
 dependencies {
-	generate "com.ngc.seaside.jellyfish.examples:pubsub.systemdescriptor:1.0.0-SNAPSHOT@zip"
+	generate "com.ngc.seaside.jellyfish.examples:pubsub.systemdescriptor:2.0.0-SNAPSHOT@zip"
 }
 
 subprojects {
