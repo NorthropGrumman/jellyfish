@@ -82,42 +82,6 @@ public abstract class AbstractModel
       });
    }
 
-   @Subscriber(Data2.TOPIC_NAME)
-   public void receiveData2(IEvent<Data2> event) {
-      Preconditions.checkNotNull(event, "event may not be null!");
-      Data2 source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
-
-      correlationService.correlate(source)
-         .stream()
-         .filter(ICorrelationStatus::isCorrelationComplete)
-         .forEach(status -> {
-            triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status));
-         });
-      queues.getOrDefault(Data2.class, Collections.emptyList()).forEach(queue -> {
-         @SuppressWarnings("unchecked")
-         Collection<Data2> q = (Collection<Data2>) queue;
-         q.add(source);
-      });
-   }
-
-   @Subscriber(Data3.TOPIC_NAME)
-   public void receiveData3(IEvent<Data3> event) {
-      Preconditions.checkNotNull(event, "event may not be null!");
-      Data3 source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
-
-      correlationService.correlate(source)
-         .stream()
-         .filter(ICorrelationStatus::isCorrelationComplete)
-         .forEach(status -> {
-            triggers.get(status.getTrigger()).forEach(consumer -> consumer.accept(status));
-         });
-      queues.getOrDefault(Data3.class, Collections.emptyList()).forEach(queue -> {
-         @SuppressWarnings("unchecked")
-         Collection<Data3> q = (Collection<Data3>) queue;
-         q.add(source);
-      });
-   }
-
    private void publishData4(Data4 value) {
       Preconditions.checkNotNull(value, "Data4 value may not be null!");
       eventService.publish(value, Data4.TOPIC);

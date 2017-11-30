@@ -42,14 +42,6 @@ public abstract class AbstractTrackPriorityService
       doCalculateConsolidatedTrackPriority(source);
    }
 
-   @Subscriber(DroppedSystemTrack.TOPIC_NAME)
-   public void receiveDroppedSystemTrack(IEvent<DroppedSystemTrack> event) {
-      Preconditions.checkNotNull(event, "event may not be null!");
-      DroppedSystemTrack source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
-
-      doCalculateConsolidatedTrackPriorityWhenTrackDropped(source);
-   }
-
    private void publishPrioritizedSystemTrackIdentifiers(PrioritizedSystemTrackIdentifiers value) {
       Preconditions.checkNotNull(value, "PrioritizedSystemTrackIdentifiers value may not be null!");
       eventService.publish(value, PrioritizedSystemTrackIdentifiers.TOPIC);
