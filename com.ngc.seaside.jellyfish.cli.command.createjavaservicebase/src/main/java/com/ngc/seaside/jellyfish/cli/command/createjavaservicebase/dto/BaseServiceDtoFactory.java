@@ -168,7 +168,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          ReceiveDto receive = new ReceiveDto();
          TypeDto<?> inputField = dataService.getEventClass(options, input.getType());
          receive.setEventType(inputField.getTypeName());
-         dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
 
          receive.setTopic(inputField.getTypeName() + ".TOPIC_NAME");
 
@@ -207,7 +206,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             dto.getAbstractClass().getImports().add(IEvent.class.getName());
             dto.getAbstractClass().getImports().add(Subscriber.class.getName());
             dto.getAbstractClass().getImports().add(Preconditions.class.getName());
-            dto.getAbstractClass().getImports().add(inputField.getFullyQualifiedName());
          }
       }
       dto.setReceiveMethods(receiveDtos);
@@ -340,7 +338,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
          TypeDto<?> type = dataService.getEventClass(options, element);
          correlation.setCorrelationType(type.getTypeName());
-         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          break;
       case BOOLEAN:
          correlation.setCorrelationType("Boolean");
@@ -453,7 +450,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          INamedChild<IPackage> element = completeness.getCorrelationEventIdReferenceType();
          TypeDto<?> type = dataService.getEventClass(options, element);
          trigger.setTriggerType(type.getTypeName());
-         dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          break;
       case BOOLEAN:
          trigger.setTriggerType("Boolean");
