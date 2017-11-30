@@ -12,8 +12,6 @@ import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import com.test.model.api.IModel;
-import com.test.model.event.test1.Data1;
-import com.test.model.event.test2.Data1;
 
 public abstract class AbstractModel
    implements IServiceModule, IModel {
