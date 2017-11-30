@@ -31,7 +31,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Optional;
@@ -105,12 +104,10 @@ public class JavaServiceGenerationServiceTest {
                                                                                                             .thenReturn(
                                                                                                                "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output");
 
-      when(scenarioService.getMessagingParadigms(options, flow.getScenario()))
-                                                                              .thenReturn(EnumSet.of(
+      when(scenarioService.getMessagingParadigms(options, flow.getScenario())).thenReturn(EnumSet.of(
                                                                                  MessagingParadigm.PUBLISH_SUBSCRIBE));
-      when(scenarioService.getPubSubMessagingFlows(options, flow.getScenario()))
-                                                                                .thenReturn(
-                                                                                   Collections.singletonList(flow));
+      when(scenarioService.getPubSubMessagingFlow(options, flow.getScenario())).thenReturn(
+                                                                                   Optional.of(flow));
 
       ClassDto<MethodDto> dto = service.getServiceInterfaceDescription(options, model);
       assertNotNull("dto is null!", dto);
@@ -136,8 +133,8 @@ public class JavaServiceGenerationServiceTest {
       IPublishSubscribeMessagingFlow flow = FlowFactory.newPubSubFlowPath("calculateTrackPriority");
       model.getScenarios().add(flow.getScenario());
 
-      when(scenarioService.getPubSubMessagingFlows(options, flow.getScenario())).thenReturn(
-         Collections.singletonList(flow));
+      when(scenarioService.getPubSubMessagingFlow(options, flow.getScenario())).thenReturn(
+         Optional.of(flow));
 
       when(transportConfService.getTransportTopicName(any(), any())).thenAnswer(args -> {
          IDataReferenceField field = args.getArgument(1);

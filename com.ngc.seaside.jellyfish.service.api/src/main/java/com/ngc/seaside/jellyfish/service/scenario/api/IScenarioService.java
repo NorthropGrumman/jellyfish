@@ -22,20 +22,6 @@ public interface IScenarioService {
    Collection<MessagingParadigm> getMessagingParadigms(IJellyFishCommandOptions options, IScenario scenario);
 
    /**
-    * Gets a collection of publish/subscribe messaging flows that the given scenario declares. Each flow is either a
-    * {@link IPublishSubscribeMessagingFlow.FlowType#PATH path}, a {@link IPublishSubscribeMessagingFlow.FlowType#PATH
-    * source}, or {@link IPublishSubscribeMessagingFlow.FlowType#PATH sink}.
-    *
-    * @deprecated use {@link #getPubSubMessagingFlow} instead since multiple pubsub flows cannot exist within the same scenario
-    * @param options the options the current command is being executed with
-    * @param scenario the scenario to get the messaging flows for
-    * @return a collection of publish/subscribe messaging flows that the given scenario declares
-    */
-   @Deprecated
-   Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(IJellyFishCommandOptions options,
-            IScenario scenario);
-
-   /**
     * Gets the publish/subscribe messaging flows that the given scenario declares, or {@link Optional#empty()} if the scenario
     * does not deal with publishing or subscribing. The flow is either a {@link IPublishSubscribeMessagingFlow.FlowType#PATH path},
     * a {@link IPublishSubscribeMessagingFlow.FlowType#PATH source}, or {@link IPublishSubscribeMessagingFlow.FlowType#PATH sink}.

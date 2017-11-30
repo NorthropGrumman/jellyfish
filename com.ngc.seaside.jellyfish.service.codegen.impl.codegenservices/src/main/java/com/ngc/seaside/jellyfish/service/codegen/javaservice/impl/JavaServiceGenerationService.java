@@ -14,9 +14,6 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
-import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
-import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
-import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -29,16 +26,12 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @Component(service = IJavaServiceGenerationService.class)
 public class JavaServiceGenerationService implements IJavaServiceGenerationService {
@@ -82,7 +75,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
    public EnumDto<?> getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
       Set<String> transportTopics = new LinkedHashSet<>();
       for (IScenario scenario : model.getScenarios()) {
-         for (IPublishSubscribeMessagingFlow flow : scenarioService.getPubSubMessagingFlows(options, scenario)) {
+         Optional<IPublishSubscribeMessagingFlow> optionalFlow = scenarioService.getPubSubMessagingFlow(options, scenario);
+         if (optionalFlow.isPresent()) {
+            IPublishSubscribeMessagingFlow flow = optionalFlow.get();
             for (IDataReferenceField field : flow.getInputs()) {
                String topic = transportConfigService.getTransportTopicName(flow, field);
                transportTopics.add(topic);

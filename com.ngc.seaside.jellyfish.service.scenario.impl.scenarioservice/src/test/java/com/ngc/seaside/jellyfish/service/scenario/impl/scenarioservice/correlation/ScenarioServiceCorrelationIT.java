@@ -78,9 +78,8 @@ public class ScenarioServiceCorrelationIT {
       PubSubModel model1 = new PubSubModel("com.ngc.Model1");
       IScenario scenario = model1.addPubSub("scenario1", 0, 2, 1, "input1", data1, "input2", data2, "output1", data1);
       model1.correlate("scenario1", "input1.field1", "input2.field2.nestedField2");
-      ICorrelationDescription description = service.getPubSubMessagingFlows(options, scenario)
-                                                   .iterator()
-                                                   .next()
+      ICorrelationDescription description = service.getPubSubMessagingFlow(options, scenario)
+                                                   .get()
                                                    .getCorrelationDescription()
                                                    .get();
       assertEquals(0, description.getCorrelationExpressions().size());
@@ -96,9 +95,8 @@ public class ScenarioServiceCorrelationIT {
       PubSubModel model2 = new PubSubModel("com.ngc.Model2");
       scenario = model2.addPubSub("scenario1", 0, 2, 1, "input1", data1, "input2", data2, "output1", data1);
       model2.correlate("scenario1", "input1.field2", "input2.field2.nestedField1");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCorrelationExpressions().size());
@@ -114,9 +112,8 @@ public class ScenarioServiceCorrelationIT {
       PubSubModel model3 = new PubSubModel("com.ngc.Model3");
       scenario = model3.addPubSub("scenario1", 0, 2, 1, "input1", data1, "input2", data2, "output1", data1);
       model3.correlate("scenario1", "input1.field3.nestedField1", "input2.field2.nestedField2");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCorrelationExpressions().size());
@@ -132,9 +129,8 @@ public class ScenarioServiceCorrelationIT {
       PubSubModel model4 = new PubSubModel("com.ngc.Model4");
       scenario = model4.addPubSub("scenario1", 0, 2, 1, "input1", data1, "input2", data2, "output1", data1);
       model4.correlate("scenario1", "input1.field3.nestedField2", "input2.field1");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCorrelationExpressions().size());
@@ -170,9 +166,8 @@ public class ScenarioServiceCorrelationIT {
          "input1", data1,
          "output1", data2,
          "input1.field1", "output1.field2.nestedField2");
-      ICorrelationDescription description = service.getPubSubMessagingFlows(options, scenario)
-                                                   .iterator()
-                                                   .next()
+      ICorrelationDescription description = service.getPubSubMessagingFlow(options, scenario)
+                                                   .get()
                                                    .getCorrelationDescription()
                                                    .get();
       assertEquals(0, description.getCompletenessExpressions().size());
@@ -190,9 +185,8 @@ public class ScenarioServiceCorrelationIT {
          "input1", data1,
          "output1", data2,
          "input1.field2", "output1.field2.nestedField1");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCompletenessExpressions().size());
@@ -210,9 +204,8 @@ public class ScenarioServiceCorrelationIT {
          "input1", data1,
          "output1", data2,
          "input1.field3.nestedField1", "output1.field2.nestedField2");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCompletenessExpressions().size());
@@ -233,9 +226,8 @@ public class ScenarioServiceCorrelationIT {
          data2,
          "input1.field3.nestedField2",
          "output1.field1");
-      description = service.getPubSubMessagingFlows(options, scenario)
-                           .iterator()
-                           .next()
+      description = service.getPubSubMessagingFlow(options, scenario)
+                           .get()
                            .getCorrelationDescription()
                            .get();
       assertEquals(0, description.getCompletenessExpressions().size());
@@ -289,9 +281,8 @@ public class ScenarioServiceCorrelationIT {
       model.correlate("scenario1", "input1.field2", "output2.field2");
       model.correlate("scenario1", "input2.field3", "output3.field3");
       
-      ICorrelationDescription description = service.getPubSubMessagingFlows(options, scenario)
-               .iterator()
-               .next()
+      ICorrelationDescription description = service.getPubSubMessagingFlow(options, scenario)
+               .get()
                .getCorrelationDescription()
                .get();
       
@@ -365,9 +356,8 @@ public class ScenarioServiceCorrelationIT {
          "input2", data2);
       model.correlate("scenario1", "input1.field1", "input2.field1");
       
-      ICorrelationDescription description = service.getPubSubMessagingFlows(options, scenario)
-               .iterator()
-               .next()
+      ICorrelationDescription description = service.getPubSubMessagingFlow(options, scenario)
+               .get()
                .getCorrelationDescription()
                .get();
       

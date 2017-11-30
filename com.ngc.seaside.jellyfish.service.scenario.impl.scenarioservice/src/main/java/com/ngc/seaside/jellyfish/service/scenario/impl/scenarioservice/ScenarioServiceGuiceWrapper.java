@@ -41,12 +41,6 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(
-         IJellyFishCommandOptions options, IScenario scenario) {
-      return scenarioService.getPubSubMessagingFlows(options, scenario);
-   }
-   
-   @Override
    public Optional<IPublishSubscribeMessagingFlow> getPubSubMessagingFlow(
          IJellyFishCommandOptions options, IScenario scenario) {
       return scenarioService.getPubSubMessagingFlow(options, scenario);
