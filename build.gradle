@@ -22,11 +22,11 @@ subprojects {
    }
 
    group = 'com.ngc.seaside'
-	version = '1.10.0-SNAPSHOT'
+	version = '1.10.0'
 
    ext {
-      jellyfishDslVersion = '0.12.0-SNAPSHOT'
-      jellyfishApiVersion = '1.5.0-SNAPSHOT'
+      jellyfishDslVersion = '0.12.0'
+      jellyfishApiVersion = '1.5.0'
       guavaVersion = '21.0'
       guiceVersion = '3.0'
       blocsCoreVersion = '2.1'
