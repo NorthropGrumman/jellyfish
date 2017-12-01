@@ -60,13 +60,6 @@ public class RegressionsIT {
       regressionTestsDir = rootDir + File.separator + "regressions";
 
       scriptUpdater = new BuildScriptUpdater();
-
-      // Start with fresh logs. Remove any previously generated 'build' folders in the 
-      //    given projects
-      removeGivenProjectsBuildFolder(regressionTestsDir);
-
-      // Start with fresh logs. Remove any previously generated projects
-      removeGeneratedProjects(regressionTestsDir);
    }
 
    /**
@@ -96,11 +89,6 @@ public class RegressionsIT {
          printRegressionSummary(regressionScore);
       }
 
-      if (!regressionScore.containsValue(false)) {
-         // All the tests pass. No need to keep the generated files
-         removeGeneratedProjects(regressionTestsDir);
-      }
-
       // The below Assert will check to see if there are any failures in the diff evaluation
       Assert.assertFalse(regressionScore.containsValue(false));
    }
@@ -128,11 +116,6 @@ public class RegressionsIT {
          }
 
          printRegressionSummary(regressionScore);
-      }
-
-      if (!regressionScore.containsValue(false)) {
-         // All the tests pass. No need to keep the generated files
-         removeGeneratedProjects(regressionTestsDir);
       }
 
       // The below Assert will check to see if there are any failures in the diff evaluation
@@ -175,80 +158,6 @@ public class RegressionsIT {
             "unable find a gradle installation; set the env variable GRADLE_HOME to a gradle installation directory",
             gradle.isDirectory());
       return gradle;
-   }
-
-   /**
-    * This method is called to remove 'generatedProject' folders in each regression test
-    *
-    * @param regDir - the 'regressions' directory
-    */
-   private static void removeGeneratedProjects(String regDir) {
-      File[] subs = new File(regDir).listFiles();
-
-      if (subs == null || subs.length == 0) {
-         fail("Error: There are no directories under the 'regressions' folder. This test"
-              + "looks for projects under the 'regressions' folder to perform tests.");
-      } else {
-
-         // Loop through the subdirectories under 'regressions' and delete any 'generatedProject' folders
-         for (File subDir : subs) {
-            if (subDir.isDirectory()) {
-               File generatedProj = new File(subDir.getAbsoluteFile() + File.separator + "generatedProject");
-               System.out.println("Cleaning up directory: " + generatedProj);
-               if (generatedProj.exists()) {
-                  deleteDir(generatedProj);
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * This method is called to remove 'build' folders in the given project of each regression test
-    *
-    * @param regDir - the 'regressions' directory
-    */
-   private static void removeGivenProjectsBuildFolder(String regDir) {
-      File[] subs = new File(regDir).listFiles();
-
-      if (subs == null || subs.length == 0) {
-         fail("Error: There are no directories under the 'regressions' folder. This test"
-              + "looks for projects under the 'regressions' folder to perform tests.");
-      } else {
-
-         // Loop through the subdirectories under 'regressions' and delete any 'build' folders under the 
-         //    provided projects
-         for (File regressionTestFolder : subs) {
-            if (regressionTestFolder.isDirectory()) {
-
-               // regressionTestFolder is regressions\1\, regressions\2\, etc.
-               for (File regressionTestSubFolder : regressionTestFolder.listFiles()) {
-
-                  // find the given project
-                  if (regressionTestSubFolder.getName().matches("^com.ngc.*$")) {
-                     removeBuildFolders(regressionTestSubFolder);
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * Recursive method to search for folders named 'build' and delete them.
-    *
-    * @param regressionTestSubFolder - the current folder
-    */
-   private static void removeBuildFolders(File regressionTestSubFolder) {
-      for (File subFile : regressionTestSubFolder.listFiles()) {
-         if (subFile.getName().equals("build")) {
-            System.out.println("Cleaning up directory: " + subFile.getAbsolutePath());
-            deleteDir(subFile);
-         } else if (subFile.isDirectory()) {
-            removeBuildFolders(subFile);
-         }
-      }
-
    }
 
    /**

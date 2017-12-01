@@ -20,14 +20,18 @@ buildscript {
 
 ext {
     jellyfishCliVersion = '1.8.2-SNAPSHOT'
-	systemDescriptorProjectsFolder = 'system-descriptor-projects'
+	systemDescriptorProjectsFolderName = 'system-descriptor-projects'
+	regressionsFolderName = 'regressions'
+	generatedFolderName = 'generatedOutput'
+	expectedFolderName = 'expectedOutput'
 }
 
 // Primary task for running 'gradle clean build install' on all system descriptor projects
-task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects')
-build.dependsOn buildSystemDescriptorProjects
+task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects') {
+    build.dependsOn it
+}
 
-file(systemDescriptorProjectsFolder).eachDir { folder -> 
+file(systemDescriptorProjectsFolderName).eachDir { folder -> 
     // Run 'gradle clean build install' on system descriptor project
     def sdTask = task("buildSd${folder.name}", type: GradleBuild) {
 	    dir = folder
@@ -35,6 +39,33 @@ file(systemDescriptorProjectsFolder).eachDir { folder ->
 		startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
 	}
 	buildSystemDescriptorProjects.dependsOn sdTask
+}
+
+// Primary task for cleaning build and generated folders for all regressions
+task('cleanRegression') {
+    clean.dependsOn it
+}
+
+file(regressionsFolderName).eachDir { folder ->
+    def regressionName = folder.name.capitalize()
+    def expectedFolder = file("${folder}/${expectedFolderName}")
+    def generatedFolder = file("${folder}/${generatedFolderName}")
+    
+    // Clean build folders and generated folder
+    task("cleanRegression${regressionName}") {
+        delete generatedFolder
+        expectedFolder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3, visitRoot: true) {
+            if (it.name == 'build') {
+                delete it
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+            if (it.name == 'src') {
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+        }
+        cleanRegression.dependsOn it
+    }
+    
 }
 
 dependencies {
