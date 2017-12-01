@@ -142,8 +142,8 @@ public abstract class AbstractModel
                status.getData(Data1.class),
                status.getData(Data2.class),
                (ILocalCorrelationEvent<Integer>) status.getEvent());
-         output.setField2(status.getData(Data2.class).getField1());
          output.getField5().setField6(status.getData(Data1.class).getField3().getField4());
+         output.setField2(status.getData(Data2.class).getField1());
          logService.info(getClass(), "ELK - Scenario: singleOutputCorrelation; Input: %s, %s; Output: %s;",
             status.getData(Data1.class).toString(),
             status.getData(Data2.class).toString(),

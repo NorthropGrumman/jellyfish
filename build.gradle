@@ -10,7 +10,7 @@ version = '1.0.0-SNAPSHOT'
 buildscript {
 
     ext {
-        jellyfishCliVersion = '1.8.2-SNAPSHOT'
+        jellyfishCliVersion = '1.9.0-SNAPSHOT'
     }
     
     repositories {
