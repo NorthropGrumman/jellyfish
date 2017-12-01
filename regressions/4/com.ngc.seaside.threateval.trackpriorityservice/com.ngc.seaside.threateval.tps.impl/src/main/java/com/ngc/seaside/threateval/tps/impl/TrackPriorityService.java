@@ -1,17 +1,16 @@
 package com.ngc.seaside.threateval.tps.impl;
 
-import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.service.fault.api.IFaultManagementService;
-import com.ngc.blocs.service.thread.api.IThreadService;
-
 import com.ngc.seaside.threateval.tps.api.ITrackPriorityService;
 import com.ngc.seaside.threateval.tps.base.impl.AbstractTrackPriorityService;
 import com.ngc.seaside.threateval.tps.event.common.datatype.DroppedSystemTrack;
 import com.ngc.seaside.threateval.tps.event.datatype.PrioritizedSystemTrackIdentifiers;
 import com.ngc.seaside.threateval.tps.event.datatype.TrackPriority;
-
+import com.ngc.blocs.service.api.IServiceModule;
+import com.ngc.blocs.service.event.api.IEventService;
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.service.fault.api.IFaultManagementService;
+import com.ngc.blocs.service.thread.api.IThreadService;
+import com.ngc.seaside.service.fault.api.ServiceFaultException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -23,13 +22,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class TrackPriorityService extends AbstractTrackPriorityService {
 
    @Override
-   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriority(TrackPriority trackPriority) {
+   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriority(TrackPriority trackPriority) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
-
    @Override
-   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) {
+   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -88,4 +86,5 @@ public class TrackPriorityService extends AbstractTrackPriorityService {
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
    }
+
 }

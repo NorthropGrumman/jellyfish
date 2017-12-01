@@ -1,0 +1,12 @@
+package com
+
+import com.NestedInputData
+import com.NestedEnum
+
+data Data1 {
+	int field1
+	NestedInputData field3
+	int field5
+	int field6
+	int field7
+}

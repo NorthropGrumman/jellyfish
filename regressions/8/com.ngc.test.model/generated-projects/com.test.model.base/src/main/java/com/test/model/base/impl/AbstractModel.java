@@ -1,8 +1,6 @@
 package com.test.model.base.impl;
 
 import com.google.common.base.Preconditions;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
@@ -10,11 +8,9 @@ import com.ngc.blocs.service.api.ServiceStatus;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
-import com.ngc.blocs.service.thread.api.IThreadService;
-import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-
 import com.test.model.api.IModel;
 
 public abstract class AbstractModel
@@ -34,7 +30,17 @@ public abstract class AbstractModel
 
    protected IThreadService threadService;
 
-   protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
+   protected void activate() {
+      eventService.addSubscriber(this);
+      setStatus(ServiceStatus.ACTIVATED);
+      logService.info(getClass(), "activated");
+   }
+
+   protected void deactivate() {
+      eventService.removeSubscriber(this);
+      setStatus(ServiceStatus.DEACTIVATED);
+      logService.info(getClass(), "deactivated");
+   }
 
    @Override
    public String getName() {
@@ -47,8 +53,8 @@ public abstract class AbstractModel
    }
 
    @Override
-   public void setContext(@SuppressWarnings("rawtypes") IContext iContext) {
-      this.context = iContext;
+   public void setContext(@SuppressWarnings("rawtypes") IContext context) {
+      this.context = context;
    }
 
    @Override
@@ -57,25 +63,10 @@ public abstract class AbstractModel
    }
 
    @Override
-   public boolean setStatus(IStatus<ServiceStatus> iStatus) {
-      Preconditions.checkNotNull(iStatus, "iStatus may not be null!");
-      this.status = iStatus.getStatus();
+   public boolean setStatus(IStatus<ServiceStatus> status) {
+      Preconditions.checkNotNull(status, "status may not be null!");
+      this.status = status.getStatus();
       return true;
-   }
-
-   protected void activate() {
-      eventService.addSubscriber(this);
-
-      setStatus(ServiceStatus.ACTIVATED);
-      logService.info(getClass(), "activated");
-   }
-
-   protected void deactivate() {
-      eventService.removeSubscriber(this);
-      threads.values().forEach(ISubmittedLongLivingTask::cancel);
-      threads.clear();
-      setStatus(ServiceStatus.DEACTIVATED);
-      logService.info(getClass(), "deactivated");
    }
 
    public void setLogService(ILogService ref) {
@@ -109,5 +100,4 @@ public abstract class AbstractModel
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
-
 }

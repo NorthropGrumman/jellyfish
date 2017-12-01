@@ -1,0 +1,124 @@
+package com
+
+import com.Data1
+import com.Data2
+import com.Data3
+import com.Data4
+import com.Data5
+
+model Model {
+	
+	input {
+		Data1 input1
+		Data2 input2
+		Data3 input3
+//		Data1 input4
+	}
+	
+	output {
+		Data4 output1
+		Data5 output2
+//		Data4 output3
+	}
+	
+	scenario basicPubSub {
+		when receiving input1
+		then willPublish output1
+		 and willCorrelate input1.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output1.field5.field6
+	}
+	
+	scenario basicSink {
+		when receiving input1
+		then willBeCompleted within 5 seconds
+	}
+	
+	scenario multiOutputPubSub {
+		when receiving input1
+		then willPublish output1
+		 and willPublish output2
+		 and willCorrelate input1.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output2.field5.field6
+	}
+	
+	scenario complexPubSub {
+		when receiving input1
+		 and receiving input2
+		then willPublish output1
+		 and willPublish output2
+		 and willCorrelate input2.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output2.field5.field6
+	}
+	
+	scenario basicSource {
+		when completing within 5 seconds
+		then willPublish output1
+	}
+	
+	scenario multiSource {
+		when completing within 5 seconds
+		then willPublish output1
+		 and willPublish output2
+	}
+	
+	scenario sinkCorrelation {
+		when receiving input1
+		 and receiving input2
+		 and correlating input1.field1 to input2.field5
+		then willBeCompleted within 5 seconds
+	}
+	
+	scenario singleOutputCorrelation {
+		when receiving input1
+		 and receiving input2
+		 and correlating input1.field1 to input2.field5
+		then willPublish output1
+		 and willCorrelate input2.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output1.field5.field6
+	}
+	
+	scenario multiOutputCorrelation {
+		when receiving input1
+		 and receiving input2
+		 and correlating input1.field1 to input2.field5
+		then willPublish output1
+		 and willPublish output2
+		 and willCorrelate input2.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output2.field5.field6
+	}
+	
+//	scenario multiOutputCorrelationSameType {
+//		when receiving input1
+//		 and receiving input4
+//		 and correlating input1.field1 to input2.field5
+//		then willPublish output1
+//		 and willPublish output3
+//		 and willCorrelate input4.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output3.field5.field6
+//	}
+	
+	scenario complexCorrelation {
+		when receiving input1
+		 and receiving input2
+		 and receiving input3
+		 and correlating input1.field1 to input2.field5
+		 and correlating input1.field6 to input3.field7
+		then willPublish output1
+		 and willPublish output2
+		 and willCorrelate input2.field1 to output1.field2
+		 and willCorrelate input1.field3.field4 to output2.field5.field6
+	}
+	
+//	scenario complexCorrelationSameType {
+//		when receiving input1
+//		 and receiving input2
+//		 and receiving input4
+//		 and correlating input1.field1 to input2.field5
+//		 and correlating input1.field6 to input4.field7
+//		then willPublish output1
+//		 and willPublish output3
+//		 and willCorrelate input2.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output3.field5.field6
+//	}
+	
+}

@@ -1,21 +1,17 @@
 package com.ngc.seaside.threateval.etps.base.impl;
 
 import com.google.common.base.Preconditions;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import com.ngc.blocs.api.IContext;
 import com.ngc.blocs.api.IStatus;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.api.ServiceStatus;
+import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
-import com.ngc.blocs.service.thread.api.IThreadService;
-import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
-
-import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.seaside.threateval.etps.api.IEngagementTrackPriorityService;
 import com.ngc.seaside.threateval.etps.event.datatype.TrackPriority;
 import com.ngc.seaside.threateval.etps.event.engagementplanning.datatype.TrackEngagementStatus;
@@ -37,26 +33,42 @@ public abstract class AbstractEngagementTrackPriorityService
 
    protected IThreadService threadService;
 
-   protected Map<String, ISubmittedLongLivingTask> threads = new ConcurrentHashMap<>();
-
    @Subscriber(TrackEngagementStatus.TOPIC_NAME)
    public void receiveTrackEngagementStatus(IEvent<TrackEngagementStatus> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
+      TrackEngagementStatus source = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
 
+      doCalculateTrackPriority(source);
+   }
+
+   private void publishTrackPriority(TrackPriority value) {
+      Preconditions.checkNotNull(value, "TrackPriority value may not be null!");
+      eventService.publish(value, TrackPriority.TOPIC);
+   }
+
+   private void doCalculateTrackPriority(TrackEngagementStatus input) {
+      TrackPriority output;
       try {
-         publishTrackPriority(calculateTrackPriority(event.getSource()));
-         logService.info(getClass(), "ELK - Scenario: %s; Input: %s; Output: %s;", 
-        		 "calculateTrackPriority", 
-        		 event.getSource(), 
-        		 calculateTrackPriority(event.getSource()));
-      } catch (ServiceFaultException fault) {
+         output = calculateTrackPriority(input);
+      } catch(ServiceFaultException fault) {
          logService.error(getClass(),
-            "Invocation of '%s.calculateTrackPriority(TrackEngagementStatus)' generated fault, dispatching to fault management service.",
-            getClass().getName());
-         faultManagementService.handleFault(fault);
-         // Consume exception.
+            "Invocation of 'AbstractEngagementTrackPriorityService.calculateTrackPriority' generated a fault, dispatching to fault management service.");
+         return;
       }
+      logService.info(getClass(), "ELK - Scenario: calculateTrackPriority; Input: %s; Output: %s;", input, output);
+      publishTrackPriority(output);
+   }
 
+   protected void activate() {
+      eventService.addSubscriber(this);
+      setStatus(ServiceStatus.ACTIVATED);
+      logService.info(getClass(), "activated");
+   }
+
+   protected void deactivate() {
+      eventService.removeSubscriber(this);
+      setStatus(ServiceStatus.DEACTIVATED);
+      logService.info(getClass(), "deactivated");
    }
 
    @Override
@@ -70,8 +82,8 @@ public abstract class AbstractEngagementTrackPriorityService
    }
 
    @Override
-   public void setContext(@SuppressWarnings("rawtypes") IContext iContext) {
-      this.context = iContext;
+   public void setContext(@SuppressWarnings("rawtypes") IContext context) {
+      this.context = context;
    }
 
    @Override
@@ -80,25 +92,10 @@ public abstract class AbstractEngagementTrackPriorityService
    }
 
    @Override
-   public boolean setStatus(IStatus<ServiceStatus> iStatus) {
-      Preconditions.checkNotNull(iStatus, "iStatus may not be null!");
-      this.status = iStatus.getStatus();
+   public boolean setStatus(IStatus<ServiceStatus> status) {
+      Preconditions.checkNotNull(status, "status may not be null!");
+      this.status = status.getStatus();
       return true;
-   }
-
-   protected void activate() {
-      eventService.addSubscriber(this);
-
-      setStatus(ServiceStatus.ACTIVATED);
-      logService.info(getClass(), "activated");
-   }
-
-   protected void deactivate() {
-      eventService.removeSubscriber(this);
-      threads.values().forEach(ISubmittedLongLivingTask::cancel);
-      threads.clear();
-      setStatus(ServiceStatus.DEACTIVATED);
-      logService.info(getClass(), "deactivated");
    }
 
    public void setLogService(ILogService ref) {
@@ -132,10 +129,4 @@ public abstract class AbstractEngagementTrackPriorityService
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
-
-   private void publishTrackPriority(TrackPriority trackPriority) {
-      Preconditions.checkNotNull(trackPriority, "trackPriority may not be null!");
-      eventService.publish(trackPriority, TrackPriority.TOPIC);
-   }
-
 }
