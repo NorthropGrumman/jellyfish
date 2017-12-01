@@ -56,6 +56,7 @@ task('cleanRegressions', description: 'Cleans the build and generated folders fo
 task('generateRegressions', description: 'Generates the output for all regressions')
 task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions')
 task('buildExpectedRegressions', description: 'Builds the expected output for all regressions')
+task('buildRegressions', description: 'Builds the expected and generated output for all regressions')
 task('updateExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions')
 
 file(regressionsFolderName).eachDir { folder ->
@@ -87,14 +88,19 @@ file(regressionsFolderName).eachDir { folder ->
     def expectedBuildTask = createRegressionBuildTask("buildExpectedRegression${regressionName}", expectedFolder)
     expectedBuildTask.dependsOn buildSystemDescriptorProjects
     buildExpectedRegressions.dependsOn expectedBuildTask
+    buildRegressions.dependsOn expectedBuildTask
 
     def generatedBuildTask = createRegressionBuildTask("buildGeneratedRegression${regressionName}", generatedFolder)
     generatedBuildTask.dependsOn buildSystemDescriptorProjects
     generatedBuildTask.dependsOn generateTask
     buildGeneratedRegressions.dependsOn generatedBuildTask
 
+    def buildTask = task("buildRegression${regressionName}", dependsOn: [expectedBuildTask, generatedBuildTask]) {
+        buildRegressions.dependsOn it
+    }
+
     // Diff the expected and generated projects
-    def diffTask = task("diffRegression${regressionName}", dependsOn: [expectedBuildTask, generatedBuildTask], type: RegressionDiffTask) {
+    def diffTask = task("diffRegression${regressionName}", dependsOn: buildTask, type: RegressionDiffTask) {
         regression = regressionName
         expectedDir = expectedFolder
         generatedDir = generatedFolder
