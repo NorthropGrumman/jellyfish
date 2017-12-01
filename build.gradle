@@ -12,7 +12,7 @@ buildscript {
     ext {
         jellyfishCliVersion = '1.9.0-SNAPSHOT'
     }
-    
+
     repositories {
         mavenLocal()
 
@@ -39,7 +39,7 @@ task('buildSystemDescriptorProjects', description: 'builds and installs all of t
     build.dependsOn it
 }
 
-file(systemDescriptorProjectsFolderName).eachDir { folder -> 
+file(systemDescriptorProjectsFolderName).eachDir { folder ->
     // Run 'gradle clean build install' on system descriptor project
     def sdTask = task("buildSd${folder.name}", type: GradleBuild) {
 	    dir = folder
@@ -56,13 +56,13 @@ task('cleanRegressions', description: 'Cleans the build and generated folders fo
 task('generateRegressions', description: 'Generates the output for all regressions')
 task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions')
 task('buildExpectedRegressions', description: 'Builds the expected output for all regressions')
-task('reviseExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions')
+task('updateExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions')
 
 file(regressionsFolderName).eachDir { folder ->
     def regressionName = folder.name.capitalize()
     def expectedFolder = file("${folder}/${expectedFolderName}")
     def generatedFolder = file("${folder}/${generatedFolderName}")
-    
+
     // Clean build folders and generated folder
     task("cleanRegression${regressionName}") {
         delete generatedFolder
@@ -77,35 +77,38 @@ file(regressionsFolderName).eachDir { folder ->
         }
         cleanRegressions.dependsOn it
     }
-    
+
     // Generate project using jellyfish cli
     def generateTask = createGenerationTask("generateRegression${regressionName}", folder, regressionName)
+    generateTask.dependsOn buildSystemDescriptorProjects
     generateRegressions.dependsOn generateTask
-    
+
     // Build the expected and generated projects
     def expectedBuildTask = createRegressionBuildTask("buildExpectedRegression${regressionName}", expectedFolder)
-    buildGeneratedRegressions.dependsOn expectedBuildTask
+    expectedBuildTask.dependsOn buildSystemDescriptorProjects
+    buildExpectedRegressions.dependsOn expectedBuildTask
 
     def generatedBuildTask = createRegressionBuildTask("buildGeneratedRegression${regressionName}", generatedFolder)
+    generatedBuildTask.dependsOn buildSystemDescriptorProjects
     generatedBuildTask.dependsOn generateTask
     buildGeneratedRegressions.dependsOn generatedBuildTask
-    
+
     // Diff the expected and generated projects
     def diffTask = task("diffRegression${regressionName}", dependsOn: [expectedBuildTask, generatedBuildTask], type: RegressionDiffTask) {
         regression = regressionName
         expectedDir = expectedFolder
         generatedDir = generatedFolder
     }
-    
+
     task("regression${regressionName}",
          group: test.group,
-         description: "Run regression test ${regressionName}",
+         description: "Run the entire regression test ${regressionName}",
          dependsOn: [generateTask, generatedBuildTask, diffTask]) {
-         
+
         test.dependsOn it
     }
-    
-    task("reviseExpectedRegression${regressionName}", type: null, dependsOn: generateTask) {
+
+    task("updateExpectedRegression${regressionName}", dependsOn: generateTask) {
         doLast {
             delete expectedFolder
             copy {
@@ -114,9 +117,9 @@ file(regressionsFolderName).eachDir { folder ->
             }
         }
         it.mustRunAfter expectedBuildTask
-        reviseExpectedRegressions.dependsOn it
+        updateExpectedRegressions.dependsOn it
     }
-    
+
 }
 
 // Creates a task that will generate the regression output, with the given task name, regression folder, and regression name
@@ -151,7 +154,7 @@ def createRegressionBuildTask(name, folder) {
     buildTask.doLast {
         folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
             if (file("${buildFolder}/build.gradle").isFile()) {
-            	
+
             	def tempFolder
             	if (OperatingSystem.current().isWindows()) {
                     tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
@@ -194,7 +197,7 @@ dependencies {
 
 test {
    testLogging {
-      showStandardStreams = true  
+      showStandardStreams = true
    }
 }
 
