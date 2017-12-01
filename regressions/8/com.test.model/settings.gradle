@@ -1,16 +1,16 @@
-rootProject.name = 'generatedProject'
+rootProject.name = 'com.test.model'
 
-include 'com.ngc.test.model.domain'
-project(':com.ngc.test.model.domain').name = 'model.domain'
+include 'com.test.model.domain'
+project(':com.test.model.domain').name = 'model.domain'
 
 include 'generated-projects/com.test.model.events'
 project(':generated-projects/com.test.model.events').name = 'model.events'
 
-include 'com.ngc.test.model.tests'
-project(':com.ngc.test.model.tests').name = 'model.tests'
+include 'com.test.model.tests'
+project(':com.test.model.tests').name = 'model.tests'
 
-include 'com.ngc.test.model.distribution'
-project(':com.ngc.test.model.distribution').name = 'model.distribution'
+include 'com.test.model.distribution'
+project(':com.test.model.distribution').name = 'model.distribution'
 
 include 'com.test.model.impl'
 project(':com.test.model.impl').name = 'model.impl'

@@ -1,4 +1,4 @@
-rootProject.name = 'generatedProject'
+rootProject.name = 'com.ngc.example.inhertance.databagsservice'
 
 include 'com.ngc.example.inhertance.databagsservice.domain'
 project(':com.ngc.example.inhertance.databagsservice.domain').name = 'databagsservice.domain'
