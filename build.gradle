@@ -19,7 +19,7 @@ buildscript {
 }
 
 ext {
-    jellyfishCliVersion = '1.8.2-SNAPSHOT'
+    jellyfishCliVersion = '1.8.2'
 }
 
 dependencies {
