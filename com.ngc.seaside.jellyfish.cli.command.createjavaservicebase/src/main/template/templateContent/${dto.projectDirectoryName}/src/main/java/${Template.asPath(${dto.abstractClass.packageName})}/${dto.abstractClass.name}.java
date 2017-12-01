@@ -155,7 +155,7 @@ public abstract class ${dto.abstractClass.name}
                Objects.equal(a.${completenessDto.input1GetterSnippet}, b.${completenessDto.input2GetterSnippet}))
 #end
             .register();
-      triggers.computeIfAbsent(trigger, __ -> new ArrayList<>()).add(this::${input.correlationMethod});
+      triggers.computeIfAbsent(trigger, __ -> new ArrayList<>()).add(this::${method.correlationMethod});
    }
 
 #end
