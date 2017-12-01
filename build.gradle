@@ -20,6 +20,21 @@ buildscript {
 
 ext {
     jellyfishCliVersion = '1.8.0'
+	systemDescriptorProjectsFolder = 'system-descriptor-projects'
+}
+
+// Primary task for running 'gradle clean build install' on all system descriptor projects
+task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects')
+build.dependsOn buildSystemDescriptorProjects
+
+file(systemDescriptorProjectsFolder).eachDir { folder -> 
+    // Run 'gradle clean build install' on system descriptor project
+    def sdTask = task("buildSd${folder.name}", type: GradleBuild) {
+	    dir = folder
+		tasks = ['clean', 'build', 'install']
+		startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
+	}
+	buildSystemDescriptorProjects.dependsOn sdTask
 }
 
 dependencies {

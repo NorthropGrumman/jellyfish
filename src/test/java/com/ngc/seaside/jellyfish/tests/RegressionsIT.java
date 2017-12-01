@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.tests;
 
+import static org.junit.Assert.fail;
+
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
 
 import org.apache.commons.io.FilenameUtils;
@@ -30,16 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
-
 public class RegressionsIT {
-
-   private static final String[] SYSTEM_DESCRIPTOR_PROJECTS = {
-         "threat-eval-system-descriptor",
-         "data-inheritance-descriptor",
-         "pubsub-system-descriptor",
-         "qualified-names-system-descriptor"
-   };
 
    private static final String[] IGNORED_FILE_NAMES = {
          ".*\\.bin$",
@@ -83,8 +76,6 @@ public class RegressionsIT {
     */
    @Test
    public void testGenerationAndDiff() throws IOException {
-      buildAndInstallSdProjects();
-
       File[] subs = new File(regressionTestsDir).listFiles();
       Map<String, Boolean> regressionScore = new HashMap<>();
 
@@ -119,8 +110,6 @@ public class RegressionsIT {
    public void testSingleCase() throws IOException {
       String testCaseName = "8";
 
-      buildAndInstallSdProjects();
-
       File[] subs = new File(regressionTestsDir).listFiles();
       Map<String, Boolean> regressionScore = new HashMap<>();
 
@@ -153,33 +142,6 @@ public class RegressionsIT {
    @After
    public void cleanUp() throws Throwable {
       scriptUpdater.restoreAllScripts();
-   }
-
-   private void buildAndInstallSdProjects() throws IOException {
-      File gradleInstall = getGradleInstallPath();
-
-      File mainDir = new File(System.getProperty("user.dir"));
-      for (String sdProject : SYSTEM_DESCRIPTOR_PROJECTS) {
-         File projectDir = new File(mainDir, sdProject);
-         System.out.println("Running 'gradle clean build install' on SD project: " + sdProject);
-
-         scriptUpdater.updateJellyFishGradlePluginsVersion(new File(projectDir, "build.gradle").toPath(),
-                                                           jellyFishVersion);
-
-         ProjectConnection connection = GradleConnector.newConnector()
-               .useInstallation(gradleInstall)
-               .forProjectDirectory(projectDir)
-               .connect();
-         try (OutputStream out = Files.newOutputStream(Paths.get("build", "gradle-" + sdProject + ".log"))) {
-            connection.newBuild()
-                  .forTasks("clean", "build", "install")
-                  .setStandardOutput(out)
-                  .setStandardError(out)
-                  .run();
-         } finally {
-            connection.close();
-         }
-      }
    }
 
    private File getGradleInstallPath() throws IOException {
