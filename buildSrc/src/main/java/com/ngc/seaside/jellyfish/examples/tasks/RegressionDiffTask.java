@@ -21,6 +21,7 @@ public class RegressionDiffTask extends DefaultTask {
 
    private Collection<String> excludedFileRegularExpressions = new ArrayList<>(Arrays.asList(
       ".*\\.bin$",
+      ".*\\.bnd$",
       ".*\\.jar$",
       ".*\\.lock$",
       ".*\\.class$",
@@ -102,27 +103,39 @@ public class RegressionDiffTask extends DefaultTask {
       boolean fileEquality = true;
       boolean dirEquality = true;
 
-      ArrayList<File> defaultFiles = new ArrayList<File>();
-      ArrayList<File> genProjFiles = new ArrayList<File>();
+      ArrayList<File> expectedFiles = new ArrayList<File>();
+      ArrayList<File> generatedFiles = new ArrayList<File>();
+      outer:
       for (File file : expectedDir.listFiles()) {
-         defaultFiles.add(file);
+         for (String pattern : excludedFileRegularExpressions) {
+            if (file.getAbsolutePath().matches(pattern)) {
+               continue outer;
+            }
+         }
+         expectedFiles.add(file);
       }
 
+      outer:
       for (File file : generatedDir.listFiles()) {
-         genProjFiles.add(file);
+         for (String pattern : excludedFileRegularExpressions) {
+            if (file.getAbsolutePath().matches(pattern)) {
+               continue outer;
+            }
+         }
+         generatedFiles.add(file);
       }
-      defaultFiles.sort(null);
-      genProjFiles.sort(null);
+      expectedFiles.sort(null);
+      generatedFiles.sort(null);
 
       // The trees must contain the same number of elements to be equal
-      if (defaultFiles.size() != genProjFiles.size()) {
+      if (expectedFiles.size() != generatedFiles.size()) {
          prettyPrintFolderContainDifferentListFiles(expectedDir, generatedDir);
          sizeEquality = false;
       } else {
          // Loop through the elements and evaluate them in each project
-         for (int i = 0; i < defaultFiles.size(); i++) {
-            File subFileDefDir = defaultFiles.get(i);
-            File subFileGenDir = genProjFiles.get(i);
+         for (int i = 0; i < expectedFiles.size(); i++) {
+            File subFileDefDir = expectedFiles.get(i);
+            File subFileGenDir = generatedFiles.get(i);
 
             if (subFileDefDir.isFile() && subFileGenDir.isDirectory() ||
                subFileDefDir.isDirectory() && subFileGenDir.isFile()) {
@@ -187,14 +200,6 @@ public class RegressionDiffTask extends DefaultTask {
    private boolean validFileDifferences(File defFile, File genFile) throws IOException {
       boolean equalFiles = true;
 
-      for (String pattern : excludedFileRegularExpressions) {
-         if (defFile.getName().matches(pattern) || genFile.getName().matches(pattern)) {
-            // These files should be ignored in the diff. Don't treat differences found in
-            // these files as valid differences.
-            return true;
-         }
-      }
-
       ArrayList<String> defPath = new ArrayList<String>();
 
       defPath.add(defFile.getName());
@@ -204,26 +209,26 @@ public class RegressionDiffTask extends DefaultTask {
          parent = parent.getParentFile();
       }
 
-      BufferedReader defaultBr = new BufferedReader(new FileReader(defFile));
-      BufferedReader generateBr = new BufferedReader(new FileReader(genFile));
+      BufferedReader expectedBr = new BufferedReader(new FileReader(defFile));
+      BufferedReader generatedBr = new BufferedReader(new FileReader(genFile));
 
       try {
-         String defaultFileLine;
+         String expectedFileLine;
          String generatedFileLine;
          int lineNum = 0;
-         while ((defaultFileLine = defaultBr.readLine()) != null
-            && (generatedFileLine = generateBr.readLine()) != null) {
+         while ((expectedFileLine = expectedBr.readLine()) != null
+            && (generatedFileLine = generatedBr.readLine()) != null) {
             lineNum++;
 
-            if (!defaultFileLine.equals(generatedFileLine)) {
+            if (!expectedFileLine.equals(generatedFileLine)) {
                equalFiles = false;
-               prettyPrintFilesNotEqual(defFile, genFile, lineNum, defaultFileLine, generatedFileLine);
+               prettyPrintFilesNotEqual(defFile, genFile, lineNum, expectedFileLine, generatedFileLine);
             }
 
          }
       } finally {
-         defaultBr.close();
-         generateBr.close();
+         expectedBr.close();
+         generatedBr.close();
       }
 
       return equalFiles;
@@ -241,11 +246,11 @@ public class RegressionDiffTask extends DefaultTask {
    private static void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
             String defLine, String genLine) {
       System.err.println("--------------------\nFiles are not equal. Valid differences found:");
-      System.err.println("  Default File: " + defFile.getAbsolutePath());
+      System.err.println(" Expected File: " + defFile.getAbsolutePath());
       System.err.println("Generated File: " + genFile.getAbsolutePath() + "\n");
 
       System.err.println("Line " + diffLineNum + ":");
-      System.err.println("  Default file: " + defLine);
+      System.err.println(" Expected file: " + defLine);
       System.err.println("Generated file: " + genLine + "\n");
    }
 
