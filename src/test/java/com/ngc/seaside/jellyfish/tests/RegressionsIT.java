@@ -2,35 +2,20 @@ package com.ngc.seaside.jellyfish.tests;
 
 import static org.junit.Assert.fail;
 
-import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator;
-
-import org.apache.commons.io.FilenameUtils;
-import org.gradle.api.logging.Logger;
 import org.gradle.internal.impldep.org.apache.commons.io.FileUtils;
-import org.gradle.tooling.BuildLauncher;
-import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ProjectConnection;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class RegressionsIT {
 
@@ -50,7 +35,6 @@ public class RegressionsIT {
    // Class variable to hold regressions directory
    private String rootDir = "";
    private String regressionTestsDir = "";
-   private String jellyFishVersion = VersionUtil.getJellyfishVersion();
    private BuildScriptUpdater scriptUpdater;
 
    @Before
@@ -127,39 +111,6 @@ public class RegressionsIT {
       scriptUpdater.restoreAllScripts();
    }
 
-   private File getGradleInstallPath() throws IOException {
-      File gradle = null;
-      String gradleHome = System.getenv("GRADLE_HOME");
-      String gradleUserHome = System.getenv("GRADLE_USER_HOME");
-      if (gradleHome != null) {
-         gradle = Paths.get(gradleHome).toFile();
-      } else if (gradleUserHome != null) {
-         Properties wrapperProps = new Properties();
-         try (InputStream is = Files.newInputStream(Paths.get(rootDir,
-                                                              "gradle",
-                                                              "wrapper",
-                                                              "gradle-wrapper.properties"))) {
-            wrapperProps.load(is);
-         }
-
-         String version = wrapperProps.getProperty("distributionUrl");
-         version = FilenameUtils.removeExtension(version.substring(version.lastIndexOf('/')));
-         gradle = Paths.get(gradleUserHome,
-                            wrapperProps.getProperty("distributionPath"),
-                            version)
-               .toFile();
-         gradle = new File(gradle.listFiles()[0], version.replace("-bin", ""));
-      }
-
-      Assert.assertNotNull(
-            "unable find a gradle installation; set the env variable GRADLE_HOME to a gradle installation directory",
-            gradle);
-      Assert.assertTrue(
-            "unable find a gradle installation; set the env variable GRADLE_HOME to a gradle installation directory",
-            gradle.isDirectory());
-      return gradle;
-   }
-
    /**
     * Simple method to display an organized summary at the end of the build.
     */
@@ -196,7 +147,6 @@ public class RegressionsIT {
       return pass;
    }
 
-
    /**
     * Run 'gradle clean build -x test' command for the generated subproject
     *
@@ -214,49 +164,6 @@ public class RegressionsIT {
 
       Assert.assertTrue(givenProject != "");
       String generatedProj = directory + File.separator + "generatedProject";
-
-      File gradleInstall = getGradleInstallPath();
-
-      // Perform the 'gradle clean build -x test' command
-      // NOTE: The below build fails on Windows due to the "windows file path too long" bug. 
-
-      System.out.println("Running 'gradle clean build -x test' on given project: " + givenProject);
-      ProjectConnection connectionToGivenProj = GradleConnector.newConnector()
-            .useInstallation(gradleInstall)
-            .forProjectDirectory(new File(givenProject))
-            .connect();
-
-      try (OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.actual.log"))) {
-         scriptUpdater.updateJellyFishGradlePluginsVersion(Paths.get(givenProject, "build.gradle"),
-                                                           jellyFishVersion);
-
-         BuildLauncher build = connectionToGivenProj.newBuild();
-         build.forTasks("clean", "build");
-         build.withArguments("-x", "test");
-         build.setStandardError(log).
-               setStandardOutput(log);
-
-         build.run();
-      } finally {
-         connectionToGivenProj.close();
-      }
-
-      System.out.println("Running 'gradle clean build -x test' on newly generated project: " + generatedProj);
-      ProjectConnection connectionToGeneratedProj = GradleConnector.newConnector()
-            .useInstallation(gradleInstall)
-            .forProjectDirectory(new File(generatedProj))
-            .connect();
-
-      try (OutputStream log = Files.newOutputStream(Paths.get(directory, "gradle.generated.log"))) {
-         BuildLauncher build = connectionToGeneratedProj.newBuild();
-         build.forTasks("clean", "build");
-         build.withArguments("-x", "test");
-         build.setStandardError(log).setStandardOutput(log);
-
-         build.run();
-      } finally {
-         connectionToGeneratedProj.close();
-      }
 
       boolean passDiff = diffDefaultAndGeneratedProjectTrees(generatedProj);
       return passDiff;
@@ -521,33 +428,6 @@ public class RegressionsIT {
       } else {
          System.out.println("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
       }
-   }
-
-   /**
-    * Convenience method to read the provided Jellyfish Properties file
-    *
-    * @param dir directory of the properties file
-    * @return a map with property name keys and the corresponding property values
-    * @throws IOException working with libraries to read a file on the filesystem
-    */
-   private static Map<String, String> readJellyfishPropertiesFile(String dir) throws IOException {
-      Map<String, String> props = new HashMap<String, String>();
-      File fin = new File(dir, "jellyfish.properties");
-      FileInputStream fis = new FileInputStream(fin);
-
-      // Construct BufferedReader from InputStreamReader
-      BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-      String line = null;
-      while ((line = br.readLine()) != null) {
-         String[] splitLine = line.split("=");
-         for (int i = 0; i < splitLine.length; i++) {
-            props.put(splitLine[0], splitLine[1]);
-         }
-      }
-
-      br.close();
-      return props;
    }
 
    /**
