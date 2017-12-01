@@ -1,5 +1,8 @@
 package com.ngc.seaside.jellyfish.service.codegen.api.dto;
 
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
+
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -9,6 +12,8 @@ public class PubSubMethodDto extends MethodDto {
 
    private Map<String, ? extends MethodDto> publishMethods;
    private String publishingTopic;
+   private Collection<ICorrelationExpression> inputInputCorrelations;
+   private Collection<ICorrelationExpression> inputOutputCorrelations;
 
    /**
     * Gets whether or not this method is associated with publishing. This will also return true for sources and false for sinks.
@@ -40,5 +45,30 @@ public class PubSubMethodDto extends MethodDto {
       this.publishingTopic = topic;
       return this;
    }
+   
+   public Collection<ICorrelationExpression> getInputInputCorrelations() {
+      return inputInputCorrelations;
+   }
+   
+   public Collection<ICorrelationExpression> getInputOutputCorrelations() {
+      return inputOutputCorrelations;
+   }
 
+   public PubSubMethodDto setInputInputCorrelations(Collection<ICorrelationExpression> inputInputCorrelations) {
+      this.inputInputCorrelations = inputInputCorrelations;
+      return this;
+   }
+
+   public PubSubMethodDto setInputOutputCorrelations(Collection<ICorrelationExpression> inputOutputCorrelations) {
+      this.inputOutputCorrelations = inputOutputCorrelations;
+      return this;
+   }
+   
+   public boolean hasCorrelation() {
+      if (!inputInputCorrelations.isEmpty() ||  !inputOutputCorrelations.isEmpty()) {
+         return true;
+      } else {
+         return false;
+      }
+   }
 }

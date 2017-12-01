@@ -14,6 +14,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -42,7 +44,8 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
    private ILogService logService;
    private ITemplateService templateService;
-   private IServiceDtoFactory templateDaoFactory;
+   private IServiceDtoFactory serviceTemplateDaoFactory;
+   private IBaseServiceDtoFactory baseServiceTemplateDaoFactory;
    private IProjectNamingService projectNamingService;
 
    @Override
@@ -54,10 +57,13 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
       IProjectInformation projectInfo = projectNamingService.getServiceProjectName(commandOptions, model);
 
-      ServiceDto dto = templateDaoFactory.newDto(commandOptions, model);
+      BaseServiceDto baseServiceDto = baseServiceTemplateDaoFactory.newDto(commandOptions, model);
+      ServiceDto serviceDto = serviceTemplateDaoFactory.newDto(commandOptions, model, baseServiceDto);
+      
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      parameters.addParameter(new DefaultParameter<>("serviceDto", serviceDto));
+      parameters.addParameter(new DefaultParameter<>("baseServiceDto", baseServiceDto));
       templateService.unpack(CreateJavaServiceCommand.class.getPackage().getName(),
          parameters,
          outputDir,
@@ -135,13 +141,22 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
       setTemplateService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateDaoFactory")
-   public void setTemplateDaoFactory(IServiceDtoFactory ref) {
-      this.templateDaoFactory = ref;
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeServiceTemplateDaoFactory")
+   public void setServiceTemplateDaoFactory(IServiceDtoFactory ref) {
+      this.serviceTemplateDaoFactory = ref;
    }
 
-   public void removeTemplateDaoFactory(IServiceDtoFactory ref) {
-      setTemplateDaoFactory(null);
+   public void removeServiceTemplateDaoFactory(IServiceDtoFactory ref) {
+      setServiceTemplateDaoFactory(null);
+   }
+   
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeBaseServiceTemplateDaoFactory")
+   public void setBaseServiceTemplateDaoFactory(IBaseServiceDtoFactory ref) {
+      this.baseServiceTemplateDaoFactory = ref;
+   }
+
+   public void removeBaseServiceTemplateDaoFactory(IBaseServiceDtoFactory ref) {
+      setBaseServiceTemplateDaoFactory(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)

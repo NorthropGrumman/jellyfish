@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -15,6 +14,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepH
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class ScenarioServiceGuiceWrapper implements IScenarioService {
 
@@ -41,9 +41,9 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(
+   public Optional<IPublishSubscribeMessagingFlow> getPubSubMessagingFlow(
          IJellyFishCommandOptions options, IScenario scenario) {
-      return scenarioService.getPubSubMessagingFlows(options, scenario);
+      return scenarioService.getPubSubMessagingFlow(options, scenario);
    }
 
    @Override

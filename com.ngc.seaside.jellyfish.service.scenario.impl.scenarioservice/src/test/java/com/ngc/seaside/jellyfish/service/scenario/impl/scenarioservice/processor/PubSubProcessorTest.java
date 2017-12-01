@@ -1,5 +1,10 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
@@ -16,12 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PubSubProcessorTest {
@@ -80,12 +80,10 @@ public class PubSubProcessorTest {
 
    @Test
    public void testDoesComputeFlowPaths() throws Throwable {
-      Collection<IPublishSubscribeMessagingFlow> flows = processor.getFlows(scenario);
-      assertEquals("does not correct number of flows!",
-                   1,
-                   flows.size());
+      Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
+      assertTrue("expected a flow!", optionalFlow.isPresent());
 
-      IPublishSubscribeMessagingFlow flow = flows.iterator().next();
+      IPublishSubscribeMessagingFlow flow = optionalFlow.get();
       assertEquals("flow type not correct!",
                    IPublishSubscribeMessagingFlow.FlowType.PATH,
                    flow.getFlowType());
@@ -102,12 +100,10 @@ public class PubSubProcessorTest {
    public void testDoesComputeFlowSources() throws Throwable {
       scenario.getWhens().clear();
 
-      Collection<IPublishSubscribeMessagingFlow> flows = processor.getFlows(scenario);
-      assertEquals("does not correct number of flows!",
-                   1,
-                   flows.size());
+      Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
+      assertTrue("expected a flow!", optionalFlow.isPresent());
 
-      IPublishSubscribeMessagingFlow flow = flows.iterator().next();
+      IPublishSubscribeMessagingFlow flow = optionalFlow.get();
       assertEquals("flow type not correct!",
                    IPublishSubscribeMessagingFlow.FlowType.SOURCE,
                    flow.getFlowType());
@@ -124,12 +120,10 @@ public class PubSubProcessorTest {
    public void testDoesComputeFlowSinks() throws Throwable {
       scenario.getThens().clear();
 
-      Collection<IPublishSubscribeMessagingFlow> flows = processor.getFlows(scenario);
-      assertEquals("does not correct number of flows!",
-                   1,
-                   flows.size());
+      Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
+      assertTrue("expected a flow!", optionalFlow.isPresent());
 
-      IPublishSubscribeMessagingFlow flow = flows.iterator().next();
+      IPublishSubscribeMessagingFlow flow = optionalFlow.get();
       assertEquals("flow type not correct!",
                    IPublishSubscribeMessagingFlow.FlowType.SINK,
                    flow.getFlowType());
