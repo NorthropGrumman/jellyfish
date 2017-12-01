@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -23,10 +22,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -56,14 +55,12 @@ public class ScenarioService implements IScenarioService {
    }
 
    @Override
-   public Collection<IPublishSubscribeMessagingFlow> getPubSubMessagingFlows(IJellyFishCommandOptions options,
+   public Optional<IPublishSubscribeMessagingFlow> getPubSubMessagingFlow(IJellyFishCommandOptions options,
                                                                              IScenario scenario) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");
 
-      Collection<IPublishSubscribeMessagingFlow> flows = new ArrayList<>();
-      flows.addAll(pubSubProcessor.getFlows(scenario));
-      return Collections.unmodifiableCollection(flows);
+      return pubSubProcessor.getFlow(scenario);
    }
 
    @Override

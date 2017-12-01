@@ -1,9 +1,11 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -27,9 +29,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScenarioServiceIT {
@@ -84,12 +84,10 @@ public class ScenarioServiceIT {
       IModel model = systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService").get();
       IScenario scenario = model.getScenarios().getByName("calculateTrackPriority").get();
 
-      Collection<IPublishSubscribeMessagingFlow> flows = service.getPubSubMessagingFlows(options, scenario);
-      assertEquals("contains an incorrect number of flows!",
-                   1,
-                   flows.size());
+      Optional<IPublishSubscribeMessagingFlow> optionalFlow = service.getPubSubMessagingFlow(options, scenario);
+      assertTrue("contains an incorrect number of flows!", optionalFlow.isPresent());
 
-      IPublishSubscribeMessagingFlow flow = flows.iterator().next();
+      IPublishSubscribeMessagingFlow flow = optionalFlow.get();
       assertEquals("flow scenario not correct!",
                    scenario,
                    flow.getScenario());

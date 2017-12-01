@@ -11,24 +11,30 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
+import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,20 +46,22 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateJavaServiceCommandIT {
 
    private CreateJavaServiceCommand command;
 
    private MockedTemplateService templateService;
 
-   private IServiceDtoFactory templateDaoFactory;
+   private IServiceDtoFactory serviceTemplateDaoFactory;
+   
+   private IBaseServiceDtoFactory baseServiceTemplateDaoFactory;
 
    private DefaultParameterCollection parameters;
 
@@ -77,7 +85,16 @@ public class CreateJavaServiceCommandIT {
 
    @Mock
    private ClassDto<?> interfaceDto;
+   
+   @Mock
+   private IScenarioService scenarioService;
 
+   @Mock
+   private IDataService dataService;
+
+   @Mock
+   private IDataFieldGenerationService dataFieldGenerationService;
+   
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
@@ -88,11 +105,15 @@ public class CreateJavaServiceCommandIT {
                                                       CreateJavaServiceCommand.class.getPackage().getName(),
                                                       Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new ServiceDtoFactory(projectService, packageService, generatorService);
+      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService);
 
+      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+      IModel testModel = newModelForTesting();
+
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
-         Optional.of(newModelForTesting()));
+         Optional.of(testModel));
 
       parameters = new DefaultParameterCollection();
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
@@ -100,26 +121,32 @@ public class CreateJavaServiceCommandIT {
 
       command = new CreateJavaServiceCommand();
       command.setLogService(logService);
-      command.setTemplateDaoFactory(templateDaoFactory);
+      command.setServiceTemplateDaoFactory(serviceTemplateDaoFactory);
+      command.setBaseServiceTemplateDaoFactory(baseServiceTemplateDaoFactory);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
 
       when(projectService.getServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase());
+         String qualName = model.getFullyQualifiedName().toLowerCase();
+         when(information.getDirectoryName()).thenReturn(qualName);
          return information;
       });
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
+         String qualName = model.getFullyQualifiedName().toLowerCase();
+         String name = model.getName().toLowerCase();
+         when(information.getDirectoryName()).thenReturn(qualName + ".base");
+         when(information.getArtifactId()).thenReturn(name + ".base");
          return information;
       });
       when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
-         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".events");
+         String name = model.getName().toLowerCase();
+         when(information.getArtifactId()).thenReturn(name + ".events");
          return information;
       });
       when(packageService.getServiceBaseImplementationPackageName(any(), any())).thenAnswer(args -> {
@@ -146,7 +173,7 @@ public class CreateJavaServiceCommandIT {
                                        .setReturnArgument(
                                           new ArgumentDto().setTypeName("TrackPriority")
                                                            .setPackageName("com.ngc.seaside.threateval")
-                                                           .setName("asdf"))
+                                                           .setName("trackPriority"))
                                        .setArguments(Collections.singletonList(
                                           new ArgumentDto().setTypeName("TrackEngagementStatus")
                                                            .setPackageName("com.ngc.seaside.threateval")
@@ -156,15 +183,33 @@ public class CreateJavaServiceCommandIT {
                         "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
          return interfaceDto;
       });
-      when(generatorService.getBaseServiceDescription(any(), any())).thenAnswer(args -> {
-         IJellyFishCommandOptions options = args.getArgument(0);
-         IModel model = args.getArgument(1);
-         ClassDto<?> abstractClassDto = new ClassDto<>();
-         abstractClassDto.setName("Abstract" + model.getName())
-                         .setPackageName(packageService.getServiceBaseImplementationPackageName(options, model));
-         return abstractClassDto;
-      });
+      ClassDto<PubSubMethodDto> abstractClassDto = new ClassDto<>();
+      
+      abstractClassDto.setName("Abstract" + testModel.getName())
+            .setPackageName(packageService.getServiceBaseImplementationPackageName(jellyFishCommandOptions, testModel))
+            .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
 
+      when(generatorService.getBaseServiceDescription(any(), any())).thenReturn(abstractClassDto);
+      when(dataService.getEventClass(any(), any())).thenAnswer(args -> {
+         INamedChild<IPackage> child = args.getArgument(1);
+         TypeDto<?> typeDto = new ArgumentDto();
+         typeDto.setPackageName(child.getParent().getName() + ".engagementtrackpriorityservice.events");
+         typeDto.setTypeName(child.getName());
+         return typeDto;
+      });
+      
+      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);  
+      IScenario scenario = testModel.getScenarios().getByName("calculateTrackPriority").get();
+      IDataReferenceField input = testModel.getInputs().iterator().next();
+      IDataReferenceField output = testModel.getOutputs().iterator().next();
+      when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getInputs()).thenReturn(Collections.singleton(input));
+      when(flow.getOutputs()).thenReturn(Collections.singleton(output));
+      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
+      when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
    }
 
    @Test
@@ -198,8 +243,8 @@ public class CreateJavaServiceCommandIT {
          "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority\\s*;");
       assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
       assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
+      
       assertFileContains(servicePath, "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(");
-      assertFileContains(servicePath, "\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
       
       Path testPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(), "com.ngc.seaside.threateval.engagementtrackpriorityservice",
          "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java");
@@ -209,38 +254,14 @@ public class CreateJavaServiceCommandIT {
       
    }
 
-   public static Model newModelForTesting() {
-      Data trackEngagementStatus = new Data("TrackEngagementStatus");
-      Data trackPriority = new Data("TrackPriority");
+   public static IModel newModelForTesting() {
+      ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.seaside.threateval.EngagementTrackPriorityService");
+      IData trackEngagementStatus = ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackEngagementStatus");
+      IData trackPriority = ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriority");
 
-      Scenario calculateTrackPriority = new Scenario("calculateTrackPriority");
-
-      ScenarioStep step = new ScenarioStep();
-      step.setKeyword(ReceiveStepHandler.PRESENT.getVerb());
-      step.getParameters().add("trackEngagementStatus");
-      calculateTrackPriority.setWhens(listOf(step));
-
-      step = new ScenarioStep();
-      step.setKeyword(PublishStepHandler.FUTURE.getVerb());
-      step.getParameters().add("trackPriority");
-      calculateTrackPriority.setThens(listOf(step));
-
-      Model model = new Model("EngagementTrackPriorityService");
-      model.addInput(new DataReferenceField("trackEngagementStatus").setType(trackEngagementStatus));
-      model.addOutput(new DataReferenceField("trackPriority").setType(trackPriority));
-      model.addScenario(calculateTrackPriority);
-      calculateTrackPriority.setParent(model);
-
-      Package p = new Package("com.ngc.seaside.threateval");
-      p.addModel(model);
+      model.addPubSub("calculateTrackPriority", "trackEngagementStatus", trackEngagementStatus, "trackPriority", trackPriority);
 
       return model;
    }
 
-   @SafeVarargs
-   private static <T> ArrayList<T> listOf(T... things) {
-      // TODO TH:
-      // Fix the basic model impl. ArrayList SHOULD NOT be in the signature.
-      return new ArrayList<>(Arrays.asList(things));
-   }
 }

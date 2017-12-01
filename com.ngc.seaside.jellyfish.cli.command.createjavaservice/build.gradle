@@ -4,6 +4,7 @@ dependencies {
 
     compile project(":jellyfish.api")
     compile project(":jellyfish.service.api")
+    compile project(":jellyfish.cli.command.createjavaservicebase")
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
@@ -28,6 +29,7 @@ dependencies {
 
     testCompile project(":jellyfish.service.codegen.impl.codegenservices")
     testCompile project(":jellyfish.cli.command.testutils")
+    testCompile "com.ngc.seaside:systemdescriptor.ext.testutils:$jellyfishEXTVersion"
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"

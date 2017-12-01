@@ -15,8 +15,15 @@ public class CorrelationExpression implements ICorrelationExpression {
    private final IDataPath right;
    
    public CorrelationExpression(CorrelateStepHandler handler, IScenarioStep step) {
-      left = handler.getLeftPath(step);
-      right = handler.getRightPath(step);
+      IDataPath left = handler.getLeftPath(step);
+      IDataPath right = handler.getRightPath(step);
+      if (left.isOutput()) {
+         this.left = right;
+         this.right = left;
+      } else {
+         this.left = left;
+         this.right = right;
+      }
    }
    
    @Override

@@ -1,19 +1,6 @@
 #set( $D = '$' )
 
-apply plugin: 'application'
-apply plugin: 'java'
-
-mainClassName = "${dto.packageName}.main.${dto.className}TestMain"
-
-distributions {
-    main {
-        contents {
-            from('src/main/resources') {
-                into 'resources'
-            }
-        }
-    }
-}
+apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
 #foreach ($dependency in $dto.dependencies)
@@ -42,17 +29,23 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': "${dto.packageName}.${dto.className}TestMain"
+        attributes 'Main-Class': "${dto.packageName}.main.${dto.className}TestMain"
     }
 }
 
-// Provide the app home directory has a system property.
-applicationDefaultJvmArgs = ["-DappHome=APP_HOME_PLACEHOLDER", "-DNG_FW_HOME=APP_HOME_PLACEHOLDER"]
 
-// Set the property to the value in the script (windows vs *nix).
-startScripts {
-    doLast {
-        unixScript.text = unixScript.text.replace('APP_HOME_PLACEHOLDER', '${D}APP_HOME')
-        windowsScript.text = windowsScript.text.replace('APP_HOME_PLACEHOLDER', '%APP_HOME%')
+seasideApplication {
+    mainClassName = "${dto.packageName}.main.${dto.className}TestMain"
+    includeDistributionDirs = ['src/main/resources/']
+    appHomeVarName = 'appHome'
+    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    distributionName = "${D}{project.name}-${D}{project.version}"
+    installationDir = "build/distributions/${D}{project.name}-${D}{project.version}"
+
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
     }
 }
