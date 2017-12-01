@@ -191,32 +191,6 @@ public class RegressionsIT {
     * @param directory - the directory of the regression test (ex: 1, 2, etc)
     */
    private boolean generateJellyfishProject(File directory) throws IOException {
-      System.out.println("Generating jelly fish project in directory: " + directory);
-
-      // Parse the properties file and store the relevant data
-      Map<String, String> propertiesValues = readJellyfishPropertiesFile(directory.getAbsolutePath());
-
-      Map<String, String> generatorArguments = new HashMap<>(propertiesValues);
-      // Set these default properties.
-      generatorArguments.put("outputDirectory", directory.getAbsolutePath());
-      generatorArguments.put("projectName", "generatedProject");
-      generatorArguments.put("jellyfishGradlePluginsVersion", jellyFishVersion);
-
-      // Create the generation project object
-
-      Logger log = Mockito.mock(Logger.class);
-      JellyFishProjectGenerator proj = new JellyFishProjectGenerator(log)
-            .setCommand(propertiesValues.get("command"))
-            .setArguments(generatorArguments);
-
-      if (propertiesValues.containsKey("inputDir")) {
-         String relPath = File.separator + propertiesValues.get("inputDir").replace('/', File.separatorChar);
-         proj.setInputDir(directory + relPath);
-      }
-
-      // Generate the object with a firey passion
-      proj.generate();
-
       // At this point, the project has been generated. Now, run 'gradle clean build -x text' on each subproject
       boolean pass = runGradleCleanBuildOnProjects(directory.getAbsolutePath());
       return pass;

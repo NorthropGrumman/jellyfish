@@ -66,6 +66,34 @@ file(regressionsFolderName).eachDir { folder ->
         cleanRegression.dependsOn it
     }
     
+    // Generate project using jellyfish cli
+    def generateTask = createGenerationTask("generateRegression${regressionName}", folder, regressionName)
+    
+}
+
+// Creates a task that will generate the regression output, with the given task name, regression folder, and regression name
+def createGenerationTask(name, folder, regressionName) {
+    def propertiesFile = file("${folder}/jellyfish.properties")
+    if (!propertiesFile.isFile()) {
+        throw new GradleException("Regression ${regressionName} is missing jellyfish.properties file")
+    }
+
+    Properties properties = new Properties()
+    propertiesFile.withInputStream {
+        properties.load(it)
+    }
+
+    properties['outputDirectory'] = "${folder}/${generatedFolderName}"
+    properties['clean'] = 'true'
+    if (properties.containsKey('inputDir')) {
+        properties['inputDir'] = "${folder}/${properties['inputDir']}"
+    }
+
+    def generateTask = task(name, type: JellyFishCliCommandTask) {
+        command = properties['command']
+        inputDir = properties['inputDir']
+        arguments = properties
+    }
 }
 
 dependencies {
