@@ -1,8 +1,8 @@
 package com.ngc.seaside.jellyfish.examples.tasks;
 
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -169,23 +169,21 @@ public class RegressionDiffTask extends DefaultTask {
     * @param defProj - the given project
     * @param genProj - the generated project
     */
-   private static void prettyPrintFolderContainDifferentListFiles(File defProj, File genProj) {
-      System.err.println("--------------------------\nDirectories are not equal:");
+   private void prettyPrintFolderContainDifferentListFiles(File defProj, File genProj) {
+      getProject().getLogger().error("--------------------------\nDirectories are not equal:");
 
       File[] subDir1 = defProj.listFiles();
       File[] subDir2 = genProj.listFiles();
 
-      System.err.println("Folder: " + defProj.getAbsolutePath());
+      getProject().getLogger().error("Folder: " + defProj.getAbsolutePath());
       for (int i = 0; i < subDir1.length; i++) {
-         System.err.println("\t- " + subDir1[i].getName());
+         getProject().getLogger().error("\t- " + subDir1[i].getName());
       }
 
-      System.err.println("\nFolder: " + genProj.getAbsolutePath());
+      getProject().getLogger().error("\nFolder: " + genProj.getAbsolutePath());
       for (int i = 0; i < subDir2.length; i++) {
-         System.out.println("\t- " + subDir2[i].getName());
+         getProject().getLogger().error("\t- " + subDir2[i].getName());
       }
-
-      System.err.println();
    }
 
    /**
@@ -243,15 +241,15 @@ public class RegressionDiffTask extends DefaultTask {
     * @param defLine - the contents of the evaluated line in the given project
     * @param genLine - the contents of the evaluated line in the generated project
     */
-   private static void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
+   private void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
             String defLine, String genLine) {
-      System.err.println("--------------------\nFiles are not equal. Valid differences found:");
-      System.err.println(" Expected File: " + defFile.getAbsolutePath());
-      System.err.println("Generated File: " + genFile.getAbsolutePath() + "\n");
+      getProject().getLogger().error("--------------------\nFiles are not equal. Valid differences found:");
+      getProject().getLogger().error(" Expected File: " + defFile.getAbsolutePath());
+      getProject().getLogger().error("Generated File: " + genFile.getAbsolutePath() + "\n");
 
-      System.err.println("Line " + diffLineNum + ":");
-      System.err.println(" Expected file: " + defLine);
-      System.err.println("Generated file: " + genLine + "\n");
+      getProject().getLogger().error("Line " + diffLineNum + ":");
+      getProject().getLogger().error(" Expected file: " + defLine);
+      getProject().getLogger().error("Generated file: " + genLine + "\n");
    }
 
    /**
@@ -260,11 +258,11 @@ public class RegressionDiffTask extends DefaultTask {
     * @param file1 - a file in the given project
     * @param file2 - a file in the generated project
     */
-   private static void prettyPrintFilesDifferentType(File file1, File file2) {
+   private void prettyPrintFilesDifferentType(File file1, File file2) {
       if (file1.isFile() && file2.isDirectory()) {
-         System.err.println("File " + file1.getName() + " is a FILE and File " + file2.getName() + " is a DIRECTORY");
+         getProject().getLogger().error("File " + file1.getName() + " is a FILE and File " + file2.getName() + " is a DIRECTORY");
       } else {
-         System.err.println("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
+         getProject().getLogger().error("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
       }
    }
 
