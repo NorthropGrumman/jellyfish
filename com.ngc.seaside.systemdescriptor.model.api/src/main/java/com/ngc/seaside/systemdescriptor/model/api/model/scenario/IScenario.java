@@ -73,7 +73,7 @@ public interface IScenario extends INamedChild<IModel> {
       keywordsSet.add(keyword);
       return Stream.concat(Stream.concat(getGivens().stream(), getWhens().stream()), getThens().stream())
                    .filter(step -> keywordsSet.contains(step.getKeyword()))
-                   .collect(Collectors.toSet());
+                   .collect(Collectors.toList());
    }
    
 }
