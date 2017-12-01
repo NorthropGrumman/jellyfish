@@ -1,13 +1,18 @@
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
+import com.ngc.seaside.jellyfish.examples.tasks.RegressionDiffTask
 import org.gradle.internal.os.OperatingSystem
 
 apply plugin: 'com.ngc.seaside.parent'
 
 group = 'com.ngc.seaside'
 version = '1.0.0-SNAPSHOT'
-def jellyfishCliVersion = '1.8.2-SNAPSHOT'
 
 buildscript {
+
+    ext {
+        jellyfishCliVersion = '1.8.2-SNAPSHOT'
+    }
+    
     repositories {
         mavenLocal()
 
@@ -30,7 +35,6 @@ ext {
 	expectedFolderName = 'expectedOutput'
 }
 
-// Primary task for running 'gradle clean build install' on all system descriptor projects
 task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects') {
     build.dependsOn it
 }
@@ -45,10 +49,14 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
 	buildSystemDescriptorProjects.dependsOn sdTask
 }
 
-// Primary task for cleaning build and generated folders for all regressions
-task('cleanRegression') {
+task('cleanRegressions', description: 'Cleans the build and generated folders for all regressions') {
     clean.dependsOn it
 }
+
+task('generateRegressions', description: 'Generates the output for all regressions')
+task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions')
+task('buildExpectedRegressions', description: 'Builds the expected output for all regressions')
+task('reviseExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions')
 
 file(regressionsFolderName).eachDir { folder ->
     def regressionName = folder.name.capitalize()
@@ -67,16 +75,48 @@ file(regressionsFolderName).eachDir { folder ->
                 return groovy.io.FileVisitResult.SKIP_SIBLINGS
             }
         }
-        cleanRegression.dependsOn it
+        cleanRegressions.dependsOn it
     }
     
     // Generate project using jellyfish cli
     def generateTask = createGenerationTask("generateRegression${regressionName}", folder, regressionName)
+    generateRegressions.dependsOn generateTask
     
     // Build the expected and generated projects
     def expectedBuildTask = createRegressionBuildTask("buildExpectedRegression${regressionName}", expectedFolder)
+    buildGeneratedRegressions.dependsOn expectedBuildTask
+
     def generatedBuildTask = createRegressionBuildTask("buildGeneratedRegression${regressionName}", generatedFolder)
     generatedBuildTask.dependsOn generateTask
+    buildGeneratedRegressions.dependsOn generatedBuildTask
+    
+    // Diff the expected and generated projects
+    def diffTask = task("diffRegression${regressionName}", dependsOn: [expectedBuildTask, generatedBuildTask], type: RegressionDiffTask) {
+        regression = regressionName
+        expectedDir = expectedFolder
+        generatedDir = generatedFolder
+    }
+    
+    task("regression${regressionName}",
+         group: test.group,
+         description: "Run regression test ${regressionName}",
+         dependsOn: [generateTask, generatedBuildTask, diffTask]) {
+         
+        test.dependsOn it
+    }
+    
+    task("reviseExpectedRegression${regressionName}", type: null, dependsOn: generateTask) {
+        doLast {
+            delete expectedFolder
+            copy {
+                from generatedFolder
+                into expectedFolder
+            }
+        }
+        it.mustRunAfter expectedBuildTask
+        reviseExpectedRegressions.dependsOn it
+    }
+    
 }
 
 // Creates a task that will generate the regression output, with the given task name, regression folder, and regression name
