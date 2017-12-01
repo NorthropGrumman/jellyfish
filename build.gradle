@@ -45,6 +45,7 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
 	    dir = folder
 		tasks = ['clean', 'build', 'install']
 		startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
+		startParameter.systemPropertiesArgs = [:]
 	}
 	buildSystemDescriptorProjects.dependsOn sdTask
 }
@@ -156,39 +157,44 @@ def createGenerationTask(name, folder, regressionName) {
 // Creates a task to build a gradle project. This task will search sub-directories until it finds a build.gradle.
 // This task will also copy the folder to a temp directory to fix windows path length issues
 def createRegressionBuildTask(name, folder) {
-    def buildTask = task(name)
-    buildTask.doLast {
-        folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
-            if (file("${buildFolder}/build.gradle").isFile()) {
-
-            	def tempFolder
-            	if (OperatingSystem.current().isWindows()) {
-                    tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
-                    copy {
-                        from buildFolder
-                        into tempFolder
-                    }
-                } else {
-                    tempFolder = buildFolder
-                }
-
-                def gradleBuildTask = task(type: GradleBuild) {}
-                gradleBuildTask.dir = tempFolder
-                gradleBuildTask.tasks = ['clean', 'build']
-                gradleBuildTask.startParameter.excludedTaskNames = ['test']
-                gradleBuildTask.execute()
-
-                if (OperatingSystem.current().isWindows()) {
-	                copy {
-	                    from tempFolder
-	                    into buildFolder
-	                }
-	                delete tempFolder
-                }
-
-                return groovy.io.FileVisitResult.SKIP_SIBLINGS
-            }
+    def buildTask = task(name) {
+        doFirst {
+            // TODO fix the error that this command prevents
+        	System.clearProperty('update.property.name')
         }
+	    doLast {
+	        folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
+	            if (file("${buildFolder}/build.gradle").isFile()) {
+	
+	            	def tempFolder
+	            	if (OperatingSystem.current().isWindows()) {
+	                    tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
+	                    copy {
+	                        from buildFolder
+	                        into tempFolder
+	                    }
+	                } else {
+	                    tempFolder = buildFolder
+	                }
+	
+	                def gradleBuildTask = task(type: GradleBuild) {}
+	                gradleBuildTask.dir = tempFolder
+	                gradleBuildTask.tasks = ['clean', 'build']
+	                gradleBuildTask.startParameter.excludedTaskNames = ['test']
+	                gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+	                gradleBuildTask.execute()
+	                if (OperatingSystem.current().isWindows()) {
+		                copy {
+		                    from tempFolder
+		                    into buildFolder
+		                }
+		                delete tempFolder
+	                }
+	
+	                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+	            }
+	        }
+	    }
     }
     return buildTask
 }
