@@ -53,11 +53,11 @@ task('cleanRegressions', description: 'Cleans the build and generated folders fo
     clean.dependsOn it
 }
 
-task('generateRegressions', description: 'Generates the output for all regressions')
-task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions')
-task('buildExpectedRegressions', description: 'Builds the expected output for all regressions')
-task('buildRegressions', description: 'Builds the expected and generated output for all regressions')
-task('updateExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions')
+task('generateRegressions', description: 'Generates the output for all regressions', group: 'Regression')
+task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions', group: 'Regression')
+task('buildExpectedRegressions', description: 'Builds the expected output for all regressions', group: 'Regression')
+task('buildRegressions', description: 'Builds the expected and generated output for all regressions', group: 'Regression')
+task('updateExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions', group: 'Regression')
 
 file(regressionsFolderName).eachDir { folder ->
     def regressionName = folder.name.capitalize()
@@ -108,7 +108,7 @@ file(regressionsFolderName).eachDir { folder ->
 
     task("regression${regressionName}",
          group: test.group,
-         description: "Run the entire regression test ${regressionName}",
+         description: "Runs the entire regression test ${regressionName}",
          dependsOn: [generateTask, generatedBuildTask, diffTask]) {
 
         test.dependsOn it
@@ -191,22 +191,4 @@ def createRegressionBuildTask(name, folder) {
         }
     }
     return buildTask
-}
-
-dependencies {
-    testCompile gradleApi()
-    testCompile "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
-    testCompile "commons-io:commons-io:2.5"
-    testCompile "org.mockito:mockito-core:2.7.14"
-    testCompile "junit:junit:4.12"
-}
-
-test {
-   testLogging {
-      showStandardStreams = true
-   }
-}
-
-processTestResources {
-    expand(jellyfishCliVersion: "${jellyfishCliVersion}")
 }
