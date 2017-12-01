@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
@@ -173,7 +174,9 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
          final Set<String> scenarioRequirements = requirementsService.getRequirements(options, scenario);
 
-         for (IPublishSubscribeMessagingFlow flow : scenarioService.getPubSubMessagingFlows(options, scenario)) {
+         Optional<IPublishSubscribeMessagingFlow> optionalFlow = scenarioService.getPubSubMessagingFlow(options, scenario);
+         if (optionalFlow.isPresent()) {
+            IPublishSubscribeMessagingFlow flow = optionalFlow.get();
 
             for (IDataReferenceField input : flow.getInputs()) {
                final IData type = input.getType();

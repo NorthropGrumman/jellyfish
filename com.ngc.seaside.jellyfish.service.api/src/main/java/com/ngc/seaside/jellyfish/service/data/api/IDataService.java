@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.service.data.api;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -15,6 +17,24 @@ import java.util.Map;
  * Service for working with {@link IData}.
  */
 public interface IDataService {
+
+   /**
+    * Returns the generated java events type (package and name) for the given {@link IData} or {@link IEnumeration}.
+    * 
+    * @param options the options the current command is being executed with
+    * @param data the data or enumeration
+    * @return the generated java events type
+    */
+   TypeDto<?> getEventClass(IJellyFishCommandOptions options, INamedChild<IPackage> data);
+   
+   /**
+    * Returns the generated java message type (package and name) for the given {@link IData} or {@link IEnumeration}.
+    * 
+    * @param options the options the current command is being executed with
+    * @param data the data or enumeration
+    * @return the generated java type
+    */
+   TypeDto<?> getMessageClass(IJellyFishCommandOptions options, INamedChild<IPackage> data);
 
    /**
     * Returns a set of all {@link IData} and {@link IEnumeration} associated with the given data. This includes all

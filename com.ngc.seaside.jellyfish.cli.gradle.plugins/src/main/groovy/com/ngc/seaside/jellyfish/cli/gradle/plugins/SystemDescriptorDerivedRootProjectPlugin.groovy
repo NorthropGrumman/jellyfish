@@ -30,11 +30,7 @@ class SystemDescriptorDerivedRootProjectPlugin implements Plugin<Project> {
                       .setExecuteCondition({ !file("${project.buildDir}/${systemDescriptorDirectoryName}").exists() })
             }
 
-            task('clean-gen') {
-                doLast {
-                    delete "${project.buildDir}"
-                }
-            }
+            task('clean-gen', group: 'build', description: 'Deletes generated jellyfish projects')
         }
     }
 }
