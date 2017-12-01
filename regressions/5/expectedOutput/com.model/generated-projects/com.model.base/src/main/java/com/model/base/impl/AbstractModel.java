@@ -166,7 +166,6 @@ public abstract class AbstractModel
                Objects.equal(a.getField1(), b.getField5()))
             .register();
       triggers.computeIfAbsent(trigger, __ -> new ArrayList<>()).add(this::doSingleOutputCorrelation);
-      triggers.computeIfAbsent(trigger, __ -> new ArrayList<>()).add(this::doSingleOutputCorrelation);
    }
 
    private void startMultiOutputPubSub() {
