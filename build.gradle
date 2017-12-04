@@ -174,13 +174,14 @@ def createRegressionBuildTask(name, folder) {
     def buildTask = task(name) {
         doLast {
             folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
-                def buildFile = file("${buildFolder}/build.gradle")
-                if (buildFile.isFile()) {
+                if (file("${buildFolder}/build.gradle").isFile()) {
                     def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
                     copy {
                         from buildFolder
                         into tempFolder
                     }
+
+                    def buildFile = file("${tempFolder}/build.gradle")
 
                     def updater = new BuildScriptUpdater()
                     updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
