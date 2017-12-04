@@ -9,7 +9,7 @@ version = '1.0.0-SNAPSHOT'
 buildscript {
 
     ext {
-        jellyfishCliVersion = '1.9.0-SNAPSHOT'
+        jellyfishCliVersion = System.getProperty('jellyfishCliVersion', '1.9.0-SNAPSHOT')
     }
 
     repositories {
@@ -28,10 +28,10 @@ buildscript {
 }
 
 ext {
-	systemDescriptorProjectsFolderName = 'system-descriptor-projects'
-	regressionsFolderName = 'regressions'
-	generatedFolderName = 'generatedOutput'
-	expectedFolderName = 'expectedOutput'
+    systemDescriptorProjectsFolderName = 'system-descriptor-projects'
+    regressionsFolderName = 'regressions'
+    generatedFolderName = 'generatedOutput'
+    expectedFolderName = 'expectedOutput'
 }
 
 task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects') {
@@ -39,14 +39,15 @@ task('buildSystemDescriptorProjects', description: 'builds and installs all of t
 }
 
 file(systemDescriptorProjectsFolderName).eachDir { folder ->
-    // Run 'gradle clean build install' on system descriptor project
-    def sdTask = task("buildSd${folder.name}", type: GradleBuild) {
-	    dir = folder
-		tasks = ['clean', 'build', 'install']
-		startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
-		startParameter.systemPropertiesArgs = [:]
-	}
-	buildSystemDescriptorProjects.dependsOn sdTask
+    def sdProjectName = folder.name.capitalize()
+    task("buildSd${sdProjectName}", type: GradleBuild, description: "Runs 'gradle clean build install' on the system descriptor project ${sdProjectName}") {
+        dir = folder
+        tasks = ['clean', 'build', 'install']
+        startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
+        startParameter.systemPropertiesArgs = [:]
+
+        buildSystemDescriptorProjects.dependsOn it
+    }
 }
 
 task('cleanRegressions', description: 'Cleans the build and generated folders for all regressions') {
@@ -65,7 +66,7 @@ file(regressionsFolderName).eachDir { folder ->
     def generatedFolder = file("${folder}/${generatedFolderName}")
 
     // Clean build folders and generated folder
-    task("cleanRegression${regressionName}") {
+    task("cleanRegression${regressionName}", description: "Cleans the build and generated folder for regression ${regressionName}") {
         delete generatedFolder
         expectedFolder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3, visitRoot: true) {
             if (it.name == 'build') {
@@ -86,21 +87,28 @@ file(regressionsFolderName).eachDir { folder ->
 
     // Build the expected and generated projects
     def expectedBuildTask = createRegressionBuildTask("buildExpectedRegression${regressionName}", expectedFolder)
+    expectedBuildTask.description = "Builds the expected output for regression ${regressionName}"
     expectedBuildTask.dependsOn buildSystemDescriptorProjects
     buildExpectedRegressions.dependsOn expectedBuildTask
     buildRegressions.dependsOn expectedBuildTask
 
     def generatedBuildTask = createRegressionBuildTask("buildGeneratedRegression${regressionName}", generatedFolder)
+    generatedBuildTask.description = "Builds the generated output for regression ${regressionName}"
     generatedBuildTask.dependsOn buildSystemDescriptorProjects
     generatedBuildTask.dependsOn generateTask
     buildGeneratedRegressions.dependsOn generatedBuildTask
 
-    def buildTask = task("buildRegression${regressionName}", dependsOn: [expectedBuildTask, generatedBuildTask]) {
+    def buildTask = task("buildRegression${regressionName}", 
+                         dependsOn: [expectedBuildTask, generatedBuildTask],
+                         description: "Builds the expected and generated output for regression ${regressionName}") {
         buildRegressions.dependsOn it
     }
 
     // Diff the expected and generated projects
-    def diffTask = task("diffRegression${regressionName}", dependsOn: buildTask, type: RegressionDiffTask) {
+    def diffTask = task("diffRegression${regressionName}", 
+                        dependsOn: buildTask, 
+                        type: RegressionDiffTask, 
+                        description: "Compares the expected and generated output for regression ${regressionName}") {
         regression = regressionName
         expectedDir = expectedFolder
         generatedDir = generatedFolder
@@ -114,7 +122,9 @@ file(regressionsFolderName).eachDir { folder ->
         test.dependsOn it
     }
 
-    task("updateExpectedRegression${regressionName}", dependsOn: generateTask) {
+    task("updateExpectedRegression${regressionName}",
+         dependsOn: generateTask,
+         description: "Replaces the expected output with the generated output for regression ${regressionName}") {
         doLast {
             delete expectedFolder
             copy {
@@ -146,7 +156,9 @@ def createGenerationTask(name, folder, regressionName) {
         properties['inputDir'] = "${folder}/${properties['inputDir']}"
     }
 
-    def generateTask = task(name, type: JellyFishCliCommandTask) {
+    def generateTask = task(name,
+                            type: JellyFishCliCommandTask,
+                            description: "Generates the output for regression ${regressionName}") {
         command = properties['command']
         inputDir = properties['inputDir']
         arguments = properties
@@ -157,42 +169,38 @@ def createGenerationTask(name, folder, regressionName) {
 // This task will also copy the folder to a temp directory to fix windows path length issues
 def createRegressionBuildTask(name, folder) {
     def buildTask = task(name) {
-        doFirst {
-            // TODO fix the error that this command prevents
-        	System.clearProperty('update.property.name')
-        }
-	    doLast {
-	        folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
-	            def buildFile = file("${buildFolder}/build.gradle")
-	            if (buildFile.isFile()) {
-	            	def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
+        doLast {
+            folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
+                def buildFile = file("${buildFolder}/build.gradle")
+                if (buildFile.isFile()) {
+                    def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
                     copy {
                         from buildFolder
                         into tempFolder
                     }
-	                
-	                def updater = new BuildScriptUpdater()
-	                updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
-	
-	                def gradleBuildTask = task(type: GradleBuild) {}
-	                gradleBuildTask.dir = tempFolder
-	                gradleBuildTask.tasks = ['clean', 'build']
-	                gradleBuildTask.startParameter.excludedTaskNames = ['test']
-	                gradleBuildTask.startParameter.systemPropertiesArgs = [:]
-	                gradleBuildTask.execute()
-	                
-	                updater.restoreScriptFile(buildFile.toPath())
-	                
-	                copy {
-	                    from tempFolder
-	                    into buildFolder
-	                }
-	                delete tempFolder
-	
-	                return groovy.io.FileVisitResult.SKIP_SIBLINGS
-	            }
-	        }
-	    }
+
+                    def updater = new BuildScriptUpdater()
+                    updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
+
+                    def gradleBuildTask = task(type: GradleBuild) {}
+                    gradleBuildTask.dir = tempFolder
+                    gradleBuildTask.tasks = ['clean', 'build']
+                    gradleBuildTask.startParameter.excludedTaskNames = ['test']
+                    gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+                    gradleBuildTask.execute()
+
+                    updater.restoreScriptFile(buildFile.toPath())
+
+                    copy {
+                        from tempFolder
+                        into buildFolder
+                    }
+                    delete tempFolder
+
+                    return groovy.io.FileVisitResult.SKIP_SIBLINGS
+                }
+            }
+        }
     }
     return buildTask
 }
