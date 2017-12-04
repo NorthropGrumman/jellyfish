@@ -1,6 +1,5 @@
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
-import com.ngc.seaside.jellyfish.examples.tasks.RegressionDiffTask
-import org.gradle.internal.os.OperatingSystem
+import com.ngc.seaside.jellyfish.examples.tasks.*
 
 apply plugin: 'com.ngc.seaside.parent'
 
@@ -164,18 +163,16 @@ def createRegressionBuildTask(name, folder) {
         }
 	    doLast {
 	        folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
-	            if (file("${buildFolder}/build.gradle").isFile()) {
-	
-	            	def tempFolder
-	            	if (OperatingSystem.current().isWindows()) {
-	                    tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
-	                    copy {
-	                        from buildFolder
-	                        into tempFolder
-	                    }
-	                } else {
-	                    tempFolder = buildFolder
-	                }
+	            def buildFile = file("${buildFolder}/build.gradle")
+	            if (buildFile.isFile()) {
+	            	def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
+                    copy {
+                        from buildFolder
+                        into tempFolder
+                    }
+	                
+	                def updater = new BuildScriptUpdater()
+	                updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
 	
 	                def gradleBuildTask = task(type: GradleBuild) {}
 	                gradleBuildTask.dir = tempFolder
@@ -183,13 +180,14 @@ def createRegressionBuildTask(name, folder) {
 	                gradleBuildTask.startParameter.excludedTaskNames = ['test']
 	                gradleBuildTask.startParameter.systemPropertiesArgs = [:]
 	                gradleBuildTask.execute()
-	                if (OperatingSystem.current().isWindows()) {
-		                copy {
-		                    from tempFolder
-		                    into buildFolder
-		                }
-		                delete tempFolder
+	                
+	                updater.restoreScriptFile(buildFile.toPath())
+	                
+	                copy {
+	                    from tempFolder
+	                    into buildFolder
 	                }
+	                delete tempFolder
 	
 	                return groovy.io.FileVisitResult.SKIP_SIBLINGS
 	            }
