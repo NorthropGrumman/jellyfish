@@ -4,7 +4,7 @@ import com.ngc.seaside.jellyfish.examples.tasks.*
 apply plugin: 'com.ngc.seaside.parent'
 
 group = 'com.ngc.seaside'
-version = '1.0.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
 
 buildscript {
 
@@ -40,7 +40,9 @@ task('buildSystemDescriptorProjects', description: 'builds and installs all of t
 
 file(systemDescriptorProjectsFolderName).eachDir { folder ->
     def sdProjectName = folder.name.capitalize()
-    task("buildSd${sdProjectName}", type: GradleBuild, description: "Runs 'gradle clean build install' on the system descriptor project ${sdProjectName}") {
+    task("buildSd${sdProjectName}",
+         type: GradleBuild,
+         description: "Runs 'gradle clean build install' on the system descriptor project ${sdProjectName}") {
         dir = folder
         tasks = ['clean', 'build', 'install']
         startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
@@ -98,16 +100,16 @@ file(regressionsFolderName).eachDir { folder ->
     generatedBuildTask.dependsOn generateTask
     buildGeneratedRegressions.dependsOn generatedBuildTask
 
-    def buildTask = task("buildRegression${regressionName}", 
+    def buildTask = task("buildRegression${regressionName}",
                          dependsOn: [expectedBuildTask, generatedBuildTask],
                          description: "Builds the expected and generated output for regression ${regressionName}") {
         buildRegressions.dependsOn it
     }
 
     // Diff the expected and generated projects
-    def diffTask = task("diffRegression${regressionName}", 
-                        dependsOn: buildTask, 
-                        type: RegressionDiffTask, 
+    def diffTask = task("diffRegression${regressionName}",
+                        dependsOn: buildTask,
+                        type: RegressionDiffTask,
                         description: "Compares the expected and generated output for regression ${regressionName}") {
         regression = regressionName
         expectedDir = expectedFolder
