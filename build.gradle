@@ -153,7 +153,7 @@ def createGenerationTask(name, folder, regressionName) {
     properties['outputDirectory'] = "${folder}/${generatedFolderName}"
     properties['clean'] = 'true'
     if (properties.containsKey('inputDir')) {
-        properties['inputDir'] = "${folder}/${properties['inputDir']}"
+        properties['inputDir'] = file("${systemDescriptorProjectsFolderName}/${properties['inputDir']}").absolutePath
     }
 
     def generateTask = task(name,
