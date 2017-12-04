@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
 import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -31,7 +32,33 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             plugins.apply 'maven'
             // This is required to install a model project locally.
             plugins.apply 'java'
-            
+
+            repositories {
+                mavenLocal()
+
+                maven {
+                    credentials {
+                        username nexusUsername
+                        password nexusPassword
+                    }
+                    url nexusConsolidated
+                }
+            }
+
+            p.configurations.add(new Configuration() {
+                @Delegate private final Configuration configuration = p.configurations.compile
+                String getName() { 'sd' }
+                String getDescription() { 'Dependencies for the system descriptor project' }
+            })
+
+            sourceSets {
+                main {
+                    resources {
+                        srcDirs = ['src/main/sd', 'src/main/resources', 'src/test/gherkin', 'src/test/resources']
+                    }
+                }
+            }
+
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
@@ -48,7 +75,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             task('sdDistribution', type: Zip, dependsOn: [copyDistributionFiles]) {
                 from { "${project.distsDir}/stage" }
             }
-            
+
             task('generateProjectInfo', description: 'Creates a properties file project info like group, artifact, and version') {
                 doLast {
                     def projectInfo = new File("${p.buildDir}/resources/main/project-info.properties")
