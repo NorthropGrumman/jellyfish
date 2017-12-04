@@ -163,6 +163,7 @@ def createGenerationTask(name, folder, regressionName) {
         inputDir = properties['inputDir']
         arguments = properties
     }
+    return generateTask
 }
 
 // Creates a task to build a gradle project. This task will search sub-directories until it finds a build.gradle.
