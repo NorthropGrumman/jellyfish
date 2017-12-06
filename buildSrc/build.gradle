@@ -1,0 +1,17 @@
+repositories {
+    mavenLocal()
+
+    maven {
+        credentials {
+            username nexusUsername
+            password nexusPassword
+        }
+        url nexusConsolidated
+    }
+}
+
+dependencies {
+    compile 'commons-io:commons-io:2.5'
+    compile 'junit:junit:4.12'
+    compile 'com.google.guava:guava:21.0'
+}

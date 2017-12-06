@@ -1,0 +1,28 @@
+rootProject.name = 'com.ngc.seaside.threateval.defendedareatrackpriorityservice'
+
+include 'com.ngc.seaside.threateval.datps.domain'
+project(':com.ngc.seaside.threateval.datps.domain').name = 'datps.domain'
+
+include 'generated-projects/com.ngc.seaside.threateval.datps.events'
+project(':generated-projects/com.ngc.seaside.threateval.datps.events').name = 'datps.events'
+
+include 'com.ngc.seaside.threateval.datps.tests'
+project(':com.ngc.seaside.threateval.datps.tests').name = 'datps.tests'
+
+include 'com.ngc.seaside.threateval.datps.distribution'
+project(':com.ngc.seaside.threateval.datps.distribution').name = 'datps.distribution'
+
+include 'com.ngc.seaside.threateval.datps.impl'
+project(':com.ngc.seaside.threateval.datps.impl').name = 'datps.impl'
+
+include 'com.ngc.seaside.threateval.datps.config'
+project(':com.ngc.seaside.threateval.datps.config').name = 'datps.config'
+
+include 'generated-projects/com.ngc.seaside.threateval.datps.base'
+project(':generated-projects/com.ngc.seaside.threateval.datps.base').name = 'datps.base'
+
+include 'generated-projects/com.ngc.seaside.threateval.datps.connector'
+project(':generated-projects/com.ngc.seaside.threateval.datps.connector').name = 'datps.connector'
+
+include 'generated-projects/com.ngc.seaside.threateval.datps.messages'
+project(':generated-projects/com.ngc.seaside.threateval.datps.messages').name = 'datps.messages'

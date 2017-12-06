@@ -1,9 +1,17 @@
+import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
+import com.ngc.seaside.jellyfish.examples.tasks.*
+
 apply plugin: 'com.ngc.seaside.parent'
 
 group = 'com.ngc.seaside'
-version = '1.0.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
 
 buildscript {
+
+    ext {
+        jellyfishCliVersion = System.getProperty('jellyfishCliVersion', '1.9.0-SNAPSHOT')
+    }
+
     repositories {
         mavenLocal()
 
@@ -15,27 +23,188 @@ buildscript {
     dependencies {
         classpath 'com.ngc.seaside:gradle.plugins:2.1.1'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+        classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
     }
 }
 
 ext {
-    jellyfishCliVersion = '1.8.2'
+    systemDescriptorProjectsFolderName = 'system-descriptor-projects'
+    regressionsFolderName = 'regressions'
+    generatedFolderName = 'generatedOutput'
+    expectedFolderName = 'expectedOutput'
 }
 
-dependencies {
-    testCompile gradleApi()
-    testCompile "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
-    testCompile "commons-io:commons-io:2.5"
-    testCompile "org.mockito:mockito-core:2.7.14"
-    testCompile "junit:junit:4.12"
+task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects') {
+    build.dependsOn it
 }
 
-test {
-   testLogging {
-      showStandardStreams = true  
-   }
+file(systemDescriptorProjectsFolderName).eachDir { folder ->
+    def sdProjectName = folder.name.capitalize()
+    task("buildSd${sdProjectName}",
+         type: GradleBuild,
+         description: "Runs 'gradle clean build install' on the system descriptor project ${sdProjectName}") {
+        dir = folder
+        tasks = ['clean', 'build', 'install']
+        startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
+        startParameter.systemPropertiesArgs = [:]
+
+        buildSystemDescriptorProjects.dependsOn it
+    }
 }
 
-processTestResources {
-    expand(jellyfishCliVersion: "${jellyfishCliVersion}")
+task('cleanRegressions', description: 'Cleans the build and generated folders for all regressions') {
+    clean.dependsOn it
+}
+
+task('generateRegressions', description: 'Generates the output for all regressions', group: 'Regression')
+task('buildGeneratedRegressions', description: 'Builds the generated output for all regressions', group: 'Regression')
+task('buildExpectedRegressions', description: 'Builds the expected output for all regressions', group: 'Regression')
+task('buildRegressions', description: 'Builds the expected and generated output for all regressions', group: 'Regression')
+task('updateExpectedRegressions', description: 'Replaces the expected output with the generated output for all regressions', group: 'Regression')
+
+file(regressionsFolderName).eachDir { folder ->
+    def regressionName = folder.name.capitalize()
+    def expectedFolder = file("${folder}/${expectedFolderName}")
+    def generatedFolder = file("${folder}/${generatedFolderName}")
+
+    // Clean build folders and generated folder
+    task("cleanRegression${regressionName}", description: "Cleans the build and generated folder for regression ${regressionName}") {
+        delete generatedFolder
+        expectedFolder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3, visitRoot: true) {
+            if (it.name == 'build') {
+                delete it
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+            if (it.name == 'src') {
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+        }
+        cleanRegressions.dependsOn it
+    }
+
+    // Generate project using jellyfish cli
+    def generateTask = createGenerationTask("generateRegression${regressionName}", folder, regressionName)
+    generateTask.dependsOn buildSystemDescriptorProjects
+    generateRegressions.dependsOn generateTask
+
+    // Build the expected and generated projects
+    def expectedBuildTask = createRegressionBuildTask("buildExpectedRegression${regressionName}", expectedFolder)
+    expectedBuildTask.description = "Builds the expected output for regression ${regressionName}"
+    expectedBuildTask.dependsOn buildSystemDescriptorProjects
+    buildExpectedRegressions.dependsOn expectedBuildTask
+    buildRegressions.dependsOn expectedBuildTask
+
+    def generatedBuildTask = createRegressionBuildTask("buildGeneratedRegression${regressionName}", generatedFolder)
+    generatedBuildTask.description = "Builds the generated output for regression ${regressionName}"
+    generatedBuildTask.dependsOn buildSystemDescriptorProjects
+    generatedBuildTask.dependsOn generateTask
+    buildGeneratedRegressions.dependsOn generatedBuildTask
+
+    def buildTask = task("buildRegression${regressionName}",
+                         dependsOn: [expectedBuildTask, generatedBuildTask],
+                         description: "Builds the expected and generated output for regression ${regressionName}") {
+        buildRegressions.dependsOn it
+    }
+
+    // Diff the expected and generated projects
+    def diffTask = task("diffRegression${regressionName}",
+                        dependsOn: buildTask,
+                        type: RegressionDiffTask,
+                        description: "Compares the expected and generated output for regression ${regressionName}") {
+        regression = regressionName
+        expectedDir = expectedFolder
+        generatedDir = generatedFolder
+    }
+
+    task("regression${regressionName}",
+         group: test.group,
+         description: "Runs the entire regression test ${regressionName}",
+         dependsOn: [generateTask, generatedBuildTask, diffTask]) {
+
+        test.dependsOn it
+    }
+
+    task("updateExpectedRegression${regressionName}",
+         dependsOn: generateTask,
+         description: "Replaces the expected output with the generated output for regression ${regressionName}") {
+        doLast {
+            delete expectedFolder
+            copy {
+                from generatedFolder
+                into expectedFolder
+            }
+        }
+        it.mustRunAfter expectedBuildTask
+        updateExpectedRegressions.dependsOn it
+    }
+
+}
+
+// Creates a task that will generate the regression output, with the given task name, regression folder, and regression name
+def createGenerationTask(name, folder, regressionName) {
+    def propertiesFile = file("${folder}/jellyfish.properties")
+    if (!propertiesFile.isFile()) {
+        throw new GradleException("Regression ${regressionName} is missing jellyfish.properties file")
+    }
+
+    Properties properties = new Properties()
+    propertiesFile.withInputStream {
+        properties.load(it)
+    }
+
+    properties['outputDirectory'] = "${folder}/${generatedFolderName}"
+    properties['clean'] = 'true'
+    if (properties.containsKey('inputDir')) {
+        properties['inputDir'] = file("${systemDescriptorProjectsFolderName}/${properties['inputDir']}").absolutePath
+    }
+
+    def generateTask = task(name,
+                            type: JellyFishCliCommandTask,
+                            description: "Generates the output for regression ${regressionName}") {
+        command = properties['command']
+        inputDir = properties['inputDir']
+        arguments = properties
+    }
+    return generateTask
+}
+
+// Creates a task to build a gradle project. This task will search sub-directories until it finds a build.gradle.
+// This task will also copy the folder to a temp directory to fix windows path length issues
+def createRegressionBuildTask(name, folder) {
+    def buildTask = task(name) {
+        doLast {
+            folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
+                if (file("${buildFolder}/build.gradle").isFile()) {
+                    def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
+                    copy {
+                        from buildFolder
+                        into tempFolder
+                    }
+
+                    def buildFile = file("${tempFolder}/build.gradle")
+
+                    def updater = new BuildScriptUpdater()
+                    updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
+
+                    def gradleBuildTask = task(type: GradleBuild) {}
+                    gradleBuildTask.dir = tempFolder
+                    gradleBuildTask.tasks = ['clean', 'build']
+                    gradleBuildTask.startParameter.excludedTaskNames = ['test']
+                    gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+                    gradleBuildTask.execute()
+
+                    updater.restoreScriptFile(buildFile.toPath())
+
+                    copy {
+                        from tempFolder
+                        into buildFolder
+                    }
+                    delete tempFolder
+
+                    return groovy.io.FileVisitResult.SKIP_SIBLINGS
+                }
+            }
+        }
+    }
+    return buildTask
 }

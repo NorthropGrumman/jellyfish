@@ -1,0 +1,28 @@
+rootProject.name = 'com.ngc.seaside.threateval.engagementtrackpriorityservice'
+
+include 'com.ngc.seaside.threateval.etps.domain'
+project(':com.ngc.seaside.threateval.etps.domain').name = 'etps.domain'
+
+include 'generated-projects/com.ngc.seaside.threateval.etps.events'
+project(':generated-projects/com.ngc.seaside.threateval.etps.events').name = 'etps.events'
+
+include 'com.ngc.seaside.threateval.etps.tests'
+project(':com.ngc.seaside.threateval.etps.tests').name = 'etps.tests'
+
+include 'com.ngc.seaside.threateval.etps.distribution'
+project(':com.ngc.seaside.threateval.etps.distribution').name = 'etps.distribution'
+
+include 'com.ngc.seaside.threateval.etps.impl'
+project(':com.ngc.seaside.threateval.etps.impl').name = 'etps.impl'
+
+include 'com.ngc.seaside.threateval.etps.config'
+project(':com.ngc.seaside.threateval.etps.config').name = 'etps.config'
+
+include 'generated-projects/com.ngc.seaside.threateval.etps.base'
+project(':generated-projects/com.ngc.seaside.threateval.etps.base').name = 'etps.base'
+
+include 'generated-projects/com.ngc.seaside.threateval.etps.connector'
+project(':generated-projects/com.ngc.seaside.threateval.etps.connector').name = 'etps.connector'
+
+include 'generated-projects/com.ngc.seaside.threateval.etps.messages'
+project(':generated-projects/com.ngc.seaside.threateval.etps.messages').name = 'etps.messages'

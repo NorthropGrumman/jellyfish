@@ -43,3 +43,6 @@ gradle-app.setting
 logs/
 *.log
 *.log.*
+
+# Generated files
+regressions/*/generatedOutput/
