@@ -1,20 +1,19 @@
 package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
+import static junit.framework.TestCase.assertEquals;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
 
 /**
  *

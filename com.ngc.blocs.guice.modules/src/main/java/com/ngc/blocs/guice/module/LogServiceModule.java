@@ -19,9 +19,9 @@ public class LogServiceModule extends AbstractModule {
    @Override
    protected void configure() {
 
-      bindListener(new AbstractMatcher<TypeLiteral>() {
+      bindListener(new AbstractMatcher<TypeLiteral<?>>() {
          @Override
-         public boolean matches(TypeLiteral literal) {
+         public boolean matches(TypeLiteral<?> literal) {
             return literal.getRawType().equals(LogService.class);
          }
       }, new TypeListener() {

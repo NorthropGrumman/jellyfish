@@ -294,13 +294,13 @@ public class BootstrapCommandProvider implements IBootstrapCommandProvider {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
-      DefaultParameter templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
+      DefaultParameter<?> outputDir = new DefaultParameter<>("outputDirectory", outputPath.toString());
+      DefaultParameter<?> templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
                                                                   output.getOutputPath().toString());
       collection.addParameter(outputDir);
       collection.addParameter(templateOutputDir);
 
-      for (IParameter templateParameter : templateParameters.getAllParameters()) {
+      for (IParameter<?> templateParameter : templateParameters.getAllParameters()) {
          collection.addParameter(templateParameter);
       }
 

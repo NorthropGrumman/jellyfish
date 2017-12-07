@@ -1,8 +1,6 @@
 package com.ngc.seaside.bootstrap.impl.provider;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-
 import com.ngc.seaside.bootstrap.api.IBootstrapCommandProvider;
 
 /**
