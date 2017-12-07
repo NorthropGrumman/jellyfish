@@ -47,7 +47,6 @@ public class ParsingContext implements AutoCloseable {
       stream = new ByteArrayInputStream(out.toByteArray());
       if (r != null) {
          r.load(stream, resourceSet.getLoadOptions());
-         System.out.println(uri);
       }
       
       return r;
@@ -57,7 +56,6 @@ public class ParsingContext implements AutoCloseable {
       XtextResource r = (XtextResource) resourceSet.createResource(
             URI.createFileURI(file.toAbsolutePath().toFile().toString()));
       r.load(streamOf(file), resourceSet.getLoadOptions());
-      System.out.println(file);
       return r;
    }
 
