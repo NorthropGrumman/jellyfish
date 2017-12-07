@@ -8,7 +8,7 @@ package com.ngc.seaside.command.api;
  *
  * @see ICommand
  */
-public interface ICommandProvider<T extends ICommand>  {
+public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<S>>  {
 
    /**
     * The usage's description should provide a detailed set of instructions on how to use this

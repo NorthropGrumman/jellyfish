@@ -25,7 +25,7 @@ public class DefaultParameterCollection implements IParameterCollection {
    }
 
    @Override
-   public IParameter getParameter(String parameterName) {
+   public IParameter<?> getParameter(String parameterName) {
       return parameterMap.get(parameterName);
    }
 
