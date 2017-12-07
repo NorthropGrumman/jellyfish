@@ -34,7 +34,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   public static final String SYSTEM_DESCRIPTOR_GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.
+   public static final String SYSTEM_DESCRIPTOR_GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.
          getName();
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
 
@@ -103,10 +103,10 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       }
 
       // parse the parameters to get the system descriptor artifact id.
-      String gaveStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAVE_PROPERTY).getStringValue();
-      String[] parsedGave = CommonParameters.parseGave(gaveStr);
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, parsedGave[1]));
-      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, parsedGave[2]));
+      String gavStr = collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue();
+      String[] parsedGav = CommonParameters.parseGav(gavStr);
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, parsedGav[1]));
+      collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, parsedGav[2]));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
@@ -175,7 +175,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             new DefaultParameter<>(VERSION_PROPERTY)
                   .setDescription("The version to use for the Gradle project")
                   .setRequired(true),
-            CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.required(),
+            CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN);
    }

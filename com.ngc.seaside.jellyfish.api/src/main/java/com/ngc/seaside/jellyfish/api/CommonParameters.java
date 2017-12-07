@@ -12,6 +12,8 @@ public enum CommonParameters implements IParameter<String> {
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
+   GROUP_ARTIFACT_VERSION("gav", "The Group/Artifact/Version/Extension of a system descriptor project"),
+   @Deprecated
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
    INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
@@ -22,9 +24,10 @@ public enum CommonParameters implements IParameter<String> {
    PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
+   @Deprecated
    REPOSITORY_URL("repositoryUrl", "The url of a system descriptor repository. If specified, " + GROUP_ARTIFACT_VERSION_EXTENSION.getName() + " parameter is required");
 
-   private static final Pattern GAVE_REGEX = java.util.regex.Pattern.compile("(.+):(.+):(.+)@(.+)");
+   private static final Pattern GAV_REGEX = java.util.regex.Pattern.compile("([^:@\\s]+):([^:@\\s]+):([^:@\\s]+)");
    private final String description;
    private final String name;
 
@@ -107,30 +110,27 @@ public enum CommonParameters implements IParameter<String> {
    }
 
    /**
-    * Parses the given group/artifact/version/extension identifier.  The GAVE should be in the format
+    * Parses the given group/artifact/version identifier.  The GAV should be in the format
     * <pre>
-    *    groupId:artifactId:version@extension
+    *    groupId:artifactId:version
     * </pre>
-    * If the GAVE is not in this format, an {@code IllegalArgumentException} is thrown.
-    * @param gave the GAVE to parse
-    * @return an array that contains the parsed group ID, artifact ID, version, and extension in that order
-    * @throws IllegalArgumentException {@code gave} is {@code null}, empty, or does not match the format above
+    * @param gav the GAV to parse
+    * @return an array that contains the parsed group ID, artifact ID, and version in that order
+    * @throws IllegalArgumentException if {@code gav} is {@code null}, or does not match the format above
     */
-   public static String[] parseGave(String gave) {
-      if(gave == null || gave.trim().isEmpty()) {
-         throw new IllegalArgumentException("GAVE may not be null or empty!");
+   public static String[] parseGav(String gav) {
+      if(gav == null || gav.trim().isEmpty()) {
+         throw new IllegalArgumentException("GAV may not be null or empty!");
       }
-      Matcher matcher = GAVE_REGEX.matcher(gave);
+      Matcher matcher = GAV_REGEX.matcher(gav);
       if (!matcher.matches()) {
-         throw new IllegalArgumentException("GAVE string must be of the format group:artifact:version@extension, got "
-                                            + gave
-                                            + "!");
+         throw new IllegalArgumentException("GAV string must be of the format group:artifact:version, got "
+                                            + gav);
       }
       return new String[]{
             matcher.group(1),
             matcher.group(2),
-            matcher.group(3),
-            matcher.group(4),
+            matcher.group(3)
             };
    }
 }

@@ -1,7 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
+import com.ngc.seaside.jellyfish.api.CommonParameters
 import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -54,49 +56,34 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             sourceSets {
                 main {
                     resources {
-                        srcDirs = ['src/main/sd', 'src/main/resources', 'src/test/gherkin', 'src/test/resources']
+                        srcDirs = ['src/main/sd', 'src/main/resources']
                     }
                 }
+                test {
+                    resources {
+                        srcDirs = ['src/test/gherkin', 'src/test/resources']
+                    }
+                }
+            }
+
+            task('testJar', type: Jar) {
+                classifier = 'tests'
+                from sourceSets.test.output
+            }
+
+            artifacts {
+                archives testJar
             }
 
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
                 inputDir = "${project.projectDir}"
-            }
-
-            // Copy all files to build for more processing.
-            task('copyDistributionFiles', type: Copy, dependsOn: [validateSd]) {
-                from 'src'
-                into { "${project.distsDir}/stage/src" }
-            }
-
-            // Zip up the files.
-            task('sdDistribution', type: Zip, dependsOn: [copyDistributionFiles]) {
-                from { "${project.distsDir}/stage" }
-            }
-
-            task('generateProjectInfo', description: 'Creates a properties file project info like group, artifact, and version') {
-                doLast {
-                    def projectInfo = new File("${p.buildDir}/resources/main/project-info.properties")
-                    projectInfo.parentFile.mkdirs()
-                    projectInfo.withWriter { w ->
-                        def properties = new Properties();
-                        properties['group'] = p.group.toString()
-                        properties['groupId'] = p.group.toString()
-                        properties['name'] = p.name.toString()
-                        properties['artifact'] = p.name.toString()
-                        properties['artifactId'] = p.name.toString()
-                        properties['version'] = p.version.toString()
-                        properties['gav'] = "${p.group}:${p.name}:${p.version}".toString()
-                        properties['gave'] = "${p.group}:${p.name}:${p.version}@zip".toString()
-                        properties.store w, null
-                    }
-                }
-                install.dependsOn it
+                build.dependsOn it
             }
 
             afterEvaluate {
+
                 // Configure the ZIP that contains the SD project to be releasable to Nexus.
                 uploadArchives {
                     repositories {
@@ -114,16 +101,6 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                         }
                     }
                 }
-
-                // Configure the artifacts so that the zip gets pushed to Nexus.
-                artifacts {
-                    archives sdDistribution
-                }
-
-                // Configure the name of the distribution.  We do this here so that properties are evaluated correctly.
-                tasks.getByName(
-                      'sdDistribution').archiveName = "${project.group}.${project.name}-${project.version}.zip"
-
 
                 // Set the default tasks.
                 defaultTasks = ['build']

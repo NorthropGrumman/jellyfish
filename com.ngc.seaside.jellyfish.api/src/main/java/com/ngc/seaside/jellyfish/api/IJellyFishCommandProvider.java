@@ -9,7 +9,7 @@ import java.util.Collection;
  * commands via calls to this interface. The run method will parse the input parameters but will not validate the
  * contents. The individual command must validate their own input.
  */
-public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommand> {
+public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommandOptions, IJellyFishCommand> {
 
    /**
     * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith(IJellyFishCommandOptions,

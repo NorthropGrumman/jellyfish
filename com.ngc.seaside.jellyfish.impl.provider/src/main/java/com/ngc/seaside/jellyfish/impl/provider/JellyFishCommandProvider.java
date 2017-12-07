@@ -27,8 +27,8 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -41,7 +41,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -96,7 +94,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    public IUsage getUsage() {
       List<IParameter<?>> parameters = new ArrayList<>();
       parameters.add(CommonParameters.INPUT_DIRECTORY);
-      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.required());
+      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION);
       return new DefaultUsage("JellyFish Description", parameters);
    }
 
@@ -167,8 +165,11 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IParameterCollection cmdLineParameters = parameterService.parseParameters(
          Arrays.asList(validatedArgs).subList(1, validatedArgs.length));
 
+      boolean gavProject = cmdLineParameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())
+         && !cmdLineParameters.containsParameter(CommonParameters.INPUT_DIRECTORY.getName());
+
       cmdLineParameters = resolveImportantParameters(cmdLineParameters, command);
-      
+
       cmdLineParameters = addMissingRequiredParameters(cmdLineParameters, command);
 
       IParameterCollection templateParameters = null;
@@ -178,6 +179,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       IJellyFishCommandOptions jellyFishCommandOptions = createCommandOptions(cmdLineParameters,
          templateParameters,
+         gavProject,
          command);
       command.run(jellyFishCommandOptions);
    }
@@ -334,7 +336,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          try {
             Path outputPath = Paths.get(".");
             if (userSuppliedParameters.containsParameter(CommonParameters.OUTPUT_DIRECTORY.getName())) {
-               outputPath = Paths.get(userSuppliedParameters.getParameter(CommonParameters.OUTPUT_DIRECTORY.getName()).getStringValue());
+               outputPath = Paths.get(
+                  userSuppliedParameters.getParameter(CommonParameters.OUTPUT_DIRECTORY.getName()).getStringValue());
             }
 
             logService.trace(getClass(),
@@ -367,7 +370,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IParameterCollection templateParameters = parameterService.parseParameters(output.getProperties());
 
       DefaultParameterCollection collection = new DefaultParameterCollection();
-      DefaultParameter<?> outputDir = new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputPath.toString());
+      DefaultParameter<?> outputDir = new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
+         outputPath.toString());
       DefaultParameter<?> templateOutputDir = new DefaultParameter<>("templateFinalOutputDirectory",
          output.getOutputPath().toString());
       collection.addParameter(outputDir);
@@ -393,59 +397,53 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * Tries to resolve the inputDir and gave parameters
+    * Tries to resolve the inputDir and gav parameters
+    * 
     * @param userInputParameters
     * @param command
     * @return
     */
-   private IParameterCollection resolveImportantParameters(IParameterCollection userInputParameters, IJellyFishCommand command) {
+   private IParameterCollection resolveImportantParameters(IParameterCollection userInputParameters,
+            IJellyFishCommand command) {
+
       String inputDirName = CommonParameters.INPUT_DIRECTORY.getName();
-      String repositoryUrlName = CommonParameters.REPOSITORY_URL.getName();
+      String gavName = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
       String gaveName = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
+      String urlName = CommonParameters.REPOSITORY_URL.getName();
       
       IParameter<?> inputDir = userInputParameters.getParameter(inputDirName);
-      IParameter<?> urlParameter = userInputParameters.getParameter(repositoryUrlName);
+      IParameter<?> gavParameter = userInputParameters.getParameter(gavName);
       IParameter<?> gaveParameter = userInputParameters.getParameter(gaveName);
-      if (inputDir == null && urlParameter == null) {
+      IParameter<?> urlParameter = userInputParameters.getParameter(urlName);
+
+      if (gaveParameter != null) {
+         logService.warn(getClass(), gaveName + " parameter has been deprecated! Please use " + gavName + " instead");
+         if (gavParameter == null) {
+            gavParameter = new DefaultParameter<>(gavName,
+               gaveParameter.getStringValue().substring(0, gaveParameter.getStringValue().lastIndexOf('@')));
+         }
+      }
+      
+      if (urlParameter != null) {
+         logService.warn(getClass(), urlName + " parameter has been deprecated! It will be ignored");
+      }
+
+      if (inputDir == null) {
          inputDir = new DefaultParameter<>(inputDirName, ".");
       }
 
-      if (urlParameter != null) {
-         String gaveValue;
-         if (gaveParameter == null) {
-            gaveValue = promptService.prompt(gaveName, null, null);
-            gaveParameter = new DefaultParameter<>(gaveName, gaveValue);
-         } else {
-            gaveValue = gaveParameter.getStringValue();
-         }
-         gaveValue = parseGave(gaveValue);
-         File tempDir;
-         try {
-            tempDir = getArchiveFromUrl(urlParameter.getValue().toString(), gaveValue);
-         } catch (IOException e) {
-            throw new CommandException(e);
-         }
-         inputDir = new DefaultParameter<>(inputDirName, tempDir.getAbsolutePath());
-      } else if (inputDir != null) {
-         String dir = inputDir.getStringValue();
-         if (gaveParameter == null) {
-            Path projectInfo = Paths.get(dir, "build", "resources", "main", "project-info.properties");
-            if (Files.isRegularFile(projectInfo)) {
-               Properties properties = new Properties();
-               try {
-                  properties.load(Files.newInputStream(projectInfo));
-                  if (properties.containsKey("gave")) {
-                     String gaveValue = properties.getProperty("gave");
-                     CommonParameters.parseGave(gaveValue);
-                     gaveParameter = new DefaultParameter<>(gaveName, gaveValue);
-                  }
-               } catch (IOException e) {
-                  // If loading fails, don't do anything.  Use the default be
-               }
+      String dir = inputDir.getStringValue();
+      if (gavParameter == null) {
+         Path projectInfo = Paths.get(dir, "build", "poms", "pom-default.xml");
+         if (Files.isRegularFile(projectInfo)) {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            Model model;
+            try {
+               model = reader.read(Files.newBufferedReader(projectInfo));
+               String gavValue = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
+               gavParameter = new DefaultParameter<>(gavName, gavValue);
+            } catch (Exception e) {
             }
-         }
-         if (gaveParameter != null) {
-            CommonParameters.parseGave(gaveParameter.getStringValue());
          }
       }
 
@@ -454,13 +452,14 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       if (inputDir != null) {
          parameters.addParameter(inputDir);
       }
-      if (gaveParameter != null) {
-         parameters.addParameter(gaveParameter);
+      if (gavParameter != null) {
+         CommonParameters.parseGav(gavParameter.getStringValue());
+         parameters.addParameter(gavParameter);
       }
-      
+
       return parameters;
    }
-   
+
    /**
     * This method converts into an {@link IJellyFishCommandOptions} object. The input directory should be the root
     * directory of a system descriptor project. At minimum, the project root should contain the directories of
@@ -472,16 +471,16 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
     * @param userInputParameters the parameters that the user input on the command line
     * @param templateParameters the parameters that were fulfilled by the templateContent.properties file in the
     *           templateContent
+    * @param gavProject if {@code true}, use the gav parameter to retrieve the jellyfish system descriptor
     * @param command the command to execute
     * @return the JellyFish command options
     */
    private IJellyFishCommandOptions createCommandOptions(IParameterCollection userInputParameters,
             IParameterCollection templateParameters,
+            boolean gavProject,
             IJellyFishCommand command) {
 
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
-
-      IParameter<?> inputDir = userInputParameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameters(userInputParameters.getAllParameters());
@@ -489,38 +488,38 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
          parameters.addParameters(templateParameters.getAllParameters());
       }
       options.setParameters(parameters);
-
-      Path path = Paths.get(inputDir.getStringValue());
-      options.setParsingResult(getParsingResult(path, doesCommandRequireValidSystemDescriptor(command)));
+      
+      options.setParsingResult(getParsingResult(parameters, gavProject, doesCommandRequireValidSystemDescriptor(command)));
+      
+      Path path = Paths.get(parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName()).getStringValue());
       options.setSystemDescriptorProjectPath(path);
       return options;
    }
 
    /**
-    * This method uses the {@link ISystemDescriptorService} to parse the provided project. If errors occur, a {@link
+    * This method uses the {@link ISystemDescriptorService} to parse the provided gav. If errors occur, a {@link
     * ParsingException} is thrown along with a list of issues.
     *
-    * @param path system descriptor project path
+    * @param parameters jellyfish parameters
+    * @param gavProject if {@code true}, use the gav parameter to retrieve the jellyfish system descriptor
     * @param isValidDescriptorRequired if true and they system descriptor is invalid, a {@code CommandException} is
     *           thrown
     * @return the results of parsing
     */
-   private IParsingResult getParsingResult(Path path, boolean isValidDescriptorRequired) {
+   private IParsingResult getParsingResult(IParameterCollection parameters, boolean gavProject, boolean isValidDescriptorRequired) {
       IParsingResult result = null;
-      boolean isValid = path.toFile().isDirectory();
+      result = doParseProject(parameters, gavProject);
+      boolean isValid = result.isSuccessful();
       if (!isValid && isValidDescriptorRequired) {
-         throw new CommandException(String.format("%s either does not exists or is not a directory!", path));
-      } else if (isValid) {
-         result = doParseProject(path);
-         isValid = result.isSuccessful();
-         if (!isValid && isValidDescriptorRequired) {
-            result.getIssues()
-                  .stream()
-                  .filter(issue -> issue.getSeverity() == Severity.ERROR)
-                  .map(issue -> String.format("ERROR at line %d of %s: %s", issue.getLineNumber(), issue.getOffendingFile(), issue.getMessage()))
-                  .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
-            throw new CommandException("Command requires a valid SystemDescriptor but errors were encountered!");
-         }
+         result.getIssues()
+               .stream()
+               .filter(issue -> issue.getSeverity() == Severity.ERROR)
+               .map(issue -> String.format("ERROR at line %d of %s: %s",
+                  issue.getLineNumber(),
+                  issue.getOffendingFile(),
+                  issue.getMessage()))
+               .forEach(issue -> logService.error(JellyFishCommandProvider.class, issue));
+         throw new CommandException("Command requires a valid SystemDescriptor but errors were encountered");
       }
       return result;
    }
@@ -528,16 +527,20 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    /**
     * Invokes the service to parse the project, converting any parsing exception to a {@link FailedParsingResult}.
     */
-   private IParsingResult doParseProject(Path path) {
+   private IParsingResult doParseProject(IParameterCollection parameters, boolean gavProject) {
       IParsingResult result;
       try {
-         result = sdService.parseProject(path);
+         if (gavProject) {
+            result = sdService.parseProject(parameters.getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()).getStringValue());
+         } else {
+            result = sdService.parseProject(Paths.get(parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName()).getStringValue()));
+         }
       } catch (ParsingException | IllegalArgumentException e) {
          result = FailedParsingResult.fromException(e);
       }
       return result;
    }
-
+   
    /**
     * This method looks up the {@link IJellyFishCommand} corresponding with the given string.
     *
@@ -549,42 +552,16 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method downloads an archive from the provided url and gave(group/artifact/version/extension) info
-    *
-    * @param url the string representation of the repository url
-    * @param gave the string representation of the archive info
-    */
-   public File getArchiveFromUrl(String url, String gave) throws IOException {
-      File tempDir = FileUtils.getTempDirectory();
-      String[] fileName = gave.split("/");
-      URL myUrl = new URL(url + gave);
-      String destDirFileName = fileName[fileName.length - 1];
-      String nameOfNewDir = FilenameUtils.removeExtension(destDirFileName);
-      File destination = new File(tempDir.toString() + File.separator + nameOfNewDir);
-      File file = new File(tempDir, destDirFileName);
-      logService.info(JellyFishCommandProvider.class, "Downloading %s.", myUrl);
-      FileUtils.copyURLToFile(myUrl, file);
-
-      // unzip the file to the given destination
-      uZip(file.toString(), destination);
-
-      logService.info(JellyFishCommandProvider.class, "temp archive location: " + destination);
-
-      return destination;
-   }
-
-   /**
-    * This method parses the gave(group/artifact/version/extension) info to create a path and file string from the
+    * This method parses the gav (group/artifact/version) info to create a path and file string from the
     * parameter input
     *
-    * @param gave the string representation of the archive info
+    * @param gav the string representation of the archive info
     */
-   public String parseGave(String gave) {
-      String[] parsed = CommonParameters.parseGave(gave);
+   public String parseGav(String gav) {
+      String[] parsed = CommonParameters.parseGav(gav);
       String group = parsed[0];
       String artifact = parsed[1];
       String version = parsed[2];
-      String extension = parsed[3];
 
       String[] temp = group.split("\\.");
       String url = temp[0] + "/";
@@ -593,7 +570,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       }
 
       url += artifact + "/" + version + "/";
-      url += artifact + "-" + version + "." + extension;
+      url += artifact + "-" + version;
 
       return url;
    }

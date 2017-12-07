@@ -7,6 +7,7 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineRow;
 import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequirementsVerificationMatrixCommandStdOutIT {
@@ -66,6 +68,7 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
             bind(ILogService.class).toInstance(logger);
             bind(IFeatureService.class).toInstance(featureService);
             bind(IRequirementsService.class).toInstance(requirementsService);
+            bind(IRepositoryService.class).toInstance(mock(IRepositoryService.class));
          }
       });
       return modules;

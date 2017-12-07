@@ -2,11 +2,13 @@ package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
@@ -48,6 +50,7 @@ public class ScenarioServiceIT {
       @Override
       protected void configure() {
          bind(ILogService.class).toInstance(logService);
+         bind(IRepositoryService.class).toInstance(mock(IRepositoryService.class));
       }
    };
 

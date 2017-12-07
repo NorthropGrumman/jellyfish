@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.inject.AbstractModule;
@@ -9,6 +10,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -67,6 +69,7 @@ public class RequirementsAllocationMatrixCommandIT {
          protected void configure() {
             bind(ILogService.class).toInstance(logger);
             bind(IRequirementsService.class).toInstance(requirementsService);
+            bind(IRepositoryService.class).toInstance(mock(IRepositoryService.class));
          }
       });
       return modules;
