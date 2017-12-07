@@ -27,7 +27,7 @@ subprojects {
     }
 
     ext {
-        apiVersion = '1.4'
+        apiVersion = '1.7.3-SNAPSHOT'
         bootstrapCommandsVersion = '1.2'
         blocsVersion = '2.1'
         osgiVersion =  '6.0.0'
