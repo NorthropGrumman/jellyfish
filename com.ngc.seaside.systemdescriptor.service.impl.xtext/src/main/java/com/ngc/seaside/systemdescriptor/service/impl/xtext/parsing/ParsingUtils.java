@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
@@ -15,7 +14,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;

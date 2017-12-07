@@ -17,11 +17,9 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,7 +55,6 @@ public class ParsingDelegate {
          Collection<XtextResource> resources = utils.getProjectAndDependencies(gav, ctx);
          return getResult(ctx, resources);
       } catch (Exception e) {
-         System.out.println("HERE5");
          throw new ParsingException(e.getMessage(), e);
       }
    }
