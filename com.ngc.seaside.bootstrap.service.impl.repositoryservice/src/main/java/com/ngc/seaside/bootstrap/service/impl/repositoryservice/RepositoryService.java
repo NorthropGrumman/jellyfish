@@ -96,7 +96,6 @@ public class RepositoryService implements IRepositoryService {
       Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
          "invalid identifier: " + identifier);
       Artifact baseArtifact = new DefaultArtifact(identifier);
-      logService.info(getClass(), "********** %s, %s", baseArtifact, baseArtifact.getFile());
       CollectRequest request = new CollectRequest();
       request.setRoot(new Dependency(baseArtifact, null));
       request.setRepositories(remoteRepositories);
@@ -108,7 +107,6 @@ public class RepositoryService implements IRepositoryService {
       } catch (Exception e) {
          throw new RepositoryServiceException(e);
       }
-      logService.info(getClass(), "######### %s, %s", baseArtifact, baseArtifact.getFile());
       result.getCollectExceptions().forEach(exception -> logService.error(RepositoryService.class, exception));
       if (transitive) {
          return result.getArtifactResults()
