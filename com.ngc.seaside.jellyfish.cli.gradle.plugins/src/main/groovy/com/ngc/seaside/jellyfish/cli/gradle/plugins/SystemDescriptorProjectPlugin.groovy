@@ -29,12 +29,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                                          'nexusSnapshots',
                                          'nexusUsername',
                                          'nexusPassword')
-
-            // This plugin requires the maven plugin to enable uploads to Nexus.
-            plugins.apply 'maven'
-            // This is required to install a model project locally.
-            plugins.apply 'java'
-
+            
             repositories {
                 mavenLocal()
 
@@ -46,12 +41,28 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                     url nexusConsolidated
                 }
             }
+            
+            // This plugin requires the maven plugin to enable uploads to Nexus.
+            plugins.apply 'maven'
 
-            p.configurations.add(new Configuration() {
-                @Delegate private final Configuration configuration = p.configurations.compile
-                String getName() { 'sd' }
-                String getDescription() { 'Dependencies for the system descriptor project' }
-            })
+            // This is required to install a model project locally.
+            plugins.apply 'java'
+            configurations.testCompile.extendsFrom = []
+            
+            configurations {
+                sd {
+                    resolutionStrategy.failOnVersionConflict()
+                }
+            }
+            
+            afterEvaluate {
+                dependencies {
+                    configurations.sd.dependencies.each {
+                        compileOnly it
+                        testCompile "${it.group}:${it.name}:${it.version}:tests"
+                    }
+                }
+            }
 
             sourceSets {
                 main {
@@ -65,12 +76,12 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                     }
                 }
             }
-
+            
             task('testJar', type: Jar) {
                 classifier = 'tests'
                 from sourceSets.test.output
             }
-
+            
             artifacts {
                 archives testJar
             }
