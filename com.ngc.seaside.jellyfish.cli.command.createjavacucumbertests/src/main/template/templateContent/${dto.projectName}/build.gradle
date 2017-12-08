@@ -43,7 +43,7 @@ task('copyFeatures', type: Copy) {
 	    from zipTree(it.file)
 	}
 	exclude {
-	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${D}{parent.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${D}{parent.systemDescriptorModel.replace('.', '/')}\\b.*?\\.(?i)feature")
 	}
 	into systemDescriptorFeatureDirectory
     build.dependsOn it
