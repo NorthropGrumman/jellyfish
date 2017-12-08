@@ -28,7 +28,7 @@ dependencies {
 }
 
 ext {
-    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    systemDescriptorFeatureDirectory = file("${D}{buildDir}/features")
     mainClass = '${dto.packageName}.main.${dto.className}TestMain'
 }
 

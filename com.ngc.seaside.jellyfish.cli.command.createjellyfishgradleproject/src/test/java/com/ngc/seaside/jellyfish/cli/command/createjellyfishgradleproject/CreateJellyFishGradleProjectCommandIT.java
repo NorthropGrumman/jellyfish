@@ -4,7 +4,6 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
@@ -136,22 +135,13 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean groupMatch = buildFileContent.stream().anyMatch(line -> line.contains(groupStringToMatch));
       Assert.assertTrue("build.gradle group is incorrect", groupMatch);
 
-      String[] parsedGav = CommonParameters.parseGav(expectedGavId);
-      String artifactStringToMatch = "systemDescriptorProjectName = '" + parsedGav[1] + "'";
+      String artifactStringToMatch = "systemDescriptor = '" + expectedGavId + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
       Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
 
-      String SDversionStringToMatch = "systemDescriptorProjectVersion = '" + parsedGav[2] + "'";
-      boolean SDversionMatch = buildFileContent.stream().anyMatch(line -> line.contains(SDversionStringToMatch));
-      Assert.assertTrue("build.gradle system descriptor version is incorrect", SDversionMatch);
-
-      String modelStringToMatch = "modelName = '" + expectedModelName + "'";
+      String modelStringToMatch = "systemDescriptorModel = '" + expectedModelName + "'";
       boolean modelStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(modelStringToMatch));
       Assert.assertTrue("build.gradle model name is incorrect", modelStringMatch);
-
-      String depStringToMatch = "generate \"" + expectedGavId + "\"";
-      boolean depStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(depStringToMatch));
-      Assert.assertTrue("build.gradle generate dependencies is incorrect", depStringMatch);
 
       // Check settings.gradle content
       Path settingsFilePath = outputDir.resolve(Paths.get(expectedProjectName, "settings.gradle"));
@@ -165,7 +155,6 @@ public class CreateJellyFishGradleProjectCommandIT {
          throws IOException {
       Path buildFilePath = outputDir.resolve(Paths.get(expectedProjectName, "build.gradle"));
       List<String> buildFileContent = Files.readAllLines(buildFilePath);
-
       String lineToMatch = String.format("classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:%s'", pluginsVersion);
       Assert.assertTrue("did not use correct Jellyfish plugins version!",
                         buildFileContent.stream().anyMatch(l -> l.contains(lineToMatch)));

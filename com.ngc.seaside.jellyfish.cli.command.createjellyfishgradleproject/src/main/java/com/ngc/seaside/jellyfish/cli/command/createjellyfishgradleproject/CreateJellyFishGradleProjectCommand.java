@@ -73,12 +73,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());
 
-      // Ensure OUTPUT_DIR_PROPERTY parameter is set
-      if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
-         collection.addParameter(new DefaultParameter<>(OUTPUT_DIR_PROPERTY).setValue(
-               Paths.get(".").toAbsolutePath().toString()));
-      }
-
       final String projectName = collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue();
 
       // Create project directory.
