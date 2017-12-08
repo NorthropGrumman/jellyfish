@@ -135,11 +135,11 @@ public class CreateJellyFishGradleProjectCommandIT {
       boolean groupMatch = buildFileContent.stream().anyMatch(line -> line.contains(groupStringToMatch));
       Assert.assertTrue("build.gradle group is incorrect", groupMatch);
 
-      String artifactStringToMatch = "systemDescriptor = '" + expectedGavId + "'";
+      String artifactStringToMatch = "project = '" + expectedGavId + "'";
       boolean artifactNameMatch = buildFileContent.stream().anyMatch(line -> line.contains(artifactStringToMatch));
       Assert.assertTrue("build.gradle system descriptor project name is incorrect", artifactNameMatch);
 
-      String modelStringToMatch = "systemDescriptorModel = '" + expectedModelName + "'";
+      String modelStringToMatch = "model = '" + expectedModelName + "'";
       boolean modelStringMatch = buildFileContent.stream().anyMatch(line -> line.contains(modelStringToMatch));
       Assert.assertTrue("build.gradle model name is incorrect", modelStringMatch);
 

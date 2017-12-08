@@ -27,8 +27,10 @@ buildscript {
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
-systemDescriptor = '${gav}'
-systemDescriptorModel = '${model}'
+systemDescriptor {
+    project = '${gav}'
+    model = '${model}'
+}
 
 subprojects {
 
