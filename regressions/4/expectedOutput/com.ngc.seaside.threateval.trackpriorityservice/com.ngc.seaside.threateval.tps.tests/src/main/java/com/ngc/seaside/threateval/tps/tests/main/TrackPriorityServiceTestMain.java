@@ -25,8 +25,16 @@ public class TrackPriorityServiceTestMain {
          }
          if (folder != null) {
             String featurePath = folder.toString();
-            args = new String[] { "--glue", TrackPriorityServiceSteps.class.getPackage().getName(),
-                                  featurePath };
+
+            String cucumberResultsDir = "build/test-results/cucumber/";
+
+            args = new String[] {
+              "--glue", TrackPriorityServiceSteps.class.getPackage().getName(),
+              "--plugin", "pretty",
+              "--plugin", "html:" + cucumberResultsDir + "html",
+              "--plugin", "junit:" + cucumberResultsDir + "cucumber-results.xml",
+              "--plugin", "json:" + cucumberResultsDir + "cucumber-results.json",
+              featurePath };
          }
 
       }
