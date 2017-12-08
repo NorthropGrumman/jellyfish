@@ -27,18 +27,35 @@ dependencies {
     compile "info.cukes:cucumber-guice:${D}cucumberVersion"
 }
 
+ext {
+    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    mainClass = '${dto.packageName}.main.${dto.className}TestMain'
+}
+
 jar {
     manifest {
-        attributes 'Main-Class': "${dto.packageName}.main.${dto.className}TestMain"
+        attributes 'Main-Class': mainClass
     }
 }
 
+task('copyFeatures', type: Copy) {
+    parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
+	    from zipTree(it.file)
+	}
+	exclude {
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${D}{parent.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	}
+	into systemDescriptorFeatureDirectory
+    build.dependsOn it
+	assemble.dependsOn it
+	sourceSets.main.resources.includes systemDescriptorFeatureDirectory
+}
 
 seasideApplication {
-    mainClassName = "${dto.packageName}.main.${dto.className}TestMain"
-    includeDistributionDirs = ['src/main/resources/']
+    mainClassName = mainClass
+    includeDistributionDirs = ['src/main/resources/', systemDescriptorFeatureDirectory]
     appHomeVarName = 'appHome'
-    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    appSystemProperties = [NG_FW_HOME: 'APP_HOME_VAR']
     distributionName = "${D}{project.name}-${D}{project.version}"
     installationDir = "build/distributions/${D}{project.name}-${D}{project.version}"
 

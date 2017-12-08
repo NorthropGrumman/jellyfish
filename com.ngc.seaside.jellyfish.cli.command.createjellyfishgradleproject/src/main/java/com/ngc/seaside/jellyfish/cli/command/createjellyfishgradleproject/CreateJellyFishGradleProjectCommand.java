@@ -107,6 +107,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       String[] parsedGav = CommonParameters.parseGav(gavStr);
       collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_ARTIFACT_ID_PROPERTY, parsedGav[1]));
       collection.addParameter(new DefaultParameter<>(SYSTEM_DESCRIPTOR_VERSION_PROPERTY, parsedGav[2]));
+      collection.addParameter(new DefaultParameter<>("testsGav", String.format("%s:%s:jar:tests-%s", parsedGav[0], parsedGav[1], parsedGav[2])));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
