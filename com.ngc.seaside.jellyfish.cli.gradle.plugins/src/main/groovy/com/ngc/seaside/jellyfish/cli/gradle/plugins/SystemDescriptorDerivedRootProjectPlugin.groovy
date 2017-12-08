@@ -20,7 +20,7 @@ class SystemDescriptorDerivedRootProjectPlugin implements Plugin<Project> {
 			addRepositories()
 			addPluginConvention()
 			
-            configurations {
+			configurations {
                 sd {
                     resolutionStrategy.failOnVersionConflict()
                 }
@@ -29,26 +29,24 @@ class SystemDescriptorDerivedRootProjectPlugin implements Plugin<Project> {
                     transitive = false
                 }
             }
-            
+			
             afterEvaluate {
-				task('generateModels', type: Copy) {
-		            def outer = it
-		            configurations.sd.resolvedConfiguration.resolvedArtifacts.each { 
-					    outer.from zipTree(it.file)
+                
+				task('generateSd', type: Copy) {
+			        dependencies.sd systemDescriptor
+		            configurations.sd.resolvedConfiguration.resolvedArtifacts.each {
+		                from zipTree(it.file)
 		            }
 		            into systemDescriptorDirectory
 				    build.dependsOn it
 				}
 				
 				task('generateFeatures', type: Copy) {
-			        configurations.sd.dependencies.each {
-			            project.dependencies.gherkin("${it.group}:${it.name}:${it.version}:tests") {
-			                targetConfiguration = 'test'
-			            }
+			        dependencies.gherkin("${systemDescriptor.group}:${systemDescriptor.name}:${systemDescriptor.version}:tests@zip") {
+			            targetConfiguration = 'test'
 			        }
-		            def outer = it
 		            configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
-		                outer.from zipTree(it.file)
+		                from zipTree(it.file)
 		            }
 		            into systemDescriptorTestDirectory
 				    build.dependsOn it

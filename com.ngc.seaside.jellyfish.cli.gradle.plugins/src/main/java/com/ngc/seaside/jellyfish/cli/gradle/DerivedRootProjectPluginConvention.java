@@ -32,6 +32,11 @@ public class DerivedRootProjectPluginConvention {
    }
 
    public DerivedRootProjectPluginConvention setSystemDescriptor(Object dependencyNotation) {
+      if (dependencyNotation == null) {
+         systemDescriptor = null;
+      } else {
+         systemDescriptor = project.getDependencies().create(dependencyNotation);
+      }
       return this;
    }
    

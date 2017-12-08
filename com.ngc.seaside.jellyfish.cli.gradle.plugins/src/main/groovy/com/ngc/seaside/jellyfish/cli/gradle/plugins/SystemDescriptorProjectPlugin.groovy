@@ -42,11 +42,18 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 }
             }
             
+            // This is required to install a model project locally.
+            plugins.apply 'java'
+            jar.enabled = false
+            configurations.all {
+                outgoing.artifacts.removeAll { artifact ->
+                    artifact.extension == 'jar'
+                }
+            }
+            
             // This plugin requires the maven plugin to enable uploads to Nexus.
             plugins.apply 'maven'
 
-            // This is required to install a model project locally.
-            plugins.apply 'java'
             configurations.testCompile.extendsFrom = []
             
             configurations {
@@ -58,7 +65,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             afterEvaluate {
                 dependencies {
                     configurations.sd.dependencies.each {
-                        compileOnly it
+                        compile "${it.group}:${it.name}:${it.version}"
                         testCompile "${it.group}:${it.name}:${it.version}:tests"
                     }
                 }
@@ -77,13 +84,19 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 }
             }
             
+            task('sdJar', type: Jar) {
+                extension = 'zip'
+                from sourceSets.main.output
+            }
+            
             task('testJar', type: Jar) {
                 classifier = 'tests'
+                extension = 'zip'
                 from sourceSets.test.output
             }
             
             artifacts {
-                archives testJar
+                archives sdJar, testJar
             }
 
             // Validate the model is correct.
