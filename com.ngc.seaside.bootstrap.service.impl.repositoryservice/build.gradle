@@ -14,6 +14,7 @@ dependencies {
     compile "org.eclipse.aether:aether-connector-basic:$aetherVersion"
     compile "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
     compile "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+    compile "org.apache.maven:maven-settings-builder:$mavenVersion"
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
 

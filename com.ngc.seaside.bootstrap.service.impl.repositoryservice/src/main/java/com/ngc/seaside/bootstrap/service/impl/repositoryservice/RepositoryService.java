@@ -6,6 +6,13 @@ import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.bootstrap.service.repository.api.RepositoryServiceException;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilder;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.io.DefaultSettingsReader;
+import org.apache.maven.settings.io.DefaultSettingsWriter;
+import org.apache.maven.settings.validation.DefaultSettingsValidator;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -41,6 +48,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -51,13 +59,12 @@ import java.util.stream.Collectors;
  */
 @Component(service = IRepositoryService.class)
 public class RepositoryService implements IRepositoryService {
-//<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>, 
-   private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile("[^:\\s@]+:[^:\\s@]+(?:[^:\\s@]+(?:[^:\\s@]+)):\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?");
+   // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
+   private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
+      "[^:\\s@]+:[^:\\s@]+(?:[^:\\s@]+(?:[^:\\s@]+)):\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?");
    private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
-   private static final Path MAVEN_LOCAL_REPO = Paths.get(System.getProperty("user.home"), ".m2", "repository");
-   private static final Path GRADLE_USER_DIR = Paths.get(System.getProperty("user.home"), ".gradle", "gradle.properties");
 
    private ILogService logService;
    private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
@@ -105,9 +112,13 @@ public class RepositoryService implements IRepositoryService {
       try {
          result = repositorySystem.resolveDependencies(session, dependencyRequest);
       } catch (Exception e) {
+         logService.error(RepositoryService.class, "Unable to retrieve artifact dependencies for " + identifier, e);
          throw new RepositoryServiceException(e);
       }
       result.getCollectExceptions().forEach(exception -> logService.error(RepositoryService.class, exception));
+      if (!result.getCollectExceptions().isEmpty()) {
+         throw new RepositoryServiceException("Unable to retrieve artifact dependencies for " + identifier);
+      }
       if (transitive) {
          return result.getArtifactResults()
                       .stream()
@@ -115,13 +126,19 @@ public class RepositoryService implements IRepositoryService {
                       .filter(artifactResult -> {
                          Artifact artifact = artifactResult.getArtifact();
                          return !(Objects.equals(artifact.getGroupId(), baseArtifact.getGroupId()) &&
-                         Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId()) &&
-                         Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier()) &&
-                         Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
+                            Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId()) &&
+                            Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier()) &&
+                            Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
                       })
-                      .peek(artifactResult -> artifactResult.getExceptions()
-                                                            .forEach(exception -> logService.error(
-                                                               RepositoryService.class, exception)))
+                      .peek(artifactResult -> {
+                         if (artifactResult.isMissing() || !artifactResult.isResolved()) {
+                            artifactResult.getExceptions()
+                                          .forEach(exception -> logService.error(
+                                             RepositoryService.class, exception));
+                            throw new RepositoryServiceException(
+                               "Unable to retrieve transitive dependency " + artifactResult + " for " + identifier);
+                         }
+                      })
                       .map(ArtifactResult::getArtifact)
                       .map(Artifact::getFile)
                       .filter(file -> file != null)
@@ -142,31 +159,6 @@ public class RepositoryService implements IRepositoryService {
 
    @Activate
    public void activate() {
-      Properties properties = new Properties();
-      try {
-         properties.load(Files.newBufferedReader(GRADLE_USER_DIR));
-
-         String nexusConsolidated = properties.getProperty(NEXUS_CONSOLIDATED);
-
-         if (nexusConsolidated == null) {
-            logService.warn(RepositoryService.class,
-               "Missing " + NEXUS_CONSOLIDATED + " property from " + GRADLE_USER_DIR);
-         } else {
-            String nexusUsername = properties.getProperty(NEXUS_USERNAME);
-            String nexusPassword = properties.getProperty(NEXUS_PASSWORD);
-            RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated);
-            if (nexusUsername != null && nexusPassword != null) {
-               builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername)
-                                                                    .addPassword(nexusPassword)
-                                                                    .build());
-            }
-            remoteRepositories.add(builder.build());
-         }
-
-      } catch (IOException e) {
-         logService.warn(RepositoryService.class, "Unable to load " + GRADLE_USER_DIR);
-      }
-      
       DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
       locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
       locator.addService(TransporterFactory.class, FileTransporterFactory.class);
@@ -174,10 +166,23 @@ public class RepositoryService implements IRepositoryService {
       this.repositorySystem = locator.getService(RepositorySystem.class);
 
       DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-      LocalRepository localRepository = new LocalRepository(MAVEN_LOCAL_REPO.toFile());
-      session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, localRepository));
+      Optional<Path> mavenLocalRepo = findMavenLocal();
+      if (mavenLocalRepo.isPresent()) {
+         LocalRepository localRepository = new LocalRepository(mavenLocalRepo.get().toFile());
+         session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, localRepository));
+      } else {
+         logService.warn(RepositoryService.class, "Unable to find maven local repository");
+      }
+
+      Optional<RemoteRepository> nexusRemoteRepo = findRemoteNexus();
+      if (nexusRemoteRepo.isPresent()) {
+         remoteRepositories.add(nexusRemoteRepo.get());
+      } else {
+         logService.warn(RepositoryService.class, "Unable to find Nexus remote repository");
+      }
+
       this.session = session;
-      
+
       logService.trace(getClass(), "activated");
    }
 
@@ -202,6 +207,116 @@ public class RepositoryService implements IRepositoryService {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+
+   private Optional<RemoteRepository> findRemoteNexus() {
+
+      Optional<Path> gradleProperties = findGradleProperties();
+      final String nexusConsolidated;
+      final String nexusUsername;
+      final String nexusPassword;
+      if (gradleProperties.isPresent()) {
+         Properties properties = new Properties();
+         try {
+            properties.load(Files.newBufferedReader(gradleProperties.get()));
+
+            nexusConsolidated = properties.getProperty(NEXUS_CONSOLIDATED);
+
+            if (nexusConsolidated == null) {
+               logService.warn(RepositoryService.class,
+                  "Missing " + NEXUS_CONSOLIDATED + " property from " + gradleProperties.get());
+               return Optional.empty();
+            } else {
+               nexusUsername = properties.getProperty(NEXUS_USERNAME);
+               nexusPassword = properties.getProperty(NEXUS_PASSWORD);
+            }
+
+         } catch (IOException e) {
+            logService.warn(RepositoryService.class,
+               "Unable to load " + gradleProperties.get() + ": " + e.getMessage());
+            return Optional.empty();
+         }
+
+      } else {
+         nexusConsolidated = System.getProperty(NEXUS_CONSOLIDATED);
+         nexusUsername = System.getProperty(NEXUS_USERNAME);
+         nexusPassword = System.getProperty(NEXUS_PASSWORD);
+         if (nexusConsolidated == null) {
+            logService.warn(RepositoryService.class,
+               "Unable to find nexusConsolidate from gradle.properties or system properties");
+            return Optional.empty();
+         }
+      }
+
+      RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated);
+      if (nexusUsername != null && nexusPassword != null) {
+         builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername)
+                                                              .addPassword(nexusPassword)
+                                                              .build());
+      }
+      return Optional.of(builder.build());
+   }
+
+   private Optional<Path> findMavenLocal() {
+      DefaultSettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
+      String m2Home = System.getProperty("M2_HOME");
+      if (m2Home != null) {
+         Path globalMavenSettings = Paths.get(m2Home, "conf", "settings.xml");
+         if (Files.isRegularFile(globalMavenSettings)) {
+            settingsRequest.setGlobalSettingsFile(globalMavenSettings.toFile());
+         }
+      }
+      String userHome = System.getProperty("user.home");
+      if (userHome != null) {
+         Path userMavenSettings = Paths.get(userHome, ".m2", "settings.xml");
+         if (Files.isRegularFile(userMavenSettings)) {
+            settingsRequest.setUserSettingsFile(userMavenSettings.toFile());
+         }
+      }
+      settingsRequest.setUserProperties(System.getProperties());
+      Settings settings;
+      try {
+         settings = new DefaultSettingsBuilder().setSettingsReader(new DefaultSettingsReader())
+                                                .setSettingsWriter(new DefaultSettingsWriter())
+                                                .setSettingsValidator(new DefaultSettingsValidator())
+                                                .build(settingsRequest)
+                                                .getEffectiveSettings();
+      } catch (SettingsBuildingException e) {
+         return Optional.empty();
+      }
+      String localRepository = settings.getLocalRepository();
+      Path userMavenRepo;
+      if (localRepository == null) {
+         if (userHome != null) {
+            userMavenRepo = Paths.get(userHome, ".m2", "repository");
+         } else {
+            userMavenRepo = null;
+         }
+      } else {
+         userMavenRepo = Paths.get(localRepository);
+      }
+      if (userMavenRepo == null || !Files.isDirectory(userMavenRepo)) {
+         return Optional.empty();
+      }
+      
+      return Optional.of(userMavenRepo);
+   }
+
+   private Optional<Path> findGradleProperties() {
+      String userHome = System.getProperty("user.home");
+      if (userHome != null) {
+         Path properties = Paths.get(userHome, ".gradle", "gradle.properties");
+         if (Files.isRegularFile(properties)) {
+            return Optional.of(properties);
+         }
+      }
+
+      Path properties = Paths.get("gradle.properties");
+      if (Files.isRegularFile(properties)) {
+         return Optional.of(properties);
+      }
+
+      return Optional.empty();
    }
 
 }
