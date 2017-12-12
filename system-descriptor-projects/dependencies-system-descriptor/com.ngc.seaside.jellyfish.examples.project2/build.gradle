@@ -1,0 +1,4 @@
+
+dependencies {
+    sd "com.ngc.seaside.threateval:threatevaluation.descriptor:$threatEvalVersion"
+}
