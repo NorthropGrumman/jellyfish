@@ -244,7 +244,7 @@ public class RepositoryService implements IRepositoryService {
          nexusPassword = System.getProperty(NEXUS_PASSWORD);
          if (nexusConsolidated == null) {
             logService.warn(RepositoryService.class,
-               "Unable to find nexusConsolidate from gradle.properties or system properties");
+               "Unable to find " + NEXUS_CONSOLIDATED + " from gradle.properties or system properties");
             return Optional.empty();
          }
       }
