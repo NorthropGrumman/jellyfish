@@ -12,7 +12,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -40,7 +39,6 @@ import java.util.Optional;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
    private static final PrintStreamLogService logger = new PrintStreamLogService();
-   private static final FeatureService featureService = new FeatureService();
 
    private CreateJavaCucumberTestsCommand command = new CreateJavaCucumberTestsCommand();
 
@@ -85,12 +83,7 @@ public class CreateJavaCucumberTestsCommandIT {
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
-      // Setup mock model
-      when(model.getParent()).thenReturn(mock(IPackage.class));
-      
-
       command.setLogService(logger);
-      command.setFeatureService(featureService);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
@@ -100,9 +93,7 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @SuppressWarnings("unchecked")
    private void setupModel(Path inputDirectory, String pkg, String name) {
-      when(options.getSystemDescriptorProjectPath()).thenReturn(inputDirectory);
       when(systemDescriptor.findModel(pkg + '.' + name)).thenReturn(Optional.of(model));
-      when(model.getParent().getName()).thenReturn(pkg);
       when(model.getName()).thenReturn(name);
       when(model.getFullyQualifiedName()).thenReturn(pkg + '.' + name);
 
@@ -129,7 +120,7 @@ public class CreateJavaCucumberTestsCommandIT {
    }
 
    @Test
-   public void testDoesGenerateANewProjectAndCopyFeatureFiles() throws IOException, URISyntaxException {
+   public void testDoesGenerateANewProject() throws IOException, URISyntaxException {
       Path inputDir = Paths.get("src", "test", "resources");
       setupModel(inputDir, "com.ngc.seaside.testeval", "HamburgerService");
 
@@ -150,48 +141,6 @@ public class CreateJavaCucumberTestsCommandIT {
                    "tests"));
       Assert.assertTrue(Files.isDirectory(javaDir));
 
-      Path featureDir = projectDir.resolve(Paths.get("src",
-         "main",
-         "resources",
-         model.getParent().getName().replace('.', File.separatorChar)));
-      Assert.assertTrue(Files.isDirectory(featureDir));
-
-      Path addBacon = featureDir.resolve("HamburgerService.addBacon.feature");
-      Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
-      Assert.assertTrue(Files.isRegularFile(addBacon));
-      Assert.assertTrue(Files.isRegularFile(removeTheCheese));
-   }
-
-   @Test
-   public void testDoesRefreshFeatureFilesOnly() throws Throwable {
-      Path inputDir = Paths.get("src", "test", "resources");
-      setupModel(inputDir, "com.ngc.seaside.testeval", "HamburgerService");
-
-      parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.MODEL_PROPERTY,
-         model.getFullyQualifiedName()));
-      parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.toString()));
-      parameters.addParameter(
-         new DefaultParameter<>(CreateJavaCucumberTestsCommand.REFRESH_FEATURE_FILES_PROPERTY, "true"));
-
-      command.run(options);
-
-      Path projectDir = outputDirectory.resolve(model.getFullyQualifiedName().toLowerCase() + ".tests");
-
-      Path javaDir = projectDir.resolve(
-         Paths.get("src", "main", "java"));
-      Assert.assertFalse(Files.isDirectory(javaDir));
-
-      Path featureDir = projectDir.resolve(Paths.get("src",
-         "main",
-         "resources",
-         model.getParent().getName().replace('.', File.separatorChar)));
-      Assert.assertTrue(Files.isDirectory(featureDir));
-
-      Path addBacon = featureDir.resolve("HamburgerService.addBacon.feature");
-      Path removeTheCheese = featureDir.resolve("HamburgerService.removeTheCheese.feature");
-      Assert.assertTrue(Files.isRegularFile(addBacon));
-      Assert.assertTrue(Files.isRegularFile(removeTheCheese));
    }
 
 }
