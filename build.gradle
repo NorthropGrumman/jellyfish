@@ -64,7 +64,6 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
         dir = folder
         tasks = ['build', 'install']
         startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
-        startParameter.systemPropertiesArgs = [:]
 
         buildSystemDescriptorProjects.dependsOn it
     }
