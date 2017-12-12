@@ -434,7 +434,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 
       String dir = inputDir.getStringValue();
       if (gavParameter == null) {
-         Path projectInfo = Paths.get(dir, "build", "poms", "pom-default.xml");
+         Path projectInfo = Paths.get(dir, "build", "publications", "mavenSd", "pom-default.xml");
          if (Files.isRegularFile(projectInfo)) {
             MavenXpp3Reader reader = new MavenXpp3Reader();
             Model model;
@@ -443,7 +443,10 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
                String gavValue = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
                gavParameter = new DefaultParameter<>(gavName, gavValue);
             } catch (Exception e) {
+               logService.warn(JellyFishCommandProvider.class, "Unable to read project information at " + projectInfo);
             }
+         } else {
+            logService.warn(JellyFishCommandProvider.class, projectInfo + " is missing: run `gradle install` on the system descriptor project");
          }
       }
 

@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -62,6 +63,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
 
             // This plugin requires the maven plugin to enable uploads to Nexus.
             plugins.apply 'maven-publish'
+            task('install', dependsOn: publishToMavenLocal)
 
             sourceSets {
                 main {
@@ -92,6 +94,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 command = 'validate'
                 inputDir = "${project.projectDir}"
                 build.dependsOn it
+                it.dependsOn tasks.withType(GenerateMavenPom)
             }
 
             afterEvaluate {
@@ -104,7 +107,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
 
                 publishing {
                     publications {
-                        mavenJava(MavenPublication) {
+                        mavenSd(MavenPublication) {
                             artifact sdJar
                             artifact testJar
                             pom.withXml { xml ->
