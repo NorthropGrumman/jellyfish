@@ -210,7 +210,7 @@ public class RepositoryService implements IRepositoryService {
       setLogService(null);
    }
 
-   private Optional<RemoteRepository> findRemoteNexus() {
+   Optional<RemoteRepository> findRemoteNexus() {
 
       Optional<Path> gradleProperties = findGradleProperties();
       final String nexusConsolidated;
@@ -258,7 +258,7 @@ public class RepositoryService implements IRepositoryService {
       return Optional.of(builder.build());
    }
 
-   private Optional<Path> findMavenLocal() {
+   Optional<Path> findMavenLocal() {
       DefaultSettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
       String m2Home = System.getProperty("M2_HOME");
       if (m2Home != null) {
@@ -303,7 +303,7 @@ public class RepositoryService implements IRepositoryService {
       return Optional.of(userMavenRepo);
    }
 
-   private Optional<Path> findGradleProperties() {
+   Optional<Path> findGradleProperties() {
       String userHome = System.getProperty("user.home");
       if (userHome != null) {
          Path properties = Paths.get(userHome, ".gradle", "gradle.properties");
