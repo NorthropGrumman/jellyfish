@@ -47,7 +47,7 @@ import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ValidationDelegateTest {
 
    private final Collection<Package> morePackagesToWrapIfNeeded = new ArrayList<>();
