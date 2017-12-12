@@ -61,7 +61,11 @@ import java.util.stream.Collectors;
 public class RepositoryService implements IRepositoryService {
    // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
    private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
-      "[^:\\s@]+:[^:\\s@]+(?:[^:\\s@]+(?:[^:\\s@]+)):\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?");
+      "(?<groupId>[^:\\s@]+)"
+      + ":(?<artifactId>[^:\\s@]+)"
+      + "(?::(?<extension>[^:\\s@]+)"
+      + "(?::(?<classifier>[^:\\s@]+))?)?"
+      + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
    private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
@@ -74,9 +78,7 @@ public class RepositoryService implements IRepositoryService {
    @Override
    public Path getArtifact(String identifier) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
-      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
-         "invalid identifier: " + identifier);
-
+      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(), "invalid identifier: " + identifier);
       ArtifactRequest request = new ArtifactRequest();
       request.setArtifact(new DefaultArtifact(identifier));
       request.setRepositories(remoteRepositories);
@@ -100,8 +102,7 @@ public class RepositoryService implements IRepositoryService {
    @Override
    public Set<Path> getArtifactDependencies(String identifier, boolean transitive) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
-      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
-         "invalid identifier: " + identifier);
+      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(), "invalid identifier: " + identifier);
       Artifact baseArtifact = new DefaultArtifact(identifier);
       CollectRequest request = new CollectRequest();
       request.setRoot(new Dependency(baseArtifact, null));
@@ -298,7 +299,7 @@ public class RepositoryService implements IRepositoryService {
       if (userMavenRepo == null || !Files.isDirectory(userMavenRepo)) {
          return Optional.empty();
       }
-      
+
       return Optional.of(userMavenRepo);
    }
 
