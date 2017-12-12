@@ -27,6 +27,7 @@ dependencies {
 
 ext {
     systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    consolidatedResourcesDirectory = file("${buildDir}/runtime/resources")
     mainClass = 'com.test.model.tests.main.ModelTestMain'
 }
 
@@ -36,7 +37,7 @@ jar {
     }
 }
 
-task('copyFeatures', type: Copy) {
+task('copyFeatures', type: Copy, description: "Copies the system descriptor test resources and the model's feature files") {
     parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
 	    from zipTree(it.file)
 	}
@@ -47,6 +48,14 @@ task('copyFeatures', type: Copy) {
     build.dependsOn it
 	assemble.dependsOn it
 	sourceSets.main.resources.srcDir systemDescriptorFeatureDirectory
+}
+
+task('consolidateResources', type: Copy,
+     dependsOn: copyFeatures,
+     description: "Copies the project's resource directories to a common folder") {
+    from sourceSets.main.resources.srcDirs
+    into consolidatedResourcesDirectory
+    build.finalizedBy it
 }
 
 seasideApplication {
