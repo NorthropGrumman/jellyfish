@@ -34,17 +34,35 @@ ext {
     expectedFolderName = 'expectedOutput'
 }
 
+task('cleanSystemDescriptorProjects', description: 'cleans all of the system descriptor projects') {
+    clean.dependsOn it
+}
+
 task('buildSystemDescriptorProjects', description: 'builds and installs all of the system descriptor projects') {
     build.dependsOn it
 }
 
 file(systemDescriptorProjectsFolderName).eachDir { folder ->
     def sdProjectName = folder.name.capitalize()
+    task("cleanSd${sdProjectName}",
+         type: Delete,
+         description: "Cleans the system descriptor project ${sdProjectName}") {
+        folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3, visitRoot: true) {
+            if (it.name == 'build') {
+                delete it
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+            if (it.name == 'src') {
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+        }
+        cleanSystemDescriptorProjects.dependsOn it
+    }
     task("buildSd${sdProjectName}",
          type: GradleBuild,
-         description: "Runs 'gradle clean build install' on the system descriptor project ${sdProjectName}") {
+         description: "Runs 'gradle build install' on the system descriptor project ${sdProjectName}") {
         dir = folder
-        tasks = ['clean', 'build', 'install']
+        tasks = ['build', 'install']
         startParameter.projectProperties['jellyfishCliVersion'] = jellyfishCliVersion
         startParameter.systemPropertiesArgs = [:]
 
