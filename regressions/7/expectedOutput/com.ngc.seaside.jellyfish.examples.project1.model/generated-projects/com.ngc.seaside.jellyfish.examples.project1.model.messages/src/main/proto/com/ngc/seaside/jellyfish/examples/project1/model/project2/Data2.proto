@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.ngc.seaside.jellyfish.examples.project1.model.project2;
+
+option java_multiple_files = true;
+
+message Data2 {
+
+   sint32 field2 = 1;
+
+}

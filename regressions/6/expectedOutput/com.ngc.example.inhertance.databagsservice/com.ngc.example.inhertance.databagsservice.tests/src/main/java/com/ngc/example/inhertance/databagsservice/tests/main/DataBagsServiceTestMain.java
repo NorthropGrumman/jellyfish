@@ -20,7 +20,7 @@ public class DataBagsServiceTestMain {
          if (appHome != null && !appHome.trim().equals("")) {
             folder = Paths.get(appHome, "resources");
          } else {
-            folder = Paths.get("src", "main", "resources");
+            folder = Paths.get("build", "features");
             System.setProperty("NG_FW_HOME", Paths.get("src", "main").toAbsolutePath().toString());
          }
          if (folder != null) {

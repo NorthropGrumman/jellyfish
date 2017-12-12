@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.ngc.seaside.jellyfish.examples.project1.model.common.datatype;
+
+option java_multiple_files = true;
+
+message GPSTime {
+
+   sint32 secondsFromGPS = 1;
+   sint32 microseconds = 2;
+
+}

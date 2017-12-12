@@ -25,18 +25,35 @@ dependencies {
     compile "info.cukes:cucumber-guice:$cucumberVersion"
 }
 
+ext {
+    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    mainClass = 'com.ngc.example.inhertance.databagsservice.tests.main.DataBagsServiceTestMain'
+}
+
 jar {
     manifest {
-        attributes 'Main-Class': "com.ngc.example.inhertance.databagsservice.tests.main.DataBagsServiceTestMain"
+        attributes 'Main-Class': mainClass
     }
 }
 
+task('copyFeatures', type: Copy) {
+    parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
+	    from zipTree(it.file)
+	}
+	exclude {
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${parent.systemDescriptor.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	}
+	into systemDescriptorFeatureDirectory
+    build.dependsOn it
+	assemble.dependsOn it
+	sourceSets.main.resources.srcDir systemDescriptorFeatureDirectory
+}
 
 seasideApplication {
-    mainClassName = "com.ngc.example.inhertance.databagsservice.tests.main.DataBagsServiceTestMain"
-    includeDistributionDirs = ['src/main/resources/']
+    mainClassName = mainClass
+    includeDistributionDirs = ['src/main/resources/', systemDescriptorFeatureDirectory]
     appHomeVarName = 'appHome'
-    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    appSystemProperties = [NG_FW_HOME: 'APP_HOME_VAR']
     distributionName = "${project.name}-${project.version}"
     installationDir = "build/distributions/${project.name}-${project.version}"
 

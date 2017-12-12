@@ -1,0 +1,11 @@
+
+dependencies {
+	compile "com.ngc.blocs:service.api:$blocsDomainVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package':
+         'com.ngc.seaside.jellyfish.examples.project1.model.event.*')
+   }
+}
