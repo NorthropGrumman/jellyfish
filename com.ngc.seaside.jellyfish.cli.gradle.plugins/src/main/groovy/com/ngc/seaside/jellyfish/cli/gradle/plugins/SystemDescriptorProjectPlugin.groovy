@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -29,7 +30,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                                          'nexusSnapshots',
                                          'nexusUsername',
                                          'nexusPassword')
-            
+
             repositories {
                 mavenLocal()
 
@@ -41,7 +42,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                     url nexusConsolidated
                 }
             }
-            
+
             // This is required to install a model project locally.
             plugins.apply 'java'
             jar.enabled = false
@@ -50,26 +51,17 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                     artifact.extension == 'jar'
                 }
             }
-            
-            // This plugin requires the maven plugin to enable uploads to Nexus.
-            plugins.apply 'maven'
 
             configurations.testCompile.extendsFrom = []
-            
+
             configurations {
                 sd {
                     resolutionStrategy.failOnVersionConflict()
                 }
             }
-            
-            afterEvaluate {
-                dependencies {
-                    configurations.sd.dependencies.each {
-                        compile "${it.group}:${it.name}:${it.version}"
-                        testCompile "${it.group}:${it.name}:${it.version}:tests"
-                    }
-                }
-            }
+
+            // This plugin requires the maven plugin to enable uploads to Nexus.
+            plugins.apply 'maven-publish'
 
             sourceSets {
                 main {
@@ -83,20 +75,16 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                     }
                 }
             }
-            
+
             task('sdJar', type: Jar) {
                 extension = 'zip'
                 from sourceSets.main.output
             }
-            
+
             task('testJar', type: Jar) {
                 classifier = 'tests'
                 extension = 'zip'
                 from sourceSets.test.output
-            }
-            
-            artifacts {
-                archives sdJar, testJar
             }
 
             // Validate the model is correct.
@@ -107,27 +95,49 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             }
 
             afterEvaluate {
+                dependencies {
+                    configurations.sd.dependencies.each {
+                        compile "${it.group}:${it.name}:${it.version}"
+                        testCompile "${it.group}:${it.name}:${it.version}:tests@zip"
+                    }
+                }
 
-                // Configure the ZIP that contains the SD project to be releasable to Nexus.
-                uploadArchives {
+                publishing {
+                    publications {
+                        mavenJava(MavenPublication) {
+                            artifact sdJar
+                            artifact testJar
+                            pom.withXml { xml ->
+                                def dependenciesNode = xml.asNode().appendNode('dependencies')
+                                p.configurations.sd.dependencies.each { dependency ->
+                                    def sdNode = dependenciesNode.appendNode('dependency')
+                                    sdNode.appendNode('groupId', dependency.group)
+                                    sdNode.appendNode('artifactId', dependency.name)
+                                    sdNode.appendNode('version', dependency.version)
+                                    sdNode.appendNode('type', sdJar.extension)
+                                    sdNode.appendNode('scope', 'compile')
+                                    def featureNode = dependenciesNode.appendNode('dependency')
+                                    featureNode.appendNode('groupId', dependency.group)
+                                    featureNode.appendNode('artifactId', dependency.name)
+                                    featureNode.appendNode('version', dependency.version)
+                                    featureNode.appendNode('classifier', testJar.classifier)
+                                    featureNode.appendNode('type', testJar.extension)
+                                    featureNode.appendNode('scope', 'test')
+                                }
+                            }
+                        }
+                    }
                     repositories {
-                        mavenDeployer {
-                            // Use the main repo for full releases.
-                            repository(url: nexusReleases) {
-                                // Make sure that nexusUsername and nexusPassword are in your
-                                // ${gradle.user.home}/gradle.properties file.
-                                authentication(userName: nexusUsername, password: nexusPassword)
+                        maven {
+                            credentials {
+                                username nexusUsername
+                                password nexusPassword
                             }
-                            // If the version has SNAPSHOT in the name, use the snapshot repo.
-                            snapshotRepository(url: nexusSnapshots) {
-                                authentication(userName: nexusUsername, password: nexusPassword)
-                            }
+                            url p.version.endsWith('-SNAPSHOT') ? nexusSnapshots : nexusReleases
                         }
                     }
                 }
 
-                // Set the default tasks.
-                defaultTasks = ['build']
             }
         }
     }
