@@ -68,6 +68,7 @@ class ParsingUtils {
       Preconditions.checkNotNull(gav, "gav may not be null!");
       Preconditions.checkArgument(gav.matches("[^:\\s]+:[^:\\s]+:[^:\\s]+"), "invalid gav: " + gav);
       Preconditions.checkNotNull(ctx, "parsing context may not be null!");
+      Collection<XtextResource> resources = new LinkedHashSet<>();
       try {
          return parseDependencies(gav, ctx, true);
       } catch (IOException e) {
@@ -200,10 +201,12 @@ class ParsingUtils {
    private Collection<XtextResource> parseDependencies(String gav, ParsingContext ctx, boolean includeSelf)
       throws IOException {
       Collection<XtextResource> resources = new LinkedHashSet<>();
+      String[] splitGav = gav.split(":");
+      String artifactGav = String.format("%s:%s:zip:%s", splitGav[0], splitGav[1], splitGav[2]);
       if (includeSelf) {
-         resources.addAll(parseJar(repositoryService.getArtifact(gav), ctx));
+         resources.addAll(parseJar(repositoryService.getArtifact(artifactGav), ctx));
       }
-      for (Path path : repositoryService.getArtifactDependencies(gav, true)) {
+      for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
          resources.addAll(parseJar(path, ctx));
       }
       return resources;
