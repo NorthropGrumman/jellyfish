@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
+import com.ngc.seaside.jellyfish.api.CommonParameters
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -44,12 +45,13 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
             // test change
             if (!file("${project.projectDir}/build.generated.gradle").exists()) {
                 logger.info(":${p.name}:generate")
+                def sdProject = parent.systemDescriptor.project
                 new JellyFishProjectGenerator(logger)
-                      .setCommand("${command}")
-                      .setInputDir(file("${systemDescriptorLocation}").absolutePath)
-                      .setArguments(['model'               : "${modelName}",
-                                     'outputDirectory'     : "${project.rootDir.absolutePath}",
-                                     'updateGradleSettings': 'false'])
+                      .setCommand(command)
+                      .setArguments([(CommonParameters.MODEL.name)                  : "${parent.systemDescriptor.model}",
+                                     (CommonParameters.GROUP_ARTIFACT_VERSION.name) : "${sdProject.group}:${sdProject.name}:${sdProject.version}",
+                                     (CommonParameters.OUTPUT_DIRECTORY.name)       : "${project.rootDir.absolutePath}",
+                                     (CommonParameters.UPDATE_GRADLE_SETTING.name)  : 'false'])
                       .generate()
             }
 
