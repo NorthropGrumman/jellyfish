@@ -2,8 +2,11 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
+import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.command.api.DefaultParameter;
+import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.command.api.DefaultUsage;
 import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IUsage;
@@ -24,6 +27,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -359,6 +363,28 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                              mergedOptions.getParameters(),
                              ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
                              clean);
+
+//      Path outputDir = Paths.get(mergedOptions.getParameters()
+//                                       .getParameter(OUTPUT_DIRECTORY_PROPERTY)
+//                                       .getStringValue());
+      updateGradleDotSettings(ctx.projectDirectory.toPath(), projectInfo);
+   }
+
+   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
+      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
+      updatedParameters.addParameter(new DefaultParameter<>(
+            OUTPUT_DIRECTORY_PROPERTY,
+            outputDir.resolve(info.getDirectoryName()).getParent().toString()));
+      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
+      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(),
+                                                            info.getArtifactId()));
+      try {
+         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
+            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
+         }
+      } catch (FileUtilitiesException e) {
+         throw new CommandException("failed to update settings.gradle!", e);
+      }
    }
 
    private static class CommandInvocationContext {
