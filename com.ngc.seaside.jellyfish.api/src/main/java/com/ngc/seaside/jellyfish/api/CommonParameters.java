@@ -12,9 +12,9 @@ public enum CommonParameters implements IParameter<String> {
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
-   GROUP_ARTIFACT_VERSION("gav", "The Group/Artifact/Version/Extension of a system descriptor project"),
+   GROUP_ARTIFACT_VERSION("gav", "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
    @Deprecated
-   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "The Group/Artifact/Version/Extension of a system descriptor project"),
+   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name() + ") The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>@<extension>"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
    INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
    MODEL("model", "The fully qualified path to the system descriptor model"),
@@ -25,7 +25,7 @@ public enum CommonParameters implements IParameter<String> {
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
    @Deprecated
-   REPOSITORY_URL("repositoryUrl", "The url of a system descriptor repository. If specified, " + GROUP_ARTIFACT_VERSION_EXTENSION.getName() + " parameter is required");
+   REPOSITORY_URL("repositoryUrl", "(Deprecated, no longer used) The url of a system descriptor repository. If specified, " + GROUP_ARTIFACT_VERSION_EXTENSION.getName() + " parameter is required");
 
    private static final Pattern GAV_REGEX = java.util.regex.Pattern.compile("([^:@\\s]+):([^:@\\s]+):([^:@\\s]+)");
    private final String description;
