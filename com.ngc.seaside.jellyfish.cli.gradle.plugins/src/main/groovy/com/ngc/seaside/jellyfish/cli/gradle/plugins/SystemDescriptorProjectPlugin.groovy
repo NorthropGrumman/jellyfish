@@ -61,9 +61,11 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 }
             }
 
-            // This plugin requires the maven plugin to enable uploads to Nexus.
+            // This plugin requires the maven-publish plugin to enable uploads to Nexus.
             plugins.apply 'maven-publish'
+            // Alias previously-used tasks from maven plugin
             task('install', dependsOn: publishToMavenLocal)
+            task('uploadArchives', dependsOn: publishToMavenRepository)
 
             sourceSets {
                 main {
