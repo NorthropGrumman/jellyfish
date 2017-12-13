@@ -26,7 +26,6 @@ public class RepositoryServiceTest {
    public void setup() {
       service = spy(RepositoryService.class);
       service.setLogService(new PrintStreamLogService());
-      when(service.findGradleProperties()).thenReturn(Optional.empty());
       when(service.findMavenLocal()).thenReturn(Optional.of(repository));
       when(service.findRemoteNexus()).thenReturn(Optional.empty());
       service.activate();

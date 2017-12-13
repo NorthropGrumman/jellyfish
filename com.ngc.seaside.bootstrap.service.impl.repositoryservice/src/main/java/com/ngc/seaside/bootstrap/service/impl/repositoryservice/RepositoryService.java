@@ -62,10 +62,11 @@ public class RepositoryService implements IRepositoryService {
    // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
    private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
       "(?<groupId>[^:\\s@]+)"
-      + ":(?<artifactId>[^:\\s@]+)"
-      + "(?::(?<extension>[^:\\s@]+)"
-      + "(?::(?<classifier>[^:\\s@]+))?)?"
-      + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
+         + ":(?<artifactId>[^:\\s@]+)"
+         + "(?::(?<extension>[^:\\s@]+)"
+         + "(?::(?<classifier>[^:\\s@]+))?)?"
+         + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
+   private static final String MAVEN_ENV = "M2_HOME";
    private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
@@ -78,7 +79,8 @@ public class RepositoryService implements IRepositoryService {
    @Override
    public Path getArtifact(String identifier) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
-      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(), "invalid identifier: " + identifier);
+      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
+         "invalid identifier: " + identifier);
       ArtifactRequest request = new ArtifactRequest();
       request.setArtifact(new DefaultArtifact(identifier));
       request.setRepositories(remoteRepositories);
@@ -102,7 +104,8 @@ public class RepositoryService implements IRepositoryService {
    @Override
    public Set<Path> getArtifactDependencies(String identifier, boolean transitive) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
-      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(), "invalid identifier: " + identifier);
+      Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
+         "invalid identifier: " + identifier);
       Artifact baseArtifact = new DefaultArtifact(identifier);
       CollectRequest request = new CollectRequest();
       request.setRoot(new Dependency(baseArtifact, null));
@@ -182,6 +185,11 @@ public class RepositoryService implements IRepositoryService {
          logService.warn(RepositoryService.class, "Unable to find Nexus remote repository");
       }
 
+      if (!mavenLocalRepo.isPresent() && !nexusRemoteRepo.isPresent()) {
+         logService.error(RepositoryService.class, "Unable to find any local or remote repositories");
+         throw new RepositoryServiceException("Unable to find any local or remote repositories");
+      }
+
       this.session = session;
 
       logService.trace(getClass(), "activated");
@@ -210,43 +218,56 @@ public class RepositoryService implements IRepositoryService {
       setLogService(null);
    }
 
+   /**
+    * Returns a remote repository to Nexus. This repository is found using the variable {@value #NEXUS_CONSOLIDATED} with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These
+    * variables are
+    * determined using the rules in the following order:
+    * 
+    * <ol>
+    * <li>From {@link System#getProperty(String)}</li>
+    * <li>From {@code gradle.properties} located in the current working directory</li>
+    * <li>From {@code gradle.properties} located in the {@code <user.home>/.gradle}</li>
+    * <li>From {@link System#getenv(String)}</li>
+    * </ol>
+    * 
+    * @return the remote repository to Nexus, or {@link Optional#empty()} if it cannot be determined
+    */
    Optional<RemoteRepository> findRemoteNexus() {
 
-      Optional<Path> gradleProperties = findGradleProperties();
-      final String nexusConsolidated;
-      final String nexusUsername;
-      final String nexusPassword;
-      if (gradleProperties.isPresent()) {
-         Properties properties = new Properties();
-         try {
-            properties.load(Files.newBufferedReader(gradleProperties.get()));
-
-            nexusConsolidated = properties.getProperty(NEXUS_CONSOLIDATED);
-
-            if (nexusConsolidated == null) {
+      Properties properties = new Properties();
+      String userHome = System.getProperty("user.home");
+      if (userHome != null) {
+         Path gradlePropertiesFile = Paths.get(userHome, ".gradle", "gradle.properties");
+         if (Files.isRegularFile(gradlePropertiesFile)) {
+            try {
+               properties.load(Files.newBufferedReader(gradlePropertiesFile));
+            } catch (IOException e) {
                logService.warn(RepositoryService.class,
-                  "Missing " + NEXUS_CONSOLIDATED + " property from " + gradleProperties.get());
-               return Optional.empty();
-            } else {
-               nexusUsername = properties.getProperty(NEXUS_USERNAME);
-               nexusPassword = properties.getProperty(NEXUS_PASSWORD);
+                  "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
             }
-
+         }
+      }
+      Path cwdPropertiesFile = Paths.get("gradle.properties");
+      if (Files.isRegularFile(cwdPropertiesFile)) {
+         try {
+            properties.load(Files.newBufferedReader(cwdPropertiesFile));
          } catch (IOException e) {
-            logService.warn(RepositoryService.class,
-               "Unable to load " + gradleProperties.get() + ": " + e.getMessage());
-            return Optional.empty();
+            logService.warn(RepositoryService.class, "Unable to load " + cwdPropertiesFile + ": " + e.getMessage());
          }
+      }
 
-      } else {
-         nexusConsolidated = System.getProperty(NEXUS_CONSOLIDATED);
-         nexusUsername = System.getProperty(NEXUS_USERNAME);
-         nexusPassword = System.getProperty(NEXUS_PASSWORD);
-         if (nexusConsolidated == null) {
-            logService.warn(RepositoryService.class,
-               "Unable to find " + NEXUS_CONSOLIDATED + " from gradle.properties or system properties");
-            return Optional.empty();
-         }
+      String nexusConsolidated = System.getProperty(NEXUS_CONSOLIDATED,
+         properties.getProperty(NEXUS_CONSOLIDATED, System.getenv(NEXUS_CONSOLIDATED)));
+      String nexusUsername = System.getProperty(NEXUS_USERNAME,
+         properties.getProperty(NEXUS_USERNAME, System.getenv(NEXUS_USERNAME)));
+      String nexusPassword = System.getProperty(NEXUS_PASSWORD,
+         properties.getProperty(NEXUS_PASSWORD, System.getenv(NEXUS_PASSWORD)));
+
+      if (nexusConsolidated == null) {
+         logService.warn(RepositoryService.class,
+            "Unable to find " + NEXUS_CONSOLIDATED
+               + " from system properties, gradle.properties, or system environment variables");
+         return Optional.empty();
       }
 
       RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated);
@@ -258,9 +279,20 @@ public class RepositoryService implements IRepositoryService {
       return Optional.of(builder.build());
    }
 
+   /**
+    * Returns the path to the maven local directory. This directory is determined using the rules in the following order:
+    * 
+    * <ol>
+    * <li>From maven user settings.xml found in {@code <user.home>/.m2</li>
+    * <li>From maven global settings.xml found in {@code <M2_HOME>/conf}</li>
+    * <li>{@code <user.home>/.m2/repository}</li>
+    * </ol>
+    * 
+    * @return the path to the local maven repository, or {@link Optional#empty()} if it cannot be determined
+    */
    Optional<Path> findMavenLocal() {
       DefaultSettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
-      String m2Home = System.getProperty("M2_HOME");
+      String m2Home = System.getProperty(MAVEN_ENV, System.getenv(MAVEN_ENV));
       if (m2Home != null) {
          Path globalMavenSettings = Paths.get(m2Home, "conf", "settings.xml");
          if (Files.isRegularFile(globalMavenSettings)) {
@@ -301,23 +333,6 @@ public class RepositoryService implements IRepositoryService {
       }
 
       return Optional.of(userMavenRepo);
-   }
-
-   Optional<Path> findGradleProperties() {
-      String userHome = System.getProperty("user.home");
-      if (userHome != null) {
-         Path properties = Paths.get(userHome, ".gradle", "gradle.properties");
-         if (Files.isRegularFile(properties)) {
-            return Optional.of(properties);
-         }
-      }
-
-      Path properties = Paths.get("gradle.properties");
-      if (Files.isRegularFile(properties)) {
-         return Optional.of(properties);
-      }
-
-      return Optional.empty();
    }
 
 }
