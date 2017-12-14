@@ -65,7 +65,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             plugins.apply 'maven-publish'
             // Alias previously-used tasks from maven plugin
             task('install', dependsOn: publishToMavenLocal)
-            //task('uploadArchives', dependsOn: publish)
+            task('uploadArchives', dependsOn: publish)
 
             sourceSets {
                 main {
