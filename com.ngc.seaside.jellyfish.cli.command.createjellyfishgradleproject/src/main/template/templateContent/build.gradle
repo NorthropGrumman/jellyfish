@@ -27,7 +27,7 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 ext {
     systemDescriptorProjectName = '${systemDescriptorArtifactId}'
     systemDescriptorProjectVersion = '${systemDescriptorVersion}'
-    systemDescriptorName = '${d}{systemDescriptorProjectName}-${d}{systemDescriptorProjectVersion}'
+    systemDescriptorName = "${d}{systemDescriptorProjectName}-${d}{systemDescriptorProjectVersion}"
     systemDescriptorLocation = "${d}{project.buildDir}/${d}{systemDescriptorDirectoryName}/${d}{systemDescriptorName}"
     modelName = '${model}'
 }
