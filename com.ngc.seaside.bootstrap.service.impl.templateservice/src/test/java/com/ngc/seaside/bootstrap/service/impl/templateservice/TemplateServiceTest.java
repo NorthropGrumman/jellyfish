@@ -1,5 +1,17 @@
 package com.ngc.seaside.bootstrap.service.impl.templateservice;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
@@ -26,18 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -222,6 +222,7 @@ public class TemplateServiceTest {
       }
    }
 
+   @SuppressWarnings("rawtypes")
    @Test
    public void doesUnpackIgnore() throws IOException {
       File outputDirectory = testFolder.newFolder("output");
@@ -248,11 +249,11 @@ public class TemplateServiceTest {
       when(collection.containsParameter("artifactId")).thenReturn(true);
       when(collection.containsParameter("commandName")).thenReturn(true);
       when(collection.containsParameter("package")).thenReturn(true);
-      when(collection.getParameter("classname")).thenReturn(new DefaultParameter<>("classname").setValue("MyClass"));
-      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter<>("classname").setValue("com.ngc.seaside"));
-      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter<>("artifactId").setValue("mybundle"));
-      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter<>("commandName").setValue("my-bundle"));
-      when(collection.getParameter("package")).thenReturn(new DefaultParameter<>("classname").setValue("com.ngc.seaside.mybundle"));
+      when(collection.getParameter("classname")).thenReturn(new DefaultParameter("classname").setValue("MyClass"));
+      when(collection.getParameter("groupId")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside"));
+      when(collection.getParameter("artifactId")).thenReturn(new DefaultParameter("artifactId").setValue("mybundle"));
+      when(collection.getParameter("commandName")).thenReturn(new DefaultParameter("commandName").setValue("my-bundle"));
+      when(collection.getParameter("package")).thenReturn(new DefaultParameter("classname").setValue("com.ngc.seaside.mybundle"));
 
 
       templateService.unpack("com.ngc.seaside.bootstrap.command.impl.ignoreexample",
@@ -275,21 +276,6 @@ public class TemplateServiceTest {
       assertTrue(template.exists());
       assertTrue(templateContent.exists());
       assertTrue(groupArtifact.exists());
-
-//      listFiles(bundle, "");
-   }
-
-   private void listFiles(File file, String indent) {
-      System.out.println(String.format("%s%s", indent, file.getAbsolutePath()));
-      if(file.isFile()) {
-         return;
-      }
-      String newIndent = indent + "";
-      if(file.isDirectory()) {
-         for(File sub : file.listFiles()) {
-            listFiles(sub, newIndent);
-         }
-      }
    }
 
 }

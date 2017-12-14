@@ -80,6 +80,7 @@ public class PromptUserService implements IPromptUserService {
       if (validator == null) {
          inputValidator = __ -> true;
       }
+      @SuppressWarnings("resource")
       Scanner scanner = new Scanner(inputStream);
 
       //This will prompt the user again if they enter an invalid value. If they don't enter anything and the

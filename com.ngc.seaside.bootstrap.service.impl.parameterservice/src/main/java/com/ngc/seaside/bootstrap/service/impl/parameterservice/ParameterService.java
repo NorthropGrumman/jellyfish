@@ -1,7 +1,6 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
 import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
@@ -20,7 +19,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -82,7 +80,7 @@ public class ParameterService implements IParameterService {
    public IParameterCollection getUnsetRequiredParameters(
          IUsage usage, IParameterCollection collection) {
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
-      for (IParameter param : usage.getRequiredParameters()) {
+      for (IParameter<?> param : usage.getRequiredParameters()) {
          if(!collection.containsParameter(param.getName())) {
             parameterCollection.addParameter(param);
          }

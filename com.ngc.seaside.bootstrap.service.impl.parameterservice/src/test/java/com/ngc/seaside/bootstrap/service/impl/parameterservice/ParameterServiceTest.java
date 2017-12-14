@@ -1,31 +1,23 @@
 package com.ngc.seaside.bootstrap.service.impl.parameterservice;
 
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  *
@@ -113,9 +105,9 @@ public class ParameterServiceTest {
 
       DefaultUsage usage1 = new DefaultUsage(
             "Description",
-            new DefaultParameter("key1").setRequired(true),
-            new DefaultParameter("key2").setRequired(false),
-            new DefaultParameter("key3").setRequired(true));
+            new DefaultParameter<>("key1").setRequired(true),
+            new DefaultParameter<>("key2").setRequired(false),
+            new DefaultParameter<>("key3").setRequired(true));
 
       assertTrue(delegate.isUsageSatisfied(usage1, collection));
       IParameterCollection unset = delegate.getUnsetRequiredParameters(usage1, collection);
@@ -126,9 +118,9 @@ public class ParameterServiceTest {
       IParameterCollection collection2 = delegate.parseParameters(missingParameters);
       DefaultUsage usage2 = new DefaultUsage(
             "Description",
-            new DefaultParameter("key1").setRequired(true),
-            new DefaultParameter("key2").setRequired(true),
-            new DefaultParameter("key3").setRequired(true));
+            new DefaultParameter<>("key1").setRequired(true),
+            new DefaultParameter<>("key2").setRequired(true),
+            new DefaultParameter<>("key3").setRequired(true));
 
       assertFalse(delegate.isUsageSatisfied(usage2, collection2));
       IParameterCollection unset2 = delegate.getUnsetRequiredParameters(usage2, collection2);

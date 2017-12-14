@@ -16,6 +16,9 @@ project(':com.ngc.seaside.bootstrap.service.impl.templateservice').name = 'boots
 include 'com.ngc.seaside.bootstrap.service.impl.propertyservice'
 project(':com.ngc.seaside.bootstrap.service.impl.propertyservice').name = 'bootstrap.service.impl.propertyservice'
 
+include 'com.ngc.seaside.bootstrap.service.impl.repositoryservice'
+project(':com.ngc.seaside.bootstrap.service.impl.repositoryservice').name = 'bootstrap.service.impl.repositoryservice'
+
 include 'com.ngc.seaside.bootstrap.impl.provider'
 project(':com.ngc.seaside.bootstrap.impl.provider').name = 'bootstrap.impl.provider'
 
