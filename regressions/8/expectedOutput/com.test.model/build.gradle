@@ -29,6 +29,7 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 systemDescriptor {
     project = 'com.ngc.seaside.jellyfish.examples:qualified.names.systemdescriptor:1.0.0-SNAPSHOT'
     model = 'com.test.Model'
+}
 
 subprojects {
 
