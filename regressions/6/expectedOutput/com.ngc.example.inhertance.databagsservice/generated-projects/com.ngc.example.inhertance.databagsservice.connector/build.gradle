@@ -1,1 +1,5 @@
-apply from: 'build.generated.gradle'
+ext {
+    command = 'create-java-pubsub-connector'
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

@@ -1,1 +1,5 @@
-apply from: 'build.generated.gradle'
+ext {
+    command = 'create-protocolbuffer-messages'
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'
