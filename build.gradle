@@ -18,7 +18,7 @@ subprojects {
 
 
     group = 'com.ngc.seaside'
-	version = '1.6.2-SNAPSHOT'
+	version = '1.7.1-SNAPSHOT'
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -27,7 +27,7 @@ subprojects {
     }
 
     ext {
-        apiVersion = '1.7.3-SNAPSHOT'
+        apiVersion = '1.8.0'
         bootstrapCommandsVersion = '1.2'
         blocsVersion = '2.1'
         osgiVersion =  '6.0.0'
