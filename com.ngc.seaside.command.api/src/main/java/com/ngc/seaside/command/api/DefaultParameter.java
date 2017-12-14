@@ -62,7 +62,7 @@ public class DefaultParameter<T> implements IParameter<T> {
       return value;
    }
 
-   public DefaultParameter setValue(T value) {
+   public DefaultParameter<T> setValue(T value) {
       this.value = value;
       return this;
    }
@@ -72,7 +72,7 @@ public class DefaultParameter<T> implements IParameter<T> {
       return description;
    }
 
-   public DefaultParameter setDescription(String description) {
+   public DefaultParameter<T> setDescription(String description) {
       this.description = description;
       return this;
    }
@@ -82,7 +82,7 @@ public class DefaultParameter<T> implements IParameter<T> {
       return required;
    }
 
-   public DefaultParameter setRequired(boolean required) {
+   public DefaultParameter<T> setRequired(boolean required) {
       this.required = required;
       return this;
    }
@@ -100,7 +100,7 @@ public class DefaultParameter<T> implements IParameter<T> {
       if (!(obj instanceof IUsage)) {
          return false;
       }
-      IParameter that = (IParameter) obj;
+      IParameter<?> that = (IParameter<?>) obj;
       return Objects.equals(name, that.getName()) &&
              Objects.equals(value, that.getValue()) &&
              Objects.equals(required, that.isRequired());

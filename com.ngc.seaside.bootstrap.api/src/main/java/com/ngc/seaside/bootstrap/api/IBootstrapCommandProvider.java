@@ -10,5 +10,5 @@ import com.ngc.seaside.command.api.ICommandProvider;
  * @see ICommandProvider
  */
 public interface IBootstrapCommandProvider
-         extends ICommandProvider<IBootstrapCommand> {
+         extends ICommandProvider<IBootstrapCommandOptions, IBootstrapCommand> {
 }

@@ -120,6 +120,7 @@ public class GradleSettingsUtilitiesTest {
       GradleSettingsUtilities.tryAddProject(collection);
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void test_givenAnOutputDirectoryWithNoParentOrSettingsFile_whenTryAddProject_thenNoExceptionThrown() throws Throwable {
       IParameterCollection collection = mock(IParameterCollection.class);
