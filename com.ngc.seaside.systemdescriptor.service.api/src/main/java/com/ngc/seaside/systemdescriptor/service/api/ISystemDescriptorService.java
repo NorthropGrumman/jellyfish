@@ -27,6 +27,15 @@ public interface ISystemDescriptorService {
    IParsingResult parseProject(Path projectDirectory);
 
    /**
+    * Parses a system descriptor project where all the {@code .sd} files are located in the artifact specified by the given identifier.
+    * @param artifactIdentifier project artifact identifier
+    * @return the result of parsing
+    * @throws ParsingException if some exception occurs during parsing
+    * @throws UnsupportedOperationException the implementation does not support parsing artifact projects
+    */
+   IParsingResult parseProject(String artifactIdentifier);
+
+   /**
     * Parses the given {@code .sd} files.  Always check the {@link IParsingResult#isSuccessful() result} of parsing to
     * before inspecting the {@code ISystemDescriptor}.  If the parsing was not successful, the descriptor may be in a
     * inconsistent state.
