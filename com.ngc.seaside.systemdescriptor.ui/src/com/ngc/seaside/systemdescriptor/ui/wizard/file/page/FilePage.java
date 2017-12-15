@@ -118,7 +118,7 @@ public class FilePage extends WizardPage
       // Radio Buttons
       new Label(container, LABEL_STYLE);
       Composite radioGroup = new Composite(container, 0);
-      GridLayout layout = new GridLayout(2, false);
+      GridLayout layout = new GridLayout(3, false);
       radioGroup.setLayout(layout);
       radioGroup.setLayoutData(new GridData(GRID_STYLE));
 
