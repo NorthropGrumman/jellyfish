@@ -8,7 +8,7 @@ buildscript {
     }
     
     dependencies {
-        classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:1.9.0-SNAPSHOT"
+        classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
     }
 }
 
@@ -18,7 +18,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
     
     ext {
-        threatEvalVersion = '2.2.3-SNAPSHOT'
+        threatEvalVersion = '2.2.3'
     }
 
 }
