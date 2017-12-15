@@ -1,11 +1,6 @@
 package com.ngc.seaside.systemdescriptor.ui.wizard.project;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -21,14 +16,33 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 /**
  * Delegate for the creation of the System Descriptor project.
  * The project format is similar to that of a Maven or Gradle project in that
  * the source is located in src/main and the project uses packages similar to that of
  * Java.
+ * 
+ * TODO: Refactor using ITemplateService
  */
 public class SystemDescriptorProjectSupport {
+   private static final String GRADLE_PROJECT_TEMPLATE_ZIP = "gradleProjectTemplate.zip";
    private static final String NEWLINE = System.getProperty("line.separator");
+   private static final String NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
+   private static final String DEFAULT_GRADLE_DISTRIBUTION_VERSION = "4.2.1";
 
    /**
     * For this project we need to:
@@ -42,6 +56,10 @@ public class SystemDescriptorProjectSupport {
     *
     * @param projectName The name of the project to create.
     * @param location Full path of location to create the project.
+    * @param gradleProjectName name of the gradle project
+    * @param group gradle project group id
+    * @param version gradle project version
+    * @param cliPluginVersion version of jellyfish cli plugins
     * @param defaultPkg The default package to create.
     * @param defaultFile The default model file to create in the default package.
     * @return Returns the project resource that was created, or null if the creation failed.
@@ -58,7 +76,9 @@ public class SystemDescriptorProjectSupport {
     *            event notification. See <code>IResourceChangeEvent</code> for more details.</li>
     *            </ul>
     */
-   public static IProject createProject(String projectName, URI location, String defaultPkg, String defaultFile) throws CoreException {
+   public static IProject createProject(String projectName, URI location, String gradleProjectName, String group,
+            String version, String cliPluginVersion, String defaultPkg, String defaultFile)
+      throws CoreException {
       Assert.isNotNull(projectName);
       Assert.isTrue(projectName.trim().length() > 0);
 
@@ -77,8 +97,6 @@ public class SystemDescriptorProjectSupport {
       sourcePathList.add(testPathGherkin);
       sourcePathList.add(testPathRes);
 
-      addToProjectStructure(project, sourcePathList);
-
       IJavaProject javaProject = JavaCore.create(project);
 
       IClasspathEntry[] newEntries = new IClasspathEntry[sourcePathList.size()];
@@ -88,6 +106,21 @@ public class SystemDescriptorProjectSupport {
          newEntries[index++] = JavaCore.newSourceEntry(root.getPath());
       }
       javaProject.setRawClasspath(newEntries, null);
+
+      Map<String, String> properties = new LinkedHashMap<>();
+      properties.put("projectName", gradleProjectName);
+      properties.put("groupId", group);
+      properties.put("version", version);
+      properties.put("cliPluginVersion", cliPluginVersion);
+      properties.put("nexusConsolidated", NEXUS_CONSOLIDATED);
+      properties.put("gradleDistributionVersion", DEFAULT_GRADLE_DISTRIBUTION_VERSION);
+      try {
+         addGradleFiles(project, properties);
+      } catch (IOException e) {
+         throw new CoreException(new ResourceStatus(0,
+            project.getFile(GRADLE_PROJECT_TEMPLATE_ZIP).getProjectRelativePath(), e.getMessage(), e));
+      }
+      addToProjectStructure(project, sourcePathList);
 
       if (defaultPkg != null) {
          String pkgMainPathSd = mainPathSd + "/" + defaultPkg.replace(".", "/");
@@ -245,8 +278,41 @@ public class SystemDescriptorProjectSupport {
     * @throws CoreException {@link #createFile(IFile, String)}
     */
    private static void addToProject(IProject project, String filepath, String fileContent) throws CoreException {
+      String[] parts = filepath.split("/");
+      if (parts.length > 1) {
+         IFolder folder = project.getFolder(
+            Arrays.asList(parts).subList(0, parts.length - 1).stream().collect(Collectors.joining("/")));
+         createFolder(folder);
+      }
       IFile file = project.getFile(filepath);
       createFile(file, fileContent);
+   }
+
+   private static void addGradleFiles(IProject project, Map<String, String> properties)
+      throws CoreException, IOException {
+      try (ZipInputStream stream = new ZipInputStream(
+         SystemDescriptorProjectSupport.class.getResourceAsStream(GRADLE_PROJECT_TEMPLATE_ZIP))) {
+         ZipEntry entry;
+         byte[] data = new byte[2048];
+         while ((entry = stream.getNextEntry()) != null) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream(stream.available());
+            int len;
+            while ((len = stream.read(data)) > 0) {
+               out.write(data, 0, len);
+            }
+            if (entry.isDirectory()) {
+               createFolder(project.getFolder(entry.getName()));
+            } else {
+               String contents = out.toString();
+               for (Map.Entry<String, String> keyValue : properties.entrySet()) {
+                  contents = contents.replace("${" + keyValue.getKey() + "}", keyValue.getValue());
+               }
+               addToProject(project, entry.getName(), contents);
+            }
+
+         }
+
+      }
    }
 
    /**
@@ -285,12 +351,13 @@ public class SystemDescriptorProjectSupport {
       IProjectDescription description = project.getDescription();
 
       String[] prevNatures = description.getNatureIds();
-      String[] newNatures = new String[prevNatures.length + 2];
+      String[] newNatures = new String[prevNatures.length + 3];
 
       System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 
       newNatures[prevNatures.length] = "org.eclipse.xtext.ui.shared.xtextNature";
       newNatures[prevNatures.length + 1] = JavaCore.NATURE_ID;
+      newNatures[prevNatures.length + 2] = "org.eclipse.buildship.core.gradleprojectnature";
       description.setNatureIds(newNatures);
 
       IProgressMonitor monitor = new NullProgressMonitor();
