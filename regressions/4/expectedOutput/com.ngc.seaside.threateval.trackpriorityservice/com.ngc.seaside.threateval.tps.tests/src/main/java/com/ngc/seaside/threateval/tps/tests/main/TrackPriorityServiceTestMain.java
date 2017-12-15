@@ -20,8 +20,8 @@ public class TrackPriorityServiceTestMain {
          if (appHome != null && !appHome.trim().equals("")) {
             folder = Paths.get(appHome, "resources");
          } else {
-            folder = Paths.get("src", "main", "resources");
-            System.setProperty("NG_FW_HOME", Paths.get("src", "main").toAbsolutePath().toString());
+            folder = Paths.get("build", "runtime", "resources");
+            System.setProperty("NG_FW_HOME", Paths.get("build", "runtime").toAbsolutePath().toString());
          }
          if (folder != null) {
             String featurePath = folder.toString();

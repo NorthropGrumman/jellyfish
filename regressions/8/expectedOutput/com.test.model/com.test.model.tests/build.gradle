@@ -25,18 +25,44 @@ dependencies {
     compile "info.cukes:cucumber-guice:$cucumberVersion"
 }
 
+ext {
+    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    consolidatedResourcesDirectory = file("${buildDir}/runtime/resources")
+    mainClass = 'com.test.model.tests.main.ModelTestMain'
+}
+
 jar {
     manifest {
-        attributes 'Main-Class': "com.test.model.tests.main.ModelTestMain"
+        attributes 'Main-Class': mainClass
     }
 }
 
+task('copyFeatures', type: Copy, description: "Copies the system descriptor test resources and the model's feature files") {
+    parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
+	    from zipTree(it.file)
+	}
+	exclude {
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${parent.systemDescriptor.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	}
+	into systemDescriptorFeatureDirectory
+    build.dependsOn it
+	assemble.dependsOn it
+	sourceSets.main.resources.srcDir systemDescriptorFeatureDirectory
+}
+
+task('consolidateResources', type: Copy,
+     dependsOn: copyFeatures,
+     description: "Copies the project's resource directories to a common folder") {
+    from sourceSets.main.resources.srcDirs
+    into consolidatedResourcesDirectory
+    build.finalizedBy it
+}
 
 seasideApplication {
-    mainClassName = "com.test.model.tests.main.ModelTestMain"
-    includeDistributionDirs = ['src/main/resources/']
+    mainClassName = mainClass
+    includeDistributionDirs = ['src/main/resources/', systemDescriptorFeatureDirectory]
     appHomeVarName = 'appHome'
-    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    appSystemProperties = [NG_FW_HOME: 'APP_HOME_VAR']
     distributionName = "${project.name}-${project.version}"
     installationDir = "build/distributions/${project.name}-${project.version}"
 

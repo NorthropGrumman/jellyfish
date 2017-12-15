@@ -1,0 +1,5 @@
+package com.ngc.seaside.jellyfish.examples.project2
+
+data Data2 {
+	int field2
+}
