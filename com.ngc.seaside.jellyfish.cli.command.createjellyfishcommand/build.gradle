@@ -17,7 +17,7 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
 
-    testCompile project(":jellyfish.cli.command.testutils")
+    testCompile project(":jellyfish.cli.testutils")
     testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
     testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
 

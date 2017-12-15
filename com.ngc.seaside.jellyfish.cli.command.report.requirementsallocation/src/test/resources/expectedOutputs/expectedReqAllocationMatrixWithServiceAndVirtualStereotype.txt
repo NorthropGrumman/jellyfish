@@ -1,5 +1,0 @@
-| Req    | ModelReqsInMetadata | ModelReqsInMetadataOfInputField | ModelReqsInMetadataOfOutputField |
-| REQ001 |          X          |                                 |                X                 |
-| REQ002 |          X          |                X                |                                  |
-| REQ003 |                     |                X                |                X                 |
-| REQ004 |                     |                                 |                X                 |

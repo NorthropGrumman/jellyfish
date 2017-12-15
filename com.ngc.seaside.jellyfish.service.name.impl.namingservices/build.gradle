@@ -16,7 +16,7 @@ dependencies {
     compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
     compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
 
-    testCompile project(":jellyfish.cli.command.testutils")
+    testCompile project(":jellyfish.cli.testutils")
     testCompile "com.ngc.blocs:service.api:$blocsVersion"
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
