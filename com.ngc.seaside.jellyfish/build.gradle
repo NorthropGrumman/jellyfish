@@ -2,6 +2,9 @@ apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
     compile project(":jellyfish.impl.provider")
+    compile project(":jellyfish.cli.command.createjellyfishcommand")
+    compile project(":jellyfish.cli.command.update")
+
     compile project(":jellyfish.service.name.impl.namingservices")
     compile project(":jellyfish.service.codegen.impl.codegenservices")
     compile project(":jellyfish.service.scenario.impl.scenarioservice")
