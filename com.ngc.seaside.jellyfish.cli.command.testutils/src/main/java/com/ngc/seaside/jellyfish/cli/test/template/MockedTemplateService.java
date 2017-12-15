@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.test.template;
+package com.ngc.seaside.jellyfish.cli.test.template;
 
 import com.google.common.base.Preconditions;
 

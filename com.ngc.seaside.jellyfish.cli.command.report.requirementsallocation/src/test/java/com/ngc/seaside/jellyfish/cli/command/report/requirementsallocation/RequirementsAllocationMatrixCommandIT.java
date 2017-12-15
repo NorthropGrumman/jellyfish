@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static com.ngc.seaside.jellyfish.cli.test.files.TestingFiles.assertFileLinesEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

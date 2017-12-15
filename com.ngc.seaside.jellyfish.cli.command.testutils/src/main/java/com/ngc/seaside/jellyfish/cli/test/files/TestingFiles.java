@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.test.files;
+package com.ngc.seaside.jellyfish.cli.test.files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

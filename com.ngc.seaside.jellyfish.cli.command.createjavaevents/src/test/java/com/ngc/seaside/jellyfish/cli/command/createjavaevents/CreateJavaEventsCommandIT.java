@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileNotContains;
+import static com.ngc.seaside.jellyfish.cli.test.files.TestingFiles.assertFileContains;
+import static com.ngc.seaside.jellyfish.cli.test.files.TestingFiles.assertFileNotContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -19,7 +19,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
