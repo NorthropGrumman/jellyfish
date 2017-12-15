@@ -21,7 +21,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.parent'
 
     group = 'com.ngc.seaside'
-    version = '1.9.0'
+    version = '1.10.0-SNAPSHOT'
 
     ext {
         jellyfishAPIVersion = '1.6.0'
