@@ -1,0 +1,19 @@
+
+dependencies {
+	compile project(":jellyfish.api")
+	
+	compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    compile "com.ngc.blocs:blocs-core:$blocsVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    compile "com.ngc.blocs:service.api:$blocsVersion"
+    compile "org.osgi:osgi.core:$osgiVersion"
+    compile "org.osgi:osgi.enterprise:$osgiVersion"
+    compile "commons-io:commons-io:$commonsIOVersion"
+    compile "commons-lang:commons-lang:$commonsLangVersion"
+    
+
+	testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+}
