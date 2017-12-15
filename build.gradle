@@ -10,7 +10,11 @@ buildscript {
 
     ext {
         jellyfishCliVersion = System.getProperty('jellyfishCliVersion', '1.9.0')
+        buildScriptUpdater = new BuildScriptUpdater()
     }
+
+    println "Version is "
+    println "$jellyfishCliVersion"
 
     repositories {
         mavenLocal()
@@ -32,6 +36,10 @@ ext {
     regressionsFolderName = 'regressions'
     generatedFolderName = 'generatedOutput'
     expectedFolderName = 'expectedOutput'
+}
+
+gradle.buildFinished {
+    buildScriptUpdater.restoreAllScripts()
 }
 
 task('cleanSystemDescriptorProjects', description: 'cleans all of the system descriptor projects') {
@@ -192,16 +200,14 @@ def createRegressionBuildTask(name, folder) {
         doLast {
             folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
                 if (file("${buildFolder}/build.gradle").isFile()) {
+                    def buildFile = file("${buildFolder}/build.gradle")
+                    buildScriptUpdater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
+
                     def tempFolder = java.nio.file.Files.createTempDirectory(null).toFile()
                     copy {
                         from buildFolder
                         into tempFolder
                     }
-
-                    def buildFile = file("${tempFolder}/build.gradle")
-
-                    def updater = new BuildScriptUpdater()
-                    updater.updateJellyFishGradlePluginsVersion(buildFile.toPath(), jellyfishCliVersion)
 
                     def gradleBuildTask = task(type: GradleBuild) {}
                     gradleBuildTask.dir = tempFolder
@@ -209,8 +215,6 @@ def createRegressionBuildTask(name, folder) {
                     gradleBuildTask.startParameter.excludedTaskNames = ['test']
                     gradleBuildTask.startParameter.systemPropertiesArgs = [:]
                     gradleBuildTask.execute()
-
-                    updater.restoreScriptFile(buildFile.toPath())
 
                     copy {
                         from tempFolder
