@@ -124,6 +124,11 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    }
 
    @Override
+   public IParsingResult parseProject(String artifactIdentifier) {
+      return parsingDelegate.parseProject(artifactIdentifier);
+   }
+
+   @Override
    public IParsingResult parseFiles(Collection<Path> paths) {
       return parsingDelegate.parseFiles(paths);
    }
@@ -178,4 +183,5 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
       @Inject(optional = true)
       Set<IScenarioStepHandler> handlers = Collections.emptySet();
    }
+
 }
