@@ -1,11 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.gradle;
 
-import com.ngc.seaside.jellyfish.api.CommonParameters;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +15,6 @@ public class JellyFishProjectGenerator {
    private final Logger logger;
 
    private String command;
-
-   private String inputDir;
 
    private boolean failBuildOnException = true;
 
@@ -59,15 +54,6 @@ public class JellyFishProjectGenerator {
       return this;
    }
 
-   public String getInputDir() {
-      return inputDir;
-   }
-
-   public JellyFishProjectGenerator setInputDir(String inputDir) {
-      this.inputDir = inputDir;
-      return this;
-   }
-
    public boolean isFailBuildOnException() {
       return failBuildOnException;
    }
@@ -99,11 +85,6 @@ public class JellyFishProjectGenerator {
       if (command == null || command.trim().equals("")) {
          throw new GradleException("command must be set!");
       }
-      if (inputDir == null) {
-         inputDir = new File(".").getAbsolutePath();
-      }
-
-      arguments.put(CommonParameters.INPUT_DIRECTORY.getName(), inputDir);
       List<String> stringArgs = arguments.entrySet()
             .stream()
             .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))

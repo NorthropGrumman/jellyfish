@@ -1,7 +1,12 @@
 package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
+import com.ngc.seaside.jellyfish.api.CommonParameters
 import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -27,79 +32,117 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                                          'nexusUsername',
                                          'nexusPassword')
 
-            // This plugin requires the maven plugin to enable uploads to Nexus.
-            plugins.apply 'maven'
+            repositories {
+                mavenLocal()
+
+                maven {
+                    credentials {
+                        username nexusUsername
+                        password nexusPassword
+                    }
+                    url nexusConsolidated
+                }
+            }
+
             // This is required to install a model project locally.
             plugins.apply 'java'
-            
+            jar.enabled = false
+            configurations.all {
+                outgoing.artifacts.removeAll { artifact ->
+                    artifact.extension == 'jar'
+                }
+            }
+
+            configurations.testCompile.extendsFrom = []
+
+            configurations {
+                sd {
+                    resolutionStrategy.failOnVersionConflict()
+                }
+            }
+
+            // This plugin requires the maven-publish plugin to enable uploads to Nexus.
+            plugins.apply 'maven-publish'
+            // Alias previously-used tasks from maven plugin
+            task('install', dependsOn: publishToMavenLocal)
+            task('uploadArchives', dependsOn: publish)
+
+            sourceSets {
+                main {
+                    resources {
+                        srcDirs = ['src/main/sd', 'src/main/resources']
+                    }
+                }
+                test {
+                    resources {
+                        srcDirs = ['src/test/gherkin', 'src/test/resources']
+                    }
+                }
+            }
+
+            task('sdJar', type: Jar) {
+                extension = 'zip'
+                from sourceSets.main.output
+            }
+
+            task('testJar', type: Jar) {
+                classifier = 'tests'
+                extension = 'zip'
+                from sourceSets.test.output
+            }
+
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
                 inputDir = "${project.projectDir}"
-            }
-
-            // Copy all files to build for more processing.
-            task('copyDistributionFiles', type: Copy, dependsOn: [validateSd]) {
-                from 'src'
-                into { "${project.distsDir}/stage/src" }
-            }
-
-            // Zip up the files.
-            task('sdDistribution', type: Zip, dependsOn: [copyDistributionFiles]) {
-                from { "${project.distsDir}/stage" }
-            }
-            
-            task('generateProjectInfo', description: 'Creates a properties file project info like group, artifact, and version') {
-                doLast {
-                    def projectInfo = new File("${p.buildDir}/resources/main/project-info.properties")
-                    projectInfo.parentFile.mkdirs()
-                    projectInfo.withWriter { w ->
-                        def properties = new Properties();
-                        properties['group'] = p.group.toString()
-                        properties['groupId'] = p.group.toString()
-                        properties['name'] = p.name.toString()
-                        properties['artifact'] = p.name.toString()
-                        properties['artifactId'] = p.name.toString()
-                        properties['version'] = p.version.toString()
-                        properties['gav'] = "${p.group}:${p.name}:${p.version}".toString()
-                        properties['gave'] = "${p.group}:${p.name}:${p.version}@zip".toString()
-                        properties.store w, null
-                    }
-                }
-                install.dependsOn it
+                build.dependsOn it
+                it.dependsOn tasks.withType(GenerateMavenPom)
             }
 
             afterEvaluate {
-                // Configure the ZIP that contains the SD project to be releasable to Nexus.
-                uploadArchives {
+                dependencies {
+                    configurations.sd.dependencies.each {
+                        compile "${it.group}:${it.name}:${it.version}"
+                        testCompile "${it.group}:${it.name}:${it.version}:tests@zip"
+                    }
+                }
+
+                publishing {
+                    publications {
+                        mavenSd(MavenPublication) {
+                            artifact sdJar
+                            artifact testJar
+                            pom.withXml { xml ->
+                                def dependenciesNode = xml.asNode().appendNode('dependencies')
+                                p.configurations.sd.dependencies.each { dependency ->
+                                    def sdNode = dependenciesNode.appendNode('dependency')
+                                    sdNode.appendNode('groupId', dependency.group)
+                                    sdNode.appendNode('artifactId', dependency.name)
+                                    sdNode.appendNode('version', dependency.version)
+                                    sdNode.appendNode('type', sdJar.extension)
+                                    sdNode.appendNode('scope', 'compile')
+                                    def featureNode = dependenciesNode.appendNode('dependency')
+                                    featureNode.appendNode('groupId', dependency.group)
+                                    featureNode.appendNode('artifactId', dependency.name)
+                                    featureNode.appendNode('version', dependency.version)
+                                    featureNode.appendNode('classifier', testJar.classifier)
+                                    featureNode.appendNode('type', testJar.extension)
+                                    featureNode.appendNode('scope', 'test')
+                                }
+                            }
+                        }
+                    }
                     repositories {
-                        mavenDeployer {
-                            // Use the main repo for full releases.
-                            repository(url: nexusReleases) {
-                                // Make sure that nexusUsername and nexusPassword are in your
-                                // ${gradle.user.home}/gradle.properties file.
-                                authentication(userName: nexusUsername, password: nexusPassword)
+                        maven {
+                            credentials {
+                                username nexusUsername
+                                password nexusPassword
                             }
-                            // If the version has SNAPSHOT in the name, use the snapshot repo.
-                            snapshotRepository(url: nexusSnapshots) {
-                                authentication(userName: nexusUsername, password: nexusPassword)
-                            }
+                            url p.version.endsWith('-SNAPSHOT') ? nexusSnapshots : nexusReleases
                         }
                     }
                 }
 
-                // Configure the artifacts so that the zip gets pushed to Nexus.
-                artifacts {
-                    archives sdDistribution
-                }
-
-                // Configure the name of the distribution.  We do this here so that properties are evaluated correctly.
-                tasks.getByName(
-                      'sdDistribution').archiveName = "${project.group}.${project.name}-${project.version}.zip"
-
-
-                // Set the default tasks.
-                defaultTasks = ['build']
             }
         }
     }

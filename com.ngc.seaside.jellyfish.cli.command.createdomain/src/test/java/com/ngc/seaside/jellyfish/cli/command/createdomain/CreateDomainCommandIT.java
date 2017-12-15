@@ -185,20 +185,6 @@ public class CreateDomainCommandIT {
    }
 
    @Test
-   public void testCommandWithEmptyModel() throws Exception {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY,
-         "com.ngc.Model2",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDir,
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
-         velocityPath);
-
-      Path projectDir = outputDir.resolve("com.ngc.model2.domain");
-      Map<String, Tobject> objects = getDomainObjects(projectDir);
-      assertEquals(0, objects.size());
-   }
-
-   @Test
    public void testCommandWithPackageGenerator() throws Exception {
       Function<INamedChild<IPackage>, String> packageGenerator = (d) -> "foo";
 
@@ -222,26 +208,6 @@ public class CreateDomainCommandIT {
             assertFalse(property.getType().contains("com"));
          });
       });
-   }
-
-   @Test
-   public void testCommandWithSimpleModel() throws Exception {
-      runCommand(CreateDomainCommand.MODEL_PROPERTY,
-         "com.ngc.Model3",
-         CreateDomainCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDir,
-         CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY,
-         velocityPath);
-
-      Path projectDir = outputDir.resolve("com.ngc.model3.domain");
-      assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.model3.domain");
-      checkVelocity(projectDir);
-      List<Tdomain> domains = getDomain(projectDir);
-      domains.forEach(domain -> assertFalse(domain.getConfig() != null && domain.getConfig().isUseVerboseImports()));
-      Map<String, Tobject> objects = getDomainObjects(projectDir);
-      assertEquals(1, objects.size());
-      assertDomainObject(objects.get("com.ngc.model3.domain.d1.Data1"), null, false, "com.ngc.model3.domain.d1.Data1");
    }
 
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {

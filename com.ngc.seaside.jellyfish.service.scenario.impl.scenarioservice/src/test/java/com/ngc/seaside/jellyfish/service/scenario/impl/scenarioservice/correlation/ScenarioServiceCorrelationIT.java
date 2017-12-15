@@ -8,6 +8,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
@@ -386,6 +387,7 @@ public class ScenarioServiceCorrelationIT {
          @Override
          protected void configure() {
             bind(ILogService.class).toInstance(mock(ILogService.class));
+            bind(IRepositoryService.class).toInstance(mock(IRepositoryService.class));
          }
       });
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());

@@ -43,8 +43,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
-   static final String URL_PROPERTY = CommonParameters.REPOSITORY_URL.getName();
-   static final String GAVE_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION.getName();
+   static final String GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
 
    final static String GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME = "gradleJellyfishCommand";
 
@@ -94,9 +93,8 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                                    new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
                                          .setDescription("Whether or not to create the service's domain model")
                                          .setRequired(false));
-               usageParameters.put(GAVE_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION_EXTENSION);
-               usageParameters.put(URL_PROPERTY, CommonParameters.REPOSITORY_URL);
-
+               usageParameters.put(GAV_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION);
+               
                for (String subcommand : SUBCOMMANDS) {
                   List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
                         .getAllParameters();

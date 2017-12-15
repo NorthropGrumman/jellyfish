@@ -20,6 +20,7 @@ dependencies {
     compile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
+    compile "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.impl.provider:$bootstrapVersion"
     compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
 

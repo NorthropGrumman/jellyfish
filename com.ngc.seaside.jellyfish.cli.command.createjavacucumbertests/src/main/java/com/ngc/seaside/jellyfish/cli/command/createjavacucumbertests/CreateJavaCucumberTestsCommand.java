@@ -14,14 +14,11 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -29,15 +26,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.NavigableMap;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
@@ -59,7 +53,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
    private IJavaServiceGenerationService generationService;
-   private IFeatureService featureService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -83,28 +76,24 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
       
       
-      if (!CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), REFRESH_FEATURE_FILES_PROPERTY)) {
+      CucumberDto dto = new CucumberDto().setProjectName(projectName)
+                                         .setPackageName(packageName)
+                                         .setClassName(model.getName())
+                                         .setTransportTopicsClass(generationService.getTransportTopicsDescription(commandOptions, model).getFullyQualifiedName())
+                                         .setDependencies(new LinkedHashSet<>(Arrays.asList(
+                                            projectNamingService.getMessageProjectName(commandOptions, model)
+                                                                .getArtifactId(),
+                                            projectNamingService.getBaseServiceProjectName(commandOptions, model)
+                                                                .getArtifactId())));
 
-         CucumberDto dto = new CucumberDto().setProjectName(projectName)
-                                            .setPackageName(packageName)
-                                            .setClassName(model.getName())
-                                            .setTransportTopicsClass(generationService.getTransportTopicsDescription(commandOptions, model).getFullyQualifiedName())
-                                            .setDependencies(new LinkedHashSet<>(Arrays.asList(
-                                               projectNamingService.getMessageProjectName(commandOptions, model)
-                                                                   .getArtifactId(),
-                                               projectNamingService.getBaseServiceProjectName(commandOptions, model)
-                                                                   .getArtifactId())));
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-         parameters.addParameter(new DefaultParameter<>("dto", dto));
-
-         templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(),
-            parameters,
-            outputDirectory,
-            clean);
-         logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
-         updateGradleDotSettings(outputDirectory, info);
-      }
-      copyFeatureFilesToGeneratedProject(commandOptions, model, outputDirectory.resolve(projectName), clean);
+      templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(),
+         parameters,
+         outputDirectory,
+         clean);
+      logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
+      updateGradleDotSettings(outputDirectory, info);
    }
 
    @Override
@@ -196,23 +185,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    }
    
    /**
-    * Sets feature service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFeatureService")
-   public void setFeatureService(IFeatureService ref) {
-      this.featureService = ref;
-   }
-
-   /**
-    * Remove feature service.
-    */
-   public void removeFeatureService(IFeatureService ref) {
-      setFeatureService(null);
-   }
-   
-   /**
     * Sets java service generation service.
     *
     * @param ref the ref
@@ -254,50 +226,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    }
 
    /**
-    * Copies feature files from a System Descriptor project to a newly generated test project. Only feature files that
-    * apply to scenarios in the given model will be copied. Any features files that are already in the test project
-    * will be deleted before coping the new files.
-    *
-    * @param model the model for which the feature files will be copied
-    * @param commandOptions the options the command was run with
-    * @param generatedProjectDirectory the directory that contains the generated tests project
-    * @param clean if true, deletes the features and resources before copying them
-    * @throws IOException
-    */
-   private void copyFeatureFilesToGeneratedProject(IJellyFishCommandOptions commandOptions, IModel model,
-            Path generatedProjectDirectory, boolean clean) {
-      
-      NavigableMap<Path, IFeatureInformation> features = featureService.getFeatures(commandOptions.getSystemDescriptorProjectPath(), model);
-      
-      final Path dataFile = commandOptions.getSystemDescriptorProjectPath()
-               .resolve(Paths.get("src", "test", "resources", "data"))
-               .toAbsolutePath();
-
-      final Path destination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources"));
-      final Path dataDestination = generatedProjectDirectory.resolve(Paths.get("src", "main", "resources", "data"));
-
-      deleteDir(destination.resolve(model.getParent().getName()).toFile());
-      deleteDir(dataDestination.toFile());
-
-      for (IFeatureInformation featureInfo : features.values()) {
-         Path featureDestination = destination.resolve(featureInfo.getRelativePath());
-         try {
-            Files.createDirectories(featureDestination.getParent());
-            Files.copy(featureInfo.getAbsolutePath(), featureDestination, StandardCopyOption.REPLACE_EXISTING);
-         } catch (IOException e) {
-            throw new CommandException("Failed to copy " + featureInfo.getAbsolutePath() + " to " + featureDestination, e);
-         }
-      }
-      if (Files.isDirectory(dataFile)) {
-         try {
-            FileUtils.copyDirectory(dataFile.toFile(), dataDestination.toFile());
-         } catch (IOException e) {
-            throw new CommandException("Failed to copy resources  to " + destination, e);
-         }
-      }
-   }
-
-   /**
     * Create the usage for this command.
     *
     * @return the usage.
@@ -313,21 +241,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
             "If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
                                                              .setRequired(false));
-   }
-
-   /**
-    * Helper method to delete folder/files
-    *
-    * @param file file/folder to delete
-    */
-   private static void deleteDir(File file) {
-      File[] contents = file.listFiles();
-      if (contents != null) {
-         for (File f : contents) {
-            deleteDir(f);
-         }
-      }
-      file.delete();
    }
 
 }
