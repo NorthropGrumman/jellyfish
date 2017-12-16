@@ -4,6 +4,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -121,6 +122,7 @@ public class ProjectInfoPage extends WizardPage {
 
    private void createField(Supplier<Text> textSupplier, String name, String defaultValue,
             Function<String, String> validator) {
+      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       Label label = new Label(container, SWT.NONE);
       label.setText(name + ":");
 
@@ -133,6 +135,7 @@ public class ProjectInfoPage extends WizardPage {
             updateStatus(message);
          }
       });
+      text.setLayoutData(gd);
    }
 
    /**
