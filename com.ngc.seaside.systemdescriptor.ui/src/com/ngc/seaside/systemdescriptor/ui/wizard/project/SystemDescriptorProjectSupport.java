@@ -35,7 +35,7 @@ import java.util.zip.ZipInputStream;
  * The project format is similar to that of a Maven or Gradle project in that
  * the source is located in src/main and the project uses packages similar to that of
  * Java.
- * 
+ *
  * TODO: Refactor using ITemplateService
  */
 public class SystemDescriptorProjectSupport {
@@ -46,7 +46,7 @@ public class SystemDescriptorProjectSupport {
 
    /**
     * For this project we need to:
-    * 
+    *
     * <pre>
     * - create the default Eclipse project
     * - add the project nature
@@ -200,7 +200,7 @@ public class SystemDescriptorProjectSupport {
 
    /**
     * Creates the specified folder.
-    * 
+    *
     * @param folder Folder resource to create.
     * @throws CoreException if this method fails. Reasons include:
     *            <ul>
@@ -236,7 +236,7 @@ public class SystemDescriptorProjectSupport {
 
    /**
     * Creates a file in a specified project.
-    * 
+    *
     * @param project The project to put the file in.
     * @param filepath The full path of the file in the project to create.
     * @param content The content to write into the file.
@@ -269,6 +269,38 @@ public class SystemDescriptorProjectSupport {
    }
 
    /**
+    * Creates a file in a specified project.
+    *
+    * @param project The project to put the file in.
+    * @param filepath The full path of the file in the project to create.
+    * @param content The content to write into the file.
+    * @throws CoreException if this method fails. Reasons include:
+    *            <ul>
+    *            <li>This resource already exists in the workspace.</li>
+    *            <li>The parent of this resource does not exist.</li>
+    *            <li>The parent of this resource is a virtual folder.</li>
+    *            <li>The project of this resource is not accessible.</li>
+    *            <li>The parent contains a resource of a different type
+    *            at the same path as this resource.</li>
+    *            <li>The name of this resource is not valid (according to
+    *            <code>IWorkspace.validateName</code>).</li>
+    *            <li>The corresponding location in the local file system is occupied
+    *            by a directory.</li>
+    *            <li>The corresponding location in the local file system is occupied
+    *            by a file and <code>force </code> is <code>false</code>.</li>
+    *            <li>Resource changes are disallowed during certain types of resource change
+    *            event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+    *            </ul>
+    */
+   private static void createFile(IFile file, InputStream contents) throws CoreException {
+      if (!file.exists()) {
+
+         IProgressMonitor monitor = new NullProgressMonitor();
+         file.create(contents, true, monitor);
+      }
+   }
+
+   /**
     * Create a file within the project
     *
     * @param project The project resource to create the file in.
@@ -278,6 +310,26 @@ public class SystemDescriptorProjectSupport {
     * @throws CoreException {@link #createFile(IFile, String)}
     */
    private static void addToProject(IProject project, String filepath, String fileContent) throws CoreException {
+      String[] parts = filepath.split("/");
+      if (parts.length > 1) {
+         IFolder folder = project.getFolder(
+            Arrays.asList(parts).subList(0, parts.length - 1).stream().collect(Collectors.joining("/")));
+         createFolder(folder);
+      }
+      IFile file = project.getFile(filepath);
+      createFile(file, fileContent);
+   }
+
+   /**
+    * Create a file within the project
+    *
+    * @param project The project resource to create the file in.
+    * @param filepath The full path of the file in the project to create.
+    * @param content The content to write into the file.
+    * @see {@link #createFile(IFile, String)}
+    * @throws CoreException {@link #createFile(IFile, String)}
+    */
+   private static void addToProject(IProject project, String filepath, InputStream fileContent) throws CoreException {
       String[] parts = filepath.split("/");
       if (parts.length > 1) {
          IFolder folder = project.getFolder(
@@ -302,6 +354,9 @@ public class SystemDescriptorProjectSupport {
             }
             if (entry.isDirectory()) {
                createFolder(project.getFolder(entry.getName()));
+            } else if (entry.getName().endsWith(".jar")){
+               ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+               addToProject(project, entry.getName(), in);
             } else {
                String contents = out.toString();
                for (Map.Entry<String, String> keyValue : properties.entrySet()) {
@@ -332,7 +387,7 @@ public class SystemDescriptorProjectSupport {
 
    /**
     * Add the xtext nature to the project.
-    * 
+    *
     * @param project The project to add the nature to.
     * @throws CoreException if this method fails. Reasons include:
     *            <ul>
