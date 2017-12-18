@@ -11,11 +11,7 @@ dependencies {
     compile "org.osgi:osgi.enterprise:$osgiVersion"
     compile "commons-io:commons-io:$commonsIOVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
-    compile "org.eclipse.aether:aether-connector-basic:$aetherVersion"
-    compile "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
-    compile "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
-    compile "org.apache.maven:maven-resolver-provider:$mavenVersion"
-    compile "org.apache.maven:maven-settings-builder:$mavenVersion"
+    
 
 	testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
