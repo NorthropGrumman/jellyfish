@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.test.files;
+package com.ngc.seaside.jellyfish.cli.command.test.files;
 
 import java.io.File;
 

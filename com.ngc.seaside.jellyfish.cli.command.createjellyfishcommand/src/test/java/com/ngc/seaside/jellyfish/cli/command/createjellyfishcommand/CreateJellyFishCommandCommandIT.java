@@ -5,7 +5,7 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 
 
 import org.junit.Assert;

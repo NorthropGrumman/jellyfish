@@ -17,7 +17,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
