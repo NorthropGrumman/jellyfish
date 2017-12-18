@@ -18,9 +18,6 @@ project(':com.ngc.seaside.jellyfish.impl.provider').name = 'jellyfish.impl.provi
 include 'com.ngc.seaside.jellyfish.cli.command.help'
 project(':com.ngc.seaside.jellyfish.cli.command.help').name = 'jellyfish.cli.command.help'
 
-include 'com.ngc.seaside.jellyfish.cli.command.update'
-project(':com.ngc.seaside.jellyfish.cli.command.update').name = 'jellyfish.cli.command.update'
-
 include 'com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand'
 project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand').name = 'jellyfish.cli.command.createjellyfishcommand'
 
