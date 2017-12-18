@@ -1,0 +1,9 @@
+package com.ngc.seaside
+
+model ModelNoRequirements {
+  metadata {
+    "name" : "ModelNoRequirements",
+    "description" : "My ModelNoRequirements description",
+    "stereotypes" : ["model", "service"]
+  }
+}

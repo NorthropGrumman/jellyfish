@@ -1,0 +1,3 @@
+rootProject.name = 'jellyfish-cli'
+include 'com.ngc.seaside.jellyfish.api'
+project(':com.ngc.seaside.jellyfish.api').name = 'jellyfish.api'

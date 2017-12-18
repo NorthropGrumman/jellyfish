@@ -1,0 +1,57 @@
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService
+import com.ngc.seaside.threateval.ClassificationTrackPriorityService
+import com.ngc.seaside.threateval.EngagementTrackPriorityService
+import com.ngc.seaside.threateval.TrackPriorityService
+import com.ngc.seaside.common.datatype.SystemTrack
+import com.ngc.seaside.classifier.datatype.Classification
+import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+model ThreatEvaluation {
+	metadata {
+		"description": "Prioritizes system tracks into a list of System Track Identifiers",
+		"stereotypes": ["virtual", "system"],
+		"satisfies": ["TE0001", "TE0002","TE0003","TE0004","TE0005"]
+	}
+	
+	requires {
+		DefendedAreaTrackPriorityService defendedAreaTrackPriorityService
+		ClassificationTrackPriorityService classificationTrackPriorityService
+		EngagementTrackPriorityService engagementTrackPriorityService
+		TrackPriorityService trackPriorityService
+	}
+	
+	input {
+		many SystemTrack systemTrack /*{
+		   "requirements": ["TE0001"]
+			"limit": { 
+				"max": 100
+			}
+		}*/
+		
+		many Classification systemTrackClassification /*{
+		   "requirements": ["TE0002"]
+			}
+		}*/
+		
+		many TrackEngagementStatus trackEngagementStatus /*{
+		   "requirements": ["TE0003"]
+			}
+		}*/
+	}
+	
+	output {
+		many SystemTrackIdentifier prioritizedSystemTrackIds /*{
+		   "requirements": ["TE0004", "TE0005"]
+			}
+		}*/
+	}
+	
+	links {
+		link systemTrack to defendedAreaTrackPriorityService.systemTrack
+		link systemTrackClassification to classificationTrackPriorityService.systemTrackClassification
+		link trackEngagementStatus to engagementTrackPriorityService.trackEngagementStatus
+	}
+}

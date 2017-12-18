@@ -1,0 +1,22 @@
+package com.ngc
+
+import com.ngc.c1.Child1
+import com.ngc.c2.Child2
+
+model Model1 {
+	
+	input {
+		Child1 input1
+	}
+	
+	output {
+		Child2 output1
+	}
+	
+	scenario scenario1 {
+		when receiving input1
+		then willPublish output1
+	}
+	
+	
+}

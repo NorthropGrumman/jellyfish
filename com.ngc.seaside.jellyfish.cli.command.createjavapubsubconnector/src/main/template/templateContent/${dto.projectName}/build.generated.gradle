@@ -1,0 +1,18 @@
+#set( $D = '$' )
+
+dependencies {
+#foreach ($dependency in $dto.projectDependencies)
+   compile project(":$dependency")
+#end
+
+   compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
+   compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
+
+   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
+   compile "org.osgi:osgi.core:${D}osgiVersion"
+   compile "org.osgi:osgi.enterprise:${D}osgiVersion"
+
+   testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsCoreVersion"
+   testCompile "junit:junit:${D}junitVersion"
+   testCompile "org.mockito:mockito-core:${D}mockitoVersion"
+}
