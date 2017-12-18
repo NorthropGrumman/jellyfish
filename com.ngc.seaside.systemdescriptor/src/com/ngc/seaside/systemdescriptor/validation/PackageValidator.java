@@ -8,7 +8,7 @@ import org.eclipse.xtext.validation.Check;
 import java.util.Arrays;
 import java.util.List;
 
-public class PackageValidator extends AbstractSystemDescriptorValidator {
+public class PackageValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
 	/**
 	 * Validates that the user did not try to escape a keyword with ^ in the

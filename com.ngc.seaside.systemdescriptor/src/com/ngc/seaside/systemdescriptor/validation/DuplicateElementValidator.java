@@ -11,7 +11,7 @@ import org.eclipse.xtext.validation.Check;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 
-public class DuplicateElementValidator extends AbstractSystemDescriptorValidator {
+public class DuplicateElementValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
 	@Inject
 	private IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
