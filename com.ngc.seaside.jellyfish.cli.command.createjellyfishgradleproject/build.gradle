@@ -16,3 +16,7 @@ dependencies {
     testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
     testImplementation "commons-io:commons-io:$commonsIOVersion"
 }
+
+processResources {
+    expand(version: version)
+}
