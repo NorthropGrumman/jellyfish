@@ -1,20 +1,16 @@
 dependencies {
-   compile "com.ngc.seaside:command.api:$apiVersion"
-   compile "com.ngc.seaside:bootstrap.api:$apiVersion"
-   compile "com.ngc.seaside:bootstrap.service.api:$apiVersion"
+   api "com.ngc.seaside:command.api:$apiVersion"
+   api "com.ngc.seaside:bootstrap.api:$apiVersion"
+   api "com.ngc.seaside:bootstrap.service.api:$apiVersion"
 
-   compile "com.google.inject:guice:$guiceVersion"
-   compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   compile "com.ngc.blocs:blocs-core:$blocsVersion"
-   compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "org.apache.velocity:velocity:$velocityVersion"
-   compile "commons-io:commons-io:$commonsIOVersion"
-   compile "commons-lang:commons-lang:$commonsLangVersion"
+   implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+   implementation "com.google.inject:guice:$guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   implementation "org.osgi:osgi.core:$osgiVersion"
+   implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
 

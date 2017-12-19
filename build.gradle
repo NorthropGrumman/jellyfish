@@ -7,15 +7,15 @@ buildscript {
         }
     }
 
-   dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:2.0.3'
-      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
-   }
+    dependencies {
+        classpath 'com.ngc.seaside:gradle.plugins:2.1.4'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+    }
 }
 
 subprojects {
     apply plugin: 'com.ngc.seaside.parent'
-
+    apply plugin: 'java-library'
 
     group = 'com.ngc.seaside'
 	version = '1.7.1-SNAPSHOT'
@@ -27,7 +27,7 @@ subprojects {
     }
 
     ext {
-        apiVersion = '1.8.0'
+        apiVersion = '1.8.1-SNAPSHOT'
         bootstrapCommandsVersion = '1.2'
         blocsVersion = '2.1'
         osgiVersion =  '6.0.0'
