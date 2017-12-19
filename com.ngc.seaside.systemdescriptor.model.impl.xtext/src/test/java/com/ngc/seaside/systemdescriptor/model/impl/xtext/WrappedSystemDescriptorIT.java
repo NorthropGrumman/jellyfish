@@ -337,6 +337,7 @@ public class WrappedSystemDescriptorIT {
                    dataLink.getTarget());
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testDoesCreateWrappedDescriptorWithDataInheritance() throws Throwable {
       resourceOf(pathTo("clocks/datatypes/Time.sd"));
@@ -367,6 +368,7 @@ public class WrappedSystemDescriptorIT {
                    superType.get().getFullyQualifiedName());
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testDoesCreateWrappedDescriptorWithEnums() throws Throwable {
       resourceOf(pathTo("clocks/datatypes/Time.sd"));

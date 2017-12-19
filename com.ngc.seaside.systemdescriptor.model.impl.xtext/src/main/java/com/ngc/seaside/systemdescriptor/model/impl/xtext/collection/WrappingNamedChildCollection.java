@@ -71,6 +71,7 @@ public class WrappingNamedChildCollection<X extends EObject, P, T extends INamed
       return contains;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public boolean remove(Object o) {
       // Override the default remove since this is more efficient.
