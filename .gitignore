@@ -46,3 +46,5 @@ logs/
 
 # Generated files
 regressions/*/generatedOutput/
+regressions/*/expectedOutput/**/generated-projects/*/*
+!regressions/*/expectedOutput/**/generated-projects/*/build.gradle
