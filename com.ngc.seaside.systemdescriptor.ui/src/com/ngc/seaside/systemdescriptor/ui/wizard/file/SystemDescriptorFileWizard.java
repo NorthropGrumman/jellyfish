@@ -46,9 +46,9 @@ public class SystemDescriptorFileWizard extends Wizard implements INewWizard {
 		if (filename.toLowerCase().endsWith(".sd")) {
 			filename = filename.substring(filename.length() - 3);
 		}
-		boolean model = this.filePage.isModelSelected();
+		String elementType = this.filePage.getElementType();
 
-		InputStream stream = SystemDescriptorFileSupport.createSDStream(packageName, filename, model);
+		InputStream stream = SystemDescriptorFileSupport.createSDStream(packageName, filename, elementType);
 		try {
 			boolean success = SystemDescriptorFileSupport.createFile(getShell(), file, stream);
 			if (success) {

@@ -35,7 +35,7 @@ class SystemDescriptorFileSupport
 
    /**
     * Tries to find the default source folder and package based on the currently selected file in eclipse and the active file in the editor.
-    * 
+    *
     * @param workbench eclipse workbench
     * @param selection selected file in the package explorer
     * @return the default source folder and package
@@ -88,7 +88,7 @@ class SystemDescriptorFileSupport
 
    /**
     * Searches the path for a src folder and returns the default source folder and default package as best as possible.
-    * 
+    *
     * @param path selected path
     * @return the default source folder and package
     */
@@ -168,21 +168,27 @@ class SystemDescriptorFileSupport
       }
    }
 
-   static InputStream createSDStream(String packageName, String name, boolean model)
+   static InputStream createSDStream(String packageName, String name, String elementType)
    {
       StringBuilder file = new StringBuilder();
       if (packageName != null && !packageName.isEmpty()) {
          file.append("package ").append(packageName).append("\n\n");
       }
 
-      if (model) {
+      switch (elementType.toLowerCase()) {
+      case "model":
          file.append("model ").append(name)
                   .append(" {\n  metadata {\n    \"name\" : \"My Model\",\n    \"description\" : \"My Model description\",\n    \"stereotypes\" : [\"model\", \"example\"]\n  }\n}\n");
-      }
-      else {
+         break;
+      case "data":
          file.append("data ").append(name).append(" {\n\n}\n");
-      }
-
+         break;
+      case "enum":
+         file.append("enum ").append(name).append(" {\n\n}\n");
+         break;
+      default:
+         throw new IllegalStateException("Unknown element type: " + elementType);
+   }
       return new ByteArrayInputStream(file.toString().getBytes(StandardCharsets.UTF_8));
    }
 

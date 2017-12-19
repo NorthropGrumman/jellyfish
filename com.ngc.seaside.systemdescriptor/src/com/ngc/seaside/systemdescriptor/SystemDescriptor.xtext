@@ -374,7 +374,7 @@ Links
 Enumeration
 	: 'enum' name=UnqualifiedName '{'
 		metadata=Metadata?
-		values+=EnumerationValueDeclaration+
+		values+=EnumerationValueDeclaration*
 	  '}'	
 	;	
 	

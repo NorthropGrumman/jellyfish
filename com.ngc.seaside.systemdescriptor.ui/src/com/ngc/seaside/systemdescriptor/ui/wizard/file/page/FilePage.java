@@ -33,6 +33,7 @@ public class FilePage extends WizardPage
    private Text fileText;
    private Button modelButton;
    private Button dataButton;
+   private Button enumButton;
    private String defaultSourceFolder;
    private String defaultPackage;
 
@@ -117,7 +118,7 @@ public class FilePage extends WizardPage
       // Radio Buttons
       new Label(container, LABEL_STYLE);
       Composite radioGroup = new Composite(container, 0);
-      GridLayout layout = new GridLayout(2, false);
+      GridLayout layout = new GridLayout(3, false);
       radioGroup.setLayout(layout);
       radioGroup.setLayoutData(new GridData(GRID_STYLE));
 
@@ -127,6 +128,9 @@ public class FilePage extends WizardPage
 
       dataButton = new Button(radioGroup, SWT.RADIO);
       dataButton.setText("Data");
+
+	  enumButton = new Button(radioGroup, SWT.RADIO);
+      enumButton.setText("Enum");
 
       // Focus
       final Text focus;
@@ -142,7 +146,7 @@ public class FilePage extends WizardPage
       container.getShell().getDisplay().asyncExec(() -> {
          focus.setFocus();
       });
-      
+
    }
 
    private void validate()
@@ -203,8 +207,8 @@ public class FilePage extends WizardPage
       }
 
       // Button Validation
-      if (!modelButton.getSelection() && !dataButton.getSelection()) {
-         updateStatus("Either Model or Data must be selected");
+      if (!modelButton.getSelection() && !dataButton.getSelection() && !enumButton.getSelection()) {
+         updateStatus("Either Model, Data or Enum must be selected");
          return;
       }
 
@@ -238,9 +242,18 @@ public class FilePage extends WizardPage
       return this.fileText.getText().trim();
    }
 
-   public boolean isModelSelected()
+   public String getElementType()
    {
-      return modelButton.getSelection();
+      if (modelButton.getSelection()) {
+         return "model";
+      }
+      if (dataButton.getSelection()) {
+         return "data";
+      }
+      if (enumButton.getSelection()) {
+         return "enum";
+      }
+      return null;
    }
 
    public IFile getAbsolutePath()
