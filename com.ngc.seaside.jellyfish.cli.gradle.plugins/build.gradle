@@ -12,13 +12,10 @@ dependencies {
     implementation gradleApi()
     implementation localGroovy()
 
-    // Note we have this implementation time dependency to provide an alternate implementation for the Gradle version of
-    // JellyFish.
     implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
 
     commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createjellyfishcommand', configuration: 'commandTemplate')
@@ -57,4 +54,3 @@ task copyCommandTemplate(type: Copy) {
 }
 
 jar.dependsOn(copyCommandTemplate)
-
