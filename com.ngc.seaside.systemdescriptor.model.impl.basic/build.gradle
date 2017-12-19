@@ -1,10 +1,9 @@
 dependencies {
-   compile project(':systemdescriptor.model.api')
-   compile 'com.google.guava:guava:21.0'
-   compile "org.glassfish:javax.json:$glassfishJsonVersion"
+   api project(':systemdescriptor.model.api')
+   implementation "com.google.guava:guava:$guavaVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {
