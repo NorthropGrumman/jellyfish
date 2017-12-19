@@ -1,14 +1,8 @@
 dependencies {
-   compile project(':systemdescriptor.scenario.impl.standardsteps')
+   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
 
-   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
-   compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
-   
-   compile "com.ngc.blocs:blocs-core:$blocsCoreVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "commons-io:commons-io:$commonsIOVersion"
-   compile "commons-lang:commons-lang:$commonsLangVersion"
-   compile "org.mockito:mockito-core:$mockitoVersion"
-   compile "junit:junit:$junitVersion"
-
+   implementation project(':systemdescriptor.scenario.impl.standardsteps')
+   implementation "org.mockito:mockito-core:$mockitoVersion"
+   implementation "junit:junit:$junitVersion"
 }

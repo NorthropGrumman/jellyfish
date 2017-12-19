@@ -1,20 +1,17 @@
 dependencies {
-   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
-   compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
-   compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
-   compile "com.google.guava:guava:$guavaVersion"
-   compile "com.google.inject:guice:$guiceVersion"
-   compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   compile "org.eclipse.xtext:org.eclipse.xtext:$xtextVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "org.glassfish:javax.json:$glassfishJsonVersion"
+   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
-   testCompile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
-   
-   testCompile project(":systemdescriptor.ext.testutils")
+   implementation "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
+   implementation "com.google.inject:guice:$guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
+
+   testImplementation project(":systemdescriptor.ext.testutils")
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+   testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"   
 }
 
 jar {
