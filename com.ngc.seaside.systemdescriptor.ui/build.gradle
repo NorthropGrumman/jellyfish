@@ -7,6 +7,9 @@ sourceSets {
          srcDirs 'src', 'src-gen'
       }
       xtendOutputDir = 'xtend-gen'
+      resources {
+         srcDirs 'resources'
+      }
    }
 }
 
