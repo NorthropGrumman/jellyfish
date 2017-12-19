@@ -1,43 +1,27 @@
-
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
+    api project(':jellyfish.api')
 
-   implementation project(":jellyfish.api")
-   implementation project(":jellyfish.service.api")
+    implementation project(':jellyfish.service.api')
+    implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
+    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-   implementation "com.google.inject:guice:$guiceVersion"
-   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-
-   implementation "com.ngc.blocs:blocs-core:$blocsVersion"
-   implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-   implementation "com.ngc.blocs:service.api:$blocsVersion"
-
-   implementation "org.osgi:osgi.core:$osgiVersion"
-   implementation "org.osgi:osgi.enterprise:$osgiVersion"
-   implementation "commons-io:commons-io:$commonsIOVersion"
-   implementation "commons-lang:commons-lang:$commonsLangVersion"
-
-   implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
-   implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-   implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-
-   testImplementation project(":jellyfish.service.scenario.impl.scenarioservice")
-   testImplementation project(":jellyfish.service.name.impl.namingservices")
-   testImplementation project(":jellyfish.service.codegen.impl.codegenservices")
-   testImplementation project(":jellyfish.service.config.impl.transportconfigurationservice")
-   testImplementation project(":jellyfish.service.requirements.impl.requirementsservice")
-   testImplementation project(":jellyfish.cli.command.testutils")
-   testImplementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-   testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-   testImplementation "com.ngc.blocs:service.api:$blocsVersion"
-   testImplementation "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-   testImplementation "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-   testImplementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-   testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-
-   testImplementation "junit:junit:$junitVersion"
-   testImplementation "org.mockito:mockito-core:$mockitoVersion"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-
+    testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
+    testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    
+    testRuntimeOnly project(':jellyfish.service.name.impl.namingservices')
+    testRuntimeOnly project(':jellyfish.service.scenario.impl.scenarioservice')
+    testRuntimeOnly project(':jellyfish.service.codegen.impl.codegenservices')
+    testRuntimeOnly project(':jellyfish.service.config.impl.transportconfigurationservice')
+    testRuntimeOnly project(':jellyfish.service.requirements.impl.requirementsservice')
 }

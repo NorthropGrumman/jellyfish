@@ -1,17 +1,14 @@
-/**
- * Wrap anything in src/main/template in a zip with a "template" classifier.
- */
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
-    implementation project(":jellyfish.api")
+    api project(':jellyfish.api')
 
     implementation "com.ngc.seaside:command.api:$bootstrapApiVersion"
     implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
 

@@ -1,10 +1,10 @@
-
 dependencies {
-    implementation project(":jellyfish.api")
+    api project(':jellyfish.api')
+
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
 

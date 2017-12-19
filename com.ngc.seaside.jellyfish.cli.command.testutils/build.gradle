@@ -1,17 +1,11 @@
 dependencies {
-   implementation "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-   implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
-   
    implementation "com.ngc.blocs:blocs-core:$blocsVersion"
    implementation "com.ngc.blocs:service.api:$blocsVersion"
-   implementation "commons-io:commons-io:$commonsIOVersion"
-   implementation "commons-lang:commons-lang:$commonsLangVersion"
-   implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
    implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-   implementation "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
    implementation "org.mockito:mockito-core:$mockitoVersion"
    implementation "junit:junit:$junitVersion"
+
+   runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
 }

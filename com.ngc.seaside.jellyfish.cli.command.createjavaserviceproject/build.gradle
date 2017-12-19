@@ -1,27 +1,18 @@
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
-
-    implementation project(":jellyfish.api")
-    implementation project(":jellyfish.service.api")
-
-    implementation "com.google.inject:guice:$guiceVersion"
-    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    api project(':jellyfish.api')
     
-    implementation "com.ngc.blocs:blocs-core:$blocsVersion"
-    implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    implementation project(':jellyfish.service.api')
     implementation "com.ngc.blocs:service.api:$blocsVersion"
-    
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
-    implementation "commons-io:commons-io:$commonsIOVersion"
-    
-    implementation "commons-lang:commons-lang:$commonsLangVersion"
-    
     implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
     
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }

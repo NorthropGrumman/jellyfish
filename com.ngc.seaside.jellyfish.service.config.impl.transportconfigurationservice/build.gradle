@@ -1,25 +1,13 @@
 dependencies {
-    implementation project(":jellyfish.api")
-    implementation project(":jellyfish.service.api")
-
-    implementation "com.google.inject:guice:$guiceVersion"
-    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    api project(':jellyfish.service.api')
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
 
+    implementation "com.google.inject:guice:$guiceVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
-    implementation "commons-io:commons-io:$commonsIOVersion"
-    implementation "commons-lang:commons-lang:$commonsLangVersion"
 
-    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    implementation "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-
-    testImplementation project(":jellyfish.cli.command.testutils")
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
 }

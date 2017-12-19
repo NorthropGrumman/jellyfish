@@ -11,7 +11,7 @@ buildscript {
     }
 
    dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:2.1.3'
+      classpath 'com.ngc.seaside:gradle.plugins:2.1.4'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
       classpath 'com.ngc.blocs:gradle.plugin:0.3'
       classpath 'ca.cutterslade.gradle:gradle-dependency-analyze:1.2.0'
@@ -48,17 +48,17 @@ subprojects {
 		justWarn = true
 	}
 	
-	task analyzeJavaDependencies(dependsOn: ['analyzeJavaLibraryDependencies', 'analyzeJavaLibraryTestDependencies'])
+	task ad(dependsOn: ['analyzeJavaLibraryDependencies', 'analyzeJavaLibraryTestDependencies'])
     
     group = 'com.ngc.seaside'
     version = '1.10.0-SNAPSHOT'
 
     ext {
-        jellyfishAPIVersion = '1.6.0'
-        jellyfishEXTVersion = '1.11.1'
+        jellyfishAPIVersion = '1.6.1-SNAPSHOT'
+        jellyfishEXTVersion = '1.11.2-SNAPSHOT'
 
-        bootstrapApiVersion = '1.8.0'
-        bootstrapVersion = '1.7.0'
+        bootstrapApiVersion = '1.8.1-SNAPSHOT'
+        bootstrapVersion = '1.7.1-SNAPSHOT'
         bootstrapCommandsVersion = '1.2'
 
         blocsVersion = '2.1'
@@ -70,6 +70,7 @@ subprojects {
         commonsIOVersion = '2.5'
         commonsLangVersion = '2.6'
         commonsLang3Version = '3.5'
+        mavenVersion = '3.5.2'
         junitVersion = '4.12'
         mockitoVersion = '2.7.14'
         glassfishJsonVersion = '1.1'

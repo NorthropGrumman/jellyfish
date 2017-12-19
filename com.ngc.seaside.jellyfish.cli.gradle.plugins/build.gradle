@@ -6,32 +6,34 @@ configurations {
 }
 
 dependencies {
-    // Note we have this implementation time dependency to provide an alternate implementation for the Gradle version of
-    // JellyFish.
-    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    implementation project(':jellyfish')
+    implementation project(':jellyfish.api')
 
     implementation gradleApi()
     implementation localGroovy()
-    implementation project(":jellyfish")
-    implementation project(":jellyfish.api")
-    implementation "com.google.inject:guice:$guiceVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
+
+    // Note we have this implementation time dependency to provide an alternate implementation for the Gradle version of
+    // JellyFish.
+    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
-    commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavapubsubconnector", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsallocation", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceproject", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaservicebase", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconfig", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavacucumbertests", configuration: "commandTemplate")
-    commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+
+    commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishcommand', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createprotocolbuffermessages', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishgradleproject', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaevents', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavapubsubconnector', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsallocation', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservice', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceproject', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicebase', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createdomain', configuration: 'commandTemplate')
 }
 
 // Include the command templates in the JAR.

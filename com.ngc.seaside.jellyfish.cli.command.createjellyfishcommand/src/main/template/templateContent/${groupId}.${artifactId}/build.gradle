@@ -4,7 +4,7 @@ apply plugin: 'com.ngc.seaside.command'
 dependencies {
 
 #if (${withApi} == "true")
-    compile project(":jellyfish.api")
+    compile project(':jellyfish.api')
 #else
     compile "com.ngc.seaside:jellyfish.api:${D}jellyfishCommandApiVersion"
 #end

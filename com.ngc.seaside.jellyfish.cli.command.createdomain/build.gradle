@@ -1,26 +1,25 @@
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
-    api project(":jellyfish.api")
+    api project(':jellyfish.api')
 
-    implementation project(":jellyfish.service.api")
-    implementation "com.ngc.blocs:blocs-core:$blocsVersion"
+    implementation project(':jellyfish.service.api')
     implementation "com.ngc.blocs:domain.impl.common.domaingenerator:$blocsDomainVersion"
     implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
     implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    
+
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    
-	testImplementation project(":jellyfish.cli.command.testutils")
-	testImplementation project(":jellyfish.service.name.impl.namingservices")
+
+	testImplementation project(':jellyfish.cli.command.testutils')
+	testImplementation project(':jellyfish.service.name.impl.namingservices')
     testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-	
 	testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    
+    testRuntimeOnly "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
 }

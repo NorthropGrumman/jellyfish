@@ -5,79 +5,81 @@ configurations {
 }
 
 dependencies {
+    api project(':jellyfish.api')
+
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-
-    implementation project(":jellyfish.impl.provider")
-    implementation project(":jellyfish.cli.command.validate")
-
-    implementation project(":jellyfish.cli.command.samplecommand")
-    commandTemplate project(path: ":jellyfish.cli.command.samplecommand", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavadistribution")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjellyfishcommand")
-    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createdomain")
-    commandTemplate project(path: ":jellyfish.cli.command.createdomain", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createprotocolbuffermessages")
-    commandTemplate project(path: ":jellyfish.cli.command.createprotocolbuffermessages", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjellyfishgradleproject")
-    commandTemplate project(path: ":jellyfish.cli.command.createjellyfishgradleproject", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavaevents")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaevents", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavapubsubconnector")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavapubsubconnector", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.report.requirementsverification")
-    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsverification", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.report.requirementsallocation")
-    commandTemplate project(path: ":jellyfish.cli.command.report.requirementsallocation", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavaservice")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaservice", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavaserviceproject")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceproject", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavaservicebase")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaservicebase", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavaserviceconfig")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavaserviceconfig", configuration: "commandTemplate")
-
-    implementation project(":jellyfish.cli.command.createjavacucumbertests")
-    commandTemplate project(path: ":jellyfish.cli.command.createjavacucumbertests", configuration: "commandTemplate")
-    
-    implementation project(":jellyfish.service.name.impl.namingservices")
-    implementation project(":jellyfish.service.codegen.impl.codegenservices")
-    implementation project(":jellyfish.service.scenario.impl.scenarioservice")
-    implementation project(":jellyfish.service.data.impl.dataservice")
-    implementation project(":jellyfish.service.config.impl.transportconfigurationservice")
-    implementation project(":jellyfish.service.requirements.impl.requirementsservice")
-    implementation project(":jellyfish.service.feature.impl.featureservice")
-
-    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
-
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
+
+    implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
     implementation "com.google.inject:guice:$guiceVersion"
-    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "commons-io:commons-io:$commonsIOVersion"
-    implementation "commons-lang:commons-lang:$commonsLangVersion"
 
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    runtimeOnly project(':jellyfish.impl.provider')
+    runtimeOnly "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+
+    runtimeOnly project(':jellyfish.cli.command.validate')
+
+    runtimeOnly project(':jellyfish.cli.command.samplecommand')
+    commandTemplate project(path: ':jellyfish.cli.command.samplecommand', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavadistribution')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjellyfishcommand')
+    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishcommand', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createdomain')
+    commandTemplate project(path: ':jellyfish.cli.command.createdomain', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createprotocolbuffermessages')
+    commandTemplate project(path: ':jellyfish.cli.command.createprotocolbuffermessages', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjellyfishgradleproject')
+    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishgradleproject', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavaevents')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaevents', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavapubsubconnector')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavapubsubconnector', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.report.requirementsverification')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.report.requirementsallocation')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsallocation', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavaservice')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservice', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavaserviceproject')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceproject', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavaservicebase')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicebase', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavaserviceconfig')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.cli.command.createjavacucumbertests')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
+
+    runtimeOnly project(':jellyfish.service.name.impl.namingservices')
+    runtimeOnly project(':jellyfish.service.codegen.impl.codegenservices')
+    runtimeOnly project(':jellyfish.service.scenario.impl.scenarioservice')
+    runtimeOnly project(':jellyfish.service.data.impl.dataservice')
+    runtimeOnly project(':jellyfish.service.config.impl.transportconfigurationservice')
+    runtimeOnly project(':jellyfish.service.requirements.impl.requirementsservice')
+    runtimeOnly project(':jellyfish.service.feature.impl.featureservice')
+
+    runtimeOnly "com.ngc.seaside:guice.modules:$bootstrapVersion"
+    runtimeOnly "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
+    runtimeOnly "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
+    runtimeOnly "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
+    runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
+    runtimeOnly "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
@@ -97,7 +99,7 @@ task copyCommandTemplate(type: Copy) {
 }
 
 seasideApplication {
-    mainClassName = "com.ngc.seaside.jellyfish.JellyFish"
+    mainClassName = 'com.ngc.seaside.jellyfish.JellyFish'
     includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
     appHomeVarName = 'appHome'
     appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
