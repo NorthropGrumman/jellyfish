@@ -1,5 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -11,19 +17,12 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WrappedDataTest extends AbstractWrappedXtextTest {
 
