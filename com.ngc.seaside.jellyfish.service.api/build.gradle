@@ -1,12 +1,12 @@
 dependencies {
-    compile project(':jellyfish.api')
+    implementation project(':jellyfish.api')
 
-    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-    compile "com.google.protobuf:protobuf-java:$protobufVersion"
+    implementation "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    implementation "com.google.protobuf:protobuf-java:$protobufVersion"
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {

@@ -1,24 +1,24 @@
 dependencies {
-    compile project(":jellyfish.api")
-    compile project(":jellyfish.service.api")
+    implementation project(":jellyfish.api")
+    implementation project(":jellyfish.service.api")
 
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 
-    compile "com.ngc.blocs:service.api:$blocsVersion"
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
 
-    compile "org.osgi:osgi.core:$osgiVersion"
-    compile "org.osgi:osgi.enterprise:$osgiVersion"
-    compile "commons-io:commons-io:$commonsIOVersion"
-    compile "commons-lang:commons-lang:$commonsLangVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    implementation "commons-io:commons-io:$commonsIOVersion"
+    implementation "commons-lang:commons-lang:$commonsLangVersion"
 
-    compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    implementation "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
 
-    testCompile project(":jellyfish.cli.command.testutils")
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-    testCompile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
+    testImplementation project(":jellyfish.cli.command.testutils")
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishAPIVersion"
 }

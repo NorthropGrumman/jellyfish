@@ -6,16 +6,17 @@ configurations {
 }
 
 dependencies {
-    // Note we have this compile time dependency to provide an alternate implementation for the Gradle version of
+    // Note we have this implementation time dependency to provide an alternate implementation for the Gradle version of
     // JellyFish.
-    compile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
 
-    compile gradleApi()
-    compile localGroovy()
-    compile project(":jellyfish")
-    compile project(":jellyfish.api")
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.guava:guava:$guavaVersion"
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation project(":jellyfish")
+    implementation project(":jellyfish.api")
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
 
     commandTemplate project(path: ":jellyfish.cli.command.createjavadistribution", configuration: "commandTemplate")
     commandTemplate project(path: ":jellyfish.cli.command.createjellyfishcommand", configuration: "commandTemplate")
