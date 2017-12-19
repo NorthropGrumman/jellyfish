@@ -1,7 +1,8 @@
 dependencies {
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "log4j:log4j:$log4jVersion"
-   compile "com.google.inject:guice:$guiceVersion"
+   api "com.ngc.blocs:service.api:$blocsCoreVersion"
+
+   implementation "log4j:log4j:$log4jVersion"
+   implementation "com.google.inject:guice:$guiceVersion"
 }
 
 jar {
