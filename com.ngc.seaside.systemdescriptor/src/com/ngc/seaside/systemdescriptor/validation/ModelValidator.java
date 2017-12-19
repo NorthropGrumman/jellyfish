@@ -43,7 +43,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenDeclaration;
  * Validates a {@code Model} is correct. This validator mostly handles checking
  * for duplicate declarations of fields within a model.
  */
-public class ModelValidator extends AbstractSystemDescriptorValidator {
+public class ModelValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
 	// TODO TH: inject the interface instead of the impl
 	@Inject

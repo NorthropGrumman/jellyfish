@@ -12,7 +12,7 @@ import org.eclipse.xtext.validation.Check;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DataValidator extends AbstractSystemDescriptorValidator {
+public class DataValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
    /**
     * A provider that is used to get the IResourceDescriptions which serves as

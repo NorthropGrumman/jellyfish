@@ -5,7 +5,7 @@ import org.eclipse.xtext.validation.Check;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-public class ScenarioValidator extends AbstractSystemDescriptorValidator {
+public class ScenarioValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
 
 	/**

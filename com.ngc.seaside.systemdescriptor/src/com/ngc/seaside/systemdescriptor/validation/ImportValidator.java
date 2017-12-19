@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * element.
  *
  */
-public class ImportValidator extends AbstractSystemDescriptorValidator {
+public class ImportValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
    /**
     * A provider that is used to get the IResourceDescriptions which serves as

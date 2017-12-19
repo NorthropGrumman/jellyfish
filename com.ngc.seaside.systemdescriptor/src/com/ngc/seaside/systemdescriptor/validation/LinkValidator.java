@@ -9,7 +9,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-public class LinkValidator extends AbstractSystemDescriptorValidator {
+public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
 	@Check
 	public void checkLinkDeclaration(LinkDeclaration link) {
