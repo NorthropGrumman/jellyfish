@@ -9,7 +9,7 @@ version = '2.0.0-SNAPSHOT'
 buildscript {
 
     ext {
-        jellyfishCliVersion = System.getProperty('jellyfishCliVersion', '1.9.0')
+        jellyfishCliVersion = System.getProperty('jellyfishCliVersion', '1.10.0-SNAPSHOT')
         buildScriptUpdater = new BuildScriptUpdater()
     }
 
