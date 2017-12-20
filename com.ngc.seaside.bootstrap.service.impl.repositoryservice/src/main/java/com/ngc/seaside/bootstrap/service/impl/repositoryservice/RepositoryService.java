@@ -67,6 +67,7 @@ public class RepositoryService implements IRepositoryService {
          + "(?::(?<classifier>[^:\\s@]+))?)?"
          + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
    private static final String MAVEN_ENV = "M2_HOME";
+   private static final String MAVEN_PROPERTY_NAME = "maven.home";
    static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
    static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
@@ -301,7 +302,7 @@ public class RepositoryService implements IRepositoryService {
     */
    Optional<Path> findMavenLocal() {
       DefaultSettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
-      String m2Home = System.getProperty(MAVEN_ENV, System.getenv(MAVEN_ENV));
+      String m2Home = System.getProperty(MAVEN_PROPERTY_NAME, System.getProperty(MAVEN_ENV, System.getenv(MAVEN_ENV)));
       if (m2Home != null) {
          Path globalMavenSettings = Paths.get(m2Home, "conf", "settings.xml");
          if (Files.isRegularFile(globalMavenSettings)) {
