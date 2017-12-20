@@ -294,6 +294,7 @@ public class RepositoryService implements IRepositoryService {
     *
     * <ol>
     * <li>From maven user settings.xml found in {@value #USER_HOME_PROPERTY_NAME}/.m2</li>
+    * <li>From maven global settings.xml found in {@value #MAVEN_PROPERTY_NAME}/conf</li>
     * <li>From maven global settings.xml found in {@value #MAVEN_ENV}/conf</li>
     * <li>{@value #USER_HOME_PROPERTY_NAME}/.m2/repository</li>
     * </ol>
