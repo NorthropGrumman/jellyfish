@@ -8,8 +8,7 @@ option java_multiple_files = true;
 enum $dto.className {
 
 #foreach ($value in $dto.data.values)
-#set ($index = $velocityCount - 1)
-	$value = $index;
+	$value = ${foreach.index};
 #end
 #else
 #foreach ($import in $dto.imports)
@@ -21,8 +20,7 @@ import "$import";
 message $dto.className {
 
 #foreach ($field in $dto.fields)
-#set ($index = $velocityCount)
-   ${dto.fieldType($field)} ${dto.fieldName($field)} = $index;
+   ${dto.fieldType($field)} ${dto.fieldName($field)} = ${foreach.count};
 #end
 #end
 

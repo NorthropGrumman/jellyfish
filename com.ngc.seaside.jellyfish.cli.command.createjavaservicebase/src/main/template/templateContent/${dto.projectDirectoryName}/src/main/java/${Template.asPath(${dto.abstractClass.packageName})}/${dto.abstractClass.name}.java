@@ -163,7 +163,7 @@ public abstract class ${dto.abstractClass.name}
 #foreach($scenario in $dto.complexScenarios)
 #set ($serviceArguments = "")
 #foreach($input in $scenario.inputs)
-#set ($serviceArguments = "${serviceArguments}, input${velocityCount}Queue")
+#set ($serviceArguments = "${serviceArguments}, input${foreach.count}Queue")
 #end
 #foreach($output in $scenario.outputs)
 #set ($serviceArguments = "${serviceArguments}, ${dto.abstractClass.name}.this::${output.name}")
@@ -172,17 +172,17 @@ public abstract class ${dto.abstractClass.name}
    private void ${scenario.startMethod}() {
       threads.put("${scenario.name}", threadService.executeLongLivingTask("${scenario.name}", () -> {
 #foreach($input in $scenario.inputs)
-         final BlockingQueue<${input.type}> input${velocityCount}Queue = new LinkedBlockingQueue<>();
+         final BlockingQueue<${input.type}> input${foreach.count}Queue = new LinkedBlockingQueue<>();
 #end
 #foreach($input in $scenario.inputs)
-         queues.computeIfAbsent(${input.type}.class, __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${velocityCount}Queue);
+         queues.computeIfAbsent(${input.type}.class, __ -> Collections.newSetFromMap(new IdentityHashMap<>())).add(input${foreach.count}Queue);
 #end
          try {
             ${scenario.serviceMethod}(${serviceArguments});
          } finally {
             threads.remove("${scenario.name}");
 #foreach($input in $scenario.inputs)
-            queues.getOrDefault(${input.type}.class, Collections.emptySet()).remove(input${velocityCount}Queue);
+            queues.getOrDefault(${input.type}.class, Collections.emptySet()).remove(input${foreach.count}Queue);
 #end
          }
       }));
