@@ -34,6 +34,8 @@ class ParsingUtils {
 
    private static final Path POM_PATH = Paths.get("build", "poms");
 
+   private static final String TESTS_CLASSIFIER = "tests";
+
    private final IRepositoryService repositoryService;
 
    public ParsingUtils(IRepositoryService repositoryService) {
@@ -203,8 +205,19 @@ class ParsingUtils {
       Collection<XtextResource> resources = new LinkedHashSet<>();
       String[] splitGav = gav.split(":");
       String artifactGav = String.format("%s:%s:zip:%s", splitGav[0], splitGav[1], splitGav[2]);
+      // We also need to download the tests classifier for the project.  This is needed because Gradle will refuse to
+      // download the tests later since the ZIP file will already be in the local Maven repository.  In this case,
+      // Gradle thinks that the entire artifact has been downloaded and won't try to download the tests.  Thus, we
+      // need to download them both.
+      String testArtifactGav = String.format("%s:%s:zip:%s:%s",
+                                             splitGav[0],
+                                             splitGav[1],
+                                             TESTS_CLASSIFIER,
+                                             splitGav[2]);
       if (includeSelf) {
          resources.addAll(parseJar(repositoryService.getArtifact(artifactGav), ctx));
+         // Force the download of the tests artifact.  We don't actually need it do anything.
+         repositoryService.getArtifact(testArtifactGav);
       }
       for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
          resources.addAll(parseJar(path, ctx));
