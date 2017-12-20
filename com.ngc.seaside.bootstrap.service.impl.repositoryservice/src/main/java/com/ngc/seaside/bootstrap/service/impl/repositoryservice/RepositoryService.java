@@ -67,6 +67,7 @@ public class RepositoryService implements IRepositoryService {
          + "(?::(?<classifier>[^:\\s@]+))?)?"
          + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
    private static final String MAVEN_ENV = "M2_HOME";
+   private static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
    private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
@@ -226,6 +227,7 @@ public class RepositoryService implements IRepositoryService {
     * <ol>
     * <li>From {@link System#getProperty(String)}</li>
     * <li>From {@code gradle.properties} located in the current working directory</li>
+    * <li>From {@code gradle.properties} located from the property {@value #GRADLE_USER_HOME}
     * <li>From {@code gradle.properties} located in the {@code <user.home>/.gradle}</li>
     * <li>From {@link System#getenv(String)}</li>
     * </ol>
@@ -233,18 +235,23 @@ public class RepositoryService implements IRepositoryService {
     * @return the remote repository to Nexus, or {@link Optional#empty()} if it cannot be determined
     */
    Optional<RemoteRepository> findRemoteNexus() {
-
       Properties properties = new Properties();
-      String userHome = System.getProperty("user.home");
-      if (userHome != null) {
-         Path gradlePropertiesFile = Paths.get(userHome, ".gradle", "gradle.properties");
-         if (Files.isRegularFile(gradlePropertiesFile)) {
-            try {
-               properties.load(Files.newBufferedReader(gradlePropertiesFile));
-            } catch (IOException e) {
-               logService.warn(RepositoryService.class,
-                  "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
-            }
+      String gradleUserHome = System.getProperty(GRADLE_USER_HOME, System.getenv(GRADLE_USER_HOME));
+      Path gradlePropertiesFile = null;
+      if (gradleUserHome == null) {
+         String userHome = System.getProperty("user.home");
+         if (userHome != null) {
+            gradlePropertiesFile = Paths.get(userHome, ".gradle", "gradle.properties");
+         }
+      } else {
+         gradlePropertiesFile = Paths.get(gradleUserHome, "gradle.properties");
+      }
+      if (gradlePropertiesFile != null && Files.isRegularFile(gradlePropertiesFile)) {
+         try {
+            properties.load(Files.newBufferedReader(gradlePropertiesFile));
+         } catch (IOException e) {
+            logService.warn(RepositoryService.class,
+               "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
          }
       }
       Path cwdPropertiesFile = Paths.get("gradle.properties");
