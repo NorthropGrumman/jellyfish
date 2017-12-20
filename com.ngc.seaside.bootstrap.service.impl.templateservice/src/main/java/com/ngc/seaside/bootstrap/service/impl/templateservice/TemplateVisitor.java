@@ -3,10 +3,10 @@ package com.ngc.seaside.bootstrap.service.impl.templateservice;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import com.google.common.base.Preconditions;
+import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -62,8 +62,8 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       this.templateIgnoreComponent = templateIgnoreComponent;
 
       engine.setProperty("runtime.references.strict", true);
-      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
-                         "org.apache.velocity.runtime.log.NullLogSystem");
+      //engine.setProperty("space.gobbling", "bc");
+      //engine.setProperty("directive.if.emptycheck", false);
       for (Map.Entry<String, ?> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
@@ -157,6 +157,8 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
          try (Writer writer = Files.newBufferedWriter(outputFile);
               Reader reader = Files.newBufferedReader(path)) {
             engine.evaluate(context, writer, "", reader);
+         } catch(Exception e) {
+            throw new TemplateServiceException("Failed to parse velocity file " + path, e);
          }
       }
 
@@ -204,10 +206,10 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
 
             try {
                engine.evaluate(context, stringWriter, "evaluate output", m.group(1));
-               path = path.replace(value, stringWriter.toString());
-            } catch (IOException e) {
-               //ignored since StringWriter won't throw an IOException
+            } catch(Exception e) {
+               throw new TemplateServiceException("Failed to parse file " + input + " in velocity", e);
             }
+            path = path.replace(value, stringWriter.toString());
          }
 
          return Paths.get(outputFolder.toFile().getAbsolutePath(), path).toAbsolutePath();
@@ -219,11 +221,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       if (outputPath.endsWith(".vm")) {
          outputPath = outputPath.substring(0, outputPath.length() - 3);
       }
-      try {
-         engine.evaluate(context, stringWriter, "evaluate output", outputPath);
-      } catch (IOException e) {
-         // ignored since StringWriter won't throw an IOException
-      }
+      engine.evaluate(context, stringWriter, "evaluate output", outputPath);
 
       return Paths.get(stringWriter.toString()).toAbsolutePath();
    }
