@@ -1,8 +1,8 @@
 dependencies {
-   compile "org.glassfish:javax.json:$glassfishJsonVersion"
+   api "org.glassfish:javax.json:$glassfishJsonVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {

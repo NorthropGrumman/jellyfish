@@ -158,6 +158,7 @@ public class TraversalsTest {
                    models.size());
    }
 
+   @SafeVarargs
    private static <P, T extends INamedChild<P>> INamedChildCollection<P, T> asCollection(T... children) {
       MockedCollection<P, T> collection = new MockedCollection<>();
       collection.addAll(Arrays.asList(children));
