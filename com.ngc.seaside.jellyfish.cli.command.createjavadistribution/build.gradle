@@ -1,37 +1,29 @@
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
+    api project(':jellyfish.api')
 
-    compile project(":jellyfish.api")
-    compile project(":jellyfish.service.api")
+    implementation project(':jellyfish.service.api')
+    implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
+    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
 
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-    compile "com.ngc.blocs:blocs-core:$blocsVersion"
-    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-    compile "com.ngc.blocs:service.api:$blocsVersion"
+    testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation project(':jellyfish.service.name.impl.namingservices')
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
+    testImplementation "com.ngc.seaside:guice.modules:$bootstrapVersion"
+    testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 
-    compile "org.osgi:osgi.core:$osgiVersion"
-    compile "org.osgi:osgi.enterprise:$osgiVersion"
-    compile "commons-io:commons-io:$commonsIOVersion"
+    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
+    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
+    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
 
-    compile "commons-lang:commons-lang:$commonsLangVersion"
-
-    compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
-    compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-
-    testCompile project(":jellyfish.cli.command.testutils")
-    testCompile project(":jellyfish.service.name.impl.namingservices")
-    testCompile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 
 }

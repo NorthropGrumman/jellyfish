@@ -1,10 +1,12 @@
-dependencies {
-    compile "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
-    compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+apply plugin: 'java-library'
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
+dependencies {
+    api "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
+    api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {

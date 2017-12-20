@@ -1,34 +1,20 @@
-
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
+    api project(':jellyfish.api')
 
-    compile project(":jellyfish.api")
-    
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    compile "com.ngc.blocs:blocs-core:$blocsVersion"
-    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-    compile "com.ngc.blocs:service.api:$blocsVersion"
-    compile "org.osgi:osgi.core:$osgiVersion"
-    compile "org.osgi:osgi.enterprise:$osgiVersion"
-    compile "commons-io:commons-io:$commonsIOVersion"
-    compile "commons-lang:commons-lang:$commonsLangVersion"
-    
-    compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
-    compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-    
-    testCompile "com.ngc.seaside:guice.modules:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-    testCompile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-    testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-    
-    testCompile project(":jellyfish.cli.command.testutils")
+    testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    testImplementation "commons-io:commons-io:$commonsIOVersion"
 }
 
 processResources {

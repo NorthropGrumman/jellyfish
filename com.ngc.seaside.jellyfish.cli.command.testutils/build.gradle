@@ -1,17 +1,11 @@
 dependencies {
-   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-   compile "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
-   compile "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
-   
-   compile "com.ngc.blocs:blocs-core:$blocsVersion"
-   compile "com.ngc.blocs:service.api:$blocsVersion"
-   compile "commons-io:commons-io:$commonsIOVersion"
-   compile "commons-lang:commons-lang:$commonsLangVersion"
-   compile "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
-   compile "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-   compile "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-   compile "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-   compile "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
-   compile "org.mockito:mockito-core:$mockitoVersion"
-   compile "junit:junit:$junitVersion"
+   implementation "com.ngc.blocs:blocs-core:$blocsVersion"
+   implementation "com.ngc.blocs:service.api:$blocsVersion"
+   implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+   implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+   implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
+   implementation "org.mockito:mockito-core:$mockitoVersion"
+   implementation "junit:junit:$junitVersion"
+
+   runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
 }
