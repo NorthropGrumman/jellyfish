@@ -7,40 +7,33 @@ configurations {
 }
 
 dependencies {
-    compile project(":bootstrap.impl.provider")
-    compile project(":bootstrap.service.impl.templateservice")
-    compile project(":bootstrap.service.impl.promptuserservice")
-    compile project(":bootstrap.service.impl.propertyservice")
-    compile project(":bootstrap.service.impl.parameterservice")
+    implementation project(":bootstrap.impl.provider")
+    implementation project(":bootstrap.service.impl.templateservice")
+    implementation project(":bootstrap.service.impl.promptuserservice")
+    implementation project(":bootstrap.service.impl.propertyservice")
+    implementation project(":bootstrap.service.impl.parameterservice")
 
     //include the blocs guice wrappers
-    compile "com.ngc.seaside:command.api:$apiVersion"
-    compile "com.ngc.seaside:bootstrap.api:$apiVersion"
-    compile project(":guice.modules")
+    implementation "com.ngc.seaside:command.api:$apiVersion"
+    implementation "com.ngc.seaside:bootstrap.api:$apiVersion"
+    implementation project(":guice.modules")
 
     //core command projects
-    compile project(":bootstrap.command.impl.help")
-//    commandTemplate project(path: ":bootstrap.command.impl.help", configuration: "commandTemplate")
+    implementation project(":bootstrap.command.impl.help")
 
     //external command projects
-    //this will eventually be replaced by downloadable commands once Nexus 3 has a useful REST API.
-    compile "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion"
+    implementation "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion"
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion:template@zip"
-    compile "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion"
+    implementation "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion"
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.initjavagradlerepo:$bootstrapCommandsVersion:template@zip"
-    compile "com.ngc.seaside:bootstrap.command.impl.createbootstrapcommand:$bootstrapCommandsVersion"
+    implementation "com.ngc.seaside:bootstrap.command.impl.createbootstrapcommand:$bootstrapCommandsVersion"
     commandTemplate "com.ngc.seaside:bootstrap.command.impl.createbootstrapcommand:$bootstrapCommandsVersion:template@zip"
 
-    compile "org.osgi:osgi.core:$osgiVersion"
-    compile "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
-    compile "org.osgi:osgi.enterprise:$osgiVersion"
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    compile "org.apache.velocity:velocity:$velocityVersion"
-    compile "commons-io:commons-io:$commonsIOVersion"
-    compile "commons-lang:commons-lang:$commonsLangVersion"
-
-    testCompile "junit:junit:$junitVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
 /**
