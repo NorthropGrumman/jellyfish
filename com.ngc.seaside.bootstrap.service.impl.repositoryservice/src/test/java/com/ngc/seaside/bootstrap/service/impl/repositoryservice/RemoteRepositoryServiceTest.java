@@ -1,7 +1,6 @@
 package com.ngc.seaside.bootstrap.service.impl.repositoryservice;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
