@@ -19,7 +19,7 @@ subprojects {
    apply plugin: 'java-library'
 
    group = 'com.ngc.seaside'
-   version = '1.6.1-SNAPSHOT'
+   version = '1.6.1'
 
    ext {
       glassfishJsonVersion = '1.1'
