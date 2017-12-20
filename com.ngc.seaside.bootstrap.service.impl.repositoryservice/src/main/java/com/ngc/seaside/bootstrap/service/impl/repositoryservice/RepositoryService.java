@@ -66,11 +66,11 @@ public class RepositoryService implements IRepositoryService {
          + "(?::(?<extension>[^:\\s@]+)"
          + "(?::(?<classifier>[^:\\s@]+))?)?"
          + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
-   private static final String MAVEN_ENV = "M2_HOME";
-   private static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
-   private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
-   private static final String NEXUS_USERNAME = "nexusUsername";
-   private static final String NEXUS_PASSWORD = "nexusPassword";
+   public static final String MAVEN_ENV = "M2_HOME";
+   static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
+   static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
+   static final String NEXUS_USERNAME = "nexusUsername";
+   static final String NEXUS_PASSWORD = "nexusPassword";
 
    private ILogService logService;
    private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
