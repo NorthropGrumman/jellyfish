@@ -67,9 +67,13 @@ public class RepositoryService implements IRepositoryService {
          + "(?::(?<classifier>[^:\\s@]+))?)?"
          + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
    private static final String MAVEN_ENV = "M2_HOME";
-   private static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
+   private static final String MAVEN_PROPERTY_NAME = "maven.home";
+   static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
+   static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
+   private static final String USER_HOME_PROPERTY_NAME = "user.home";
+   private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
    private ILogService logService;
    private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
@@ -222,32 +226,38 @@ public class RepositoryService implements IRepositoryService {
     * Returns a remote repository to Nexus. This repository is found using the variable {@value #NEXUS_CONSOLIDATED} with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These
     * variables are
     * determined using the rules in the following order:
-    * 
+    *
     * <ol>
     * <li>From {@link System#getProperty(String)}</li>
-    * <li>From {@code gradle.properties} located in the current working directory</li>
-    * <li>From {@code gradle.properties} located in the {@code <user.home>/.gradle}</li>
+    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the current working directory</li>
+    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located from the property {@value #GRADLE_USER_HOME}
+    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the {@value #USER_HOME_PROPERTY_NAME}/.gradle</li>
     * <li>From {@link System#getenv(String)}</li>
     * </ol>
-    * 
+    *
     * @return the remote repository to Nexus, or {@link Optional#empty()} if it cannot be determined
     */
    Optional<RemoteRepository> findRemoteNexus() {
-
       Properties properties = new Properties();
-      String userHome = System.getProperty("user.home");
-      if (userHome != null) {
-         Path gradlePropertiesFile = Paths.get(userHome, ".gradle", "gradle.properties");
-         if (Files.isRegularFile(gradlePropertiesFile)) {
-            try {
-               properties.load(Files.newBufferedReader(gradlePropertiesFile));
-            } catch (IOException e) {
-               logService.warn(RepositoryService.class,
-                  "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
-            }
+      String gradleUserHome = System.getProperty(GRADLE_USER_HOME, System.getenv(GRADLE_USER_HOME));
+      Path gradlePropertiesFile = null;
+      if (gradleUserHome == null) {
+         String userHome = System.getProperty(USER_HOME_PROPERTY_NAME);
+         if (userHome != null) {
+            gradlePropertiesFile = Paths.get(userHome, ".gradle", GRADLE_PROPERTIES_FILENAME);
+         }
+      } else {
+         gradlePropertiesFile = Paths.get(gradleUserHome, GRADLE_PROPERTIES_FILENAME);
+      }
+      if (gradlePropertiesFile != null && Files.isRegularFile(gradlePropertiesFile)) {
+         try {
+            properties.load(Files.newBufferedReader(gradlePropertiesFile));
+         } catch (IOException e) {
+            logService.warn(RepositoryService.class,
+               "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
          }
       }
-      Path cwdPropertiesFile = Paths.get("gradle.properties");
+      Path cwdPropertiesFile = Paths.get(GRADLE_PROPERTIES_FILENAME);
       if (Files.isRegularFile(cwdPropertiesFile)) {
          try {
             properties.load(Files.newBufferedReader(cwdPropertiesFile));
@@ -266,7 +276,7 @@ public class RepositoryService implements IRepositoryService {
       if (nexusConsolidated == null) {
          logService.warn(RepositoryService.class,
             "Unable to find " + NEXUS_CONSOLIDATED
-               + " from system properties, gradle.properties, or system environment variables");
+               + " from system properties, " + GRADLE_PROPERTIES_FILENAME + ", or system environment variables");
          return Optional.empty();
       }
 
@@ -281,25 +291,26 @@ public class RepositoryService implements IRepositoryService {
 
    /**
     * Returns the path to the maven local directory. This directory is determined using the rules in the following order:
-    * 
+    *
     * <ol>
-    * <li>From maven user settings.xml found in {@code <user.home>/.m2</li>
-    * <li>From maven global settings.xml found in {@code <M2_HOME>/conf}</li>
-    * <li>{@code <user.home>/.m2/repository}</li>
+    * <li>From maven user settings.xml found in {@value #USER_HOME_PROPERTY_NAME}/.m2</li>
+    * <li>From maven global settings.xml found in {@value #MAVEN_PROPERTY_NAME}/conf</li>
+    * <li>From maven global settings.xml found in {@value #MAVEN_ENV}/conf</li>
+    * <li>{@value #USER_HOME_PROPERTY_NAME}/.m2/repository</li>
     * </ol>
-    * 
+    *
     * @return the path to the local maven repository, or {@link Optional#empty()} if it cannot be determined
     */
    Optional<Path> findMavenLocal() {
       DefaultSettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
-      String m2Home = System.getProperty(MAVEN_ENV, System.getenv(MAVEN_ENV));
+      String m2Home = System.getProperty(MAVEN_PROPERTY_NAME, System.getProperty(MAVEN_ENV, System.getenv(MAVEN_ENV)));
       if (m2Home != null) {
          Path globalMavenSettings = Paths.get(m2Home, "conf", "settings.xml");
          if (Files.isRegularFile(globalMavenSettings)) {
             settingsRequest.setGlobalSettingsFile(globalMavenSettings.toFile());
          }
       }
-      String userHome = System.getProperty("user.home");
+      String userHome = System.getProperty(USER_HOME_PROPERTY_NAME);
       if (userHome != null) {
          Path userMavenSettings = Paths.get(userHome, ".m2", "settings.xml");
          if (Files.isRegularFile(userMavenSettings)) {
