@@ -8,13 +8,14 @@ buildscript {
     }
 
    dependencies {
-      classpath 'com.ngc.seaside:gradle.plugins:1.5'
+      classpath 'com.ngc.seaside:gradle.plugins:2.1.4'
       classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
    }
 }
 
 subprojects {
     apply plugin: 'com.ngc.seaside.parent'
+    apply plugin: 'java-library'
 
     group = 'com.ngc.seaside'
     version = '1.8.1-SNAPSHOT'
