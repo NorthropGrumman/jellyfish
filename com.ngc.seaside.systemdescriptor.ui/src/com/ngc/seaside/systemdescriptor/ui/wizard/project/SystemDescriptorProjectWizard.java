@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.ui.wizard.project;
 
 import com.ngc.seaside.systemdescriptor.ui.wizard.project.page.PackageInfoPage;
+import com.ngc.seaside.systemdescriptor.ui.wizard.project.page.ProjectInfoPage;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +26,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
    private static final String WINDOW_TITLE = "New System Descriptor Project";
 
    protected WizardNewProjectCreationPage projPage;
+   protected ProjectInfoPage gradleProjPage;
    protected PackageInfoPage pkgPage;
    protected StatusManager statusManager;
 
@@ -49,10 +51,12 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       projPage = new WizardNewProjectCreationPage(PAGE_NAME);
       projPage.setTitle(WIZARD_NAME);
       projPage.setDescription(WIZARD_DESC);
-
+      
+      gradleProjPage = new ProjectInfoPage(() -> projPage.getProjectName());
       pkgPage = new PackageInfoPage();
 
       addPage(projPage);
+      addPage(gradleProjPage);
       addPage(pkgPage);
    }
 
@@ -64,6 +68,11 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       if (!projPage.useDefaults()) {
          location = projPage.getLocationURI();
       }
+      
+      String projectName = gradleProjPage.getProjectName();
+      String group = gradleProjPage.getGroupId();
+      String version = gradleProjPage.getVersion();
+      String cliVersion = gradleProjPage.getCliPluginVersion();
 
       String defaultPkg = null;
       if (pkgPage.getCreatePkg()) {
@@ -76,10 +85,11 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       }
 
       try {
-         SystemDescriptorProjectSupport.createProject(name, location, defaultPkg, defaultFile);
+         SystemDescriptorProjectSupport.createProject(name, location, projectName, group, version, cliVersion, defaultPkg, defaultFile);
       } catch (CoreException e) {
          statusManager.handle(
             new Status(IStatus.ERROR, getClass().getName(), "Unable to create project", e));
+         throw new RuntimeException(e);
       }
 
       return true;
