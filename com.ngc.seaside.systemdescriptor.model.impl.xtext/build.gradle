@@ -1,15 +1,11 @@
 dependencies {
-   compile "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
-   compile "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
-   compile "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
-   compile "com.google.guava:guava:$guavaVersion"
-   compile "org.glassfish:javax.json:$glassfishJsonVersion"
-   compile "org.eclipse.emf:org.eclipse.emf.ecore:$emfVersion"
-   compile "org.eclipse.emf:org.eclipse.emf.common:$emfVersion"
+   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
-   testCompile "com.google.inject:guice:$guiceVersion"
+   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
+   implementation "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 jar {
