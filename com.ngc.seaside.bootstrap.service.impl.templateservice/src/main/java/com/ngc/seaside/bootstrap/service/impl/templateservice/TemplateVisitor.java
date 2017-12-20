@@ -62,8 +62,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       this.templateIgnoreComponent = templateIgnoreComponent;
 
       engine.setProperty("runtime.references.strict", true);
-      //engine.setProperty("space.gobbling", "bc");
-      //engine.setProperty("directive.if.emptycheck", false);
+      engine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
       for (Map.Entry<String, ?> entry : parametersAndValues.entrySet()) {
          context.put(entry.getKey(), entry.getValue());
       }
