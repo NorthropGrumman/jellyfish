@@ -2,7 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,10 +11,10 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
@@ -64,12 +63,8 @@ public class CreateDomainCommandIT {
          INamedChild<IPackage> element = args.getArgument(1);
          return element.getParent().getName() + ".domain";
       });
-      IProjectNamingService projectService = mock(IProjectNamingService.class);
-      IProjectInformation info = mock(IProjectInformation.class);
-      when(info.getDirectoryName()).thenReturn("dir");
-      when(projectService.getDomainProjectName(eq(options), any())).thenReturn(info);
-      cmd.setPackageNamingService(packageService);
-      cmd.setProjectNamingService(projectService);
+      cmd.setPackageNamingService(new MockedPackageNamingService());
+      cmd.setProjectNamingService(new MockedProjectNamingService());
 
       outputDirectory = Files.createTempDirectory(null);
       outputDirectory.toFile().deleteOnExit();
@@ -84,7 +79,7 @@ public class CreateDomainCommandIT {
       IData base = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Base");
       IData child = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Child");
       IData data = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data");
-      IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enum");
+      IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enumeration");
       ModelUtils.mockData(data, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration);
       ModelUtils.mockData(base, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
       ModelUtils.mockData(child, base, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
@@ -99,9 +94,9 @@ public class CreateDomainCommandIT {
    public void testCommand() throws Exception {
       cmd.run(options);
 
-      Path projectDir = outputDirectory.resolve("dir");
+      Path projectDir = outputDirectory.resolve("com.ngc.model.domain");
       assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.domain");
+      checkGradleBuild(projectDir, "com.ngc.base.domain", "com.ngc.child.domain", "com.ngc.data.domain", "com.ngc.enumeration.domain");
       checkVelocity(projectDir);
 
       Path domain = projectDir.resolve(CreateDomainCommand.DOMAIN_PATH).resolve("com.ngc.Model.xml");

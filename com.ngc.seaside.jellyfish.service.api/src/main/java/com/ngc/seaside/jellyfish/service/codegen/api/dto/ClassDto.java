@@ -1,13 +1,14 @@
 package com.ngc.seaside.jellyfish.service.codegen.api.dto;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Represents a description of a Java class. May also be used to represent an interface.
  */
 public class ClassDto implements TypeDto<ClassDto> {
 
-   private Set<String> imports;
+   private Set<String> imports = new TreeSet<>();
    private String name;
    private String packageName;
 

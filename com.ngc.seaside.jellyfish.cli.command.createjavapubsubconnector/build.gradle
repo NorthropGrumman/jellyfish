@@ -15,13 +15,5 @@ dependencies {
     testImplementation project(':jellyfish.cli.command.testutils')
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-    
-    testRuntimeOnly project(':jellyfish.service.name.impl.namingservices')
-    testRuntimeOnly project(':jellyfish.service.scenario.impl.scenarioservice')
-    testRuntimeOnly project(':jellyfish.service.codegen.impl.codegenservices')
-    testRuntimeOnly project(':jellyfish.service.config.impl.transportconfigurationservice')
-    testRuntimeOnly project(':jellyfish.service.requirements.impl.requirementsservice')
+    testImplementation "com.ngc.seaside:systemdescriptor.ext.testutils:$jellyfishEXTVersion"
 }
