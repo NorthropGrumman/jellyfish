@@ -11,7 +11,6 @@ import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
@@ -100,7 +99,7 @@ public class CreateJavaServiceCommandIT {
       templateService = new MockedTemplateService()
                .useRealPropertyService()
                .setTemplateDirectory(
-                     CreateJavaServiceBaseCommand.class.getPackage().getName(),
+                     CreateJavaServiceCommand.class.getPackage().getName(),
                      Paths.get("src", "main", "template"));
 
       serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService);
