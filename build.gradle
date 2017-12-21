@@ -187,7 +187,6 @@ def createGenerationTask(name, folder, regressionName) {
                             type: JellyFishCliCommandTask,
                             description: "Generates the output for regression ${regressionName}") {
         command = properties['command']
-        inputDir = properties['inputDir']
         arguments = properties
     }
     return generateTask
