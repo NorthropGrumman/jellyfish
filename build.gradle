@@ -28,11 +28,11 @@ subprojects {
         jellyfishEXTVersion = '1.11.2'
 
         bootstrapApiVersion = '1.8.1'
-        bootstrapVersion = '1.7.1'
+        bootstrapVersion = '1.7.2-SNAPSHOT'
         bootstrapCommandsVersion = '1.2'
 
         blocsVersion = '2.1'
-        blocsDomainVersion = '2.2'
+        blocsDomainVersion = '2.3.1'
         guiceVersion = '4.1.0'
         osgiVersion =  '6.0.0'
         guavaVersion = '21.0'

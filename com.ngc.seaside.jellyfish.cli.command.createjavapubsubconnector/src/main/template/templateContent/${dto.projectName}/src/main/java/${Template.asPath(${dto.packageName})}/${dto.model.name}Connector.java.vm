@@ -176,7 +176,7 @@ public class ${dto.model.name}Connector {
 #set ($requirements = $entry.value)
 #set ($size = $requirements.size())
          case ${topic}:
-            requirements = Arrays.asList(#foreach($req in $requirements)"${req}"#if($velocityCount == $size)#{else}, #{end}#{end});
+            requirements = Arrays.asList(#foreach($req in $requirements)"${req}"#if($foreach.last)#{else}, #{end}#{end});
             break;
 #end
          default:

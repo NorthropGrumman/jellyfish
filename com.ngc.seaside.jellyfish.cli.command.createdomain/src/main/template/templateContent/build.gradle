@@ -10,7 +10,7 @@ jar {
    manifest {
       attributes('Export-Package': 
 #foreach($pkg in $packages)
-#if( $velocityHasNext )
+#if( $foreach.hasNext )
          '$pkg.*,' + 
 #else
          '$pkg.*')

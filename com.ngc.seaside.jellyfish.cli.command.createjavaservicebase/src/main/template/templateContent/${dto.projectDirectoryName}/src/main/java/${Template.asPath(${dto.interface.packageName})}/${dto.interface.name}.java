@@ -26,12 +26,12 @@ public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) 
 #foreach ($scenario in $dto.complexScenarios)
    void ${scenario.serviceMethod}(
 #foreach ($input in $scenario.inputs)
-#set ($lastParam = $velocityCount == $scenario.inputs.size() && $scenario.outputs.isEmpty())
+#set ($lastParam = $foreach.last && $scenario.outputs.isEmpty())
       BlockingQueue<${input.type}> ${input.fieldName}Queue#if ($lastParam));#{else},
 #end
 #end
 #foreach ($output in $scenario.outputs)
-#set ($lastParam = $velocityCount == $scenario.outputs.size())
+#set ($lastParam = $foreach.last)
       Consumer<${output.type}> ${output.fieldName}Consumer#if ($lastParam));#{else},
 #end
 #end

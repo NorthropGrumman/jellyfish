@@ -1,4 +1,4 @@
-#set($D="$")
+#set($D='$')
 apply plugin: 'com.google.protobuf'
 
 dependencies {
@@ -20,7 +20,7 @@ jar {
    manifest {
       attributes('Export-Package': 
 #foreach($pkg in $dto.exportedPackages)
-#if( $velocityHasNext )
+#if( $foreach.hasNext )
          '$pkg.*,' + 
 #else
          '$pkg.*')

@@ -274,6 +274,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       }
 
       BasicPubSubDto pubSub = new BasicPubSubDto();
+      pubSub.setScenarioName(scenario.getName());
       pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
