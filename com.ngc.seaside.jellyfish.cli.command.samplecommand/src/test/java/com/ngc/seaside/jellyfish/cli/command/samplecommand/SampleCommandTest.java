@@ -1,14 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.samplecommand;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
 import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.IParameter;
 import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.command.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.samplecommand.SampleCommand;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,19 +18,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-/**
- *
- */
 public class SampleCommandTest {
 
-   private ILogService logService;
    private SampleCommand fixture;
 
    @Rule
@@ -38,17 +27,15 @@ public class SampleCommandTest {
 
    @Before
    public void setup() {
-      logService = new PrintStreamLogService();
       fixture = new SampleCommand();
-
-      fixture.setLogService(logService);
+      fixture.setLogService(mock(ILogService.class));
       fixture.activate();
    }
 
    @After
    public void shutdown() {
       fixture.deactivate();
-      fixture.removeLogService(logService);
+      fixture.setLogService(null);
    }
 
    @Test
@@ -74,15 +61,6 @@ public class SampleCommandTest {
       IParameterCollection collection = mock(IParameterCollection.class);
       when(options.getParameters()).thenReturn(collection);
       fixture.run(options);
-
-      verify(options, times(1)).getParameters();
-   }
-
-   private IParameter createParameterMock(String name, String value) {
-      IParameter mock = mock(IParameter.class);
-      when(mock.getName()).thenReturn(name);
-      when(mock.getValue()).thenReturn(value);
-      return mock;
    }
 
 }
