@@ -1,25 +1,25 @@
 apply plugin: 'application'
 
-mainClassName = "com.ngc.seaside.bootstrap.Main"
+mainClassName = 'com.ngc.seaside.bootstrap.Main'
 
 configurations {
     commandTemplate
 }
 
 dependencies {
-    implementation project(":bootstrap.impl.provider")
-    implementation project(":bootstrap.service.impl.templateservice")
-    implementation project(":bootstrap.service.impl.promptuserservice")
-    implementation project(":bootstrap.service.impl.propertyservice")
-    implementation project(":bootstrap.service.impl.parameterservice")
+    implementation project(':bootstrap.impl.provider')
+    implementation project(':bootstrap.service.impl.templateservice')
+    implementation project(':bootstrap.service.impl.promptuserservice')
+    implementation project(':bootstrap.service.impl.propertyservice')
+    implementation project(':bootstrap.service.impl.parameterservice')
 
     //include the blocs guice wrappers
     implementation "com.ngc.seaside:command.api:$apiVersion"
     implementation "com.ngc.seaside:bootstrap.api:$apiVersion"
-    implementation project(":guice.modules")
+    implementation project(':guice.modules')
 
     //core command projects
-    implementation project(":bootstrap.command.impl.help")
+    implementation project(':bootstrap.command.impl.help')
 
     //external command projects
     implementation "com.ngc.seaside:bootstrap.command.impl.createjavabundle:$bootstrapCommandsVersion"

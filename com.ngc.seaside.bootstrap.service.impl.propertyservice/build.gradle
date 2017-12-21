@@ -2,7 +2,7 @@ dependencies {
     api "com.ngc.seaside:bootstrap.service.api:$apiVersion"
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "org.apache.velocity:velocity:$velocityVersion"
+    implementation "org.apache.velocity:velocity-engine-core:$velocityVersion"
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
