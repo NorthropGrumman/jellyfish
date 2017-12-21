@@ -6,8 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
 import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
 import com.ngc.seaside.command.api.DefaultParameter;
@@ -20,8 +19,6 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.SystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,9 +34,9 @@ public class CreateJavaDistributionCommandTest {
 
    private CreateJavaDistributionCommand fixture;
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
-   private ISystemDescriptor systemDescriptor = mock(SystemDescriptor.class);
-   private ITemplateService templateService = mock(TemplateService.class);
-   private IModel model = mock(Model.class);
+   private ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+   private ITemplateService templateService = mock(ITemplateService.class);
+   private IModel model = mock(IModel.class);
    private Path createDirectoriesPath;
    private IParameterCollection addProjectParameters;
 
@@ -110,7 +107,7 @@ public class CreateJavaDistributionCommandTest {
          }
       };
 
-      fixture.setLogService(new PrintStreamLogService());
+      fixture.setLogService(mock(ILogService.class));
       fixture.setTemplateService(templateService);
       fixture.setProjectNamingService(projectNamingService);
       fixture.setPackageNamingService(packageNamingService);

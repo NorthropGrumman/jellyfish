@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
@@ -48,15 +47,12 @@ public class CreateDomainCommandIT {
 
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
-   @Mock
-   private ISystemDescriptor systemDescriptor;
-
    private Path outputDirectory;
    private Path velocityPath;
 
    @Before
    public void setup() throws IOException {
-      cmd = spy(CreateDomainCommand.class);
+      cmd = new CreateDomainCommand();
       cmd.setLogService(mock(ILogService.class));
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
                                                         .setTemplateDirectory(
@@ -81,6 +77,7 @@ public class CreateDomainCommandIT {
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDirectory));
       parameters.addParameter(new DefaultParameter<>(CreateDomainCommand.DOMAIN_TEMPLATE_FILE_PROPERTY, velocityPath));
 
+      ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(options.getParameters()).thenReturn(parameters);
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
@@ -88,40 +85,9 @@ public class CreateDomainCommandIT {
       IData child = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Child");
       IData data = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data");
       IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enum");
-      ModelUtils.mockData(data,
-         null,
-         "field1",
-         DataTypes.INT,
-         "field2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "field3",
-         FieldCardinality.MANY,
-         enumeration);
-      ModelUtils.mockData(base,
-         null,
-         "field1",
-         DataTypes.INT,
-         "field2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "field3",
-         FieldCardinality.MANY,
-         enumeration,
-         "field4",
-         data);
-      ModelUtils.mockData(child,
-         base,
-         "field1",
-         DataTypes.INT,
-         "field2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "field3",
-         FieldCardinality.MANY,
-         enumeration,
-         "field4",
-         data);
+      ModelUtils.mockData(data, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration);
+      ModelUtils.mockData(base, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
+      ModelUtils.mockData(child, base, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
       ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.Model");
       model.addInput("input1", data);
       model.addInput("input2", child);
@@ -131,7 +97,7 @@ public class CreateDomainCommandIT {
 
    @Test
    public void testCommand() throws Exception {
-      runCommand();
+      cmd.run(options);
 
       Path projectDir = outputDirectory.resolve("dir");
       assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
@@ -156,13 +122,6 @@ public class CreateDomainCommandIT {
       assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
       assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
          Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
-   }
-
-   private void runCommand(Object... keyValues) {
-      for (int n = 0; n + 1 < keyValues.length; n += 2) {
-         parameters.addParameter(new DefaultParameter<>((String) keyValues[n], keyValues[n + 1]));
-      }
-      cmd.run(options);
    }
 
 }
