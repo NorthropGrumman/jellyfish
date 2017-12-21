@@ -93,7 +93,7 @@ class ParsingUtils {
       if (!Files.isDirectory(resourcesDirectory)) {
          resourcesDirectory = projectDirectory.resolve(SD_SOURCE_PATH);
          if (!Files.isDirectory(resourcesDirectory)) {
-            resourcesDirectory = projectDirectory;
+            throw new ParsingException("Cannot find location of system descriptor files");
          }
       }
 
@@ -118,21 +118,17 @@ class ParsingUtils {
 
       Collection<XtextResource> resources = new LinkedHashSet<>();
 
-      try {
-         Files.walk(resourcesDirectory)
-              .filter(Files::isRegularFile)
-              .filter(file -> file.toString().endsWith(".sd"))
-              .map(file -> {
-                 try {
-                    return ctx.resourceOf(file);
-                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                 }
-              })
-              .forEach(resources::add);
-      } catch (IOException e) {
-         throw new UncheckedIOException(e);
-      }
+      Files.walk(resourcesDirectory)
+           .filter(Files::isRegularFile)
+           .filter(file -> file.toString().endsWith(".sd"))
+           .map(file -> {
+              try {
+                 return ctx.resourceOf(file);
+              } catch (IOException e) {
+                 throw new UncheckedIOException(e);
+              }
+           })
+           .forEach(resources::add);
 
       if (pom != null) {
          resources.addAll(parseDependencies(pom, ctx, false));
