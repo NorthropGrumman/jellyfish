@@ -94,7 +94,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             // Validate the model is correct.
             task('validateSd', type: JellyFishCliCommandTask) {
                 command = 'validate'
-                inputDir = "${project.projectDir}"
+                arguments = [(CommonParameters.INPUT_DIRECTORY.name): "${project.projectDir}"]
                 build.dependsOn it
                 it.dependsOn tasks.withType(GenerateMavenPom)
             }

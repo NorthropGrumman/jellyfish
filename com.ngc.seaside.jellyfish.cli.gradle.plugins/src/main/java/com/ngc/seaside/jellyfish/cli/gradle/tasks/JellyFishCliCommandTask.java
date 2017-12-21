@@ -1,11 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.gradle.tasks;
 
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.cli.gradle.GradleJellyFishRunner;
 
 import org.gradle.api.GradleException;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +12,6 @@ import java.util.stream.Collectors;
 public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
 
    private String command;
-
-   private String inputDir;
 
    private boolean failBuildOnException = true;
 
@@ -26,11 +22,6 @@ public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
       if (command == null || command.trim().equals("")) {
          throw new GradleException("command must be set!");
       }
-      if (inputDir == null) {
-         inputDir = new File(".").getAbsolutePath();
-      }
-
-      arguments.put(CommonParameters.INPUT_DIRECTORY.getName(), inputDir);
       List<String> stringArgs = arguments.entrySet()
             .stream()
             .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))
@@ -56,14 +47,6 @@ public class JellyFishCliCommandTask extends AbstractJellyFishCliCommandTask {
 
    public void setCommand(String command) {
       this.command = command;
-   }
-
-   public String getInputDir() {
-      return inputDir;
-   }
-
-   public void setInputDir(String inputDir) {
-      this.inputDir = inputDir;
    }
 
    public Map<String, String> getArguments() {
