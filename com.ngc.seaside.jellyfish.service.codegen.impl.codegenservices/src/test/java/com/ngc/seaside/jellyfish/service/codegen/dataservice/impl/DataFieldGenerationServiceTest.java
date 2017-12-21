@@ -57,16 +57,7 @@ public class DataFieldGenerationServiceTest {
       assertEquals("testInt", javaField.getJavaFieldName());
       assertEquals("getTestInt", javaField.getJavaGetterName());
       assertEquals("setTestInt", javaField.getJavaSetterName());
-      assertTrue(Arrays.asList("int64",
-         "int32",
-         "uint64",
-         "uint32",
-         "sint32",
-         "sint64",
-         "fixed32",
-         "fixed64",
-         "sfixed32",
-         "sfixed64")
+      assertTrue(Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64")
                        .contains(protoField.getProtoType()));
       assertEquals("testInt", protoField.getProtoFieldName());
       assertTrue(Arrays.asList("int", "long").contains(protoField.getJavaField().getJavaType()));
@@ -90,16 +81,7 @@ public class DataFieldGenerationServiceTest {
       assertEquals("testInt", javaField.getJavaFieldName());
       assertEquals("getTestInt", javaField.getJavaGetterName());
       assertEquals("setTestInt", javaField.getJavaSetterName());
-      assertTrue(Arrays.asList("int64",
-         "int32",
-         "uint64",
-         "uint32",
-         "sint32",
-         "sint64",
-         "fixed32",
-         "fixed64",
-         "sfixed32",
-         "sfixed64")
+      assertTrue(Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64")
                        .contains(protoField.getProtoType()));
       assertEquals("testInt", protoField.getProtoFieldName());
       assertTrue(Arrays.asList("java.lang.Integer", "java.lang.Long")
@@ -132,30 +114,6 @@ public class DataFieldGenerationServiceTest {
    }
 
    @Test
-   public void testManyFloatField() {
-      IDataField field = getMockPrimitiveField(DataTypes.FLOAT, "testFloat", false);
-      IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedProtoField protoField = service.getMessagesField(options, field);
-      assertTrue(javaField.isMultiple());
-      assertTrue(protoField.isMultiple());
-      assertTrue(protoField.getJavaField().isMultiple());
-      assertEquals(field, javaField.getDataField());
-      assertEquals(field, protoField.getDataField());
-      assertEquals(field, protoField.getJavaField().getDataField());
-      assertTrue(
-         Arrays.asList("java.lang.Float", "java.lang.Double").contains(javaField.getJavaType()));
-      assertEquals("testFloat", javaField.getJavaFieldName());
-      assertEquals("getTestFloat", javaField.getJavaGetterName());
-      assertEquals("setTestFloat", javaField.getJavaSetterName());
-      assertTrue(Arrays.asList("float", "double").contains(protoField.getProtoType()));
-      assertEquals("testFloat", protoField.getProtoFieldName());
-      assertTrue(Arrays.asList("java.lang.Float", "java.lang.Double")
-                       .contains(protoField.getJavaField().getJavaType()));
-      assertEquals("getTestFloatList", protoField.getJavaField().getJavaGetterName());
-      assertEquals("addAllTestFloat", protoField.getJavaField().getJavaSetterName());
-   }
-
-   @Test
    public void testBooleanField() {
       IDataField field = getMockPrimitiveField(DataTypes.BOOLEAN, "testBoolean", true);
       IGeneratedJavaField javaField = service.getEventsField(options, field);
@@ -178,28 +136,6 @@ public class DataFieldGenerationServiceTest {
    }
 
    @Test
-   public void testManyBooleanField() {
-      IDataField field = getMockPrimitiveField(DataTypes.BOOLEAN, "testBoolean", false);
-      IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedProtoField protoField = service.getMessagesField(options, field);
-      assertTrue(javaField.isMultiple());
-      assertTrue(protoField.isMultiple());
-      assertTrue(protoField.getJavaField().isMultiple());
-      assertEquals(field, javaField.getDataField());
-      assertEquals(field, protoField.getDataField());
-      assertEquals(field, protoField.getJavaField().getDataField());
-      assertEquals("java.lang.Boolean", javaField.getJavaType());
-      assertEquals("testBoolean", javaField.getJavaFieldName());
-      assertEquals("getTestBoolean", javaField.getJavaGetterName());
-      assertEquals("setTestBoolean", javaField.getJavaSetterName());
-      assertEquals("bool", protoField.getProtoType());
-      assertEquals("testBoolean", protoField.getProtoFieldName());
-      assertEquals("java.lang.Boolean", protoField.getJavaField().getJavaType());
-      assertEquals("getTestBooleanList", protoField.getJavaField().getJavaGetterName());
-      assertEquals("addAllTestBoolean", protoField.getJavaField().getJavaSetterName());
-   }
-
-   @Test
    public void testStringField() {
       IDataField field = getMockPrimitiveField(DataTypes.STRING, "testString", true);
       IGeneratedJavaField javaField = service.getEventsField(options, field);
@@ -219,28 +155,6 @@ public class DataFieldGenerationServiceTest {
       assertEquals("java.lang.String", protoField.getJavaField().getJavaType());
       assertEquals("getTestString", protoField.getJavaField().getJavaGetterName());
       assertEquals("setTestString", protoField.getJavaField().getJavaSetterName());
-   }
-
-   @Test
-   public void testManyStringField() {
-      IDataField field = getMockPrimitiveField(DataTypes.STRING, "testString", false);
-      IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedProtoField protoField = service.getMessagesField(options, field);
-      assertTrue(javaField.isMultiple());
-      assertTrue(protoField.isMultiple());
-      assertTrue(protoField.getJavaField().isMultiple());
-      assertEquals(field, javaField.getDataField());
-      assertEquals(field, protoField.getDataField());
-      assertEquals(field, protoField.getJavaField().getDataField());
-      assertEquals("java.lang.String", javaField.getJavaType());
-      assertEquals("testString", javaField.getJavaFieldName());
-      assertEquals("getTestString", javaField.getJavaGetterName());
-      assertEquals("setTestString", javaField.getJavaSetterName());
-      assertEquals("string", protoField.getProtoType());
-      assertEquals("testString", protoField.getProtoFieldName());
-      assertEquals("java.lang.String", protoField.getJavaField().getJavaType());
-      assertEquals("getTestStringList", protoField.getJavaField().getJavaGetterName());
-      assertEquals("addAllTestString", protoField.getJavaField().getJavaSetterName());
    }
 
    @Test
@@ -270,32 +184,6 @@ public class DataFieldGenerationServiceTest {
    }
 
    @Test
-   public void testManyDataField() {
-      IDataField field = getMockDataField("com.ngc.test.TestDataField", "testData", false, false);
-      when(packageService.getEventPackageName(options, field.getReferencedDataType())).thenReturn(
-         "com.ngc.test.events");
-      when(packageService.getMessagePackageName(options, field.getReferencedDataType())).thenReturn(
-         "com.ngc.test.messages");
-      IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedProtoField protoField = service.getMessagesField(options, field);
-      assertTrue(javaField.isMultiple());
-      assertTrue(protoField.isMultiple());
-      assertTrue(protoField.getJavaField().isMultiple());
-      assertEquals(field, javaField.getDataField());
-      assertEquals(field, protoField.getDataField());
-      assertEquals(field, protoField.getJavaField().getDataField());
-      assertEquals("com.ngc.test.events.TestDataField", javaField.getJavaType());
-      assertEquals("testData", javaField.getJavaFieldName());
-      assertEquals("getTestData", javaField.getJavaGetterName());
-      assertEquals("setTestData", javaField.getJavaSetterName());
-      assertEquals("com.ngc.test.messages.TestDataField", protoField.getProtoType());
-      assertEquals("testData", protoField.getProtoFieldName());
-      assertEquals("com.ngc.test.messages.TestDataField", protoField.getJavaField().getJavaType());
-      assertEquals("getTestDataList", protoField.getJavaField().getJavaGetterName());
-      assertEquals("addAllTestData", protoField.getJavaField().getJavaSetterName());
-   }
-
-   @Test
    public void testEnumField() {
       IDataField field = getMockDataField("com.ngc.test.TestEnumField", "testEnum", true, true);
       when(packageService.getEventPackageName(options, field.getReferencedEnumeration())).thenReturn(
@@ -319,32 +207,6 @@ public class DataFieldGenerationServiceTest {
       assertEquals("com.ngc.test.messages.TestEnumField", protoField.getJavaField().getJavaType());
       assertEquals("getTestEnum", protoField.getJavaField().getJavaGetterName());
       assertEquals("setTestEnum", protoField.getJavaField().getJavaSetterName());
-   }
-
-   @Test
-   public void testManyEnumField() {
-      IDataField field = getMockDataField("com.ngc.test.TestEnumField", "testEnum", false, true);
-      when(packageService.getEventPackageName(options, field.getReferencedEnumeration())).thenReturn(
-         "com.ngc.test.events");
-      when(packageService.getMessagePackageName(options, field.getReferencedEnumeration())).thenReturn(
-         "com.ngc.test.messages");
-      IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedProtoField protoField = service.getMessagesField(options, field);
-      assertTrue(javaField.isMultiple());
-      assertTrue(protoField.isMultiple());
-      assertTrue(protoField.getJavaField().isMultiple());
-      assertEquals(field, javaField.getDataField());
-      assertEquals(field, protoField.getDataField());
-      assertEquals(field, protoField.getJavaField().getDataField());
-      assertEquals("com.ngc.test.events.TestEnumField", javaField.getJavaType());
-      assertEquals("testEnum", javaField.getJavaFieldName());
-      assertEquals("getTestEnum", javaField.getJavaGetterName());
-      assertEquals("setTestEnum", javaField.getJavaSetterName());
-      assertEquals("com.ngc.test.messages.TestEnumField", protoField.getProtoType());
-      assertEquals("testEnum", protoField.getProtoFieldName());
-      assertEquals("com.ngc.test.messages.TestEnumField", protoField.getJavaField().getJavaType());
-      assertEquals("getTestEnumList", protoField.getJavaField().getJavaGetterName());
-      assertEquals("addAllTestEnum", protoField.getJavaField().getJavaSetterName());
    }
 
    @Test

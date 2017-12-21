@@ -6,8 +6,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
@@ -31,18 +29,18 @@ public class JavaServiceGenerationServiceGuiceWrapper implements IJavaServiceGen
    }
 
    @Override
-   public ClassDto<MethodDto> getServiceInterfaceDescription(IJellyFishCommandOptions options, IModel model) {
+   public ClassDto getServiceInterfaceDescription(IJellyFishCommandOptions options, IModel model) {
       return javaServiceGenerationService.getServiceInterfaceDescription(options, model);
    }
 
    @Override
-   public ClassDto<PubSubMethodDto> getBaseServiceDescription(IJellyFishCommandOptions options,
+   public ClassDto getBaseServiceDescription(IJellyFishCommandOptions options,
             IModel model) {
       return javaServiceGenerationService.getBaseServiceDescription(options, model);
    }
 
    @Override
-   public EnumDto<?> getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
+   public EnumDto getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
       return javaServiceGenerationService.getTransportTopicsDescription(options, model);
    }
 }

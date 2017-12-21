@@ -20,8 +20,8 @@ package ${serviceDto.service.packageName};
 import ${i};
 #end
 
-@Component(service = {#if($serviceDto.service.implementedInterface)${serviceDto.service.implementedInterface.name}.class, #{end}IServiceModule.class}, immediate = true)
-public class ${serviceDto.service.name}#if($serviceDto.service.baseClass) extends ${serviceDto.service.baseClass.name}#elseif($serviceDto.service.implementedInterface) implements ${serviceDto.service.implementedInterface.name}#end {
+@Component(service = {${serviceDto.interface}.class, IServiceModule.class}, immediate = true)
+public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 
 #foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Override

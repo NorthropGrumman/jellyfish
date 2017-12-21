@@ -2,8 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.ArrayList;
@@ -14,11 +12,11 @@ import java.util.stream.Collectors;
 public class BaseServiceDto {
 
    private String projectDirectoryName;
-   private ClassDto<? extends MethodDto> interfacez;
-   private ClassDto<? extends PubSubMethodDto> abstractClass;
+   private ClassDto interfacez;
+   private ClassDto abstractClass;
    private Set<String> projectDependencies;
    private Set<String> exportedPackages;
-   private EnumDto<?> topics;
+   private EnumDto topics;
    private IModel model;
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
@@ -42,20 +40,20 @@ public class BaseServiceDto {
       return this;
    }
 
-   public ClassDto<? extends MethodDto> getInterface() {
+   public ClassDto getInterface() {
       return interfacez;
    }
 
-   public BaseServiceDto setInterface(ClassDto<? extends MethodDto> interfacez) {
+   public BaseServiceDto setInterface(ClassDto interfacez) {
       this.interfacez = interfacez;
       return this;
    }
 
-   public ClassDto<? extends PubSubMethodDto> getAbstractClass() {
+   public ClassDto getAbstractClass() {
       return abstractClass;
    }
 
-   public BaseServiceDto setAbstractClass(ClassDto<? extends PubSubMethodDto> abstractClass) {
+   public BaseServiceDto setAbstractClass(ClassDto abstractClass) {
       this.abstractClass = abstractClass;
       return this;
    }
@@ -78,11 +76,11 @@ public class BaseServiceDto {
       return this;
    }
 
-   public EnumDto<?> getTopicsEnum() {
+   public EnumDto getTopicsEnum() {
       return topics;
    }
 
-   public BaseServiceDto setTopicsEnum(EnumDto<?> topics) {
+   public BaseServiceDto setTopicsEnum(EnumDto topics) {
       this.topics = topics;
       return this;
    }

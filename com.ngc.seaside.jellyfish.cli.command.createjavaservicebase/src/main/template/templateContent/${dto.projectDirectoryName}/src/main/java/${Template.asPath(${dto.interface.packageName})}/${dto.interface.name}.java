@@ -5,7 +5,7 @@ package ${dto.interface.packageName};
 import ${i};
 #end
 
-public interface ${dto.interface.name}#if ($dto.interface.implementedInterface) extends ${dto.interface.implementedInterface.name}#end {
+public interface ${dto.interface.name} {
 
 #foreach ($method in $dto.basicPubSubMethods)
    ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;

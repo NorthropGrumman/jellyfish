@@ -66,7 +66,7 @@ public class DataService implements IDataService {
 
    @Override
    public TypeDto<?> getEventClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
-      TypeDto<?> dto = new ClassDto<>();
+      TypeDto<?> dto = new ClassDto();
       dto.setPackageName(packageNamingService.getEventPackageName(options, data));
       dto.setTypeName(data.getName());
       return dto;
@@ -75,7 +75,7 @@ public class DataService implements IDataService {
 
    @Override
    public TypeDto<?> getMessageClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
-      TypeDto<?> dto = new ClassDto<>();
+      TypeDto<?> dto = new ClassDto();
       dto.setPackageName(packageNamingService.getMessagePackageName(options, data));
       dto.setTypeName(data.getName());
       return dto;

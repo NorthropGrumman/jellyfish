@@ -14,8 +14,6 @@ import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
 import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -85,9 +83,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
       Set<String> projectDependencies = Collections.singleton(
          projectService.getEventsProjectName(options, model).getArtifactId());
-      ClassDto<? extends MethodDto> interfaceDto = generateService.getServiceInterfaceDescription(options, model);
-      ClassDto<? extends PubSubMethodDto> abstractClassDto = generateService.getBaseServiceDescription(options, model);
-      EnumDto<?> topicsDto = generateService.getTransportTopicsDescription(options, model);
+      ClassDto interfaceDto = generateService.getServiceInterfaceDescription(options, model);
+      ClassDto abstractClassDto = generateService.getBaseServiceDescription(options, model);
+      EnumDto topicsDto = generateService.getTransportTopicsDescription(options, model);
 
       BaseServiceDto dto = new BaseServiceDto();
       dto.setProjectDirectoryName(projectService.getBaseServiceProjectName(options, model).getDirectoryName());
