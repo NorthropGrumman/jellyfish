@@ -40,7 +40,7 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #if($type == "enum")
 #set($size = $domain.getEnumValues().size())
 #foreach ($value in $domain.enumValues)
-#if($velocityCount == $size)
+#if($foreach.last)
 	$value
 #else
 	$value,
@@ -139,7 +139,7 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #end##empty properties
 #end##extended
 #foreach ($property in $domain.nonAbstractProperties)
-#if($velocityCount == $size)
+#if($foreach.last)
        $property.name
 #else
        $property.name,
@@ -172,7 +172,7 @@ public${modifier}$type ${domain.classname} extends $domain.extendedClassShort {
 #else
 #set($equalObj = "Objects")
 #end
-#if($velocityCount == $size)
+#if($foreach.last)
       ${equalObj}.equals($property.name, that.$property.name)
 #else
       ${equalObj}.equals($property.name, that.$property.name) &&
