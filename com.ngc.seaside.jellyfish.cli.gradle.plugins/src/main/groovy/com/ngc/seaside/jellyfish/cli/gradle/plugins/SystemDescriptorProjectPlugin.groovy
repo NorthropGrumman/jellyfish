@@ -1,17 +1,13 @@
 package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
+import com.ngc.seaside.gradle.util.GradleUtil
 import com.ngc.seaside.jellyfish.api.CommonParameters
-import com.ngc.seaside.jellyfish.cli.gradle.internal.GradleUtil
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.publish.maven.tasks.GenerateMavenPom
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.bundling.Zip
-import java.util.Properties
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.tasks.bundling.Jar
 
 /**
  * A plugin that can be applied to a System Descriptor project.  When a build is executed, the System Descriptor project
@@ -67,6 +63,9 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             task('install', dependsOn: publishToMavenLocal)
             task('uploadArchives', dependsOn: publish)
 
+            // Apply the Seaside release plugin so we can release the project.
+            plugins.apply 'com.ngc.seaside.release'
+
             sourceSets {
                 main {
                     resources {
@@ -83,12 +82,14 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             task('sdJar', type: Jar) {
                 extension = 'zip'
                 from sourceSets.main.output
+                build.dependsOn it
             }
 
             task('testJar', type: Jar) {
                 classifier = 'tests'
                 extension = 'zip'
                 from sourceSets.test.output
+                build.dependsOn it
             }
 
             // Validate the model is correct.
@@ -96,6 +97,8 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 command = 'validate'
                 arguments = [(CommonParameters.INPUT_DIRECTORY.name): "${project.projectDir}"]
                 build.dependsOn it
+                sdJar.dependsOn it
+                testJar.dependsOn it
                 it.dependsOn tasks.withType(GenerateMavenPom)
             }
 

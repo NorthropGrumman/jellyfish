@@ -33,11 +33,9 @@ public class GradleJellyFishRunner {
    private static Collection<Module> getModules() {
       Collection<Module> modules = new ArrayList<>();
       modules.add(new JellyFishServiceModule());
-      // Add the proxy command provider module so that an IJellyFishCommandProvider can be resolved.
-      //modules.add(proxyJellyFishCommandProvider);
       for (Module dynamicModule : ServiceLoader.load(Module.class)) {
-         // Ignore the XTextSystemDescriptorServiceModule, we'll createStringTable the module below via forStandaloneUsage().  This
-         // is because XTextSystemDescriptorServiceModule is registered as an Module and the service loader picks it up.
+         // Ignore the XTextSystemDescriptorServiceModule, we'll create the module below via forStandaloneUsage().  This
+         // is because XTextSystemDescriptorServiceModule is registered as a module and the service loader picks it up.
          // However, we need to build the module via forStandaloneUsage() to make sure the XText framework is
          // initialized correctly.
          if (!MODULES_TO_IGNORE.contains(dynamicModule.getClass())) {
