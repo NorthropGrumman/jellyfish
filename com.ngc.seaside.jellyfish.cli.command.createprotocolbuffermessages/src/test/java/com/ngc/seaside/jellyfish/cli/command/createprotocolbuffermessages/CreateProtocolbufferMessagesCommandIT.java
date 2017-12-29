@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.MESSAGES_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.MESSAGES_PROTO_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.OUTPUT_DIRECTORY_PROPERTY;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,7 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,15 +56,15 @@ public class CreateProtocolbufferMessagesCommandIT {
       cmd.setDataFieldGenerationService(new MockedDataFieldGenerationService());
       cmd.setDataService(new MockedDataService());
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
-                                                        .setTemplateDirectory(CreateProtocolbufferMessagesCommand.class
-                                                                                                                       .getPackage()
-                                                                                                                       .getName()
-                                                           + MESSAGES_BUILD_TEMPLATE_SUFFIX,
+                                                        .setTemplateDirectory(
+                                                           CreateProtocolbufferMessagesCommand.class.getPackage()
+                                                                                                    .getName()
+                                                              + MESSAGES_BUILD_TEMPLATE_SUFFIX,
                                                            Paths.get("src", "main", "templates", "build"))
-                                                        .setTemplateDirectory(CreateProtocolbufferMessagesCommand.class
-                                                                                                                       .getPackage()
-                                                                                                                       .getName()
-                                                           + MESSAGES_PROTO_TEMPLATE_SUFFIX,
+                                                        .setTemplateDirectory(
+                                                           CreateProtocolbufferMessagesCommand.class.getPackage()
+                                                                                                    .getName()
+                                                              + MESSAGES_PROTO_TEMPLATE_SUFFIX,
                                                            Paths.get("src", "main", "templates", "proto")));
 
       outputDirectory = Files.createTempDirectory(null);
@@ -79,52 +79,20 @@ public class CreateProtocolbufferMessagesCommandIT {
       IData child = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Child");
       IData data = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data");
       IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enumeration");
-      ModelUtils.mockData(data,
-         null,
-         "dataField1",
-         DataTypes.INT,
-         "dataField2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "dataField3",
-         FieldCardinality.MANY,
-         enumeration);
-      ModelUtils.mockData(base,
-         null,
-         "baseField1",
-         DataTypes.INT,
-         "baseField2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "baseField3",
-         FieldCardinality.MANY,
-         enumeration,
-         "baseField4",
-         data);
-      ModelUtils.mockData(child,
-         base,
-         "childField1",
-         DataTypes.INT,
-         "childField2",
-         FieldCardinality.MANY,
-         DataTypes.STRING,
-         "childField3",
-         FieldCardinality.MANY,
-         enumeration,
-         "childField4",
-         data);
+      ModelUtils.mockData(data, null, "dataField1", DataTypes.INT, "dataField2", FieldCardinality.MANY, DataTypes.STRING, "dataField3", FieldCardinality.MANY, enumeration);
+      ModelUtils.mockData(base, null, "baseField1", DataTypes.INT, "baseField2", FieldCardinality.MANY, DataTypes.STRING, "baseField3", FieldCardinality.MANY, enumeration, "baseField4", data);
+      ModelUtils.mockData(child, base, "childField1", DataTypes.INT, "childField2", FieldCardinality.MANY, DataTypes.STRING, "childField3", FieldCardinality.MANY, enumeration, "childField4", data);
       ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.Model");
       model.addPubSub("scenario1", "input1", data, "output1", child);
       when(systemDescriptor.findModel("com.ngc.Model")).thenReturn(Optional.of(model));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(), model.getFullyQualifiedName()));
-
    }
 
    @Test
    public void testCommand() throws Exception {
       cmd.run(options);
 
-      Path projectDirectory = outputDirectory.resolve("com.ngc.model.messages");
+      Path projectDirectory = outputDirectory.resolve("com.ngc.model.message");
       assertTrue("Project directory incorrect", Files.isDirectory(projectDirectory));
 
       Path gradleBuild = projectDirectory.resolve("build.generated.gradle");
@@ -133,27 +101,15 @@ public class CreateProtocolbufferMessagesCommandIT {
       Path sourceDirectory = projectDirectory.resolve(Paths.get("src", "main", "proto"));
       assertTrue(Files.isDirectory(sourceDirectory));
 
-      Map<String, List<Path>> fileMap = Files.walk(sourceDirectory)
-                                             .filter(Files::isRegularFile)
-                                             .peek(
-                                                file -> assertTrue(file.toString(), file.toString().endsWith(".proto")))
-                                             .collect(Collectors.groupingBy(file -> {
-                                                String name = ((Path) file).getFileName().toString();
-                                                name = name.substring(0, name.lastIndexOf('.'));
-                                                return name;
-                                             }));
+      List<Path> files = Files.walk(sourceDirectory)
+                              .filter(Files::isRegularFile)
+                              .sorted((f1, f2) -> f1.getFileName().toString().compareTo(f2.getFileName().toString()))
+                              .collect(Collectors.toList());
 
-      // Map<String, Path> files = new HashMap<>();
-      // fileMap.forEach((name, list) -> {
-      // assertEquals("Unexpected duplicate files: " + list, 1, list.size());
-      // files.put(name, list.get(0));
-      // });
-      //
-      // assertEquals("Invalid number of files generated: ", data.length + enums.length, files.size());
-      //
-      // IntStream.range(0, data.length).forEach(i -> assertTrue(files.containsKey("Data" + i)));
-      // IntStream.range(0, enums.length).forEach(i -> assertTrue(files.containsKey("Enum" + i)));
-
+      assertEquals(3, files.size());
+      assertTrue(files.get(0).endsWith(Paths.get("com", "ngc", "child", "message", "Child.proto")));
+      assertTrue(files.get(1).endsWith(Paths.get("com", "ngc", "data", "message", "Data.proto")));
+      assertTrue(files.get(2).endsWith(Paths.get("com", "ngc", "enumeration", "message", "Enumeration.proto")));
    }
 
 }
