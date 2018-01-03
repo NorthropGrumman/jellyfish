@@ -9,8 +9,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
 import com.ngc.seaside.jellyfish.service.codegen.testutils.FlowFactory;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -109,23 +107,20 @@ public class JavaServiceGenerationServiceTest {
       when(scenarioService.getPubSubMessagingFlow(options, flow.getScenario())).thenReturn(
                                                                                    Optional.of(flow));
 
-      ClassDto<MethodDto> dto = service.getServiceInterfaceDescription(options, model);
+      ClassDto dto = service.getServiceInterfaceDescription(options, model);
       assertNotNull("dto is null!", dto);
       assertEquals("interface name not correct!", "I" + model.getName(), dto.getName());
       assertEquals("package name not correct!",
          "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
          dto.getPackageName());
-      assertEquals("incorrect number of methods!", 0, dto.getMethods().size());
      
 
-      ClassDto<PubSubMethodDto> baseDto = service.getBaseServiceDescription(options, model);
+      ClassDto baseDto = service.getBaseServiceDescription(options, model);
       assertNotNull("dto is null!", baseDto);
       assertEquals("base name not correct!", "Abstract" + model.getName(), baseDto.getName());
       assertEquals("package name not correct!",
          "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
          baseDto.getPackageName());
-      assertEquals("incorrect number of methods!", 0, baseDto.getMethods().size());
-
    }
 
    @Test
@@ -141,7 +136,7 @@ public class JavaServiceGenerationServiceTest {
          return field.getName();
       });
 
-      EnumDto<?> topicsEnum = service.getTransportTopicsDescription(options, model);
+      EnumDto topicsEnum = service.getTransportTopicsDescription(options, model);
       assertEquals("EngagementTrackPriorityServiceTransportTopics", topicsEnum.getName());
       assertEquals(new HashSet<>(Arrays.asList("inputField", "outputField")), topicsEnum.getValues());
    }

@@ -14,12 +14,7 @@ dependencies {
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 
 	testImplementation project(':jellyfish.cli.command.testutils')
-	testImplementation project(':jellyfish.service.name.impl.namingservices')
-    testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-	testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-    
-    testRuntimeOnly "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.ext.testutils:$jellyfishEXTVersion"
 }

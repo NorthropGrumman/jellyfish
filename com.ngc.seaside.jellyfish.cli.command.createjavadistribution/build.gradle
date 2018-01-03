@@ -12,18 +12,6 @@ dependencies {
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-    testImplementation project(':jellyfish.cli.command.testutils')
-    testImplementation project(':jellyfish.service.name.impl.namingservices')
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    testImplementation "com.ngc.seaside:guice.modules:$bootstrapVersion"
-    testImplementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
-
-    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-    testRuntimeOnly "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-
-
 }

@@ -4,10 +4,8 @@ import java.util.Set;
 
 /**
  * Represents a description of a Java enum class.
- * 
- * @param <T> the type of the MethodDto
  */
-public class EnumDto<T extends MethodDto> extends ClassDto<T> {
+public class EnumDto extends ClassDto {
 
    private Set<String> values;
 
@@ -18,7 +16,7 @@ public class EnumDto<T extends MethodDto> extends ClassDto<T> {
       return values;
    }
 
-   public EnumDto<T> setValues(Set<String> values) {
+   public EnumDto setValues(Set<String> values) {
       this.values = values;
       return this;
    }

@@ -116,7 +116,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       dto.setPackageService(packageService);
       dto.setDataFieldService(dataFieldService);
       dto.setFields(FIELDS_FUNCTION);
-      EnumDto<?> transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
+      EnumDto transportTopics = generationService.getTransportTopicsDescription(commandOptions, model);
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
       dto.setProjectDependencies(new LinkedHashSet<>(
          Arrays.asList(projectService.getBaseServiceProjectName(commandOptions, model).getArtifactId(),

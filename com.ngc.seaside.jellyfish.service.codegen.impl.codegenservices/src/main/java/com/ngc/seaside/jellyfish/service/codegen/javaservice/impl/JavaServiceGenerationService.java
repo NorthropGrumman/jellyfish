@@ -4,12 +4,8 @@ import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.ArgumentDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.MethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.PubSubMethodDto;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -25,10 +21,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,37 +36,33 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
    private ILogService logService;
 
    @Override
-   public ClassDto<MethodDto> getServiceInterfaceDescription(IJellyFishCommandOptions options, IModel model) {
+   public ClassDto getServiceInterfaceDescription(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
 
-      ClassDto<MethodDto> dto = new ClassDto<>();
+      ClassDto dto = new ClassDto();
       dto.setName("I" + model.getName());
       dto.setPackageName(packageNamingService.getServiceInterfacePackageName(options, model));
-      List<MethodDto> methods = new ArrayList<>();
-      dto.setMethods(methods);
       dto.setImports(getImports(dto));
 
       return dto;
    }
 
    @Override
-   public ClassDto<PubSubMethodDto> getBaseServiceDescription(IJellyFishCommandOptions options, IModel model) {
+   public ClassDto getBaseServiceDescription(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
 
-      ClassDto<PubSubMethodDto> dto = new ClassDto<>();
+      ClassDto dto = new ClassDto();
       dto.setName("Abstract" + model.getName());
       dto.setPackageName(packageNamingService.getServiceBaseImplementationPackageName(options, model));
-      List<PubSubMethodDto> methods = new ArrayList<>();
-      dto.setMethods(methods);
       dto.setImports(getImports(dto));
       dto.getImports().add(packageNamingService.getServiceInterfacePackageName(options, model) + ".I" + model.getName());
       return dto;
    }
 
    @Override
-   public EnumDto<?> getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
+   public EnumDto getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
       Set<String> transportTopics = new LinkedHashSet<>();
       for (IScenario scenario : model.getScenarios()) {
          Optional<IPublishSubscribeMessagingFlow> optionalFlow = scenarioService.getPubSubMessagingFlow(options, scenario);
@@ -88,13 +78,11 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
             }
          }
       }
-      EnumDto<?> dto = new EnumDto<>();
+      EnumDto dto = new EnumDto();
       dto.setValues(transportTopics)
          .setName(model.getName() + "TransportTopics")
          .setPackageName(packageNamingService.getTransportTopicsPackageName(options, model))
-         .setImplementedInterface(new ClassDto<>().setInterface(true).setName("ITransportTopic").setPackageName(
-            "com.ngc.seaside.service.transport.api"))
-         .setImports(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic"));
+         .setImports(new LinkedHashSet<>(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic")));
       return dto;
    }
 
@@ -144,25 +132,8 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
       setTransportConfigurationService(null);
    }
 
-   private static Set<String> getImports(ClassDto<? extends MethodDto> dto) {
+   private static Set<String> getImports(ClassDto dto) {
       Set<String> imports = new TreeSet<>();
-      if (dto.getBaseClass() != null) {
-         imports.add(dto.getBaseClass().getFullyQualifiedName());
-      }
-      if (dto.getImplementedInterface() != null) {
-         imports.add(dto.getImplementedInterface().getFullyQualifiedName());
-      }
-      for (MethodDto method : dto.getMethods()) {
-         if (method.isReturns()) {
-            imports.add(method.getReturnArgument().getPackageName() + "." + method.getReturnArgument().getTypeName());
-         }
-         for (ArgumentDto arg : method.getArguments()) {
-            imports.add(arg.getPackageName() + "." + arg.getTypeName());
-            for (TypeDto<?> type : arg.getTypes()) {
-               imports.add(type.getPackageName() + "." + type.getTypeName());
-            }
-         }
-      }
       return imports;
    }
 

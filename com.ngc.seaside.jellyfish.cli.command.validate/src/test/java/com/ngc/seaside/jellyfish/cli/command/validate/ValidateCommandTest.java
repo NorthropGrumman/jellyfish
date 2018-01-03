@@ -1,6 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.command.api.CommandException;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
@@ -16,16 +19,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ValidateCommandTest {
 
    private ValidateCommand command = new ValidateCommand();
-
-   private PrintStreamLogService logService = new PrintStreamLogService();
 
    @Mock
    private IJellyFishCommandOptions options;
@@ -36,7 +33,7 @@ public class ValidateCommandTest {
    @Before
    public void before() {
       when(options.getParsingResult()).thenReturn(parsingResult);
-      command.setLogService(logService);
+      command.setLogService(mock(ILogService.class));
    }
 
    @Test
@@ -45,7 +42,7 @@ public class ValidateCommandTest {
       command.run(options);
    }
 
-   @Test
+   @Test(expected = CommandException.class)
    public void testValidateInvalidResult() {
       IParsingIssue issue = mock(IParsingIssue.class);
       when(issue.getSeverity()).thenReturn(Severity.ERROR);
@@ -57,12 +54,7 @@ public class ValidateCommandTest {
       when(parsingResult.isSuccessful()).thenReturn(false);
       when(parsingResult.getIssues()).thenReturn(Collections.singletonList(issue));
 
-      try {
-         command.run(options);
-         fail("failed to throw CommandException if descriptor is invalid!");
-      } catch (CommandException e) {
-         // Expected.
-      }
+      command.run(options);
    }
 
 }
