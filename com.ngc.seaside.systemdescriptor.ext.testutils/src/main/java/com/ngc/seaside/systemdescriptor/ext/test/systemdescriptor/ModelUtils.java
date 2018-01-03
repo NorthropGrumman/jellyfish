@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,11 +36,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * Utility class for mocking system descriptor elements.
+ */
 public class ModelUtils {
 
+   /**
+    * An instance of {@link IModel} with convenience methods for adding pub-sub scenarios and correlations.
+    */
    public static class PubSubModel implements IModel {
 
       private final String name;
@@ -345,7 +350,7 @@ public class ModelUtils {
     * Adds mocking to the given data for the given superData type and fields. Each data field can be an {@link IDataField} or the fields can be specified with the parameters as follows: [String]
     * [FieldCardinality] (IData|IEnumeration|DataTypes). That is, an optional String for the field name, an optional cardinality, and either an IData, IEnumeration or DataTypes instance.
     * 
-    * @param data data add mocking
+    * @param data mocked data instance
     * @param superData super data type (can be null)
     * @param fields data fields
     */
@@ -379,25 +384,36 @@ public class ModelUtils {
    }
 
    /**
-    * Returns a fully-implemented mocked {@link INamedChildCollection} containing the given children.
+    * Returns a fully-implemented {@link INamedChildCollection} containing the given children.
     * 
     * @param children collection of elements
-    * @return a mocked {@link INamedChildCollection} containing the given children
+    * @return an {@link INamedChildCollection} containing the given children
     */
    @SafeVarargs
    public static <P, T extends INamedChild<P>> INamedChildCollection<P, T> mockedNamedCollectionOf(T... children) {
-      abstract class NamedChildCollectionInstance extends AbstractCollection<T> implements INamedChildCollection<P, T> {
+      Map<String, T> map = new TreeMap<>();
+      for (T child : children) {
+         map.put(child.getName(), child);
       }
-      INamedChildCollection<P, T> collection = mock(NamedChildCollectionInstance.class, CALLS_REAL_METHODS);
-      when(collection.getByName(any())).thenAnswer(args -> {
-         String name = args.getArgument(0);
-         return Stream.of(children).filter(child -> child.getName().equals(name)).findAny();
-      });
-      when(collection.iterator()).thenReturn(Arrays.asList(children).iterator());
-      when(collection.size()).thenReturn(children.length);
-      return collection;
-   }
+      class NamedChildCollectionInstance extends AbstractCollection<T> implements INamedChildCollection<P, T> {
+         @Override
+         public Optional<T> getByName(String name) {
+            return Optional.of(map.get(name));
+         }
 
+         @Override
+         public Iterator<T> iterator() {
+            return map.values().iterator();
+         }
+
+         @Override
+         public int size() {
+            return map.size();
+         }
+      }
+      return new NamedChildCollectionInstance();
+   }
+   
    /**
     * A {@link INamedChildCollection} instance with helper methods for easily adding fields.
     *
