@@ -1,0 +1,46 @@
+// Use Nexus to retrieve additional Gradle plugins used by the build.
+buildscript {
+   repositories {
+      mavenLocal()
+
+      maven {
+         url nexusConsolidated
+      }
+   }
+
+   dependencies {
+      classpath 'com.ngc.seaside:gradle.plugins:2.1.4'
+      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+   }
+}
+
+subprojects {
+   // Do not make the feature and update site projects Java projects.
+   if(name != 'systemdescriptor.ext.feature'
+      && name != 'systemdescriptor.ext.updatesite') {
+      apply plugin: 'com.ngc.seaside.parent'
+      apply plugin: 'java-library'
+   }
+
+   group = 'com.ngc.seaside'
+   version = '1.11.4-SNAPSHOT'
+
+   ext {
+      jellyfishDslVersion = '0.13.0'
+      jellyfishApiVersion = '1.6.1'
+      bootstrapApiVersion = '1.8.1'
+      guavaVersion = '22.0'
+      guiceVersion = '3.0'
+      blocsCoreVersion = '2.1'
+      commonsIOVersion = '2.5'
+      commonsLangVersion = '2.6'
+      glassfishJsonVersion = '1.1'
+      emfVersion = '2.12.0'
+      xtextVersion = '2.10.0'
+      log4jVersion = '1.2.17'
+      mavenVersion = '3.5.2'
+
+      junitVersion = '4.12'
+      mockitoVersion = '2.7.14'
+   }
+}

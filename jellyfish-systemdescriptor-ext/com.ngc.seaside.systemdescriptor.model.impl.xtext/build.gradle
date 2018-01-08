@@ -1,0 +1,15 @@
+dependencies {
+   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+
+   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
+   implementation "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.impl.xtext.*')
+   }
+}

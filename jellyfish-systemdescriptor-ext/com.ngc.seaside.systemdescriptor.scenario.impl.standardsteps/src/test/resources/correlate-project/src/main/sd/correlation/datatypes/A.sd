@@ -1,0 +1,9 @@
+package correlation.datatypes
+
+data A {
+  metadata {
+    "name": "A",
+    "description": "Some datatype A"
+  }
+  int foo
+}

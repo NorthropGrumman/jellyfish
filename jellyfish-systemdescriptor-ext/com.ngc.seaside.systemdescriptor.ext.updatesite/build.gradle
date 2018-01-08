@@ -1,0 +1,196 @@
+import com.ngc.seaside.gradle.util.EclipsePlugins
+import com.ngc.seaside.gradle.util.Versions
+import org.gradle.internal.os.OperatingSystem
+
+ext {
+   buildDir = 'build'
+
+   eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
+   eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+
+   eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
+
+   // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
+   eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
+   // The cache location of downloaded files.
+   eclipseCache = '../.gradle/eclipse'
+   // The local file to save the ZIP to.
+   eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
+   // This is the location where the Eclipse download will be unzipped to.
+   // Note this name may change if the download URL changes to a different version of Eclipse.
+   eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
+
+   // This is the location of the Eclipse we use when compiling and building the
+   // update site.
+   eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+
+   // This is the location of the Eclispe exe we use to create the update site
+   // metadata.
+   eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
+}
+
+repositories {
+   mavenLocal()
+
+   maven {
+      url nexusConsolidated
+   }
+}
+
+configurations {
+   features
+
+   // note that plugins is reserved
+   sdPlugins {
+      transitive = false
+   }
+
+   // Only add Guava to this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   guava {
+      transitive = false
+   }
+
+   // Only add guice multibindings for this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   multibindings {
+      transitive = false
+   }
+}
+
+dependencies {
+   features project(path: ':systemdescriptor.ext.feature', configuration: 'feature')
+
+   sdPlugins project(':systemdescriptor.model.impl.xtext')
+   sdPlugins project(':systemdescriptor.scenario.impl.standardsteps')
+   sdPlugins project(':systemdescriptor.service.impl.xtext')
+   sdPlugins project(':service.log.impl.common.log4jlogservice')
+
+   sdPlugins "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   sdPlugins "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
+   sdPlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
+
+   sdPlugins "com.ngc.blocs:api:$blocsCoreVersion"
+   sdPlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
+   sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+
+   guava "com.google.guava:guava:$guavaVersion"
+   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+}
+
+task clean() {
+   doLast {
+      delete("$buildDir")
+   }
+}
+
+task downloadEclipse() {
+   doLast {
+      def destFile = file("$eclipseDownloadDestFile")
+      destFile.getParentFile().mkdir()
+      println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
+      new URL("$eclipseDownloadUrl").withInputStream { is ->
+         destFile.withOutputStream { it << is  }
+      }
+   }
+}
+downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
+
+task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+   from zipTree(file("$eclipseDownloadDestFile"))
+   into "$eclipseCache"
+}
+unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
+
+task copyFeatures(type: Copy) {
+   from configurations.features
+   into { "$buildDir/updatesite/features" }
+
+   // We have to rename the feature JARs built with Gradle to make the naming
+   // convention expected by Eclipse or the feature won't install correctly.
+   rename { String name ->
+      EclipsePlugins.makeEclipseCompliantJarFileName(name)
+   }
+}
+
+task copyPlugins(type: Copy) {
+   from configurations.sdPlugins {
+      rename { String name ->
+         // We have to rename the feature JARs built with Gradle to make the naming
+         // convention expected by Eclipse or the feature won't install correctly.
+         // For these dependencies, we need to prefix the group ID to the filename.
+         def artifacts = configurations.sdPlugins.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         "${artifact.moduleVersion.id.group}.${artifact.name}_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task copyMultibings(type: Copy) {
+   from configurations.multibindings {
+      rename { String name ->
+         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // The bundle name is all messed up for multibindings.  Just hardcode the name.
+         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task copyGuava(type: Copy) {
+   from configurations.guava {
+      rename { String name ->
+         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         // And guava is messed up too...  At least according to Eclipse.
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into { "$buildDir/updatesite/plugins" }
+}
+
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings, copyGuava]) {
+   // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
+   // files.  Note that the arguments -metadataRepository and -artifactRepository want
+   // "file URLs" but -source wants a plain old absolute path.
+   doLast {
+      project.exec {
+         commandLine(
+               "$eclipseExe",
+               '-nosplash',
+               '-application', 'org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher',
+               '-compress',
+               '-metadataRepository', file("$buildDir/updatesite/").toURI().toURL(),
+               '-artifactRepository', file("$buildDir/updatesite/").toURI().toURL(),
+               '-source', new File("$buildDir", "updatesite")
+         )
+      }
+   }
+}
+
+task createZip(type: Zip, dependsOn: createMetadata) {
+   from "$buildDir/updatesite"
+   destinationDir = file("$buildDir")
+   archiveName = "com.ngc.seaside.systemdescriptor.ext.updatesite-${project.version}.zip"
+}
+
+task createTarGz(type: Tar, dependsOn: createMetadata) {
+   from "$buildDir/updatesite"
+   compression = Compression.GZIP
+   destinationDir = file("$buildDir")
+   archiveName = "com.ngc.seaside.systemdescriptor.ext.updatesite-${project.version}.tar.gz"
+}
+
+task build (dependsOn: [createZip, createTarGz]) {
+}
+
+defaultTasks = ['build']

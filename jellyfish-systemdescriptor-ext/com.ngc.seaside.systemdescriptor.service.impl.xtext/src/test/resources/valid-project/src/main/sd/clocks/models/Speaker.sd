@@ -1,0 +1,10 @@
+package clocks.models
+
+model Speaker {
+  metadata {
+    "description": "Makes annoying buzzing sounds.",
+    "stereotypes": ["device"]
+  }
+
+  scenario buzz { }
+}

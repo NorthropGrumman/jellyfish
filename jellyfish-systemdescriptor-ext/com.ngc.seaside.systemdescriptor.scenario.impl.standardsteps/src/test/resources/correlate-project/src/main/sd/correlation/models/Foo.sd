@@ -1,0 +1,26 @@
+package correlation.models
+
+import correlation.datatypes.A
+import correlation.datatypes.B
+import correlation.datatypes.C
+
+model Foo {
+  input {
+    A a
+    B b
+  }
+
+  scenario valid1 {
+    when receiving a
+      and receiving b
+      and correlating a.foo to b.foo
+   }
+   
+  scenario valid2 {
+    when receiving a
+      and receiving b
+      and correlating a.foo to b.foo
+    then willCorrelate c.foo to b.foo
+      and willPublish c
+   }
+}
