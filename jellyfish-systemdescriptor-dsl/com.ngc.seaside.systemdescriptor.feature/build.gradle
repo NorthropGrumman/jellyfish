@@ -1,0 +1,36 @@
+import com.ngc.seaside.gradle.util.Versions
+
+ext {
+   buildDir = 'build'
+}
+
+configurations {
+  feature
+}
+
+task clean() {
+   doLast {
+      delete("$buildDir")
+   }
+}
+
+task copyAndFilterFeatureFile(type: Copy) {
+   from 'src/main/resources', { include('feature.xml') }
+   expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"))
+   destinationDir = file("$buildDir/tmp")
+}
+
+task createJar(type: Zip, dependsOn: copyAndFilterFeatureFile) {
+   from "$buildDir/tmp"
+   destinationDir = file("$buildDir")
+   archiveName = "${project.group}.${project.name}-${project.version}.jar"
+}
+
+task build(dependsOn: createJar) {
+}
+
+artifacts {
+  feature createJar
+}
+
+defaultTasks = ['build']

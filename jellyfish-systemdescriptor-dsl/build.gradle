@@ -1,0 +1,185 @@
+import org.gradle.internal.os.OperatingSystem
+
+// Use Nexus to retrieve additional Gradle plugins used by the build.
+buildscript {
+	repositories {
+		mavenLocal()
+		
+        maven {
+            url nexusConsolidated
+        }
+	}
+	dependencies {
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+		classpath 'com.ngc.seaside:gradle.plugins:2.1.0'
+                classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+	}
+}
+
+import org.gradle.api.ProjectConfigurationException
+
+ext {
+   	xtextVersion = '2.10.0'
+   	
+	eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
+   	eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+
+	eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
+   	
+   	// The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
+   	eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
+	// The cache location of downloaded files.
+   	 eclipseCache = '.gradle/eclipse'
+   	// The local file to save the ZIP to.
+   	eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
+   	// This is the location where the Eclipse download will be unzipped to.
+   	// Note this name may change if the download URL changes to a different version of Eclipse.
+   	eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
+   	
+	// This is the location of the Eclipse we use when compiling and building the 
+	// update site.
+	eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+	
+	// This is the location of the Eclispe exe we use to create the update site
+	// metadata.
+	eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
+}
+
+allprojects {
+	group = 'com.ngc.seaside'
+	version = '0.14.0-SNAPSHOT'
+}
+
+subprojects {
+        apply plugin: 'com.ngc.seaside.ci'
+	if(name == 'systemdescriptor.ui') {
+	   // We have to apply the maven plugin here instead of in the build.gradle for 
+	   // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
+	   apply plugin: 'java'
+	   apply plugin: 'eclipse'
+	   apply plugin: 'idea'
+	   apply plugin: 'maven'
+	   apply plugin: 'org.xtext.xtend'
+	} else if(name == 'systemdescriptor.feature') {
+	   // Don't apply any parent plugins.
+	} else if(name == 'systemdescriptor.updatesite') {
+	   // Don't apply any parent plugins.
+	} else {
+	    // Apply XText plugins.
+	    apply plugin: 'java'
+	    apply plugin: 'eclipse'
+	    apply plugin: 'idea'
+		apply plugin: 'org.xtext.xtend'
+		apply from: "${rootDir}/gradle/source-layout.gradle"
+		apply from: "${rootDir}/gradle/maven-deployment.gradle"
+	}
+	
+	if(name != 'systemdescriptor.feature'
+	    && name != 'systemdescriptor.updatesite') {
+		
+		sourceCompatibility = '1.8'
+		targetCompatibility = '1.8'
+		
+		configurations.all {
+			exclude group: 'asm'
+		}
+		
+		repositories {
+	      	mavenLocal()
+	
+	        maven {
+		        url nexusConsolidated
+	        }
+		}
+	
+	    uploadArchives {
+	        repositories {
+	            mavenDeployer {
+	                // Use the main repo for full releases.
+	                repository(url: nexusReleases) {
+	                    // Make sure that nexusUsername and nexusPassword are in your
+	                    // ${gradle.user.home}/gradle.properties file.
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	                // If the version has SNAPSHOT in the name, use the snapshot repo.
+	                snapshotRepository(url: nexusSnapshots) {
+	                    authentication(userName: nexusUsername, password: nexusPassword)
+	                }
+	            }
+	        }
+	    }	
+	    
+		/**
+	     * Create a task for generating the source jar. This will also be uploaded to Nexus.
+	     */
+	    task('sourcesJar', type: Jar, dependsOn: [classes]) {
+	        classifier = 'sources'
+	        from sourceSets.main.allSource
+	    }
+	
+	    /**
+	     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
+	     */
+	    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
+	        classifier = 'javadoc'
+	        from javadoc.destinationDir
+	    }
+	    
+		/**
+	     * Augment the jar name to be $groupId.$project.name).
+	     */
+	    tasks.getByName('sourcesJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	
+	    tasks.getByName('javadocJar') { jar ->
+	        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+	    }
+	    
+	    tasks.getByName('jar') { jar ->
+	      archiveName = "${project.group}.${project.name}-${project.version}.jar"
+	    }
+	    
+	    /**
+		 * Ensure to add the doclint option to the javadoc task if using Java 8.
+		 */
+		if (JavaVersion.current().isJava8Compatible()) {
+		    tasks.getByName('javadoc') { doc ->
+		        options.addStringOption('Xdoclint:none', '-quiet')
+		    }
+		}
+	
+	    /**
+	     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
+	     */
+	    artifacts {
+	        archives sourcesJar
+	        archives javadocJar
+	    }
+	}
+}
+
+task downloadEclipse() {
+   doLast {
+      def destFile = file("$eclipseDownloadDestFile")
+      destFile.getParentFile().mkdir()
+         println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
+         new URL("$eclipseDownloadUrl").withInputStream { is ->
+            destFile.withOutputStream { it << is  }
+      }
+   }
+}
+downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
+
+//if (OperatingSystem.current().isLinux()) {
+//   task unzipEclpse(type: , dep
+//} else {
+   task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+      from zipTree(file("$eclipseDownloadDestFile"))
+      into "$eclipseCache"
+   }
+//}
+unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
+
+task build(dependsOn: unzipEclipse) {
+}

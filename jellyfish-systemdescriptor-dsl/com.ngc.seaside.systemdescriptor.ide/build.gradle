@@ -1,0 +1,23 @@
+import com.ngc.seaside.gradle.util.Versions
+
+dependencies {
+	compile project(':systemdescriptor')
+	compile "org.eclipse.xtext:org.eclipse.xtext.ide:${xtextVersion}"
+	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.ide:${xtextVersion}"
+}
+//this is an eclipse plugin project
+eclipseClasspath.enabled=false
+cleanEclipseClasspath.enabled=false
+
+jar {
+   manifest {
+      from('META-INF/MANIFEST.MF') {
+         // Replace the version with the version from the gradle build.
+         eachEntry {
+            if(getKey().equals('Bundle-Version')) {
+               setValue(Versions.makeOsgiCompliantVersion("$version"))
+            }
+         }
+      }
+   }
+}

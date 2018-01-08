@@ -1,0 +1,1 @@
+This file exists so that the the directory can be checked into Git and Eclipse won't complain about missing src directories.  When a class is created, delete this file.

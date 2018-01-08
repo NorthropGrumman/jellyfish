@@ -1,0 +1,480 @@
+grammar com.ngc.seaside.systemdescriptor.SystemDescriptor
+with org.eclipse.xtext.common.Terminals
+hidden (WS, ML_COMMENT, SL_COMMENT, SL_EXTENDED_COMMENT)
+
+
+generate systemDescriptor "http://www.ngc.com/seaside/systemdescriptor/SystemDescriptor"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+/*
+ * Package is the root type and it contains imports and at most one declaration of
+ * an element.  Should align to the decomposition of the system. The structure here
+ * should reflect the file structure similar to that of Java.
+ */
+Package
+	: 'package' name=QualifiedName
+	  imports+=Import*
+	  element=Element
+	;
+
+/*
+ * A comment may also begin with '--'.  It is ignored.
+ */
+terminal SL_EXTENDED_COMMENT
+	: '--' !('\n'|'\r')* ('\r'? '\n')?
+	;
+
+// -------------------------------	
+// ---- Identifiers and names ----
+// -------------------------------
+
+/*
+ * A qualified name is a '.' delimited set of IDs.
+ */
+QualifiedName
+	: ID ('.' ID)*
+	;
+
+/*
+ * A qualified name with a wildcard is normal Java like import with
+ * some.name.*
+ */
+QualifiedNameWithWildcard
+	: QualifiedName '.*'?
+	;
+
+/*
+ * An unqualified name is just an identifier without any '.' delimiters.
+ */	
+UnqualifiedName
+	: ID
+	;
+	
+// ---------------------------
+// ---- Common base types ----
+// ---------------------------
+
+/*
+ * Defines different cardinality values.
+ * 
+ * Note the first value of a enum is the default value that the parsed 
+ * model will have.  Since cardinality is optional for inputs and 
+ * outputs we have to make sure we have a default value listed first
+ * that means not set.
+ */
+enum Cardinality
+    : DEFAULT='default'
+	| MANY='many'
+	;
+
+/*
+ * FieldDeclaration is the base type of all type of declarations in a model.
+ * This includes inputs, outputs, parts, and requirements.
+ * 
+ * This element is used in references.
+ */
+FieldDeclaration
+	: InputDeclaration
+	| OutputDeclaration
+	| PartDeclaration
+	| RequireDeclaration
+	;
+
+// ---------------------------
+// ---- Package structure ----
+// ---------------------------
+
+/*
+ * Imports allow modelers to reference data or models in other packages.
+ * Note that wildcard ('*') imports are not yet supported.
+ */
+Import
+	: 'import' importedNamespace=QualifiedName
+	;
+
+// ------------------------------
+// ---- Enum related objects ----
+// ------------------------------
+
+/*
+ * Defines a value field of an enumeration.
+ */
+EnumerationValueDeclaration
+	: value=UnqualifiedName
+	  metadata=JsonObject? ','?
+	;
+
+// ------------------------------
+// ---- Data related objects ----
+// ------------------------------
+
+/*
+ * Defines the different data types that are built in.
+ */
+enum PrimitiveDataType
+	: INT='int'
+	| FLOAT='float'
+	| STRING="string"
+	| BOOLEAN="boolean"
+	;
+		
+/*
+ * A primitive data field declaration consists of a type and unqualified name.
+ * It may also contain optional metadata.
+ */
+PrimitiveDataFieldDeclaration
+	: cardinality=Cardinality?
+	  type=PrimitiveDataType
+	  name=UnqualifiedName
+	  metadata=JsonObject?
+	;
+
+/*
+ * A referenced data field declaration is used to reference another data model type.
+ */	
+ReferencedDataModelFieldDeclaration
+	: cardinality=Cardinality?
+	  dataModel=[DataModel|QualifiedName]
+	  name=UnqualifiedName
+	  metadata=JsonObject?
+	;
+
+/*
+ * A data field declaration may either be a primitive type or reference another
+ * data type.
+ */
+DataFieldDeclaration
+	: PrimitiveDataFieldDeclaration
+	| ReferencedDataModelFieldDeclaration
+	;
+
+// -------------------------------
+// ---- Model related objects ----
+// -------------------------------
+
+/*
+ * Declares a output via a referenced data type and an unqualified name.
+ * An output declaration may also specify an optional cardinality.
+ */
+OutputDeclaration
+	: cardinality=Cardinality? type=[Data|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	;
+
+/*
+ * Optional attribute of model, defines outputs produced by the model.
+ */
+Output
+	: 'output' '{'
+		declarations+=OutputDeclaration+
+	  '}'
+	;
+
+/*
+ * Declares an input via a referenced data type and an unqualified name.
+ * An output declaration may also specify an optional cardinality.
+ */
+InputDeclaration
+	: cardinality=Cardinality? type=[Data|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	;
+
+/*
+ * Optional attribute of a model, defines necessary input.
+ */
+Input 
+	: 'input' '{'
+		declarations+=InputDeclaration+
+	  '}'
+	; 
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+PartDeclaration
+	: type=[Model|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	;
+ 
+/*
+ * Optional attribute of a model, defines sub-model objects.
+ */
+Parts
+	: 'parts' '{'
+		declarations+=PartDeclaration+
+	  '}'
+	;
+ 
+/*
+ * Declares a requirement on another model via a referenced model type
+ * and an unqualified name.
+ */
+RequireDeclaration
+	: type=[Model|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	;
+ 
+/*
+ * Optional attribute of a model, places condition on the model to necessitate
+ * access to / existence of another model. 
+ */
+Requires
+	: 'requires' '{'
+		declarations+=RequireDeclaration+
+	  '}'
+	;
+ 
+// ----------------------------------
+// ---- Scenario related objects ----
+// ----------------------------------
+
+/*
+ * Declares a generic keyword for use by a scenario.  These keywords
+ * are usually verbs.  Keywords that are used in "whens" are usually 
+ * in current tense.  Keywords that are used in "thens" are usually
+ * in future tense.  The keyword can be any value but there must be 
+ * a "handler" registered to interpret it.
+ */
+ScenarioKeyword
+	: QualifiedName
+	;
+/*
+ * Declares a generic parameter that is used by a particular keyword.
+ */
+ScenarioParameter
+	: INTEGER
+	| DOUBLE
+	| QualifiedName
+	;
+
+/*
+ * Represents both a precondition and its subject.
+ */
+GivenStep
+	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
+	;
+
+/*
+ * Introduces a post condition that must be satisfied prior to the scenario being executable.
+ */
+GivenDeclaration
+	: 'given' steps+=GivenStep
+	  ('and' steps+=GivenStep)*
+	;
+
+/*
+ * Represents both a triggering condition represented as a keyword and the parameters 
+ * used by that keyword.
+ */
+WhenStep
+	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
+	;
+
+/*
+ * Introduces a condition or trigger to be tested that determines the scenario has began.
+ */
+WhenDeclaration
+	: 'when' steps+=WhenStep
+	  ('and' steps+=WhenStep)*
+	;
+
+/*
+ * Represents both a postcondition represented as a keyword and the parameters 
+ * used by that keyword.
+ */
+ThenStep
+	: keyword=ScenarioKeyword (parameters+=ScenarioParameter)*
+	;
+
+/*
+ * Introduces a statement or post condition to be asserted after a scenario has been
+ * triggered and has executed.
+ */
+ThenDeclaration
+	: 'then' steps+=ThenStep
+	  ('and' steps+=ThenStep)*
+	;
+
+/**
+ * The base type of all scenario steps.
+ */
+Step
+	: GivenStep
+	| WhenStep
+	| ThenStep
+	;
+
+/*
+ * Attribute of a model defining a set of circumstances describing behavior the
+ * model exhibits given a set of conditions. This should follow the BDD
+ * specification syntax and use the keywords such as given, when and then.
+ */
+Scenario
+	: 'scenario' name=UnqualifiedName '{'
+		(
+			metadata=Metadata?
+			given=GivenDeclaration?
+		 	when=WhenDeclaration
+		 	then=ThenDeclaration
+		 )?
+	  '}'
+	;
+	
+// -----------------------------
+// ---- Link model elements ----
+// -----------------------------
+
+/*
+ * A linkable expression is an expression that is used in the link block.  
+ * 
+ * This syntax instructs XText to generate a base type named LinkableReference and
+ * both LinkableExpression and FieldReference extend this base type.  The magic
+ * LinkableExpression.ref=current statement results in a type of recursive tree 
+ * structure that results in tree like structure.  The tail attribute is the 
+ * final field in the expression and it must be a field.  
+ * 
+ * See
+ * https://christiandietrich.wordpress.com/2013/05/18/xtext-and-dot-expressions/
+ * for more information.
+ */
+LinkableExpression returns LinkableReference
+	: FieldReference ({LinkableExpression.ref=current} '.' tail=[FieldDeclaration|UnqualifiedName])*
+	;
+
+/*
+ * A field reference references a field declared in a model (which may be an
+ * input, output, part, or requirement).
+ */
+FieldReference returns LinkableReference
+	: {FieldReference} fieldDeclaration=[FieldDeclaration|UnqualifiedName]
+	;	
+
+/*
+ * Provides a linkage between two objects, indicating that two objects interact or
+ * exchange information in some manner (ex. "link speaker to alarm.speaker").
+ */
+LinkDeclaration
+	: 'link' source=LinkableExpression '->' target=LinkableExpression
+	;
+
+/*
+ * Defines links in a model.
+ */
+Links
+	: 'links' '{'
+		declarations+=LinkDeclaration+
+	  '}'
+	;
+	
+// ------------------------------
+// ---- Basic model elements ----
+// ------------------------------
+
+/*
+ * Declares an object of an enumeration; this is a type of object that 
+ * contains discreet values.
+ */
+Enumeration
+	: 'enum' name=UnqualifiedName '{'
+		metadata=Metadata?
+		values+=EnumerationValueDeclaration*
+	  '}'	
+	;	
+	
+/*
+ * Declares an object of a data type; this is a type of object that contains
+ * attributes of metadata and optional members.
+ */
+Data
+	: 'data' name=UnqualifiedName (':' superclass=[Data|QualifiedName])? '{'
+		metadata=Metadata?
+		fields+=DataFieldDeclaration* 
+	  '}'
+	;
+
+/*
+ * Serves as the base type for all data related objects.
+ */
+DataModel
+	: Data
+	| Enumeration
+	;
+
+/*
+ * Declares an object of a model type; this is a type of object that contains
+ * attributes of metadata and optional requires, input, output, and scenario attributes.
+ */
+Model
+	: 'model' name=UnqualifiedName '{'
+		metadata=Metadata? &
+		requires=Requires? &
+		input=Input? &
+		output=Output? &
+		scenarios+=Scenario* &
+		parts=Parts? &
+		links=Links?
+	  '}'
+	;
+
+/*
+ * An element represents the common root type of modeling elements.  Elements
+ * may either be data or a model.
+ */
+Element
+	: DataModel
+	| Model
+	;
+
+/*
+ * Optional attribute of model, data, input, and data. The metadata should 
+ * use the JSON syntax. The modeler can use this field in any way necessary
+ * to convey the intent of the object.  For instance: the model may require
+ * metdata that provides a name, description and a classifier (stereotype)
+ * in order to give the reader context.  Possible stereotypes include but
+ * are not limited to:
+ * - service (a service in the MSA architecture)
+ * - virtual (a non-realized component used to convey structure)
+ */
+Metadata
+	: 'metadata' json=JsonObject
+	;	
+	
+// ----------------------
+// ---- JSON support ----
+// ----------------------
+
+JsonObject:
+	'{' {JsonObject}
+	    ((members+=Member)
+	    (',' members+=Member)*)?
+    '}';
+
+    
+Member:
+	key=STRING ':' value=Value;
+
+StringValue: value=STRING;
+BooleanValue: value=Boolean;
+JsonValue: value=JsonObject;
+ArrayValue: value=Array;
+NullValue: value=Null;
+IntValue: value=INTEGER;
+DblValue: value=DOUBLE;
+
+Value:
+	StringValue | BooleanValue | JsonValue | ArrayValue | NullValue | IntValue | DblValue;
+
+Array:
+	'[' {Array} 
+	    ((values+=Value)  
+	    (',' values+=Value)*)? 
+	']';
+	
+Boolean:
+	'true' | 'false';
+	
+Null:
+	'null';
+	
+terminal INTEGER returns ecore::EInt:
+	'-'? INT;
+
+terminal DOUBLE returns ecore::EDouble:
+	'-'? INT? '.' INT (('E'|'e') '-'? INT)?;
