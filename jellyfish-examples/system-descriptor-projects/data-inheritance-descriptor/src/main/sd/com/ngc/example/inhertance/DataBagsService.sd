@@ -1,0 +1,23 @@
+package com.ngc.example.inhertance
+
+import com.ngc.example.inhertance.datatype.B
+import com.ngc.example.inhertance.datatype.C
+
+model DataBagsService {
+  metadata {
+    "stereotypes" : ["service", "example"]
+  }
+  
+  input {
+  	B b
+  }
+  
+  output {
+  	C c
+  }
+  
+  scenario publish {
+  	when receiving b
+  	then willPublish c
+  }
+}

@@ -1,0 +1,14 @@
+apply plugin: 'com.ngc.blocs.gradle.plugin.domain'
+
+generateDomain {
+   domainGenProperty('template.list', file('src/main/resources/velocity/service-domain.java.vm'))
+   domainGenProperty('extension.list', 'java')
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 
+         'com.ngc.seaside.threateval.ctps.domain.classifier.datatype.*,' + 
+         'com.ngc.seaside.threateval.ctps.domain.datatype.*')
+   }
+}

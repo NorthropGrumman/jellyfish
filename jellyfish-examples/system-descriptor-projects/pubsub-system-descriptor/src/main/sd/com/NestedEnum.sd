@@ -1,0 +1,5 @@
+package com
+
+enum NestedEnum {
+	FIELD1
+}

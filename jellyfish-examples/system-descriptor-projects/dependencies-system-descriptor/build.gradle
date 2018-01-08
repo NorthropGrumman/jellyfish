@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+    
+    dependencies {
+        classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
+    }
+}
+
+subprojects {
+    group = 'com.ngc.seaside.jellyfish.examples'
+    version = '1.0.0-SNAPSHOT'
+    apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
+    
+    ext {
+        threatEvalVersion = '2.2.3'
+    }
+
+}

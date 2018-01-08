@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.seaside.jellyfish.examples.project1.model.domain.project2.Data2" generated="true" abstract="false">
+        <property name="field2" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.jellyfish.examples.project1.model.domain.common.datatype.GPSTime" generated="true" abstract="false">
+        <property name="secondsFromGPS" type="int" multiple="false" abstract="false"/>
+        <property name="microseconds" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.jellyfish.examples.project1.model.domain.Data1" generated="true" abstract="false">
+        <property name="field1" type="int" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>

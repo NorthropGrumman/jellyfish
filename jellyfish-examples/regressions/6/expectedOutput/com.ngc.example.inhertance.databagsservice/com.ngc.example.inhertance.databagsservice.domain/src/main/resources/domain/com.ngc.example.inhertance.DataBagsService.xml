@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.example.inhertance.databagsservice.domain.datatype.B" extends="com.ngc.example.inhertance.databagsservice.domain.datatype.A" generated="true" abstract="false">
+        <property name="fieldB1" type="int" multiple="false" abstract="false"/>
+        <property name="fieldB2" type="com.ngc.example.inhertance.databagsservice.domain.datatype.C" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.inhertance.databagsservice.domain.datatype.C" extends="com.ngc.example.inhertance.databagsservice.domain.datatype.D" generated="true" abstract="false">
+        <property name="fieldC" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.inhertance.databagsservice.domain.datatype.A" generated="true" abstract="true">
+        <property name="fieldA" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.inhertance.databagsservice.domain.datatype.D" generated="true" abstract="true">
+        <property name="fieldD" type="int" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>

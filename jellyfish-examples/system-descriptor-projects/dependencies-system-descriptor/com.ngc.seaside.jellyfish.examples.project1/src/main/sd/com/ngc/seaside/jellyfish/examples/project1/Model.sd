@@ -1,0 +1,24 @@
+package com.ngc.seaside.jellyfish.examples.project1
+
+import com.ngc.seaside.jellyfish.examples.project1.Data1
+import com.ngc.seaside.jellyfish.examples.project2.Data2
+import com.ngc.seaside.common.datatype.GPSTime
+
+model Model {
+	input {
+		Data2 input1
+		GPSTime input2
+	}
+	output {
+		Data1 output1
+	}
+	scenario scenario1 {
+		when receiving input1
+		then willPublish output1
+	}
+	scenario scenario2 {
+		when receiving input2
+		then willPublish output1
+	}
+	
+}

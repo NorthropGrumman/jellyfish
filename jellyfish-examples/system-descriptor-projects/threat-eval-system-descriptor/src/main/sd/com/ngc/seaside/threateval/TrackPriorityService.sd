@@ -1,0 +1,41 @@
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.threateval.datatype.TrackPriority
+import com.ngc.seaside.threateval.datatype.TrackPriorityRequest
+import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers
+import com.ngc.seaside.common.datatype.DroppedSystemTrack
+
+model TrackPriorityService {
+	metadata {
+		"description": "Aggregates track priorities from 1..n sources and upon request will provide a set of prioritized track IDs.",
+		"stereotypes": ["service", "aggregator"],
+		"satisfies": ["TE001.1", "TE001.2", "TE001.3", "TE001.4", "TE001.5"],
+		"codegen": {
+			"alias": "tps"
+		}
+	}
+	
+	input {
+		TrackPriority trackPriority
+		DroppedSystemTrack droppedSystemTrack
+	}
+	
+	output {
+		PrioritizedSystemTrackIdentifiers prioritizedSystemTracks
+	}
+	
+	scenario calculateConsolidatedTrackPriority {
+		metadata {
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation" } // TODO: need to find a way to stamp a version
+		}
+		when receiving trackPriority
+		then willPublish prioritizedSystemTracks
+		 and willBeCompleted within 500 milliseconds
+	}
+	
+	scenario calculateConsolidatedTrackPriorityWhenTrackDropped {
+		when receiving droppedSystemTrack
+		then willPublish prioritizedSystemTracks
+		 and willBeCompleted within 500 milliseconds
+	}
+}
