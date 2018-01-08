@@ -1,0 +1,12 @@
+dependencies {
+   api "org.glassfish:javax.json:$glassfishJsonVersion"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.api.*')
+   }
+}
