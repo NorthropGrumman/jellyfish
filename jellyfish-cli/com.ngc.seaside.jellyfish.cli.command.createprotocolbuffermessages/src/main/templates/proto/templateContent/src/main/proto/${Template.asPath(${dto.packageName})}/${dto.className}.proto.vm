@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package $dto.packageName;
+
+option java_multiple_files = true;
+
+#if($dto.isEnum())
+enum $dto.className {
+
+#foreach ($value in $dto.data.values)
+	$value = ${foreach.index};
+#end
+#else
+#foreach ($import in $dto.imports)
+import "$import";
+#end
+#if (! $dto.imports.isEmpty())
+
+#end
+message $dto.className {
+
+#foreach ($field in $dto.fields)
+   ${dto.fieldType($field)} ${dto.fieldName($field)} = ${foreach.count};
+#end
+#end
+
+}

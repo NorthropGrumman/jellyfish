@@ -1,0 +1,13 @@
+dependencies {
+    api project(':jellyfish.api')
+    api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.jellyfish.service.*')
+    }
+}
+

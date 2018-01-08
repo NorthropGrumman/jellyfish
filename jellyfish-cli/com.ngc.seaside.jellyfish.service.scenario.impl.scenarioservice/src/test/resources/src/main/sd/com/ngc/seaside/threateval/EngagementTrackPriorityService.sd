@@ -1,0 +1,30 @@
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.threateval.datatype.TrackPriority
+import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus
+
+model EngagementTrackPriorityService {
+	metadata {
+		"description": "Determines track priority of a SystemTrack based on planned, committed, and in-progress engagements.",
+		"stereotypes": ["service"],
+		"satisfies": ["TE001.2", "TE001.4"]
+	}
+	
+	input {
+		TrackEngagementStatus trackEngagementStatus
+	}
+	
+	output {
+		TrackPriority trackPriority
+	}	
+	
+	scenario calculateTrackPriority {
+		metadata {
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" } // TODO: need to find a way to stamp a version
+		}
+		when receiving trackEngagementStatus
+		then willPublish trackPriority
+		 and willBeCompleted within 500 milliseconds
+	}
+	
+}

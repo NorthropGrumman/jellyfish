@@ -1,0 +1,15 @@
+dependencies {
+   api project(':jellyfish.service.api')
+   api "com.ngc.blocs:service.api:$blocsVersion"
+
+   implementation project(':jellyfish.service.scenario.impl.scenarioservice')
+   implementation "com.ngc.blocs:blocs-core:$blocsVersion"
+   implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+   implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+   implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
+   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+   implementation "org.mockito:mockito-core:$mockitoVersion"
+   implementation "junit:junit:$junitVersion"
+
+   runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
+}

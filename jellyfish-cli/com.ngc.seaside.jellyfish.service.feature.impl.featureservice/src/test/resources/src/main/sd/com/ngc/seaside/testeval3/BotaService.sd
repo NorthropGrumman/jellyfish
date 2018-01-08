@@ -1,0 +1,20 @@
+package com.ngc.seaside.testeval3
+
+import com.ngc.seaside.testeval.datatype.FooStatus
+import com.ngc.seaside.testeval.datatype.BarStatus
+
+model BotaService {
+	metadata {
+		"description": "Determines the FooNess of a system.",
+		"stereotypes": ["service"],
+		"satisfies": ["SW003", "SE004"]
+	}
+	
+	input {
+		FooStatus fooStatus
+	}
+	
+	output {
+		BarStatus barStatus
+	}
+}

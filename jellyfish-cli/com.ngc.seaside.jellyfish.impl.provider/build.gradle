@@ -1,0 +1,19 @@
+dependencies {
+    api project(':jellyfish.api')
+
+    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
+    implementation "org.apache.maven:maven-model:$mavenVersion"
+    implementation "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+
+    runtimeOnly project(':jellyfish.cli.command.help')
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+}

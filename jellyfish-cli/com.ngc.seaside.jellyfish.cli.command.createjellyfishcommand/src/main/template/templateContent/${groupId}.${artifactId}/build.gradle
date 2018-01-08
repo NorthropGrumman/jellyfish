@@ -1,0 +1,32 @@
+#set( $D = '$' )
+apply plugin: 'com.ngc.seaside.command'
+
+dependencies {
+
+#if (${withApi} == "true")
+    compile project(':jellyfish.api')
+#else
+    compile "com.ngc.seaside:jellyfish.api:${D}jellyfishCommandApiVersion"
+#end
+
+    compile "com.google.inject:guice:${D}guiceVersion"
+    compile "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"
+    
+    compile "com.ngc.blocs:blocs-core:${D}blocsVersion"
+    compile "com.ngc.blocs:component.impl.common.componentutilities:${D}blocsVersion"
+    compile "com.ngc.blocs:service.api:${D}blocsVersion"
+    
+    compile "org.osgi:osgi.core:${D}osgiVersion"
+    compile "org.osgi:osgi.enterprise:${D}osgiVersion"
+    compile "commons-io:commons-io:${D}commonsIOVersion"
+    
+    compile "commons-lang:commons-lang:${D}commonsLangVersion"
+    
+    compile "com.ngc.seaside:bootstrap.utilities:${D}bootstrapApiVersion"
+    compile "com.ngc.seaside:bootstrap.service.api:${D}bootstrapApiVersion"
+    
+    testCompile "junit:junit:${D}junitVersion"
+    testCompile "org.mockito:mockito-core:${D}mockitoVersion"
+    testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"
+    
+}

@@ -1,0 +1,18 @@
+apply plugin: 'java-library'
+
+dependencies {
+    api "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
+    api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
+    api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+    manifest {
+        // Bnd instructions to export the api package.
+        attributes('Export-Package': 'com.ngc.seaside.jellyfish.api.*')
+    }
+}
+

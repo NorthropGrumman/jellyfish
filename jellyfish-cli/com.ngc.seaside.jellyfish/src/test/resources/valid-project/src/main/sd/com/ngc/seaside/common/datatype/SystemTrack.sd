@@ -1,0 +1,10 @@
+package com.ngc.seaside.common.datatype
+
+//import com.ngc.seaside.systemdescriptor.common.StateVector
+//import com.ngc.seaside.systemdescriptor.common.Covariance
+
+data SystemTrack {
+	int identifier
+	//StateVector state
+	//Covariance cov
+}
