@@ -1,7 +1,7 @@
 dependencies {
-   api "com.ngc.seaside:command.api:$apiVersion"
-   api "com.ngc.seaside:bootstrap.api:$apiVersion"
-   api "com.ngc.seaside:bootstrap.service.api:$apiVersion"
+   api "com.ngc.seaside:command.api:$version"
+   api "com.ngc.seaside:bootstrap.api:$version"
+   api "com.ngc.seaside:bootstrap.service.api:$version"
 
    implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
    implementation "com.google.inject:guice:$guiceVersion"

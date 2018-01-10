@@ -4,12 +4,12 @@ dependencies {
 
    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
    implementation "com.ngc.blocs:blocs-core:$blocsVersion"
-   implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
-   implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-   implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+   implementation "com.ngc.seaside:bootstrap.service.api:$version"
+   implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
+   implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$version"
+   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
    implementation "org.mockito:mockito-core:$mockitoVersion"
    implementation "junit:junit:$junitVersion"
 
-   runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
+   runtimeOnly "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$version"
 }

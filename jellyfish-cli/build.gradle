@@ -1,7 +1,9 @@
-/**
- * jellyfish-cli
- */
 buildscript {
+    ext {
+        versionsFile = file('../versions.gradle')
+    }
+    apply from: versionsFile, to: project
+
     repositories {
         mavenLocal()
 
@@ -10,43 +12,17 @@ buildscript {
         }
     }
 
-   ext {
-       seasideGradlePluginsVersion = '2.1.5-SNAPSHOT'
-   }
-
-   dependencies {
-      classpath "com.ngc.seaside:gradle.plugins:$seasideGradlePluginsVersion"
-      classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
-      classpath 'com.ngc.blocs:gradle.plugin:0.3'
-   }
+    dependencies {
+        classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+        classpath "com.ngc.blocs:gradle.plugin:$blocsPluginVersion"
+    }
 }
+
 subprojects {
     apply plugin: 'com.ngc.seaside.parent'
-    apply plugin: 'java-library'
-    
-    group = 'com.ngc.seaside'
-    version = '1.10.0-SNAPSHOT'
-
-    ext {
-        jellyfishAPIVersion = '1.6.1'
-        jellyfishEXTVersion = '1.11.3'
-
-        bootstrapApiVersion = '1.8.1'
-        bootstrapVersion = '1.8.0'
-        bootstrapCommandsVersion = '1.2'
-
-        blocsVersion = '2.1'
-        blocsDomainVersion = '2.3.1'
-        guiceVersion = '4.1.0'
-        osgiVersion =  '6.0.0'
-        guavaVersion = '21.0'
-        protobufVersion = '3.2.0'
-        commonsIOVersion = '2.5'
-        commonsLangVersion = '2.6'
-        commonsLang3Version = '3.5'
-        mavenVersion = '3.5.2'
-        junitVersion = '4.12'
-        mockitoVersion = '2.7.14'
-        glassfishJsonVersion = '1.1'
+    versionSettings {
+        versionFile = versionsFile
     }
+    apply plugin: 'java-library'
 }

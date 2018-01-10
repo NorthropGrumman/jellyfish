@@ -7,7 +7,7 @@ configurations {
 dependencies {
     api project(':jellyfish.api')
 
-    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
 
@@ -17,7 +17,7 @@ dependencies {
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 
     implementation project(':jellyfish.impl.provider')
-    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$jellyfishEXTVersion"
+    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
 
     implementation project(':jellyfish.cli.command.validate')
 
@@ -74,12 +74,12 @@ dependencies {
     implementation project(':jellyfish.service.requirements.impl.requirementsservice')
     implementation project(':jellyfish.service.feature.impl.featureservice')
 
-    implementation "com.ngc.seaside:guice.modules:$bootstrapVersion"
-    implementation "com.ngc.seaside:bootstrap.service.impl.parameterservice:$bootstrapVersion"
-    implementation "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$bootstrapVersion"
-    implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$bootstrapVersion"
-    implementation "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$bootstrapVersion"
-    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
+    implementation "com.ngc.seaside:guice.modules:$version"
+    implementation "com.ngc.seaside:bootstrap.service.impl.parameterservice:$version"
+    implementation "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$version"
+    implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$version"
+    implementation "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$version"
+    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

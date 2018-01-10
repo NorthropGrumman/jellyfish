@@ -1,9 +1,9 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api "com.ngc.seaside:bootstrap.api:$bootstrapApiVersion"
-    api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    api "com.ngc.seaside:bootstrap.api:$version"
+    api "com.ngc.seaside:systemdescriptor.model.api:$version"
+    api "com.ngc.seaside:systemdescriptor.service.api:$version"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

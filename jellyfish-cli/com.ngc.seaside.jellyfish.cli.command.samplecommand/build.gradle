@@ -3,8 +3,8 @@ apply plugin: 'com.ngc.seaside.command'
 dependencies {
     api project(':jellyfish.api')
 
-    implementation "com.ngc.seaside:command.api:$bootstrapApiVersion"
-    implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
+    implementation "com.ngc.seaside:command.api:$version"
+    implementation "com.ngc.seaside:bootstrap.utilities:$version"
     implementation "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"

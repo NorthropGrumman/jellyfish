@@ -14,8 +14,8 @@ dependencies {
     implementation project(':bootstrap.service.impl.parameterservice')
 
     //include the blocs guice wrappers
-    implementation "com.ngc.seaside:command.api:$apiVersion"
-    implementation "com.ngc.seaside:bootstrap.api:$apiVersion"
+    implementation "com.ngc.seaside:command.api:$version"
+    implementation "com.ngc.seaside:bootstrap.api:$version"
     implementation project(':guice.modules')
 
     //core command projects
