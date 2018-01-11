@@ -6,8 +6,8 @@ dependencies {
     
     implementation "com.ngc.blocs:blocs-core:$blocsVersion"
     implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "com.ngc.seaside:bootstrap.utilities:$bootstrapApiVersion"
-    implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+    implementation "com.ngc.seaside:bootstrap.utilities:$version"
+    implementation "com.ngc.seaside:bootstrap.service.api:$version"
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"

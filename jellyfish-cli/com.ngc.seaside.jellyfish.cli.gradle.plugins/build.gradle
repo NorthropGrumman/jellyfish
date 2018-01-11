@@ -12,9 +12,9 @@ dependencies {
     implementation gradleApi()
     implementation localGroovy()
 
-    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$bootstrapVersion"
-    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$jellyfishEXTVersion"
-    implementation "com.ngc.seaside:gradle.plugins:$seasideGradlePluginsVersion"
+    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+    implementation "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
 

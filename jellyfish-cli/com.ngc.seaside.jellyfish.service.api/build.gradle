@@ -1,7 +1,7 @@
 dependencies {
     api project(':jellyfish.api')
-    api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishAPIVersion"
-    api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishAPIVersion"
+    api "com.ngc.seaside:systemdescriptor.model.api:$version"
+    api "com.ngc.seaside:systemdescriptor.service.api:$version"
 }
 
 jar {

@@ -1,8 +1,8 @@
 dependencies {
-   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
+   api "com.ngc.seaside:systemdescriptor.model.api:$version"
 
-   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$jellyfishApiVersion"
-   implementation "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
+   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   implementation "com.ngc.seaside:systemdescriptor:$version"
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"

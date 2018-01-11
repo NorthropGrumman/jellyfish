@@ -17,7 +17,6 @@ task clean() {
 task copyAndFilterFeatureFile(type: Copy) {
    from 'src/main/resources', { include('feature.xml') }
    expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
-          'jellyfishApiVersion': Versions.makeOsgiCompliantVersion("${jellyfishApiVersion}"),
           'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
           'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
           'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsCoreVersion}"),
