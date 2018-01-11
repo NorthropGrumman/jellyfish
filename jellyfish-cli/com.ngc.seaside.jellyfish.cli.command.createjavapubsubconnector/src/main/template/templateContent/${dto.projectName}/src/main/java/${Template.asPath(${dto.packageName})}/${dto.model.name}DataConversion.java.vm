@@ -59,6 +59,8 @@ public class ${dto.model.name}DataConversion {
       to.${dto.messageSetter($field)}(${dto.eventToMessageConvert($field, "from.${dto.eventGetter($field)}()")});
 #end
 #end
+
+      return to.build();
 #else
 #set ($enum = $value)
       final ${messagePackage}.${enum.name} to;
@@ -72,9 +74,9 @@ public class ${dto.model.name}DataConversion {
       default:
          throw new IllegalArgumentException("Unknown enum: " + from);
       }
-#end
 
-      return to.build();
+      return to;
+#end
    }
 
 #end
