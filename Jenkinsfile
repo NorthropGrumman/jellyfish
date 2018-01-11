@@ -7,28 +7,6 @@ pipeline {
                 }
     
                 stages {
-                    // This stage checks out the project from Git.  It will checkout the
-                    // branch given by the build parameters.  It will also merge the master
-                    // branch into the target branch.  
-                    stage("Checkout project") {
-                        steps {
-                            checkout changelog: true,
-                                     poll: false,
-                                     scm: [$class: 'GitSCM',
-                                           branches: [[name: '${BRANCH}']],
-                                           doGenerateSubmoduleConfigurations: false,
-                                           extensions: [[$class: 'CleanBeforeCheckout'],
-                                                        [$class: 'PreBuildMerge',
-                                                         options: [fastForwardMode: 'FF',
-                                                                   mergeRemote: 'origin',
-                                                                   mergeTarget: 'master']],
-                                                        [$class: 'RelativeTargetDirectory',
-                                                         relativeTargetDir: 'jellyfish']],
-                                           submoduleCfg: [],
-                                           userRemoteConfigs: [[url: 'https://github.ms.northgrum.com/ceacide/jellyfish']]]
-                        }
-                    }
-                    
                     // The following stages actually build each project.
                     
                     stage("Build seaside-bootstrap-api") {
