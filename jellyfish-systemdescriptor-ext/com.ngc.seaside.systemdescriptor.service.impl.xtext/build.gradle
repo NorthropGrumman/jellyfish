@@ -1,10 +1,10 @@
 dependencies {
-   api "com.ngc.seaside:systemdescriptor.model.api:$jellyfishApiVersion"
-   api "com.ngc.seaside:systemdescriptor.service.api:$jellyfishApiVersion"
+   api "com.ngc.seaside:systemdescriptor.model.api:$version"
+   api "com.ngc.seaside:systemdescriptor.service.api:$version"
 
    implementation project(':systemdescriptor.model.impl.xtext')
-   implementation "com.ngc.seaside:systemdescriptor:$jellyfishDslVersion"
-   implementation "com.ngc.seaside:bootstrap.service.api:$bootstrapApiVersion"
+   implementation "com.ngc.seaside:systemdescriptor:$version"
+   implementation "com.ngc.seaside:bootstrap.service.api:$version"
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "com.ngc.blocs:service.api:$blocsCoreVersion"

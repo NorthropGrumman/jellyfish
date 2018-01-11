@@ -1,5 +1,5 @@
 dependencies {
-    api "com.ngc.seaside:bootstrap.service.api:$apiVersion"
+    api "com.ngc.seaside:bootstrap.service.api:$version"
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "org.apache.velocity:velocity-engine-core:$velocityVersion"

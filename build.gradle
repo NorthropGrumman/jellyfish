@@ -1,0 +1,39 @@
+/**
+ * This build.gradle simply runs gradle on each of the jellyfish projects
+ * with the same parameters and settings provided to this script.
+ */
+
+def jellyfishProjects = [
+    'seaside-bootstrap-api',
+    'seaside-bootstrap',
+    'jellyfish-systemdescriptor-dsl',
+    'jellyfish-systemdescriptor-api',
+    'jellyfish-systemdescriptor-ext',
+    'jellyfish-cli',
+    'jellyfish-examples'
+]
+
+gradle.startParameter.taskNames.each {
+    task(it)
+}
+
+def previous = null
+jellyfishProjects.each { projectName ->
+    def subtaskStartParameter = gradle.startParameter.newInstance()
+    subtaskStartParameter.buildFile = null
+    subtaskStartParameter.settingsFile = null
+    subtaskStartParameter.projectCacheDir = null
+    subtaskStartParameter.projectDir = file(projectName)
+    subtaskStartParameter.currentDir = subtaskStartParameter.projectDir
+
+    def subtask = task(projectName, type: GradleBuild) {
+        startParameter = subtaskStartParameter
+    }
+    gradle.startParameter.taskNames.each { taskName ->
+        tasks.getByName(taskName).dependsOn subtask
+    }
+    if (previous != null) {
+        subtask.mustRunAfter previous
+    }
+    previous = subtask
+}
