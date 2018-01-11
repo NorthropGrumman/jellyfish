@@ -1,8 +1,8 @@
 pipeline {
-                agent {
+               agent {
                     label {
                         label ""
-                        customWorkspace "${JENKINS_HOME}/workspace/${JOB_NAME}"
+                        customWorkspace "${JENKINS_HOME}/workspace/jellyfish/${JOB_NAME}"
                     }
                 }
     
@@ -11,7 +11,7 @@ pipeline {
                     
                     stage("Build seaside-bootstrap-api") {
                         steps {
-                            dir('jellyfish/seaside-bootstrap-api') {
+                            dir('seaside-bootstrap-api') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -19,7 +19,7 @@ pipeline {
                     }
                     stage("Build seaside-bootstrap") {
                         steps {
-                            dir('jellyfish/seaside-bootstrap') {
+                            dir('seaside-bootstrap') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -27,7 +27,7 @@ pipeline {
                     }
                     stage("Build jellyfish-systemdescriptor-dsl") {
                         steps {
-                            dir('jellyfish/jellyfish-systemdescriptor-dsl') {
+                            dir('jellyfish-systemdescriptor-dsl') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -35,7 +35,7 @@ pipeline {
                     }
                     stage("Build jellyfish-systemdescriptor-api") {
                         steps {
-                            dir('jellyfish/jellyfish-systemdescriptor-api') {
+                            dir('jellyfish-systemdescriptor-api') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -43,7 +43,7 @@ pipeline {
                     }
                     stage("Build jellyfish-systemdescriptor-ext") {
                         steps {
-                            dir('jellyfish/jellyfish-systemdescriptor-ext') {
+                            dir('jellyfish-systemdescriptor-ext') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -51,7 +51,7 @@ pipeline {
                     }
                     stage("Build jellyfish-cli") {
                         steps {
-                            dir('jellyfish/jellyfish-cli') {
+                            dir('jellyfish-cli') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
@@ -59,7 +59,7 @@ pipeline {
                     }
                     stage("Build jellyfish-examples") {
                         steps {
-                            dir('jellyfish/jellyfish-examples') {
+                            dir('jellyfish-examples') {
                                 sh 'chmod a+x ./gradlew'
                                 sh "./gradlew clean build install --stacktrace --continue"
                             }
