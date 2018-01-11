@@ -1,5 +1,8 @@
 package com.ngc.example.inhertance.datatype
 
+import com.ngc.example.inhertance.datatype.E
+
 data D {
-	int fieldD
+	int fieldD1
+	E fieldD2
 }
