@@ -1,0 +1,5 @@
+package com.ngc.example.inhertance.datatype
+
+enum E {
+	FIELD1
+}
