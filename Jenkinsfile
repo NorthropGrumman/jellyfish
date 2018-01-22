@@ -7,9 +7,9 @@ pipeline {
     }
 
     parameters {
-        stringParam(name: 'TARGET_BRANCH',
-                    defaultValue: 'master',
-                    description: 'The branch to release.')
+        string(name: 'TARGET_BRANCH',
+               defaultValue: 'master',
+               description: 'The branch to checkout.')
         booleanParam(name: 'PERFORM_RELEASE',
                      defaultValue: false,
                      description: 'If true, a release build will be performed.')
