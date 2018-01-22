@@ -11,17 +11,17 @@ pipeline {
                                      defaultValue: false,
                                      description: 'If true, a release build will be performed.')
                 }
-    
+
                 stages {
                     // The following stages actually build each project.
-                    
+
                     stage("Build seaside-bootstrap-api") {
                         steps {
                             dir('seaside-bootstrap-api') {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build seaside-bootstrap") {
                         steps {
@@ -29,7 +29,7 @@ pipeline {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build jellyfish-systemdescriptor-dsl") {
                         steps {
@@ -37,7 +37,7 @@ pipeline {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build jellyfish-systemdescriptor-api") {
                         steps {
@@ -45,7 +45,7 @@ pipeline {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build jellyfish-systemdescriptor-ext") {
                         steps {
@@ -53,7 +53,7 @@ pipeline {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build jellyfish-cli") {
                         steps {
@@ -61,7 +61,7 @@ pipeline {
                                 sh "./gradlew clean build install"
                                 junit '**/build/test-results/test/*.xml'
                             }
-                        } 
+                        }
                     }
                     stage("Build jellyfish-examples") {
                         steps {
@@ -69,7 +69,7 @@ pipeline {
                                 sh 'chmod a+x ./gradlew'
                                 sh "./gradlew clean build install --stacktrace --continue"
                             }
-                        } 
+                        }
                     }
 
                      stage('Upload or Release') {
