@@ -2,11 +2,14 @@ pipeline {
     agent {
         label {
             label ""
-            customWorkspace "${JENKINS_HOME}/workspace/jellyfish/${JOB_NAME}"
+            customWorkspace "${JENKINS_HOME}/workspace/jellyfish-test/${JOB_NAME}"
         }
     }
 
     parameters {
+        stringParam(name: 'TARGET_BRANCH',
+                    defaultValue: 'master',
+                    description: 'The branch to release.')
         booleanParam(name: 'PERFORM_RELEASE',
                      defaultValue: false,
                      description: 'If true, a release build will be performed.')
