@@ -19,9 +19,6 @@ buildscript {
 }
 
 subprojects {
-    // Needed to enable downloading dependencies for offline use.
-    apply plugin: 'com.ngc.seaside.ci'
-
     // Do not make the feature and update site projects Java projects.
     if(name != 'systemdescriptor.ext.feature'
         && name != 'systemdescriptor.ext.updatesite') {
@@ -30,9 +27,9 @@ subprojects {
             versionFile = versionsFile
         }
         apply plugin: 'java-library'
-    }
 
-    seasideCi {
-        m2OutputDirectory = m2directory
+        seasideCi {
+            m2OutputDirectory = m2directory
+        }
     }
 }
