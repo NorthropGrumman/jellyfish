@@ -31,6 +31,6 @@ allprojects {
 
         // This is a not a version but it is a property that is shared by all projects.
         // TODO TH: rename this file to properties.gradle or common.gradle.
-        m2directory = project.file("${project.rootProject.projectDir}/../build/m2")
+        m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
     }
 }
