@@ -178,7 +178,7 @@ file(regressionsFolderName).eachDir { folder ->
             }
         }
 
-        tasks = ['m2repo', '--outputDirectory', m2directory.getAbsolutePath()]
+        tasks = ['populateM2repo', '--outputDirectory', m2directory.getAbsolutePath()]
         startParameter.systemPropertiesArgs = [:]
     }
 }
