@@ -94,8 +94,9 @@ pipeline {
                     // the same.
                     sh './gradlew audit1'
                 }
-                zip dir: 'build/dependencies-m2',
-                    zipFile: 'build/dependencies-m2.zip'
+                dir('build') {
+                    sh 'zip -r dependencies-m2.zip dependencies-m2'
+                }
             }
         }
 
