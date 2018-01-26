@@ -12,7 +12,7 @@ pipeline {
         stage('Build seaside-bootstrap-api') {
             steps {
                 dir('seaside-bootstrap-api') {
-                    sh './gradlew clean build install'
+                    sh './gradlew clean build install --refresh-dependencies'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
