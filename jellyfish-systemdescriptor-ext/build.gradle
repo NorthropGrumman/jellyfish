@@ -30,6 +30,7 @@ subprojects {
 
         seasideCi {
             m2OutputDirectory = m2directory
+            dependencyInfoCsvFile = dependenciesCsvFile
         }
     }
 }
