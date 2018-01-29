@@ -18,6 +18,9 @@ pipeline {
         booleanParam(name: 'upload',
                      description: 'If true, artifacts will be uploaded to the build\'s remote repository.',
                      defaultValue: false)
+        booleanParam(name: 'buildOfflineSupport',
+                     description: 'If true, a maven2 repository will be created that can be used for offline deployments.',
+                     defaultValue: false)
     }
 
     stages {
@@ -87,6 +90,9 @@ pipeline {
         }
 
         stage('Build offline support') {
+            when {
+                expression { params.buildOfflineSupport }
+            }
             steps {
                 dir('seaside-bootstrap-api') {
                     sh './gradlew populateM2repo'
