@@ -181,8 +181,8 @@ file(regressionsFolderName).eachDir { folder ->
         tasks = ['populateM2repo',
                  '--outputDirectory',
                  m2directory.getAbsolutePath(),
-                 '--dependencyInfoCsvFile',
-                 dependenciesCsvFile.getAbsolutePath()]
+                 '--dependencyInfoReportFile',
+                 dependenciesReportFile.getAbsolutePath()]
         startParameter.systemPropertiesArgs = [:]
     }
 }

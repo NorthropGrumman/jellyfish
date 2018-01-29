@@ -95,6 +95,7 @@ pipeline {
                     sh './gradlew audit1'
                 }
                 dir('build') {
+                    // Collect the m2 repository files inside a single ZIP.
                     sh 'zip -r dependencies-m2.zip dependencies-m2'
                 }
             }
@@ -102,8 +103,12 @@ pipeline {
 
         stage("Archive artifacts") {
             steps {
+                // Create a ZIP that has everything.
+                sh 'zip -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv'
+
+                // Archive the zip that has everything.
                 archiveArtifacts allowEmptyArchive: true,
-                                 artifacts: 'jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip, jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip, jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip, build/dependencies-m2.zip',
+                                 artifacts: 'build/jellyfish-all.zip',
                                  caseSensitive: false,
                                  defaultExcludes: false,
                                  onlyIfSuccessful: true

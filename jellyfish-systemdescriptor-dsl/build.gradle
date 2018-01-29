@@ -53,7 +53,7 @@ subprojects {
     }
     seasideCi {
         m2OutputDirectory = m2directory
-        dependencyInfoCsvFile = dependenciesCsvFile
+        dependencyInfoReportFile = dependenciesReportFile
     }
 
     if(name == 'systemdescriptor.ui') {
