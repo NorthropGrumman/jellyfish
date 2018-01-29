@@ -6,6 +6,10 @@ pipeline {
         }
     }
 
+    options {
+        lock resource: 'mavenLocal'
+    }
+
     stages {
         // The following stages actually build each project.
 
@@ -117,9 +121,7 @@ pipeline {
 
         stage("Clean-up") {
             steps {
-                lock('mavenLocal') {
-                    sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' -delete'
-                }
+                sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
     }
