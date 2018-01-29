@@ -72,7 +72,7 @@ pipeline {
             }
         }
 
-        stage('Build Offline Support') {
+        stage('Build offline support') {
             steps {
                 dir('seaside-bootstrap-api') {
                     sh './gradlew populateM2repo'
@@ -104,7 +104,7 @@ pipeline {
         stage("Archive artifacts") {
             steps {
                 // Create a ZIP that has everything.
-                sh 'zip -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv'
+                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv'
 
                 // Archive the zip that has everything.
                 archiveArtifacts allowEmptyArchive: true,

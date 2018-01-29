@@ -178,11 +178,14 @@ file(regressionsFolderName).eachDir { folder ->
             }
         }
 
+        String cleanSnapshots = project.hasProperty('removeSnapshots') ? project.property('removeSnapshots') : 'false'
         tasks = ['populateM2repo',
                  '--outputDirectory',
                  m2directory.getAbsolutePath(),
                  '--dependencyInfoReportFile',
-                 dependenciesReportFile.getAbsolutePath()]
+                 dependenciesReportFile.getAbsolutePath(),
+                 '--removeSnapshots',
+                 cleanSnapshots]
         startParameter.systemPropertiesArgs = [:]
     }
 }
