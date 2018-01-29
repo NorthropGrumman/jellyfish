@@ -118,7 +118,7 @@ pipeline {
         stage("Clean-up") {
             steps {
                 lock('mavenLocal') {
-                    'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' -delete'
+                    sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' -delete'
                 }
             }
         }
