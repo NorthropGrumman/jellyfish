@@ -5,11 +5,11 @@ buildscript {
     apply from: versionsFile, to: project
 
     repositories {
-        mavenLocal()
-
         maven {
             url nexusConsolidated
         }
+
+        mavenLocal()
     }
 
     dependencies {
