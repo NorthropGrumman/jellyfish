@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         string(name: 'TARGET_BRANCH',
-               defaultValue: 'master',
+               defaultValue: 'SEA18-11',
                description: 'The branch to checkout.')
         booleanParam(name: 'PERFORM_RELEASE',
                      defaultValue: false,
@@ -17,6 +17,15 @@ pipeline {
 
     stages {
         // The following stages actually build each project.
+
+        stage("PrepareForRelaseBuild") {
+            steps {
+               if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
+                  sh "./gradlew removeVersionSuffix"
+                  sh "./gradlew createReleaseTag"
+               }
+            }
+        }
 
         stage("Build seaside-bootstrap-api") {
             steps {
@@ -82,7 +91,9 @@ pipeline {
                 script {
                     // Release
                     if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
-                        sh './gradlew clean build release'
+                        sh "./gradlew clean build"
+                        sh "./gradlew bumpTheVersion"
+                        sh "./gradlew releasePush"
                     }
                     // Upload
                     else {
@@ -100,6 +111,7 @@ pipeline {
                     )
                 }
             }
+            steps
         }
     }
 }
