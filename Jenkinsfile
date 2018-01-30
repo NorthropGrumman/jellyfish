@@ -85,9 +85,9 @@ pipeline {
                 }
             }
         }
-        stage('Upload or Release') {
+        stage("Upload or Release") {
             when {
-                expression { return params.TARGET_BRANCH == 'master' }
+                expression { return params.TARGET_BRANCH == 'SEA18-11' }
             }
             steps {
                 script {
@@ -99,7 +99,7 @@ pipeline {
                     }
                     // Upload
                     else {
-                        sh './gradlew upload'
+                        sh "./gradlew upload"
                     }
                 }
             }
@@ -113,7 +113,6 @@ pipeline {
                     )
                 }
             }
-            steps
         }
     }
 }
