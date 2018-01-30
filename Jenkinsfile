@@ -20,9 +20,11 @@ pipeline {
 
         stage("PrepareForRelaseBuild") {
             steps {
-               if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
-                  sh "./gradlew removeVersionSuffix"
-                  sh "./gradlew createReleaseTag"
+               script {
+                  if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
+                     sh "./gradlew removeVersionSuffix"
+                     sh "./gradlew createReleaseTag"
+                  }
                }
             }
         }
