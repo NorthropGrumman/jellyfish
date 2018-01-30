@@ -3,7 +3,6 @@ dependencies {
    api "com.ngc.blocs:service.api:$blocsVersion"
 
    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
-   implementation "com.ngc.blocs:blocs-core:$blocsVersion"
    implementation "com.ngc.seaside:bootstrap.service.api:$version"
    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
    implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$version"
