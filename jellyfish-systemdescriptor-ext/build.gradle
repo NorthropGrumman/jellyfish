@@ -18,6 +18,8 @@ buildscript {
     }
 }
 
+apply plugin: 'com.ngc.seaside.release.root'
+
 subprojects {
     // Do not make the feature and update site projects Java projects.
     if(name != 'systemdescriptor.ext.feature'

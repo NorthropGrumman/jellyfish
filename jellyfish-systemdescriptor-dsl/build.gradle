@@ -46,6 +46,8 @@ ext {
     eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
 }
 
+apply plugin: 'com.ngc.seaside.release.root'
+
 subprojects {
     apply plugin: 'com.ngc.seaside.ci'
     versionSettings {
