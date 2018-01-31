@@ -43,9 +43,9 @@ subprojects {
     version = '1.0-SNAPSHOT'
 
     ext {
-        starfishCoreVersion = '1.6.0'
-        transportServiceVersion = '1.3'
-        multicastTransportVersion = '1.1.1'
+        starfishCoreVersion = '2.0.0'
+        transportServiceVersion = '2.0.0'
+        multicastTransportVersion = '2.0.0'
         seasideBootstrapVersion = '1.8.0'
 
         blocsCoreVersion = '2.1'
