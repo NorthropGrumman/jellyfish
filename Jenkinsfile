@@ -90,7 +90,7 @@ pipeline {
         }
         stage("Release") {
             when {
-                expression { branch == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+                expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
             }
             steps {
                dir('bootstrap-api') {
