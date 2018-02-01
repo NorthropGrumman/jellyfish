@@ -90,6 +90,23 @@ pipeline {
                 expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
             }
             steps {
+               //Upload all projects
+               dir('seaside-bootstrap') {
+                  sh "./gradlew upload"
+               }
+               dir('jellyfish-systemdescriptor-dsl') {
+                  sh "./gradlew upload"
+               }
+               dir('jellyfish-systemdescriptor-api') {
+                  sh "./gradlew upload"
+               }
+               dir('jellyfish-systemdescriptor-ext') {
+                  sh "./gradlew upload"
+               }
+               dir('jellyfish-cli') {
+                  sh "./gradlew upload"
+               }
+               //Finish up release
                dir('seaside-bootstrap-api') {
                   sh "./gradlew upload"
                   sh "./gradlew bumpTheVersion"
