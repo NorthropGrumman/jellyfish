@@ -96,8 +96,24 @@ pipeline {
                dir('seaside-bootstrap-api') {
                   sh "./gradlew upload"
                   sh "./gradlew bumpTheVersion"
-                  sh "./gradlew releasePush"
-
+                  script {
+                       try {
+                           // This allows us to run Git commands with the credentials from Jenkins.  See
+                           // https://groups.google.com/forum/#!topic/jenkinsci-users/BPdw6EOP0fQ
+                           // and https://stackoverflow.com/questions/33570075/tag-a-repo-from-a-jenkins-workflow-script
+                           // for more information.
+                           withCredentials([usernamePassword(credentialsId: 'ngc-github-pipelines',
+                                                             passwordVariable: 'gitPassword',
+                                                             usernameVariable: 'gitUsername')]) {
+                               // This allows use to use a custom credential helper that uses the values from Jenkins.
+                               sh "git config credential.helper '!echo password=\$gitPassword; echo username=\$gitUsername; echo'"
+                               sh 'GIT_ASKPASS=true ./gradlew releasePush'
+                           }
+                       }
+                       finally {
+                           sh 'git config --unset credential.helper'
+                       }
+                   }
                }
             }
         }
