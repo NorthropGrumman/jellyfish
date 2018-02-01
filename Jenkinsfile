@@ -20,11 +20,13 @@ pipeline {
 
         stage("PrepareForRelaseBuild") {
             steps {
-               script {
-                  if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
-                     sh "./gradlew tasks"
-                     sh "./gradlew removeVersionSuffix"
-                     sh "./gradlew createReleaseTag"
+               dir('seaside-bootstrap') {
+                  script {
+                     if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
+                        sh "./gradlew tasks"
+                        sh "./gradlew removeVersionSuffix"
+                        sh "./gradlew createReleaseTag"
+                     }
                   }
                }
             }
