@@ -18,6 +18,8 @@ buildscript {
     }
 }
 
+apply plugin: 'com.ngc.seaside.release.root'
+
 subprojects {
     apply plugin: 'com.ngc.seaside.parent'
     versionSettings {

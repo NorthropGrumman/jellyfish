@@ -23,6 +23,7 @@ buildscript {
     }
 }
 
+apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.parent'
 versionSettings {
     versionFile = versionsFile
