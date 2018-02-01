@@ -93,7 +93,7 @@ pipeline {
                 expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
             }
             steps {
-               dir('bootstrap-api') {
+               dir('seaside-bootstrap-api') {
                   sh "./gradlew upload"
                   sh "./gradlew bumpTheVersion"
                   sh "./gradlew releasePush"
