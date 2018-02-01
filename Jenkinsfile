@@ -80,14 +80,14 @@ pipeline {
                 }
             }
         }
-        stage("Build jellyfish-examples") {
-            steps {
-                dir('jellyfish-examples') {
-                    sh 'chmod a+x ./gradlew'
-                    sh "./gradlew clean build install --stacktrace --continue"
-                }
-            }
-        }
+        //stage("Build jellyfish-examples") {
+        //    steps {
+        //        dir('jellyfish-examples') {
+        //            sh 'chmod a+x ./gradlew'
+        //            sh "./gradlew clean build install --stacktrace --continue"
+        //        }
+        //    }
+        //}
         stage("Release") {
             when {
                 expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
