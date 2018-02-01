@@ -106,7 +106,7 @@ pipeline {
 
         stage('Build offline support') {
             when {
-                expression { params.buildOfflineSupport }
+                expression { params.offlineSupport }
             }
             steps {
                 dir('seaside-bootstrap-api') {
