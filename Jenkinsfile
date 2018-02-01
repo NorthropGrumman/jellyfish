@@ -22,6 +22,7 @@ pipeline {
             steps {
                script {
                   if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
+                     sh "./gradlew tasks"
                      sh "./gradlew removeVersionSuffix"
                      sh "./gradlew createReleaseTag"
                   }
