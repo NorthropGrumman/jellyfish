@@ -87,7 +87,7 @@ pipeline {
         }
         stage("Release") {
             when {
-                expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+                expression { env.BRANCH_NAME == 'master' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
             }
             steps {
                //Upload all projects
