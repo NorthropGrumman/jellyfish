@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.tasks.bundling.Jar
+import com.ngc.seaside.gradle.plugins.release.SeasideReleaseRootProjectPlugin
 
 /**
  * A plugin that can be applied to a System Descriptor project.  When a build is executed, the System Descriptor project
@@ -64,7 +65,8 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             task('uploadArchives', dependsOn: publish)
 
             // Apply the Seaside release plugin so we can release the project.
-            plugins.apply 'com.ngc.seaside.release'
+            plugins.apply 'com.ngc.seaside.release.root'
+            configureReleaseTask(p)
 
             sourceSets {
                 main {
@@ -148,5 +150,24 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
 
             }
         }
+    }
+
+    private void configureReleaseTask(Project project) {
+        // Must run removeSuffix first.
+        def removeSuffix = project.getTasks()
+              .getByName(SeasideReleaseRootProjectPlugin.RELEASE_REMOVE_VERSION_SUFFIX_TASK_NAME)
+        def createTag = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME)
+        def bumpVersion = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME)
+        def push = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_PUSH_TASK_NAME)
+        def upload = project.getTasks().getByName('uploadArchives')
+        project.task('release',
+                     group: SeasideReleaseRootProjectPlugin.RELEASE_ROOT_PROJECT_TASK_GROUP_NAME,
+                     description: 'Releases this project.',
+                     dependsOn: [removeSuffix, createTag, upload, bumpVersion, push])
+
+        createTag.mustRunAfter(removeSuffix)
+        upload.mustRunAfter(createTag)
+        bumpVersion.mustRunAfter(upload)
+        push.mustRunAfter(bumpVersion)
     }
 }
