@@ -7,9 +7,6 @@ pipeline {
     }
 
     parameters {
-        string(name: 'TARGET_BRANCH',
-               defaultValue: 'SEA18-11',
-               description: 'The branch to checkout.')
         booleanParam(name: 'PERFORM_RELEASE',
                      defaultValue: false,
                      description: 'If true, a release build will be performed.')
@@ -18,7 +15,7 @@ pipeline {
     stages {
         // The following stages actually build each project.
 
-        stage("PrepareForRelaseBuild") {
+        stage("Prepare For Relase") {
             steps {
                dir('seaside-bootstrap-api') {
                   script {
@@ -80,14 +77,14 @@ pipeline {
                 }
             }
         }
-        //stage("Build jellyfish-examples") {
-        //    steps {
-        //        dir('jellyfish-examples') {
-        //            sh 'chmod a+x ./gradlew'
-        //            sh "./gradlew clean build install --stacktrace --continue"
-        //        }
-        //    }
-        //}
+        stage("Build jellyfish-examples") {
+            steps {
+                dir('jellyfish-examples') {
+                    sh 'chmod a+x ./gradlew'
+                    sh "./gradlew clean build install --stacktrace --continue"
+                }
+            }
+        }
         stage("Release") {
             when {
                 expression { env.BRANCH_NAME == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
