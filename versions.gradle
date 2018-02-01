@@ -4,7 +4,7 @@ allprojects {
 
     ext {
         blocsPluginVersion = '0.5'
-        seasidePluginsVersion = '2.2.3-SNAPSHOT'
+        seasidePluginsVersion = '2.3.0'
         sonarqubePluginVersion = '2.5'
         xtextPluginVersion = '1.0.2'
 
@@ -12,7 +12,7 @@ allprojects {
         blocsVersion = '2.1'
         blocsCoreVersion = '2.1'
         blocsDomainVersion = '2.3.1'
-        bootstrapCommandsVersion = '1.2'
+        bootstrapCommandsVersion = '1.2'  
         commonsIOVersion = '2.5'
         commonsLangVersion = '2.6'
         commonsLang3Version = '3.5'
@@ -28,5 +28,11 @@ allprojects {
         protobufVersion = '3.2.0'
         velocityVersion = '2.0'
         xtextVersion = '2.10.0'
+
+        // This is a not a version but it is a property that is shared by all projects.
+        // TODO TH: rename this file to properties.gradle or common.gradle.
+        m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
+        dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
+        m2DeploymentScritFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
     }
 }

@@ -162,6 +162,35 @@ file(regressionsFolderName).eachDir { folder ->
         updateExpectedRegressions.dependsOn it
     }
 
+    task("audit${regressionName}",
+         dependsOn: generateTask,
+         group: "Auditing and Security",
+         description: "Collects all dependencies used by project generated for regression ${regressionName}",
+         type: GradleBuild) {
+        // This task will run the task 'm2repo' on the generated project.  in order for this task to work,
+        // the generated project must use v2.2.0 of seaside-gradle-plugins or above and the project must apply
+        // the seaside-ci plugin.
+        doFirst {
+            generatedFolder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
+                if (file("${buildFolder}/build.gradle")) {
+                    dir = buildFolder
+                }
+                return groovy.io.FileVisitResult.SKIP_SIBLINGS
+            }
+        }
+
+        String cleanSnapshots = project.hasProperty('removeSnapshots') ? project.property('removeSnapshots') : 'false'
+        tasks = ['populateM2repo',
+                 '--outputDirectory',
+                 m2directory.getAbsolutePath(),
+                 '--dependencyInfoReportFile',
+                 dependenciesReportFile.getAbsolutePath(),
+                 '--deploymentScriptFile',
+                 m2DeploymentScritFile.getAbsolutePath(),
+                 '--removeSnapshots',
+                 cleanSnapshots]
+        startParameter.systemPropertiesArgs = [:]
+    }
 }
 
 // Creates a task that will generate the regression output, with the given task name, regression folder, and regression name

@@ -53,6 +53,11 @@ subprojects {
     versionSettings {
         versionFile = versionsFile
     }
+    seasideCi {
+        m2OutputDirectory = m2directory
+        dependencyInfoReportFile = dependenciesReportFile
+        deploymentScriptFile = m2DeploymentScritFile
+    }
 
     if(name == 'systemdescriptor.ui') {
         // We have to apply the maven plugin here instead of in the build.gradle for
@@ -90,6 +95,9 @@ subprojects {
             mavenLocal()
 
             maven {
+                // The name of the repo must match the repository name configured by the SeasideCi plugin.
+                // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
+                name 'NexusConsolidated'
                 url nexusConsolidated
             }
         }
@@ -173,14 +181,10 @@ task downloadEclipse() {
 }
 downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
 
-//if (OperatingSystem.current().isLinux()) {
-//    task unzipEclpse(type: , dep
-//} else {
-    task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
-        from zipTree(file("$eclipseDownloadDestFile"))
-        into "$eclipseCache"
-    }
-//}
+task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
+   from zipTree(file("$eclipseDownloadDestFile"))
+   into "$eclipseCache"
+}
 unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
 
 task build(dependsOn: unzipEclipse) {

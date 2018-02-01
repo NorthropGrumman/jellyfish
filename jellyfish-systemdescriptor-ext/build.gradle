@@ -29,5 +29,11 @@ subprojects {
             versionFile = versionsFile
         }
         apply plugin: 'java-library'
+
+        seasideCi {
+            m2OutputDirectory = m2directory
+            dependencyInfoReportFile = dependenciesReportFile
+            deploymentScriptFile = m2DeploymentScritFile
+        }
     }
 }
