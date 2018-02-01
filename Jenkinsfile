@@ -20,7 +20,7 @@ pipeline {
 
         stage("PrepareForRelaseBuild") {
             steps {
-               dir('seaside-bootstrap') {
+               dir('seaside-bootstrap-api') {
                   script {
                      if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
                         sh "./gradlew tasks"
@@ -88,32 +88,26 @@ pipeline {
                 }
             }
         }
-        stage("Upload or Release") {
+        stage("Release") {
             when {
-                expression { return params.TARGET_BRANCH == 'SEA18-11' }
+                expression { branch == 'SEA18-11' && params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
             }
             steps {
-                script {
-                    // Release
-                    if (params.PERFORM_RELEASE ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/) {
-                        sh "./gradlew bumpTheVersion"
-                        sh "./gradlew releasePush"
-                    }
-                    // Upload
-                    else {
-                        sh "./gradlew upload"
-                    }
-                }
-            }
-            post {
-               success {
-                    archiveArtifacts(allowEmptyArchive: true,
-                        artifacts: 'jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip, jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip, jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip',
-                        caseSensitive: false,
-                        defaultExcludes: false,
-                        onlyIfSuccessful: true
-                    )
+               dir('bootstrap-api') {
+                  sh "./gradlew upload"
+                  sh "./gradlew bumpTheVersion"
+                  sh "./gradlew releasePush"
+
                }
+            }
+        }
+        stage("Archive") {
+            steps {
+             archiveArtifacts(allowEmptyArchive: true,
+                              artifacts: 'jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip, jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip, jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip',
+                              caseSensitive: false,
+                              defaultExcludes: false,
+                              onlyIfSuccessful: true)
             }
         }
     }
