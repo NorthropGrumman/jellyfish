@@ -184,6 +184,8 @@ file(regressionsFolderName).eachDir { folder ->
                  m2directory.getAbsolutePath(),
                  '--dependencyInfoReportFile',
                  dependenciesReportFile.getAbsolutePath(),
+                 '--deploymentScriptFile',
+                 m2DeploymentScritFile.getAbsolutePath(),
                  '--removeSnapshots',
                  cleanSnapshots]
         startParameter.systemPropertiesArgs = [:]
