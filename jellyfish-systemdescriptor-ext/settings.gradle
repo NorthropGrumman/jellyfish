@@ -1,13 +1,11 @@
 rootProject.name = 'jellyfish-systemdescriptor-ext'
 
 
-include 'com.ngc.seaside.systemdescriptor.ext.feature'
-include 'com.ngc.seaside.systemdescriptor.ext.updatesite'
 
 
 
-project(':com.ngc.seaside.systemdescriptor.ext.feature').name = 'systemdescriptor.ext.feature'
-project(':com.ngc.seaside.systemdescriptor.ext.updatesite').name = 'systemdescriptor.ext.updatesite'
+
+
 
 
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.ngc.seaside.systemdescriptor.ext.feature"
-      label="JellyFish SystemDescriptor DSL Extensions"
+      id="com.ngc.seaside.systemdescriptor.plus.feature"
+      label="JellyFish SystemDescriptor DSL Extra Features"
       version="${osgiVersion}"
       provider-name="Northrop Grumman Corporation">
 
    <description url="http://www.systemdescriptor.seaside.ngc.com/description">
-      This is the JellyFish System Descriptor DSL extensions Eclipse plugin.
+      This is the JellyFish System Descriptor DSL Eclipse plugin for extra features.
    </description>
 
    <copyright url="http://www.systemdescriptor.seaside.ngc.com/copyright">
