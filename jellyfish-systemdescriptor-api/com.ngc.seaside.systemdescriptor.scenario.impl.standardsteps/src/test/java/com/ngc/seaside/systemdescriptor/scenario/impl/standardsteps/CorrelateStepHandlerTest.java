@@ -10,8 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
-import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
