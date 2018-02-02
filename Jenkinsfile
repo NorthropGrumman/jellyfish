@@ -2,7 +2,7 @@ pipeline {
     agent {
         label {
             label ''
-            customWorkspace "${JENKINS_HOME}/workspace/jellyfish-test/${JOB_NAME}"
+            customWorkspace "${JENKINS_HOME}/workspace/jellyfish/${JOB_NAME}"
         }
     }
 
