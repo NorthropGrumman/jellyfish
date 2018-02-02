@@ -1,7 +1,7 @@
 dependencies {
-   api "com.ngc.seaside:systemdescriptor.model.api:$version"
+   api project(":systemdescriptor.model.api")
 
-   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   implementation project(":systemdescriptor.model.impl.basic")
    implementation "com.ngc.seaside:systemdescriptor:$version"
 
    testImplementation "junit:junit:$junitVersion"

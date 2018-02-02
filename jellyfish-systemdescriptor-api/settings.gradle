@@ -1,10 +1,19 @@
-rootProject.name = 'jellyfish-systemdescriptor-api'
+rootProject.name = 'jellyfish-systemdescriptor'
 
 include 'com.ngc.seaside.systemdescriptor.model.api'
-include 'com.ngc.seaside.systemdescriptor.service.api'
 include 'com.ngc.seaside.systemdescriptor.model.impl.basic'
+include 'com.ngc.seaside.systemdescriptor.model.impl.xtext'
+include 'com.ngc.seaside.systemdescriptor.service.api'
+include 'com.ngc.seaside.systemdescriptor.service.impl.xtext'
+include 'com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps'
+include 'com.ngc.blocs.service.log.impl.common.log4jlogservice'
+include 'com.ngc.seaside.systemdescriptor.ext.testutils'
 
 project(':com.ngc.seaside.systemdescriptor.model.api').name = 'systemdescriptor.model.api'
-project(':com.ngc.seaside.systemdescriptor.service.api').name = 'systemdescriptor.service.api'
 project(':com.ngc.seaside.systemdescriptor.model.impl.basic').name = 'systemdescriptor.model.impl.basic'
-
+project(':com.ngc.seaside.systemdescriptor.model.impl.xtext').name = 'systemdescriptor.model.impl.xtext'
+project(':com.ngc.seaside.systemdescriptor.service.api').name = 'systemdescriptor.service.api'
+project(':com.ngc.seaside.systemdescriptor.service.impl.xtext').name = 'systemdescriptor.service.impl.xtext'
+project(':com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps').name = 'systemdescriptor.scenario.impl.standardsteps'
+project(':com.ngc.blocs.service.log.impl.common.log4jlogservice').name = 'service.log.impl.common.log4jlogservice'
+project(':com.ngc.seaside.systemdescriptor.ext.testutils').name = 'systemdescriptor.ext.testutils'
