@@ -91,7 +91,7 @@ task clean() {
 task downloadEclipse() {
    doLast {
       def destFile = file("$eclipseDownloadDestFile")
-      destFile.getParentFile().mkdir()
+      destFile.getParentFile().mkdirs()
       println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
       new URL("$eclipseDownloadUrl").withInputStream { is ->
          destFile.withOutputStream { it << is  }
