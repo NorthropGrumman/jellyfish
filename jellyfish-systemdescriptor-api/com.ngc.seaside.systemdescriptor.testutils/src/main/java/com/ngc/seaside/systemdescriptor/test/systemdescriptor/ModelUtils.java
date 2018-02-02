@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor;
+package com.ngc.seaside.systemdescriptor.test.systemdescriptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -61,9 +61,9 @@ public class ModelUtils {
          name = fullyQualifiedName.substring(index + 1);
          parent = mock(IPackage.class);
          when(parent.getName()).thenReturn(fullyQualifiedName.substring(0, index));
-         inputs = new NamedChildCollection<IModel, IDataReferenceField>(this, IDataReferenceField.class);
-         outputs = new NamedChildCollection<IModel, IDataReferenceField>(this, IDataReferenceField.class);
-         scenarios = new NamedChildCollection<IModel, IScenario>(this, IScenario.class);
+         inputs = new NamedChildCollection<>(this, IDataReferenceField.class);
+         outputs = new NamedChildCollection<>(this, IDataReferenceField.class);
+         scenarios = new NamedChildCollection<>(this, IScenario.class);
       }
 
       /**

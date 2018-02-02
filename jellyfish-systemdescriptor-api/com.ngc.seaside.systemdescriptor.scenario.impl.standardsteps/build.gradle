@@ -7,7 +7,7 @@ dependencies {
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
 
-   testImplementation project(":systemdescriptor.ext.testutils")
+   testImplementation project(":systemdescriptor.testutils")
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
