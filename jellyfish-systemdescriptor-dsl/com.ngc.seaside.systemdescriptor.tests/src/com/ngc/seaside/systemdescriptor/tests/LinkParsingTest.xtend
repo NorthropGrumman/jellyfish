@@ -44,7 +44,7 @@ class LinkParsingTest {
 		dataResource = resourceHelper.resource(
 			'''
 				package clocks.datatypes
-							
+
 				data Time {
 				}
 			''',
@@ -55,14 +55,14 @@ class LinkParsingTest {
 		requirementResource1 = resourceHelper.resource(
 			'''
 				package clocks.models.part
-				
+
 				import clocks.datatypes.Time
-							
+
 				model Speaker {
 					input {
 						Time speakTime
 					}
-					
+
 					output {
 						Time doneTime
 					}
@@ -75,19 +75,19 @@ class LinkParsingTest {
 		partResource1 = resourceHelper.resource(
 			'''
 				package clocks.models.part
-				
+
 				import clocks.datatypes.Time
 				import clocks.models.part.Speaker
-							
+
 				model Alarm {
 					requires {
 						Speaker speaker
 					}
-					
+
 					input {
 						Time myTime
 					}
-					
+
 					output {
 						Time fooTime
 					}
@@ -102,23 +102,23 @@ class LinkParsingTest {
 	def void testDoesParseModelWithLinkFromInputToPartInput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link currentTime -> alarm.myTime
 				}
@@ -152,23 +152,23 @@ class LinkParsingTest {
 		// Test the reverse.
 		source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link alarm.myTime -> currentTime
 				}
@@ -184,23 +184,23 @@ class LinkParsingTest {
 	def void testDoesParseModelWithLinkFromInputToRequirementInput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				requires {
 					Alarm alarm
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				links {
 					link currentTime -> alarm.myTime
 				}
@@ -234,23 +234,23 @@ class LinkParsingTest {
 		// Test the reverse.
 		source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				requires {
 					Alarm alarm
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				links {
 					link alarm.myTime -> currentTime
 				}
@@ -266,23 +266,23 @@ class LinkParsingTest {
 	def void testDoesParseModelWithLinkFromOutputToPartOutput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link alarmTime -> alarm.fooTime
 				}
@@ -296,23 +296,23 @@ class LinkParsingTest {
 		// Test the reverse.
 		source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link alarm.fooTime -> alarmTime
 				}
@@ -328,23 +328,23 @@ class LinkParsingTest {
 	def void testDoesParseModelWithLinkFromOutputToRequirementOutput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				requires {
 					Alarm alarm
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				links {
 					link alarmTime -> alarm.fooTime
 				}
@@ -358,23 +358,23 @@ class LinkParsingTest {
 		// Test the reverse.
 		source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				requires {
 					Alarm alarm
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				links {
 					link alarm.fooTime -> alarmTime
 				}
@@ -390,28 +390,28 @@ class LinkParsingTest {
 	def void testDoesParseModelWithLinkFromRequirementToPartRequirement() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
 			import clocks.models.part.Speaker
-			
+
 			model AlarmClock {
 				requires {
 					Speaker speaker
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link speaker -> alarm.speaker
 				}
@@ -425,28 +425,28 @@ class LinkParsingTest {
 		// Test the reverse.
 		source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
 			import clocks.models.part.Speaker
-			
+
 			model AlarmClock {
 				requires {
 					Speaker speaker
 				}
-				
+
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link alarm.speaker -> speaker
 				}
@@ -462,15 +462,15 @@ class LinkParsingTest {
 	def void testDoesNotParseModelWithLinkToSelf() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				links {
 					link currentTime -> currentTime
 				}
@@ -490,16 +490,16 @@ class LinkParsingTest {
 	def void testDoesNotParseModelWithLinkFromInputToInput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 					Time otherTime
 				}
-				
+
 				links {
 					link currentTime -> otherTime
 				}
@@ -519,16 +519,16 @@ class LinkParsingTest {
 	def void testDoesNotParseModelWithLinkFromOutputToOutput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				output {
 					Time currentTime
 					Time otherTime
 				}
-				
+
 				links {
 					link currentTime -> otherTime
 				}
@@ -548,21 +548,21 @@ class LinkParsingTest {
 	def void testDoesNotParseModelWithLinkFromPartToPart() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				output {
 					Time currentTime
 					Time otherTime
 				}
-				
+
 				parts {
 					Alarm a1
 					Alarm a2
 				}
-				
+
 				links {
 					link a1 -> a2
 				}
@@ -583,23 +583,23 @@ class LinkParsingTest {
 	def void testDoesNotParseModelWithLinkFromInputToPartOutput() {
 		var source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.models.part.Alarm
-			
+
 			model AlarmClock {
 				input {
 					Time currentTime
 				}
-				
+
 				output {
 					Time alarmTime
 				}
-				
+
 				parts {
 					Alarm alarm
 				}
-				
+
 				links {
 					link currentTime -> alarm.fooTime
 				}
