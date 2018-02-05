@@ -23,7 +23,6 @@ import org.junit.Ignore
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class LinkParsingTest {
-
 	@Inject
 	ParseHelper<Package> parseHelper
 
@@ -386,77 +385,152 @@ class LinkParsingTest {
 		validationTester.assertNoIssues(result)
 	}
 
-	@Test
-	def void testDoesParseModelWithLinkFromRequirementToPartRequirement() {
-		var source = '''
-			package clocks.models
+   @Test
+   def void testDoesParseModelWithLinkFromRequirementToPartRequirement() {
+      var source = '''
+         package clocks.models
 
-			import clocks.datatypes.Time
-			import clocks.models.part.Alarm
-			import clocks.models.part.Speaker
+         import clocks.datatypes.Time
+         import clocks.models.part.Alarm
+         import clocks.models.part.Speaker
 
-			model AlarmClock {
-				requires {
-					Speaker speaker
-				}
+         model AlarmClock {
+            requires {
+               Speaker speaker
+            }
 
-				input {
-					Time currentTime
-				}
+            input {
+               Time currentTime
+            }
 
-				output {
-					Time alarmTime
-				}
+            output {
+               Time alarmTime
+            }
 
-				parts {
-					Alarm alarm
-				}
+            parts {
+               Alarm alarm
+            }
 
-				links {
-					link speaker -> alarm.speaker
-				}
-			}
-		'''
+            links {
+               link speaker -> alarm.speaker
+            }
+         }
+      '''
 
-		var result = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
+      var result = parseHelper.parse(source, dataResource.resourceSet)
+      assertNotNull(result)
+      validationTester.assertNoIssues(result)
 
-		// Test the reverse.
-		source = '''
-			package clocks.models
+      // Test the reverse.
+      source = '''
+         package clocks.models
 
-			import clocks.datatypes.Time
-			import clocks.models.part.Alarm
-			import clocks.models.part.Speaker
+         import clocks.datatypes.Time
+         import clocks.models.part.Alarm
+         import clocks.models.part.Speaker
 
-			model AlarmClock {
-				requires {
-					Speaker speaker
-				}
+         model AlarmClock {
+            requires {
+               Speaker speaker
+            }
 
-				input {
-					Time currentTime
-				}
+            input {
+               Time currentTime
+            }
 
-				output {
-					Time alarmTime
-				}
+            output {
+               Time alarmTime
+            }
 
-				parts {
-					Alarm alarm
-				}
+            parts {
+               Alarm alarm
+            }
 
-				links {
-					link alarm.speaker -> speaker
-				}
-			}
-		'''
+            links {
+               link alarm.speaker -> speaker
+            }
+         }
+      '''
 
-		result = parseHelper.parse(source, dataResource.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
-	}
+      result = parseHelper.parse(source, dataResource.resourceSet)
+      assertNotNull(result)
+      validationTester.assertNoIssues(result)
+   }
+
+   @Test
+   def void testDoesParseModelWithNamedLink() {
+      var source = '''
+         package clocks.models
+
+         import clocks.datatypes.Time
+         import clocks.models.part.Alarm
+         import clocks.models.part.Speaker
+
+         model AlarmClock {
+            requires {
+               Speaker speaker
+            }
+
+            input {
+               Time currentTime
+            }
+
+            output {
+               Time alarmTime
+            }
+
+            parts {
+               Alarm alarm
+            }
+
+            links {
+               link mySpeaker speaker -> alarm.speaker
+            }
+         }
+      '''
+
+      var result = parseHelper.parse(source, dataResource.resourceSet)
+      assertNotNull(result)
+      validationTester.assertNoIssues(result)
+   }
+
+   @Test
+   def void testDoesParseModelWithNamedAndUnnamedLinks() {
+      var source = '''
+         package clocks.models
+
+         import clocks.datatypes.Time
+         import clocks.models.part.Alarm
+         import clocks.models.part.Speaker
+
+         model AlarmClock {
+            requires {
+               Speaker speaker
+            }
+
+            input {
+               Time currentTime
+            }
+
+            output {
+               Time alarmTime
+            }
+
+            parts {
+               Alarm alarm
+            }
+
+            links {
+               link alarm.fooTime -> alarmTime
+               link mySpeaker speaker -> alarm.speaker
+            }
+         }
+      '''
+
+      var result = parseHelper.parse(source, dataResource.resourceSet)
+      assertNotNull(result)
+      validationTester.assertNoIssues(result)
+   }
 
 	@Test
 	def void testDoesNotParseModelWithLinkToSelf() {
