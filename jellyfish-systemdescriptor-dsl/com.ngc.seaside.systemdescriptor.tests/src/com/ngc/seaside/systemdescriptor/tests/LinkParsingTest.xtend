@@ -652,6 +652,57 @@ class LinkParsingTest {
 		)
 	}
 
+   @Test
+   def void testDoesNotParseModelWithNamedLinksWhereNamesAreAlreadyUsed() {
+      var source = '''
+         package clocks.models
+
+         import clocks.datatypes.Time
+         import clocks.models.part.Alarm
+
+         model AlarmClock {
+            inputs {
+              Time currentTime
+            }
+
+            outputs {
+              Time otherTime
+            }
+
+            parts {
+              Alarm a1
+            }
+
+            requires {
+              Speaker speaker
+            }
+
+            links {
+              // This link is valid.
+              link myLink x.a -> y.a
+              // Invalid - duplicate name.
+              link myLink x.b -> y.b
+              // Invalid - duplicate input name.
+              link currentTime x.b -> y.b
+              // Invalid - duplicate output name.
+              link otherTime x.b -> y.b
+              // Invalid - duplicate part name.
+              link a1 x.b -> y.b
+              // Invalid - duplicate requirement name.
+              link speaker x.b -> y.b
+            }
+         }
+      '''
+
+      var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+      assertNotNull(invalidResult)
+      validationTester.assertError(
+         invalidResult,
+         SystemDescriptorPackage.Literals.LINK_DECLARATION,
+         null
+      )
+   }
+
 	@Test
 	@Ignore("not yet passing")
 	def void testDoesNotParseModelWithLinkFromInputToPartOutput() {
