@@ -34,6 +34,7 @@ pipeline {
             }
             steps {
                 dir('seaside-bootstrap-api') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew removeVersionSuffix --refresh-dependencies'
                     sh './gradlew createReleaseTag'
                 }
@@ -44,6 +45,7 @@ pipeline {
         stage("Build seaside-bootstrap-api") {
             steps {
                 dir('seaside-bootstrap-api') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
@@ -53,6 +55,7 @@ pipeline {
         stage('Build seaside-bootstrap') {
             steps {
                 dir('seaside-bootstrap') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
@@ -62,33 +65,27 @@ pipeline {
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
         }
         
-        stage('Build jellyfish-systemdescriptor-api') {
+        stage('Build jellyfish-systemdescriptor') {
             steps {
-                dir('jellyfish-systemdescriptor-api') {
+                dir('jellyfish-systemdescriptor') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
         }
-        
-        stage('Build jellyfish-systemdescriptor-ext') {
-            steps {
-                dir('jellyfish-systemdescriptor-ext') {
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
-                }
-            }
-        }
-        
+
         stage('Build jellyfish-cli') {
             steps {
                 dir('jellyfish-cli') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
@@ -118,10 +115,7 @@ pipeline {
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew populateM2repo'
                 }
-                dir('jellyfish-systemdescriptor-api') {
-                    sh './gradlew populateM2repo'
-                }
-                dir('jellyfish-systemdescriptor-ext') {
+                dir('jellyfish-systemdescriptor') {
                     sh './gradlew populateM2repo'
                 }
                 dir('jellyfish-cli') {
@@ -161,10 +155,7 @@ pipeline {
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew upload'
                 }
-                dir('jellyfish-systemdescriptor-api') {
-                    sh './gradlew upload'
-                }
-                dir('jellyfish-systemdescriptor-ext') {
+                dir('jellyfish-systemdescriptor') {
                     sh './gradlew upload'
                 }
                 dir('jellyfish-cli') {
@@ -207,7 +198,7 @@ pipeline {
             steps {
                 // Create a ZIP that has everything.
                 sh 'mkdir -p build'
-                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml'
+                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.plus.updatesite/build/com.ngc.seaside.systemdescriptor.plus.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml'
 
                 // Archive the zip that has everything.
                 archiveArtifacts allowEmptyArchive: true,

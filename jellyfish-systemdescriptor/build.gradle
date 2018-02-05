@@ -1,0 +1,43 @@
+buildscript {
+    ext {
+        versionsFile = file('../versions.gradle')
+    }
+    apply from: versionsFile, to: project
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+    dependencies {
+        classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+    }
+}
+
+apply plugin: 'com.ngc.seaside.release.root'
+
+def NON_JAVA_PROJECTS = [
+      'systemdescriptor.plus.feature',
+      'systemdescriptor.plus.updatesite'
+]
+
+subprojects {
+    if (!NON_JAVA_PROJECTS.contains(name)) {
+        apply plugin: 'com.ngc.seaside.parent'
+        apply plugin: 'java-library'
+
+        versionSettings {
+            versionFile = versionsFile
+        }
+
+        seasideCi {
+            m2OutputDirectory = m2directory
+            dependencyInfoReportFile = dependenciesReportFile
+            deploymentScriptFile = m2DeploymentScritFile
+        }
+    }
+}
