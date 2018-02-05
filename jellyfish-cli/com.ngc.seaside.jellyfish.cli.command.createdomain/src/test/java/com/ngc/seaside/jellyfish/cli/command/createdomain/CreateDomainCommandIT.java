@@ -15,7 +15,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
