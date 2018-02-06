@@ -132,6 +132,7 @@ class LinkParsingTest {
         var link = model.links.declarations.get(0)
         var linkSource = link.source as FieldReference
         var linkTarget = link.target as LinkableExpression
+        var linkName = link.name
         assertEquals(
             "linkSource not correct!",
             "currentTime",
@@ -146,6 +147,10 @@ class LinkParsingTest {
             "linkTarget not correct!",
             "myTime",
             linkTarget.tail.name
+        )
+        assertNull(
+            "linkName not correct!",
+            linkName
         )
 
         // Test the reverse.
@@ -385,152 +390,173 @@ class LinkParsingTest {
         validationTester.assertNoIssues(result)
     }
 
-   @Test
-   def void testDoesParseModelWithLinkFromRequirementToPartRequirement() {
-      var source = '''
-         package clocks.models
+    @Test
+    def void testDoesParseModelWithLinkFromRequirementToPartRequirement() {
+        var source = '''
+            package clocks.models
 
-         import clocks.datatypes.Time
-         import clocks.models.part.Alarm
-         import clocks.models.part.Speaker
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
 
-         model AlarmClock {
-            requires {
-               Speaker speaker
+            model AlarmClock {
+               requires {
+                  Speaker speaker
+               }
+
+               input {
+                   Time currentTime
+               }
+
+               output {
+                   Time alarmTime
+               }
+
+               parts {
+                   Alarm alarm
+               }
+
+               links {
+                   link speaker -> alarm.speaker
+               }
             }
+        '''
 
-            input {
-               Time currentTime
+        var result = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+
+        // Test the reverse.
+        source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+               requires {
+                  Speaker speaker
+               }
+
+               input {
+                   Time currentTime
+               }
+
+               output {
+                   Time alarmTime
+               }
+
+               parts {
+                   Alarm alarm
+               }
+
+               links {
+                   link alarm.speaker -> speaker
+               }
             }
+        '''
 
-            output {
-               Time alarmTime
+        result = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
+
+    @Test
+    def void testDoesParseModelWithNamedLink() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+               requires {
+                  Speaker speaker
+               }
+
+               input {
+                   Time currentTime
+               }
+
+               output {
+                   Time alarmTime
+               }
+
+               parts {
+                   Alarm alarm
+               }
+
+               links {
+                   link mySpeaker speaker -> alarm.speaker
+               }
             }
+        '''
 
-            parts {
-               Alarm alarm
+        var result = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+
+        var model = result.element as Model;
+        var link = model.links.declarations.get(0)
+        assertEquals(
+            "link name not correct!",
+            "mySpeaker",
+            link.name
+        )
+    }
+
+    @Test
+    def void testDoesParseModelWithNamedAndUnnamedLinks() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+               requires {
+                  Speaker speaker
+               }
+
+               input {
+                   Time currentTime
+               }
+
+               output {
+                   Time alarmTime
+               }
+
+               parts {
+                   Alarm alarm
+               }
+
+               links {
+                   link alarm.fooTime -> alarmTime
+                   link mySpeaker speaker -> alarm.speaker
+               }
             }
+        '''
 
-            links {
-               link speaker -> alarm.speaker
-            }
-         }
-      '''
+        var result = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
 
-      var result = parseHelper.parse(source, dataResource.resourceSet)
-      assertNotNull(result)
-      validationTester.assertNoIssues(result)
-
-      // Test the reverse.
-      source = '''
-         package clocks.models
-
-         import clocks.datatypes.Time
-         import clocks.models.part.Alarm
-         import clocks.models.part.Speaker
-
-         model AlarmClock {
-            requires {
-               Speaker speaker
-            }
-
-            input {
-               Time currentTime
-            }
-
-            output {
-               Time alarmTime
-            }
-
-            parts {
-               Alarm alarm
-            }
-
-            links {
-               link alarm.speaker -> speaker
-            }
-         }
-      '''
-
-      result = parseHelper.parse(source, dataResource.resourceSet)
-      assertNotNull(result)
-      validationTester.assertNoIssues(result)
-   }
-
-   @Test
-   def void testDoesParseModelWithNamedLink() {
-      var source = '''
-         package clocks.models
-
-         import clocks.datatypes.Time
-         import clocks.models.part.Alarm
-         import clocks.models.part.Speaker
-
-         model AlarmClock {
-            requires {
-               Speaker speaker
-            }
-
-            input {
-               Time currentTime
-            }
-
-            output {
-               Time alarmTime
-            }
-
-            parts {
-               Alarm alarm
-            }
-
-            links {
-               link mySpeaker speaker -> alarm.speaker
-            }
-         }
-      '''
-
-      var result = parseHelper.parse(source, dataResource.resourceSet)
-      assertNotNull(result)
-      validationTester.assertNoIssues(result)
-   }
-
-   @Test
-   def void testDoesParseModelWithNamedAndUnnamedLinks() {
-      var source = '''
-         package clocks.models
-
-         import clocks.datatypes.Time
-         import clocks.models.part.Alarm
-         import clocks.models.part.Speaker
-
-         model AlarmClock {
-            requires {
-               Speaker speaker
-            }
-
-            input {
-               Time currentTime
-            }
-
-            output {
-               Time alarmTime
-            }
-
-            parts {
-               Alarm alarm
-            }
-
-            links {
-               link alarm.fooTime -> alarmTime
-               link mySpeaker speaker -> alarm.speaker
-            }
-         }
-      '''
-
-      var result = parseHelper.parse(source, dataResource.resourceSet)
-      assertNotNull(result)
-      validationTester.assertNoIssues(result)
-   }
+        var model = result.element as Model;
+        var unnamedLink = model.links.declarations.get(0)
+        var namedLink = model.links.declarations.get(1)
+        assertNull(
+            "unnamedLink not correct!",
+            unnamedLink.name
+        )
+        assertEquals(
+            "namedLink not correct!",
+            "mySpeaker",
+            namedLink.name
+        )
+     }
 
     @Test
     def void testDoesNotParseModelWithLinkToSelf() {
@@ -652,56 +678,57 @@ class LinkParsingTest {
         )
     }
 
-   @Test
-   def void testDoesNotParseModelWithNamedLinksWhereNamesAreAlreadyUsed() {
-      var source = '''
-         package clocks.models
+    @Test
+    def void testDoesNotParseModelWithNamedLinksWhereLinkNamesAreDuplicated() {
+        var source = '''
+            package clocks.models
 
-         import clocks.datatypes.Time
-         import clocks.models.part.Alarm
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
 
-         model AlarmClock {
-            inputs {
-              Time currentTime
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                }
+
+                requires {
+                    Speaker speaker
+                }
+
+                links {
+                    // This link is valid.
+                    link myLink currentTime -> otherTime
+                    // Invalid - duplicate name.
+                    link myLink otherTime -> a1.myTime
+                    // Invalid - duplicate input name.
+                    link currentTime a1.myTime -> speaker.speakTime
+                    // Invalid - duplicate output name.
+                    link otherTime speaker.doneTime -> a1.speaker.speakTime
+                    // Invalid - duplicate part name.
+                    link a1 currentTime -> otherTime
+                    // Invalid - duplicate requirement name.
+                    link speaker speaker -> a1.speaker
+                }
             }
+        '''
 
-            outputs {
-              Time otherTime
-            }
-
-            parts {
-              Alarm a1
-            }
-
-            requires {
-              Speaker speaker
-            }
-
-            links {
-              // This link is valid.
-              link myLink x.a -> y.a
-              // Invalid - duplicate name.
-              link myLink x.b -> y.b
-              // Invalid - duplicate input name.
-              link currentTime x.b -> y.b
-              // Invalid - duplicate output name.
-              link otherTime x.b -> y.b
-              // Invalid - duplicate part name.
-              link a1 x.b -> y.b
-              // Invalid - duplicate requirement name.
-              link speaker x.b -> y.b
-            }
-         }
-      '''
-
-      var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-      assertNotNull(invalidResult)
-      validationTester.assertError(
-         invalidResult,
-         SystemDescriptorPackage.Literals.LINK_DECLARATION,
-         null
-      )
-   }
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
 
     @Test
     @Ignore("not yet passing")
