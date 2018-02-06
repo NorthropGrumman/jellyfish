@@ -142,7 +142,28 @@ pipeline {
                 sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
-
+        stage("Security Scan") {
+            parallel {
+                stage("Nexus Lifecycle") {
+                    steps {
+                        // Evaluate the items for security, license, and other issues via Nexus Lifecycle.
+                        script {
+                            def policyEvaluationResult = nexusPolicyEvaluation(
+                                failBuildOnNetworkError: false,
+                                iqApplication: 'jenkins',
+                                iqStage: 'build',
+                                jobCredentialsId: 'nexusiqCreds'
+                            )
+							currentBuild.result = 'SUCCESS'
+                            //if (policyEvaluationResult.affectedComponentCount > 10000000) {
+                                //error("Nexus Lifecycle check failed.")
+                            //}
+                        }
+                    }
+                }
+                
+            }
+        }
         stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
