@@ -155,7 +155,8 @@ pipeline {
 					currentBuild.result = 'SUCCESS'
 				}
 			}
-        }
+		}
+        
         stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
