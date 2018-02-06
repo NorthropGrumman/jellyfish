@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.getMockNamedChild;
+import static com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils.getMockNamedChild;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,7 +11,7 @@ import com.ngc.seaside.command.api.DefaultParameter;
 import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice.RequirementsService;
-import com.ngc.seaside.systemdescriptor.ext.test.systemdescriptor.ModelUtils.PubSubModel;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;

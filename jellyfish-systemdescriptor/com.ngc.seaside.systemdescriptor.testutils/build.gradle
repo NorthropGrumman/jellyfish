@@ -1,6 +1,6 @@
 dependencies {
-   api "com.ngc.seaside:systemdescriptor.model.api:$version"
-   api "com.ngc.seaside:systemdescriptor.service.api:$version"
+   api project(":systemdescriptor.model.api")
+   api project(":systemdescriptor.service.api")
 
    implementation project(':systemdescriptor.scenario.impl.standardsteps')
    implementation "org.mockito:mockito-core:$mockitoVersion"
