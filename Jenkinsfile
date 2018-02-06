@@ -103,6 +103,20 @@ pipeline {
             }
         }
 
+		stage("Nexus Lifecycle") {
+            steps {
+				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
+				script {
+					def policyEvaluationResult = nexusPolicyEvaluation(
+						failBuildOnNetworkError: false,
+						iqApplication: 'jenkins',
+						iqStage: 'build',
+						jobCredentialsId: 'nexusiqCreds'
+					)
+					currentBuild.result = 'SUCCESS'
+				}
+			}
+		}
         stage('Build offline support') {
             when {
                 expression { params.offlineSupport }
@@ -143,22 +157,8 @@ pipeline {
             }
         }
         
-        stage("Nexus Lifecycle") {
-            steps {
-				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
-				script {
-					def policyEvaluationResult = nexusPolicyEvaluation(
-						failBuildOnNetworkError: false,
-						iqApplication: 'jenkins',
-						iqStage: 'build',
-						jobCredentialsId: 'nexusiqCreds'
-					)
-					currentBuild.result = 'SUCCESS'
-				}
-			}
-		}
-		
-        stage('Upload') {
+      
+	        stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
             }
