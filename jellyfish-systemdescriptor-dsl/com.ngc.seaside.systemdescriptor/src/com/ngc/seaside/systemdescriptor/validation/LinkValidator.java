@@ -7,15 +7,17 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
-
 	@Check
 	public void checkLinkDeclaration(LinkDeclaration link) {
 		checkForValidLinks(link);
 		checkForTypeSafeLinks(link);
 		checkForDuplicateLinks(link);
+		checkForDuplicateLinkNames(link);
 	}
 
 	protected void checkForValidLinks(LinkDeclaration link) {
@@ -65,9 +67,22 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		// and model types for parts and requirements match up.
 	}
 
-	protected void checkForDuplicateLinks(LinkDeclaration link) {
-		// TODO TH: declare duplicate links as a warning, not an error.
-	}
+    protected void checkForDuplicateLinks(LinkDeclaration link) {
+        // TODO TH: declare duplicate links as a warning, not an error.
+    }
+
+    protected void checkForDuplicateLinkNames(LinkDeclaration link) {
+        Links links = (Links) link.eContainer();
+        Model model = (Model) links.eContainer();
+
+        if (getNumberOfLinksNamed(model, link.getName()) > 1) {
+            String msg = String.format(
+                    "A link named '%s' is already defined for the model '%s'.",
+                    link.getName(),
+                    model.getName());
+            error(msg, link, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+        }
+    }
 
 	private static FieldDeclaration resolveField(LinkableReference ref) {
 		FieldDeclaration field;
@@ -80,4 +95,16 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 		return field;
 	}
+
+    private static int getNumberOfLinksNamed(
+            Model model,
+            String linkName) {
+        Links links = model.getLinks();
+        return links == null
+                ? 0
+                : (int) links.getDeclarations()
+                        .stream()
+                        .filter(d -> d.getName().equals(linkName))
+                        .count();
+    }
 }
