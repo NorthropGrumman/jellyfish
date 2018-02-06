@@ -705,18 +705,172 @@ class LinkParsingTest {
                 }
 
                 links {
-                    // This link is valid.
                     link myLink currentTime -> otherTime
-                    // Invalid - duplicate name.
                     link myLink otherTime -> a1.myTime
-                    // Invalid - duplicate input name.
-                    link currentTime a1.myTime -> speaker.speakTime
-                    // Invalid - duplicate output name.
-                    link otherTime speaker.doneTime -> a1.speaker.speakTime
-                    // Invalid - duplicate part name.
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+
+    @Test
+    def void testDoesNotParseModelWithNamedLinksWhereLinkNameDuplicatesInputName() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                }
+
+                requires {
+                    Speaker speaker
+                }
+
+                links {
+                    link currentTime currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+
+    @Test
+    def void testDoesNotParseModelWithNamedLinksWhereLinkNameDuplicatesOutputName() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                }
+
+                requires {
+                    Speaker speaker
+                }
+
+                links {
+                    link otherTime currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+
+    @Test
+    def void testDoesNotParseModelWithNamedLinksWhereLinkNameDuplicatesPartName() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                }
+
+                requires {
+                    Speaker speaker
+                }
+
+                links {
                     link a1 currentTime -> otherTime
-                    // Invalid - duplicate requirement name.
-                    link speaker speaker -> a1.speaker
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+
+    @Test
+    def void testDoesNotParseModelWithNamedLinksWhereLinkNameDuplicatesRequirementName() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                }
+
+                requires {
+                    Speaker speaker
+                }
+
+                links {
+                    link speaker currentTime -> otherTime
                 }
             }
         '''
