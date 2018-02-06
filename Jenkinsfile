@@ -42,7 +42,7 @@ pipeline {
                 }
             }
         }
-
+	
         // The following stages actually build each project.
         stage("Build seaside-bootstrap-api") {
             steps {
@@ -53,7 +53,20 @@ pipeline {
                 }
             }
         }
-        
+        stage("Nexus Lifecycle") {
+            steps {
+				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
+				script {
+					def policyEvaluationResult = nexusPolicyEvaluation(
+						failBuildOnNetworkError: false,
+						iqApplication: 'jenkins',
+						iqStage: 'build',
+						jobCredentialsId: 'nexusiqCreds'
+					)
+					currentBuild.result = 'SUCCESS'
+				}
+			}
+		}
         stage('Build seaside-bootstrap') {
             steps {
                 dir('seaside-bootstrap') {
@@ -142,20 +155,7 @@ pipeline {
                 sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
-        stage("Nexus Lifecycle") {
-            steps {
-				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
-				script {
-					def policyEvaluationResult = nexusPolicyEvaluation(
-						failBuildOnNetworkError: false,
-						iqApplication: 'jenkins',
-						iqStage: 'build',
-						jobCredentialsId: 'nexusiqCreds'
-					)
-					currentBuild.result = 'SUCCESS'
-				}
-			}
-		}
+        
         
         stage('Upload') {
             when {
