@@ -39,7 +39,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
       super(resolver, wrapped);
       source = getReferenceTo(wrapped.getSource());
       target = getReferenceTo(wrapped.getTarget());
-      name = Optional.of(wrapped.getName());
+      name = Optional.ofNullable(wrapped.getName());
    }
 
    @Override
