@@ -26,6 +26,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
 
    private IDataReferenceField source;
    private IDataReferenceField target;
+   private Optional<String> name;
 
    /**
     * Creates a new wrapper for the given link declaration.  If the link declaration does not wrap data an {@code
@@ -38,6 +39,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
       super(resolver, wrapped);
       source = getReferenceTo(wrapped.getSource());
       target = getReferenceTo(wrapped.getTarget());
+      name = Optional.of(wrapped.getName());
    }
 
    @Override
@@ -59,6 +61,16 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
    @Override
    public IModelLink<IDataReferenceField> setTarget(IDataReferenceField target) {
       // TODO TH: figure out how to implement this.
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public Optional<String> getName() {
+      return name;
+   }
+
+   @Override
+   public IModelLink<IDataReferenceField> setName(String name) {
       throw new UnsupportedOperationException("not implemented");
    }
 
