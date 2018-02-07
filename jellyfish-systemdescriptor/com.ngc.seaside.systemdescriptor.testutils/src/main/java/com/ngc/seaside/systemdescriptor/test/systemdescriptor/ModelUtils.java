@@ -319,6 +319,10 @@ public class ModelUtils {
          return Collections.emptySet();
       }
 
+      @Override
+      public Optional<IModelLink<?>> getLink(String name) {
+         return Optional.empty();
+      }
    }
 
    /**
