@@ -19,10 +19,10 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 
-@RunWith(XtextRunner)
-@InjectWith(SystemDescriptorInjectorProvider)
+//@RunWith(XtextRunner)
+//@InjectWith(SystemDescriptorInjectorProvider)
 class LinkNameParsingTest {
-
+/*
 	@Inject
 	ParseHelper<Package> parseHelper
 
@@ -401,4 +401,5 @@ class LinkNameParsingTest {
 			null
 		)
 	}
+*/
 }
