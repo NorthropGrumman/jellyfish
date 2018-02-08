@@ -89,7 +89,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		debugLog("Entering method: format(MODEL)");
 
 		model.regionFor.keyword('model').prepend[noIndentation]
-		model.regionFor.keyword('{').append[newLine]
+		model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		if (model.getMetadata() !== null) {
 			model.getMetadata().format;
@@ -127,7 +127,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(JsonObject json, extension IFormattableDocument document) {
 		debugLog("Entering method: format(JSON)");
 
-		var begin = json.regionFor.keyword('{')
+		var begin = json.regionFor.keyword('{').prepend[oneSpace]
 		var end = json.regionFor.keyword('}')
 		interior(begin, end)[indent]
 
@@ -158,7 +158,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = input.regionFor.keyword('input')
 		var end = input.regionFor.keyword('}')
 
-		input.regionFor.keyword('{').append[newLine]
+		input.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		for (InputDeclaration dec : input.getDeclarations()) {
 			dec.format;
@@ -188,7 +188,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = output.regionFor.keyword('output')
 		var end = output.regionFor.keyword('}')
 
-		output.regionFor.keyword('{').append[newLine]
+		output.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		for (OutputDeclaration dec : output.getDeclarations()) {
 			dec.format;
@@ -216,7 +216,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(Scenario scenario, extension IFormattableDocument document) {
 		debugLog("Entering method: format(SCENARIO)");
 
-		scenario.regionFor.keyword('{').append[newLine]
+		scenario.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		if (scenario.getMetadata() !== null) {
 			scenario.getMetadata().format;
@@ -289,7 +289,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = parts.regionFor.keyword('parts')
 		var end = parts.regionFor.keyword('}')
 
-		parts.regionFor.keyword('{').append[newLine]
+		parts.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		for (PartDeclaration dec : parts.getDeclarations()) {
 			dec.format;
@@ -311,7 +311,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = links.regionFor.keyword('links')
 		var end = links.regionFor.keyword('}')
 
-		links.regionFor.keyword('{').append[newLine]
+		links.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
 		for (LinkDeclaration dec : links.getDeclarations()) {
 			dec.format;
@@ -329,6 +329,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 			dec.getSource().prepend[dec.getName]
 			dec.getSource().prepend[oneSpace]
 		}
+		dec.regionFor.keyword('->').prepend[oneSpace].append[oneSpace]
 		dec.getSource().append[oneSpace]
 		dec.getTarget().append[newLine]
 	}
