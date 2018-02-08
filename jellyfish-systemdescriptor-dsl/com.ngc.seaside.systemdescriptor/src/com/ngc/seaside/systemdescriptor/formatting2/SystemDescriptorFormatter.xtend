@@ -324,6 +324,12 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(LinkDeclaration dec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(LINK_DECLARATION)")
+		dec.regionFor.keyword('link').append[oneSpace]
+		if (dec.getName() != null && !dec.getName().isEmpty()) {
+			dec.getSource().prepend[dec.getName]
+			dec.getSource().prepend[oneSpace]
+		}
+		dec.getSource().append[oneSpace]
 		dec.getTarget().append[newLine]
 	}
 
