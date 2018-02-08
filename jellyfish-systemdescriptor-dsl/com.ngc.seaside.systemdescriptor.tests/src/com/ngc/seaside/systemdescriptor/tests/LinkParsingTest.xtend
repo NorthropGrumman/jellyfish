@@ -885,6 +885,54 @@ class LinkParsingTest {
     }
 
     @Test
+    def void testDoesNotParseModelWithLinkFromInputToOutputOfDifferentType() {
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time alarmTime
+                }
+
+                parts {
+                    Alarm alarm
+                }
+
+                links {
+                    link currentTime -> alarm.fooTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+        assertNotNull(invalidResult)
+
+        var model = invalidResult.element as Model;
+        var link = model.links.declarations.get(0)
+        var linkSource = link.source as LinkableReference
+        var linkTarget = link.target as LinkableReference
+
+        assertNotSame(
+            "linkSource and linkTarget types not correct!",
+            linkSource.tail.type.name,
+            linkTarget.tail.type.name
+        )
+
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+
+    @Test
     @Ignore("not yet passing")
     def void testDoesNotParseModelWithLinkFromInputToPartOutput() {
         var source = '''
