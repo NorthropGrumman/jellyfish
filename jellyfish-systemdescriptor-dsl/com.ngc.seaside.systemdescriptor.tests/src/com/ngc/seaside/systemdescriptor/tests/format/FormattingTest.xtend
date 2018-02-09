@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.format
 
 import org.junit.Test
 import com.google.inject.Inject

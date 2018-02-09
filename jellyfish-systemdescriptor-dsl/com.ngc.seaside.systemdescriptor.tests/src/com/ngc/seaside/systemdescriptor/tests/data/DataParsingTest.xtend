@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.data
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
@@ -23,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)

@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.packages
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.emf.common.util.URI
 import com.ngc.seaside.systemdescriptor.validation.SdIssueCodes
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)

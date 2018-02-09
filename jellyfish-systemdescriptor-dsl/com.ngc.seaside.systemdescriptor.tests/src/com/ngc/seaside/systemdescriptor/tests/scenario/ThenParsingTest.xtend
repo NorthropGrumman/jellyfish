@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.scenario
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
@@ -15,10 +15,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class GivenParsingTest {
+class ThenParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
@@ -59,7 +60,7 @@ class GivenParsingTest {
 	}
 
 	@Test
-	def void testDoesParseScenarioWithGiven() {
+	def void testDoesParseScenarioWithThen() {
 		val source = '''
 			package clocks.models
 			 
@@ -72,9 +73,8 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	when validating alarmTime
-			  	then doSomething
+			  	when receiving alarmTime
+			  	then doSomething withThis
 			  }
 			}
 		'''
@@ -85,22 +85,22 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
-		val step = given.steps.get(0)
+		val then = scenario.then
+		val step = then.steps.get(0)
 		assertEquals(
-			"subject not correct!",
-			"alarmTime",
+			"keyword not correct!",
+			"doSomething",
 			step.keyword
 		)
 		assertEquals(
-			"precondition not correct!",
-			"hasBeenReceived",
+			"keyword parameters not correct!",
+			"withThis",
 			step.parameters.get(0)
 		)
 	}
 
 	@Test
-	def void testDoesParseScenarioWithMultipleGiven() {
+	def void testDoesParseScenarioWithMultipleThens() {
 		val source = '''
 			package clocks.models
 			 
@@ -113,10 +113,9 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given alarmTime hasBeenReceived
-			  	and alarmTime hasBeenValidated
-			  	when validating alarmTime
+			  	when receiving alarmTime
 			  	then doSomething
+			  	and doSomethingElse
 			  }
 			}
 		'''
@@ -127,16 +126,16 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
+		val then = scenario.then
 		assertEquals(
-			"did not parse all given steps!",
+			"did not parse all then fragments!",
 			2,
-			given.steps.size
+			then.steps.size
 		)
 	}
 	
 	@Test
-	def void testDoesParseScenarioWithMultipleQualifiedGiven() {
+	def void testDoesParseScenarioWithMultipleQualifiedThens() {
 		val source = '''
 			package clocks.models
 			 
@@ -149,10 +148,9 @@ class GivenParsingTest {
 			  }
 			  
 			  scenario triggerAlert {
-			  	given SecretSpaceTime.alarmTime hasBeenReceived
-			  	and SecretSpaceTime.alarmTime hasBeenValidated
-			  	when validating alarmTime
-			  	then doSomething
+			  	when receiving alarmTime
+			  	then Important.doSomething
+			  	and NotSoImportant.doSomethingElse
 			  }
 			}
 		'''
@@ -163,11 +161,11 @@ class GivenParsingTest {
 
 		val model = result.element as Model
 		val scenario = model.scenarios.get(0)
-		val given = scenario.given
+		val then = scenario.then
 		assertEquals(
-			"did not parse all given steps!",
+			"did not parse all then fragments!",
 			2,
-			given.steps.size
+			then.steps.size
 		)
 	}
 }

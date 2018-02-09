@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.scenario
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)

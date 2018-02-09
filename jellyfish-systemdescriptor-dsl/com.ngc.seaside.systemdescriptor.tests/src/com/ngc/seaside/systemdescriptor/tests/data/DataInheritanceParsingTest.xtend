@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.data
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
@@ -21,12 +21,13 @@ import com.google.inject.Provider
 import org.eclipse.xtext.resource.XtextResourceSet
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 // TODO TH: !!! REFACTOR THIS !!!
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class InheritTest {
+class DataInheritanceParsingTest {
 
 	@Inject
 	Provider<XtextResourceSet> resourceSetProvider;
