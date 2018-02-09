@@ -5,8 +5,12 @@ dependencies {
 
 #if (${withApi} == "true")
     compile project(':jellyfish.api')
+    compile project(':jellyfish.service.api')
+    compile project(':jellyfish.utilities')
 #else
     compile "com.ngc.seaside:jellyfish.api:${D}jellyfishCommandApiVersion"
+    compile "com.ngc.seaside:jellyfish.utilities:${D}jellyfishCommandApiVersion"
+    compile "com.ngc.seaside:jellyfish.service.api:${D}jellyfishCommandApiVersion"
 #end
 
     compile "com.google.inject:guice:${D}guiceVersion"
@@ -20,9 +24,7 @@ dependencies {
     compile "commons-io:commons-io:${D}commonsIOVersion"
     
     compile "commons-lang:commons-lang:${D}commonsLangVersion"
-    
-    compile "com.ngc.seaside:jellyfish.utilities:${D}jellyfishVersion"
-    compile "com.ngc.seaside:jellyfish.service.api:${D}jellyfishVersion"
+
     
     testCompile "junit:junit:${D}junitVersion"
     testCompile "org.mockito:mockito-core:${D}mockitoVersion"

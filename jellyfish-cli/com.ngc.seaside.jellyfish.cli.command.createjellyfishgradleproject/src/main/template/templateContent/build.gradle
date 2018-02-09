@@ -46,6 +46,7 @@ subprojects {
         starfishCoreVersion = '2.0.0'
         transportServiceVersion = '2.0.0'
         multicastTransportVersion = '2.0.0'
+        jellyfishVersion = '${jellyfishGradlePluginsVersion}'
 
         blocsCoreVersion = '2.1'
         blocsDomainVersion = '2.3.1'
