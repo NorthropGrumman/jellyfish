@@ -22,6 +22,8 @@ import org.eclipse.xtext.resource.XtextResourceSet
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
+// TODO TH: !!! REFACTOR THIS !!!
+
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class InheritTest {
