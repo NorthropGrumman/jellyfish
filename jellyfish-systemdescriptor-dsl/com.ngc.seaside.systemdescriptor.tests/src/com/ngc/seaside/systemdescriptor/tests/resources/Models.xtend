@@ -19,7 +19,7 @@ class Models {
 				}
 			}
 		}
-	''', Data.ZONED_TIME)
+	''', Datas.ZONED_TIME)
 
 	public static final ParsingTestResource ALARM = resource('''
 		package clocks.models.part
@@ -40,7 +40,7 @@ class Models {
 				AlarmStatus alarmStatus
 			}
 		}
-	''', Data.ZONED_TIME, Data.ALARM_ACKNOWLEDGEMENT, Data.ALARM_STATUS)
+	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)
 	
 	def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
 		return ParsingTestResource.preparedForParse(resourceHelper, Arrays.asList(resources))

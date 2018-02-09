@@ -5,7 +5,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import java.util.Arrays
 import org.eclipse.xtext.junit4.util.ResourceHelper
 
-class Data {
+class Datas {
 
 	public static final ParsingTestResource TIME = resource('''
 		package clocks.datatypes

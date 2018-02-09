@@ -5,7 +5,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
-import com.ngc.seaside.systemdescriptor.tests.resources.Data
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
@@ -18,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -40,7 +40,7 @@ class LinkNameParsingTest {
 			resourceHelper,
 			Models.ALARM,
 			Models.CLOCK,
-			Data.ALARM_ACKNOWLEDGEMENT
+			Datas.ALARM_ACKNOWLEDGEMENT
 		)
 		validationTester.assertNoIssues(requiredResources)
 	}
