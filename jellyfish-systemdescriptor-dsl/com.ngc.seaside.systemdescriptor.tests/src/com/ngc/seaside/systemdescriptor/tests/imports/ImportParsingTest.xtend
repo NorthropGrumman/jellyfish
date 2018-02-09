@@ -4,7 +4,9 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
@@ -12,13 +14,12 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.xbase.validation.IssueCodes
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.eclipse.xtext.xbase.validation.IssueCodes
-import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -33,76 +34,20 @@ class ImportParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	Resource dataResource
-
-	Resource modelResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("datatypes.sd")
+		requiredResources = Datas.allOf(
+			resourceHelper,
+			Datas.DATE_TIME.requiredResources,
+			Models.ALARM.requiredResources
 		)
-		validationTester.assertNoIssues(dataResource)
-
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models.more
-							
-				model Extra {
-				}
-			''',
-			dataResource.resourceSet
-		)
-		validationTester.assertNoIssues(modelResource)
 	}
 
 	@Test
 	def void testDoesParseImportedData() {
-		val dateSource = '''
-			package clocks.datatypes
-			
-			data Date {
-				int day
-				int month
-				int year
-			}
-		''';
-		
-		val dataResource = resourceHelper.resource(dateSource, URI.createURI("datatypes.sd"))
-		validationTester.assertNoIssues(dataResource)
-		
-		val timeSource = '''
-			package clocks.datatypes
-			
-			data Time {
-				int hour
-				int minute
-				int second
-			}
-		''';
-		
-		val timeResource = resourceHelper.resource(timeSource, dataResource.resourceSet)
-		validationTester.assertNoIssues(timeResource)
-
-		val dateTimeSource = '''
-			package clocks.otherdatatypes
-			
-			import clocks.datatypes.Date
-			import clocks.datatypes.Time
-			
-			data DateTime {
-			  Date date
-			  many Time time
-			}
-		'''
-
-		val result = parseHelper.parse(dateTimeSource, dataResource.resourceSet)
+		val result = parseHelper.parse(Datas.DATE_TIME.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)	
 
@@ -116,16 +61,7 @@ class ImportParsingTest {
 	
 	@Test
 	def void testDoesParseModelWithImportedData() {
-		val source = '''
-			package clocks.models
-			
-			import clocks.datatypes.Time
-			
-			model Timer {
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(Models.ALARM.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoErrors(result)
 	}
@@ -143,7 +79,7 @@ class ImportParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -151,13 +87,13 @@ class ImportParsingTest {
 			Diagnostic.LINKING_DIAGNOSTIC
 		)
 	}
-	
+
 	@Test
 	def void testDoesNotParseModelWithMissingInputDataType() {
 		val source = '''
 			package clocks.models
 			
-			model ClockDisplay {
+			model Timer {
 				
 				input {
 					Time currentTime
@@ -165,7 +101,7 @@ class ImportParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -175,23 +111,22 @@ class ImportParsingTest {
 	}
 	
 	@Test
-	def void testDoesNotParseWithMissingImports() {
+	def void testDoesNotParseWithImportsThatCannotBeResolved() {
 		val source = '''
-			package clocks.models
+			package foo
 			
-			import clocks.datatypes.Foo
+			import foo.DoesNotExist
 			
-			model Timer {
+			model FooBar {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.IMPORT,
-			IssueCodes.IMPORT_UNRESOLVED,
-			#[]
+			IssueCodes.IMPORT_UNRESOLVED
 		)
 	}
 }
