@@ -1,14 +1,10 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
@@ -19,6 +15,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescript
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
@@ -32,6 +29,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScenarioServiceIT {
@@ -69,10 +70,10 @@ public class ScenarioServiceIT {
    @Test
    public void testDoesDetermineMessageParadigms() throws Throwable {
       IScenario scenario = systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")
-            .get()
-            .getScenarios()
-            .getByName("calculateTrackPriority")
-            .get();
+               .get()
+               .getScenarios()
+               .getByName("calculateTrackPriority")
+               .get();
 
       Collection<MessagingParadigm> paradigms = service.getMessagingParadigms(options, scenario);
       assertTrue("does not contain correct paradigms!",
@@ -121,8 +122,8 @@ public class ScenarioServiceIT {
       modules.add(new StepsSystemDescriptorServiceModule());
 
       return Guice.createInjector(modules)
-            .getInstance(ISystemDescriptorService.class)
-            .parseProject(Paths.get("src/test/resources/"))
-            .getSystemDescriptor();
+               .getInstance(ISystemDescriptorService.class)
+               .parseProject(Paths.get("src/test/resources/"))
+               .getSystemDescriptor();
    }
 }

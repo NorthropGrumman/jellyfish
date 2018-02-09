@@ -9,10 +9,11 @@ dependencies {
     implementation project(':jellyfish')
     implementation project(':jellyfish.api')
 
+    implementation project(':jellyfish.service.impl.templateservice')
+
     implementation gradleApi()
     implementation localGroovy()
 
-    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
 

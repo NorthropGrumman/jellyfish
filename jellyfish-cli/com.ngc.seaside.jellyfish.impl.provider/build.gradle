@@ -1,7 +1,7 @@
 dependencies {
     api project(':jellyfish.api')
 
-    implementation "com.ngc.seaside:bootstrap.service.api:$version"
+    implementation project(':jellyfish.service.api')
     implementation "com.ngc.blocs:component.impl.common.componentutilities:$blocsVersion"
     implementation "org.apache.maven:maven-model:$mavenVersion"
     implementation "com.ngc.seaside:systemdescriptor.service.api:$version"

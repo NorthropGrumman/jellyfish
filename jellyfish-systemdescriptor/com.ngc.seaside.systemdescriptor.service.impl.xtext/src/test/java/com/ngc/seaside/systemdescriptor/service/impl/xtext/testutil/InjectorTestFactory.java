@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;

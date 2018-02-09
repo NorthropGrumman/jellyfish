@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;

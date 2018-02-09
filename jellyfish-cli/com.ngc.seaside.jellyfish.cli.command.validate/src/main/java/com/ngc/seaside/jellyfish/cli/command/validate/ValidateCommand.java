@@ -5,9 +5,9 @@ import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;

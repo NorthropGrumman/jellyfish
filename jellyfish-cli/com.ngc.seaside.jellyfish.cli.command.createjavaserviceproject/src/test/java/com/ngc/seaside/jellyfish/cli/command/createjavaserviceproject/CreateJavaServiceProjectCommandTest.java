@@ -1,11 +1,11 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.command.api.IParameter;
-import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
