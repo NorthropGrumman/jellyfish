@@ -71,7 +71,7 @@ public class JellyFishCommandProviderTest {
 
       provider = new JellyFishCommandProvider() {
          /**
-          * The Bootstrap command provider uses the package name from the class in order to look up the templateContent.
+          * The JellyFish command provider uses the package name from the class in order to look up the templateContent.
           * Therefore, it is necessary to return our own value since we can't mock the final method getClass
           */
          @Override

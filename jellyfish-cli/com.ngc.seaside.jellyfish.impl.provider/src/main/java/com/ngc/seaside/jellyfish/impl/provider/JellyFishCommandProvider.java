@@ -305,8 +305,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method is required due to an issue when BND tries to resolve the dependencies and the IBootstrapCommand
-    * extends an interface that is typed.
+    * This method is required due to an issue when BND tries to resolve the dependencies
     */
    @Reference(unbind = "removeCommandOSGi", service = IJellyFishCommand.class, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
    protected void addCommandOSGi(IJellyFishCommand command) {

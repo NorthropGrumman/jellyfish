@@ -2,10 +2,10 @@ package ${package};
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,7 +64,8 @@ public class ${classname}Test {
       //The run method only uses already existing functionality to add the new command
       //to the settings.gradle file. Just ensure that if we don't add any options that the
       //exception is thrown for this test.
-      IBootstrapCommandOptions options = mock(IBootstrapCommandOptions.class);
+
+      IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
 
       IParameterCollection collection = mock(IParameterCollection.class);
       when(options.getParameters()).thenReturn(collection);

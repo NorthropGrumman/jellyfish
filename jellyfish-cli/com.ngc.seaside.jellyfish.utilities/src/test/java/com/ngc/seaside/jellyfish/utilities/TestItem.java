@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.utilities;
+package com.ngc.seaside.jellyfish.utilities;
 
 import java.util.Objects;
 

@@ -1,9 +1,7 @@
-package com.ngc.seaside.bootstrap.utilities.console.api;
+package com.ngc.seaside.jellyfish.utilities.console.api;
 
 
-import com.ngc.seaside.bootstrap.utilities.TestItem;
-import com.ngc.seaside.jellyfish.utilities.console.api.DefaultTableModel;
-import com.ngc.seaside.jellyfish.utilities.console.api.ITableModelListener;
+import com.ngc.seaside.jellyfish.utilities.TestItem;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,10 +1,7 @@
-package com.ngc.seaside.bootstrap.utilities.console.impl.stringtable;
+package com.ngc.seaside.jellyfish.utilities.console.impl.stringtable;
 
-import com.ngc.seaside.bootstrap.utilities.TestItem;
+import com.ngc.seaside.jellyfish.utilities.TestItem;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.MultiLineCell;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.MultiLineRow;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 
 import org.junit.Before;
 import org.junit.Test;

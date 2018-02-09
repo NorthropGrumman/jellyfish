@@ -6,9 +6,10 @@
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
-    compile "com.ngc.seaside:command.api:${D}bootstrapApiVersion"
-    compile "com.ngc.seaside:bootstrap.api:${D}bootstrapApiVersion"
-    compile "com.ngc.seaside:bootstrap.utilities:${D}bootstrapApiVersion"
+    api project(':jellyfish.service.api')
+
+    compile "com.ngc.seaside:jellyfish.api:${D}jellyfishVersion"
+    compile "com.ngc.seaside:jellyfish.utilities:${D}jelyfishVersion"
 
     compile "com.google.inject:guice:${D}guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"

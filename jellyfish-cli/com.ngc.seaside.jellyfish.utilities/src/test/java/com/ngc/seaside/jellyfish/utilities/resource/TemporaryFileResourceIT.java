@@ -1,7 +1,4 @@
-package com.ngc.seaside.bootstrap.utilities.resource;
-
-import com.ngc.seaside.jellyfish.utilities.resource.ITemporaryFileResource;
-import com.ngc.seaside.jellyfish.utilities.resource.TemporaryFileResource;
+package com.ngc.seaside.jellyfish.utilities.resource;
 
 import org.junit.After;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.ngc.seaside.bootstrap.utilities.file;
+package com.ngc.seaside.jellyfish.utilities.file;
 
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilities;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;

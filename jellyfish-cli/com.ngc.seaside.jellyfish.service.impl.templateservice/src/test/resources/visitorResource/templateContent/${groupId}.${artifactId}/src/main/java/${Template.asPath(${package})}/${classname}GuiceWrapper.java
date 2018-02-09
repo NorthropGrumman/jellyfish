@@ -4,15 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 
 /**
  * Wrap the service using Guice Injection
  */
 @Singleton
-public class ${classname}GuiceWrapper implements IBootstrapCommand {
+public class ${classname}GuiceWrapper implements IJellyFishCommand {
 
    private final ${classname} delegate = new ${classname}();
 
@@ -33,7 +33,7 @@ public class ${classname}GuiceWrapper implements IBootstrapCommand {
    }
 
    @Override
-   public void run(IBootstrapCommandOptions commandOptions) {
+   public void run(IJellyFishCommandOptions commandOptions) {
       delegate.run(commandOptions);
    }
 }

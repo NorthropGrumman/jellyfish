@@ -1,15 +1,15 @@
 package ${package};
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommand;
-import com.ngc.seaside.bootstrap.api.IBootstrapCommandOptions;
-import com.ngc.seaside.bootstrap.utilites.file.FileUtilitiesException;
-import com.ngc.seaside.bootstrap.utilites.file.GradleSettingsUtilities;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.utilites.file.FileUtilitiesException;
+import com.ngc.seaside.jellyfish.utilites.file.GradleSettingsUtilities;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,8 +21,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 /**
  *
  */
-@Component(service = IBootstrapCommand.class)
-public class ${classname} implements IBootstrapCommand {
+@Component(service = IJellyFishCommand.class)
+public class ${classname} implements IJellyFishCommand {
 
    private static final String FIRSTNAME = "${pojo.firstName}";
    private static final String LASTNAME = "${pojo.lastName}";
@@ -71,7 +71,7 @@ public class ${classname} implements IBootstrapCommand {
    }
 
    @Override
-   public void run(IBootstrapCommandOptions commandOptions) {
+   public void run(IJellyFishCommandOptions commandOptions) {
       IParameterCollection parameters = commandOptions.getParameters();
 
       try {
