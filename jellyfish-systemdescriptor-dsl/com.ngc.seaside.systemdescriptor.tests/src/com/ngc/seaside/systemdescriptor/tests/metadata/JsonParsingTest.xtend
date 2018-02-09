@@ -17,6 +17,7 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -30,18 +31,7 @@ class JsonParsingTest {
 
 	@Test
 	def void testDoesParseMetadataAsJson() {
-		val result = parseHelper.parse('''
-			package blah
-			
-			data Foo { 
-				metadata {
-				  "name" : "test",
-				  "description" : "A test metadata object",
-				  "arraydata" : ["metadata", "test"],
-				  "boolvalue" : true
-				}  
-			}
-		''')
+		val result = parseHelper.parse(Datas.DATA_WITH_GENERIC_METADATA.getSource())
 		Assert.assertNotNull(result)
 		validationTester.assertNoIssues(result);
 		

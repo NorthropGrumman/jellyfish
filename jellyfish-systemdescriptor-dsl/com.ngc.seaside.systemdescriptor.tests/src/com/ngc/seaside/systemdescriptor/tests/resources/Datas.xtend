@@ -35,6 +35,19 @@ class Datas {
 		}
 	''')
 	
+	public static final ParsingTestResource DATA_WITH_GENERIC_METADATA = resource('''
+		package blah
+		
+		data Foo { 
+			metadata {
+			  "name" : "test",
+			  "description" : "A test metadata object",
+			  "arraydata" : ["metadata", "test"],
+			  "boolvalue" : true
+			}  
+		}	
+	''')
+	
 	def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
 		return ParsingTestResource.preparedForParse(resourceHelper, Arrays.asList(resources))
 	}

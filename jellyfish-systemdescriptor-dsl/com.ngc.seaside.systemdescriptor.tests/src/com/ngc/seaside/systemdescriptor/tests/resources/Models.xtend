@@ -41,7 +41,14 @@ class Models {
 			}
 		}
 	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)
-	
+
+	public static final ParsingTestResource TIMER = resource('''
+		package clocks.models.part
+					
+		model Timer {
+		}
+	''')
+
 	def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
 		return ParsingTestResource.preparedForParse(resourceHelper, Arrays.asList(resources))
 	}
