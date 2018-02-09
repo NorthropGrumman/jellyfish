@@ -4,9 +4,9 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
-import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -17,8 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -33,53 +31,19 @@ class ScenarioMetadataParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 	
-	Resource dataResource
-
-	Resource modelResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("datatypes.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.SPEAKER.requiredResources
 		)
-		validationTester.assertNoIssues(dataResource)
-		
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models.sub
-							
-				model Wire {
-				}
-			''',
-			URI.createURI("part.sd")
-		)
-		validationTester.assertNoIssues(modelResource)
 	}
 	
 	@Test
 	def void testDoesParseScenarioWithMetadata() {
-		val source = '''
-			package clocks.models
-			 
-			model Speaker {
-			  scenario buzz { 
-			  	metadata {
-			  		"name": "someName",
-			  		"description": "someDescription"
-			  	}
-			  	when receiving alarmTime
-			  	then doSomething withThis
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(Models.SPEAKER.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -102,34 +66,6 @@ class ScenarioMetadataParsingTest {
 			"metadata did not parse!",
 			"someName",
 			(firstmember.value as StringValue).value
-		)
-	}
-	
-	@Test
-	def void testDoesNotParseScenarioWithMisplacedMetadata() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			 
-			model Speaker {
-			  scenario buzz { 
-			  	when receiving alarmTime
-			  	then doSomething withThis
-			  	metadata {
-			  		"name": "someName",
-			  		"description": "someDescription"
-			  	}
-			  }
-			}
-		'''
-		
-		val invalidResult = parseHelper.parse(source)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.PACKAGE,
-			Diagnostic.SYNTAX_DIAGNOSTIC
 		)
 	}
 }

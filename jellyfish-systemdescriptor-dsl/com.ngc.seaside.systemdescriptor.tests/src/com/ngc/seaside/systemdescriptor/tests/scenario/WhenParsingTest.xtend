@@ -3,7 +3,8 @@ package com.ngc.seaside.systemdescriptor.tests.scenario
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
-import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -15,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -30,56 +30,20 @@ class WhenParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	Resource dataResource
-
-	Resource modelResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("datatypes.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.ALARM.requiredResources,
+			Models.GENERIC_MODEL_WITH_MULTIPLE_WHEN_STEPS.requiredResources
 		)
-		validationTester.assertNoIssues(dataResource)
-
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models
-							
-				model Speaker {
-				}
-			''',
-			dataResource.resourceSet
-		)
-		validationTester.assertNoIssues(modelResource)
 	}
 
 	@Test
 	def void testDoesParseScenarioWithWhen() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	when receiving alarmTime
-			  	then doSomething
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(Models.ALARM.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -98,29 +62,13 @@ class WhenParsingTest {
 			step.parameters.get(0)
 		)
 	}
-	
+
 	@Test
 	def void testDoesParseScenarioWithMultipleWhens() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	when receiving alarmTime
-			  	and talkingWith yoda
-			  	then doSomething
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(
+			Models.GENERIC_MODEL_WITH_MULTIPLE_WHEN_STEPS.source,
+			requiredResources.resourceSet
+		)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -133,18 +81,18 @@ class WhenParsingTest {
 			when.steps.size
 		)
 	}
-	
+
 	@Test
-	def void testDoesParseScenarioWithMultipleQualifiedWhens() {
+	def void testDoesParseScenarioWithMultipleWhensWithPeriodsCharacters() {
 		val source = '''
 			package clocks.models
 			 
-			import clocks.datatypes.Time
+			import clocks.datatypes.ZonedTime
 			 
 			model Alarm {
 			  input {
-			  	Time currentTime
-			  	Time alarmTime
+			  	ZonedTime currentTime
+			  	ZonedTime alarmTime
 			  }
 			  
 			  scenario triggerAlert {
@@ -155,7 +103,7 @@ class WhenParsingTest {
 			}
 		'''
 
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
