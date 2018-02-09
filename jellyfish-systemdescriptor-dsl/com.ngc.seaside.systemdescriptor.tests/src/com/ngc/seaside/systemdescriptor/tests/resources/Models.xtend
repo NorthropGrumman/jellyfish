@@ -43,7 +43,7 @@ class Models {
 			scenario triggerAlert {
 				given alarmTime hasBeenReceived
 				when receiving alarmTime
-				then doSomething
+				then doSomething withThis
 			}
 		}
 	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)
@@ -129,6 +129,34 @@ class Models {
 				when receiving alarmTime
 				and something is cool
 				then doSomething
+			}
+		}
+	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)
+	
+	public static final ParsingTestResource GENERIC_MODEL_WITH_MULTIPLE_THEN_STEPS = resource('''
+		package scenarios.test
+		
+		import clocks.datatypes.ZonedTime
+		import clocks.datatypes.AlarmAcknowledgement
+		import clocks.datatypes.AlarmStatus
+		
+		model ScenarioTestWithManyGivens {
+		
+			input {
+				ZonedTime currentTime
+				ZonedTime alarmTime
+				AlarmAcknowledgement alarmAcknowledgement
+			}
+		
+			output {
+				AlarmStatus alarmStatus
+			}
+			
+			scenario triggerAlert {
+				given alarmTime hasBeenReceived
+				when receiving alarmTime
+				then doSomething
+				and something is cool
 			}
 		}
 	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)

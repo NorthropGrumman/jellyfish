@@ -3,7 +3,8 @@ package com.ngc.seaside.systemdescriptor.tests.scenario
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
-import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -15,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -30,56 +30,20 @@ class ThenParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	Resource dataResource
-
-	Resource modelResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("datatypes.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.ALARM.requiredResources,
+			Models.GENERIC_MODEL_WITH_MULTIPLE_THEN_STEPS.requiredResources
 		)
-		validationTester.assertNoIssues(dataResource)
-
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models
-							
-				model Speaker {
-				}
-			''',
-			dataResource.resourceSet
-		)
-		validationTester.assertNoIssues(modelResource)
 	}
 
 	@Test
 	def void testDoesParseScenarioWithThen() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	when receiving alarmTime
-			  	then doSomething withThis
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(Models.ALARM.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -101,26 +65,10 @@ class ThenParsingTest {
 
 	@Test
 	def void testDoesParseScenarioWithMultipleThens() {
-		val source = '''
-			package clocks.models
-			 
-			import clocks.datatypes.Time
-			 
-			model Alarm {
-			  input {
-			  	Time currentTime
-			  	Time alarmTime
-			  }
-			  
-			  scenario triggerAlert {
-			  	when receiving alarmTime
-			  	then doSomething
-			  	and doSomethingElse
-			  }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(
+			Models.GENERIC_MODEL_WITH_MULTIPLE_THEN_STEPS.source,
+			requiredResources.resourceSet
+		)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -133,18 +81,18 @@ class ThenParsingTest {
 			then.steps.size
 		)
 	}
-	
+
 	@Test
-	def void testDoesParseScenarioWithMultipleQualifiedThens() {
+	def void testDoesParseScenarioWithMultipleThensWithPeriodCharacters() {
 		val source = '''
 			package clocks.models
 			 
-			import clocks.datatypes.Time
+			import clocks.datatypes.ZonedTime
 			 
 			model Alarm {
 			  input {
-			  	Time currentTime
-			  	Time alarmTime
+			  	ZonedTime currentTime
+			  	ZonedTime alarmTime
 			  }
 			  
 			  scenario triggerAlert {
@@ -155,7 +103,7 @@ class ThenParsingTest {
 			}
 		'''
 
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
