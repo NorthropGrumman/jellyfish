@@ -15,7 +15,7 @@ dependencies {
     compile "com.ngc.seaside:service.transport.impl.topic.multicast:$multicastTransportVersion"
     compile "com.ngc.seaside:service.transport.impl.provider.multicast:$multicastTransportVersion"
 
-    compile "com.ngc.seaside:guice.modules:$version"
+    compile "com.ngc.seaside:guice.modules:$jellyfishVersion"
     compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$transportServiceVersion"
     compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$multicastTransportVersion"
 
