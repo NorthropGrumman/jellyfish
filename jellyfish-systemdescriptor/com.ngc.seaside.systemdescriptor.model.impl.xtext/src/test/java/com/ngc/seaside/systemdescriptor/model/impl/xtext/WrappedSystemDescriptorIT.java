@@ -82,7 +82,6 @@ public class WrappedSystemDescriptorIT {
       resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
    }
 
-
    @Test
    public void doesCreateWrappedDescriptorWithSingleResource() throws Throwable {
       IParseResult result = parser.parse(new InputStreamReader(streamOf(pathTo("clocks/datatypes/Time.sd"))));
