@@ -1,4 +1,3 @@
-
 dependencies {
     sd project(':project2')
 }
