@@ -7,7 +7,7 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;

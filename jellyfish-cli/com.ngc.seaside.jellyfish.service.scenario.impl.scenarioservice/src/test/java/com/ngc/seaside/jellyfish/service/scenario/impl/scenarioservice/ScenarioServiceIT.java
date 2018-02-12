@@ -15,7 +15,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescript
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
-import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 

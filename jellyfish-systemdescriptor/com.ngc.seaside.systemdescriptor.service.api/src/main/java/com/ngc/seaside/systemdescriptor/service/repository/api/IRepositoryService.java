@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.api;
+package com.ngc.seaside.systemdescriptor.service.repository.api;
 
 import java.nio.file.Path;
 import java.util.Set;

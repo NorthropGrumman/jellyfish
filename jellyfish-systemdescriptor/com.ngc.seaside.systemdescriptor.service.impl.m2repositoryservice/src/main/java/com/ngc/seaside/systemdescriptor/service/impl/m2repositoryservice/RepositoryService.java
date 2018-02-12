@@ -2,8 +2,8 @@ package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
-import com.ngc.seaside.systemdescriptor.service.api.RepositoryServiceException;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Settings;

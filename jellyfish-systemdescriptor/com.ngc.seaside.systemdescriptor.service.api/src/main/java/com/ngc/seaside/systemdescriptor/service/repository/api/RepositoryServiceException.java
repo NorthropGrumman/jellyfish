@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.service.api;
+package com.ngc.seaside.systemdescriptor.service.repository.api;
 
 /**
  * Any exception in the IRepositoryService implementation.

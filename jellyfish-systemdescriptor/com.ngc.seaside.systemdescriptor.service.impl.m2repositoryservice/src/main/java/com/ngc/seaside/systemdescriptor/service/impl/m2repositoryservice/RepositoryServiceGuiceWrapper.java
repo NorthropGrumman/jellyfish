@@ -3,7 +3,7 @@ package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 import java.nio.file.Path;
 import java.util.Set;

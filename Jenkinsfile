@@ -11,7 +11,7 @@ pipeline {
         // This is important because the last stage in this pipeline removes all snapshots from the local repo.  We
         // don't want to remove a snapshot another build are just installed but that other build isn't finish yet (ie,
         // the build needs to reference the snapshot).  This happens if a pipeline has multiple invocations of Gradle.
-        lock resource: 'mavenLocal'
+        //lock resource: 'mavenLocal'
     }
 
     parameters {
