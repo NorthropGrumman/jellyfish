@@ -3,18 +3,18 @@ package com.ngc.seaside.jellyfish.impl.provider;
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameter;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -305,8 +305,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    /**
-    * This method is required due to an issue when BND tries to resolve the dependencies and the IBootstrapCommand
-    * extends an interface that is typed.
+    * This method is required due to an issue when BND tries to resolve the dependencies
     */
    @Reference(unbind = "removeCommandOSGi", service = IJellyFishCommand.class, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
    protected void addCommandOSGi(IJellyFishCommand command) {

@@ -5,9 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
 import org.junit.After;

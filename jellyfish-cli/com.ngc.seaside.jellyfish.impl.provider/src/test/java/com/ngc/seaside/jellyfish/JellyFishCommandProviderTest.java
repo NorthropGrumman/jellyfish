@@ -18,16 +18,16 @@ import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -71,7 +71,7 @@ public class JellyFishCommandProviderTest {
 
       provider = new JellyFishCommandProvider() {
          /**
-          * The Bootstrap command provider uses the package name from the class in order to look up the templateContent.
+          * The JellyFish command provider uses the package name from the class in order to look up the templateContent.
           * Therefore, it is necessary to return our own value since we can't mock the final method getClass
           */
          @Override
