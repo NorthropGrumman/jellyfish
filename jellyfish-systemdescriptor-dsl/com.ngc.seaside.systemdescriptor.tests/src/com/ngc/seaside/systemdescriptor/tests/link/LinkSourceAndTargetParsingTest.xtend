@@ -19,6 +19,8 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -202,20 +204,19 @@ class LinkSourceAndTargetParsingTest {
 
 	@Test
 	def void testDoesNotParseModelWithLinkIfTypesAre_Not_TheSame() {
-
         var source = '''
             package clocks.models
 
-            import clocks.datatypes.Time
+            import clocks.datatypes.ZonedTime
             import clocks.models.part.Alarm
 
             model AlarmClock {
                 input {
-                    Time currentTime
+                    ZonedTime currentTime
                 }
 
                 output {
-                    Time alarmTime
+                    ZonedTime alarmTime
                 }
 
                 parts {
@@ -230,11 +231,22 @@ class LinkSourceAndTargetParsingTest {
 
         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
+        var model = invalidResult.element as Model;
+        var link = model.links.declarations.get(0)
+        var linkSource = link.source as FieldReference
+        var linkTarget = link.target as LinkableExpression
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.LINK_DECLARATION,
             null
+        )
+
+        assertNotSame(
+            "linkSource and linkTarget types not correct!",
+            (linkSource.fieldDeclaration as InputDeclaration).type.name,
+            (linkTarget.tail as InputDeclaration).type.name
         )
 	}
 
@@ -380,7 +392,7 @@ class LinkSourceAndTargetParsingTest {
         )
 	}
 	
-		@Test
+	@Test
 	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
 
 		        var source = '''
