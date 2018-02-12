@@ -7,6 +7,8 @@ import org.eclipse.xtext.validation.Check;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
@@ -81,8 +83,25 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
     }
 
     protected void checkForTypeSafeLinks(LinkDeclaration link) {
-        // TODO TH: validate the data types for inputs and outputs
-        // and model types for parts and requirements match up.
+        LinkableReference source = link.getSource();
+        LinkableReference target = link.getTarget();
+
+        FieldDeclaration sourceField = resolveField(source);
+        FieldDeclaration targetField = resolveField(target);
+
+        String sourceTypeName = getFieldTypeName(sourceField);
+        String targetTypeName = getFieldTypeName(targetField);
+
+        if (sourceTypeName != targetTypeName) {
+            String msg = String.format(
+                "Type of link target ('%s') must match type of link source ('%s'): %s != %s.",
+                targetField.getName(),
+                sourceField.getName(),
+                targetTypeName,
+                sourceTypeName
+            );
+            error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+        }
     }
 
     protected void checkForDuplicateLinks(LinkDeclaration link) {
@@ -208,6 +227,15 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
            isLinkable = false;
         }
     	return isLinkable;
+    }
+
+    private String getFieldTypeName(FieldDeclaration field) {
+        if (field.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION)) {
+            return ((InputDeclaration) field).getType().getName();
+        } else if (field.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION)) {
+            return ((OutputDeclaration) field).getType().getName();
+        }
+        return "";
     }
 
     private static int getNumberOfLinksNamed(
