@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.packages
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.emf.common.util.URI
 import com.ngc.seaside.systemdescriptor.validation.SdIssueCodes
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -21,61 +22,54 @@ class PackageParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
-	
+
 	@Inject
 	ResourceHelper resourceHelper
 
 	@Inject
 	ValidationTestHelper validationTester
-	
-	
+
 	@Test
-	def void testDoesNotAllowPackageNameKeywords1() {
-		val source = '''
+	def void testDoesNotAllowEscapingPackageNames() {
+		var source = '''
 			package ^foo.datatypes
 			
 			data Foo {
 				int i
 				float f
 			}
-
+			
 		'''
 
-		val invalidResult = parseHelper.parse(source)
+		var invalidResult = parseHelper.parse(source)
 		assertNotNull(invalidResult)
-		
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.PACKAGE,
 			null
 		)
-	}
-	
 
-	@Test
-	def void testDoesNotAllowPackageNameKeywords2() {
-		val source = '''
+		source = '''
 			package foo.^datatypes
 			
 			data Foo {
 				int i
 				float f
 			}
-
+			
 		'''
 
-		val invalidResult = parseHelper.parse(source)
+		invalidResult = parseHelper.parse(source)
 		assertNotNull(invalidResult)
-		
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.PACKAGE,
 			null
 		)
-	}		
-	
+	}
+
 	@Test
-	def void testPackageAndFilePathMatch() {
+	def void testDoesRequirePackageAndFilePathToMatch() {
 		val dateSourceValid = '''
 			package com.ngc.seaside.common
 			
@@ -85,10 +79,13 @@ class PackageParsingTest {
 				int year
 			}
 		''';
-		
-		val validDataResource = resourceHelper.resource(dateSourceValid, URI.createPlatformResourceURI("src/main/sd/com/ngc/seaside/common/datatypes.sd", false))
+
+		val validDataResource = resourceHelper.resource(
+			dateSourceValid,
+			URI.createPlatformResourceURI("src/main/sd/com/ngc/seaside/common/datatypes.sd", false)
+		)
 		validationTester.assertNoIssues(validDataResource)
-		
+
 		val dateSourceInvalid1 = '''
 			package com.ngc.seaside
 			
@@ -98,14 +95,17 @@ class PackageParsingTest {
 				int year
 			}
 		''';
-		
-		val invalidDataResource1 = resourceHelper.resource(dateSourceInvalid1, URI.createPlatformResourceURI("src/main/sd/com/ngc/seaside/common/datatypes.sd", false))
+
+		val invalidDataResource1 = resourceHelper.resource(
+			dateSourceInvalid1,
+			URI.createPlatformResourceURI("src/main/sd/com/ngc/seaside/common/datatypes.sd", false)
+		)
 		validationTester.assertError(
 			invalidDataResource1,
 			SystemDescriptorPackage.Literals.PACKAGE,
 			SdIssueCodes.MISMATCHED_PACKAGE
 		)
-		
+
 		val dateSourceInvalid2 = '''
 			package foo
 			
@@ -115,13 +115,15 @@ class PackageParsingTest {
 				int year
 			}
 		''';
-		
-		val invalidDataResource2 = resourceHelper.resource(dateSourceInvalid2, URI.createPlatformResourceURI("src/main/sd/Foo.sd", false))
+
+		val invalidDataResource2 = resourceHelper.resource(
+			dateSourceInvalid2,
+			URI.createPlatformResourceURI("src/main/sd/Foo.sd", false)
+		)
 		validationTester.assertError(
 			invalidDataResource2,
 			SystemDescriptorPackage.Literals.PACKAGE,
 			SdIssueCodes.MISMATCHED_PACKAGE
 		)
-		
 	}
 }

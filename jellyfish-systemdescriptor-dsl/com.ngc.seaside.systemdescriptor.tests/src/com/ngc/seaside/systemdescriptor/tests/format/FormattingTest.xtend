@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.format
 
 import org.junit.Test
 import com.google.inject.Inject
@@ -14,13 +14,15 @@ import org.eclipse.xtext.junit4.formatter.FormatterTester
 class FormattingTest {
 	@Inject extension FormatterTester
 	
-	@Test def void testAlreadyFormattedExample1() {
+	@Test
+	def void testAlreadyFormattedExample1() {
 		assertFormatted[
 			toBeFormatted = formattedExample1
 		]
 	}
 	
-	@Test def void testJumbledExample1() {
+	@Test
+	def void testJumbledExample1() {
 		assertFormatted[
 			expectation = formattedExample1
 			toBeFormatted = '''
@@ -53,7 +55,8 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample1() {
+	@Test
+	def void testOneLineExample1() {
 		assertFormatted[
 			expectation = formattedExample1
 			toBeFormatted = '''
@@ -62,13 +65,15 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testAlreadyFormattedExample2() {
+	@Test
+	def void testAlreadyFormattedExample2() {
 		assertFormatted[
 			toBeFormatted = formattedExample2
 		]
 	}
 	
-	@Test def void testJumbledExample2() {
+	@Test
+	def void testJumbledExample2() {
 		assertFormatted[
 			expectation = formattedExample2
 			toBeFormatted = '''
@@ -117,7 +122,8 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample2() {
+	@Test
+	def void testOneLineExample2() {
 		assertFormatted[
 			expectation = formattedExample2
 			toBeFormatted = '''
@@ -126,13 +132,15 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testAlreadyFormattedExample3() {
+	@Test
+	def void testAlreadyFormattedExample3() {
 		assertFormatted[
 			toBeFormatted = formattedExample3
 		]
 	}
 	
-	@Test def void testJumbledExample3() {
+	@Test
+	def void testJumbledExample3() {
 		assertFormatted[
 			expectation = formattedExample3
 			toBeFormatted = '''
@@ -147,7 +155,8 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample3() {
+	@Test
+	def void testOneLineExample3() {
 		assertFormatted[
 			expectation = formattedExample3
 			toBeFormatted = '''
@@ -156,7 +165,8 @@ class FormattingTest {
 		]
 	}
 
-	@Test def void testJumbledExample4() {
+	@Test
+	def void testJumbledExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
@@ -172,7 +182,8 @@ class FormattingTest {
 		]
 	}
 
-	@Test def void testAlreadyFormattedExample4() {
+	@Test
+	def void testAlreadyFormattedExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
@@ -190,7 +201,8 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample4() {
+	@Test
+	def void testOneLineExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''

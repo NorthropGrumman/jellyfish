@@ -94,6 +94,7 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//LinkableReference"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//LinkDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//LinkDeclaration/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkDeclaration/source"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//LinkDeclaration/target"/>
     </genClasses>
