@@ -210,7 +210,17 @@ pipeline {
                }
             }
         }
-        
+		
+        stage('Gather Logs') {
+            steps {
+                println "Downloading Nexus Lifecycle report."
+                withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
+                    sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
+                    sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+                }
+            }
+        }
+		
         stage('Archive') {
             steps {
                 // Create a ZIP that has everything.
