@@ -366,7 +366,7 @@ class LinkSourceAndTargetParsingTest {
                 }
 
                 links {
-                    timeOverride -> clock.currentTime
+                    link timeOverride -> clock.currentTime
                 }
             }
         '''
@@ -418,43 +418,4 @@ class LinkSourceAndTargetParsingTest {
             null
         )
 	}	
-	
-	// THIS IS A REPEAT OF A VALID TEST NOT SURE WHY THIS WAS PUT HERE
-//	@Test
-//	def void testDoesNotParseModelWithLink_From_InputField_To_PartInputField() {
-//		 var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.ZonedTime
-//            import clocks.models.part.Alarm
-//            import clocks.models.part.Clock
-//
-//            model AlarmClock {
-//                 input {
-//                      ZonedTime timeOverride
-//                }
-//
-//                output {
-//                    ZonedTime currentTime
-//                }
-//
-//                parts {
-//                    Alarm alarm
-//                    Clock clock
-//                }
-//
-//                links {
-//                    link timeOverride -> alarm.currentTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
-//	}	
 }
