@@ -15,6 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -43,70 +44,66 @@ class BaiscLinkParsingTest {
 	
 	@Test
 	def void testDoesNotParseModelWithLink_From_Field_To_Same_Field() {
-		fail("not implemented");
-		
-		// OLD LinkParsingTest FOR REFERENCE
-//		var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                input {
-//                    Time currentTime
-//                }
-//
-//                links {
-//                    link currentTime -> currentTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+
+		var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                links {
+                    link currentTime -> currentTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 
 	@Test
 	def void testDoesNotParseModelWithLink_From_Part_To_Part() {
-		fail("not implemented");
-		
-		// OLD LinkParsingTest FOR REFERENCE
-//		        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                output {
-//                    Time currentTime
-//                    Time otherTime
-//                }
-//
-//                parts {
-//                    Alarm a1
-//                    Alarm a2
-//                }
-//
-//                links {
-//                    link a1 -> a2
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+
+		        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                output {
+                    Time currentTime
+                    Time otherTime
+                }
+
+                parts {
+                    Alarm a1
+                    Alarm a2
+                }
+
+                links {
+                    link a1 -> a2
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 
 	@Test
@@ -116,71 +113,92 @@ class BaiscLinkParsingTest {
 
 	@Test
 	def void testDoesNotParseModelWithLink_From_InputField_To_InputField() {
-		fail("not implemented");
-				
-		// OLD LinkParsingTest FOR REFERENCE
-//        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                input {
-//                    Time currentTime
-//                    Time otherTime
-//                }
-//
-//                links {
-//                    link currentTime -> otherTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                    Time otherTime
+                }
+
+                links {
+                    link currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 
 	@Test
 	def void testDoesNotParseModelWithLink_From_OutputField_To_OutputField() {
-		fail("not implemented");
+		
+		var source = '''
+            package clocks.models
 
-		// OLD LinkParsingTest FOR REFERENCE		
-//		        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                output {
-//                    Time currentTime
-//                    Time otherTime
-//                }
-//
-//                links {
-//                    link currentTime -> otherTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+            import clocks.datatypes.ZonedTime
+
+            model AlarmClock {
+                output {
+                    ZonedTime currentTime
+                    ZonedTime otherTime
+                }
+
+                links {
+                    link currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 	
 	@Test
 	def void testDoesNotParseModelWithLink_From_InputField_To_OutputField() {
-		fail("not implemented");
+		var source = '''
+            package clocks.models
+
+            import clocks.datatypes.ZonedTime
+
+            model AlarmClock {
+                input {
+                    ZonedTime currentTime
+                }
+                output {
+                	ZonedTime otherTime
+                }
+
+                links {
+                    link currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+	}
 	}
 	
 	@Test

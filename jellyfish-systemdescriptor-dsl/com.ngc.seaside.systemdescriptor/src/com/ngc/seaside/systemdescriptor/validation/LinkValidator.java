@@ -45,6 +45,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
         checkForPartOutputField_To_InputField(link);
         checkForInputField_To_PartOutputField(link);
         checkForOutputField_To_PartOutputField(link);
+        checkForInputField_To_OutputField(link);
     }
 
     protected void checkForValidLinks(LinkDeclaration link) {
@@ -302,6 +303,28 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
         }
     }
 
+    protected void checkForInputField_To_OutputField(LinkDeclaration link) {
+    	LinkableReference source = link.getSource();
+        LinkableReference target = link.getTarget();
+
+        FieldDeclaration sourceField = resolveField(source);
+        FieldDeclaration targetField = resolveField(target);
+        
+        // Both parts and both outputs then this is a bad link statement 
+        if ( !isLinkableExpression(source) &&  !isLinkableExpression(target) &&
+        		sourceField.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION) &&
+        			targetField.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION))  
+        {
+        	
+        	String msg = String.format(
+                    "Linking model output '%s' to part model output '%s'.",
+                    sourceField.getName(),
+                    targetField.getName());
+            error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+        	
+        }
+    }
+    
     private static FieldDeclaration resolveField(LinkableReference ref) {
         FieldDeclaration field;
         if (ref.eClass().equals(SystemDescriptorPackage.Literals.FIELD_REFERENCE)) {
