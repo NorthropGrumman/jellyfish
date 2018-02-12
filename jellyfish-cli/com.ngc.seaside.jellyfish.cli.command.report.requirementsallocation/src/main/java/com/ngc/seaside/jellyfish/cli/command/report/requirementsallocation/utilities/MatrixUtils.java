@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities;
 
-import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
+import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.Requirement;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementItemFormat;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;

@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.command.api.ICommandProvider;
-
 import java.util.Collection;
 
 /**
