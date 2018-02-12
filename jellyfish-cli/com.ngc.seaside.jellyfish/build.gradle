@@ -8,6 +8,8 @@ dependencies {
     api project(':jellyfish.api')
 
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
 
@@ -66,6 +68,9 @@ dependencies {
     implementation project(':jellyfish.cli.command.createjavacucumbertests')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
 
+
+
+    implementation project(':guice.modules')
     implementation project(':jellyfish.service.name.impl.namingservices')
     implementation project(':jellyfish.service.codegen.impl.codegenservices')
     implementation project(':jellyfish.service.scenario.impl.scenarioservice')
@@ -74,12 +79,10 @@ dependencies {
     implementation project(':jellyfish.service.requirements.impl.requirementsservice')
     implementation project(':jellyfish.service.feature.impl.featureservice')
 
-    implementation "com.ngc.seaside:guice.modules:$version"
-    implementation "com.ngc.seaside:bootstrap.service.impl.parameterservice:$version"
-    implementation "com.ngc.seaside:bootstrap.service.impl.promptuserservice:$version"
-    implementation "com.ngc.seaside:bootstrap.service.impl.propertyservice:$version"
-    implementation "com.ngc.seaside:bootstrap.service.impl.repositoryservice:$version"
-    implementation "com.ngc.seaside:bootstrap.service.impl.templateservice:$version"
+    implementation project(':jellyfish.service.impl.parameterservice')
+    implementation project(':jellyfish.service.impl.promptuserservice')
+    implementation project(':jellyfish.service.impl.propertyservice')
+    implementation project(':jellyfish.service.impl.templateservice')
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

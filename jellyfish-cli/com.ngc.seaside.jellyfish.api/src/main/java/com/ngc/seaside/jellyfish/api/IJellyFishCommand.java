@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.command.api.ICommand;
-
 /**
  * This interface provides an extension of the {@link ICommand} interface only in the type of options that are
  * presented to the command at run time. The main difference being that of the System Descriptor. The system descriptor

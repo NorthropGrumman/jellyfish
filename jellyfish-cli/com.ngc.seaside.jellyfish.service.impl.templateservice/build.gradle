@@ -1,0 +1,14 @@
+dependencies {
+    api project(':jellyfish.service.api')
+
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
+    implementation "org.apache.velocity:velocity-engine-core:$velocityVersion"
+    implementation "commons-io:commons-io:$commonsIOVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+}

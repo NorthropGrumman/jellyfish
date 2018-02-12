@@ -202,55 +202,40 @@ class LinkSourceAndTargetParsingTest {
 
 	@Test
 	def void testDoesNotParseModelWithLinkIfTypesAre_Not_TheSame() {
-		fail("not implemented");
-		
-		// ------------------------------------------------
-		// OLD LinkParsingTest FOR REFERENCE
-		// ------------------------------------------------
-//        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                input {
-//                    Time currentTime
-//                }
-//
-//                output {
-//                    Time alarmTime
-//                }
-//
-//                parts {
-//                    Alarm alarm
-//                }
-//
-//                links {
-//                    link currentTime -> alarm.fooTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//
-//        var model = invalidResult.element as Model;
-//        var link = model.links.declarations.get(0)
-//        var linkSource = link.source as LinkableReference
-//        var linkTarget = link.target as LinkableReference
-//
-//        assertNotSame(
-//            "linkSource and linkTarget types not correct!",
-//            linkSource.tail.type.name,
-//            linkTarget.tail.type.name
-//        )
-//
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+
+        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                output {
+                    Time alarmTime
+                }
+
+                parts {
+                    Alarm alarm
+                }
+
+                links {
+                    link currentTime -> alarm.alarmAcknowledgement
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 
 
@@ -273,7 +258,7 @@ class LinkSourceAndTargetParsingTest {
 			    }
 			
 			    links {
-			    	link clock.currentTime -> alarm.alarmAcknowledgement
+			    	link clock.currentTime -> alarm.outputTime
 			    }
 			}
 		'''
@@ -290,100 +275,154 @@ class LinkSourceAndTargetParsingTest {
 
 	@Test
 	def void testDoesNotParseModelWithLink_From_PartInputField_To_PartOutputField() {
-		fail("not implemented: you can't connect input on the LHS to output on the RHS!");
+		var source = '''
+			package clocks.models
+			
+			import clocks.models.part.Alarm
+			import clocks.models.part.Clock
+			
+			model AlarmClock {
+			    parts {
+			    	Alarm alarm
+			    	Clock clock
+			    }
+			
+			    links {
+			    	link alarm.currentTime -> clock.currentTime
+			    }
+			}
+		'''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.LINK_DECLARATION,
+			null
+		)
 	}
 	
 	@Test
 	def void testDoesNotParseModelWithLink_From_PartOutputField_To_InputField() {
-		fail("not implemented");
+		 var source = '''
+            package clocks.models
+
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Alarm
+            import clocks.models.part.Clock
+
+            model AlarmClock {
+                 input {
+                      ZonedTime timeOverride
+                }
+
+                output {
+                    ZonedTime currentTime
+                }
+
+                parts {
+                    Alarm alarm
+                    Clock clock
+                }
+
+                links {
+                    link clock.currentTime -> timeOverride
+                }
+            }
+        '''
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+		
 	}
 	
 		
 	@Test
 	def void testDoesNotParseModelWithLink_From_InputField_To_PartOutputField() {
-		fail("not implemented");
-		
-		// ------------------------------------------------
-		// OLD LinkParsingTest FOR REFERENCE
-		// ------------------------------------------------
-//		        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.Time
-//            import clocks.models.part.Alarm
-//
-//            model AlarmClock {
-//                input {
-//                    Time currentTime
-//                }
-//
-//                output {
-//                    Time alarmTime
-//                }
-//
-//                parts {
-//                    Alarm alarm
-//                }
-//
-//                links {
-//                    link currentTime -> alarm.fooTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+	
+        var source = '''
+            package clocks.models
 
-// --------------------------------------------------------------------------
-// HERE IS A DUPLICATE TEST FROM LinkNameParsingTest THAT DID THE SAME THING
-// -------------------------------------------------------------------------
-//        var source = '''
-//            package clocks.models
-//
-//            import clocks.datatypes.ZonedTime
-//            import clocks.models.part.Alarm
-//            import clocks.models.part.Clock
-//
-//            model AlarmClock {
-//                 input {
-//                      ZonedTime timeOverride
-//                }
-//
-//                output {
-//                    ZonedTime currentTime
-//                }
-//
-//                parts {
-//                    Alarm alarm
-//                    Clock clock
-//                }
-//
-//                links {
-//                    timeOverride -> clock.currentTime
-//                }
-//            }
-//        '''
-//
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
-//        assertNotNull(invalidResult)
-//        validationTester.assertError(
-//            invalidResult,
-//            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-//            null
-//        )
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Alarm
+            import clocks.models.part.Clock
+
+            model AlarmClock {
+                 input {
+                      ZonedTime timeOverride
+                }
+
+                output {
+                    ZonedTime currentTime
+                }
+
+                parts {
+                    Alarm alarm
+                    Clock clock
+                }
+
+                links {
+                    timeOverride -> clock.currentTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 	
 		@Test
 	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
-		// ------------------------------------------------
-		// OLD LinkNameParsingTest FOR REFERENCE
-		// ------------------------------------------------
-		//        var source = '''
+
+		        var source = '''
+            package clocks.models
+
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Alarm
+            import clocks.models.part.Clock
+
+            model AlarmClock {
+                 input {
+                      ZonedTime timeOverride
+                }
+
+                output {
+                    ZonedTime currentTime
+                }
+
+                parts {
+                    Alarm alarm
+                    Clock clock
+                }
+
+                links {
+                    link currentTime -> clock.currentTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+	}	
+	
+	// THIS IS A REPEAT OF A VALID TEST NOT SURE WHY THIS WAS PUT HERE
+//	@Test
+//	def void testDoesNotParseModelWithLink_From_InputField_To_PartInputField() {
+//		 var source = '''
 //            package clocks.models
 //
 //            import clocks.datatypes.ZonedTime
@@ -405,22 +444,17 @@ class LinkSourceAndTargetParsingTest {
 //                }
 //
 //                links {
-//                    link currentTime -> clock.currentTime
+//                    link timeOverride -> alarm.currentTime
 //                }
 //            }
 //        '''
 //
-//        var invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+//        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 //        assertNotNull(invalidResult)
 //        validationTester.assertError(
 //            invalidResult,
 //            SystemDescriptorPackage.Literals.LINK_DECLARATION,
 //            null
 //        )
-	}	
-	
-	@Test
-	def void testDoesNotParseModelWithLink_From_InputField_To_PartInputField() {
-		fail("not implemented");
-	}	
+//	}	
 }

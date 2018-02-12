@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 

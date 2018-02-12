@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.Check;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -12,9 +13,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
@@ -23,12 +24,18 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
         checkForValidLinks(link);
         checkForTypeSafeLinks(link);
         checkForDuplicateLinks(link);
-        checkForDuplicateLinkNames(link);
-        checkForLinkNameThatDuplicatesRequirementName(link);
-        checkForLinkNameThatDuplicatesInputName(link);
-        checkForLinkNameThatDuplicatesOutputName(link);
-        checkForLinkNameThatDuplicatesPartName(link);
-        checkForLinkNameThatDuplicatesScenarioName(link);
+        //If the link doesn't have a name no reason to check for duplicates 
+        // names 
+        if (link.getName() != null)
+        {
+	        checkForDuplicateLinkNames(link);
+	        checkForLinkNameThatDuplicatesRequirementName(link);
+	        checkForLinkNameThatDuplicatesInputName(link);
+	        checkForLinkNameThatDuplicatesOutputName(link);
+	        checkForLinkNameThatDuplicatesPartName(link);
+	        checkForLinkNameThatDuplicatesScenarioName(link);
+        }
+        checkForPartOutputFieldToPartOutputField(link);
     }
 
     protected void checkForValidLinks(LinkDeclaration link) {
@@ -159,6 +166,29 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
             error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
         }
     }
+    
+    protected void checkForPartOutputFieldToPartOutputField(LinkDeclaration link) {
+        
+		LinkableReference source = link.getSource();
+        LinkableReference target = link.getTarget();
+
+        FieldDeclaration sourceField = resolveField(source);
+        FieldDeclaration targetField = resolveField(target);
+        
+        // Both parts and both outputs then this is a bad link statement 
+        if (( isLinkableExpression(source) && isLinkableExpression(target) ) && 
+        		(sourceField.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION) &&
+        			targetField.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION)) ) 
+        {
+        	
+        	String msg = String.format(
+                    "Linking part model output '%s' to another part model output '%s'.",
+                    sourceField.getName(),
+                    targetField.getName());
+            error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+        	
+        }
+    }
 
     private static FieldDeclaration resolveField(LinkableReference ref) {
         FieldDeclaration field;
@@ -170,6 +200,14 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
             field = casted.getTail();
         }
         return field;
+    }
+    
+    private static boolean isLinkableExpression(LinkableReference ref) {
+    	boolean isLinkable = true;
+    	if (!ref.eClass().equals(SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION)) {
+           isLinkable = false;
+        }
+    	return isLinkable;
     }
 
     private static int getNumberOfLinksNamed(
@@ -242,4 +280,5 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
                         .filter(d -> d.getName().equals(name))
                         .count();
     }
+    
 }

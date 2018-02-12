@@ -1,6 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 
-import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
+import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.apache.commons.lang.StringUtils;
