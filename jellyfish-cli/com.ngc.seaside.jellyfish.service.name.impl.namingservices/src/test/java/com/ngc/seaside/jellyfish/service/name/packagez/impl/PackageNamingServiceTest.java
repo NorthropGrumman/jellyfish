@@ -1,8 +1,8 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.MetadataNames;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;

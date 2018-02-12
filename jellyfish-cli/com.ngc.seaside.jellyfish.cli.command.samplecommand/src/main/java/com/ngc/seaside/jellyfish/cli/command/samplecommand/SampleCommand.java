@@ -1,13 +1,13 @@
 package com.ngc.seaside.jellyfish.cli.command.samplecommand;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.bootstrap.utilities.file.GradleSettingsUtilities;
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultUsage;
-import com.ngc.seaside.command.api.IParameterCollection;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;

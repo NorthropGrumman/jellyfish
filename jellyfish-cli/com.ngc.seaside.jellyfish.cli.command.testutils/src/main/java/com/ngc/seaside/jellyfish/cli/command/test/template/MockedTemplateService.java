@@ -3,16 +3,16 @@ package com.ngc.seaside.jellyfish.cli.command.test.template;
 import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.impl.propertyservice.PropertyService;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateIgnoreComponent;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateVisitor;
-import com.ngc.seaside.bootstrap.service.property.api.IProperties;
-import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.DefaultTemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateOutput;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
-import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.service.impl.propertyservice.PropertyService;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateIgnoreComponent;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateVisitor;
+import com.ngc.seaside.jellyfish.service.property.api.IProperties;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;

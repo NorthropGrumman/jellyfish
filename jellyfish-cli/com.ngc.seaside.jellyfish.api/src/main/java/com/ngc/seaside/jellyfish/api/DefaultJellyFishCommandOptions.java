@@ -1,9 +1,5 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.bootstrap.api.DefaultBootstrapCommandOptions;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
-import com.ngc.seaside.command.api.IParameter;
-import com.ngc.seaside.command.api.IParameterCollection;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
@@ -16,10 +12,20 @@ import java.util.Objects;
 /**
  * Default implementation of the {@link IJellyFishCommandOptions}
  */
-public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptions implements IJellyFishCommandOptions {
+public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions {
 
    private IParsingResult parsingResult;
    private Path systemDescriptorProjectPath;
+   private IParameterCollection parameters;
+
+   @Override
+   public IParameterCollection getParameters() {
+      return parameters;
+   }
+
+   public void setParameters(IParameterCollection parameters) {
+      this.parameters = parameters;
+   }
 
    @Override
    public IParsingResult getParsingResult() {
@@ -43,7 +49,7 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
 
    @Override
    public String toString() {
-      return String.format("%s, parsingResult: %s", super.toString(), parsingResult);
+      return String.format("parameters: %s, parsingResult: %s", parameters, parsingResult);
    }
 
    @Override
@@ -55,12 +61,13 @@ public class DefaultJellyFishCommandOptions extends DefaultBootstrapCommandOptio
          return false;
       }
       IJellyFishCommandOptions that = (IJellyFishCommandOptions) obj;
-      return super.equals(obj) && Objects.equals(parsingResult, that.getParsingResult());
+      return Objects.equals(parameters, that.getParameters()) &&
+             Objects.equals(parsingResult, that.getParsingResult());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), parsingResult);
+      return Objects.hash(parameters, parsingResult);
    }
 
    /**

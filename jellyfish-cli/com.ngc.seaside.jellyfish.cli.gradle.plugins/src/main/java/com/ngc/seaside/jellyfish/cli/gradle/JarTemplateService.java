@@ -7,10 +7,10 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateService;
-import com.ngc.seaside.bootstrap.service.property.api.IPropertyService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.bootstrap.service.template.api.TemplateServiceException;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateService;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
 
 import java.io.IOException;
 import java.io.InputStream;
