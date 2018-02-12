@@ -54,25 +54,33 @@ class MetadataParsingTest {
 			model AlarmClock {
 			  input {
 			    Time alarmTimes {
-			      "satisifes": "requirement1"
+			      metadata {
+			        "satisifes": "requirement1"
+			      }
 			    }
 			  }
 			
 			  output {
 			    Time timeOfAlarmDeactivation {
-			       "since": "2.0"
+			       metadata {
+			         "since": "2.0"
+			       }
 			     }
 			  }
 			
 			  parts {
 			    Timer timer {
-			      "description": "This is provided by 3rd party software"
+			      metadata {
+			        "description": "This is provided by 3rd party software"
+			      }
 			    }
 			  }
 			
 			  requires {
 			    Clock clock {
-			      "mustTick": "true"
+			      metadata {
+			        "mustTick": "true"
+			      }
 			    }
 			  }
 			}

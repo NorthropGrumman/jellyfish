@@ -33,6 +33,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition
 
 class SystemDescriptorFormatter extends AbstractFormatter2 {
 
@@ -79,9 +80,9 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(EnumerationValueDeclaration value,
 		extension IFormattableDocument document) {
-		if (value.metadata !== null) {
-			value.metadata.format;
-			value.metadata.prepend[oneSpace]
+		if (value.definition.metadata !== null) {
+			value.definition.metadata.format;
+			value.definition.metadata.prepend[oneSpace]
 		}
 	}
 
@@ -162,7 +163,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		for (InputDeclaration dec : input.getDeclarations()) {
 			dec.format;
-			if (dec != input.getDeclarations.last && dec.getMetadata() !== null) {
+			if (dec != input.getDeclarations.last && dec.definition.metadata !== null) {
 				dec.append[setNewLines(2)]
 			} else {
 				dec.append[newLine]
@@ -177,8 +178,14 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(InputDeclaration inputDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(INPUT_DECLARATION)");
 
-		if (inputDec.getMetadata() !== null) {
-			inputDec.getMetadata().format
+		if (inputDec.definition !== null) {
+			inputDec.definition.format
+		}
+	}
+	
+	def dispatch void format(DeclarationDefinition definition, extension IFormattableDocument document) {
+		if (definition.metadata !== null) {
+			definition.metadata.format
 		}
 	}
 
@@ -192,7 +199,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 		for (OutputDeclaration dec : output.getDeclarations()) {
 			dec.format;
-			if (dec != output.getDeclarations.last && dec.getMetadata() !== null) {
+			if (dec != output.getDeclarations.last && dec.definition.metadata !== null) {
 				dec.append[setNewLines(2)]
 			} else {
 				dec.append[newLine]
@@ -208,8 +215,8 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(OutputDeclaration outputDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(OUTPUT_DECLARATION)");
 
-		if (outputDec.getMetadata() !== null) {
-			outputDec.getMetadata.format
+		if (outputDec.definition.metadata !== null) {
+			outputDec.definition.metadata.format
 		}
 	}
 
@@ -355,8 +362,8 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(PrimitiveDataFieldDeclaration pDec, extension IFormattableDocument document) {
 		debugLog("Entering method: format(PRIMITITVE_DATA_FIELD_DECLARATION)")
-		if (pDec.getMetadata() !== null) {
-			pDec.getMetadata().format
+		if (pDec.definition.metadata !== null) {
+			pDec.definition.metadata.format
 		}
 		
 		pDec.prepend[noSpace].append[newLine]

@@ -39,23 +39,29 @@ class JellyFishExampleParsingTest {
 			  }
 			  
 			  int hour {
-			    "validation": {
-			      "min": 0,
-			      "max": 23
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 23
+			      }
 			    }
 			  }
 			  
 			  int minute {
-			    "validation": {
-			      "min": 0,
-			      "max": 60
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 60
+			      }
 			    }
 			  }
 			  
 			  int second {
-			    "validation": {
-			      "min": 0,
-			      "max": 60
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 60
+			      }
 			    }
 			  }
 			}
