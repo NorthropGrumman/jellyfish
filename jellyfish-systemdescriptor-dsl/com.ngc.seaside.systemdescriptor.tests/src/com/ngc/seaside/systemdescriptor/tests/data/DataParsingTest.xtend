@@ -253,6 +253,27 @@ class DataParsingTest {
 			timeDataRef.name
 		)
 	}
+	
+	@Test
+	def void doesDoesParseDataThatUsesFullyQualifiedNames() {
+		val source = '''
+			package clocks.datatypes
+			
+			data FullyQualified : clocks.datatypes.DateTime {
+				clocks.datatypes.TimeZone timeZone
+			}
+		'''
+		
+		requiredResources = Datas.allOf(
+			resourceHelper,
+			Datas.TIME_ZONE,
+			Datas.DATE_TIME
+		)
+		
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+	}
 
 	@Test
 	def void testDoesNotAllowDataNameKeywords() {
