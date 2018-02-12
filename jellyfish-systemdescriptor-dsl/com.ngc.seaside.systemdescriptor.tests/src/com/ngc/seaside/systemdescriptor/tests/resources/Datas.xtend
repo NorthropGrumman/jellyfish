@@ -144,6 +144,44 @@ class Datas {
 		'''
 	)
 
+	public static final ParsingTestResource FOOD = resource(
+		'''
+			package food
+			
+			data Food {
+				int calories {
+					"maxPerMeal": 500
+				}
+			}
+		'''
+	)
+
+	public static final ParsingTestResource HAMBURGER = resource(
+		'''
+			package food
+			
+			import food.Food
+			
+			data Hamburger : Food {
+				boolean withFries
+			}
+		''',
+		FOOD
+	)
+
+	public static final ParsingTestResource SLIDERS_MEAL = resource(
+		'''
+			package food
+			
+			import food.Hamburger
+			
+			data SlidersMeal : Hamburger {
+				many Hamburger smallBurgers
+			}
+		''',
+		HAMBURGER
+	)
+
 	def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
 		return ParsingTestResource.preparedForParse(resourceHelper, Arrays.asList(resources))
 	}
