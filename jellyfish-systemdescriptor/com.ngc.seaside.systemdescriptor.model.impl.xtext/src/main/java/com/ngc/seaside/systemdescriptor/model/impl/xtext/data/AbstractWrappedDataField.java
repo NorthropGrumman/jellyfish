@@ -7,7 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -27,7 +27,7 @@ public abstract class AbstractWrappedDataField<T extends DataFieldDeclaration> e
 
    protected AbstractWrappedDataField(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
-      metadata = WrappedMetadata.fromXtextJson(wrapped.getMetadata());
+      metadata = WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
    }
 
    @Override
@@ -51,7 +51,7 @@ public abstract class AbstractWrappedDataField<T extends DataFieldDeclaration> e
    public IDataField setMetadata(IMetadata metadata) {
       Preconditions.checkNotNull(metadata, "metadata may not be null!");
       this.metadata = metadata;
-      wrapped.setMetadata(WrappedMetadata.toXtextJson(metadata));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
       return this;
    }
 

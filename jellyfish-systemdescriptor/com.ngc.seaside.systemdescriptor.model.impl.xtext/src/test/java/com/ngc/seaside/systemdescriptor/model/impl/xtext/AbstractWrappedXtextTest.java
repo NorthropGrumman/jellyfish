@@ -21,7 +21,7 @@ public abstract class AbstractWrappedXtextTest {
    private static SystemDescriptorFactory factory;
 
    @BeforeClass
-   public static void setupClass() throws Exception {
+   public static void setupClass() {
       factory = SystemDescriptorFactory.eINSTANCE;
    }
 
