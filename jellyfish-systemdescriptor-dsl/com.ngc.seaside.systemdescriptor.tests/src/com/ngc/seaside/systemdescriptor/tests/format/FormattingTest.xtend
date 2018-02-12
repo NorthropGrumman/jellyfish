@@ -147,7 +147,8 @@ class FormattingTest {
 				package com.ngc.seaside.common.datatype
 				data GPSTime {
 				int secondsFromGPS
-				int microseconds { "validation": { "min": 0, "max": 999999 }
+				int microseconds { metadata { "validation": { "min": 0, "max": 999999 }
+				}
 					}
 									Vector3 ecefVelocity
 				}
@@ -160,7 +161,7 @@ class FormattingTest {
 		assertFormatted[
 			expectation = formattedExample3
 			toBeFormatted = '''
-				package com.ngc.seaside.common.datatype data GPSTime { int secondsFromGPS int microseconds { "validation": { "min": 0, "max": 999999 } } Vector3 ecefVelocity }
+				package com.ngc.seaside.common.datatype data GPSTime { int secondsFromGPS int microseconds { metadata { "validation": { "min": 0, "max": 999999 } } } Vector3 ecefVelocity }
 			'''
 		]
 	}
@@ -175,7 +176,8 @@ class FormattingTest {
 							FIELD1 FIELD2
 			FIELD3
 			{
-				"name":null
+				metadata
+				{"name":null}
 			} FIELD4
 				}
 			'''
@@ -193,7 +195,9 @@ class FormattingTest {
 				FIELD1
 				FIELD2
 				FIELD3 {
-					"name": null
+					metadata {
+						"name": null
+					}
 				}
 				FIELD4
 			}
@@ -206,7 +210,7 @@ class FormattingTest {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
-			package com.ngc.test enum Enumeration{FIELD1 FIELD2 FIELD3{"name":null} FIELD4}
+			package com.ngc.test enum Enumeration{FIELD1 FIELD2 FIELD3{metadata{"name":null}} FIELD4}
 			'''
 		]
 	}
