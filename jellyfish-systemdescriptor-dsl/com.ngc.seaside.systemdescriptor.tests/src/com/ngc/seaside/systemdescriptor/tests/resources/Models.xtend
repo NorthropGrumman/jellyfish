@@ -50,6 +50,7 @@ class Models {
 		
 			output {
 				AlarmStatus alarmStatus
+				ZonedTime outputTime
 			}
 			
 			scenario triggerAlert {
