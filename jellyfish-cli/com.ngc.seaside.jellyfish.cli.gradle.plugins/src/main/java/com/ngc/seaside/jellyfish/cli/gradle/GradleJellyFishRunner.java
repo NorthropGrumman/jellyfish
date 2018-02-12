@@ -2,7 +2,7 @@ package com.ngc.seaside.jellyfish.cli.gradle;
 
 import com.google.inject.Module;
 
-import com.ngc.seaside.bootstrap.service.impl.templateservice.TemplateServiceGuiceModule;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.jellyfish.JellyFish;
 import com.ngc.seaside.jellyfish.JellyFishServiceModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;

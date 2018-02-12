@@ -39,6 +39,9 @@ public class BuildScriptUpdater {
                if (line.trim().startsWith("classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:")) {
                   line = String.format("      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:%s'", version);
                }
+               else if (line.trim().startsWith("jellyfishVersion = ")) {
+                  line = String.format("      jellyfishVersion = '%s'", version);
+               }
                return line;
             })
             .collect(Collectors.toList());

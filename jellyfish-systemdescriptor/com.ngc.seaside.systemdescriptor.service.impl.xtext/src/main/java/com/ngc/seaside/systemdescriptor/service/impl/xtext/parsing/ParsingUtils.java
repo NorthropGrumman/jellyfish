@@ -1,7 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.common.base.Preconditions;
-import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
 import org.apache.maven.model.Model;

@@ -1,9 +1,9 @@
 package com.ngc.seaside.jellyfish.api;
 
-import com.ngc.seaside.command.api.CommandException;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.IParameter;
-import com.ngc.seaside.command.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

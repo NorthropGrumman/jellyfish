@@ -40,27 +40,6 @@ pipeline {
                 }
             }
         }
-
-        // The following stages actually build each project.
-        stage("Build seaside-bootstrap-api") {
-            steps {
-                dir('seaside-bootstrap-api') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
-                }
-            }
-        }
-        
-        stage('Build seaside-bootstrap') {
-            steps {
-                dir('seaside-bootstrap') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
-                }
-            }
-        }
         
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
@@ -106,12 +85,6 @@ pipeline {
                 expression { params.offlineSupport }
             }
             steps {
-                dir('seaside-bootstrap-api') {
-                    sh './gradlew populateM2repo'
-                }
-                dir('seaside-bootstrap') {
-                    sh './gradlew populateM2repo'
-                }
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew populateM2repo'
                 }
@@ -146,12 +119,6 @@ pipeline {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
             }
             steps {
-                dir('seaside-bootstrap-api') {
-                    sh './gradlew upload'
-                }
-                dir('seaside-bootstrap') {
-                    sh './gradlew upload'
-                }
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew upload'
                 }
