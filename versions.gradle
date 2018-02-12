@@ -1,6 +1,6 @@
 allprojects {
     group = 'com.ngc.seaside'
-   version = '1.21.0-SNAPSHOT'
+   version = '2.0.0-SNAPSHOT'
 
     ext {
         blocsPluginVersion = '0.5'
