@@ -1,0 +1,14 @@
+package com.ngc.seaside.common.datatype
+
+data GPSTime {
+	// long long microsecondsFromGPS
+	int secondsFromGPS
+	int microseconds {
+	   metadata {
+		   "validation": {
+			   "min": 0,
+			   "max": 999999
+		   }
+		}
+	}
+}
