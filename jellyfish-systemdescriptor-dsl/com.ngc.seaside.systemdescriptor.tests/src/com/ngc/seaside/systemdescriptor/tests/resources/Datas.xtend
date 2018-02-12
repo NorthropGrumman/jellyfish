@@ -28,6 +28,16 @@ class Datas {
 			int second
 		}
 	''')
+	
+	public static final ParsingTestResource TIME_ZONE = resource(
+		'''
+		package clocks.datatypes
+		
+		enum TimeZone {
+			CST MST EST PST
+		}
+		'''
+	)
 
 	public static final ParsingTestResource DATE_TIME = resource(
 		'''
