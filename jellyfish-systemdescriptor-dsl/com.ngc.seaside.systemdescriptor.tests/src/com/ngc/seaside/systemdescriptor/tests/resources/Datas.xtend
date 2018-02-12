@@ -9,33 +9,61 @@ import java.util.Collection
 
 class Datas {
 
-	public static final ParsingTestResource DATE = resource('''
-		package clocks.datatypes
-		
-		data Date {
-			int day
-			int month
-			int year
-		}
-	''')
+	public static final ParsingTestResource EMPTY_DATA = resource(
+		'''
+			package foo
+			
+			data EmptyData {
+			}
+		'''
+	)
 
-	public static final ParsingTestResource TIME = resource('''
-		package clocks.datatypes
-		
-		data Time {
-			int hour
-			int minute
-			int second
-		}
-	''')
-	
+	public static final ParsingTestResource DATE = resource(
+		'''
+			package clocks.datatypes
+			
+			data Date {
+				int day
+				int month
+				int year
+			}
+		'''
+	)
+
+	public static final ParsingTestResource TIME = resource(
+		'''
+			package clocks.datatypes
+			
+			data Time {
+				int hour {
+					"validation": {
+						"min": 0,
+						"max": 23
+					}
+				}
+				int minute {
+					"validation": {
+						"min": 0,
+						"max": 59
+					}
+				}
+				int second {
+					"validation": {
+						"min": 0,
+						"max": 59
+					}
+				}
+			}
+		'''
+	)
+
 	public static final ParsingTestResource TIME_ZONE = resource(
 		'''
-		package clocks.datatypes
-		
-		enum TimeZone {
-			CST MST EST PST
-		}
+			package clocks.datatypes
+			
+			enum TimeZone {
+				CST MST EST PST
+			}
 		'''
 	)
 
@@ -55,39 +83,66 @@ class Datas {
 		DATE
 	)
 
-	public static final ParsingTestResource ZONED_TIME = resource('''
-		package clocks.datatypes
-		
-		data ZonedTime {
-		}
-	''')
+	public static final ParsingTestResource ZONED_TIME = resource(
+		'''
+			package clocks.datatypes
+			
+			import clocks.datatypes.TimeZone
+			import clocks.datatypes.DateTime
+			
+			data ZonedTime {
+				DateTime dataTime
+				TimeZone timeZone
+			}
+		''',
+		TIME_ZONE,
+		DATE_TIME
+	)
 
-	public static final ParsingTestResource ALARM_ACKNOWLEDGEMENT = resource('''
-		package clocks.datatypes
-		
-		data AlarmAcknowledgement {
-		}
-	''')
+	public static final ParsingTestResource ALARM_ACKNOWLEDGEMENT = resource(
+		'''
+			package clocks.datatypes
+			
+			data AlarmAcknowledgement {
+			}
+		'''
+	)
 
-	public static final ParsingTestResource ALARM_STATUS = resource('''
-		package clocks.datatypes
-		
-		data AlarmStatus {
-		}
-	''')
+	public static final ParsingTestResource ALARM_STATUS = resource(
+		'''
+			package clocks.datatypes
+			
+			data AlarmStatus {
+			}
+		'''
+	)
 
-	public static final ParsingTestResource DATA_WITH_GENERIC_METADATA = resource('''
-		package blah
-		
-		data Foo { 
-			metadata {
-			  "name" : "test",
-			  "description" : "A test metadata object",
-			  "arraydata" : ["metadata", "test"],
-			  "boolvalue" : true
-			}  
-		}	
-	''')
+	public static final ParsingTestResource DATA_WITH_GENERIC_METADATA = resource(
+		'''
+			package blah
+			
+			data Foo { 
+				metadata {
+				  "name" : "test",
+				  "description" : "A test metadata object",
+				  "arraydata" : ["metadata", "test"],
+				  "boolvalue" : true
+				}  
+			}	
+		'''
+	)
+
+	public static final ParsingTestResource DATA_WITH_MANY_FIELDS = resource(
+		'''
+			package blah
+			
+			data LotsOfManys { 
+				many int x
+				many int y
+				many int z 
+			}	
+		'''
+	)
 
 	def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
 		return ParsingTestResource.preparedForParse(resourceHelper, Arrays.asList(resources))
@@ -113,7 +168,7 @@ class Datas {
 			for (Object o : collection) {
 				if (!(o instanceof ParsingTestResource)) {
 					throw new IllegalArgumentException(
-					"collection must contain only instances of ParsingTestResources!")
+						"collection must contain only instances of ParsingTestResources!")
 				}
 			}
 		}
