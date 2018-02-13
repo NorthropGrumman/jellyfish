@@ -2,12 +2,4 @@ package com.test3
 
 model Model1 {
 	
-	input {
-		myInput
-	}
-	
-	output {
-		myOutput
-	}
-	
 }
