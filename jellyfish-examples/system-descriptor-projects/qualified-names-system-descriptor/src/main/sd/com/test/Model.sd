@@ -26,7 +26,7 @@ model Model {
 	}
 
    links {
-      link link1 input1 -> output2
-      link link2 input2 -> output1
+      link link1 input1 -> part3.myInput
+      link link2 input2 -> part3.myInput
    }
 }
