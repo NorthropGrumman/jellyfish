@@ -317,7 +317,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
         {
         	
         	String msg = String.format(
-                    "Linking model output '%s' to part model output '%s'.",
+                    "Linking model input '%s' to part model output '%s'.",
                     sourceField.getName(),
                     targetField.getName());
             error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);

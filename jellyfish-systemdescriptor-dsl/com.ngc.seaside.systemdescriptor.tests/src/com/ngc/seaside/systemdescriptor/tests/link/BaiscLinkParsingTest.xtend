@@ -74,7 +74,7 @@ class BaiscLinkParsingTest {
 	@Test
 	def void testDoesNotParseModelWithLink_From_Part_To_Part() {
 
-		        var source = '''
+		var source = '''
             package clocks.models
 
             import clocks.datatypes.Time
@@ -106,10 +106,10 @@ class BaiscLinkParsingTest {
         )
 	}
 
-	@Test
-	def void testDoesNotParseModelWithLink_From_Requirement_To_Requirement() {
-		fail("not implemented");
-	}
+//	@Test
+//	def void testDoesNotParseModelWithLink_From_Requirement_To_Requirement() {
+//		fail("not implemented");
+//	}
 
 	@Test
 	def void testDoesNotParseModelWithLink_From_InputField_To_InputField() {
@@ -199,10 +199,34 @@ class BaiscLinkParsingTest {
             null
         )
 	}
-	}
 	
 	@Test
 	def void testDoesNotParseModelWithLink_From_OutputField_To_InputField() {
-		fail("not implemented");
+	var source = '''
+            package clocks.models
+
+            import clocks.datatypes.ZonedTime
+
+            model AlarmClock {
+                input {
+                    ZonedTime currentTime
+                }
+                output {
+                	ZonedTime otherTime
+                }
+
+                links {
+                    link currentTime -> otherTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
 	}
 }
