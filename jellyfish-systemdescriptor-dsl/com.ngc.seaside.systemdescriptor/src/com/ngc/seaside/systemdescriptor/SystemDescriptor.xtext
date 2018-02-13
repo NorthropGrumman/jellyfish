@@ -75,12 +75,19 @@ UnqualifiedName
 Metadata
 	: 'metadata' json=JsonObject
 	;
-	
+
 DeclarationDefinition
 	: '{'
 		metadata=Metadata?
 	  '}'
 	;	
+	
+/* Synatx for future properties:
+ * 
+ * DeclarationDefinition : BasicDeclarationDefinition | PropertizedDeclarationDefinition
+ * BasicDeclarationDefinition : '{' metadata=Metadata? '}'
+ * PropertizedDeclarationDefinition: '{' metadata=Metadata? properties=Properties? '}'
+ */
 
 /*
  * Defines different cardinality values.
