@@ -157,6 +157,12 @@ pipeline {
 					)
 					currentBuild.result = 'SUCCESS'
 				}
+				 withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
+					sh 'chmod +x downloadNexusLifecycleReport.sh'
+					sh 'mkdir -p build'
+					sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
+					sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+                }
 			}
 		}
 		
