@@ -26,6 +26,9 @@ pipeline {
         booleanParam(name: 'offlineSupport',
                      description: 'If true, a maven2 repository will be created that can be used for offline deployments.',
                      defaultValue: false)
+		booleanParam(name: 'nexusLifecycle',
+                     description: 'If true, Nexus Lifecycle will scan for security issues.',
+                     defaultValue: true)			 
     }
 
     stages {
@@ -146,7 +149,10 @@ pipeline {
         }
         
         stage("Nexus Lifecycle") {
-            steps {
+            when {
+                expression { params.nexusLifecycle }
+            }
+			steps {
 				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
 				script {
 					def policyEvaluationResult = nexusPolicyEvaluation(
