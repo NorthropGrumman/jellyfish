@@ -25,8 +25,4 @@ model Model {
 		Model1 part3
 	}
 
-   links {
-      link link1 input1 -> output2
-      link link2 input2 -> output1
-   }
 }

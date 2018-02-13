@@ -69,7 +69,7 @@ model ThreatEvaluation {
 		link systemTrack -> defendedAreaTrackPriorityService.systemTrack
 		link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
 		link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
-		link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks
+		link trackPriorityService.prioritizedSystemTracks -> prioritizedSystemTracks
 		link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
 		link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
 		link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority

@@ -19,6 +19,7 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -39,7 +40,8 @@ class LinkSourceAndTargetParsingTest {
 		requiredResources = Models.allOf(
 			resourceHelper,
 			Models.ALARM,
-			Models.CLOCK
+			Models.CLOCK, 
+			Datas.TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
 	}
