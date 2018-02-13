@@ -76,13 +76,21 @@ Metadata
 	: 'metadata' json=JsonObject
 	;
 
+/*
+ * A declaration definition is used by fields and links to describe the 
+ * metadata and other details of that declaration.  This block is used
+ * to "define" the details for those field and link declarations.  
+ */
 DeclarationDefinition
 	: '{'
+		// This action ensures the object is created even if an empty
+		// block ( ie, "Foo myInput {}" ) is declared.
+		{DeclarationDefinition} 
 		metadata=Metadata?
 	  '}'
 	;	
 	
-/* Synatx for future properties:
+/* Syntax for future properties:
  * 
  * DeclarationDefinition : BasicDeclarationDefinition | PropertizedDeclarationDefinition
  * BasicDeclarationDefinition : '{' metadata=Metadata? '}'
