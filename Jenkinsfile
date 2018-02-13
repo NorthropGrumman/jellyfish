@@ -30,6 +30,12 @@ pipeline {
 
     stages {
         // Prepare for a release if necessary.
+		
+		stage('Setup') {
+		    steps {
+			sh 'chmod +x downloadNexusLifecycleReport.sh'
+        	}
+		}
         stage("Prepare For Release") {
             when {
                 expression { params.performRelease }
@@ -158,6 +164,16 @@ pipeline {
 			}
 		}
 		
+		stage('Gather Logs') {
+            steps {
+                println "Downloading Nexus Lifecycle report."
+                withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
+                    sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
+                    sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+                }
+            }
+        }
+		
         stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
@@ -211,16 +227,7 @@ pipeline {
             }
         }
 		
-        stage('Gather Logs') {
-            steps {
-                println "Downloading Nexus Lifecycle report."
-                withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
-                    sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
-                    sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
-                }
-            }
-        }
-		
+        		
         stage('Archive') {
             steps {
                 // Create a ZIP that has everything.
