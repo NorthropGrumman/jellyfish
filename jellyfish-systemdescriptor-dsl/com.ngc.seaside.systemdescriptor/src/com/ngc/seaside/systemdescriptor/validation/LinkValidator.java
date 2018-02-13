@@ -100,7 +100,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
         String sourceTypeName = getFieldTypeName(sourceField);
         String targetTypeName = getFieldTypeName(targetField);
 
-        if (sourceTypeName != targetTypeName) {
+        if (!sourceTypeName.equals(targetTypeName)) {
             String msg = String.format(
                 "Type of link target ('%s') must match type of link source ('%s'): %s != %s.",
                 targetField.getName(),
