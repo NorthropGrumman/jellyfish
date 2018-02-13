@@ -159,7 +159,7 @@ pipeline {
 						failBuildOnNetworkError: false,
 						iqApplication: 'noalert',
 						iqStage: 'build',
-						jobCredentialsId: 'nexusiqCreds'
+						jobCredentialsId: 'NexusLifecycle'
 					)
 					currentBuild.result = 'SUCCESS'
 				}
