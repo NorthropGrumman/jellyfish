@@ -13,6 +13,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
@@ -25,6 +26,7 @@ public class HierarchicalModelView implements IModel {
    private final INamedChildCollection<IModel, IModelReferenceField> aggregatedParts;
    private final INamedChildCollection<IModel, IModelReferenceField> aggregatedRequirements;
    private final INamedChildCollection<IModel, IScenario> aggregatedScenarios;
+   private final Collection<IModelLink<?>> aggregatedLinks;
 
    public HierarchicalModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
@@ -33,6 +35,7 @@ public class HierarchicalModelView implements IModel {
       this.aggregatedParts = getAggregatedFields(IModel::getParts);
       this.aggregatedRequirements = getAggregatedFields(IModel::getRequiredModels);
       this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios);
+      this.aggregatedLinks = getAggregatedLinks();
    }
 
    @Override
@@ -72,14 +75,17 @@ public class HierarchicalModelView implements IModel {
 
    @Override
    public Collection<IModelLink<?>> getLinks() {
-      // TODO TH:
-      return wrapped.getLinks();
+      return aggregatedLinks;
    }
 
    @Override
    public Optional<IModelLink<?>> getLink(String name) {
-      // TODO TH:
-      return wrapped.getLink(name);
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkState(!name.trim().isEmpty(), "name may not be empty!");
+      return aggregatedLinks
+            .stream()
+            .filter(link -> name.equals(link.getName().orElse(null)))
+            .findFirst();
    }
 
    @Override
@@ -124,7 +130,19 @@ public class HierarchicalModelView implements IModel {
       IModel model = wrapped;
       while (model != null) {
          collection.addAll(fieldFinder.apply(model));
-         // TODO TH: implement this and remove the null assignment.
+         // TODO TH: implement this and remove the null assignment when model refinement is implemented.
+         //model = model.getRefinedModel().orElse(null);
+         model = null;
+      }
+      return collection;
+   }
+
+   private Collection<IModelLink<?>> getAggregatedLinks() {
+      Collection<IModelLink<?>> collection = new ArrayList<>();
+      IModel model = wrapped;
+      while (model != null) {
+         collection.addAll(model.getLinks());
+         // TODO TH: implement this and remove the null assignment when model refinement is implemented.
          //model = model.getRefinedModel().orElse(null);
          model = null;
       }
