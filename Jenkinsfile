@@ -2,7 +2,7 @@ pipeline {
     agent {
         label {
             label ''
-            customWorkspace "${JENKINS_HOME}/workspace/jellyfish-test/${JOB_NAME}"
+            customWorkspace "${JENKINS_HOME}/workspace/jellyfish/${JOB_NAME}"
         }
     }
 
@@ -34,27 +34,9 @@ pipeline {
             }
             steps {
                 dir('seaside-bootstrap-api') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew removeVersionSuffix --refresh-dependencies'
                     sh './gradlew createReleaseTag'
-                }
-            }
-        }
-
-        // The following stages actually build each project.
-        stage("Build seaside-bootstrap-api") {
-            steps {
-                dir('seaside-bootstrap-api') {
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
-                }
-            }
-        }
-        
-        stage('Build seaside-bootstrap') {
-            steps {
-                dir('seaside-bootstrap') {
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
                 }
             }
         }
@@ -62,33 +44,27 @@ pipeline {
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
         }
         
-        stage('Build jellyfish-systemdescriptor-api') {
+        stage('Build jellyfish-systemdescriptor') {
             steps {
-                dir('jellyfish-systemdescriptor-api') {
+                dir('jellyfish-systemdescriptor') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
         }
-        
-        stage('Build jellyfish-systemdescriptor-ext') {
-            steps {
-                dir('jellyfish-systemdescriptor-ext') {
-                    sh './gradlew clean build install'
-                    junit '**/build/test-results/test/*.xml'
-                }
-            }
-        }
-        
+
         stage('Build jellyfish-cli') {
             steps {
                 dir('jellyfish-cli') {
+                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
@@ -109,19 +85,10 @@ pipeline {
                 expression { params.offlineSupport }
             }
             steps {
-                dir('seaside-bootstrap-api') {
-                    sh './gradlew populateM2repo'
-                }
-                dir('seaside-bootstrap') {
-                    sh './gradlew populateM2repo'
-                }
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew populateM2repo'
                 }
-                dir('jellyfish-systemdescriptor-api') {
-                    sh './gradlew populateM2repo'
-                }
-                dir('jellyfish-systemdescriptor-ext') {
+                dir('jellyfish-systemdescriptor') {
                     sh './gradlew populateM2repo'
                 }
                 dir('jellyfish-cli') {
@@ -136,6 +103,14 @@ pipeline {
                     // Collect the m2 repository files inside a single ZIP.
                     sh 'zip -r dependencies-m2.zip dependencies-m2'
                 }
+                // We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
+                // 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
+                // since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
+                // repo will always be used by builds on the CI server.  This means that the Gradle will never download a
+                // newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
+                // problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
+                // building a development branch that is not finished yet.
+                sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
 
@@ -144,19 +119,10 @@ pipeline {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
             }
             steps {
-                dir('seaside-bootstrap-api') {
-                    sh './gradlew upload'
-                }
-                dir('seaside-bootstrap') {
-                    sh './gradlew upload'
-                }
                 dir('jellyfish-systemdescriptor-dsl') {
                     sh './gradlew upload'
                 }
-                dir('jellyfish-systemdescriptor-api') {
-                    sh './gradlew upload'
-                }
-                dir('jellyfish-systemdescriptor-ext') {
+                dir('jellyfish-systemdescriptor') {
                     sh './gradlew upload'
                 }
                 dir('jellyfish-cli') {
@@ -199,7 +165,7 @@ pipeline {
             steps {
                 // Create a ZIP that has everything.
                 sh 'mkdir -p build'
-                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor-ext/com.ngc.seaside.systemdescriptor.ext.updatesite/build/com.ngc.seaside.systemdescriptor.ext.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml'
+                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.plus.updatesite/build/com.ngc.seaside.systemdescriptor.plus.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml'
 
                 // Archive the zip that has everything.
                 archiveArtifacts allowEmptyArchive: true,
@@ -207,15 +173,6 @@ pipeline {
                                  caseSensitive: false,
                                  defaultExcludes: false,
                                  onlyIfSuccessful: true
-
-                // We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
-                // 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
-                // since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
-                // repo will always be used by builds on the CI server.  This means that the Gradle will never download a
-                // newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
-                // problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
-                // building a development branch that is not finished yet.
-                sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
     }

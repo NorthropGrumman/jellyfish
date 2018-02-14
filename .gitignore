@@ -30,6 +30,3 @@ build/
 !gradle-wrapper.jar
 
 # logs
-
-*.log
-*.log.*

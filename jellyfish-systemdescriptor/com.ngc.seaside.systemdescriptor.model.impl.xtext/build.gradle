@@ -1,0 +1,15 @@
+dependencies {
+   api project(":systemdescriptor.model.api")
+
+   implementation project(":systemdescriptor.model.impl.basic")
+   implementation "com.ngc.seaside:systemdescriptor:$version"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+}
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.model.impl.xtext.*')
+   }
+}

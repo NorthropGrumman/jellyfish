@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
-import com.ngc.seaside.bootstrap.utilities.console.api.ITableFormat;
-import com.ngc.seaside.command.api.IParameter;
+import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
+import com.ngc.seaside.jellyfish.api.IParameter;
 
 /**
  * Formatter for parameters with two columns: the name and the description.

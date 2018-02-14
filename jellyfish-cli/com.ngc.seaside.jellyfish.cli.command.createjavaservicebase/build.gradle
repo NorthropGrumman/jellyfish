@@ -4,16 +4,17 @@ dependencies {
     api project(':jellyfish.api')
 
     implementation project(':jellyfish.service.api')
-    implementation "com.ngc.seaside:bootstrap.utilities:$version"
-    implementation "com.ngc.seaside:bootstrap.service.api:$version"
+    implementation project(':jellyfish.utilities')
     
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+
     testImplementation project(':jellyfish.cli.command.testutils')
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.ext.testutils:$version"
+    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
 }
