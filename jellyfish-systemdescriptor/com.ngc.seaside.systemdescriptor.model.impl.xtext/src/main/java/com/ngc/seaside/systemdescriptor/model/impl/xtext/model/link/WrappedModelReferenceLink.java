@@ -26,7 +26,6 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
 
    private IModelReferenceField source;
    private IModelReferenceField target;
-   private Optional<String> name;
 
    /**
     * Creates a new wrapper for the given link declaration.  If the link declaration does not wrap models an {@code
@@ -39,7 +38,6 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
       super(resolver, wrapped);
       source = getReferenceTo(wrapped.getSource());
       target = getReferenceTo(wrapped.getTarget());
-      name = Optional.ofNullable(wrapped.getName());
    }
 
    @Override
@@ -66,12 +64,13 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
 
    @Override
    public Optional<String> getName() {
-      return name;
+      return Optional.ofNullable(wrapped.getName());
    }
 
    @Override
    public IModelLink<IModelReferenceField> setName(String name) {
-      throw new UnsupportedOperationException("not implemented");
+      wrapped.setName(name);
+      return this;
    }
 
    @Override

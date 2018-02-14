@@ -19,7 +19,7 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private T source;
    private T target;
    private final IModel parent;
-   private Optional<String> name;
+   private String name;
 
    public ModelLink(IModel p) {
       parent = p;
@@ -49,12 +49,12 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
    @Override
    public Optional<String> getName() {
-	   return name;
+	   return Optional.ofNullable(name);
    }
 
    @Override
    public IModelLink<T> setName(String name) {
-	   this.name = Optional.of(name);
+	   this.name = name;
 	   return this;
    }
 
@@ -73,8 +73,7 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
       }
 
       ModelLink<?> link = (ModelLink<?>) o;
-      return name.isPresent() == link.name.isPresent() &&
-             name.get() == link.name.get() &&
+      return Objects.equals(name, link.name) &&
              source == link.source &&
              target == link.target &&
              parent == link.parent;
@@ -82,14 +81,15 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
    @Override
    public int hashCode() {
-      return Objects
-            .hash(System.identityHashCode(source), System.identityHashCode(target), System.identityHashCode(parent));
+      return Objects.hash(System.identityHashCode(source),
+                          System.identityHashCode(target),
+                          System.identityHashCode(parent));
    }
 
    @Override
    public String toString() {
       return "ModelLink[" +
-             "name='" + (name.isPresent() ? "null" : name.get()) +
+             "name='" + name +
              "source='" + (source == null ? "null" : source) +
              "target='" + (target == null ? "null" : target) +
              "parent='" + (parent == null ? "null" : parent) +
