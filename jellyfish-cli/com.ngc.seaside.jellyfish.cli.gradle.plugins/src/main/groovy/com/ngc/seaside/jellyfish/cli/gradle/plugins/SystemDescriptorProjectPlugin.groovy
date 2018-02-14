@@ -153,9 +153,6 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
     }
 
     private void configureReleaseTask(Project project) {
-        // Must run removeSuffix first.
-        def removeSuffix = project.getTasks()
-              .getByName(SeasideReleaseRootProjectPlugin.RELEASE_REMOVE_VERSION_SUFFIX_TASK_NAME)
         def createTag = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME)
         def bumpVersion = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME)
         def push = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_PUSH_TASK_NAME)
@@ -163,9 +160,8 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
         project.task('release',
                      group: SeasideReleaseRootProjectPlugin.RELEASE_ROOT_PROJECT_TASK_GROUP_NAME,
                      description: 'Releases this project.',
-                     dependsOn: [removeSuffix, createTag, upload, bumpVersion, push])
+                     dependsOn: [createTag, upload, bumpVersion, push])
 
-        createTag.mustRunAfter(removeSuffix)
         upload.mustRunAfter(createTag)
         bumpVersion.mustRunAfter(upload)
         push.mustRunAfter(bumpVersion)
