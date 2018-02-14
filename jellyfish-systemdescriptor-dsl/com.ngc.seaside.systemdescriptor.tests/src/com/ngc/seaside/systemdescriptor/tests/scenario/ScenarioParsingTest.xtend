@@ -1,10 +1,12 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.scenario
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.emf.common.util.URI
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -30,46 +32,21 @@ class ScenarioParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 	
-	Resource dataResource
-
-	Resource modelResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("datatypes.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.SPEAKER.requiredResources,
+			Models.CLOCK,
+			Datas.TIME
 		)
-		validationTester.assertNoIssues(dataResource)
-		
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models.sub
-							
-				model Wire {
-				}
-			''',
-			URI.createURI("part.sd")
-		)
-		validationTester.assertNoIssues(modelResource)
 	}
 	
 	@Test
 	def void testDoesParseModelWithEmptyScenario() {
-		val source = '''
-			package clocks.models
-			 
-			model Speaker {
-			  scenario buzz { }
-			}
-		'''
-
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(Models.SPEAKER.source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -100,7 +77,7 @@ class ScenarioParsingTest {
 			}
 		'''
 		
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -125,7 +102,7 @@ class ScenarioParsingTest {
 			}
 		'''
 		
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -150,7 +127,7 @@ class ScenarioParsingTest {
 			}
 		'''
 		
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -164,18 +141,18 @@ class ScenarioParsingTest {
 		val source = '''
 			package clocks.models
 			 
-			import clocks.models.sub.Wire
+			import clocks.models.part.Clock
 			 
 			model Speaker {
 			  scenario buzz { }
 			  
 			  parts {
-			    Wire buzz
+			    Clock buzz
 			  }
 			}
 		'''
 		
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -189,18 +166,18 @@ class ScenarioParsingTest {
 		val source = '''
 			package clocks.models
 			 
-			import clocks.models.sub.Wire
+			import clocks.models.part.Clock
 			 
 			model Speaker {
 			  requires {
-			  	Wire buzz
+			  	Clock buzz
 			  }
 				
 			  scenario buzz { }
 			}
 		'''
 		
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -211,7 +188,7 @@ class ScenarioParsingTest {
 	
 
 	@Test
-	def void testDoesNotAllowScenarioNameKeywords() {
+	def void testDoesNotAllowScenarioNamesToEscapeKeywords() {
 		val source = '''
 			package clocks.models
 			 
@@ -220,7 +197,7 @@ class ScenarioParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, dataResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -230,9 +207,9 @@ class ScenarioParsingTest {
 	}
 	
 	@Test
-	def void testScenarioWithQualifiedCharacter() {
+	def void testDoesScenarioAllowPeriodCharactersInSteps() {
 		val source = '''
-			package clocks.models
+			package test
 			 
 			model TestModel {
 			  scenario calculateConsolidatedTrackPriority {
@@ -244,7 +221,7 @@ class ScenarioParsingTest {
 			}
 		'''
 		
-		val result = parseHelper.parse(source, dataResource.resourceSet)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 

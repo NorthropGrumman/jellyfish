@@ -9,6 +9,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//Element"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Metadata">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="json" eType="#//JsonObject"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Cardinality">
     <eLiterals name="DEFAULT" literal="default"/>
     <eLiterals name="MANY" value="1" literal="many"/>
@@ -108,6 +112,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LinkableReference"/>
   <eClassifiers xsi:type="ecore:EClass" name="LinkDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//LinkableReference"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//LinkableReference"
@@ -144,10 +149,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="Element">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Metadata">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="json" eType="#//JsonObject"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="JsonObject">

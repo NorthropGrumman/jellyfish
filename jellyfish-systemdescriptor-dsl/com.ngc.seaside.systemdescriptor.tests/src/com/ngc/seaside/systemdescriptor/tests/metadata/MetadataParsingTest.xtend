@@ -1,16 +1,16 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.metadata
 
 import com.google.inject.Inject
-import com.google.inject.Provider
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.ResourceSet
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.resource.XtextResourceSet
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,9 +22,6 @@ import static org.junit.Assert.*
 class MetadataParsingTest {
 
 	@Inject
-	Provider<XtextResourceSet> resourceSetProvider;
-
-	@Inject
 	ParseHelper<Package> parseHelper
 
 	@Inject
@@ -33,47 +30,16 @@ class MetadataParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	ResourceSet resources
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		resources = resourceSetProvider.get()
-
-		var resource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			URI.createURI("time.sd"),
-			resources
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.TIMER,
+			Models.CLOCK,
+			Datas.TIME
 		)
-		validationTester.assertNoIssues(resource)
-
-		resource = resourceHelper.resource(
-			'''
-				package clocks.models
-							
-				model Timer {
-				}
-			''',
-			URI.createURI("timer.sd"),
-			resources
-		)
-		validationTester.assertNoIssues(resource)
-
-		resource = resourceHelper.resource(
-			'''
-				package beverages.models
-							
-				model Gatorade {
-				}
-			''',
-			URI.createURI("gatorade.sd"),
-			resources
-		)
-		validationTester.assertNoIssues(resource)
 	}
 
 	@Test
@@ -82,12 +48,12 @@ class MetadataParsingTest {
 			package clocks.models
 			
 			import clocks.datatypes.Time
-			import clocks.models.Timer
-			import beverages.models.Gatorade
+			import clocks.models.part.Timer
+			import clocks.models.part.Clock
 			
 			model AlarmClock {
 			  input {
-			    many Time alarmTimes {
+			    Time alarmTimes {
 			      "satisifes": "requirement1"
 			    }
 			  }
@@ -105,14 +71,14 @@ class MetadataParsingTest {
 			  }
 			
 			  requires {
-			    Gatorade thristQuencher {
-			      "flavor": "purple"
+			    Clock clock {
+			      "mustTick": "true"
 			    }
 			  }
 			}
 		'''
 
-		val result = parseHelper.parse(source, resources)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 	}
