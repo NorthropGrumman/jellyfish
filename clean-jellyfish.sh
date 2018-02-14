@@ -2,11 +2,7 @@
 
 set -e -u -x
 
-cd seaside-bootstrap-api \
-&& gradle clean \
-&& cd ../seaside-bootstrap \
-&& gradle clean \
-&& cd ../jellyfish-systemdescriptor-dsl \
+cd jellyfish-systemdescriptor-dsl \
 && gradle clean \
 && cd ../jellyfish-systemdescriptor \
 && gradle clean \
