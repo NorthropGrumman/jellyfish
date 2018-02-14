@@ -2,7 +2,6 @@ package com.ngc.seaside.systemdescriptor.tests.data
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration
-import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumerationValueDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
@@ -34,19 +33,19 @@ class EnumParsingTest {
 		val timeZone = result.element as Enumeration
 		assertEquals("timezone value not correct!",
 			"CST",
-			(timeZone.values.get(0) as EnumerationValueDeclaration).value
+			timeZone.values.get(0).value
 		)	
 		assertEquals("timezone value not correct!",
 			"MST",
-			(timeZone.values.get(1) as EnumerationValueDeclaration).value
+			timeZone.values.get(1).value
 		)	
 		assertEquals("timezone value not correct!",
 			"EST",
-			(timeZone.values.get(2) as EnumerationValueDeclaration).value
+			timeZone.values.get(2).value
 		)	
 		assertEquals("timezone value not correct!",
 			"PST",
-			(timeZone.values.get(3) as EnumerationValueDeclaration).value
+			timeZone.values.get(3).value
 		)	
 	}
 }
