@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
@@ -17,7 +18,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -277,4 +277,39 @@ class LinkNameParsingTest {
             null
         )
     }
+    
+    @Test
+    def void testDoesNotParseModelWithWithEscapedLinkName() {
+		var source = '''
+			package clocks.models
+			
+			import clocks.models.part.Alarm
+			import clocks.models.part.Clock
+			import clocks.datatypes.AlarmAcknowledgement
+			
+			model AlarmClock {
+			
+				input {
+					AlarmAcknowledgement alarmAcknowledgement
+				}
+			
+			    parts {
+			    	Alarm alarm
+			    	Clock clock
+			    }
+			
+			    links {
+			    	link ^link clock.currentTime -> alarm.currentTime
+			    }
+			}
+		'''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+    
 }
