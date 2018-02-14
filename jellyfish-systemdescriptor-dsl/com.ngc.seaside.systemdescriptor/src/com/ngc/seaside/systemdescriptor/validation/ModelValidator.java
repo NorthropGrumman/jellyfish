@@ -19,7 +19,6 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;

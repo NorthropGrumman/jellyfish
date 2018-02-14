@@ -1,23 +1,29 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
+import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
+	
+	@Inject
+	private IQualifiedNameProvider nameProvider;
+	
 	@Check
 	public void checkLinkDeclaration(LinkDeclaration link) {
 		checkForValidLinks(link);
@@ -27,6 +33,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		// If the link doesn't have a name no reason to check for duplicates
 		// names
 		if (link.getName() != null) {
+			checkUsageOfEscapeHatCharacterInLinkName(link);
 			checkForDuplicateLinkNames(link);
 			checkForLinkNameThatDuplicatesRequirementName(link);
 			checkForLinkNameThatDuplicatesInputName(link);
@@ -99,6 +106,18 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		// TODO TH: declare duplicate links as a warning, not an error.
 	}
 
+	
+	protected void checkUsageOfEscapeHatCharacterInLinkName(LinkDeclaration link) {
+		// Verify the link name doesn't not have the escape hat
+		if (link.getName().indexOf('^') >= 0) {
+			String msg = String.format(
+					"Cannot use '^' to escape the link name %s.",
+					link.getName());
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+		}
+
+	}
+	
 	protected void checkForDuplicateLinkNames(LinkDeclaration link) {
 		Links links = (Links) link.eContainer();
 		Model model = (Model) links.eContainer();
@@ -107,7 +126,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: a link named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -120,7 +139,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: a requirement named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -133,7 +152,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: an input named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -146,7 +165,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: an output named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -159,7 +178,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: a part named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -172,7 +191,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"Invalid link name: a scenario named '%s' is already defined for the model '%s'.",
 					link.getName(),
-					ValidationUtils.getFullyQualifiedName(model));
+					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
@@ -306,6 +325,15 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 	}
 
+	private String getFieldTypeName(FieldDeclaration field) {
+		if (field.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION)) {
+			return nameProvider.getFullyQualifiedName(((InputDeclaration) field).getType()).toString();
+		} else if (field.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION)) {
+			return nameProvider.getFullyQualifiedName(((OutputDeclaration) field).getType()).toString();
+		}
+		return "";
+	}
+	
 	private static FieldDeclaration resolveField(LinkableReference ref) {
 		FieldDeclaration field;
 		if (ref.eClass().equals(SystemDescriptorPackage.Literals.FIELD_REFERENCE)) {
@@ -317,23 +345,13 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 		return field;
 	}
-
+	
 	private static boolean isLinkableExpression(LinkableReference ref) {
 		return ref.eClass().equals(SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION);
 	}
 	
 	private static boolean isFieldReference(LinkableReference ref) {
 		return !isLinkableExpression(ref);
-	}
-
-
-	private String getFieldTypeName(FieldDeclaration field) {
-		if (field.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION)) {
-			return ValidationUtils.getFullyQualifiedName(((InputDeclaration) field).getType());
-		} else if (field.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION)) {
-			return ValidationUtils.getFullyQualifiedName(((OutputDeclaration) field).getType());
-		}
-		return "";
 	}
 
 	private static int getNumberOfLinksNamed(
