@@ -74,12 +74,12 @@ class DataExtensionParseingTest {
 		assertEquals(
 			"inherited field metadata not correct!",
 			"maxPerMeal",
-			caloriesField.metadata.members.get(0).key
+			caloriesField.definition.metadata.json.members.get(0).key
 		)
 		assertEquals(
 			"inherited field metadata not correct!",
 			500,
-			(caloriesField.metadata.members.get(0).value as IntValue).value
+			(caloriesField.definition.metadata.json.members.get(0).value as IntValue).value
 		)
 	}
 

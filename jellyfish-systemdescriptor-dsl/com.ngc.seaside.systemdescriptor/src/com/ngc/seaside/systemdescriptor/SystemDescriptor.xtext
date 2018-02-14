@@ -66,7 +66,7 @@ UnqualifiedName
  * Optional attribute of model, data, input, and data. The metadata should 
  * use the JSON syntax. The modeler can use this field in any way necessary
  * to convey the intent of the object.  For instance: the model may require
- * metdata that provides a name, description and a classifier (stereotype)
+ * metadata that provides a name, description and a classifier (stereotype)
  * in order to give the reader context.  Possible stereotypes include but
  * are not limited to:
  * - service (a service in the MSA architecture)
@@ -75,6 +75,27 @@ UnqualifiedName
 Metadata
 	: 'metadata' json=JsonObject
 	;
+
+/*
+ * A declaration definition is used by fields and links to describe the 
+ * metadata and other details of that declaration.  This block is used
+ * to "define" the details for those field and link declarations.  
+ */
+DeclarationDefinition
+	: '{'
+		// This action ensures the object is created even if an empty
+		// block ( ie, "Foo myInput {}" ) is declared.
+		{DeclarationDefinition} 
+		metadata=Metadata?
+	  '}'
+	;	
+	
+/* Syntax for future properties:
+ * 
+ * DeclarationDefinition : BasicDeclarationDefinition | PropertizedDeclarationDefinition
+ * BasicDeclarationDefinition : '{' metadata=Metadata? '}'
+ * PropertizedDeclarationDefinition: '{' metadata=Metadata? properties=Properties? '}'
+ */
 
 /*
  * Defines different cardinality values.
@@ -123,7 +144,7 @@ Import
  */
 EnumerationValueDeclaration
 	: value=UnqualifiedName
-	  metadata=JsonObject? ','?
+	  definition=DeclarationDefinition? ','?
 	;
 
 // ------------------------------
@@ -148,7 +169,7 @@ PrimitiveDataFieldDeclaration
 	: cardinality=Cardinality?
 	  type=PrimitiveDataType
 	  name=UnqualifiedName
-	  metadata=JsonObject?
+	  definition=DeclarationDefinition?
 	;
 
 /*
@@ -158,7 +179,7 @@ ReferencedDataModelFieldDeclaration
 	: cardinality=Cardinality?
 	  dataModel=[DataModel|QualifiedName]
 	  name=UnqualifiedName
-	  metadata=JsonObject?
+	  definition=DeclarationDefinition?
 	;
 
 /*
@@ -179,7 +200,10 @@ DataFieldDeclaration
  * An output declaration may also specify an optional cardinality.
  */
 OutputDeclaration
-	: cardinality=Cardinality? type=[Data|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	: cardinality=Cardinality?
+	  type=[Data|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
 	;
 
 /*
@@ -196,7 +220,10 @@ Output
  * An output declaration may also specify an optional cardinality.
  */
 InputDeclaration
-	: cardinality=Cardinality? type=[Data|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	: cardinality=Cardinality?
+	  type=[Data|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
 	;
 
 /*
@@ -212,7 +239,9 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
-	: type=[Model|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	: type=[Model|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
 	;
  
 /*
@@ -229,7 +258,9 @@ Parts
  * and an unqualified name.
  */
 RequireDeclaration
-	: type=[Model|QualifiedName] name=UnqualifiedName metadata=JsonObject?
+	: type=[Model|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
 	;
  
 /*
@@ -377,6 +408,7 @@ LinkDeclaration
 		source=LinkableExpression
 		'->'
 		target=LinkableExpression
+		definition=DeclarationDefinition?
 	;
 
 /*

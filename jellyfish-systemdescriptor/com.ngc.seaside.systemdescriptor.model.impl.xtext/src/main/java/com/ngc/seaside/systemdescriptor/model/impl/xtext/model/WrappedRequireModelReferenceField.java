@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -41,7 +42,7 @@ public class WrappedRequireModelReferenceField extends AbstractWrappedModelRefer
       Preconditions.checkNotNull(field, "field may not be null!");
       RequireDeclaration d = SystemDescriptorFactory.eINSTANCE.createRequireDeclaration();
       d.setName(field.getName());
-      d.setMetadata(WrappedMetadata.toXtextJson(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
       d.setType(doFindXtextModel(resolver, field.getType().getName(), field.getType().getParent().getName()));
       return d;
    }

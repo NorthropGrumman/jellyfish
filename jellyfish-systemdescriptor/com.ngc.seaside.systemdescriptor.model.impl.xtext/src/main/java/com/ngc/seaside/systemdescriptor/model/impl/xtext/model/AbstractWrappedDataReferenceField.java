@@ -4,7 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -18,7 +18,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
  * @param <T> the type of XText field this class is wrapping
  * @param <I> the type of the class implementing this class
  */
-public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclaration, I extends AbstractWrappedDataReferenceField<T, I>> extends AbstractWrappedXtext<T>
+public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclaration, I extends AbstractWrappedDataReferenceField<T, I>>
+      extends AbstractWrappedXtext<T>
       implements IDataReferenceField {
 
    public AbstractWrappedDataReferenceField(IWrapperResolver resolver, T wrapped) {
@@ -27,13 +28,13 @@ public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclarati
 
    @Override
    public IMetadata getMetadata() {
-      return WrappedMetadata.fromXtextJson(wrapped.getMetadata());
+      return WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public I setMetadata(IMetadata metadata) {
-      wrapped.setMetadata(WrappedMetadata.toXtextJsonObject(metadata.getJson()));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
       return (I) this;
    }
 

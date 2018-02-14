@@ -36,21 +36,27 @@ class Datas {
 			
 			data Time {
 				int hour {
-					"validation": {
-						"min": 0,
-						"max": 23
+					metadata {
+						"validation": {
+							"min": 0,
+							"max": 23
+						}
 					}
 				}
 				int minute {
-					"validation": {
-						"min": 0,
-						"max": 59
+					metadata {
+						"validation": {
+							"min": 0,
+							"max": 59
+						}
 					}
 				}
 				int second {
-					"validation": {
-						"min": 0,
-						"max": 59
+					metadata {
+						"validation": {
+							"min": 0,
+							"max": 59
+						}
 					}
 				}
 			}
@@ -150,7 +156,9 @@ class Datas {
 			
 			data Food {
 				int calories {
-					"maxPerMeal": 500
+					metadata {
+						"maxPerMeal": 500
+					}
 				}
 			}
 		'''

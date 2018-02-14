@@ -140,7 +140,7 @@ class DataParsingTest {
 		assertTrue(field instanceof PrimitiveDataFieldDeclaration)
 		field = field as PrimitiveDataFieldDeclaration
 
-		var metadata = field.metadata
+		var metadata = field.definition.metadata.json
 		var validation = metadata.members.get(0)
 
 		assertEquals(

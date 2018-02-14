@@ -13,13 +13,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="json" eType="#//JsonObject"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeclarationDefinition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Cardinality">
     <eLiterals name="DEFAULT" literal="default"/>
     <eLiterals name="MANY" value="1" literal="many"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//DeclarationDefinition"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Import">
@@ -27,7 +31,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnumerationValueDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//DeclarationDefinition"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="PrimitiveDataType">
@@ -46,7 +50,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="DataFieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//Cardinality"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//JsonObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//DeclarationDefinition"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutputDeclaration" eSuperTypes="#//FieldDeclaration">
@@ -116,6 +120,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//LinkableReference"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//LinkableReference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//DeclarationDefinition"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Links">

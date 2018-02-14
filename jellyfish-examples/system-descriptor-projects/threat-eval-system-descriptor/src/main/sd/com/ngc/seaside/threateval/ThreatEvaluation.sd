@@ -22,15 +22,21 @@ model ThreatEvaluation {
 	
 	input {
 		SystemTrack systemTrack {
-			"satisfies": ["TE001"]
+		   metadata {
+			   "satisfies": ["TE001"]
+			}
 		}
 		
 		Classification systemTrackClassification {
-			"satisfies": ["TE001"]
+		   metadata {
+			   "satisfies": ["TE001"]
+			}
 		}
 		
 		TrackEngagementStatus trackEngagementStatus {
-			"satisfies": ["TE001"]
+		   metadata {
+			   "satisfies": ["TE001"]
+			}
 		}
 		
 		DroppedSystemTrack droppedSystemTrack
@@ -38,7 +44,9 @@ model ThreatEvaluation {
 	
 	output {
 		PrioritizedSystemTrackIdentifiers prioritizedSystemTracks {
-			"satisfies": ["TE001"]
+		   metadata {
+			   "satisfies": ["TE001"]
+			}
 		}
 	}
 	

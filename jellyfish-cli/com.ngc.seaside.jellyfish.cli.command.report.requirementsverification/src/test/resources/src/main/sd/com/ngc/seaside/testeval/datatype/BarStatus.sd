@@ -8,9 +8,11 @@ data BarStatus {
     }
 	string foo
 	float bar {
-		"validation": {
-			"min": 0.0,
-			"max": 1.0
+	   metadata {
+		  "validation": {
+			  "min": 0.0,
+			  "max": 1.0
+		  }
 		}
 	}
 }
