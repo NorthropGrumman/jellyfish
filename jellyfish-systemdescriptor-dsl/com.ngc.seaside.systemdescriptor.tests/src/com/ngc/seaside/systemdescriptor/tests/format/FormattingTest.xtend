@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.format
 
 import org.junit.Test
 import com.google.inject.Inject
@@ -11,18 +11,18 @@ import org.eclipse.xtext.junit4.formatter.FormatterTester
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SystemDescriptorInjectorProvider))
-
 class FormattingTest {
-	
 	@Inject extension FormatterTester
 	
-	@Test def void testAlreadyFormattedExample1() {
+	@Test
+	def void testAlreadyFormattedExample1() {
 		assertFormatted[
 			toBeFormatted = formattedExample1
 		]
 	}
 	
-	@Test def void testJumbledExample1() {
+	@Test
+	def void testJumbledExample1() {
 		assertFormatted[
 			expectation = formattedExample1
 			toBeFormatted = '''
@@ -55,7 +55,8 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample1() {
+	@Test
+	def void testOneLineExample1() {
 		assertFormatted[
 			expectation = formattedExample1
 			toBeFormatted = '''
@@ -64,13 +65,15 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testAlreadyFormattedExample2() {
+	@Test
+	def void testAlreadyFormattedExample2() {
 		assertFormatted[
 			toBeFormatted = formattedExample2
 		]
 	}
 	
-	@Test def void testJumbledExample2() {
+	@Test
+	def void testJumbledExample2() {
 		assertFormatted[
 			expectation = formattedExample2
 			toBeFormatted = '''
@@ -90,11 +93,11 @@ class FormattingTest {
 						"satisfies": ["TE001"] }
 				
 					input {
-						SystemTrack systemTrack { "satisfies": ["TE001"] }
-						Classification systemTrackClassification { "satisfies": ["TE001"] }
-						TrackEngagementStatus trackEngagementStatus { "satisfies": ["TE001"] } }
+						SystemTrack systemTrack { metadata { "satisfies": ["TE001"] } }
+						Classification systemTrackClassification { metadata { "satisfies": ["TE001"] } }
+						TrackEngagementStatus trackEngagementStatus { metadata { "satisfies": ["TE001"] } } }
 				
-					output { PrioritizedSystemTrackIdentifiers prioritizedSystemTracks { "satisfies": ["TE001"] } }
+					output { PrioritizedSystemTrackIdentifiers prioritizedSystemTracks { metadata { "satisfies": ["TE001"] } } }
 				
 					parts {
 						DefendedAreaTrackPriorityService defendedAreaTrackPriorityService
@@ -105,9 +108,12 @@ class FormattingTest {
 					scenario calculateTrackPriority { when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks
 						and willBeCompleted within 1 seconds }
 				
-					links { link systemTrack -> defendedAreaTrackPriorityService.systemTrack
-						link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
-						link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+					links { link systemTrackToDATPS systemTrack -> defendedAreaTrackPriorityService.systemTrack
+						link
+						systemTrackClassificationToCTPS
+						systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
+						link prioritizedSystemTracks
+						-> trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
 						link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
 						link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority }
 				
@@ -116,29 +122,33 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample2() {
+	@Test
+	def void testOneLineExample2() {
 		assertFormatted[
 			expectation = formattedExample2
 			toBeFormatted = '''
-				package com.ngc.seaside.threateval import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService import com.ngc.seaside.threateval.ClassificationTrackPriorityService import com.ngc.seaside.threateval.EngagementTrackPriorityService import com.ngc.seaside.threateval.TrackPriorityService import com.ngc.seaside.common.datatype.SystemTrack import com.ngc.seaside.classifier.datatype.Classification import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus import com.ngc.seaside.common.datatype.SystemTrackIdentifier import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers model ThreatEvaluation { metadata { "description": "Prioritizes system tracks into a list of System Track Identifiers", "stereotypes": ["virtual", "system"], "satisfies": ["TE001"] } input { SystemTrack systemTrack { "satisfies": ["TE001"] } Classification systemTrackClassification { "satisfies": ["TE001"] } TrackEngagementStatus trackEngagementStatus { "satisfies": ["TE001"] } } output { PrioritizedSystemTrackIdentifiers prioritizedSystemTracks { "satisfies": ["TE001"] } } parts { DefendedAreaTrackPriorityService defendedAreaTrackPriorityService ClassificationTrackPriorityService classificationTrackPriorityService EngagementTrackPriorityService engagementTrackPriorityService TrackPriorityService trackPriorityService } scenario calculateTrackPriority { when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks and willBeCompleted within 1 seconds } links { link systemTrack -> defendedAreaTrackPriorityService.systemTrack link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority }  }
+				package com.ngc.seaside.threateval import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService import com.ngc.seaside.threateval.ClassificationTrackPriorityService import com.ngc.seaside.threateval.EngagementTrackPriorityService import com.ngc.seaside.threateval.TrackPriorityService import com.ngc.seaside.common.datatype.SystemTrack import com.ngc.seaside.classifier.datatype.Classification import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus import com.ngc.seaside.common.datatype.SystemTrackIdentifier import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers model ThreatEvaluation{metadata{"description":"Prioritizes system tracks into a list of System Track Identifiers","stereotypes":["virtual", "system"],"satisfies":["TE001"]}input{SystemTrack systemTrack{metadata{"satisfies":["TE001"]}}Classification systemTrackClassification{metadata{"satisfies":["TE001"]}}TrackEngagementStatus trackEngagementStatus{metadata{"satisfies":["TE001"]}}}output{PrioritizedSystemTrackIdentifiers prioritizedSystemTracks{metadata{"satisfies":["TE001"]}}}parts{DefendedAreaTrackPriorityService defendedAreaTrackPriorityService ClassificationTrackPriorityService classificationTrackPriorityService EngagementTrackPriorityService engagementTrackPriorityService TrackPriorityService trackPriorityService}scenario calculateTrackPriority{when receiving systemTrack and receiving systemTrackClassification and receiving trackEngagementStatus then willPublish prioritizedSystemTracks and willBeCompleted within 1 seconds}links{link systemTrackToDATPS systemTrack->defendedAreaTrackPriorityService.systemTrack link systemTrackClassificationToCTPS systemTrackClassification->classificationTrackPriorityService.systemTrackClassification link trackEngagementStatus->engagementTrackPriorityService.trackEngagementStatus link prioritizedSystemTracks->trackPriorityService.prioritizedSystemTracks link defendedAreaTrackPriorityService.trackPriority->trackPriorityService.trackPriority link classificationTrackPriorityService.trackPriority->trackPriorityService.trackPriority link engagementTrackPriorityService.trackPriority->trackPriorityService.trackPriority}}
 			'''
 		]
 	}
 	
-	@Test def void testAlreadyFormattedExample3() {
+	@Test
+	def void testAlreadyFormattedExample3() {
 		assertFormatted[
 			toBeFormatted = formattedExample3
 		]
 	}
 	
-	@Test def void testJumbledExample3() {
+	@Test
+	def void testJumbledExample3() {
 		assertFormatted[
 			expectation = formattedExample3
 			toBeFormatted = '''
 				package com.ngc.seaside.common.datatype
 				data GPSTime {
 				int secondsFromGPS
-				int microseconds { "validation": { "min": 0, "max": 999999 }
+				int microseconds { metadata { "validation": { "min": 0, "max": 999999 }
+				}
 					}
 									Vector3 ecefVelocity
 				}
@@ -146,16 +156,18 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testOneLineExample3() {
+	@Test
+	def void testOneLineExample3() {
 		assertFormatted[
 			expectation = formattedExample3
 			toBeFormatted = '''
-				package com.ngc.seaside.common.datatype data GPSTime { int secondsFromGPS int microseconds { "validation": { "min": 0, "max": 999999 } } Vector3 ecefVelocity }
+				package com.ngc.seaside.common.datatype data GPSTime { int secondsFromGPS int microseconds { metadata { "validation": { "min": 0, "max": 999999 } } } Vector3 ecefVelocity }
 			'''
 		]
 	}
 
-	@Test def void testJumbledExample4() {
+	@Test
+	def void testJumbledExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
@@ -164,14 +176,16 @@ class FormattingTest {
 							FIELD1 FIELD2
 			FIELD3
 			{
-				"name":null
+				metadata
+				{"name":null}
 			} FIELD4
 				}
 			'''
 		]
 	}
 
-	@Test def void testOneLineExample4() {
+	@Test
+	def void testAlreadyFormattedExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
@@ -181,7 +195,9 @@ class FormattingTest {
 				FIELD1
 				FIELD2
 				FIELD3 {
-					"name": null
+					metadata {
+						"name": null
+					}
 				}
 				FIELD4
 			}
@@ -189,11 +205,12 @@ class FormattingTest {
 		]
 	}
 	
-	@Test def void testAlreadyFormattedExample4() {
+	@Test
+	def void testOneLineExample4() {
 		assertFormatted[
 			expectation = formattedExample4
 			toBeFormatted = '''
-			package com.ngc.test enum Enumeration{FIELD1 FIELD2 FIELD3{"name":null} FIELD4}
+			package com.ngc.test enum Enumeration{FIELD1 FIELD2 FIELD3{metadata{"name":null}} FIELD4}
 			'''
 		]
 	}
@@ -265,21 +282,29 @@ class FormattingTest {
 		
 			input {
 				SystemTrack systemTrack {
-					"satisfies": ["TE001"]
+					metadata {
+						"satisfies": ["TE001"]
+					}
 				}
 		
 				Classification systemTrackClassification {
-					"satisfies": ["TE001"]
+					metadata {
+						"satisfies": ["TE001"]
+					}
 				}
 		
 				TrackEngagementStatus trackEngagementStatus {
-					"satisfies": ["TE001"]
+					metadata {
+						"satisfies": ["TE001"]
+					}
 				}
 			}
 		
 			output {
 				PrioritizedSystemTrackIdentifiers prioritizedSystemTracks {
-					"satisfies": ["TE001"]
+					metadata {
+						"satisfies": ["TE001"]
+					}
 				}
 			}
 		
@@ -299,8 +324,8 @@ class FormattingTest {
 			}
 		
 			links {
-				link systemTrack -> defendedAreaTrackPriorityService.systemTrack
-				link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
+				link systemTrackToDATPS systemTrack -> defendedAreaTrackPriorityService.systemTrack
+				link systemTrackClassificationToCTPS systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
 				link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
 				link prioritizedSystemTracks -> trackPriorityService.prioritizedSystemTracks
 				link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
@@ -317,9 +342,11 @@ class FormattingTest {
 		data GPSTime {
 			int secondsFromGPS
 			int microseconds {
-				"validation": {
-					"min": 0,
-					"max": 999999
+				metadata {
+					"validation": {
+						"min": 0,
+						"max": 999999
+					}
 				}
 			}
 			Vector3 ecefVelocity
@@ -333,7 +360,9 @@ class FormattingTest {
 			FIELD1
 			FIELD2
 			FIELD3 {
-				"name": null
+				metadata {
+					"name": null
+				}
 			}
 			FIELD4
 		}

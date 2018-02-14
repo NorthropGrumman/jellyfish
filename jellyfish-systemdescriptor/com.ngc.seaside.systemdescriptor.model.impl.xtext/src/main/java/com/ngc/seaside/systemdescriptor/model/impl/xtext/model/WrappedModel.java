@@ -106,6 +106,13 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    }
 
    @Override
+   public Optional<IModelLink<?>> getLink(String name) {
+      return links.stream()
+            .filter(link -> link.getName().equals(name))
+            .findFirst();
+   }
+
+   @Override
    public String getFullyQualifiedName() {
       Package p = (Package) wrapped.eContainer();
       return String.format("%s%s%s",

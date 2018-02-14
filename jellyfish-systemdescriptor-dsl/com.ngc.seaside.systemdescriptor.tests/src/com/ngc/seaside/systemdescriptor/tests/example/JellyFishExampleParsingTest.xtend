@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.tests
+package com.ngc.seaside.systemdescriptor.tests.example
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
@@ -12,6 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -38,23 +39,29 @@ class JellyFishExampleParsingTest {
 			  }
 			  
 			  int hour {
-			    "validation": {
-			      "min": 0,
-			      "max": 23
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 23
+			      }
 			    }
 			  }
 			  
 			  int minute {
-			    "validation": {
-			      "min": 0,
-			      "max": 60
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 60
+			      }
 			    }
 			  }
 			  
 			  int second {
-			    "validation": {
-			      "min": 0,
-			      "max": 60
+			  	metadata {
+			      "validation": {
+			        "min": 0,
+			        "max": 60
+			      }
 			    }
 			  }
 			}

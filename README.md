@@ -11,3 +11,12 @@ projects.  Developers rarely use the DSL directly; they should use the APIs prov
 1.  The **jellyfish-cli** project contains the standard command line interface tooling built on top of the System
 Descriptor language.  This project uses the API and may be extended by developers to add custom features without having
 to build tooling from scratch.  
+
+# Downloads
+You can download the latest releases at https://github.ms.northgrum.com/CEACIDE/jellyfish/releases.
+
+# More Information
+You can find more information the SD language at
+http://10.207.42.137/confluence/display/SEAS/Modeling+with+the+System+Descriptor.  Information about
+the jellyfish-cli can be found at http://10.207.42.137/confluence/display/SEAS/Appendix+C+-+The+Jellyfish+Command+Line+Interface
+and http://10.207.42.137/confluence/display/SEAS/JellyFish+Implementation.

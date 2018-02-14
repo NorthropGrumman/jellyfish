@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implements the IModel inteface.  Maintains all the data associated with the IModel.
@@ -96,6 +97,13 @@ public class Model implements IModel {
    @Override
    public Collection<IModelLink<?>> getLinks() {
       return links;
+   }
+
+   @Override
+   public Optional<IModelLink<?>> getLink(String name) {
+      return links.stream()
+         .filter(link -> link.getName().equals(name))
+         .findFirst();
    }
 
    @Override
