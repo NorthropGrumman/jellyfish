@@ -102,7 +102,7 @@ public class Model implements IModel {
    @Override
    public Optional<IModelLink<?>> getLink(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
-      Preconditions.checkArgument(name.trim().isEmpty(), "name may not be empty!");
+      Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       return links.stream()
          .filter(link -> name.equals(link.getName().orElse(null)))
          .findFirst();
