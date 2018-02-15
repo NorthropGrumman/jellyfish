@@ -16,12 +16,12 @@ then
   exit
 fi
 
-SEARCH_STRING='https://nexuslifecycle.ms.northgrum.com/ui/links/application/jenkins/report/'
+SEARCH_STRING='The detailed report can be viewed online at'
 
-BUILD_ID=$(grep $SEARCH_STRING $LOGFILE | tail -1 | awk -F $SEARCH_STRING '{print $2}')
+REPORT_URL=$(grep $SEARCH_STRING $LOGFILE | tail -1 | awk '{print $NF}')
 
 export no_proxy=".northgrum.com"
 
-echo "Downloading Nexus Lifecycle PDF report at '${SEARCH_STRING}${BUILD_ID}/pdf'"
+echo "Downloading Nexus Lifecycle PDF report at '${REPORT_URL}/pdf'"
 
-curl -L -k -u "$USERNAME:$PASSWORD" "${SEARCH_STRING}${BUILD_ID}/pdf" > $OUTPUT_DIRECTORY/Nexus-Lifecycle-Report-$BUILD_ID.pdf
+curl -L -k -u "$USERNAME:$PASSWORD" "${REPORT_URL}/pdf" > $OUTPUT_DIRECTORY/Nexus-Lifecycle-Report.pdf
