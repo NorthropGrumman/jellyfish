@@ -28,7 +28,7 @@ pipeline {
                      defaultValue: false)
 		booleanParam(name: 'nexusLifecycle',
                      description: 'If true, Nexus Lifecycle will scan for security issues.',
-                     defaultValue: true)			 
+                     defaultValue: false)			 
     }
 
     stages {
