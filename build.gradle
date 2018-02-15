@@ -4,8 +4,6 @@
  */
 
 def jellyfishProjects = [
-    'seaside-bootstrap-api',
-    'seaside-bootstrap',
     'jellyfish-systemdescriptor-dsl',
     'jellyfish-systemdescriptor',
     'jellyfish-cli',

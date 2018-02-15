@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.bootstrap.service.parameter.api.IParameterService;
-import com.ngc.seaside.bootstrap.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.bootstrap.service.template.api.ITemplateService;
-import com.ngc.seaside.command.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;

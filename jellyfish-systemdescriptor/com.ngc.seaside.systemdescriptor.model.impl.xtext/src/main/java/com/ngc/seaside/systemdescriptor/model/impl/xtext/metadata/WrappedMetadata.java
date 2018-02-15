@@ -77,12 +77,11 @@ public class WrappedMetadata implements IMetadata {
 
    /**
     * Creates a new {@code Metadata} instance is is equivalent ot the given {@code IMetadata}.  If the metadata is empty
-    * the new instanceewill have a null JSON object.
+    * or {@code null} the new instance will have a null JSON object.
     */
    public static Metadata toXtext(IMetadata metadata) {
-      Preconditions.checkNotNull(metadata, "metadata may not be null!");
       Metadata xtext = SystemDescriptorFactory.eINSTANCE.createMetadata();
-      if (!metadata.getJson().isEmpty()) {
+      if (metadata != null && !metadata.getJson().isEmpty()) {
          xtext.setJson(toXtextJsonObject(metadata.getJson()));
       }
       return xtext;

@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implements the IModel inteface.  Maintains all the data associated with the IModel.
@@ -99,6 +100,15 @@ public class Model implements IModel {
    }
 
    @Override
+   public Optional<IModelLink<?>> getLink(String name) {
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+      return links.stream()
+         .filter(link -> name.equals(link.getName().orElse(null)))
+         .findFirst();
+   }
+
+   @Override
    public String getFullyQualifiedName() {
       return String.format("%s%s%s",
                            parent == null ? "" : parent.getName(),
@@ -146,7 +156,7 @@ public class Model implements IModel {
       if (this == o) {
          return true;
       }
-      if (!(o instanceof Data)) {
+      if (!(o instanceof Model)) {
          return false;
       }
       Model model = (Model) o;

@@ -63,6 +63,17 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
    }
 
    @Override
+   public Optional<String> getName() {
+      return Optional.ofNullable(wrapped.getName());
+   }
+
+   @Override
+   public IModelLink<IDataReferenceField> setName(String name) {
+      wrapped.setName(name);
+      return this;
+   }
+
+   @Override
    public IModel getParent() {
       return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
    }

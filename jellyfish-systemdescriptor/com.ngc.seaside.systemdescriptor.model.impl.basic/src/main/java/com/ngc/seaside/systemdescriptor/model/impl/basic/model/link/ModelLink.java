@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implements the IModelLink interface.  Maintains the source of the link and the target of the link.
@@ -18,6 +19,7 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private T source;
    private T target;
    private final IModel parent;
+   private String name;
 
    public ModelLink(IModel p) {
       parent = p;
@@ -46,6 +48,17 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    }
 
    @Override
+   public Optional<String> getName() {
+	   return Optional.ofNullable(name);
+   }
+
+   @Override
+   public IModelLink<T> setName(String name) {
+	   this.name = name;
+	   return this;
+   }
+
+   @Override
    public IModel getParent() {
       return parent;
    }
@@ -60,20 +73,23 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
       }
 
       ModelLink<?> link = (ModelLink<?>) o;
-      return source == link.source &&
+      return Objects.equals(name, link.name) &&
+             source == link.source &&
              target == link.target &&
              parent == link.parent;
    }
 
    @Override
    public int hashCode() {
-      return Objects
-            .hash(System.identityHashCode(source), System.identityHashCode(target), System.identityHashCode(parent));
+      return Objects.hash(System.identityHashCode(source),
+                          System.identityHashCode(target),
+                          System.identityHashCode(parent));
    }
 
    @Override
    public String toString() {
       return "ModelLink[" +
+             "name='" + name +
              "source='" + (source == null ? "null" : source) +
              "target='" + (target == null ? "null" : target) +
              "parent='" + (parent == null ? "null" : parent) +

@@ -36,7 +36,7 @@ public class DataValidator extends AbstractUnregisteredSystemDescriptorValidator
 	   while (parent != null) {
 	      QualifiedName parentName = nameProvider.getFullyQualifiedName(parent);
 	      if (parentName.equals(name)) {
-	         String msg = String.format("Cycle detected: a cycle exists in the type hierarchy of %s", name.getLastSegment());
+	        String msg = String.format("Cycle detected: a cycle exists in the type hierarchy of %s", name.getLastSegment());
             error(msg, data, SystemDescriptorPackage.Literals.DATA__SUPERCLASS);
             return;
 	      }

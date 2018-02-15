@@ -5,3 +5,7 @@ project(':com.ngc.seaside.jellyfish.examples.project1').name = 'project1'
 
 include 'com.ngc.seaside.jellyfish.examples.project2'
 project(':com.ngc.seaside.jellyfish.examples.project2').name = 'project2'
+
+include 'com.ngc.seaside.jellyfish.examples.project3'
+project(':com.ngc.seaside.jellyfish.examples.project3').name = 'project3'
+

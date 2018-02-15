@@ -5,9 +5,11 @@ data GPSTime {
 	// long long microsecondsFromGPS
 	int secondsFromGPS
 	int microseconds {
-		"validation": {
-			"min": 0,
-			"max": 999999
+	   metadata {
+		   "validation": {
+			   "min": 0,
+			   "max": 999999
+		   }
 		}
 	}
 }

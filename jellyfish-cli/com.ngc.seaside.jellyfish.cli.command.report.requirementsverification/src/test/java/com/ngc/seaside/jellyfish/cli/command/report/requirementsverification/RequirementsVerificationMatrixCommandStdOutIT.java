@@ -7,11 +7,11 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.bootstrap.service.repository.api.IRepositoryService;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.MultiLineRow;
-import com.ngc.seaside.bootstrap.utilities.console.impl.stringtable.StringTable;
-import com.ngc.seaside.command.api.DefaultParameter;
-import com.ngc.seaside.command.api.DefaultParameterCollection;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.MultiLineRow;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;

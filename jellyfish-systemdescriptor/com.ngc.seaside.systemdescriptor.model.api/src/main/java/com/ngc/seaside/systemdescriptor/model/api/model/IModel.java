@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Represents a model.  Operations that change the state of this object may throw {@code UnsupportedOperationException}s
@@ -76,6 +77,15 @@ public interface IModel extends INamedChild<IPackage> {
     * @return the links declared by this model
     */
    Collection<IModelLink<?>> getLinks();
+
+   /**
+    * Gets the link with the given name.  Since links do not require names, a link with the specified name may not exist
+    * in the model.
+    *
+    * @param name The name of the link to get.
+    * @return the optional value containing a link with the given name, if one exists.
+    */
+   Optional<IModelLink<?>> getLink(String name);
 
    /**
     * Gets the fully qualified name of this model type.  The fully qualified name is the name of the parent package,

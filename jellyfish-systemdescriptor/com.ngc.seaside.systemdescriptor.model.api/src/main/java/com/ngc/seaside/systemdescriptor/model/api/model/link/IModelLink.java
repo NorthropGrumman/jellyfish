@@ -3,6 +3,8 @@ package com.ngc.seaside.systemdescriptor.model.api.model.link;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 
+import java.util.Optional;
+
 /**
  * Represents a link between two fields of a model.  Links usually join together two {@link IModel}s or {@link
  * com.ngc.seaside.systemdescriptor.model.api.data.IData}s types.  Operations that change the state of this object may
@@ -39,6 +41,21 @@ public interface IModelLink<T extends IReferenceField> {
     * @return this link
     */
    IModelLink<T> setTarget(T target);
+
+   /**
+    * Gets the link's name, if it has one.
+    *
+    * @return the name of the link, if one exists.
+    */
+    Optional<String> getName();
+
+    /**
+     * Sets the link name.
+     *
+     * @param name the name for the link
+     * @return this link
+     */
+    IModelLink<T> setName(String name);
 
    /**
     * Gets the parent model that contains this link.
