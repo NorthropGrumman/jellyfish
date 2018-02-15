@@ -211,7 +211,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output field '%s' to another output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
@@ -231,7 +231,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
@@ -254,7 +254,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output '%s' to this model's own input '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
@@ -276,7 +276,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
@@ -298,7 +298,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output field '%s' to another output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
@@ -320,7 +320,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
 
 		}
 	}
