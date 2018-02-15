@@ -27,9 +27,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HierarchicalModelViewTest {
+public class AggregatedModelViewTest {
 
-   private HierarchicalModelView view;
+   private AggregatedModelView view;
 
    @Mock
    private IModel model;
@@ -89,7 +89,7 @@ public class HierarchicalModelViewTest {
       when(grandparent.getLinks()).thenReturn(links);
       // TODO TH: set refined relationship: when(grandparent.getRefinedModel()).thenReturn(null)
 
-      view = new HierarchicalModelView(model);
+      view = new AggregatedModelView(model);
    }
 
    @Test
@@ -152,8 +152,8 @@ public class HierarchicalModelViewTest {
                  view.getLink("linkC").isPresent());
    }
 
-   private <T extends INamedChild<IModel>> INamedChildCollection<IModel, T> fields(Class<? extends T> fieldType,
-                                                                                   String... names) {
+   public static <T extends INamedChild<IModel>> INamedChildCollection<IModel, T> fields(Class<? extends T> fieldType,
+                                                                                         String... names) {
       NamedChildCollection<IModel, T> collection = new NamedChildCollection<>();
       if (names != null) {
          for (String name : names) {
@@ -165,7 +165,7 @@ public class HierarchicalModelViewTest {
       return collection;
    }
 
-   private Collection<IModelLink<?>> links(String... names) {
+   public static Collection<IModelLink<?>> links(String... names) {
       Collection<IModelLink<?>> collection = new ArrayList<>();
       if (names != null) {
          for (String name : names) {

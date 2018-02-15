@@ -18,9 +18,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HierarchicalDataViewTest {
+public class AggregatedDataViewTest {
 
-   private HierarchicalDataView view;
+   private AggregatedDataView view;
 
    @Mock
    private IData data;
@@ -45,7 +45,7 @@ public class HierarchicalDataViewTest {
       when(grandparent.getFields()).thenReturn(children);
       when(grandparent.getSuperDataType()).thenReturn(Optional.empty());
 
-      view = new HierarchicalDataView(data);
+      view = new AggregatedDataView(data);
    }
 
    @Test
@@ -58,7 +58,7 @@ public class HierarchicalDataViewTest {
                  view.getFields().getByName("c").isPresent());
    }
 
-   private INamedChildCollection<IData, IDataField> fields(String... names) {
+   public static INamedChildCollection<IData, IDataField> fields(String... names) {
       NamedChildCollection<IData, IDataField> collection = new NamedChildCollection<>();
       if (names != null) {
          for (String name : names) {

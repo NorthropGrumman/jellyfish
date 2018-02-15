@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class HierarchicalModelView implements IModel {
+public class AggregatedModelView implements IModel {
 
    private final IModel wrapped;
    private final INamedChildCollection<IModel, IDataReferenceField> aggregatedInputs;
@@ -28,7 +28,7 @@ public class HierarchicalModelView implements IModel {
    private final INamedChildCollection<IModel, IScenario> aggregatedScenarios;
    private final Collection<IModelLink<?>> aggregatedLinks;
 
-   public HierarchicalModelView(IModel wrapped) {
+   public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedInputs = getAggregatedFields(IModel::getInputs);
       this.aggregatedOutputs = getAggregatedFields(IModel::getOutputs);
@@ -113,8 +113,8 @@ public class HierarchicalModelView implements IModel {
       if (this == o) {
          return true;
       }
-      if (o instanceof HierarchicalModelView) {
-         return wrapped.equals(((HierarchicalModelView) o).wrapped);
+      if (o instanceof AggregatedModelView) {
+         return wrapped.equals(((AggregatedModelView) o).wrapped);
       }
       return o instanceof IModel && wrapped.equals(o);
    }

@@ -10,18 +10,19 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
 import java.util.Optional;
 
-public class HierarchicalDataView implements IData {
+public class AggregatedDataView implements IData {
 
    private final IData wrapped;
    private final INamedChildCollection<IData, IDataField> aggregatedFields;
 
-   public HierarchicalDataView(IData wrapped) {
+   public AggregatedDataView(IData wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedFields = getAggregatedFields();
    }
 
    @Override
    public IMetadata getMetadata() {
+      // TODO TH: merge metadata?
       return wrapped.getMetadata();
    }
 
@@ -70,8 +71,8 @@ public class HierarchicalDataView implements IData {
       if (this == o) {
          return true;
       }
-      if (o instanceof HierarchicalDataView) {
-         return wrapped.equals(((HierarchicalDataView) o).wrapped);
+      if (o instanceof AggregatedDataView) {
+         return wrapped.equals(((AggregatedDataView) o).wrapped);
       }
       return o instanceof IData && wrapped.equals(o);
    }
