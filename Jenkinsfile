@@ -24,10 +24,15 @@ pipeline {
         booleanParam(name: 'offlineSupport',
                      description: 'If true, a maven2 repository will be created that can be used for offline deployments.',
                      defaultValue: false)
+		booleanParam(name: 'nexusLifecycle',
+                     description: 'If true, Nexus Lifecycle will scan for security issues.',
+                     defaultValue: false)			 
     }
 
     stages {
         // Prepare for a release if necessary.
+		
+		
         stage("Prepare For Release") {
             when {
                 expression { params.performRelease }
@@ -40,7 +45,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
@@ -112,7 +117,31 @@ pipeline {
                 sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
-
+        
+        stage("Nexus Lifecycle") {
+            when {
+                expression { params.nexusLifecycle }
+            }
+			steps {
+				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
+				script {
+					def policyEvaluationResult = nexusPolicyEvaluation(
+						failBuildOnNetworkError: false,
+						iqApplication: 'noalert',
+						iqStage: 'build',
+						jobCredentialsId: 'NexusLifecycle'
+					)
+					currentBuild.result = 'SUCCESS'
+				}
+				 withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
+					sh 'chmod +x downloadNexusLifecycleReport.sh'
+					sh 'mkdir -p build'
+					sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
+					sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+                }
+			}
+		}
+		
         stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
@@ -159,12 +188,13 @@ pipeline {
                }
             }
         }
-        
+		
+        		
         stage('Archive') {
             steps {
                 // Create a ZIP that has everything.
                 sh 'mkdir -p build'
-                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.plus.updatesite/build/com.ngc.seaside.systemdescriptor.plus.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml'
+                sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.plus.updatesite/build/com.ngc.seaside.systemdescriptor.plus.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml build/*.pdf'
 
                 // Archive the zip that has everything.
                 archiveArtifacts allowEmptyArchive: true,
