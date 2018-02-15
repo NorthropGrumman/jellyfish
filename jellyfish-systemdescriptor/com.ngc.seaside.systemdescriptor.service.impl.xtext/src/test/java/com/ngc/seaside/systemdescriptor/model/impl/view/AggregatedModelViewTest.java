@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.view;
 
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -59,6 +60,7 @@ public class AggregatedModelViewTest {
       when(model.getScenarios()).thenReturn(scenarios);
       links = links("linkA");
       when(model.getLinks()).thenReturn(links);
+      when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       // TODO TH: set refined relationship: when(model.getRefinedModel()).thenReturn(parent)
 
       dataRefFields = fields(DataReferenceField.class, "inputB");
@@ -73,6 +75,7 @@ public class AggregatedModelViewTest {
       when(parent.getScenarios()).thenReturn(scenarios);
       links = links("linkB");
       when(parent.getLinks()).thenReturn(links);
+      when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       // TODO TH: set refined relationship: when(parent.getRefinedModel()).thenReturn(grandparent)
 
       dataRefFields = fields(DataReferenceField.class, "inputC");
@@ -87,6 +90,7 @@ public class AggregatedModelViewTest {
       when(grandparent.getScenarios()).thenReturn(scenarios);
       links = links("linkC");
       when(grandparent.getLinks()).thenReturn(links);
+      when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       // TODO TH: set refined relationship: when(grandparent.getRefinedModel()).thenReturn(null)
 
       view = new AggregatedModelView(model);

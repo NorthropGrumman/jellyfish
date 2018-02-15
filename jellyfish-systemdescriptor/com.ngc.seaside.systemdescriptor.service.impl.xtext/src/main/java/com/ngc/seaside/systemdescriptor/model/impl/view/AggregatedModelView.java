@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Provides an aggregated view of a model by taking into account the model's refinement hierarchy.
+ */
 public class AggregatedModelView implements IModel {
 
    private final IModel wrapped;
@@ -27,6 +30,7 @@ public class AggregatedModelView implements IModel {
    private final INamedChildCollection<IModel, IModelReferenceField> aggregatedRequirements;
    private final INamedChildCollection<IModel, IScenario> aggregatedScenarios;
    private final Collection<IModelLink<?>> aggregatedLinks;
+   private IMetadata aggregatedMetadata;
 
    public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
@@ -36,16 +40,19 @@ public class AggregatedModelView implements IModel {
       this.aggregatedRequirements = getAggregatedFields(IModel::getRequiredModels);
       this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios);
       this.aggregatedLinks = getAggregatedLinks();
+      this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
    }
 
    @Override
    public IMetadata getMetadata() {
-      return wrapped.getMetadata();
+      return aggregatedMetadata;
    }
 
    @Override
    public IModel setMetadata(IMetadata metadata) {
-      return wrapped.setMetadata(metadata);
+      wrapped.setMetadata(metadata);
+      aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      return this;
    }
 
    @Override

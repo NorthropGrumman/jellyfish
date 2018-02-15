@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.view;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
 import org.junit.Before;
@@ -36,14 +37,17 @@ public class AggregatedDataViewTest {
       INamedChildCollection<IData, IDataField> children = fields("a");
       when(data.getFields()).thenReturn(children);
       when(data.getSuperDataType()).thenReturn(Optional.of(parent));
+      when(data.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       children = fields("b");
       when(parent.getFields()).thenReturn(children);
       when(parent.getSuperDataType()).thenReturn(Optional.of(grandparent));
+      when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       children = fields("c");
       when(grandparent.getFields()).thenReturn(children);
       when(grandparent.getSuperDataType()).thenReturn(Optional.empty());
+      when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       view = new AggregatedDataView(data);
    }

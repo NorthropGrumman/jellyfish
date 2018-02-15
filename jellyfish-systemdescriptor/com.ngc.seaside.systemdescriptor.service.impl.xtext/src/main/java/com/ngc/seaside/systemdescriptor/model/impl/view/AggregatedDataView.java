@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.view;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -10,25 +11,31 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
 import java.util.Optional;
 
+/**
+ * Provides an aggregated view of a data object by taking into account the data's extension hierarchy.
+ */
 public class AggregatedDataView implements IData {
 
    private final IData wrapped;
    private final INamedChildCollection<IData, IDataField> aggregatedFields;
+   private IMetadata aggregatedMetadata;
 
    public AggregatedDataView(IData wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedFields = getAggregatedFields();
+      this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
    }
 
    @Override
    public IMetadata getMetadata() {
-      // TODO TH: merge metadata?
-      return wrapped.getMetadata();
+      return aggregatedMetadata;
    }
 
    @Override
    public IData setMetadata(IMetadata iMetadata) {
-      return wrapped.setMetadata(iMetadata);
+      wrapped.setMetadata(iMetadata);
+      aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      return this;
    }
 
    @Override
@@ -38,7 +45,8 @@ public class AggregatedDataView implements IData {
 
    @Override
    public IData setSuperDataType(IData iData) {
-      return wrapped.setSuperDataType(iData);
+      wrapped.setSuperDataType(iData);
+      return this;
    }
 
    @Override
