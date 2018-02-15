@@ -33,9 +33,9 @@ pipeline {
                 expression { params.performRelease }
             }
             steps {
-                dir('seaside-bootstrap-api') {
+                dir('jellyfish-systemdescriptor-dsl') {
                     sh 'chmod a+x ./gradlew'
-                    sh './gradlew removeVersionSuffix --refresh-dependencies'
+                    sh './gradlew removeVersionSuffix'
                     sh './gradlew createReleaseTag'
                 }
             }
@@ -44,7 +44,6 @@ pipeline {
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh 'chmod a+x ./gradlew'
                     sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
@@ -137,7 +136,7 @@ pipeline {
             }
             steps {
                // Finish up the release.
-               dir('seaside-bootstrap-api') {
+               dir('jellyfish-systemdescriptor-dsl') {
                   sh './gradlew bumpTheVersion'
                   script {
                        try {
