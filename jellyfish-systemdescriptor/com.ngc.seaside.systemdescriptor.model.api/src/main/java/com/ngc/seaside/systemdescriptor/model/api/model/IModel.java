@@ -85,7 +85,7 @@ public interface IModel extends INamedChild<IPackage> {
     * @param name The name of the link to get.
     * @return the optional value containing a link with the given name, if one exists.
     */
-   Optional<IModelLink<?>> getLink(String name);
+   Optional<IModelLink<?>> getLinkByName(String name);
 
    /**
     * Gets the fully qualified name of this model type.  The fully qualified name is the name of the parent package,
