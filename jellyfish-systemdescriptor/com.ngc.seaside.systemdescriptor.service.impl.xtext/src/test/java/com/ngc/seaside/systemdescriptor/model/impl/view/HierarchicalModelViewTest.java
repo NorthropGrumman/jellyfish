@@ -59,6 +59,7 @@ public class HierarchicalModelViewTest {
       when(model.getScenarios()).thenReturn(scenarios);
       links = links("linkA");
       when(model.getLinks()).thenReturn(links);
+      // TODO TH: set refined relationship: when(model.getRefinedModel()).thenReturn(parent)
 
       dataRefFields = fields(DataReferenceField.class, "inputB");
       when(parent.getInputs()).thenReturn(dataRefFields);
@@ -72,6 +73,7 @@ public class HierarchicalModelViewTest {
       when(parent.getScenarios()).thenReturn(scenarios);
       links = links("linkB");
       when(parent.getLinks()).thenReturn(links);
+      // TODO TH: set refined relationship: when(parent.getRefinedModel()).thenReturn(grandparent)
 
       dataRefFields = fields(DataReferenceField.class, "inputC");
       when(grandparent.getInputs()).thenReturn(dataRefFields);
@@ -85,6 +87,7 @@ public class HierarchicalModelViewTest {
       when(grandparent.getScenarios()).thenReturn(scenarios);
       links = links("linkC");
       when(grandparent.getLinks()).thenReturn(links);
+      // TODO TH: set refined relationship: when(grandparent.getRefinedModel()).thenReturn(null)
 
       view = new HierarchicalModelView(model);
    }
