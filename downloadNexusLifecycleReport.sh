@@ -18,7 +18,7 @@ fi
 
 SEARCH_STRING='The detailed report can be viewed online at'
 
-REPORT_URL=$(grep $SEARCH_STRING $LOGFILE | tail -1 | awk '{print $NF}')
+REPORT_URL=$(grep "$SEARCH_STRING" $LOGFILE | tail -1 | awk '{print $NF}')
 
 export no_proxy=".northgrum.com"
 
