@@ -35,7 +35,7 @@ pipeline {
 		
         stage("Prepare For Release") {
             when {
-                expression { params.performRelease }
+                expression { env.BRANCH_NAME == 'master' && params.performRelease }
             }
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
