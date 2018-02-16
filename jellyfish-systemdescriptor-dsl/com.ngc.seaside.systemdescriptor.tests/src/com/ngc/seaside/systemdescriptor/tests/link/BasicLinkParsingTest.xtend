@@ -19,7 +19,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class BaiscLinkParsingTest {
+class BasicLinkParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
