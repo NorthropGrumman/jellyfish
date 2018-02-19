@@ -56,7 +56,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
 
    @Override
    public Optional<IData> getSuperDataType() {
-      Data superType = wrapped.getSuperclass();
+      Data superType = wrapped.getExtendedDataType();
       return superType == null ? Optional.empty() : Optional.of(resolver.getWrapperFor(superType));
    }
 
@@ -64,7 +64,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
    public IData setSuperDataType(IData superDataType) {
       Preconditions.checkNotNull(superDataType, "superDataType may not be null!");
       Preconditions.checkArgument(superDataType.getParent() != null, "data must be contained within a package");
-      wrapped.setSuperclass(findXtextData(superDataType.getName(), superDataType.getParent().getName()));
+      wrapped.setExtendedDataType(findXtextData(superDataType.getName(), superDataType.getParent().getName()));
       return this;
    }
 
@@ -99,7 +99,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
       Data d = SystemDescriptorFactory.eINSTANCE.createData();
       d.setName(data.getName());
       d.setMetadata(WrappedMetadata.toXtext(data.getMetadata()));
-      d.setSuperclass(superType == null ? null : doFindXtextData(wrapperResolver,
+      d.setExtendedDataType(superType == null ? null : doFindXtextData(wrapperResolver,
                                                                  superType.getName(),
                                                                  superType.getParent().getName()));
       data.getFields()

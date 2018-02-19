@@ -92,7 +92,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesWrapXtextObjectWithSuperType() throws Throwable {
-      data.setSuperclass(superType);
+      data.setExtendedDataType(superType);
       wrappedData = new WrappedData(resolver(), data);
       assertEquals("did not return wrapper for superType!",
                    wrappedSuperType,
@@ -127,7 +127,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
       when(wrappedSuperType.getParent()).thenReturn(superTypePackage);
       when(superTypePackage.getName()).thenReturn(superTypePackageName);
 
-      data.setSuperclass(superType);
+      data.setExtendedDataType(superType);
       wrappedData = new WrappedData(resolver(), data);
       wrappedData.setSuperDataType(wrappedSuperType);
       assertEquals("did not update superType!",

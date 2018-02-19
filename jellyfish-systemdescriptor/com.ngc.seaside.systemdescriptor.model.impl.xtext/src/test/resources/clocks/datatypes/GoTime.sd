@@ -3,7 +3,7 @@ package clocks.datatypes
 import clocks.datatypes.TimeZone
 import clocks.datatypes.Time
 
-data GoTime : Time {
+data GoTime extends Time {
   int timeToGo
   TimeZone timeZone
 }
