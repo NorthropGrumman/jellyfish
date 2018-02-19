@@ -20,7 +20,7 @@ import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class ModelRefinesParsingTest {
+class RefinedModelParsingTest {
 	@Inject
 	ParseHelper<Package> parseHelper
 
@@ -29,7 +29,6 @@ class ModelRefinesParsingTest {
 
 	@Inject
 	ValidationTestHelper validationTester
-
 
 	Resource requiredResources
 
