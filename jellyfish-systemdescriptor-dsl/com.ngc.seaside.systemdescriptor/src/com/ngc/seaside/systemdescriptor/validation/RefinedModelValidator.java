@@ -13,6 +13,10 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     @Check
     public void checkDoesNotParseModelThatRefinesItself(Model model) {
+        if (model.getRefinedModel().equals(model)) {
+            String msg = "A model cannot refine itself!";
+            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+        }
     }
 
     @Check
