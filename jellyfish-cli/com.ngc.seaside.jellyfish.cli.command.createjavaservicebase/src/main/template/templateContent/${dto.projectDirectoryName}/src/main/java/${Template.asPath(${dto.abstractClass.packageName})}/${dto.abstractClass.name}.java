@@ -85,7 +85,9 @@ public abstract class ${dto.abstractClass.name}
 #################### Basic 1-input 1-output pubsub methods ####################
 #foreach($method in $dto.basicPubSubMethods)
    private void ${method.name}(${method.input.type} input) {
-
+#foreach($correlation in $method.inputOutputCorrelations)
+      updateRequestWithCorrelation(input.${correlation.getterSnippet});
+#end
       try {
          ${method.output.type} output = ${method.serviceMethod}(input);
 #foreach($correlation in $method.inputOutputCorrelations)
@@ -97,6 +99,11 @@ public abstract class ${dto.abstractClass.name}
          logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
       }
+#if ($method.isCorrelating())
+      finally {
+         clearCorrelationFromRequest();
+      }
+#end
    }
 
 #end

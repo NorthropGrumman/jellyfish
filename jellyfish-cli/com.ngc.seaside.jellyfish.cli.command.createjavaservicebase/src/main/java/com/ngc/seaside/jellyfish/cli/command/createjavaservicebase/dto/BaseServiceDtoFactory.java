@@ -589,7 +589,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    private void computeFinalCorrelationSettings(BaseServiceDto dto) {
       dto.setCorrelationRequestHandlingEnabled(dto.getBasicPubSubMethods()
                                                      .stream()
-                                                     .anyMatch(m -> !m.getInputOutputCorrelations().isEmpty()));
+                                                     .anyMatch(BasicPubSubDto::isCorrelating));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
                                         || dto.isCorrelationRequestHandlingEnabled());
       if (dto.isCorrelationRequestHandlingEnabled()) {
