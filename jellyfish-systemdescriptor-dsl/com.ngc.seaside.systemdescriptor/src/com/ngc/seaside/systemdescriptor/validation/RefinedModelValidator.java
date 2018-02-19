@@ -20,6 +20,10 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     @Check
+    public void checkDoesNotParseModelThatRefinesData(Model model) {
+    }
+
+    @Check
     public void checkDoesNotParseModelsThatCircularlyRefineEachOther(Model model) {
     }
 
