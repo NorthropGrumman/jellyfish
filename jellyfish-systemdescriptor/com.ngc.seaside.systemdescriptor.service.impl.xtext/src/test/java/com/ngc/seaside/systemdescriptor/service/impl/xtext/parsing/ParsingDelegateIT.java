@@ -75,10 +75,10 @@ public class ParsingDelegateIT {
       assertNotNull("system descriptor not set!", result.getSystemDescriptor());
       IData bestTime = result.getSystemDescriptor().findData("clocks.datatypes.BestTime").get();
       assertTrue("data does not have base type!",
-                 bestTime.getSuperDataType().isPresent());
+                 bestTime.getExtendedDataType().isPresent());
       assertEquals("base data type name not correct!",
                    "BaseTime",
-                   bestTime.getSuperDataType().get().getName());
+                   bestTime.getExtendedDataType().get().getName());
    }
 
    @Test
