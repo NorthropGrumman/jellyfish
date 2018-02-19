@@ -32,7 +32,7 @@ public class DataService implements IDataService {
       data.forEach(d -> map.put(d, true));
       while (!queue.isEmpty()) {
          IData next = queue.poll();
-         IData parent = next.getSuperDataType().orElse(null);
+         IData parent = next.getExtendedDataType().orElse(null);
          while (parent != null) {
             Boolean previous = map.putIfAbsent(parent, false);
             if (previous == null) {

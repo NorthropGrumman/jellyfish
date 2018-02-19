@@ -69,7 +69,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       Set<IDataField> fields = new LinkedHashSet<>();
       while (data != null) {
          fields.addAll(data.getFields());
-         data = data.getSuperDataType().orElse(null);
+         data = data.getExtendedDataType().orElse(null);
       }
       return fields;
    };
@@ -260,8 +260,8 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
             }
          }
 
-         while (datum.getSuperDataType().isPresent()) {
-            datum = datum.getSuperDataType().get();
+         while (datum.getExtendedDataType().isPresent()) {
+            datum = datum.getExtendedDataType().get();
             if (superTypes.add(datum)) {
                queue.add(datum);
             }

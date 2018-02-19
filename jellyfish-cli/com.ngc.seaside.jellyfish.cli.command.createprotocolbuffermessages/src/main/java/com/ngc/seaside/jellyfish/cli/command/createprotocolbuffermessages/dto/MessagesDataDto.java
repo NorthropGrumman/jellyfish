@@ -68,7 +68,7 @@ public class MessagesDataDto {
          List<IDataField> dataFields = new ArrayList<>(parent.getFields());
          Collections.reverse(dataFields);
          fields.addAll(dataFields);
-         parent = parent.getSuperDataType().orElse(null);
+         parent = parent.getExtendedDataType().orElse(null);
       }
 
       Collections.reverse(fields);

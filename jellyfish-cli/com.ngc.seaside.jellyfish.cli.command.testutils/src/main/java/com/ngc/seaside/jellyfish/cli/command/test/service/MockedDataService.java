@@ -46,7 +46,7 @@ public class MockedDataService implements IDataService {
       while (!queue.isEmpty()) {
          INamedChild<IPackage> element = queue.poll();
          if (element instanceof IData) {
-            Optional<IData> parent = ((IData) element).getSuperDataType();
+            Optional<IData> parent = ((IData) element).getExtendedDataType();
             while (parent.isPresent()) {
                if (map.putIfAbsent(parent.get(), false) == null) {
                   queue.add(parent.get());

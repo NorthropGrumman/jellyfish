@@ -3,7 +3,7 @@ package com.ngc.example.inhertance.datatype
 import com.ngc.example.inhertance.datatype.D
 import com.ngc.example.inhertance.datatype.F
 
-data C : D {
+data C extends D {
 	int fieldC1
 	F fieldC2
 }
