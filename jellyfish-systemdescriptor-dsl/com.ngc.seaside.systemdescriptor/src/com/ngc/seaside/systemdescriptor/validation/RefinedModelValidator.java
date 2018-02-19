@@ -24,18 +24,18 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     @Check
-    public void checkDoesNotParseModelThatRedeclaresInputs() {
+    public void checkDoesNotParseModelThatRedeclaresInputs(Model model) {
     }
 
     @Check
-    public void checkDoesNotParseModelThatRedeclaresOutputs() {
+    public void checkDoesNotParseModelThatRedeclaresOutputs(Model model) {
     }
 
     @Check
-    public void checkDoesNotParseModelThatRedeclaresRequires() {
+    public void checkDoesNotParseModelThatRedeclaresRequires(Model model) {
     }
 
     @Check
-    public void checkDoesNotParseModelThatRedeclaresScenarios() {
+    public void checkDoesNotParseModelThatRedeclaresScenarios(Model model) {
     }
 }
