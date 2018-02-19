@@ -459,7 +459,7 @@ DataModel
  * attributes of metadata and optional requires, input, output, and scenario attributes.
  */
 Model
-	: 'model' name=UnqualifiedName '{'
+	: 'model' name=UnqualifiedName ('refines' refinedModel=[Model|QualifiedName])?'{'
 		metadata=Metadata? &
 		requires=Requires? &
 		input=Input? &

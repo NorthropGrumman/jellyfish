@@ -117,6 +117,7 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//DataModel"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Model">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/refinedModel"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/requires"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/input"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Model/output"/>
