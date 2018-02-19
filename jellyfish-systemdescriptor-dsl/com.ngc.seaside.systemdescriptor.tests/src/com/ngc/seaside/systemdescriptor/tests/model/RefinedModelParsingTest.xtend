@@ -45,7 +45,7 @@ class RefinedModelParsingTest {
 	}
 
 	@Test
-	def void testDoesParseEmptyRefinesModel() {
+	def void testDoesParseEmptyRefinedModelUsingFullyQualifiedName() {
 		val source = '''
 			package clocks.models
 
@@ -59,7 +59,7 @@ class RefinedModelParsingTest {
 	}
 	
 	@Test
-	def void testDoesParseEmptyRefinesModelUsingImport() {
+	def void testDoesParseEmptyRefinedModelUsingImport() {
 		val source = '''
 			package clocks.models
 
@@ -78,7 +78,7 @@ class RefinedModelParsingTest {
 	//DON'T Parse test methods 
 	
 	@Test
-	def void testDoesNotParseModelRefinesSelf() {
+	def void testDoesNotParseModelThatRefinesItself() {
 		val source = '''
 			package clocks.models
 
@@ -96,7 +96,7 @@ class RefinedModelParsingTest {
 	}
 	
 	@Test
-	def void testDoesNotParseModelRefinesData() {
+	def void testDoesNotParseModelThatRefinesData() {
 		val source = '''
 			package clocks.models
 
@@ -114,7 +114,7 @@ class RefinedModelParsingTest {
 	}	
 	
 	@Test
-	def void testDoesNotParseModelB_AlreadyRefines_ModelA_A_Cannot_Refine_ModelB() {
+	def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
 		val source = '''
 			package clocks.models
 
