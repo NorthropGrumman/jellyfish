@@ -1,0 +1,28 @@
+rootProject.name = 'com.ngc.example.correlation.candyservice'
+
+include 'com.ngc.example.correlation.cs.domain'
+project(':com.ngc.example.correlation.cs.domain').name = 'cs.domain'
+
+include 'generated-projects/com.ngc.example.correlation.cs.events'
+project(':generated-projects/com.ngc.example.correlation.cs.events').name = 'cs.events'
+
+include 'com.ngc.example.correlation.cs.tests'
+project(':com.ngc.example.correlation.cs.tests').name = 'cs.tests'
+
+include 'com.ngc.example.correlation.cs.distribution'
+project(':com.ngc.example.correlation.cs.distribution').name = 'cs.distribution'
+
+include 'com.ngc.example.correlation.cs.impl'
+project(':com.ngc.example.correlation.cs.impl').name = 'cs.impl'
+
+include 'com.ngc.example.correlation.cs.config'
+project(':com.ngc.example.correlation.cs.config').name = 'cs.config'
+
+include 'generated-projects/com.ngc.example.correlation.cs.base'
+project(':generated-projects/com.ngc.example.correlation.cs.base').name = 'cs.base'
+
+include 'generated-projects/com.ngc.example.correlation.cs.connector'
+project(':generated-projects/com.ngc.example.correlation.cs.connector').name = 'cs.connector'
+
+include 'generated-projects/com.ngc.example.correlation.cs.messages'
+project(':generated-projects/com.ngc.example.correlation.cs.messages').name = 'cs.messages'

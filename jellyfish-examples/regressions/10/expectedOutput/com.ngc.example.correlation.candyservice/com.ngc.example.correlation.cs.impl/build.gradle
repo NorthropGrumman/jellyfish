@@ -1,0 +1,14 @@
+
+dependencies {
+   compile project(':cs.events')
+   compile project(':cs.base')
+
+   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
+   compile "org.osgi:osgi.core:$osgiVersion"
+   compile "org.osgi:osgi.enterprise:$osgiVersion"
+   compile "com.google.guava:guava:$guavaVersion"
+
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
+}
