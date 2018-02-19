@@ -142,9 +142,11 @@ class RefinedModelParsingTest {
 			package clocks.models
 
 			import clocks.models.part.Alarm
+			import clocks.models.part.Timer
 
 			model RefinedModel refines Alarm {
-				inputs {
+				input {
+					Timer timer
 				}
 			}
 		'''
@@ -164,9 +166,11 @@ class RefinedModelParsingTest {
 			package clocks.models
 
 			import clocks.models.part.Alarm
+			import clocks.models.part.Timer
 
 			model RefinedModel refines Alarm {
-				outputs {
+				output {
+					Timer timer
 				}
 			}
 		'''
@@ -186,9 +190,11 @@ class RefinedModelParsingTest {
 			package clocks.models
 
 			import clocks.models.part.Alarm
+			import clocks.models.part.Timer
 
 			model RefinedModel refines Alarm {
 				requires {
+					Timer timer
 				}
 			}
 		'''
@@ -210,7 +216,7 @@ class RefinedModelParsingTest {
 			import clocks.models.part.Alarm
 
 			model RefinedModel refines Alarm {
-				scenario {
+				scenario whatever {
 				}
 			}
 		'''
