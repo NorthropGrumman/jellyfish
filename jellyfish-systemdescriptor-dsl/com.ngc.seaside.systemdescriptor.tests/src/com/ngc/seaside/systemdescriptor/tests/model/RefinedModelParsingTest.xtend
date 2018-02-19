@@ -48,7 +48,7 @@ class RefinedModelParsingTest {
 	def void testDoesParseEmptyRefinesModel() {
 		val source = '''
 			package clocks.models
-			
+
 			model MyModel refines foo.AnEmptyModel {
 			}
 		'''
@@ -62,9 +62,9 @@ class RefinedModelParsingTest {
 	def void testDoesParseEmptyRefinesModelUsingImport() {
 		val source = '''
 			package clocks.models
-			
+
 			import foo.AnEmptyModel
-			
+
 			model MyModel refines AnEmptyModel {
 			}
 		'''
@@ -81,7 +81,7 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRefinesSelf() {
 		val source = '''
 			package clocks.models
-			
+
 			model MyModel refines clocks.models.MyModel {
 			}
 		'''
@@ -99,7 +99,7 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRefinesData() {
 		val source = '''
 			package clocks.models
-			
+
 			model MyModel refines clocks.datatypes.time {
 			}
 		'''
@@ -117,13 +117,12 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelB_AlreadyRefines_ModelA_A_Cannot_Refine_ModelB() {
 		val source = '''
 			package clocks.models
-			
+
 			model MyModelB refines clocks.models.MyModelA {
-				
 			}
-			
+
 			package clocks.models
-			
+
 			model MyModelA refines clocks.models.MyModelB {
 			}
 		'''
@@ -141,13 +140,12 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRedeclaring_Inputs() {
 		val source = '''
 			package clocks.models
-			
+
 			import clocks.models.part.Alarm
-			
+
 			model RefinedModel refines Alarm {
-			
 				inputs {
-				}	
+				}
 			}
 		'''
 
@@ -164,13 +162,12 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRedeclaring_Outputs() {
 		val source = '''
 			package clocks.models
-			
+
 			import clocks.models.part.Alarm
-			
+
 			model RefinedModel refines Alarm {
-			
 				outputs {
-				}	
+				}
 			}
 		'''
 
@@ -187,13 +184,12 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRedeclaring_Requires() {
 		val source = '''
 			package clocks.models
-			
+
 			import clocks.models.part.Alarm
-			
+
 			model RefinedModel refines Alarm {
-			
 				requires {
-				}	
+				}
 			}
 		'''
 
@@ -210,13 +206,12 @@ class RefinedModelParsingTest {
 	def void testDoesNotParseModelRedeclaring_Scenarios() {
 		val source = '''
 			package clocks.models
-			
+
 			import clocks.models.part.Alarm
-			
+
 			model RefinedModel refines Alarm {
-			
 				scenario {
-				}	
+				}
 			}
 		'''
 
