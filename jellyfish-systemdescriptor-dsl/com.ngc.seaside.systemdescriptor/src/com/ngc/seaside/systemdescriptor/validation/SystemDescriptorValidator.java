@@ -21,6 +21,7 @@ import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 		ImportValidator.class,
 		DuplicateElementValidator.class,
 		ModelValidator.class,
+		RefinedModelValidator.class,
 		ScenarioValidator.class,
 		LinkValidator.class,
 		DataValidator.class,
