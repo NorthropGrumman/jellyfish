@@ -257,10 +257,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       pubSub.setServiceMethod(scenario.getName());
 
       if (flow.getCorrelationDescription().isPresent()) {
-//         System.out.printf("%s:%s has a correlation description with %d expressions!%n",
-//                           flow.getScenario().getParent().getFullyQualifiedName(),
-//                           flow.getScenario().getName(),
-//                           flow.getCorrelationDescription().get().getCorrelationExpressions().size());
          pubSub.setInputOutputCorrelations(
                getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
       }
@@ -596,5 +592,13 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                      .anyMatch(m -> !m.getInputOutputCorrelations().isEmpty()));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
                                         || dto.isCorrelationRequestHandlingEnabled());
+      if (dto.isCorrelationRequestHandlingEnabled()) {
+         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
+         dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
+         dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
+      }
+      if (dto.isCorrelationServiceRequired()) {
+         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");
+      }
    }
 }
