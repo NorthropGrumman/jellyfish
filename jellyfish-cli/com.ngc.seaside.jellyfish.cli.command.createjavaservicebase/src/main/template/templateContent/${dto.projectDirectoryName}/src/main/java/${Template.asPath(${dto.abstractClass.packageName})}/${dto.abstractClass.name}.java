@@ -92,7 +92,7 @@ public abstract class ${dto.abstractClass.name}
          return;
       }
 #foreach($correlation in $method.inputOutputCorrelations)
-      output.${correlation.setterSnippet}(${correlation.getterSnippet});
+      output.${correlation.setterSnippet}(input.${correlation.getterSnippet});
 #end
       logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
       ${method.output.name}(output);
