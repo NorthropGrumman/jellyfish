@@ -36,7 +36,6 @@ class RefinedModelParsingTest {
     def void setup() {
         requiredResources = Models.allOf(
             resourceHelper,
-            Models.EMPTY_MODEL,
             Models.ALARM,
             Models.TIMER,
             Datas.TIME
@@ -45,11 +44,11 @@ class RefinedModelParsingTest {
     }
 
     @Test
-    def void testDoesParseEmptyRefinedModelUsingFullyQualifiedName() {
+    def void testDoesParseRefinedModelUsingFullyQualifiedName() {
         val source = '''
             package clocks.models
 
-            model MyModel refines foo.AnEmptyModel {
+            model MyModel refines clocks.models.part.Alarm {
             }
         '''
 
@@ -59,13 +58,13 @@ class RefinedModelParsingTest {
     }
 
     @Test
-    def void testDoesParseEmptyRefinedModelUsingImport() {
+    def void testDoesParseRefinedModelUsingImport() {
         val source = '''
             package clocks.models
 
-            import foo.AnEmptyModel
+            import clocks.models.part.Alarm
 
-            model MyModel refines AnEmptyModel {
+            model MyModel refines Alarm {
             }
         '''
 
