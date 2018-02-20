@@ -95,4 +95,11 @@ public interface IModel extends INamedChild<IPackage> {
     * @return the fully qualified name of this model type
     */
    String getFullyQualifiedName();
+
+   /**
+    * Gets the model this model is refining.  If this model is not refining another model, the optional is empty.
+    *
+    * @returns an optional with the model that this model is refining or an empty optional if this model does not refine anything.
+    */
+   Optional<IModel> getRefinedModel();
 }

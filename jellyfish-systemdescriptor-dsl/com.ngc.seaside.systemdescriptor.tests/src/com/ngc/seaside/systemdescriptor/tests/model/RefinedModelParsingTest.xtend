@@ -94,47 +94,47 @@ class RefinedModelParsingTest {
             null)
 	}
 	
-	@Test
-	def void testDoesNotParseModelThatRefinesData() {
-		val source = '''
-			package clocks.models
-
-			model MyModel refines clocks.datatypes.time {
-			}
-		'''
-
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-        
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
-            null)
-	}	
+//	@Test
+//	def void testDoesNotParseModelThatRefinesData() {
+//		val source = '''
+//			package clocks.models
+//
+//			model MyModel refines clocks.datatypes.time {
+//			}
+//		'''
+//
+//		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+//        assertNotNull(invalidResult)
+//        
+//        validationTester.assertError(
+//            invalidResult,
+//            SystemDescriptorPackage.Literals.MODEL,
+//            null)
+//	}	
 	
-	@Test
-	def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
-		val source = '''
-			package clocks.models
-
-			model MyModelB refines clocks.models.MyModelA {
-			}
-
-			package clocks.models
-
-			model MyModelA refines clocks.models.MyModelB {
-			}
-		'''
-
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-        
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
-            null)
-	}
-	
+//	@Test
+//	def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
+//		val source = '''
+//			package clocks.models
+//
+//			model MyModelB refines clocks.models.MyModelA {
+//			}
+//
+//			package clocks.models
+//
+//			model MyModelA refines clocks.models.MyModelB {
+//			}
+//		'''
+//
+//		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+//        assertNotNull(invalidResult)
+//        
+//        validationTester.assertError(
+//            invalidResult,
+//            SystemDescriptorPackage.Literals.MODEL,
+//            null)
+//	}
+//	
 	@Test
 	def void testDoesNotParseModelRedeclaring_Inputs() {
 		val source = '''
