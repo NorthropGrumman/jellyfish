@@ -32,51 +32,52 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition
 
-class SystemDescriptorFormatter extends AbstractFormatter2 {
+// TODO TH: Delete this class once this code has been factored out.
+class OldSystemDescriptorFormatter extends AbstractFormatter2 {
+	
+//	def dispatch void format(
+//		com.ngc.seaside.systemdescriptor.systemDescriptor.Package packagez,
+//		extension IFormattableDocument document
+//	) {
+//
+//		packagez.regionFor.keyword('package').prepend[noIndentation]
+//		packagez.regionFor.feature(SystemDescriptorPackage.Literals.PACKAGE__NAME).append[setNewLines(2)]
+//
+//		if(packagez.getImports().size != 0) {
+//
+//			for (Import imports : packagez.imports) {
+//				if(imports == packagez.imports.last) {
+//					imports.append[setNewLines(2)];
+//				} else {
+//					imports.append[setNewLines(1)];
+//				}
+//			}
+//		}
+//
+//		packagez.element.format;
+//	}
 
-	def dispatch void format(
-		com.ngc.seaside.systemdescriptor.systemDescriptor.Package packagez,
-		extension IFormattableDocument document
-	) {
-
-		packagez.regionFor.keyword('package').prepend[noIndentation]
-		packagez.regionFor.feature(SystemDescriptorPackage.Literals.PACKAGE__NAME).append[setNewLines(2)]
-
-		if(packagez.getImports().size != 0) {
-
-			for (Import imports : packagez.imports) {
-				if(imports == packagez.imports.last) {
-					imports.append[setNewLines(2)];
-				} else {
-					imports.append[setNewLines(1)];
-				}
-			}
-		}
-
-		packagez.element.format;
-	}
-
-	def dispatch void format(
-		Enumeration enumeration,
-		extension IFormattableDocument document
-	) {
-		enumeration.regionFor.keyword('enum').prepend[noIndentation]
-		enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
-
-		if(enumeration.metadata !== null) {
-			enumeration.metadata.format
-		}
-
-		for (EnumerationValueDeclaration value : enumeration.values) {
-			value.format
-			value.regionFor.keyword(',').prepend[noSpace]
-			value.append[newLine]
-		}
-
-		var begin = enumeration.regionFor.keyword('enum')
-		var end = enumeration.regionFor.keyword('}')
-		interior(begin, end)[indent]
-	}
+//	def dispatch void format(
+//		Enumeration enumeration,
+//		extension IFormattableDocument document
+//	) {
+//		enumeration.regionFor.keyword('enum').prepend[noIndentation]
+//		enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+//
+//		if(enumeration.metadata !== null) {
+//			enumeration.metadata.format
+//		}
+//
+//		for (EnumerationValueDeclaration value : enumeration.values) {
+//			value.format
+//			value.regionFor.keyword(',').prepend[noSpace]
+//			value.append[newLine]
+//		}
+//
+//		var begin = enumeration.regionFor.keyword('enum')
+//		var end = enumeration.regionFor.keyword('}')
+//		interior(begin, end)[indent]
+//	}
 
 	def dispatch void format(
 		EnumerationValueDeclaration value,
@@ -87,65 +88,65 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		}
 	}
 
-	def dispatch void format(
-		Model model,
-		extension IFormattableDocument document
-	) {
-		model.regionFor.keyword('model').prepend[noIndentation]
-		model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+//	def dispatch void format(
+//		Model model,
+//		extension IFormattableDocument document
+//	) {
+//		model.regionFor.keyword('model').prepend[noIndentation]
+//		model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+//
+//		if(model.metadata !== null) {
+//			model.metadata.format;
+//			model.metadata.append[setNewLines(2) ; highPriority()]
+//		}
+//
+//		var modelInput = model.getInput();
+//		modelInput.format;
+//
+//		var modelOutput = model.getOutput();
+//		modelOutput.format;
+//
+//		var modelParts = model.getParts();
+//		modelParts.format;
+//
+//		var modelLinks = model.getLinks();
+//		modelLinks.format;
+//
+//		var modelScenarios = model.getScenarios();
+//		for (Scenario scenario : modelScenarios) {
+//			scenario.format;
+//		}
+//
+//		var begin = model.regionFor.keyword('model')
+//		var end = model.regionFor.keyword('}')
+//		interior(begin, end)[indent]
+//
+//	}
 
-		if(model.metadata !== null) {
-			model.metadata.format;
-			model.metadata.append[setNewLines(2) ; highPriority()]
-		}
-
-		var modelInput = model.getInput();
-		modelInput.format;
-
-		var modelOutput = model.getOutput();
-		modelOutput.format;
-
-		var modelParts = model.getParts();
-		modelParts.format;
-
-		var modelLinks = model.getLinks();
-		modelLinks.format;
-
-		var modelScenarios = model.getScenarios();
-		for (Scenario scenario : modelScenarios) {
-			scenario.format;
-		}
-
-		var begin = model.regionFor.keyword('model')
-		var end = model.regionFor.keyword('}')
-		interior(begin, end)[indent]
-
-	}
-
-	def dispatch void format(
-		Metadata metadata,
-		extension IFormattableDocument document
-	) {
-		metadata.getJson().format
-		metadata.append[setNewLines(1) ; lowPriority()]
-	}
-
-	def dispatch void format(
-		JsonObject json,
-		extension IFormattableDocument document
-	) {
-
-		var begin = json.regionFor.keyword('{').prepend[oneSpace]
-		var end = json.regionFor.keyword('}')
-		interior(begin, end)[indent]
-
-		for (Member member : json.members) {
-			member.format
-			if(member == json.members.last) {
-				member.append[newLine]
-			}
-		}
-	}
+//	def dispatch void format(
+//		Metadata metadata,
+//		extension IFormattableDocument document
+//	) {
+//		metadata.getJson().format
+//		metadata.append[setNewLines(1) ; lowPriority()]
+//	}
+//
+//	def dispatch void format(
+//		JsonObject json,
+//		extension IFormattableDocument document
+//	) {
+//
+//		var begin = json.regionFor.keyword('{').prepend[oneSpace]
+//		var end = json.regionFor.keyword('}')
+//		interior(begin, end)[indent]
+//
+//		for (Member member : json.members) {
+//			member.format
+//			if(member == json.members.last) {
+//				member.append[newLine]
+//			}
+//		}
+//	}
 
 	def dispatch void format(
 		Member member,
