@@ -37,29 +37,30 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     private void checkDoesNotParseModelThatRedeclaresInputs(Model model) {
         if (model.getInput() != null && model.getInput().getDeclarations() != null) {
-            String msg = "A refined model cannot add inputs!";
-            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+            causeUnpermittedAdditionErrorRegarding("inputs", model);
         }
     }
 
     private void checkDoesNotParseModelThatRedeclaresOutputs(Model model) {
         if (model.getOutput() != null && model.getOutput().getDeclarations() != null) {
-            String msg = "A refined model cannot add outputs!";
-            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+            causeUnpermittedAdditionErrorRegarding("outputs", model);
         }
     }
 
     private void checkDoesNotParseModelThatRedeclaresRequires(Model model) {
         if (model.getRequires() != null && model.getRequires().getDeclarations() != null) {
-            String msg = "A refined model cannot add requirements!";
-            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+            causeUnpermittedAdditionErrorRegarding("requirements", model);
         }
     }
 
     private void checkDoesNotParseModelThatRedeclaresScenarios(Model model) {
         if (!model.getScenarios().isEmpty()) {
-            String msg = "A refined model cannot add scenarios!";
-            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+            causeUnpermittedAdditionErrorRegarding("scenarios", model);
         }
+    }
+
+    private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
+        String msg = String.format("A refined model cannot add %s!", typeOfRedefinition);
+        error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
     }
 }
