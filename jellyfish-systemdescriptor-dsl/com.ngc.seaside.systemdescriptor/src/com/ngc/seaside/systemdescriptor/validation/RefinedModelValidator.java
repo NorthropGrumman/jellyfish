@@ -1,6 +1,5 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
