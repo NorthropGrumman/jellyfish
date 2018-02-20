@@ -1,7 +1,9 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -31,9 +33,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Adapts an XText {@link Model} to an {@link IModel}.
@@ -73,6 +72,12 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       this.metadata = metadata;
       wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
       return this;
+   }
+   
+   @Override
+   public Optional<IModel> getRefinedModel() {
+	   IModel model = resolver.getWrapperFor(wrapped.getRefinedModel());
+	   return model == null ? Optional.empty() : Optional.of(model); 
    }
 
    @Override
@@ -296,4 +301,5 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       // TODO TH: implement this
       throw new UnsupportedOperationException("modification of links is not currently supported!");
    }
+
 }
