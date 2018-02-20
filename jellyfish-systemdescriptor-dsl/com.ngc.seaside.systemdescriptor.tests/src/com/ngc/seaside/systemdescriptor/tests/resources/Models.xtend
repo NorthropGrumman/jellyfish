@@ -15,17 +15,6 @@ class Models {
 		}
 		'''
 	)
-	
-	public static final ParsingTestResource EMPTY_MODEL_REFINES = resource(
-		'''
-		package foo
-		
-		import clocks.models.part.AnEmptyModel
-		
-		model AnEmptyModelRefined refines AnEmptyModel {
-		}
-		'''
-	)
 
 	public static final ParsingTestResource CLOCK = resource(
 		'''
@@ -50,7 +39,7 @@ class Models {
 		import clocks.datatypes.ZonedTime
 		import clocks.datatypes.AlarmAcknowledgement
 		import clocks.datatypes.AlarmStatus
-		import clocks.models.part.AnEmptyModel
+		import foo.AnEmptyModel
 		
 		model Alarm {
 		
@@ -64,18 +53,18 @@ class Models {
 				AlarmStatus alarmStatus
 				ZonedTime outputTime
 			}
-			
+
 			requires {
-					 AnEmptyModel emptyModel
-				}
-			
+				 AnEmptyModel emptyModel
+			}
+
 			scenario triggerAlert {
 				given alarmTime hasBeenReceived
 				when receiving alarmTime
 				then doSomething withThis
 			}
 		}
-	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS)
+	''', Datas.ZONED_TIME, Datas.ALARM_ACKNOWLEDGEMENT, Datas.ALARM_STATUS, Models.EMPTY_MODEL)
 
 	public static final ParsingTestResource TIMER = resource(
 		'''

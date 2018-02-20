@@ -37,7 +37,6 @@ class RefinedModelParsingTest {
 		requiredResources = Models.allOf(
 			resourceHelper,
 			Models.EMPTY_MODEL,
-			Models.EMPTY_MODEL_REFINES,
 			Models.ALARM,
 			Datas.TIME
 		)
