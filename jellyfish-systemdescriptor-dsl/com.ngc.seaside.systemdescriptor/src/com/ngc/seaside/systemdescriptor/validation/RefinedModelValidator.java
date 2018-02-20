@@ -17,7 +17,7 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     @Check
     public void checkDoesNotParseModelThatRefinesData(Model model) {
         if (model.getRefinedModel() != null && model.getRefinedModel().getName() == null) {
-            String msg = "A model cannot refine data!";
+            String msg = "Invalid model refinement due to model-load error!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
         }
     }
