@@ -37,6 +37,10 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     @Check
     public void checkDoesNotParseModelThatRedeclaresOutputs(Model model) {
+        if (!model.getRefinedModel().getOutput().getDeclarations().equals(model.getOutput().getDeclarations())) {
+            String msg = "A refined model cannot re-define outputs!";
+            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+        }
     }
 
     @Check
