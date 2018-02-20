@@ -21,212 +21,210 @@ import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
 class RefinedModelParsingTest {
-	@Inject
-	ParseHelper<Package> parseHelper
+    @Inject
+    ParseHelper<Package> parseHelper
 
-	@Inject
-	ResourceHelper resourceHelper
+    @Inject
+    ResourceHelper resourceHelper
 
-	@Inject
-	ValidationTestHelper validationTester
+    @Inject
+    ValidationTestHelper validationTester
 
-	Resource requiredResources
+    Resource requiredResources
 
-	@Before
-	def void setup() {
-		requiredResources = Models.allOf(
-			resourceHelper,
-			Models.EMPTY_MODEL,
-			Models.ALARM,
-			Datas.TIME
-		)
-		validationTester.assertNoIssues(requiredResources)
-	}
+    @Before
+    def void setup() {
+        requiredResources = Models.allOf(
+            resourceHelper,
+            Models.EMPTY_MODEL,
+            Models.ALARM,
+            Datas.TIME
+        )
+        validationTester.assertNoIssues(requiredResources)
+    }
 
-	@Test
-	def void testDoesParseEmptyRefinedModelUsingFullyQualifiedName() {
-		val source = '''
-			package clocks.models
+    @Test
+    def void testDoesParseEmptyRefinedModelUsingFullyQualifiedName() {
+        val source = '''
+            package clocks.models
 
-			model MyModel refines foo.AnEmptyModel {
-			}
-		'''
+            model MyModel refines foo.AnEmptyModel {
+            }
+        '''
 
-		var result = parseHelper.parse(source, requiredResources.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
-	}
-	
-	@Test
-	def void testDoesParseEmptyRefinedModelUsingImport() {
-		val source = '''
-			package clocks.models
+        var result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
-			import foo.AnEmptyModel
+    @Test
+    def void testDoesParseEmptyRefinedModelUsingImport() {
+        val source = '''
+            package clocks.models
 
-			model MyModel refines AnEmptyModel {
-			}
-		'''
+            import foo.AnEmptyModel
 
-		var result = parseHelper.parse(source, requiredResources.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
-	}
-	
-	
-	//DON'T Parse test methods 
-	
-	@Test
-	def void testDoesNotParseModelThatRefinesItself() {
-		val source = '''
-			package clocks.models
+            model MyModel refines AnEmptyModel {
+            }
+        '''
 
-			model MyModel refines clocks.models.MyModel {
-			}
-		'''
+        var result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
-		 var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+    //DON'T Parse test methods
+
+    @Test
+    def void testDoesNotParseModelThatRefinesItself() {
+        val source = '''
+            package clocks.models
+
+            model MyModel refines clocks.models.MyModel {
+            }
+        '''
+
+         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}
-	
-	@Test
-	def void testDoesNotParseModelThatRefinesData() {
-		val source = '''
-			package clocks.models
+    }
 
-			model MyModel refines clocks.datatypes.time {
-			}
-		'''
+    @Test
+    def void testDoesNotParseModelThatRefinesData() {
+        val source = '''
+            package clocks.models
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model MyModel refines clocks.datatypes.time {
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}	
-	
-	@Test
-	def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
-		val source = '''
-			package clocks.models
+    }
 
-			model MyModelB refines clocks.models.MyModelA {
-			}
+    @Test
+    def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
+        val source = '''
+            package clocks.models
 
-			package clocks.models
+            model MyModelB refines clocks.models.MyModelA {
+            }
 
-			model MyModelA refines clocks.models.MyModelB {
-			}
-		'''
+            package clocks.models
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model MyModelA refines clocks.models.MyModelB {
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}
-	
-	@Test
-	def void testDoesNotParseModelRedeclaring_Inputs() {
-		val source = '''
-			package clocks.models
+    }
 
-			import clocks.models.part.Alarm
-			import clocks.models.part.Timer
+    @Test
+    def void testDoesNotParseModelRedeclaring_Inputs() {
+        val source = '''
+            package clocks.models
 
-			model RefinedModel refines Alarm {
-				input {
-					Timer timer
-				}
-			}
-		'''
+            import clocks.models.part.Alarm
+            import clocks.models.part.Timer
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model RefinedModel refines Alarm {
+                input {
+                    Timer timer
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}
-	
-	@Test
-	def void testDoesNotParseModelRedeclaring_Outputs() {
-		val source = '''
-			package clocks.models
+    }
 
-			import clocks.models.part.Alarm
-			import clocks.models.part.Timer
+    @Test
+    def void testDoesNotParseModelRedeclaring_Outputs() {
+        val source = '''
+            package clocks.models
 
-			model RefinedModel refines Alarm {
-				output {
-					Timer timer
-				}
-			}
-		'''
+            import clocks.models.part.Alarm
+            import clocks.models.part.Timer
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model RefinedModel refines Alarm {
+                output {
+                    Timer timer
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}		
-	
-	@Test
-	def void testDoesNotParseModelRedeclaring_Requires() {
-		val source = '''
-			package clocks.models
+    }
 
-			import clocks.models.part.Alarm
-			import clocks.models.part.Timer
+    @Test
+    def void testDoesNotParseModelRedeclaring_Requires() {
+        val source = '''
+            package clocks.models
 
-			model RefinedModel refines Alarm {
-				requires {
-					Timer timer
-				}
-			}
-		'''
+            import clocks.models.part.Alarm
+            import clocks.models.part.Timer
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model RefinedModel refines Alarm {
+                requires {
+                    Timer timer
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}		
-	
-	@Test
-	def void testDoesNotParseModelRedeclaring_Scenarios() {
-		val source = '''
-			package clocks.models
+    }
 
-			import clocks.models.part.Alarm
+    @Test
+    def void testDoesNotParseModelRedeclaring_Scenarios() {
+        val source = '''
+            package clocks.models
 
-			model RefinedModel refines Alarm {
-				scenario whatever {
-				}
-			}
-		'''
+            import clocks.models.part.Alarm
 
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+            model RefinedModel refines Alarm {
+                scenario whatever {
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
             null)
-	}		
-	
+    }
 }
