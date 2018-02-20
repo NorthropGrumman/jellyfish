@@ -98,6 +98,7 @@ public abstract class ${dto.abstractClass.name}
       } catch(ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
+         faultManagementService.handleFault(fault);
       }
 #if ($method.isCorrelating())
       finally {
@@ -116,6 +117,7 @@ public abstract class ${dto.abstractClass.name}
       } catch(ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
+         faultManagementService.handleFault(fault);
       }
    }
 
