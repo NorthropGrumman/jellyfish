@@ -1,0 +1,28 @@
+package com.ngc.example.correlation
+
+import com.ngc.example.correlation.datatype.Candy
+import com.ngc.example.correlation.datatype.HardCandy
+
+model CandyService {
+	metadata {
+		"stereotypes": ["service"],
+		"codegen": {
+			"alias": "cs"
+		}
+	}
+
+	input {
+		Candy candy
+	}
+
+	output {
+		HardCandy hardCandy
+	}
+
+	scenario makeCandy {
+		when receiving candy
+		then willCorrelate candy.header.batchNumber to hardCandy.header.batchNumber
+		 and willPublish hardCandy
+	}
+
+}
