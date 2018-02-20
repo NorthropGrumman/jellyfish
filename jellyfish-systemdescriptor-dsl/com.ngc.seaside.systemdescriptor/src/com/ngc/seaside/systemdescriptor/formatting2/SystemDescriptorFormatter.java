@@ -48,8 +48,14 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 				SystemDescriptorPackage.Literals.METADATA,
 				SystemDescriptorPackage.Literals.JSON_OBJECT);
 		registerFormatter(new PackageFormatter(), SystemDescriptorPackage.Literals.PACKAGE);
+		registerFormatter(new ElementFormatter(), SystemDescriptorPackage.Literals.ELEMENT);
+		registerFormatter(new DataFormatter(), SystemDescriptorPackage.Literals.DATA);
 		registerFormatter(new EnumerationFormatter(), SystemDescriptorPackage.Literals.ENUMERATION);
 		registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
+		registerFormatter(new DataFieldDeclarationFormatter(), 
+				SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION, 
+				SystemDescriptorPackage.Literals.PRIMITIVE_DATA_FIELD_DECLARATION, 
+				SystemDescriptorPackage.Literals.REFERENCED_DATA_MODEL_FIELD_DECLARATION);
 		// End formatter registration.
 
 		formatters = Collections.unmodifiableMap(formatters);
@@ -70,6 +76,12 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 				EObject model = contents.get(0);
 				// Find the formatter for the element and perform the
 				// formatting.
+				for (EClass cls : model.eClass().getEAllSuperTypes()) {
+					AbstractFormatter2 f = formatters.get(cls);
+					if (f != null) {
+						replacements = f.format(request);
+					}
+				}
 				AbstractFormatter2 f = formatters.get(model.eClass());
 				if (f != null) {
 					replacements = f.format(request);
@@ -78,7 +90,7 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 					// created a formatter to format the rule.
 					LOGGER.warn("No formatter register to handle objects of type " + model.eClass().getName() + ".");
 				}
-			}
+			}		
 		} finally {
 			this.request = null;
 		}
@@ -97,6 +109,17 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 	protected void format(Object object, IFormattableDocument document) {
 		if (object instanceof EObject) {
 			EObject eobj = (EObject) object;
+			for (EClass cls : eobj.eClass().getEAllSuperTypes()) {
+				AbstractSystemDescriptorFormatter f = formatters.get(cls);
+				if (f != null) {
+					f.initalize(request);
+					try {
+						f.format(eobj, document);
+					} finally {
+						f.reset();
+					}
+				}
+			}
 			AbstractSystemDescriptorFormatter f = formatters.get(eobj.eClass());
 			if (f != null) {
 				// Necessary to avoid NPEs due to how AbstractFormatter2 is

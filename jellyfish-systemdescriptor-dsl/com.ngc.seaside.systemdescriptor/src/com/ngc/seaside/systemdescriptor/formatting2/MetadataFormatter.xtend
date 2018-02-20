@@ -13,16 +13,17 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 	}
 
 	def dispatch void format(JsonObject json, extension IFormattableDocument document) {
-		var begin = json.regionFor.keyword('{').prepend[oneSpace]
+		var begin = json.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 		var end = json.regionFor.keyword('}')
 		interior(begin, end)[indent]
 
 		for (Member member : json.members) {
-			member.format
+			member.regionFor.keyword(':').prepend[oneSpace].append[oneSpace]
+			member.value.format
 			if(member == json.members.last) {
 				member.append[newLine]
 			}
 		}
 	}
-
+	
 }
