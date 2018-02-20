@@ -15,15 +15,13 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     @Check
-    public void checkDoesNotParseModelThatRefinesData(Model model) {
+    public void checkDoesNotParseModelThatRefinesUnloadableItem(Model model) {
+        // Caveat: Since we can't directly check for refinement of data types, circular dependencies,
+        // etc just prevent the user from refining anything that couldn't be loaded as a model.
         if (model.getRefinedModel() != null && model.getRefinedModel().getName() == null) {
             String msg = "Invalid model refinement due to model-load error!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
         }
-    }
-
-    @Check
-    public void checkDoesNotParseModelsThatCircularlyRefineEachOther(Model model) {
     }
 
     @Check
