@@ -39,6 +39,7 @@ class RefinedModelParsingTest {
             resourceHelper,
             Models.EMPTY_MODEL,
             Models.ALARM,
+            Models.TIMER,
             Datas.TIME
         )
         validationTester.assertNoIssues(requiredResources)
@@ -100,7 +101,7 @@ class RefinedModelParsingTest {
         val source = '''
             package clocks.models
 
-            model MyModel refines clocks.datatypes.time {
+            model MyModel refines clocks.datatypes.Time {
             }
         '''
 
@@ -143,11 +144,11 @@ class RefinedModelParsingTest {
             package clocks.models
 
             import clocks.models.part.Alarm
-            import clocks.models.part.Timer
+            import clocks.datatypes.Time
 
             model RefinedModel refines Alarm {
                 input {
-                    Timer timer
+                    Time time
                 }
             }
         '''
@@ -167,11 +168,11 @@ class RefinedModelParsingTest {
             package clocks.models
 
             import clocks.models.part.Alarm
-            import clocks.models.part.Timer
+            import clocks.datatypes.Time
 
             model RefinedModel refines Alarm {
                 output {
-                    Timer timer
+                    Time time
                 }
             }
         '''
