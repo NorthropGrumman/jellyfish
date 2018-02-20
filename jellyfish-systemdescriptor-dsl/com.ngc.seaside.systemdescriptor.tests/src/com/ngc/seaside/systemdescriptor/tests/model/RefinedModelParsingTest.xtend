@@ -95,7 +95,6 @@ class RefinedModelParsingTest {
             null)
     }
 
-	@Ignore("until I figure out how to implement the validator rule for this")
     @Test
     def void testDoesNotParseModelThatRefinesData() {
         val source = '''
