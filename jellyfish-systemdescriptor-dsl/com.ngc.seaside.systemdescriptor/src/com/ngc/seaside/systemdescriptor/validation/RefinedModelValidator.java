@@ -53,5 +53,9 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     @Check
     public void checkDoesNotParseModelThatRedeclaresScenarios(Model model) {
+        if (!model.getRefinedModel().getScenarios().equals(model.getScenarios())) {
+            String msg = "A refined model cannot add scenarios!";
+            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+        }
     }
 }
