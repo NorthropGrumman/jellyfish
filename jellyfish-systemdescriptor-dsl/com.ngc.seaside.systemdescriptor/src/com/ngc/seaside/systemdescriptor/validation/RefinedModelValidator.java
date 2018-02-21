@@ -79,7 +79,6 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         boolean modelBeingRefinedHasRequirementsDeclarations = modelBeingRefinedRequirements != null;
 
         boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = true;
-        long numInvalidRequirementsInRefinedModel = 0;
 
         if (refinedModelHasRequirementsDeclarations && modelBeingRefinedHasRequirementsDeclarations) {
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements =
@@ -87,17 +86,25 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
                 modelBeingRefinedHasRequirementsDeclarations &&
                 refinedModelRequirements.size() == modelBeingRefinedRequirements.size();
 
-            numInvalidRequirementsInRefinedModel =
-                        refinedModelRequirements.stream()
-                                                   .filter(r -> !modelBeingRefinedRequirements.contains(r))
-                                                   .count();
         } else if (refinedModelHasRequirementsDeclarations) {
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = false;
-            numInvalidRequirementsInRefinedModel = refinedModelRequirements.size();
         }
 
         return
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements &&
-            numInvalidRequirementsInRefinedModel == 0;
+            findNumInvalidRequirementsInRefinedModel(refinedModelRequirements, modelBeingRefinedRequirements) == 0;
+    }
+
+    private long findNumInvalidRequirementsInRefinedModel(
+            EList<RequireDeclaration> refinedModelRequirements, EList<RequireDeclaration> modelBeingRefinedRequirements) {
+        if (refinedModelRequirements != null && modelBeingRefinedRequirements != null) {
+            return refinedModelRequirements
+                .stream()
+                .filter(r -> !modelBeingRefinedRequirements.contains(r))
+                .count();
+        } else if (refinedModelRequirements != null) {
+            return refinedModelRequirements.size();
+        }
+        return 0;
     }
 }
