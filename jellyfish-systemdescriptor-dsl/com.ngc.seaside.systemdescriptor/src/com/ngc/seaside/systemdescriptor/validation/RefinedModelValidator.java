@@ -75,24 +75,23 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
                                                                 ? modelBeingRefined.getRequires().getDeclarations()
                                                                 : null;
 
-        boolean refinedModelHasRequirementsDeclarations = refinedModelRequirements != null;
-        boolean modelBeingRefinedHasRequirementsDeclarations = modelBeingRefinedRequirements != null;
+        return
+            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(refinedModelRequirements, modelBeingRefinedRequirements) &&
+            findNumInvalidRequirementsInRefinedModel(refinedModelRequirements, modelBeingRefinedRequirements) == 0;
+    }
 
-        boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = true;
-
-        if (refinedModelHasRequirementsDeclarations && modelBeingRefinedHasRequirementsDeclarations) {
-            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements =
-                refinedModelHasRequirementsDeclarations &&
-                modelBeingRefinedHasRequirementsDeclarations &&
+    private boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(
+            EList<RequireDeclaration> refinedModelRequirements, EList<RequireDeclaration> modelBeingRefinedRequirements) {
+        if (refinedModelRequirements != null && modelBeingRefinedRequirements != null) {
+            return
+                refinedModelRequirements != null &&
+                modelBeingRefinedRequirements != null &&
                 refinedModelRequirements.size() == modelBeingRefinedRequirements.size();
 
-        } else if (refinedModelHasRequirementsDeclarations) {
-            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = false;
+        } else if (refinedModelRequirements != null) {
+            return false;
         }
-
-        return
-            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements &&
-            findNumInvalidRequirementsInRefinedModel(refinedModelRequirements, modelBeingRefinedRequirements) == 0;
+        return true;
     }
 
     private long findNumInvalidRequirementsInRefinedModel(
