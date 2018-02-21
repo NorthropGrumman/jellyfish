@@ -17,7 +17,6 @@ import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -37,19 +36,19 @@ class RefinedModelParsingTest {
     def void setup() {
         requiredResources = Models.allOf(
             resourceHelper,
-            Models.EMPTY_MODEL,
             Models.ALARM,
+            Models.TIMER,
             Datas.TIME
         )
         validationTester.assertNoIssues(requiredResources)
     }
 
     @Test
-    def void testDoesParseEmptyRefinedModelUsingFullyQualifiedName() {
+    def void testDoesParseRefinedModelUsingFullyQualifiedName() {
         val source = '''
             package clocks.models
 
-            model MyModel refines foo.AnEmptyModel {
+            model MyModel refines clocks.models.part.Alarm {
             }
         '''
 
@@ -59,13 +58,13 @@ class RefinedModelParsingTest {
     }
 
     @Test
-    def void testDoesParseEmptyRefinedModelUsingImport() {
+    def void testDoesParseRefinedModelUsingImport() {
         val source = '''
             package clocks.models
 
-            import foo.AnEmptyModel
+            import clocks.models.part.Alarm
 
-            model MyModel refines AnEmptyModel {
+            model MyModel refines Alarm {
             }
         '''
 
@@ -94,13 +93,12 @@ class RefinedModelParsingTest {
             null)
     }
 
-	@Ignore("until I figure out how to implement the validator rule for this")
     @Test
     def void testDoesNotParseModelThatRefinesData() {
         val source = '''
             package clocks.models
 
-            model MyModel refines clocks.datatypes.time {
+            model MyModel refines clocks.datatypes.Time {
             }
         '''
 
@@ -113,7 +111,6 @@ class RefinedModelParsingTest {
             null)
     }
 
-	@Ignore("until I figure out how to implement the validator rule for this")
     @Test
     def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
         val source = '''
@@ -143,11 +140,11 @@ class RefinedModelParsingTest {
             package clocks.models
 
             import clocks.models.part.Alarm
-            import clocks.models.part.Timer
+            import clocks.datatypes.Time
 
             model RefinedModel refines Alarm {
                 input {
-                    Timer timer
+                    Time time
                 }
             }
         '''
@@ -167,11 +164,11 @@ class RefinedModelParsingTest {
             package clocks.models
 
             import clocks.models.part.Alarm
-            import clocks.models.part.Timer
+            import clocks.datatypes.Time
 
             model RefinedModel refines Alarm {
                 output {
-                    Timer timer
+                    Time time
                 }
             }
         '''
