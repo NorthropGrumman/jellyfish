@@ -62,6 +62,11 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         }
     }
 
+    private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
+        String msg = String.format("A refined model cannot add %s!", typeOfRedefinition);
+        error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+    }
+
     private boolean refinedModelHasValidRequiresBlock(Model refinedModel, Model modelBeingRefined) {
         EList<RequireDeclaration> refinedModelRequirements = refinedModel.getRequires() != null
                                                            ? refinedModel.getRequires().getDeclarations()
@@ -94,10 +99,5 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         return
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements &&
             numInvalidRequirementsInRefinedModel == 0;
-    }
-
-    private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
-        String msg = String.format("A refined model cannot add %s!", typeOfRedefinition);
-        error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
     }
 }
