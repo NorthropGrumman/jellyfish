@@ -69,20 +69,15 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     private boolean refinedModelHasValidRequiresBlock(Model refinedModel, Model modelBeingRefined) {
         return
-            findNumInvalidRequirementsInRefinedModel(refinedModel, modelBeingRefined) == 0 &&
-            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(refinedModel, modelBeingRefined);
+            !modelHasRequirementDeclarations(refinedModel) ||
+            findNumInvalidRequirementsInRefinedModel(refinedModel, modelBeingRefined) == 0;
     }
 
     private long findNumInvalidRequirementsInRefinedModel(Model refinedModel, Model modelBeingRefined) {
-        if (modelHasRequirementDeclarations(refinedModel) && modelHasRequirementDeclarations(modelBeingRefined)) {
-            return modelRequirementDeclarations(refinedModel)
-                .stream()
-                .filter(r -> !modelRequirementDeclarations(modelBeingRefined).contains(r))
-                .count();
-        } else if (modelHasRequirementDeclarations(refinedModel)) {
-            return modelRequirementDeclarations(refinedModel).size();
-        }
-        return 0;
+        return modelRequirementDeclarations(refinedModel)
+            .stream()
+            .filter(r -> !modelRequirementDeclarations(modelBeingRefined).contains(r))
+            .count();
     }
 
     private EList<RequireDeclaration> modelRequirementDeclarations(Model model) {
@@ -91,17 +86,5 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 
     private boolean modelHasRequirementDeclarations(Model model) {
         return model.getRequires() != null && modelRequirementDeclarations(model) != null;
-    }
-
-    private boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(Model refinedModel, Model modelBeingRefined) {
-        if (modelHasRequirementDeclarations(refinedModel) && modelHasRequirementDeclarations(modelBeingRefined)) {
-            return
-                modelHasRequirementDeclarations(refinedModel) &&
-                modelHasRequirementDeclarations(modelBeingRefined) &&
-                modelRequirementDeclarations(refinedModel).size() == modelRequirementDeclarations(modelBeingRefined).size();
-        } else if (modelHasRequirementDeclarations(refinedModel)) {
-            return false;
-        }
-        return true;
     }
 }
