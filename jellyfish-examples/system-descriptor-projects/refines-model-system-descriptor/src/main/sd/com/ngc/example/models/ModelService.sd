@@ -1,0 +1,27 @@
+package com.ngc.example.models
+
+import com.ngc.example.models.ExampleData
+import com.ngc.example.models.Bravo
+
+model ModelService {
+ metadata {
+    "stereotypes" : ["service", "example"]
+  }
+  
+  input {
+  	ExampleData inputA
+  }
+  
+  output {
+  	ExampleData outputB
+  }
+  
+  parts {
+  	Bravo bravo
+  }
+  
+  scenario refined {
+  	when recieving inputA
+  	then willpublish outputB
+  }
+}
