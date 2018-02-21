@@ -239,8 +239,9 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
-	: type=[Model|QualifiedName]
-	  name=UnqualifiedName
+	: (refinedField?='refine')?
+	  type=[Model|QualifiedName]
+	  name=UnqualifiedName  
 	  definition=DeclarationDefinition?
 	;
  
@@ -258,7 +259,8 @@ Parts
  * and an unqualified name.
  */
 RequireDeclaration
-	: type=[Model|QualifiedName]
+	: (refinedField?='refine')?
+		type=[Model|QualifiedName]
 	  name=UnqualifiedName
 	  definition=DeclarationDefinition?
 	;
@@ -403,7 +405,8 @@ FieldReference returns LinkableReference
  * exchange information in some manner (ex. "link speaker to alarm.speaker").
  */
 LinkDeclaration
-	: 'link'
+	: (refinedField?='refine')?
+		'link'
 		name=UnqualifiedName?
 		source=LinkableExpression
 		'->'
