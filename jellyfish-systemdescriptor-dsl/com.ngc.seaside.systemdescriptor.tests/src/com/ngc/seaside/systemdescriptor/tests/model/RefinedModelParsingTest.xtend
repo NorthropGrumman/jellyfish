@@ -183,7 +183,7 @@ class RefinedModelParsingTest {
     }
 
     @Test
-    def void testDoesNotParseModelRedeclaring_Requires() {
+    def void testDoesNotParseModelAdding_Requires() {
         val source = '''
             package clocks.models
 
