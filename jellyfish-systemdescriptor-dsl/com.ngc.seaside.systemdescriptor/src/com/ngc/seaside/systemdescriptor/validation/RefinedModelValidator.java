@@ -63,23 +63,15 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     private boolean refinedModelHasValidRequiresBlock(Model refinedModel, Model modelBeingRefined) {
-        Requires refinedModelRequirements = refinedModel.getRequires();
-        Requires modelBeingRefinedRequirements = modelBeingRefined.getRequires();
+        EList<RequireDeclaration> refinedModelRequirements = refinedModel.getRequires() != null
+                                                           ? refinedModel.getRequires().getDeclarations()
+                                                           : null;
+        EList<RequireDeclaration> modelBeingRefinedRequirements = modelBeingRefined.getRequires() != null
+                                                                ? modelBeingRefined.getRequires().getDeclarations()
+                                                                : null;
 
-        boolean refinedModelHasRequirements = refinedModelRequirements != null;
-        boolean modelBeingRefinedHasRequirements = modelBeingRefinedRequirements != null;
-
-        EList<RequireDeclaration> refinedModelRequirementDeclarations =
-            refinedModelHasRequirements
-                ? refinedModelRequirements.getDeclarations()
-                : null;
-        EList<RequireDeclaration> modelBeingRefinedRequirementDeclarations =
-            modelBeingRefinedHasRequirements
-                ? modelBeingRefinedRequirements.getDeclarations()
-                : null;
-
-        boolean refinedModelHasRequirementsDeclarations = refinedModelRequirementDeclarations != null;
-        boolean modelBeingRefinedHasRequirementsDeclarations = modelBeingRefinedRequirementDeclarations != null;
+        boolean refinedModelHasRequirementsDeclarations = refinedModelRequirements != null;
+        boolean modelBeingRefinedHasRequirementsDeclarations = modelBeingRefinedRequirements != null;
 
         boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = true;
         long numInvalidRequirementsInRefinedModelNotInModelBeingRefined = 0;
@@ -88,15 +80,15 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements =
                 refinedModelHasRequirementsDeclarations &&
                 modelBeingRefinedHasRequirementsDeclarations &&
-                refinedModelRequirementDeclarations.size() == modelBeingRefinedRequirementDeclarations.size();
+                refinedModelRequirements.size() == modelBeingRefinedRequirements.size();
 
             numInvalidRequirementsInRefinedModelNotInModelBeingRefined =
-                refinedModelRequirementDeclarations.stream()
-                                                   .filter(r -> !modelBeingRefinedRequirementDeclarations.contains(r))
+                        refinedModelRequirements.stream()
+                                                   .filter(r -> !modelBeingRefinedRequirements.contains(r))
                                                    .count();
         } else if (refinedModelHasRequirementsDeclarations) {
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = false;
-            numInvalidRequirementsInRefinedModelNotInModelBeingRefined = refinedModelRequirementDeclarations.size();
+            numInvalidRequirementsInRefinedModelNotInModelBeingRefined = refinedModelRequirements.size();
         }
 
         return
