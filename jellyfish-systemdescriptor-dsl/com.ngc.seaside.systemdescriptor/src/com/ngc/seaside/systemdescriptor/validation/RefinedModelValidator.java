@@ -68,42 +68,40 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     private boolean refinedModelHasValidRequiresBlock(Model refinedModel, Model modelBeingRefined) {
-        EList<RequireDeclaration> refinedModelRequirements = refinedModel.getRequires() != null
-                                                           ? refinedModel.getRequires().getDeclarations()
-                                                           : null;
-        EList<RequireDeclaration> modelBeingRefinedRequirements = modelBeingRefined.getRequires() != null
-                                                                ? modelBeingRefined.getRequires().getDeclarations()
-                                                                : null;
-
         return
-            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(refinedModelRequirements, modelBeingRefinedRequirements) &&
-            findNumInvalidRequirementsInRefinedModel(refinedModelRequirements, modelBeingRefinedRequirements) == 0;
+            findNumInvalidRequirementsInRefinedModel(refinedModel, modelBeingRefined) == 0 &&
+            refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(refinedModel, modelBeingRefined);
     }
 
-    private boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(
-            EList<RequireDeclaration> refinedModelRequirements, EList<RequireDeclaration> modelBeingRefinedRequirements) {
-        if (refinedModelRequirements != null && modelBeingRefinedRequirements != null) {
-            return
-                refinedModelRequirements != null &&
-                modelBeingRefinedRequirements != null &&
-                refinedModelRequirements.size() == modelBeingRefinedRequirements.size();
+    private long findNumInvalidRequirementsInRefinedModel(Model refinedModel, Model modelBeingRefined) {
+        if (modelHasRequirementDeclarations(refinedModel) && modelHasRequirementDeclarations(modelBeingRefined)) {
+            return modelRequirementDeclarations(refinedModel)
+                .stream()
+                .filter(r -> !modelRequirementDeclarations(modelBeingRefined).contains(r))
+                .count();
+        } else if (modelHasRequirementDeclarations(refinedModel)) {
+            return modelRequirementDeclarations(refinedModel).size();
+        }
+        return 0;
+    }
 
-        } else if (refinedModelRequirements != null) {
+    private EList<RequireDeclaration> modelRequirementDeclarations(Model model) {
+        return model.getRequires().getDeclarations();
+    }
+
+    private boolean modelHasRequirementDeclarations(Model model) {
+        return model.getRequires() != null && modelRequirementDeclarations(model) != null;
+    }
+
+    private boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements(Model refinedModel, Model modelBeingRefined) {
+        if (modelHasRequirementDeclarations(refinedModel) && modelHasRequirementDeclarations(modelBeingRefined)) {
+            return
+                modelHasRequirementDeclarations(refinedModel) &&
+                modelHasRequirementDeclarations(modelBeingRefined) &&
+                modelRequirementDeclarations(refinedModel).size() == modelRequirementDeclarations(modelBeingRefined).size();
+        } else if (modelHasRequirementDeclarations(refinedModel)) {
             return false;
         }
         return true;
-    }
-
-    private long findNumInvalidRequirementsInRefinedModel(
-            EList<RequireDeclaration> refinedModelRequirements, EList<RequireDeclaration> modelBeingRefinedRequirements) {
-        if (refinedModelRequirements != null && modelBeingRefinedRequirements != null) {
-            return refinedModelRequirements
-                .stream()
-                .filter(r -> !modelBeingRefinedRequirements.contains(r))
-                .count();
-        } else if (refinedModelRequirements != null) {
-            return refinedModelRequirements.size();
-        }
-        return 0;
     }
 }
