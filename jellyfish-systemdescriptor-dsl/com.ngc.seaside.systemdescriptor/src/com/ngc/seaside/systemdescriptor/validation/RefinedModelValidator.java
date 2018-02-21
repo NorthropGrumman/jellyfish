@@ -74,7 +74,7 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         boolean modelBeingRefinedHasRequirementsDeclarations = modelBeingRefinedRequirements != null;
 
         boolean refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = true;
-        long numInvalidRequirementsInRefinedModelNotInModelBeingRefined = 0;
+        long numInvalidRequirementsInRefinedModel = 0;
 
         if (refinedModelHasRequirementsDeclarations && modelBeingRefinedHasRequirementsDeclarations) {
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements =
@@ -82,18 +82,18 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
                 modelBeingRefinedHasRequirementsDeclarations &&
                 refinedModelRequirements.size() == modelBeingRefinedRequirements.size();
 
-            numInvalidRequirementsInRefinedModelNotInModelBeingRefined =
+            numInvalidRequirementsInRefinedModel =
                         refinedModelRequirements.stream()
                                                    .filter(r -> !modelBeingRefinedRequirements.contains(r))
                                                    .count();
         } else if (refinedModelHasRequirementsDeclarations) {
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements = false;
-            numInvalidRequirementsInRefinedModelNotInModelBeingRefined = refinedModelRequirements.size();
+            numInvalidRequirementsInRefinedModel = refinedModelRequirements.size();
         }
 
         return
             refinedModelAndModelBeingRefinedHaveTheSameNumberOfRequirements &&
-            numInvalidRequirementsInRefinedModelNotInModelBeingRefined == 0;
+            numInvalidRequirementsInRefinedModel == 0;
     }
 
     private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
