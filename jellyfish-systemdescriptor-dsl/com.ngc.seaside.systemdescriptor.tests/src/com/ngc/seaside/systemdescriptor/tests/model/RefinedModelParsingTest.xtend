@@ -192,6 +192,7 @@ class RefinedModelParsingTest {
 
             model RefinedModel refines Alarm {
                 requires {
+                    AnEmptyModel emptyModel
                     Timer timer
                 }
             }
