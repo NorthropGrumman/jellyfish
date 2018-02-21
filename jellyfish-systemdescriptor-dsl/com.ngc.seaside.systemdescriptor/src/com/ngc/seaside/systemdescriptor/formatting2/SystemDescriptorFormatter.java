@@ -51,7 +51,18 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 		registerFormatter(new ElementFormatter(), SystemDescriptorPackage.Literals.ELEMENT);
 		registerFormatter(new DataFormatter(), SystemDescriptorPackage.Literals.DATA);
 		registerFormatter(new EnumerationFormatter(), SystemDescriptorPackage.Literals.ENUMERATION);
-		registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
+		registerFormatter(new ModelFormatter(), 
+		      SystemDescriptorPackage.Literals.MODEL,
+            SystemDescriptorPackage.Literals.INPUT,
+            SystemDescriptorPackage.Literals.OUTPUT,
+		      SystemDescriptorPackage.Literals.SCENARIO,
+		      SystemDescriptorPackage.Literals.PARTS,
+		      SystemDescriptorPackage.Literals.REQUIRES,
+		      SystemDescriptorPackage.Literals.LINKS);
+      registerFormatter(new ScenarioFormatter(), 
+            SystemDescriptorPackage.Literals.GIVEN_DECLARATION,
+            SystemDescriptorPackage.Literals.WHEN_DECLARATION,
+            SystemDescriptorPackage.Literals.THEN_DECLARATION);
 		registerFormatter(new DataFieldDeclarationFormatter(), 
 				SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION, 
 				SystemDescriptorPackage.Literals.PRIMITIVE_DATA_FIELD_DECLARATION, 
