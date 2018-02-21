@@ -29,12 +29,12 @@ public interface IData extends INamedChild<IPackage> {
    IData setMetadata(IMetadata metadata);
 
    /**
-    * Gets the super data type that this data type extends.  If this data type does not extend another data type the
+    * Gets the data type that this data type extends.  If this data type does not extend another data type the
     * returned optional is empty.
     *
     * @return an optional that only contains a value if this data type extends another data type
     */
-   Optional<IData> getSuperDataType();
+   Optional<IData> getExtendedDataType();
 
    /**
     * Sets the data type that this type extends.
@@ -42,7 +42,7 @@ public interface IData extends INamedChild<IPackage> {
     * @param superDataType the data type that this type extends.
     * @return this data type
     */
-   IData setSuperDataType(IData superDataType);
+   IData setExtendedDataType(IData superDataType);
 
    /**
     * Gets the data fields declared within this data type.  The fields are listed in the order they were declared.

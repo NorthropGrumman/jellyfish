@@ -82,7 +82,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
                    IMetadata.EMPTY_METADATA,
                    wrappedData.getMetadata());
       assertFalse("superType should not be set!",
-                  wrappedData.getSuperDataType().isPresent());
+                  wrappedData.getExtendedDataType().isPresent());
 
       String fieldName = data.getFields().get(0).getName();
       assertEquals("did not get fields!",
@@ -92,11 +92,11 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesWrapXtextObjectWithSuperType() throws Throwable {
-      data.setSuperclass(superType);
+      data.setExtendedDataType(superType);
       wrappedData = new WrappedData(resolver(), data);
       assertEquals("did not return wrapper for superType!",
                    wrappedSuperType,
-                   wrappedData.getSuperDataType().get());
+                   wrappedData.getExtendedDataType().get());
    }
 
    @Test
@@ -127,11 +127,11 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
       when(wrappedSuperType.getParent()).thenReturn(superTypePackage);
       when(superTypePackage.getName()).thenReturn(superTypePackageName);
 
-      data.setSuperclass(superType);
+      data.setExtendedDataType(superType);
       wrappedData = new WrappedData(resolver(), data);
-      wrappedData.setSuperDataType(wrappedSuperType);
+      wrappedData.setExtendedDataType(wrappedSuperType);
       assertEquals("did not update superType!",
                    superType.getName(),
-                   wrappedData.getSuperDataType().get().getName());
+                   wrappedData.getExtendedDataType().get().getName());
    }
 }

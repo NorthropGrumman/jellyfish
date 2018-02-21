@@ -486,7 +486,7 @@ public class ModelValidator extends AbstractUnregisteredSystemDescriptorValidato
 					}
 					
 					Data data = (Data) eObject;
-					Data superclass = data.getSuperclass();
+					Data superclass = data.getExtendedDataType();
 					if(superclass != null ){
 						String superclassName = superclass.getName();
 						if(!superclasses.contains(superclassName)){

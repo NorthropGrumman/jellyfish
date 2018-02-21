@@ -364,7 +364,7 @@ public class ModelUtils {
     * @param fields data fields
     */
    public static void mockData(IData data, IData superData, Object... fields) {
-      when(data.getSuperDataType()).thenReturn(Optional.ofNullable(superData));
+      when(data.getExtendedDataType()).thenReturn(Optional.ofNullable(superData));
       NamedChildCollection<IData, IDataField> collection = new NamedChildCollection<>(data, IDataField.class);
       for (int n = 0; n < fields.length; n++) {
          if (fields[n] instanceof IDataField) {

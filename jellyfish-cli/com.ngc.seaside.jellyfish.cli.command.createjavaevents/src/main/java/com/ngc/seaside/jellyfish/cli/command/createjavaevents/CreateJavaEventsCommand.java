@@ -107,7 +107,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
          dataDto.setData(child);
          dataDto.setAbstract(!normal);
          if (child instanceof IData) {
-            ((IData) child).getSuperDataType().ifPresent(superData -> {
+            ((IData) child).getExtendedDataType().ifPresent(superData -> {
                String pkg = packageNamingService.getEventPackageName(options, superData);
                dataDto.setExtendedClass(pkg + '.' + superData.getName());
             });

@@ -133,7 +133,7 @@
         eType="#//EnumerationValueDeclaration" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Data" eSuperTypes="#//DataModel">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="superclass" eType="#//Data"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extendedDataType" eType="#//Data"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
         eType="#//DataFieldDeclaration" containment="true"/>
   </eClassifiers>

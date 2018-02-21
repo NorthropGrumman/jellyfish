@@ -71,12 +71,12 @@ public class Data implements IData {
    }
 
    @Override
-   public Optional<IData> getSuperDataType() {
+   public Optional<IData> getExtendedDataType() {
       return Optional.ofNullable(superDataType);
    }
 
    @Override
-   public IData setSuperDataType(IData superDataType) {
+   public IData setExtendedDataType(IData superDataType) {
       this.superDataType = superDataType;
       return this;
    }
