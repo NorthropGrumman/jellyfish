@@ -88,9 +88,9 @@ class FormattingTest {
 				import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers
 				
 				model ThreatEvaluation {
-					metadata { "description": "Prioritizes system tracks into a list of System Track Identifiers",
-						"stereotypes": ["virtual", "system"],
-						"satisfies": ["TE001"] }
+					metadata{ "description"         :"Prioritizes system tracks into a list of System Track Identifiers",
+						"stereotypes" :["virtual", "system"],
+						"satisfies":["TE001"] }
 				
 					input {
 						SystemTrack systemTrack { metadata { "satisfies": ["TE001"] } }
@@ -187,21 +187,7 @@ class FormattingTest {
 	@Test
 	def void testAlreadyFormattedExample4() {
 		assertFormatted[
-			expectation = formattedExample4
-			toBeFormatted = '''
-			package com.ngc.test
-			
-			enum Enumeration {
-				FIELD1
-				FIELD2
-				FIELD3 {
-					metadata {
-						"name": null
-					}
-				}
-				FIELD4
-			}
-			'''
+			toBeFormatted = formattedExample4
 		]
 	}
 	
@@ -225,9 +211,9 @@ class FormattingTest {
 		
 		model TrackPriorityService {
 			metadata {
-				"description": "Aggregates track priorities from 1..n sources and upon request will provide a set of prioritized track IDs.",
-				"stereotypes": ["service", "aggregator"],
-				"satisfies": ["TE001.1", "TE001.2", "TE001.3", "TE001.4", "TE001.5"]
+				"description" : "Aggregates track priorities from 1..n sources and upon request will provide a set of prioritized track IDs.",
+				"stereotypes" : ["service", "aggregator"],
+				"satisfies" : ["TE001.1", "TE001.2", "TE001.3", "TE001.4", "TE001.5"]
 			}
 		
 			input {
@@ -241,8 +227,8 @@ class FormattingTest {
 		
 			scenario calculateConsolidatedTrackPriority {
 				metadata {
-					"see": {
-						"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation"
+					"see" : {
+						"url" : "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation"
 					}
 				}
 		
@@ -275,27 +261,27 @@ class FormattingTest {
 		
 		model ThreatEvaluation {
 			metadata {
-				"description": "Prioritizes system tracks into a list of System Track Identifiers",
-				"stereotypes": ["virtual", "system"],
-				"satisfies": ["TE001"]
+				"description" : "Prioritizes system tracks into a list of System Track Identifiers",
+				"stereotypes" : ["virtual", "system"],
+				"satisfies" : ["TE001"]
 			}
 		
 			input {
 				SystemTrack systemTrack {
 					metadata {
-						"satisfies": ["TE001"]
+						"satisfies" : ["TE001"]
 					}
 				}
 		
 				Classification systemTrackClassification {
 					metadata {
-						"satisfies": ["TE001"]
+						"satisfies" : ["TE001"]
 					}
 				}
 		
 				TrackEngagementStatus trackEngagementStatus {
 					metadata {
-						"satisfies": ["TE001"]
+						"satisfies" : ["TE001"]
 					}
 				}
 			}
@@ -303,7 +289,7 @@ class FormattingTest {
 			output {
 				PrioritizedSystemTrackIdentifiers prioritizedSystemTracks {
 					metadata {
-						"satisfies": ["TE001"]
+						"satisfies" : ["TE001"]
 					}
 				}
 			}
@@ -343,9 +329,9 @@ class FormattingTest {
 			int secondsFromGPS
 			int microseconds {
 				metadata {
-					"validation": {
-						"min": 0,
-						"max": 999999
+					"validation" : {
+						"min" : 0,
+						"max" : 999999
 					}
 				}
 			}
@@ -361,7 +347,7 @@ class FormattingTest {
 			FIELD2
 			FIELD3 {
 				metadata {
-					"name": null
+					"name" : null
 				}
 			}
 			FIELD4
