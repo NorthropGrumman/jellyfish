@@ -45,7 +45,8 @@ public class SystemDescriptorFormatter implements IFormatter2 {
         // single formatter to handle multiple types.
         registerFormatter(new MetadataFormatter(),
             SystemDescriptorPackage.Literals.METADATA,
-            SystemDescriptorPackage.Literals.JSON_OBJECT);
+            SystemDescriptorPackage.Literals.JSON_OBJECT,
+            SystemDescriptorPackage.Literals.MEMBER);
         registerFormatter(new PackageFormatter(), SystemDescriptorPackage.Literals.PACKAGE);
         registerFormatter(new EnumerationFormatter(), SystemDescriptorPackage.Literals.ENUMERATION);
         registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);

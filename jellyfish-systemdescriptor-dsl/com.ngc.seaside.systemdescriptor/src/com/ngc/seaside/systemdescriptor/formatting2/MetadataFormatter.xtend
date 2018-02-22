@@ -23,4 +23,10 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
             }
         }
     }
+
+    def dispatch void format(Member member, extension IFormattableDocument document) {
+        member.regionFor.keyword(':').prepend[oneSpace]
+        member.getValue.format.prepend[oneSpace]
+        member.prepend[newLine]
+    }
 }
