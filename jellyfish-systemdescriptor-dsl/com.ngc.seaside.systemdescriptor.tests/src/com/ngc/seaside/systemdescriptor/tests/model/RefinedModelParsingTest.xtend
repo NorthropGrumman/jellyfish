@@ -17,6 +17,7 @@ import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -157,6 +158,31 @@ class RefinedModelParsingTest {
             SystemDescriptorPackage.Literals.MODEL,
             null)
     }
+    
+     @Test
+     @Ignore 
+    def void testDoesNotParseModelRefining_Inputs() {
+        val source = '''
+            package clocks.models
+
+            import clocks.models.part.Alarm
+            import clocks.datatypes.Time
+
+            model RefinedModel refines Alarm {
+                Input {
+                    refine Time time
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.MODEL,
+            null)
+    }
 
     @Test
     def void testDoesNotParseModelRedeclaring_Outputs() {
@@ -169,6 +195,31 @@ class RefinedModelParsingTest {
             model RefinedModel refines Alarm {
                 output {
                     Time time
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.MODEL,
+            null)
+    }
+    
+    @Test
+    @Ignore 
+    def void testDoesNotParseModelRefining_Outputs() {
+        val source = '''
+            package clocks.models
+
+            import clocks.models.part.Alarm
+            import clocks.datatypes.Time
+
+            model RefinedModel refines Alarm {
+                output {
+                    refine Time time
                 }
             }
         '''

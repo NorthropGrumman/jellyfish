@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
@@ -18,6 +17,9 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -32,33 +34,18 @@ class PartParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	Resource subPartResource
-
-	Resource dataResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		subPartResource = resourceHelper.resource(
-			'''
-				package clocks.models.sub
-							
-				model Gear {
-				}
-			''',
-			URI.createURI("subpart.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.ALARM,
+			Models.CLOCK,
+			Models.SPEAKER,
+			Datas.TIME
 		)
-		validationTester.assertNoIssues(subPartResource)
-
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			subPartResource.resourceSet
-		)
-		validationTester.assertNoIssues(dataResource)
+		validationTester.assertNoIssues(requiredResources)
 	}
 
 	@Test
@@ -66,17 +53,17 @@ class PartParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.sub.Gear
+			import clocks.models.part.Alarm
 			
 			model BigClock {
 				
 				parts {
-					Gear gear
+					Alarm alarm
 				}
 			}
 		'''
 
-		val result = parseHelper.parse(source, subPartResource.resourceSet)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -90,14 +77,42 @@ class PartParsingTest {
 		val part = model.parts.declarations.get(0)
 		assertEquals(
 			"part name not correct",
-			"gear",
+			"alarm",
 			part.name
 		)
 		assertEquals(
 			"part type not correct!",
-			"Gear",
+			"Alarm",
 			part.type.name
 		)
+	}
+	
+	@Test
+	def void testDoesParseModelWithRefinedParts() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Clock
+			import foo.AnEmptyModel
+			
+			model BigClock refines Clock{
+				
+				parts {
+					refine AnEmptyModel emptyModel {
+						metadata {
+						  			"name" : "My Part",
+						  			"description" : "EmptyModel Part",
+						  			"stereotypes" : ["part", "example"]
+						  		}
+						}
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
 	}
 
 	@Test
@@ -115,7 +130,7 @@ class PartParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -129,18 +144,18 @@ class PartParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.sub.Gear
+			import clocks.models.part.Alarm
 			
 			model BigClock {
 				
 				parts {
-					Gear gear
-					Gear gear
+					Alarm alarm
+					Alarm alarm
 				}
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -154,22 +169,22 @@ class PartParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.sub.Gear
+			import clocks.models.part.Alarm
 			import clocks.datatypes.Time
 			
 			model BigClock {
 				
 				input {
-					Time gear
+					Time alarm
 				}
 				
 				parts {
-					Gear gear
+					Alarm alarm
 				}
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -183,22 +198,22 @@ class PartParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.sub.Gear
+			import clocks.models.part.Alarm
 			import clocks.datatypes.Time
 			
 			model BigClock {
 				
 				output {
-					Time gear
+					Time alarm
 				}
 				
 				parts {
-					Gear gear
+					Alarm alarm
 				}
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -213,17 +228,17 @@ class PartParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.sub.Gear
+			import clocks.models.part.Alarm
 			
 			model BigClock {
 				
 				parts {
-					Gear ^int
+					Alarm ^int
 				}
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, subPartResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -231,4 +246,67 @@ class PartParsingTest {
 			null
 		)
 	}
+	
+	@Test
+	@Ignore
+    def void testDoesNotParseANonRefinedModelThatRefinedAPart() {
+        val source = '''
+			package clocks.models
+			
+			import foo.AnEmptyModel
+
+			model BigClock {
+			
+				parts {
+					refine AnEmptyModel emptyModel {
+						metadata {
+				  			"name" : "My Part",
+				  			"description" : "EmptyModel Part",
+				  			"stereotypes" : ["part", "example"]
+				  		}
+					}
+				}
+			}
+        '''
+
+         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.PART_DECLARATION,
+            null)
+    }
+    
+    @Test
+    @Ignore
+    def void testDoesNotParseRefinedModelOfAPartThatWasntInTheRefinedModel() {
+        val source = '''
+			package clocks.models
+			
+			import foo.AnEmptyModel
+			import clocks.models.part.Alarm
+
+			model BigClock refines Alarm{
+			
+				parts {
+					refine AnEmptyModel emptyModel {
+						metadata {
+				  			"name" : "My Part",
+				  			"description" : "EmptyModel Part",
+				  			"stereotypes" : ["part", "example"]
+				  		}
+					}
+				}
+			}
+        '''
+
+         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.PART_DECLARATION,
+            null)
+    }
 }

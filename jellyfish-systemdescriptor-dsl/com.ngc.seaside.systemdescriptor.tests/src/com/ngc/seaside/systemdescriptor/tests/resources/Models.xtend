@@ -20,6 +20,7 @@ class Models {
             package clocks.models.part
 
             import clocks.datatypes.ZonedTime
+            import foo.AnEmptyModel
 
             model Clock {
 
@@ -27,9 +28,13 @@ class Models {
                     ZonedTime currentTime {
                     }
                 }
+                
+                parts {
+                	AnEmptyModel emptyModel
             }
         ''',
-        Datas.ZONED_TIME
+        Datas.ZONED_TIME, 
+        Models.EMPTY_MODEL
     )
 
     public static final ParsingTestResource ALARM = resource(
