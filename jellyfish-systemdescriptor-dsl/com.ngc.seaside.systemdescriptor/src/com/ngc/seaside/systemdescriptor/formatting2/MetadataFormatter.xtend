@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Member
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
 import org.eclipse.xtext.formatting2.IFormattableDocument
@@ -28,5 +29,9 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
         member.regionFor.keyword(':').prepend[oneSpace]
         member.value.format.prepend[oneSpace]
         member.prepend[newLine]
+    }
+
+    def dispatch void format(JsonValue json, extension IFormattableDocument document) {
+        json.value.format
     }
 }
