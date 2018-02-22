@@ -5,15 +5,26 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumerationValueDeclara
 import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class EnumerationFormatter extends AbstractSystemDescriptorFormatter {
+    def dispatch void format(Enumeration enumeration, extension IFormattableDocument document) {
+        var begin = enumeration.regionFor.keyword('enum').prepend[noIndentation]
+        var end = enumeration.regionFor.keyword('}')
+        interior(begin, end)[indent]
 
-	def dispatch void format(Enumeration enumeration, extension IFormattableDocument document) {
-//		if (enumeration.metadata != null && !enumeration.values.isEmpty()) {
-//			enumeration.metadata.append[newLines = 2]
-//		}
-		for (EnumerationValueDeclaration value : enumeration.values) {
-			value.format
-			value.regionFor.keyword(',').prepend[noSpace]
-			value.append[newLine]
-		}
-	}
+        enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+
+        if (enumeration.metadata !== null) {
+            enumeration.metadata.format
+        }
+
+        for (EnumerationValueDeclaration value : enumeration.values) {
+            value.format
+            value.append[newLine]
+        }
+    }
+
+    def dispatch void format(EnumerationValueDeclaration value, extension IFormattableDocument document) {
+        if (value.definition !== null) {
+            value.definition.format;
+        }
+    }
 }

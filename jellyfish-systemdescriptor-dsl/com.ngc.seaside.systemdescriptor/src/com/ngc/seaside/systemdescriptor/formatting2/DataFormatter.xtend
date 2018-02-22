@@ -5,17 +5,23 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class DataFormatter extends AbstractSystemDescriptorFormatter {
+    def dispatch void format(Data data, extension IFormattableDocument document) {
+        var begin = data.regionFor.keyword('data')
+        var end = data.regionFor.keyword('}')
+        interior(begin, end)[indent]
 
-	def dispatch void format(Data data, extension IFormattableDocument document) {
-		data.regionFor.keyword(':')
-			.prepend[oneSpace]
-			.append[oneSpace]
+        data.prepend[newLines = 2]
 
-		for (DataFieldDeclaration field : data.fields) {
-			field.regionFor.keyword(',').prepend[noSpace]
-			field.append[newLine]
-			field.format
-		}
+        data.regionFor.keyword(':').prepend[oneSpace].append[newLine]
 
-	}
+        if (data.metadata !== null) {
+            data.metadata.format;
+            data.metadata.append[newLines = 2; highPriority]
+        }
+
+        for (DataFieldDeclaration field : data.fields) {
+            field.prepend[newLine]
+            field.format
+        }
+    }
 }
