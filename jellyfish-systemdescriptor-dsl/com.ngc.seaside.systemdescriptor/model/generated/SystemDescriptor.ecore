@@ -69,9 +69,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//InputDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration" eSuperTypes="#//FieldDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="refinedField" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration" eSuperTypes="#//FieldDeclaration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BasePartDeclaration" eSuperTypes="#//PartDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Model"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RefinedPartDeclaration" eSuperTypes="#//PartDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="refinedField" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parts">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"

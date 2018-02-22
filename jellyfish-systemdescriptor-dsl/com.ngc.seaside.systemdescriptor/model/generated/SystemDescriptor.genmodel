@@ -63,9 +63,12 @@
     <genClasses ecoreClass="SystemDescriptor.ecore#//Input">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Input/declarations"/>
     </genClasses>
-    <genClasses ecoreClass="SystemDescriptor.ecore#//PartDeclaration">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//PartDeclaration/refinedField"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//PartDeclaration/type"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//PartDeclaration"/>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//BasePartDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//BasePartDeclaration/type"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//RefinedPartDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//RefinedPartDeclaration/refinedField"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Parts">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Parts/declarations"/>

@@ -239,8 +239,24 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
+	: BasePartDeclaration
+	| RefinedPartDeclaration
+	;
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+BasePartDeclaration
+	: type=[Model|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
+	;
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+RefinedPartDeclaration
 	: (refinedField?='refine')?
-	  type=[Model|QualifiedName]
 	  name=UnqualifiedName  
 	  definition=DeclarationDefinition?
 	;

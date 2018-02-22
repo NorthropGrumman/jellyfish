@@ -20,6 +20,7 @@ import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 import org.junit.Ignore
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -80,15 +81,45 @@ class PartParsingTest {
 			"alarm",
 			part.name
 		)
-		assertEquals(
-			"part type not correct!",
-			"Alarm",
-			part.type.name
-		)
+		if (part.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
+			assertEquals(
+				"part type not correct!",
+				"Alarm",
+				(part as BasePartDeclaration).type.name
+			)
+		}
+	}
+
+	@Test
+	def void testDoesParseModelWithRefinedParts() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Clock
+			
+			model BigClock refines Clock{
+				
+				parts {
+					refine emptyModel {
+						metadata {
+						  			"name" : "My Part",
+						  			"description" : "EmptyModel Part",
+						  			"stereotypes" : ["part", "example"]
+						  		}
+						}
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
 	}
 	
 	@Test
-	def void testDoesParseModelWithRefinedParts() {
+	@Ignore
+	def void testDoesNotParseModelWithRefinedPartsWithTypeDelcared() {
 		val source = '''
 			package clocks.models
 			
@@ -109,9 +140,13 @@ class PartParsingTest {
 			}
 		'''
 
-		val result = parseHelper.parse(source, requiredResources.resourceSet)
-		assertNotNull(result)
-		validationTester.assertNoIssues(result)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PART_DECLARATION,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
 
 	}
 
@@ -221,8 +256,7 @@ class PartParsingTest {
 			null
 		)
 	}
-	
-	
+
 	@Test
 	def void testDoesNotParseModelWithEscapedPartsFieldName() {
 		val source = '''
@@ -246,67 +280,61 @@ class PartParsingTest {
 			null
 		)
 	}
-	
+
 	@Test
 	@Ignore
-    def void testDoesNotParseANonRefinedModelThatRefinedAPart() {
-        val source = '''
+	def void testDoesNotParseANonRefinedModelThatRefinedAPart() {
+		val source = '''
 			package clocks.models
 			
 			import foo.AnEmptyModel
-
+			
 			model BigClock {
 			
 				parts {
 					refine AnEmptyModel emptyModel {
 						metadata {
-				  			"name" : "My Part",
-				  			"description" : "EmptyModel Part",
-				  			"stereotypes" : ["part", "example"]
-				  		}
+									"name" : "My Part",
+									"description" : "EmptyModel Part",
+									"stereotypes" : ["part", "example"]
+								}
 					}
 				}
 			}
-        '''
+		     '''
 
-         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
 
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.PART_DECLARATION,
-            null)
-    }
-    
-    @Test
-    @Ignore
-    def void testDoesNotParseRefinedModelOfAPartThatWasntInTheRefinedModel() {
-        val source = '''
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PART_DECLARATION, null)
+	}
+
+	@Test
+	@Ignore
+	def void testDoesNotParseRefinedModelOfAPartThatWasntInTheRefinedModel() {
+		val source = '''
 			package clocks.models
 			
 			import foo.AnEmptyModel
 			import clocks.models.part.Alarm
-
+			
 			model BigClock refines Alarm{
 			
 				parts {
 					refine AnEmptyModel emptyModel {
 						metadata {
-				  			"name" : "My Part",
-				  			"description" : "EmptyModel Part",
-				  			"stereotypes" : ["part", "example"]
-				  		}
+									"name" : "My Part",
+									"description" : "EmptyModel Part",
+									"stereotypes" : ["part", "example"]
+								}
 					}
 				}
 			}
-        '''
+		     '''
 
-         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
 
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.PART_DECLARATION,
-            null)
-    }
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PART_DECLARATION, null)
+	}
 }

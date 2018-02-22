@@ -15,7 +15,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -52,10 +52,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 			// Include all field declarations of the referenced model in the
 			// scope.
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.PART_DECLARATION)) {
+		} else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
 			// Include all field declarations of the referenced model in the
 			// scope.
-			PartDeclaration casted = (PartDeclaration) fieldDeclaration;
+			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;	
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
 		} else {
 			// Otherwise, do the default behavior.
