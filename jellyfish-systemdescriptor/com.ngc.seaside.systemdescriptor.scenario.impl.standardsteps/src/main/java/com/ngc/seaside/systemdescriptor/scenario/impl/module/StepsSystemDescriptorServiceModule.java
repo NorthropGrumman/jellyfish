@@ -10,7 +10,9 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.BeginCorrlea
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CompleteStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 /**
@@ -29,6 +31,8 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       bind(CompleteStepHandler.class).in(Singleton.class);
       bind(CorrelateStepHandler.class).in(Singleton.class);
       bind(BeginCorrleationEventStepHandler.class).in(Singleton.class);
+      bind(ReceiveRequestStepHandler.class).in(Singleton.class);
+      bind(RespondStepHandler.class).in(Singleton.class);
 
       Multibinder<IScenarioStepHandler> handlers = Multibinder.newSetBinder(
             binder(),
@@ -39,6 +43,8 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       handlers.addBinding().to(CompleteStepHandler.class);
       handlers.addBinding().to(CorrelateStepHandler.class);
       handlers.addBinding().to(BeginCorrleationEventStepHandler.class);
+      handlers.addBinding().to(ReceiveRequestStepHandler.class);
+      handlers.addBinding().to(RespondStepHandler.class);
 
       // These handlers are also validators.
       Multibinder<ISystemDescriptorValidator> validators = Multibinder.newSetBinder(
@@ -50,6 +56,8 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       validators.addBinding().to(CompleteStepHandler.class);
       validators.addBinding().to(CorrelateStepHandler.class);
       validators.addBinding().to(BeginCorrleationEventStepHandler.class);
+      validators.addBinding().to(ReceiveRequestStepHandler.class);
+      validators.addBinding().to(RespondStepHandler.class);
    }
 
    @Override
