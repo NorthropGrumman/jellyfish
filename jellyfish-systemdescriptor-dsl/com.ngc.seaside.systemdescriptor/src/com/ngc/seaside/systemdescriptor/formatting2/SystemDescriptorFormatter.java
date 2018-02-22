@@ -65,6 +65,9 @@ public class SystemDescriptorFormatter implements IFormatter2 {
         registerFormatter(new RequiresFormatter(),
             SystemDescriptorPackage.Literals.REQUIRES,
             SystemDescriptorPackage.Literals.REQUIRE_DECLARATION);
+        registerFormatter(new LinksFormatter(),
+            SystemDescriptorPackage.Literals.LINKS,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION);
         // End formatter registration.
 
         formatters = Collections.unmodifiableMap(formatters);
