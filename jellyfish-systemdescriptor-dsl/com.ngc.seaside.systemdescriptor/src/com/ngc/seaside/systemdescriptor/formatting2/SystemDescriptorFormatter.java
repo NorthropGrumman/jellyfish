@@ -48,7 +48,10 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.JSON_OBJECT,
             SystemDescriptorPackage.Literals.MEMBER);
         registerFormatter(new PackageFormatter(), SystemDescriptorPackage.Literals.PACKAGE);
-        registerFormatter(new EnumerationFormatter(), SystemDescriptorPackage.Literals.ENUMERATION);
+        registerFormatter(new EnumerationFormatter(),
+            SystemDescriptorPackage.Literals.ENUMERATION,
+            SystemDescriptorPackage.Literals.ENUMERATION_VALUE_DECLARATION);
+        registerFormatter(new DeclarationDefinitionFormatter(), SystemDescriptorPackage.Literals.DECLARATION_DEFINITION);
         registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
         // End formatter registration.
 
