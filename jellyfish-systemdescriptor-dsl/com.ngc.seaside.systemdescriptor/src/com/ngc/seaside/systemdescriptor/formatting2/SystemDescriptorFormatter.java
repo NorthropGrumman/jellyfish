@@ -53,6 +53,7 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.ENUMERATION_VALUE_DECLARATION);
         registerFormatter(new DeclarationDefinitionFormatter(), SystemDescriptorPackage.Literals.DECLARATION_DEFINITION);
         registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
+        registerFormatter(new InputFormatter(), SystemDescriptorPackage.Literals.INPUT);
         // End formatter registration.
 
         formatters = Collections.unmodifiableMap(formatters);
