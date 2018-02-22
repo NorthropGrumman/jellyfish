@@ -18,7 +18,7 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 
         for (Member member : json.members) {
             member.format
-            if(member == json.members.last) {
+            if (member == json.members.last) {
                 member.append[newLine]
             }
         }
@@ -26,7 +26,7 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 
     def dispatch void format(Member member, extension IFormattableDocument document) {
         member.regionFor.keyword(':').prepend[oneSpace]
-        member.getValue.format.prepend[oneSpace]
+        member.value.format.prepend[oneSpace]
         member.prepend[newLine]
     }
 }

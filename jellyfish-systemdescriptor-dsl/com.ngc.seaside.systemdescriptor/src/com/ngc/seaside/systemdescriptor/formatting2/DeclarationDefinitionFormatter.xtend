@@ -5,12 +5,12 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class DeclarationDefinitionFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(DeclarationDefinition definition, extension IFormattableDocument document) {
-        definition.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+        var begin = definition.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+        var end = definition.regionFor.keyword('}')
+        interior(begin, end)[indent]
 
         if (definition.metadata !== null) {
             definition.metadata.format
         }
-
-        definition.interior[indent]
     }
 }

@@ -9,31 +9,20 @@ class ModelFormatter extends AbstractSystemDescriptorFormatter {
         model.regionFor.keyword('model').prepend[noIndentation]
         model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
-        if(model.metadata !== null) {
-            model.metadata.format;
-            model.metadata.append[setNewLines(2); highPriority()]
+        if (model.metadata !== null) {
+            model.metadata.format
+            model.metadata.append[newLines = 2; highPriority]
         }
 
-        var modelInput = model.getInput();
-        modelInput.format;
-
-        var modelOutput = model.getOutput();
-        modelOutput.format;
-
-        var modelParts = model.getParts();
-        modelParts.format;
-
-        var modelLinks = model.getLinks();
-        modelLinks.format;
-
-        var modelScenarios = model.getScenarios();
-        for (Scenario scenario : modelScenarios) {
-            scenario.format;
-        }
+        model.input.format
+        model.output.format
+        model.requires.format
+        model.parts.format
+        model.links.format
+        model.scenarios.forEach[format]
 
         var begin = model.regionFor.keyword('model')
         var end = model.regionFor.keyword('}')
         interior(begin, end)[indent]
-
     }
 }
