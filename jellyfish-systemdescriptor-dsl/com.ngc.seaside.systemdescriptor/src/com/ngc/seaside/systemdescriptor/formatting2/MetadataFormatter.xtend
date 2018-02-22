@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Member
@@ -33,5 +34,10 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 
     def dispatch void format(JsonValue json, extension IFormattableDocument document) {
         json.value.format
+    }
+
+    def dispatch void format(ArrayValue array, extension IFormattableDocument document) {
+        array.value.regionFor.keyword('[').append[oneSpace]
+        array.value.regionFor.keyword(']').prepend[oneSpace]
     }
 }

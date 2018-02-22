@@ -51,7 +51,8 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.METADATA,
             SystemDescriptorPackage.Literals.JSON_OBJECT,
             SystemDescriptorPackage.Literals.MEMBER,
-            SystemDescriptorPackage.Literals.JSON_VALUE);
+            SystemDescriptorPackage.Literals.JSON_VALUE,
+            SystemDescriptorPackage.Literals.ARRAY_VALUE);
         registerFormatter(new EnumerationFormatter(),
             SystemDescriptorPackage.Literals.ENUMERATION,
             SystemDescriptorPackage.Literals.ENUMERATION_VALUE_DECLARATION);

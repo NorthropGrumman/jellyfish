@@ -212,8 +212,8 @@ class FormattingTest {
 		model TrackPriorityService {
 			metadata {
 				"description" : "Aggregates track priorities from 1..n sources and upon request will provide a set of prioritized track IDs.",
-				"stereotypes" : ["service", "aggregator"],
-				"satisfies" : ["TE001.1", "TE001.2", "TE001.3", "TE001.4", "TE001.5"]
+				"stereotypes" : [ "service", "aggregator" ],
+				"satisfies" : [ "TE001.1", "TE001.2", "TE001.3", "TE001.4", "TE001.5" ]
 			}
 
 			input {
@@ -262,26 +262,26 @@ class FormattingTest {
 		model ThreatEvaluation {
 			metadata {
 				"description" : "Prioritizes system tracks into a list of System Track Identifiers",
-				"stereotypes" : ["virtual", "system"],
-				"satisfies" : ["TE001"]
+				"stereotypes" : [ "virtual", "system" ],
+				"satisfies" : [ "TE001" ]
 			}
 
 			input {
 				SystemTrack systemTrack {
 					metadata {
-						"satisfies" : ["TE001"]
+						"satisfies" : [ "TE001" ]
 					}
 				}
 
 				Classification systemTrackClassification {
 					metadata {
-						"satisfies" : ["TE001"]
+						"satisfies" : [ "TE001" ]
 					}
 				}
 
 				TrackEngagementStatus trackEngagementStatus {
 					metadata {
-						"satisfies" : ["TE001"]
+						"satisfies" : [ "TE001" ]
 					}
 				}
 			}
@@ -289,7 +289,7 @@ class FormattingTest {
 			output {
 				PrioritizedSystemTrackIdentifiers prioritizedSystemTracks {
 					metadata {
-						"satisfies" : ["TE001"]
+						"satisfies" : [ "TE001" ]
 					}
 				}
 			}
