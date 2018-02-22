@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output
-import org.eclipse.xtext.formatting2.IFormattableDocument
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration
+import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class OutputFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Output output, extension IFormattableDocument document) {

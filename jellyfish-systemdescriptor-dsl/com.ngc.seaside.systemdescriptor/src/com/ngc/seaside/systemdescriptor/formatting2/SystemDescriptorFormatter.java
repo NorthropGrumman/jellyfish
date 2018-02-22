@@ -1,9 +1,6 @@
 package com.ngc.seaside.systemdescriptor.formatting2;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
@@ -15,7 +12,10 @@ import org.eclipse.xtext.formatting2.IFormatter2;
 import org.eclipse.xtext.formatting2.regionaccess.ITextReplacement;
 import org.eclipse.xtext.resource.XtextResource;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The System Descriptor formatter. This formatter delegates to other more
@@ -43,18 +43,18 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 
         // Register all formatters here. Note it is possible to register a
         // single formatter to handle multiple types.
+        registerFormatter(new PackageFormatter(), SystemDescriptorPackage.Literals.PACKAGE);
+        registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
+        registerFormatter(new DataFormatter(), SystemDescriptorPackage.Literals.DATA);
+        registerFormatter(new DeclarationDefinitionFormatter(), SystemDescriptorPackage.Literals.DECLARATION_DEFINITION);
         registerFormatter(new MetadataFormatter(),
             SystemDescriptorPackage.Literals.METADATA,
             SystemDescriptorPackage.Literals.JSON_OBJECT,
             SystemDescriptorPackage.Literals.MEMBER,
             SystemDescriptorPackage.Literals.JSON_VALUE);
-        registerFormatter(new PackageFormatter(), SystemDescriptorPackage.Literals.PACKAGE);
         registerFormatter(new EnumerationFormatter(),
             SystemDescriptorPackage.Literals.ENUMERATION,
             SystemDescriptorPackage.Literals.ENUMERATION_VALUE_DECLARATION);
-        registerFormatter(new DeclarationDefinitionFormatter(), SystemDescriptorPackage.Literals.DECLARATION_DEFINITION);
-        registerFormatter(new ModelFormatter(), SystemDescriptorPackage.Literals.MODEL);
-        registerFormatter(new DataFormatter(), SystemDescriptorPackage.Literals.DATA);
         registerFormatter(new DataFieldDeclarationFormatter(),
             SystemDescriptorPackage.Literals.DATA_FIELD_DECLARATION,
             SystemDescriptorPackage.Literals.PRIMITIVE_DATA_FIELD_DECLARATION,

@@ -1,11 +1,11 @@
 package com.ngc.seaside.systemdescriptor.formatting2;
 
+import com.google.common.base.Preconditions;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.FormatterRequest;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Base class for System Descriptor formatters. All formatters should extend

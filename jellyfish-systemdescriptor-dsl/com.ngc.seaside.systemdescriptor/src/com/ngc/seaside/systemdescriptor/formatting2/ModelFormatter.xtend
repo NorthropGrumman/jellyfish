@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario
 import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class ModelFormatter extends AbstractSystemDescriptorFormatter {

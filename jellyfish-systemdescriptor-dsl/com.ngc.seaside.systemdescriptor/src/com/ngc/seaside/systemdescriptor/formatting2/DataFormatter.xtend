@@ -3,8 +3,6 @@ package com.ngc.seaside.systemdescriptor.formatting2
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration
 
 class DataFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Data data, extension IFormattableDocument document) {

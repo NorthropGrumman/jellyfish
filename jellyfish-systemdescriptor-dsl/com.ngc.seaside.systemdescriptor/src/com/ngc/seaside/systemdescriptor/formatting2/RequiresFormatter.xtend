@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration
 
 class RequiresFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Requires requires, extension IFormattableDocument document) {

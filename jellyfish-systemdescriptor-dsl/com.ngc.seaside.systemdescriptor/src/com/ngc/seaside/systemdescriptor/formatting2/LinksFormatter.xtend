@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration
 
 class LinksFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Links links, extension IFormattableDocument document) {

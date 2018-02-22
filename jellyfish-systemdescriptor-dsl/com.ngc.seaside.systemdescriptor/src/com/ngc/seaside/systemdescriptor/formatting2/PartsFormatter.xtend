@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration
 
 class PartsFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Parts parts, extension IFormattableDocument document) {

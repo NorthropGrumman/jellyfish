@@ -1,13 +1,13 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
+import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario
-import org.eclipse.xtext.formatting2.IFormattableDocument
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ThenStep
-import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep
 import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenDeclaration
-import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep
-import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration
+import com.ngc.seaside.systemdescriptor.systemDescriptor.WhenStep
+import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class ScenarioFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Scenario scenario, extension IFormattableDocument document) {
