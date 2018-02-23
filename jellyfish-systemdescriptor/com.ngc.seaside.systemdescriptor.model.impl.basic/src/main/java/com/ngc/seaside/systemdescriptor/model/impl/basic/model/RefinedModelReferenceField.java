@@ -8,23 +8,24 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Implements the IModelReferenceField interface.
- *
- * @author psnell
+ * Implements the IModelReferenceField interface for a refined reference.
  */
-public class ModelReferenceField implements IModelReferenceField {
+public class RefinedModelReferenceField implements IModelReferenceField {
 
    protected final String name;
    protected IMetadata metadata;
-   protected IModel type;
+   protected IModelReferenceField refinedField;
    protected IModel parent;
 
-   public ModelReferenceField(String name) {
+   public RefinedModelReferenceField(String name, IModelReferenceField refinedField) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
+      Preconditions.checkNotNull(refinedField, "refined field may not be empty!");
       this.name = name;
+      this.refinedField = refinedField;
    }
 
    @Override
@@ -50,13 +51,12 @@ public class ModelReferenceField implements IModelReferenceField {
 
    @Override
    public IModel getType() {
-      return type;
+      return refinedField.getType();
    }
 
    @Override
    public IModelReferenceField setType(IModel model) {
-      this.type = model;
-      return this;
+      throw new UnsupportedOperationException("The type of refined field cannot be changed");
    }
 
    public void setParent(Model model) {
@@ -69,28 +69,32 @@ public class ModelReferenceField implements IModelReferenceField {
       if (this == o) {
          return true;
       }
-      if (!(o instanceof ModelReferenceField)) {
+      if (!(o instanceof RefinedModelReferenceField)) {
          return false;
       }
-      ModelReferenceField that = (ModelReferenceField) o;
+      RefinedModelReferenceField that = (RefinedModelReferenceField) o;
       return Objects.equals(name, that.name) &&
              Objects.equals(metadata, that.metadata) &&
-             Objects.equals(type, that.type) &&
+             Objects.equals(refinedField, that.refinedField) &&
              parent == that.parent;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, metadata, type, System.identityHashCode(parent));
+      return Objects.hash(name, metadata, System.identityHashCode(parent));
    }
 
    @Override
    public String toString() {
-      return "ModelReferenceField[" +
+      return "RefinedModelReferenceField[" +
              "name='" + name + '\'' +
              ", metadata=" + metadata +
-             ", type=" + type +
              ", parent=" + (parent == null ? "null" : parent.getName()) +
              ']';
+   }
+
+   @Override
+   public Optional<IModelReferenceField> getRefinedField() {
+      return Optional.of(refinedField);
    }
 }
