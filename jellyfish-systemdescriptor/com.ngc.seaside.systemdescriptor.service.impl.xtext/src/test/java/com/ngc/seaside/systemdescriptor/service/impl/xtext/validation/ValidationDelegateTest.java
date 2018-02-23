@@ -1,5 +1,22 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.validation;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
+import org.eclipse.emf.ecore.EObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -13,6 +30,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
@@ -21,31 +39,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
-
-import org.eclipse.emf.ecore.EObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ValidationDelegateTest {
@@ -223,7 +224,7 @@ public class ValidationDelegateTest {
 
    @Test
    public void testDoesValidateModelPart() throws Throwable {
-      PartDeclaration source = factory().createPartDeclaration();
+      BasePartDeclaration source = factory().createBasePartDeclaration();
       source.setName("myPart");
       Model model = factory().createModel();
       model.setName("MyModel");
@@ -242,6 +243,30 @@ public class ValidationDelegateTest {
             .get();
       verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
    }
+   
+   @Test
+   public void testDoesValidateRefinedModelPart() throws Throwable {
+      RefinedPartDeclaration source = factory().createRefinedPartDeclaration();
+      source.setName("myPart");
+      Model model = factory().createModel();
+      model.setName("MyModel");
+      model.setParts(factory().createParts());
+      model.getParts().getDeclarations().add(source);
+      Package p = factory().createPackage();
+      p.setName("foo.package");
+      p.setElement(model);
+
+      delegate.addValidator(validator);
+      delegate.validate(source, helper);
+
+      IModelReferenceField toValidate = descriptor.findModel(p.getName(), model.getName()).get()
+            .getParts()
+            .getByName(source.getName())
+            .get();
+      verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
+   }
+   
+   
 
    @Test
    public void testDoesValidateModelRequirement() throws Throwable {
@@ -272,7 +297,7 @@ public class ValidationDelegateTest {
       Model targetModel = factory().createModel();
       targetModel.setName("targetModel");
 
-      PartDeclaration sourceField = factory().createPartDeclaration();
+      BasePartDeclaration sourceField = factory().createBasePartDeclaration();
       sourceField.setType(sourceModel);
       sourceField.setName("sourceField");
       Model yetMoreSourceModels = factory().createModel();
@@ -280,7 +305,7 @@ public class ValidationDelegateTest {
       yetMoreSourceModels.setParts(factory().createParts());
       yetMoreSourceModels.getParts().getDeclarations().add(sourceField);
 
-      PartDeclaration targetField = factory().createPartDeclaration();
+      BasePartDeclaration targetField = factory().createBasePartDeclaration();
       targetField.setType(targetModel);
       targetField.setName("targetField");
       Model yetMoreTargetModels = factory().createModel();

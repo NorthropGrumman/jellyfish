@@ -23,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataR
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -30,6 +31,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -169,7 +171,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       m.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
       model.getParts()
             .stream()
-            .map(i -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, i))
+            .map(i -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, i))
             .forEach(m.getParts().getDeclarations()::add);
 
       model.getScenarios()
@@ -221,8 +223,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private void initParts() {
       if (wrapped.getParts() == null) {
          parts = new SelfInitializingWrappingNamedChildCollection<>(
-               d -> new WrappedPartModelReferenceField(resolver, d),
-               d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
@@ -231,9 +233,19 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       } else {
          parts = new WrappingNamedChildCollection<>(
                wrapped.getParts().getDeclarations(),
-               d -> new WrappedPartModelReferenceField(resolver, d),
-               d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
                FieldDeclaration::getName);
+      }
+   }
+   
+   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, PartDeclaration part) {
+      if (part instanceof BasePartDeclaration) {
+         return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);
+      } else if (part instanceof RefinedPartDeclaration) {
+         return new WrappedRefinedPartModelReferenceField(resolver, (RefinedPartDeclaration) part);
+      } else {
+         throw new IllegalStateException("Unknown PartDeclaration subclass: " + part.getClass());
       }
    }
 

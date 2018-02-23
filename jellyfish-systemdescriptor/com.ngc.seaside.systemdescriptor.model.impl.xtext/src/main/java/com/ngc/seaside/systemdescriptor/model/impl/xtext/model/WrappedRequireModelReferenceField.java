@@ -1,11 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.google.common.base.Preconditions;
+import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -44,6 +44,18 @@ public class WrappedRequireModelReferenceField extends AbstractWrappedModelRefer
       d.setName(field.getName());
       d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
       d.setType(doFindXtextModel(resolver, field.getType().getName(), field.getType().getParent().getName()));
+      d.setRefinedField(field.getRefinedField().isPresent());
       return d;
+   }
+
+   @Override
+   public Optional<IModelReferenceField> getRefinedField() {
+      if (wrapped.isRefinedField()) {
+         IModel refinedModel = getParent().getRefinedModel().orElseThrow(() -> new IllegalStateException("Refined model missing for refined required field " + getName()));
+         IModelReferenceField field = refinedModel.getRequiredModels().getByName(getName()).orElseThrow(() -> new IllegalStateException("Required " + getName() + " missing from refined model"));
+         return Optional.of(field);
+      } else {
+         return Optional.empty();
+      }
    }
 }
