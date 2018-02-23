@@ -34,13 +34,13 @@ public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXt
 
    @Mock
    private IModel parent;
-   
+
    @Mock
    private IModel refinedParent;
-   
+
    @Mock
    private IModel wrappedModelType;
-   
+
    @Mock
    private IModel refinedWrappedModelType;
 
@@ -63,12 +63,12 @@ public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXt
       Model model = factory().createModel();
       model.setParts(factory().createParts());
       model.getParts().getDeclarations().add(basePartDeclaration);
-      
+
       Model refinedModel = factory().createModel();
       refinedModel.setRefinedModel(model);
       refinedModel.setParts(factory().createParts());
       refinedModel.getParts().getDeclarations().add(refinedPartDeclaration);
-      
+
       IPackage p = mock(IPackage.class);
       when(p.getName()).thenReturn("some.package");
 

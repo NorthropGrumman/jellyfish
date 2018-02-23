@@ -238,7 +238,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
                FieldDeclaration::getName);
       }
    }
-   
+
    private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, PartDeclaration part) {
       if (part instanceof BasePartDeclaration) {
          return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);

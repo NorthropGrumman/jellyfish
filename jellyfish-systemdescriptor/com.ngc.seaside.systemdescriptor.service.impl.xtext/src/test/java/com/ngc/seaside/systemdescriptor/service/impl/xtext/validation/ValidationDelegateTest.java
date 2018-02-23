@@ -243,7 +243,7 @@ public class ValidationDelegateTest {
             .get();
       verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
    }
-   
+
    @Test
    public void testDoesValidateRefinedModelPart() throws Throwable {
       RefinedPartDeclaration source = factory().createRefinedPartDeclaration();
@@ -265,8 +265,6 @@ public class ValidationDelegateTest {
             .get();
       verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
    }
-   
-   
 
    @Test
    public void testDoesValidateModelRequirement() throws Throwable {

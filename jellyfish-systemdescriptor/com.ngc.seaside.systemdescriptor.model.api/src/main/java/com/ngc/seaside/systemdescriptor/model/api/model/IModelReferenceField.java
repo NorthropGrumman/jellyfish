@@ -22,10 +22,10 @@ public interface IModelReferenceField extends IReferenceField {
     * @return this field
     */
    IModelReferenceField setType(IModel model);
-   
+
    /**
     * Gets the field that this field refines. If this field does not refine a field, the optional is empty.
-    * 
+    *
     * @return the field that this field refines
     */
    Optional<IModelReferenceField> getRefinedField();
