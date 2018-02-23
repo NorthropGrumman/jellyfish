@@ -49,7 +49,8 @@ pipeline {
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh './gradlew clean build install'
+                    sh 'chmod a+x ./gradlew'
+                    sh './gradlew clean build install --refresh-dependencies'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
@@ -59,7 +60,7 @@ pipeline {
             steps {
                 dir('jellyfish-systemdescriptor') {
                     sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build install'
+                    sh './gradlew clean build install --refresh-dependencies'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
