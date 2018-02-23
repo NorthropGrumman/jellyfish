@@ -107,14 +107,6 @@ pipeline {
                     // Collect the m2 repository files inside a single ZIP.
                     sh 'zip -r dependencies-m2.zip dependencies-m2'
                 }
-                // We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
-                // 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
-                // since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
-                // repo will always be used by builds on the CI server.  This means that the Gradle will never download a
-                // newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
-                // problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
-                // building a development branch that is not finished yet.
-                sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
             }
         }
         
@@ -204,5 +196,18 @@ pipeline {
                                  onlyIfSuccessful: true
             }
         }
+		
+		post {
+		    always {
+			    // We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
+                // 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
+                // since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
+                // repo will always be used by builds on the CI server.  This means that the Gradle will never download a
+                // newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
+                // problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
+                // building a development branch that is not finished yet.
+                sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
+			}
+		}     
     }
 }
