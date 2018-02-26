@@ -100,13 +100,7 @@ class PartParsingTest {
 			model BigClock refines Clock{
 				
 				parts {
-					refine emptyModel {
-						metadata {
-						  			"name" : "My Part",
-						  			"description" : "EmptyModel Part",
-						  			"stereotypes" : ["part", "example"]
-						  		}
-						}
+					refine emptyModel
 				}
 			}
 		'''
@@ -118,24 +112,16 @@ class PartParsingTest {
 	}
 	
 	@Test
-	@Ignore
 	def void testDoesNotParseModelWithRefinedPartsWithTypeDelcared() {
 		val source = '''
 			package clocks.models
 			
 			import clocks.models.part.Clock
-			import foo.AnEmptyModel
 			
 			model BigClock refines Clock{
 				
 				parts {
-					refine AnEmptyModel emptyModel {
-						metadata {
-						  			"name" : "My Part",
-						  			"description" : "EmptyModel Part",
-						  			"stereotypes" : ["part", "example"]
-						  		}
-						}
+					refine AnEmptyModel emptyModel 
 				}
 			}
 		'''
@@ -145,7 +131,7 @@ class PartParsingTest {
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.PART_DECLARATION,
-			Diagnostic.LINKING_DIAGNOSTIC
+			null
 		)
 
 	}
@@ -282,17 +268,14 @@ class PartParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseANonRefinedModelThatRefinedAPart() {
 		val source = '''
 			package clocks.models
 			
-			import foo.AnEmptyModel
-			
 			model BigClock {
 			
 				parts {
-					refine AnEmptyModel emptyModel {
+					refine emptyModel {
 						metadata {
 									"name" : "My Part",
 									"description" : "EmptyModel Part",
@@ -310,24 +293,39 @@ class PartParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseRefinedModelOfAPartThatWasntInTheRefinedModel() {
 		val source = '''
 			package clocks.models
 			
-			import foo.AnEmptyModel
 			import clocks.models.part.Alarm
 			
 			model BigClock refines Alarm{
 			
 				parts {
-					refine AnEmptyModel emptyModel {
-						metadata {
-									"name" : "My Part",
-									"description" : "EmptyModel Part",
-									"stereotypes" : ["part", "example"]
-								}
-					}
+					refine superModel
+					
+				}
+			}
+		     '''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PART_DECLARATION, null)
+	}
+	
+	@Test
+	def void testDoesNotParseRefinedPartOfAType() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Alarm
+			
+			model BigClock refines Alarm{
+			
+				parts {
+					refine AnEmptyModel
+					
 				}
 			}
 		     '''
