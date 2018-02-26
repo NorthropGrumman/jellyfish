@@ -2,6 +2,8 @@ package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json;
 
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 
+import java.util.Objects;
+
 public class DependencyArtifact implements IBuildDependency {
 
    private String groupId;
@@ -45,5 +47,24 @@ public class DependencyArtifact implements IBuildDependency {
    public DependencyArtifact setGroup(ArtifactGroup group) {
       this.group = group;
       return this;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      }
+      if (!(o instanceof DependencyArtifact)) {
+         return false;
+      }
+      DependencyArtifact that = (DependencyArtifact) o;
+      return Objects.equals(groupId, that.groupId) &&
+             Objects.equals(artifactId, that.artifactId);
+   }
+
+   @Override
+   public int hashCode() {
+
+      return Objects.hash(groupId, artifactId);
    }
 }

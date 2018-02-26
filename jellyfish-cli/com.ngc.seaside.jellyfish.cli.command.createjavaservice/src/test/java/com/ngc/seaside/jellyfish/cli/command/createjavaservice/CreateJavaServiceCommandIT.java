@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFa
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -97,11 +98,11 @@ public class CreateJavaServiceCommandIT {
    @Mock
    private IDataFieldGenerationService dataFieldGenerationService;
 
-   @Mock
    private IBuildManagementService buildManagementService;
    
    @Before
    public void setup() throws Throwable {
+      buildManagementService = new MockedBuildManagementService();
       outputDirectory.newFile("settings.gradle");
 
       templateService = new MockedTemplateService()
@@ -204,16 +205,6 @@ public class CreateJavaServiceCommandIT {
       when(flow.getOutputs()).thenReturn(Collections.singleton(output));
       when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
       when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
-
-      when(buildManagementService.registerDependency(eq(jellyFishCommandOptions), any(String.class)))
-            .thenAnswer((Answer<IBuildDependency>) invocation -> {
-               String[] parts = invocation.getArgument(1).toString().split(":");
-               IBuildDependency d = mock(IBuildDependency.class);
-               when(d.getGroupId()).thenReturn(parts[0]);
-               when(d.getArtifactId()).thenReturn(parts[1]);
-               when(d.getVersionPropertyName()).thenReturn("version");
-               return d;
-            });
    }
 
    @Test

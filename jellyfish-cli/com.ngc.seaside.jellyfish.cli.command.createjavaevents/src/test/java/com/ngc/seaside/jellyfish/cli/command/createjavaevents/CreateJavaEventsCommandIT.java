@@ -13,11 +13,13 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -28,6 +30,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -42,6 +45,7 @@ import java.util.stream.Collectors;
 public class CreateJavaEventsCommandIT {
 
    private final CreateJavaEventsCommand cmd = new CreateJavaEventsCommand();
+
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
@@ -55,6 +59,7 @@ public class CreateJavaEventsCommandIT {
       cmd.setProjectNamingService(new MockedProjectNamingService());
       cmd.setDataFieldGenerationService(new MockedDataFieldGenerationService());
       cmd.setDataService(new MockedDataService());
+      cmd.setBuildManagementService(new MockedBuildManagementService());
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
                                                         .setTemplateDirectory(
                                                            CreateJavaEventsCommand.class.getPackage()

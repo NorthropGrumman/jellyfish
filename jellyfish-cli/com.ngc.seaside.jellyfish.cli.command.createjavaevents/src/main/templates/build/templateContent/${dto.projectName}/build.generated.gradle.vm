@@ -1,7 +1,7 @@
 #set($D='$')
 
 dependencies {
-	compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
+	compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
 }
 
 #if(! $dto.exportedPackages.isEmpty() )
