@@ -6,7 +6,7 @@ dependencies {
 #end
 
    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
+   compile "${serviceDto.getFormattedDependency('com.ngc.blocs:service.api')}"
    compile "org.osgi:osgi.core:${D}osgiVersion"
    compile "org.osgi:osgi.enterprise:${D}osgiVersion"
    compile "com.google.guava:guava:${D}guavaVersion"

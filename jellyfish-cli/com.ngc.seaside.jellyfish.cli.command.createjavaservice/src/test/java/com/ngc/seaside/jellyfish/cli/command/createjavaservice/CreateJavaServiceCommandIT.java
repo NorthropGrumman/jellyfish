@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +15,8 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFac
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -39,7 +42,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -91,6 +96,9 @@ public class CreateJavaServiceCommandIT {
 
    @Mock
    private IDataFieldGenerationService dataFieldGenerationService;
+
+   @Mock
+   private IBuildManagementService buildManagementService;
    
    @Before
    public void setup() throws Throwable {
@@ -102,7 +110,7 @@ public class CreateJavaServiceCommandIT {
                      CreateJavaServiceCommand.class.getPackage().getName(),
                      Paths.get("src", "main", "template"));
 
-      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService);
+      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService, buildManagementService);
 
       baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
       
@@ -196,6 +204,16 @@ public class CreateJavaServiceCommandIT {
       when(flow.getOutputs()).thenReturn(Collections.singleton(output));
       when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
       when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
+
+      when(buildManagementService.registerDependency(eq(jellyFishCommandOptions), any(String.class)))
+            .thenAnswer((Answer<IBuildDependency>) invocation -> {
+               String[] parts = invocation.getArgument(1).toString().split(":");
+               IBuildDependency d = mock(IBuildDependency.class);
+               when(d.getGroupId()).thenReturn(parts[0]);
+               when(d.getArtifactId()).thenReturn(parts[1]);
+               when(d.getVersionPropertyName()).thenReturn("version");
+               return d;
+            });
    }
 
    @Test
