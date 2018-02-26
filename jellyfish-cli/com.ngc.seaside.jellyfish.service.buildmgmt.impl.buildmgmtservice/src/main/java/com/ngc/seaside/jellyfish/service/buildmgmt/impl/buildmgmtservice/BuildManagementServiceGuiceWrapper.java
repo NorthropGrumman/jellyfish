@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 
@@ -24,15 +25,20 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
    }
 
    @Override
-   public Collection<IBuildDependency> getProjectDependencies(
-         IJellyFishCommandOptions options) {
-      return buildManagementService.getProjectDependencies(options);
+   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
+                                                                 DependencyType type) {
+      return buildManagementService.getRegisteredDependencies(options, type);
    }
 
    @Override
-   public Collection<IBuildDependency> getBuildDependencies(
-         IJellyFishCommandOptions options) {
-      return buildManagementService.getBuildDependencies(options);
+   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId,
+                                              String artifactId) {
+      return buildManagementService.registerDependency(options, groupId, artifactId);
+   }
+
+   @Override
+   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+      return buildManagementService.registerDependency(options, groupAndArtifact);
    }
 
    @Override

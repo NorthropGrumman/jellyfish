@@ -78,6 +78,7 @@ dependencies {
     implementation project(':jellyfish.service.config.impl.transportconfigurationservice')
     implementation project(':jellyfish.service.requirements.impl.requirementsservice')
     implementation project(':jellyfish.service.feature.impl.featureservice')
+    implementation project(':jellyfish.service.buildmgmt.impl.buildmgmtservice')
 
     implementation project(':jellyfish.service.impl.parameterservice')
     implementation project(':jellyfish.service.impl.promptuserservice')

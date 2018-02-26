@@ -2,7 +2,7 @@
    {
       "versionPropertyName": "protobufVersion",
       "version": "0.8.3",
-      "type": "BUILDSCRIPT",
+      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "com.google.protobuf",
@@ -11,9 +11,31 @@
       ]
    },
    {
+      "versionPropertyName": "sonarqubePluginVersion",
+      "version": "2.5",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "org.sonarsource.scanner.gradle",
+            "artifactId": "sonarqube-gradle-plugin"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "blocsPluginVersion",
+      "version": "0.5",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "gradle.plugin"
+         }
+      ]
+   },
+   {
       "versionPropertyName": "seasidePluginsVersion",
       "version": "2.3.0",
-      "type": "BUILDSCRIPT",
+      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
@@ -24,7 +46,7 @@
    {
       "versionPropertyName": "osgiVersion",
       "version": "6.0.0",
-      "type": "NORMAL",
+      "type": "normal",
       "artifacts": [
          {
             "groupId": "org.osgi",
@@ -39,7 +61,7 @@
    {
       "versionPropertyName": "blocsCoreVersion",
       "version": "2.2.0",
-      "type": "NORMAL",
+      "type": "normal",
       "artifacts": [
          {
             "groupId": "com.ngc.blocs",
@@ -48,13 +70,17 @@
          {
             "groupId": "com.ngc.blocs",
             "artifactId": "service.api"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "com.ngc.blocs:test.impl.common.testutilities"
          }
       ]
    },
    {
       "versionPropertyName": "starfishVersion",
       "version": "2.1.0",
-      "type": "NORMAL",
+      "type": "normal",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",

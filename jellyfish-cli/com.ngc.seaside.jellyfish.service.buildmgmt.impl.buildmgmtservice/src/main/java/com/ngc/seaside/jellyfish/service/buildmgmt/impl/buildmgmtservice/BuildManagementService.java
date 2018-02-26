@@ -7,9 +7,11 @@ import com.ngc.blocs.json.resource.impl.common.json.JsonResource;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.ArtifactGroup;
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.DependencyArtifact;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -19,28 +21,68 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+/**
+ * A stateful implementation of the {@code IBuildManagementService}.  Unlike most services, a new instance of this
+ * service should be used for each generation of project in Jellyfish.  Since Jellyfish only generates a single project
+ * per execution, this works fine.
+ *
+ * <p/>
+ *
+ * This implementation requires a JSON configuration file be located at {@link #DEPENDENCIES_FILE} when the service is
+ * activated.
+ */
 public class BuildManagementService implements IBuildManagementService {
 
+   /**
+    * The location of the file that contains the dependencies and their versions.
+    */
    private static final String DEPENDENCIES_FILE = "config/app/dependencies.json";
 
+   /**
+    * The registered artifacts.
+    */
+   private final Set<DependencyArtifact> registeredArtifacts = Collections.synchronizedSet(new TreeSet<>(
+         Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
+
+   /**
+    * The artifact information loaded from the JSON file.
+    */
    private Collection<ArtifactGroup> groups;
 
    private ILogService logService;
    private IResourceService resourceService;
 
    @Override
-   public Collection<IBuildDependency> getProjectDependencies(IJellyFishCommandOptions options) {
-      throw new UnsupportedOperationException("not implemented");
+   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options, DependencyType type) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(type, "type may not be null!");
+      return registeredArtifacts.stream()
+            .filter(d -> d.getGroup().getType() == type)
+            .collect(Collectors.toList());
    }
 
    @Override
-   public Collection<IBuildDependency> getBuildDependencies(IJellyFishCommandOptions options) {
-      throw new UnsupportedOperationException("not implemented");
+   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+      DependencyArtifact dependency = getDependency(options, groupId, artifactId);
+      registeredArtifacts.add(dependency);
+      return dependency;
    }
 
    @Override
-   public IBuildDependency getDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+      DependencyArtifact dependency = getDependency(options, groupAndArtifact);
+      registeredArtifacts.add(dependency);
+      return dependency;
+   }
+
+   @Override
+   public DependencyArtifact getDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(groupId, "groupId may not be null!");
       Preconditions.checkNotNull(artifactId, "artifactId may not be null!");
@@ -58,7 +100,7 @@ public class BuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public IBuildDependency getDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public DependencyArtifact getDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(groupAndArtifact, "groupAndArtifact may not be null!");
       String[] parts = groupAndArtifact.split(":");
@@ -79,7 +121,8 @@ public class BuildManagementService implements IBuildManagementService {
                DEPENDENCIES_FILE,
                json.getError()));
       }
-      groups = Arrays.asList(json.get());
+      groups = Collections.unmodifiableCollection(Arrays.asList(json.get()));
+      // Set the group pointer for each artifact.
       groups.forEach(g -> g.getArtifacts().forEach(a -> a.setGroup(g)));
 
       logService.debug(getClass(), "Activated.");

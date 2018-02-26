@@ -4,6 +4,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BuildManagementServiceTest {
@@ -84,6 +86,17 @@ public class BuildManagementServiceTest {
       assertEquals("version property name not correct!",
                    "blocsCoreVersion",
                    dependency.getVersionPropertyName());
+   }
+
+   @Test
+   public void testDoesRegisterDependency() {
+      IBuildDependency dependency = service.registerDependency(options, "com.ngc.blocs", "api");
+      assertTrue("did not register normal dependency!",
+                 service.getRegisteredDependencies(options, DependencyType.NORMAL).contains(dependency));
+
+      dependency = service.registerDependency(options, "com.ngc.seaside", "gradle.plugins");
+      assertTrue("did not register buildscript dependency!",
+                 service.getRegisteredDependencies(options, DependencyType.BUILDSCRIPT).contains(dependency));
    }
 
    @Test(expected = IllegalArgumentException.class)

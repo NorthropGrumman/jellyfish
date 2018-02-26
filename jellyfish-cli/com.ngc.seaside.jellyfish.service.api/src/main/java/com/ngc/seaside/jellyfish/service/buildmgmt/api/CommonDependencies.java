@@ -1,5 +1,8 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.api;
 
+/**
+ * Contains group and artifact IDs for commonly referenced dependencies.
+ */
 public enum CommonDependencies {
 
    PROTOBUF_GRADLE_PLUGIN("com.google.protobuf", "protobuf-gradle-plugin"),
@@ -21,10 +24,16 @@ public enum CommonDependencies {
       this.artifactId = artifactId;
    }
 
+   /**
+    * Gets the group ID of the dependency.
+    */
    public String getGropuId() {
       return gropuId;
    }
 
+   /**
+    * Gets the artifact ID of the dependency.
+    */
    public String getArtifactId() {
       return artifactId;
    }

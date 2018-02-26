@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json;
 
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
+
 import java.util.List;
 
 public class ArtifactGroup {
