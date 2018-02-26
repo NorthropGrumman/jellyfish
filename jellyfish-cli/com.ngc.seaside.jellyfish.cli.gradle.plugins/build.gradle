@@ -3,6 +3,7 @@ apply plugin: 'maven'
 
 configurations {
     commandTemplate
+    jfResources
 }
 
 dependencies {
@@ -33,6 +34,8 @@ dependencies {
     commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createdomain', configuration: 'commandTemplate')
+
+    jfResources project(path: ':jellyfish', configuration: 'jfResources')
 }
 
 // Include the command templates in the JAR.
@@ -55,4 +58,17 @@ task copyCommandTemplate(type: Copy) {
     into "${buildDir}/commands-templates/templates/"
 }
 
-jar.dependsOn(copyCommandTemplate)
+task copyJfResources(type: Copy) {
+    from configurations.jfResources {
+        rename { "cli-resources.zip" }
+    }
+    into "${buildDir}/resources"
+}
+
+task unpackJfResources(type: Copy, dependsOn: copyJfResources) {
+    from zipTree("${buildDir}/resources/cli-resources.zip")
+    into file("${buildDir}/resources/main")
+
+}
+
+jar.dependsOn(copyCommandTemplate, unpackJfResources)
