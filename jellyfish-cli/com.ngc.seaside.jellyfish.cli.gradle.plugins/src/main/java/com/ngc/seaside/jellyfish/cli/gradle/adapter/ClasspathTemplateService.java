@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.gradle;
+package com.ngc.seaside.jellyfish.cli.gradle.adapter;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class JarTemplateService extends TemplateService {
+/**
+ * An implementation of {@code ITemplateService} that loads template resources (IE, ZIP) directly from the classpath.
+ */
+public class ClasspathTemplateService extends TemplateService {
 
    private final static String CONFIG_PROPERTIES_FILE = "com.ngc.seaside.jellyfish.cli.gradle.config.properties";
    private final static String VERSION_PROPERTY = "version";
@@ -24,9 +27,9 @@ public class JarTemplateService extends TemplateService {
    private final String version;
 
    @Inject
-   public JarTemplateService(ILogService logService,
-                             IResourceService resourceService,
-                             IPropertyService propertyService) {
+   public ClasspathTemplateService(ILogService logService,
+                                   IResourceService resourceService,
+                                   IPropertyService propertyService) {
       version = loadVersion();
       super.setLogService(logService);
       super.setResourceService(resourceService);
@@ -52,7 +55,8 @@ public class JarTemplateService extends TemplateService {
 
    private static String loadVersion() {
       String version;
-      try (InputStream is = JarTemplateService.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES_FILE)) {
+      try (InputStream is = ClasspathTemplateService.class.getClassLoader()
+            .getResourceAsStream(CONFIG_PROPERTIES_FILE)) {
          Properties props = new Properties();
          props.load(is);
          version = props.getProperty(VERSION_PROPERTY);
@@ -67,7 +71,7 @@ public class JarTemplateService extends TemplateService {
 
       @Override
       protected void configure() {
-         bind(ITemplateService.class).to(JarTemplateService.class);
+         bind(ITemplateService.class).to(ClasspathTemplateService.class);
       }
    };
 }

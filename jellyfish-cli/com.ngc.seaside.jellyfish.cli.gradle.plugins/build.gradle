@@ -10,14 +10,14 @@ dependencies {
     implementation project(':jellyfish')
     implementation project(':jellyfish.api')
 
+    implementation project(':guice.modules')
     implementation project(':jellyfish.service.impl.templateservice')
 
     implementation gradleApi()
     implementation localGroovy()
-
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
-
+    implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
     implementation "com.google.inject:guice:$guiceVersion"
 
     commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
