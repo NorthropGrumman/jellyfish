@@ -7,6 +7,16 @@
             "groupId": "com.google.protobuf",
             "artifactId": "protobuf-gradle-plugin",
             "scope": "BUILDSCRIPT"
+         },
+         {
+            "groupId": "com.google.protobuf",
+            "artifactId": "protobuf-java",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.google.protobuf",
+            "artifactId": "protoc",
+            "scope": "BUILD"
          }
       ]
    },
@@ -115,7 +125,6 @@
    {
       "versionPropertyName": "mockitoVersion",
       "version": "2.7.14",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "org.mockito",
@@ -127,7 +136,6 @@
    {
       "versionPropertyName": "junitVersion",
       "version": "4.12",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "junit",

@@ -28,12 +28,12 @@
          {
             "groupId": "org.osgi",
             "artifactId": "osgi.core",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          },
          {
             "groupId": "org.osgi",
             "artifactId": "osgi.enterprise",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          }
       ]
    },
@@ -44,12 +44,12 @@
          {
             "groupId": "com.ngc.blocs",
             "artifactId": "api",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.blocs",
             "artifactId": "service.api",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          }
       ]
    },
@@ -60,17 +60,17 @@
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "api",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "service.transport.api",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "service.correlation.impl.correlationservice",
-            "scope": "NORMAL"
+            "scope": "BUILD"
          }
       ]
    }

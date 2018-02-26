@@ -91,8 +91,8 @@ public class BuildManagementServiceTest {
    @Test
    public void testDoesRegisterDependency() {
       IBuildDependency dependency = service.registerDependency(options, "com.ngc.blocs", "api");
-      assertTrue("did not register normal dependency!",
-                 service.getRegisteredDependencies(options, DependencyScope.NORMAL).contains(dependency));
+      assertTrue("did not register build dependency!",
+                 service.getRegisteredDependencies(options, DependencyScope.BUILD).contains(dependency));
 
       dependency = service.registerDependency(options, "com.ngc.seaside", "gradle.plugins");
       assertTrue("did not register buildscript dependency!",
