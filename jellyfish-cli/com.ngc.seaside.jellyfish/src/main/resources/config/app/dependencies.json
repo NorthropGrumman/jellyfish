@@ -84,7 +84,7 @@
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "api"
+            "artifactId": "service.api"
          },
          {
             "groupId": "com.ngc.seaside",
@@ -93,6 +93,39 @@
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "service.correlation.impl.correlationservice"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "guavaVersion",
+      "version": "22.0",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "com.google.guava",
+            "artifactId": "guava"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "mockitoVersion",
+      "version": "2.7.14",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "org.mockito",
+            "artifactId": "mockito-core"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "junitVersion",
+      "version": "4.12",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "junit",
+            "artifactId": "junit"
          }
       ]
    }
