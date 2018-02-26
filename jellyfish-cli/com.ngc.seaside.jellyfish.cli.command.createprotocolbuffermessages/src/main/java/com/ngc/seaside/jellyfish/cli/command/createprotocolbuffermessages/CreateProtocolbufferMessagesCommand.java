@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -60,6 +61,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
    private IDataFieldGenerationService dataFieldGenerationService;
    private IDataService dataService;
    private ITemplateService templateService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public String getName() {
@@ -85,7 +87,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
       Map<INamedChild<IPackage>, Boolean> map = dataService.aggregateNestedFields(model);
 
-      MessagesDto messagesDto = new MessagesDto();
+      MessagesDto messagesDto = new MessagesDto(buildManagementService, options);
       messagesDto.setProjectName(projectInfo.getDirectoryName());
       messagesDto.setExportedPackages(map.keySet()
                                          .stream()
@@ -201,6 +203,16 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
 
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {

@@ -14,4 +14,3 @@ dependencies {
    testCompile "${serviceDto.getFormattedDependency('junit:junit')}"
    testCompile "${serviceDto.getFormattedDependency('org.mockito:mockito-core')}"
 }
-p

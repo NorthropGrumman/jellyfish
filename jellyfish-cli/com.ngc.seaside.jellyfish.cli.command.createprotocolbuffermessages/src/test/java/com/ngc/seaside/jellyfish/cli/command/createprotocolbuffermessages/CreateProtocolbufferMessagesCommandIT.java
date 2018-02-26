@@ -13,6 +13,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
@@ -55,6 +56,7 @@ public class CreateProtocolbufferMessagesCommandIT {
       cmd.setProjectNamingService(new MockedProjectNamingService());
       cmd.setDataFieldGenerationService(new MockedDataFieldGenerationService());
       cmd.setDataService(new MockedDataService());
+      cmd.setBuildManagementService(new MockedBuildManagementService());
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
                                                         .setTemplateDirectory(
                                                            CreateProtocolbufferMessagesCommand.class.getPackage()
