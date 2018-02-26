@@ -2,6 +2,7 @@ apply plugin: 'com.ngc.seaside.application'
 
 configurations {
     commandTemplate
+    resources
 }
 
 dependencies {
@@ -67,8 +68,6 @@ dependencies {
 
     implementation project(':jellyfish.cli.command.createjavacucumbertests')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
-
-
 
     implementation project(':guice.modules')
     implementation project(':jellyfish.service.name.impl.namingservices')

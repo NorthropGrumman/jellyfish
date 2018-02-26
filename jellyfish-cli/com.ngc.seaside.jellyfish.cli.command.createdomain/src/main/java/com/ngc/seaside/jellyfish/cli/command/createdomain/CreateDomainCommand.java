@@ -8,6 +8,7 @@ import com.ngc.blocs.domain.impl.common.generated.Tproperty;
 import com.ngc.blocs.jaxb.impl.common.JAXBUtilities;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -62,7 +63,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    private static final String NAME = "create-domain";
    private static final IUsage USAGE = createUsage();
-   static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
+   private static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
+   static final String BLOCS_PLUGINS_DEPENDENCY = "com.ngc.blocs:gradle.plugin";
 
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
@@ -89,6 +91,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private IResourceService resourceService;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public String getName() {
@@ -132,6 +135,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
                                                     true)) {
          updateGradleDotSettings(outputDir, projectInfo);
       }
+
+      // Register blocs plugins as a required dependency.
+      buildManagementService.registerDependency(commandOptions, BLOCS_PLUGINS_DEPENDENCY);
 
       logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
@@ -205,6 +211,16 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
@@ -513,7 +529,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    /**
     * Converts the IEnumeration to a Tobject.
     *
-    * @param enum enumeration
     * @param packageGenerator package generating function
     * @param packages set of packages that this method should add to
     * @return domain object
@@ -541,7 +556,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
     *
     * @param field IDataField
     * @param packageGenerator package generating function
-    * @param packages set of packages that this method should add to
     * @return domain property
     */
    private static Tproperty convert(IDataField field, Function<INamedChild<IPackage>, String> packageGenerator) {
