@@ -14,7 +14,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;

@@ -145,9 +145,24 @@ public class TestingFiles {
    }
 
    /**
+    * Helper method to delete folder/files
+    *
+    * @param file file/folder to delete
+    */
+   public static void deleteDir(File file) {
+      File[] contents = file.listFiles();
+      if (contents != null) {
+         for (File f : contents) {
+            deleteDir(f);
+         }
+      }
+      file.delete();
+   }
+
+   /**
     * Gets the content of a file and strips any trailing empty lines
     *
-    * @param path the path of the file to read
+    * @param filepath the path of the file to read
     * @return the content of the file as a list of Strings
     */
    private static List<String> getFileContent(Path filepath) throws IOException {
