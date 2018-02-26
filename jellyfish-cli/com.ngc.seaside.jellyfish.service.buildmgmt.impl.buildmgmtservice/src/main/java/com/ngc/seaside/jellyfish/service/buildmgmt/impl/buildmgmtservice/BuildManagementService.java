@@ -7,7 +7,7 @@ import com.ngc.blocs.json.resource.impl.common.json.JsonResource;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.ArtifactGroup;
@@ -59,11 +59,12 @@ public class BuildManagementService implements IBuildManagementService {
    private IResourceService resourceService;
 
    @Override
-   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options, DependencyType type) {
+   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
+                                                                 DependencyScope scope) {
       Preconditions.checkNotNull(options, "options may not be null!");
-      Preconditions.checkNotNull(type, "type may not be null!");
+      Preconditions.checkNotNull(scope, "scope may not be null!");
       return registeredArtifacts.stream()
-            .filter(d -> d.getGroup().getType() == type)
+            .filter(d -> d.getScope() == scope)
             .collect(Collectors.toList());
    }
 

@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.test.service;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 
@@ -11,7 +11,7 @@ public class MockedBuildManagementService implements IBuildManagementService {
 
    @Override
    public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
-                                                                 DependencyType type) {
+                                                                 DependencyScope type) {
       throw new UnsupportedOperationException("not implemented");
    }
 

@@ -4,7 +4,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyType;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 
 import org.junit.Before;
@@ -92,11 +92,11 @@ public class BuildManagementServiceTest {
    public void testDoesRegisterDependency() {
       IBuildDependency dependency = service.registerDependency(options, "com.ngc.blocs", "api");
       assertTrue("did not register normal dependency!",
-                 service.getRegisteredDependencies(options, DependencyType.NORMAL).contains(dependency));
+                 service.getRegisteredDependencies(options, DependencyScope.NORMAL).contains(dependency));
 
       dependency = service.registerDependency(options, "com.ngc.seaside", "gradle.plugins");
       assertTrue("did not register buildscript dependency!",
-                 service.getRegisteredDependencies(options, DependencyType.BUILDSCRIPT).contains(dependency));
+                 service.getRegisteredDependencies(options, DependencyScope.BUILDSCRIPT).contains(dependency));
    }
 
    @Test(expected = IllegalArgumentException.class)

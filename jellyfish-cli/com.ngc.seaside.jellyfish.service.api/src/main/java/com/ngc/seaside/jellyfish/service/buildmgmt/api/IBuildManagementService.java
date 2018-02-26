@@ -13,19 +13,19 @@ import java.util.Collection;
 public interface IBuildManagementService {
 
    /**
-    * Gets all dependencies of the given type that have been {@link #registerDependency(IJellyFishCommandOptions,
+    * Gets all dependencies of the given scope that have been {@link #registerDependency(IJellyFishCommandOptions,
     * String) registered}.
     *
     * @param options the options used in the current invocation of Jellyfish
-    * @param type    the type of dependencies to get
+    * @param scope   the type of dependencies to get
     * @return the registered dependencies of the given type
     */
-   Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options, DependencyType type);
+   Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options, DependencyScope scope);
 
    /**
     * Gets the dependency with the given group and artifact ID and registers the dependency as required.  Once this
     * operation is invoked, the dependency will be included in the results of {@link
-    * #getRegisteredDependencies(IJellyFishCommandOptions, DependencyType)}.
+    * #getRegisteredDependencies(IJellyFishCommandOptions, DependencyScope)}.
     *
     * @param options    the options used in the current invocation of Jellyfish
     * @param groupId    the group ID of the dependency
@@ -39,7 +39,7 @@ public interface IBuildManagementService {
     * Gets the dependency with the given group and artifact ID and registers the dependency as required.  The format of
     * the group and artifact ID should be {@code <groupId>:<artifactId>}.  Once this operation is invoked, the
     * dependency will be included in the results of {@link #getRegisteredDependencies(IJellyFishCommandOptions,
-    * DependencyType)}.
+    * DependencyScope)}.
     *
     * @param options          the options used in the current invocation of Jellyfish
     * @param groupAndArtifact the group and artifact ID in the format {@code <groupId>:<artifactId>}

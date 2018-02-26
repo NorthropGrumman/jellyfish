@@ -2,108 +2,113 @@
    {
       "versionPropertyName": "protobufVersion",
       "version": "0.8.3",
-      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "com.google.protobuf",
-            "artifactId": "protobuf-gradle-plugin"
+            "artifactId": "protobuf-gradle-plugin",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "sonarqubePluginVersion",
       "version": "2.5",
-      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "org.sonarsource.scanner.gradle",
-            "artifactId": "sonarqube-gradle-plugin"
+            "artifactId": "sonarqube-gradle-plugin",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "blocsPluginVersion",
       "version": "0.5",
-      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "gradle.plugin"
+            "artifactId": "gradle.plugin",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "seasidePluginsVersion",
       "version": "2.3.0",
-      "type": "buildscript",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "gradle.plugins"
+            "artifactId": "gradle.plugins",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "osgiVersion",
       "version": "6.0.0",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "org.osgi",
-            "artifactId": "osgi.core"
+            "artifactId": "osgi.core",
+            "scope": "BUILD"
          },
          {
             "groupId": "org.osgi",
-            "artifactId": "osgi.enterprise"
+            "artifactId": "osgi.enterprise",
+            "scope": "BUILD"
          }
       ]
    },
    {
       "versionPropertyName": "blocsCoreVersion",
       "version": "2.2.0",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "api"
+            "artifactId": "api",
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "service.api"
+            "artifactId": "service.api",
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "com.ngc.blocs:test.impl.common.testutilities"
+            "artifactId": "com.ngc.blocs:test.impl.common.testutilities",
+            "scope": "BUILD"
          }
       ]
    },
    {
       "versionPropertyName": "starfishVersion",
       "version": "2.1.0",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.api"
+            "artifactId": "service.api",
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.transport.api"
+            "artifactId": "service.transport.api",
+            "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.correlation.impl.correlationservice"
+            "artifactId": "service.correlation.impl.correlationservice",
+            "scope": "BUILD"
          }
       ]
    },
    {
       "versionPropertyName": "guavaVersion",
       "version": "22.0",
-      "type": "normal",
       "artifacts": [
          {
             "groupId": "com.google.guava",
-            "artifactId": "guava"
+            "artifactId": "guava",
+            "scope": "BUILD"
          }
       ]
    },
@@ -114,7 +119,8 @@
       "artifacts": [
          {
             "groupId": "org.mockito",
-            "artifactId": "mockito-core"
+            "artifactId": "mockito-core",
+            "scope": "TEST"
          }
       ]
    },
@@ -125,7 +131,8 @@
       "artifacts": [
          {
             "groupId": "junit",
-            "artifactId": "junit"
+            "artifactId": "junit",
+            "scope": "TEST"
          }
       ]
    }

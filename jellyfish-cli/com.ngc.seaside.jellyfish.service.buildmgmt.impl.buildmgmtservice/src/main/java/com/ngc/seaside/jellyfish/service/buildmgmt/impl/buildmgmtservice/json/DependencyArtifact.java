@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json;
 
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 
 import java.util.Objects;
@@ -8,6 +9,7 @@ public class DependencyArtifact implements IBuildDependency {
 
    private String groupId;
    private String artifactId;
+   private DependencyScope scope;
    private ArtifactGroup group;
 
    @Override
@@ -40,6 +42,15 @@ public class DependencyArtifact implements IBuildDependency {
       return this;
    }
 
+   public DependencyScope getScope() {
+      return scope;
+   }
+
+   public DependencyArtifact setScope(DependencyScope scope) {
+      this.scope = scope;
+      return this;
+   }
+
    public ArtifactGroup getGroup() {
       return group;
    }
@@ -59,12 +70,13 @@ public class DependencyArtifact implements IBuildDependency {
       }
       DependencyArtifact that = (DependencyArtifact) o;
       return Objects.equals(groupId, that.groupId) &&
-             Objects.equals(artifactId, that.artifactId);
+             Objects.equals(artifactId, that.artifactId) &&
+             scope == that.scope;
    }
 
    @Override
    public int hashCode() {
 
-      return Objects.hash(groupId, artifactId);
+      return Objects.hash(groupId, artifactId, scope);
    }
 }

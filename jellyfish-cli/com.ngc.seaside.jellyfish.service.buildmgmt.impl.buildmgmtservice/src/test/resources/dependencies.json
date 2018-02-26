@@ -2,71 +2,75 @@
    {
       "versionPropertyName": "protobufVersion",
       "version": "0.8.3",
-      "type": "BUILDSCRIPT",
       "artifacts": [
          {
             "groupId": "com.google.protobuf",
-            "artifactId": "protobuf-gradle-plugin"
+            "artifactId": "protobuf-gradle-plugin",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "seasidePluginsVersion",
       "version": "2.3.0",
-      "type": "BUILDSCRIPT",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "gradle.plugins"
+            "artifactId": "gradle.plugins",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },
    {
       "versionPropertyName": "osgiVersion",
       "version": "6.0.0",
-      "type": "NORMAL",
       "artifacts": [
          {
             "groupId": "org.osgi",
-            "artifactId": "osgi.core"
+            "artifactId": "osgi.core",
+            "scope": "NORMAL"
          },
          {
             "groupId": "org.osgi",
-            "artifactId": "osgi.enterprise"
+            "artifactId": "osgi.enterprise",
+            "scope": "NORMAL"
          }
       ]
    },
    {
       "versionPropertyName": "blocsCoreVersion",
       "version": "2.2.0",
-      "type": "NORMAL",
       "artifacts": [
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "api"
+            "artifactId": "api",
+            "scope": "NORMAL"
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "service.api"
+            "artifactId": "service.api",
+            "scope": "NORMAL"
          }
       ]
    },
    {
       "versionPropertyName": "starfishVersion",
       "version": "2.1.0",
-      "type": "NORMAL",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "api"
+            "artifactId": "api",
+            "scope": "NORMAL"
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.transport.api"
+            "artifactId": "service.transport.api",
+            "scope": "NORMAL"
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.correlation.impl.correlationservice"
+            "artifactId": "service.correlation.impl.correlationservice",
+            "scope": "NORMAL"
          }
       ]
    }
