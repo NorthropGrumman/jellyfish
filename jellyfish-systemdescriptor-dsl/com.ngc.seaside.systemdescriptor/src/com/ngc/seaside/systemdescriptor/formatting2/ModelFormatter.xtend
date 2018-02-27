@@ -6,7 +6,7 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 class ModelFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Model model, extension IFormattableDocument document) {
         model.regionFor.keyword('model').prepend[noIndentation]
-        model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+        //model.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
         if (model.metadata !== null) {
             model.metadata.format
@@ -20,10 +20,10 @@ class ModelFormatter extends AbstractSystemDescriptorFormatter {
         model.links.format
         model.scenarios.forEach[format]
 
-		model.regionFor.keyword('}').append[newLine]
+		//model.regionFor.keyword('}').append[newLine]
 
-        var begin = model.regionFor.keyword('model')
-        var end = model.regionFor.keyword('}')
-        interior(begin, end)[indent]
+        //var begin = model.regionFor.keyword('model')
+        //var end = model.regionFor.keyword('}')
+        //interior(begin, end)[indent]
     }
 }

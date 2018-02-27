@@ -11,7 +11,7 @@ class ElementFormatter extends AbstractSystemDescriptorFormatter {
 
         if(element.metadata !== null) {
             element.metadata.format;
-            element.metadata.append[newLines = 2; highPriority]
+            //element.metadata.append[newLines = 2; highPriority]
         }
 
         var begin = element.regionFor.keyword('{')

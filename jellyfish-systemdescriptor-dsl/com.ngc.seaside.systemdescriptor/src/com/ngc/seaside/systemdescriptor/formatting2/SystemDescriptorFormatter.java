@@ -152,17 +152,23 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 		for (EClass clazz : getTypesOf(object)) {
 			AbstractSystemDescriptorFormatter f = formatters.get(clazz);
 			if (f != null) {
-				replacements.addAll(f.format(request));
+				System.out.println("Calling DO FORMAT " + f.getClass() + " for " + clazz.getName());
+				//replacements.addAll(f.format(request));
+				replacements = f.format(request);
 			}
 		}
 
+		System.out.println("OUT");
+		
 		return replacements;
 	}
 
 	private void doFormat(EObject object, IFormattableDocument document) {
+		System.out.println("+ doFormat");
 		for (EClass clazz : getTypesOf(object)) {
 			AbstractSystemDescriptorFormatter f = formatters.get(clazz);
 			if (f != null) {
+				System.out.println("Calling " + f.getClass() + " for " + clazz.getName());
 				// Necessary to avoid NPEs due to how AbstractFormatter2 is
 				// setup.
 				f.initalize(request);
@@ -173,6 +179,7 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 				}
 			}
 		}
+		System.out.println("- doFormat");
 	}
 
 	/**

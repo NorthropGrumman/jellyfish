@@ -22,7 +22,7 @@ class ModelFormattingTest {
 
 		model Model {
 			metadata {
-				"a" : 1
+					"a" : 1
 			}
 		
 			input {
@@ -69,7 +69,9 @@ class ModelFormattingTest {
 	
 	@Test
 	def void testModelFormatting() {
-		formattingUtils.testFormatter(formattedModel)
+		formattingUtils.testFormat(formattedModel, FormattingTestUtils.ONE_LINE_MALFORMATTER)
+		//formattingUtils.testFormat(formattedModel, FormattingTestUtils.RANDOM_SPACING_MALFORMATTER)
+		//formattingUtils.testFormat(formattedModel, FormattingTestUtils.PASSTHROUGH_MALFORMATTER)
 	}
 	
 }

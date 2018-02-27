@@ -9,14 +9,16 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class MetadataFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Metadata metadata, extension IFormattableDocument document) {
+    	metadata.regionFor.keyword('metadata').prepend[newLine]    	
+    	
         metadata.json.format
-        metadata.append[newLines = 2]
+        metadata.append[setNewLines(2)]
     }
 
     def dispatch void format(JsonObject json, extension IFormattableDocument document) {
         var begin = json.regionFor.keyword('{').prepend[oneSpace]
         var end = json.regionFor.keyword('}')
-        interior(begin, end)[indent]
+       interior(begin, end)[indent]
 
         for (Member member : json.members) {
             member.format
