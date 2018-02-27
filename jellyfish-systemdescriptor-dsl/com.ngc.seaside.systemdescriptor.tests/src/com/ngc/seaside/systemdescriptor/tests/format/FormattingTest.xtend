@@ -201,6 +201,14 @@ class FormattingTest {
 		]
 	}
 
+	@Test
+	def void testJumbledExample5() {
+		assertFormatted[
+			expectation = formattedExample5
+			toBeFormatted = formattedExample5.replaceAll("\r|\n", " ")
+		]
+	}
+
 	var formattedExample1 = '''
 		package com.ngc.seaside.threateval
 
@@ -355,6 +363,17 @@ class FormattingTest {
 				}
 			}
 			FIELD4
+		}
+	'''
+
+	var formattedExample5 = '''
+		package com.ngc.seaside.common.datatype
+		
+		import com.ngc.seaside.common.datatype.GPSTime
+		
+		data FooTime extends GPSTime {
+			int moreSeconds
+			int andStuff
 		}
 	'''
 }

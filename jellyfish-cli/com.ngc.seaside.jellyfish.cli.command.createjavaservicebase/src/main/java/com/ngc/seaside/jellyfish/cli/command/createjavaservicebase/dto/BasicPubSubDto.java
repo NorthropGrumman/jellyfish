@@ -11,44 +11,48 @@ public class BasicPubSubDto {
    private String serviceMethod;
    private String scenarioName;
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
-   
-	public String getName() {
-		return name;
-	}
-	
-	public BasicPubSubDto setName(String name) {
-		this.name = name;
-		return this;
-	}
-	
-	public InputDto getInput() {
-		return input;
-	}
-	
-	public BasicPubSubDto setInput(InputDto input) {
-		this.input = input;
-		return this;
-	}
-	
-	public PublishDto getOutput() {
-		return output;
-	}
-	
-	public BasicPubSubDto setOutput(PublishDto output) {
-		this.output = output;
-		return this;
-	}
-	
-	public String getServiceMethod() {
-		return serviceMethod;
-	}
-	
-	public BasicPubSubDto setServiceMethod(String serviceMethod) {
-		this.serviceMethod = serviceMethod;
-		return this;
-	}
-	
-	public String getScenarioName() {
+
+   public boolean isCorrelating() {
+      return !inputOutputCorrelations.isEmpty();
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public BasicPubSubDto setName(String name) {
+      this.name = name;
+      return this;
+   }
+
+   public InputDto getInput() {
+      return input;
+   }
+
+   public BasicPubSubDto setInput(InputDto input) {
+      this.input = input;
+      return this;
+   }
+
+   public PublishDto getOutput() {
+      return output;
+   }
+
+   public BasicPubSubDto setOutput(PublishDto output) {
+      this.output = output;
+      return this;
+   }
+
+   public String getServiceMethod() {
+      return serviceMethod;
+   }
+
+   public BasicPubSubDto setServiceMethod(String serviceMethod) {
+      this.serviceMethod = serviceMethod;
+      return this;
+   }
+
+   public String getScenarioName() {
       return scenarioName;
    }
 
@@ -56,14 +60,14 @@ public class BasicPubSubDto {
       this.scenarioName = scenarioName;
       return this;
    }
-	
-	public List<IOCorrelationDto> getInputOutputCorrelations() {
-		return inputOutputCorrelations;
-	}
-	
-	public BasicPubSubDto setInputOutputCorrelations(List<IOCorrelationDto> inputOutputCorrelations) {
-		this.inputOutputCorrelations = inputOutputCorrelations;
-		return this;
-	}
+
+   public List<IOCorrelationDto> getInputOutputCorrelations() {
+      return inputOutputCorrelations;
+   }
+
+   public BasicPubSubDto setInputOutputCorrelations(List<IOCorrelationDto> inputOutputCorrelations) {
+      this.inputOutputCorrelations = inputOutputCorrelations;
+      return this;
+   }
 
 }

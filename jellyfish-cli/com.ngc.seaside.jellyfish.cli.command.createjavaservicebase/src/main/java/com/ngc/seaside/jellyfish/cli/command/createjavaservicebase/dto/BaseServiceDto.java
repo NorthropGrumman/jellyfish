@@ -18,6 +18,8 @@ public class BaseServiceDto {
    private Set<String> exportedPackages;
    private EnumDto topics;
    private IModel model;
+   private boolean correlationRequestHandlingEnabled;
+   private boolean correlationServiceRequired;
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
    private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>(); 
@@ -157,4 +159,21 @@ public class BaseServiceDto {
       return this;
    }
 
+   public boolean isCorrelationRequestHandlingEnabled() {
+      return correlationRequestHandlingEnabled;
+   }
+
+   public BaseServiceDto setCorrelationRequestHandlingEnabled(boolean correlationRequestHandlingEnabled) {
+      this.correlationRequestHandlingEnabled = correlationRequestHandlingEnabled;
+      return this;
+   }
+
+   public boolean isCorrelationServiceRequired() {
+      return correlationServiceRequired;
+   }
+
+   public BaseServiceDto setCorrelationServiceRequired(boolean correlationServiceRequired) {
+      this.correlationServiceRequired = correlationServiceRequired;
+      return this;
+   }
 }

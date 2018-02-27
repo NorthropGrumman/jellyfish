@@ -1,10 +1,7 @@
 package com.ngc.seaside.systemdescriptor.formatting2
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Input
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Links
 
 class ModelFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Model model, extension IFormattableDocument document) {

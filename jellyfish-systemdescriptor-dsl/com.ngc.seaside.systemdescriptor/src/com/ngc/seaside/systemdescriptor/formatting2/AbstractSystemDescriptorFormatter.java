@@ -32,7 +32,7 @@ public class AbstractSystemDescriptorFormatter extends AbstractFormatter2 {
     }
 
     public void setRootFormatter(SystemDescriptorFormatter rootFormatter) {
-        // This is called by SystemDescriptorFormatter at registeration time.
+        // This is called by SystemDescriptorFormatter at registration time.
         this.rootFormatter = rootFormatter;
     }
 

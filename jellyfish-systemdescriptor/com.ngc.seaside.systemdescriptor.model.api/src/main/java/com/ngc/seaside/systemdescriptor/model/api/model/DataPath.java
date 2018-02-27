@@ -71,8 +71,8 @@ class DataPath implements IDataPath {
                field = optionalField.get();
                break;
             }
-            if (data.getSuperDataType().isPresent()) {
-               data = data.getSuperDataType().get();
+            if (data.getExtendedDataType().isPresent()) {
+               data = data.getExtendedDataType().get();
             } else {
                throw new IllegalArgumentException(
                      "Cannot resolve nested data field from model " + model.getFullyQualifiedName() + ": "
@@ -134,8 +134,8 @@ class DataPath implements IDataPath {
                field = optionalField.get();
                break;
             }
-            if (data.getSuperDataType().isPresent()) {
-               data = data.getSuperDataType().get();
+            if (data.getExtendedDataType().isPresent()) {
+               data = data.getExtendedDataType().get();
             } else {
                throw new IllegalArgumentException(
                      "Cannot resolve nested data field from model " + model.getFullyQualifiedName() + ": "
