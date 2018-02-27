@@ -119,7 +119,8 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = model.regionFor.keyword('model')
 		var end = model.regionFor.keyword('}')
 		interior(begin, end)[indent]
-
+		
+		model.regionFor.keyword('}').append[noSpace].append[newLine]
 	}
 
 	def dispatch void format(
@@ -318,7 +319,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(
 		Parts parts,
 		extension IFormattableDocument document
-	) {
+	) {		
 		var begin = parts.regionFor.keyword('parts')
 		var end = parts.regionFor.keyword('}')
 
@@ -387,10 +388,9 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		Data data,
 		extension IFormattableDocument document
 	) {
-		var begin = data.regionFor.keyword('data')
-		var end = data.regionFor.keyword('}')
+		data.regionFor.keyword('data').prepend[noIndentation]
+		data.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
-		data.prepend[setNewLines(2)]
 
 		if(data.metadata !== null) {
 			data.metadata.format;
@@ -401,7 +401,11 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 			dec.prepend[newLine]
 			dec.format;
 		}
+		
+		data.regionFor.keyword('}').append[noSpace].append[newLine]
 
+		var begin = data.regionFor.keyword('data')
+		var end = data.regionFor.keyword('}')
 		interior(begin, end)[indent]
 	}
 
