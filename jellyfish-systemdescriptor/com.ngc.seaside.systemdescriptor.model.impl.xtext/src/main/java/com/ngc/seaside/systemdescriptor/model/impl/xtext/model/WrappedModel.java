@@ -31,8 +31,11 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -165,7 +168,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       m.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
       model.getRequiredModels()
             .stream()
-            .map(i -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, i))
+            .map(i -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, i))
             .forEach(m.getRequires().getDeclarations()::add);
 
       m.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
@@ -252,8 +255,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private void initRequires() {
       if (wrapped.getRequires() == null) {
          requires = new SelfInitializingWrappingNamedChildCollection<>(
-               d -> new WrappedRequireModelReferenceField(resolver, d),
-               d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+        	   d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
@@ -262,11 +265,22 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       } else {
          requires = new WrappingNamedChildCollection<>(
                wrapped.getRequires().getDeclarations(),
-               d -> new WrappedRequireModelReferenceField(resolver, d),
-               d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName);
       }
    }
+   
+   private AbstractWrappedModelReferenceField<? extends RequireDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, RequireDeclaration require) {
+	      if (require instanceof BaseRequireDeclaration) {
+	         return new WrappedBaseRequireModelReferenceField(resolver, (BaseRequireDeclaration) require);
+	      } else if (require instanceof RefinedRequireDeclaration) {
+	         return new WrappedRefinedRequireModelReferenceField(resolver, (RefinedRequireDeclaration) require);
+	      } else {
+	         throw new IllegalStateException("Unknown RequireDeclaration subclass: " + require.getClass());
+	      }
+	   }
+
 
    private void initScenarios() {
       scenarios = new WrappingNamedChildCollection<>(

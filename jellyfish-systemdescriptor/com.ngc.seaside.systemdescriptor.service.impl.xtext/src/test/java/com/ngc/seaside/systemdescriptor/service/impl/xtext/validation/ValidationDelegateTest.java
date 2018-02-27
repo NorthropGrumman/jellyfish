@@ -42,7 +42,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
@@ -268,8 +269,30 @@ public class ValidationDelegateTest {
 
    @Test
    public void testDoesValidateModelRequirement() throws Throwable {
-      RequireDeclaration source = factory().createRequireDeclaration();
-      source.setName("myRequiredModel");
+      BaseRequireDeclaration source = factory().createBaseRequireDeclaration();
+      source.setName("myBaseRequiredModel");
+      Model model = factory().createModel();
+      model.setName("MyModel");
+      model.setRequires(factory().createRequires());
+      model.getRequires().getDeclarations().add(source);
+      Package p = factory().createPackage();
+      p.setName("foo.package");
+      p.setElement(model);
+
+      delegate.addValidator(validator);
+      delegate.validate(source, helper);
+
+      IModelReferenceField toValidate = descriptor.findModel(p.getName(), model.getName()).get()
+            .getRequiredModels()
+            .getByName(source.getName())
+            .get();
+      verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
+   }
+   
+   @Test
+   public void testDoesValidateRefinedModelRequirement() throws Throwable {
+      RefinedRequireDeclaration source = factory().createRefinedRequireDeclaration();
+      source.setName("myRefinedRequiredModel");
       Model model = factory().createModel();
       model.setName("MyModel");
       model.setRequires(factory().createRequires());

@@ -23,7 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 
 // Note we run this test with MockitoJUnitRunner.Silent to avoid UnnecessaryStubbingExceptions.  This happens because
@@ -61,7 +61,7 @@ public class WrappedModelTest extends AbstractWrappedXtextTest {
       model.setOutput(factory().createOutput());
       model.getOutput().getDeclarations().add(output);
 
-      RequireDeclaration require = factory().createRequireDeclaration();
+      BaseRequireDeclaration require = factory().createBaseRequireDeclaration();
       require.setName("require");
       require.setType(modelType);
       model.setRequires(factory().createRequires());

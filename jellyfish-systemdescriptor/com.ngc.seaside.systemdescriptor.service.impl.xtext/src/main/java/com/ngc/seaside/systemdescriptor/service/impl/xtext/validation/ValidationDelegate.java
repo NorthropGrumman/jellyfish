@@ -38,6 +38,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDecla
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Step;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
@@ -226,25 +228,49 @@ public class ValidationDelegate implements IValidatorExtension {
                   helper);
             doValidation(ctx10);
             break;
+         case SystemDescriptorPackage.BASE_REQUIRE_DECLARATION:
+             fieldName = ((BaseRequireDeclaration) source).getName();
+             modelName = ((Model) source.eContainer().eContainer()).getName();
+             packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+             IValidationContext<IModelReferenceField> ctx11 = newContext(
+                   descriptor.findModel(packageName, modelName).get()
+                         .getRequiredModels()
+                         .getByName(fieldName)
+                         .get(),
+                   helper);
+             doValidation(ctx11);
+             break;
+         case SystemDescriptorPackage.REFINED_REQUIRE_DECLARATION:
+             fieldName = ((RefinedRequireDeclaration) source).getName();
+             modelName = ((Model) source.eContainer().eContainer()).getName();
+             packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
+             IValidationContext<IModelReferenceField> ctx12 = newContext(
+                   descriptor.findModel(packageName, modelName).get()
+                         .getRequiredModels()
+                         .getByName(fieldName)
+                         .get(),
+                   helper);
+             doValidation(ctx12);
+             break;
          case SystemDescriptorPackage.LINK_DECLARATION:
             modelName = ((Model) source.eContainer().eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
-            IValidationContext<IModelLink<?>> ctx11 = newContext(
+            IValidationContext<IModelLink<?>> ctx13 = newContext(
                   findLink(descriptor.findModel(packageName, modelName).get(), (LinkDeclaration) source),
                   helper);
-            doValidation(ctx11);
+            doValidation(ctx13);
             break;
          case SystemDescriptorPackage.SCENARIO:
             String scenarioName = ((Scenario) source).getName();
             modelName = ((Model) source.eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer()).getName();
-            IValidationContext<IScenario> ctx12 = newContext(
+            IValidationContext<IScenario> ctx14 = newContext(
                   descriptor.findModel(packageName, modelName).get()
                         .getScenarios()
                         .getByName(scenarioName)
                         .get(),
                   helper);
-            doValidation(ctx12);
+            doValidation(ctx14);
             break;
          case SystemDescriptorPackage.GIVEN_STEP:
          case SystemDescriptorPackage.WHEN_STEP:
@@ -252,10 +278,10 @@ public class ValidationDelegate implements IValidatorExtension {
             scenarioName = ((Scenario) source.eContainer().eContainer()).getName();
             modelName = ((Model) source.eContainer().eContainer().eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer().eContainer().eContainer()).getName();
-            IValidationContext<IScenarioStep> ctx13 = newContext(
+            IValidationContext<IScenarioStep> ctx15 = newContext(
                   findStep(descriptor.findModel(packageName, modelName).get(), scenarioName, (Step) source),
                   helper);
-            doValidation(ctx13);
+            doValidation(ctx15);
             break;
          default:
             // Do nothing, this is not a type we want to validate.

@@ -201,7 +201,9 @@ public class ValidationBridgeUtil {
          case "getName":
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
-            return SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__TYPE;
+            return SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION__TYPE;
+         case "isRefinedField":
+            return SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__REFINED_FIELD;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }

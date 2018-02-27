@@ -4,7 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,11 +16,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextTest {
+public class WrappedBaseRequireModelReferenceFieldTest extends AbstractWrappedXtextTest {
 
-   private WrappedRequireModelReferenceField wrapped;
+   private WrappedBaseRequireModelReferenceField wrapped;
 
-   private RequireDeclaration requireDeclaration;
+   private BaseRequireDeclaration baseRequireDeclaration;
 
    private Model modelType;
 
@@ -32,16 +32,16 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
 
    @Before
    public void setup() throws Throwable {
-      requireDeclaration = factory().createRequireDeclaration();
-      requireDeclaration.setName("require1");
+      baseRequireDeclaration = factory().createBaseRequireDeclaration();
+      baseRequireDeclaration.setName("require1");
 
       modelType = factory().createModel();
       modelType.setName("MyType");
-      requireDeclaration.setType(modelType);
+      baseRequireDeclaration.setType(modelType);
 
       Model model = factory().createModel();
       model.setRequires(factory().createRequires());
-      model.getRequires().getDeclarations().add(requireDeclaration);
+      model.getRequires().getDeclarations().add(baseRequireDeclaration);
 
       IPackage p = mock(IPackage.class);
       when(p.getName()).thenReturn("some.package");
@@ -54,10 +54,10 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
       assertEquals("name not correct!",
                    wrapped.getName(),
-                   requireDeclaration.getName());
+                   baseRequireDeclaration.getName());
       assertEquals("parent not correct!",
                    parent,
                    wrapped.getParent());
@@ -76,22 +76,22 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
       when(p.getName()).thenReturn("some.package");
       when(resolver().findXTextModel(newType.getName(), p.getName())).thenReturn(Optional.of(newXtextType));
 
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
       wrapped.setType(newType);
       assertEquals("type not updated!",
                    newXtextType,
-                   requireDeclaration.getType());
+                   baseRequireDeclaration.getType());
    }
 
    @Test
    public void testDoesConvertToXtextObject() throws Throwable {
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
-      RequireDeclaration xtext = WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
+      BaseRequireDeclaration xtext = WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
       assertEquals("name not correct!",
-                   requireDeclaration.getName(),
+    		  	   baseRequireDeclaration.getName(),
                    xtext.getName());
       assertEquals("type not correct!",
-                   requireDeclaration.getType(),
+    		  	   baseRequireDeclaration.getType(),
                    xtext.getType());
    }
 }

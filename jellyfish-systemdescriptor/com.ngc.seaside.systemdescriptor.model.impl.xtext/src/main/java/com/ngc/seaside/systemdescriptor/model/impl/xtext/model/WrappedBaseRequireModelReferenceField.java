@@ -15,7 +15,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedBaseRequireModelReferenceField extends AbstractWrappedModelReferenceField<RequireDeclaration, WrappedBaseRequireModelReferenceField> {
+public class WrappedBaseRequireModelReferenceField extends AbstractWrappedModelReferenceField<BaseRequireDeclaration, WrappedBaseRequireModelReferenceField> {
 
    public WrappedBaseRequireModelReferenceField(IWrapperResolver resolver, BaseRequireDeclaration wrapped) {
       super(resolver, wrapped);
@@ -37,7 +37,7 @@ public class WrappedBaseRequireModelReferenceField extends AbstractWrappedModelR
    /**
     * Creates a new {@code BaseRequireDeclaration} from the given field.
     */
-   public static RequireDeclaration toXTextRequireDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
+   public static BaseRequireDeclaration toXTextRequireDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
       Preconditions.checkNotNull(resolver, "resolver may not be null!");
       Preconditions.checkNotNull(field, "field may not be null!");
       BaseRequireDeclaration d = SystemDescriptorFactory.eINSTANCE.createBaseRequireDeclaration();

@@ -23,7 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -72,7 +72,7 @@ public class WrappedModelMetadataTest extends AbstractWrappedXtextTest {
       model.setParts(factory().createParts());
       model.getParts().getDeclarations().add(part);
 
-      RequireDeclaration require = factory().createRequireDeclaration();
+      BaseRequireDeclaration require = factory().createBaseRequireDeclaration();
       require.setName("thristQuencher");
       require.setType(gatorade);
       require.setDefinition(getDefinition("flavor", "purple"));
