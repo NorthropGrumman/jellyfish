@@ -20,6 +20,8 @@ class ModelFormatter extends AbstractSystemDescriptorFormatter {
         model.links.format
         model.scenarios.forEach[format]
 
+		model.regionFor.keyword('}').append[newLine]
+
         var begin = model.regionFor.keyword('model')
         var end = model.regionFor.keyword('}')
         interior(begin, end)[indent]
