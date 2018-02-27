@@ -10,7 +10,7 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 class MetadataFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Metadata metadata, extension IFormattableDocument document) {
         metadata.json.format
-        metadata.append[newLine ; lowPriority()]
+        metadata.append[newLines = 2]
     }
 
     def dispatch void format(JsonObject json, extension IFormattableDocument document) {

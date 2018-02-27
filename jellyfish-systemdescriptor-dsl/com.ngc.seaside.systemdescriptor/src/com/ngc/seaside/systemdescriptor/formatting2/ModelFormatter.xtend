@@ -10,7 +10,7 @@ class ModelFormatter extends AbstractSystemDescriptorFormatter {
 
         if (model.metadata !== null) {
             model.metadata.format
-            model.metadata.append[newLines = 2; highPriority]
+            //model.metadata.append[newLines = 2; highPriority]
         }
 
         model.input.format
