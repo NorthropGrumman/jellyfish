@@ -69,9 +69,7 @@ class ModelFormattingTest {
 	
 	@Test
 	def void testModelFormatting() {
-		//formattingUtils.testFormat(formattedModel, FormattingTestUtils.ONE_LINE_MALFORMATTER)
-		formattingUtils.testFormat(formattedModel, FormattingTestUtils.RANDOM_SPACING_MALFORMATTER)
-		//formattingUtils.testFormat(formattedModel, FormattingTestUtils.PASSTHROUGH_MALFORMATTER)
+		formattingUtils.testFormatter(formattedModel)
 	}
 	
 }
