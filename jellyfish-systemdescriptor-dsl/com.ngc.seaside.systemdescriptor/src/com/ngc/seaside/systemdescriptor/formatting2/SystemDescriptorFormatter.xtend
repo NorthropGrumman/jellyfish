@@ -119,7 +119,8 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		var begin = model.regionFor.keyword('model')
 		var end = model.regionFor.keyword('}')
 		interior(begin, end)[indent]
-
+		
+		model.regionFor.keyword('}').append[noSpace].append[newLine]
 	}
 
 	def dispatch void format(
@@ -318,7 +319,7 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 	def dispatch void format(
 		Parts parts,
 		extension IFormattableDocument document
-	) {
+	) {		
 		var begin = parts.regionFor.keyword('parts')
 		var end = parts.regionFor.keyword('}')
 
