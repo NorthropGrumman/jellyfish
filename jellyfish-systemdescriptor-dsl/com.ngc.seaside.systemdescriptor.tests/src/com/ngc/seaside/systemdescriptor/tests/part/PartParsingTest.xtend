@@ -19,7 +19,6 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
-import org.junit.Ignore
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration
 
 @RunWith(XtextRunner)

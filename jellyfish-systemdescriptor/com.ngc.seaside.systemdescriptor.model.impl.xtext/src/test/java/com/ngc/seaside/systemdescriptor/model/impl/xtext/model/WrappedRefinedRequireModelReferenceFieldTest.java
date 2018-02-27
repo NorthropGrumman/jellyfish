@@ -58,7 +58,6 @@ public class WrappedRefinedRequireModelReferenceFieldTest extends AbstractWrappe
 
       refinedModelType = factory().createModel();
       refinedModelType.setName("MyType");
-      refinedRequireDeclaration.setRefinedField(true);
 
       Model model = factory().createModel();
       model.setRequires(factory().createRequires());
@@ -105,8 +104,5 @@ public class WrappedRefinedRequireModelReferenceFieldTest extends AbstractWrappe
       assertEquals("name not correct!",
                    refinedRequireDeclaration.getName(),
                    xtext.getName());
-      assertEquals("refined not correct!",
-                   refinedRequireDeclaration.isRefinedField(),
-                   xtext.isRefinedField());
    }
 }
