@@ -43,7 +43,6 @@ class PartParsingTest {
 			resourceHelper,
 			Models.ALARM,
 			Models.CLOCK,
-			Models.SPEAKER,
 			Datas.TIME
 		)
 		validationTester.assertNoIssues(requiredResources)

@@ -75,8 +75,11 @@
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//RequireDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SystemDescriptor.ecore#//RequireDeclaration/refinedField"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//RequireDeclaration/type"/>
     </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//BaseRequireDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//BaseRequireDeclaration/type"/>
+    </genClasses>
+    <genClasses ecoreClass="SystemDescriptor.ecore#//RefinedRequireDeclaration"/>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Requires">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Requires/declarations"/>
     </genClasses>

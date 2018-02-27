@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -47,8 +48,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 		// can declare other models as fields. Input and output must declare
 		// data as fields. Since we can't yet reference the contents of data,
 		// we don't have to worry aobut referencing input or output.
-		if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REQUIRE_DECLARATION)) {
-			RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
+		if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION)) {
+			BaseRequireDeclaration casted = (BaseRequireDeclaration) fieldDeclaration;
 			// Include all field declarations of the referenced model in the
 			// scope.
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));

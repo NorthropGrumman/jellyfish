@@ -82,8 +82,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RequireDeclaration" eSuperTypes="#//FieldDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="refinedField" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BaseRequireDeclaration" eSuperTypes="#//RequireDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Model"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RefinedRequireDeclaration" eSuperTypes="#//RequireDeclaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="Requires">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//RequireDeclaration" containment="true"/>

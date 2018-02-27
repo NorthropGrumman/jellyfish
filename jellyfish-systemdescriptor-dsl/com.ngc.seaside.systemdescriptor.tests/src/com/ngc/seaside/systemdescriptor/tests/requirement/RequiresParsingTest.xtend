@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
@@ -18,6 +17,9 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
+import com.ngc.seaside.systemdescriptor.tests.resources.Models
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -32,33 +34,18 @@ class RequiresParsingTest {
 	@Inject
 	ValidationTestHelper validationTester
 
-	Resource modelResource
-
-	Resource dataResource
+	Resource requiredResources
 
 	@Before
 	def void setup() {
-		modelResource = resourceHelper.resource(
-			'''
-				package clocks.models.hw
-							
-				model Speaker {
-				}
-			''',
-			URI.createURI("clocks.models.hw.sd")
+		requiredResources = Models.allOf(
+			resourceHelper,
+			Models.ALARM,
+			Models.CLOCK,
+			Models.SPEAKER,
+			Datas.TIME
 		)
-		validationTester.assertNoIssues(modelResource)
-
-		dataResource = resourceHelper.resource(
-			'''
-				package clocks.datatypes
-							
-				data Time {
-				}
-			''',
-			modelResource.resourceSet
-		)
-		validationTester.assertNoIssues(dataResource)
+		validationTester.assertNoIssues(requiredResources)
 	}
 
 	@Test
@@ -66,7 +53,7 @@ class RequiresParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			
 			model Alarm {
 				
@@ -76,7 +63,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val result = parseHelper.parse(source, modelResource.resourceSet)
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(result)
 		validationTester.assertNoIssues(result)
 
@@ -96,7 +83,7 @@ class RequiresParsingTest {
 		assertEquals(
 			"require type not correct!",
 			"Speaker",
-			require.type.name
+			(require as BaseRequireDeclaration).type.name
 		)
 	}
 
@@ -115,7 +102,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -129,7 +116,7 @@ class RequiresParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			
 			model Alarm {
 				
@@ -140,7 +127,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -154,7 +141,7 @@ class RequiresParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			import clocks.datatypes.Time
 			
 			model Alarm {
@@ -169,7 +156,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -183,7 +170,7 @@ class RequiresParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			import clocks.datatypes.Time
 			
 			model Alarm {
@@ -198,7 +185,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -212,7 +199,7 @@ class RequiresParsingTest {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			import clocks.datatypes.Time
 			
 			model Alarm {
@@ -227,7 +214,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -235,13 +222,13 @@ class RequiresParsingTest {
 			null
 		)
 	}
-	
+
 	@Test
 	def void testDoesNotParseModelWithEscapedRequiresFieldName() {
 		val source = '''
 			package clocks.models
 			
-			import clocks.models.hw.Speaker
+			import clocks.models.part.Speaker
 			
 			model Alarm {
 				
@@ -251,7 +238,7 @@ class RequiresParsingTest {
 			}
 		'''
 
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
@@ -259,5 +246,5 @@ class RequiresParsingTest {
 			null
 		)
 	}
-	
+
 }
