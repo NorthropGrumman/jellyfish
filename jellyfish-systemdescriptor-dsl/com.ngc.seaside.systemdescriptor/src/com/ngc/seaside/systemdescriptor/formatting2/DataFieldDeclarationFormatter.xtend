@@ -7,7 +7,7 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class DataFieldDeclarationFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(DataFieldDeclaration field, extension IFormattableDocument document) {
-      field.regionFor.keyword('{').prepend[oneSpace].append[newLine]
+        field.regionFor.keyword('{').prepend[oneSpace].append[newLine]
     }
 
     def dispatch void format(PrimitiveDataFieldDeclaration field, extension IFormattableDocument document) {
