@@ -31,6 +31,11 @@ class Models {
                 
                 parts {
                 	AnEmptyModel emptyModel
+                }
+                
+                requires {
+                	AnEmptyModel requiresEmptyModel
+                }
             }
         ''',
         Datas.ZONED_TIME, 

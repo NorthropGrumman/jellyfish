@@ -234,30 +234,6 @@ class RefinedModelParsingTest {
     }
 
     @Test
-    def void testDoesNotParseModelRedeclaring_Requires() {
-        val source = '''
-            package clocks.models
-
-            import clocks.models.part.Alarm
-            import clocks.models.part.Timer
-
-            model RefinedModel refines Alarm {
-                requires {
-                    Timer timer
-                }
-            }
-        '''
-
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
-            null)
-    }
-
-    @Test
     def void testDoesNotParseModelRedeclaring_Scenarios() {
         val source = '''
             package clocks.models

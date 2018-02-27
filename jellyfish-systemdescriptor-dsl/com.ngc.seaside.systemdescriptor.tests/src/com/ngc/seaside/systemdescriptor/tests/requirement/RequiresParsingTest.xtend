@@ -86,6 +86,27 @@ class RequiresParsingTest {
 			(require as BaseRequireDeclaration).type.name
 		)
 	}
+	
+	@Test
+	def void testDoesParseModelWithRefinedRequires() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Clock
+			
+			model BigClock refines Clock{
+				
+				requires {
+					refine requiresEmptyModel
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+	}
 
 	@Test
 	def void testDoesNotParseModelWithRequiresOfTypeData() {
@@ -246,5 +267,46 @@ class RequiresParsingTest {
 			null
 		)
 	}
+	
+	@Test
+	def void testDoesNotParseANonRefinedModelThatRefinesARequirement() {
+		val source = '''
+			package clocks.models
+			
+			model BigClock {
+			
+				requires {
+					refine emptyModel
+				}
+			}
+		     '''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION, null)
+	}
+	
+	@Test
+	def void testDoesNotParseRefinedModelOfARequireThatWasntInTheRefinedModel() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Clock
+			
+			model BigClock refines Clock{
+			
+				requires {
+					refine superModel
+				}
+			}
+		     '''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION, null)
+	}
+	
 
 }

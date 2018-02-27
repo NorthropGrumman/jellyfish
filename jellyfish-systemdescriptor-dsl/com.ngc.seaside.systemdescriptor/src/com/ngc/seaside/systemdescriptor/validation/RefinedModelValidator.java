@@ -15,7 +15,6 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         checkDoesNotParseModelThatRefinesItself(model);
         checkDoesNotParseModelThatRedeclaresInputs(model);
         checkDoesNotParseModelThatRedeclaresOutputs(model);
-        checkDoesNotParseModelThatRedeclaresRequires(model);
         checkDoesNotParseModelThatRedeclaresScenarios(model);
     }
 
@@ -44,12 +43,6 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     private void checkDoesNotParseModelThatRedeclaresOutputs(Model model) {
         if (model.getOutput() != null && model.getOutput().getDeclarations() != null) {
             causeUnpermittedAdditionErrorRegarding("outputs", model);
-        }
-    }
-
-    private void checkDoesNotParseModelThatRedeclaresRequires(Model model) {
-        if (model.getRequires() != null && model.getRequires().getDeclarations() != null) {
-            causeUnpermittedAdditionErrorRegarding("requirements", model);
         }
     }
 
