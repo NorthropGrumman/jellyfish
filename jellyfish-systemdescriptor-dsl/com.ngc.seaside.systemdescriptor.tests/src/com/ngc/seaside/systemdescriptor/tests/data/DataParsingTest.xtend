@@ -259,7 +259,7 @@ class DataParsingTest {
 		val source = '''
 			package clocks.datatypes
 			
-			data FullyQualified : clocks.datatypes.DateTime {
+			data FullyQualified extends clocks.datatypes.DateTime {
 				clocks.datatypes.TimeZone timeZone
 			}
 		'''

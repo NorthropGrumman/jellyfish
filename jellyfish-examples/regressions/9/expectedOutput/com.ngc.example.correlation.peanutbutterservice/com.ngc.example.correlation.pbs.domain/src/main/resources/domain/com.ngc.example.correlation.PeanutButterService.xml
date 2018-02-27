@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.example.correlation.pbs.domain.datatype.Peanut" generated="true" abstract="false">
+        <property name="header" type="com.ngc.example.correlation.pbs.domain.datatype.MessageHeader" multiple="false" abstract="false"/>
+        <property name="label" type="String" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.correlation.pbs.domain.datatype.Butter" generated="true" abstract="false">
+        <property name="header" type="com.ngc.example.correlation.pbs.domain.datatype.MessageHeader" multiple="false" abstract="false"/>
+        <property name="good" type="boolean" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.correlation.pbs.domain.datatype.Candy" generated="true" abstract="false">
+        <property name="header" type="com.ngc.example.correlation.pbs.domain.datatype.MessageHeader" multiple="false" abstract="false"/>
+        <property name="color" type="String" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.example.correlation.pbs.domain.datatype.MessageHeader" generated="true" abstract="false">
+        <property name="batchNumber" type="String" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>

@@ -112,7 +112,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Enumeration/values"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//Data">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/superclass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/extendedDataType"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SystemDescriptor.ecore#//Data/fields"/>
     </genClasses>
     <genClasses ecoreClass="SystemDescriptor.ecore#//DataModel"/>

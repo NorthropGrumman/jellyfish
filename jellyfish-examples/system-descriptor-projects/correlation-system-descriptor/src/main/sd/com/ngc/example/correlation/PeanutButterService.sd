@@ -1,0 +1,32 @@
+package com.ngc.example.correlation
+
+import com.ngc.example.correlation.datatype.Peanut
+import com.ngc.example.correlation.datatype.Butter
+import com.ngc.example.correlation.datatype.Candy
+
+model PeanutButterService {
+	metadata {
+		"stereotypes": ["service"],
+		"codegen": {
+			"alias": "pbs"
+		}
+	}
+
+	input {
+		Peanut peanut
+		Butter butter
+	}
+
+	output {
+		Candy candy
+	}
+
+	scenario combine {
+		when receiving peanut
+		 and receiving butter
+		 and correlating peanut.header.batchNumber to butter.header.batchNumber
+		then willCorrelate peanut.header.batchNumber to candy.header.batchNumber
+		 and willPublish candy
+	}
+
+}

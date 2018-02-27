@@ -32,9 +32,11 @@ public abstract class ${dto.abstractClass.name}
 
    protected IThreadService threadService;
 
-#if (!$dto.correlationMethods.isEmpty())
+#if ($dto.correlationServiceRequired)
    protected ICorrelationService correlationService;
 
+#end
+#if (!$dto.correlationMethods.isEmpty())
    protected Map<ICorrelationTrigger<?>, Collection<Consumer<ICorrelationStatus<?>>>> triggers = new ConcurrentHashMap<>();
 
 #end
@@ -83,19 +85,26 @@ public abstract class ${dto.abstractClass.name}
 #################### Basic 1-input 1-output pubsub methods ####################
 #foreach($method in $dto.basicPubSubMethods)
    private void ${method.name}(${method.input.type} input) {
-      ${method.output.type} output;
+#foreach($correlation in $method.inputOutputCorrelations)
+      updateRequestWithCorrelation(input.${correlation.getterSnippet});
+#end
       try {
-         output = ${method.serviceMethod}(input);
+         ${method.output.type} output = ${method.serviceMethod}(input);
+#foreach($correlation in $method.inputOutputCorrelations)
+         output.${correlation.setterSnippet}(input.${correlation.getterSnippet});
+#end
+         logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
+         ${method.output.name}(output);
       } catch(ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
-         return;
+         faultManagementService.handleFault(fault);
       }
-#foreach($correlation in $method.inputOutputCorrelations)
-      output.${correlation.setterSnippet}(${correlation.getterSnippet});
+#if ($method.isCorrelating())
+      finally {
+         clearCorrelationFromRequest();
+      }
 #end
-      logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: %s;", input, output);
-      ${method.output.name}(output);
    }
 
 #end
@@ -104,12 +113,12 @@ public abstract class ${dto.abstractClass.name}
    private void ${method.name}(${method.input.type} input) {
       try {
          ${method.serviceMethod}(input);
+         logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: ;", input);
       } catch(ServiceFaultException fault) {
          logService.error(getClass(),
             "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
-         return;
+         faultManagementService.handleFault(fault);
       }
-      logService.info(getClass(), "ELK - Scenario: ${method.scenarioName}; Input: %s; Output: ;", input);
    }
 
 #end
@@ -260,7 +269,7 @@ public abstract class ${dto.abstractClass.name}
       setEventService(null);
    }
 
-#if (!$dto.correlationMethods.isEmpty())
+#if ($dto.correlationServiceRequired)
    public void setCorrelationService(ICorrelationService ref) {
       this.correlationService = ref;
    }
@@ -294,6 +303,19 @@ public abstract class ${dto.abstractClass.name}
          ((ServiceRequest) request).setLocalCorrelationEvent(event);
       }
    }
+#end
+#if ($dto.correlationRequestHandlingEnabled)
+
+   @SuppressWarnings("unchecked")
+   private void updateRequestWithCorrelation(Object correlationEventId) {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof ServiceRequest) {
+         ((ServiceRequest) request).setLocalCorrelationEvent(
+            correlationService.newLocalCorrelationEvent(correlationEventId));
+      }
+   }
+#end
+#if (!$dto.correlationMethods.isEmpty() || $dto.correlationRequestHandlingEnabled)
 
    @SuppressWarnings("rawtypes")
    private void clearCorrelationFromRequest() {

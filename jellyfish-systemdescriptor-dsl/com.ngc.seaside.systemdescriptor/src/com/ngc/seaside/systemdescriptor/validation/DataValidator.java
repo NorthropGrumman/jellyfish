@@ -32,18 +32,18 @@ public class DataValidator extends AbstractUnregisteredSystemDescriptorValidator
 	   Set<QualifiedName> superClasses = new HashSet<>();
 	   
 	   final QualifiedName name = nameProvider.getFullyQualifiedName(data);
-	   Data parent = data.getSuperclass();
+	   Data parent = data.getExtendedDataType();
 	   while (parent != null) {
 	      QualifiedName parentName = nameProvider.getFullyQualifiedName(parent);
 	      if (parentName.equals(name)) {
 	        String msg = String.format("Cycle detected: a cycle exists in the type hierarchy of %s", name.getLastSegment());
-            error(msg, data, SystemDescriptorPackage.Literals.DATA__SUPERCLASS);
+            error(msg, data, SystemDescriptorPackage.Literals.DATA__EXTENDED_DATA_TYPE);
             return;
 	      }
 	      if (!superClasses.add(nameProvider.getFullyQualifiedName(parent))) {
 	         return;
 	      }
-	      parent = parent.getSuperclass();
+	      parent = parent.getExtendedDataType();
 	   }
 	}
 	

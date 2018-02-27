@@ -358,7 +358,7 @@ public class WrappedSystemDescriptorIT {
       assertTrue("did not find data!",
                  data.isPresent());
 
-      Optional<IData> superType = data.get().getSuperDataType();
+      Optional<IData> superType = data.get().getExtendedDataType();
       assertTrue("data super type not set!",
                  superType.isPresent());
       assertEquals("superType fully qualified name is not correct!",

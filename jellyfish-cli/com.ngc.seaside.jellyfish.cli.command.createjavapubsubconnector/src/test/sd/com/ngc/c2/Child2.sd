@@ -4,7 +4,7 @@ import com.ngc.b2.Base2
 import com.ngc.d1.Data1
 import com.ngc.e1.Enum1
 
-data Child2 : Base2 {
+data Child2 extends Base2 {
 	int intFieldChild2
 	many int manyIntFieldChild2
 	float floatFieldChild2

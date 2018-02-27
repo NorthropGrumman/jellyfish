@@ -170,7 +170,7 @@ class Datas {
 			
 			import food.Food
 			
-			data Hamburger : Food {
+			data Hamburger extends Food {
 				boolean withFries
 			}
 		''',
@@ -183,7 +183,7 @@ class Datas {
 			
 			import food.Hamburger
 			
-			data SlidersMeal : Hamburger {
+			data SlidersMeal extends Hamburger {
 				many Hamburger smallBurgers
 			}
 		''',
