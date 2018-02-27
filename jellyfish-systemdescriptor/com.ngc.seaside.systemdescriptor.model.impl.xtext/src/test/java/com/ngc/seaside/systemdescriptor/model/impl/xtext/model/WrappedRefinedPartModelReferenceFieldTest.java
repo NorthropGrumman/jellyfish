@@ -58,7 +58,6 @@ public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXt
 
       refinedModelType = factory().createModel();
       refinedModelType.setName("MyType");
-      refinedPartDeclaration.setRefinedField(true);
 
       Model model = factory().createModel();
       model.setParts(factory().createParts());
@@ -105,8 +104,5 @@ public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXt
       assertEquals("name not correct!",
                    refinedPartDeclaration.getName(),
                    xtext.getName());
-      assertEquals("refined not correct!",
-                   refinedPartDeclaration.isRefinedField(),
-                   xtext.isRefinedField());
    }
 }

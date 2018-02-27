@@ -256,7 +256,7 @@ BasePartDeclaration
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 RefinedPartDeclaration
-	: (refinedField?='refine')?
+	: 'refine'
 	  name=UnqualifiedName  
 	  definition=DeclarationDefinition?
 	;
@@ -281,14 +281,13 @@ RequireDeclaration
 	;
 	
 BaseRequireDeclaration
-	: (refinedField?='refine')?
-		type=[Model|QualifiedName]
+	: type=[Model|QualifiedName]
 	  name=UnqualifiedName
 	  definition=DeclarationDefinition?
 	;
 	
 RefinedRequireDeclaration
-	: (refinedField?='refine')?
+	: (refinedField?='refine')
 	  name=UnqualifiedName
 	  definition=DeclarationDefinition?
 	;

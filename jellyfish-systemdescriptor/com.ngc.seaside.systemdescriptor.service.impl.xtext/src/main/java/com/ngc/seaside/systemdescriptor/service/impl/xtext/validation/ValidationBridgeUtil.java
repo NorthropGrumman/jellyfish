@@ -189,8 +189,6 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
             return SystemDescriptorPackage.Literals.BASE_PART_DECLARATION__TYPE;
-         case "isRefinedField":
-            return SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION__REFINED_FIELD;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
@@ -203,7 +201,7 @@ public class ValidationBridgeUtil {
          case "getType":
             return SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION__TYPE;
          case "isRefinedField":
-            return SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__REFINED_FIELD;
+            return SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION__REFINED_FIELD;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }

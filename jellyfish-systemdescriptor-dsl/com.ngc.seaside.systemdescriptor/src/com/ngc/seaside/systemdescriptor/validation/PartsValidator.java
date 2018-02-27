@@ -24,27 +24,18 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
 			//Don't change order unless you have thought about what 
 			// should be checked first
 			checkForNonRefinedModelUsingRefinedParts(refinedPart);
-			checkForRefinementWithoutARefineKeyword(refinedPart);
 			checkForRefinementOfAType(refinedPart);
-			
 		}
 
 	}
 
-	protected void checkForRefinementWithoutARefineKeyword(RefinedPartDeclaration part) {
-		if (!part.isRefinedField()) {
-			error("Found Refined Part declaration without the refined field", part,
-					SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION__REFINED_FIELD);
-		}
-	}
-		
 	protected void checkForNonRefinedModelUsingRefinedParts(RefinedPartDeclaration part) {
 		//Bring us up to the part model
 		Model partModel = getModel(part);
 		if (partModel !=null) {
 			if (((Model)part.eContainer().eContainer()).getRefinedModel() == null) {
 				error("Refining a Parts model without the Model being refined", part,
-						SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION__REFINED_FIELD);
+						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 			}
 		}
 	}
@@ -54,7 +45,7 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
 		if (partModel != null){
 			if (!findPartName(partModel, part.getName())){
 				error("Refining a part that is not defined in the Refined Model", part,
-						SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION__REFINED_FIELD);	
+						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);	
 			}
 		}
 	}

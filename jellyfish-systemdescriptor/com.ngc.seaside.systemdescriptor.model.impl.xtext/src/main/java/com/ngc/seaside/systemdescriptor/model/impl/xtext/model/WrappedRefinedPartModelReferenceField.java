@@ -42,7 +42,6 @@ public class WrappedRefinedPartModelReferenceField extends AbstractWrappedModelR
       RefinedPartDeclaration d = SystemDescriptorFactory.eINSTANCE.createRefinedPartDeclaration();
       d.setName(field.getName());
       d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
-      d.setRefinedField(true);
       return d;
    }
 
