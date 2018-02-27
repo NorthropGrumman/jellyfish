@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.formatting2
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 class PartsFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Parts parts, extension IFormattableDocument document) {
@@ -23,8 +24,15 @@ class PartsFormatter extends AbstractSystemDescriptorFormatter {
     }
 
     def dispatch void format(PartDeclaration declaration, extension IFormattableDocument document) {
-        if(declaration.definition !== null) {
-            declaration.definition.format
-        }
+        declaration.prepend[noSpace]
+
+		declaration.regionFor.feature(SystemDescriptorPackage.Literals.PART_DECLARATION__TYPE).append[oneSpace]
+
+		if(declaration.definition !== null) {
+			declaration.regionFor.feature(SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME).append[oneSpace]
+			declaration.definition.format
+		} else {
+			declaration.regionFor.feature(SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME).prepend[newLines = 0].append[newLine]
+		}
     }
 }
