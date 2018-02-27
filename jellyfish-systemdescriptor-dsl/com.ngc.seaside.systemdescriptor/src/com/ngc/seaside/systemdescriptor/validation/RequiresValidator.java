@@ -21,41 +21,45 @@ public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValid
 			RefinedRequireDeclaration refinedRequirementPart = ((RefinedRequireDeclaration)requirement);
 			//Don't change order unless you have thought about what 
 			// should be checked first
-			checkForNonRefinedModelUsingRefinedParts(refinedRequirementPart);
-			checkForRefinementOfANameNotInRefinedModel(refinedRequirementPart);
+			checkForNonRefinedModelUsingRefinedRequires(refinedRequirementPart);
+			checkForRefinementOfARequirementFieldThatsNotInModelBeingRefined(refinedRequirementPart);
 		}
 	}
 	
-	protected void checkForNonRefinedModelUsingRefinedParts(RefinedRequireDeclaration requirement) {
+	protected void checkForNonRefinedModelUsingRefinedRequires(RefinedRequireDeclaration requirement) {
 		//Bring us up to the part model
-		Model partModel = getModel(requirement);
-		if (partModel !=null) {
+		Model requirementModel = getModel(requirement);
+		if (requirementModel !=null) {
 			if (((Model)requirement.eContainer().eContainer()).getRefinedModel() == null) {
-				error("Refining a Parts model without the Model being refined", requirement,
-						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+				String msg = String.format(
+						"Cannot refine requirement '%s' if this model '%s' is not refining another model",
+						requirement.getName(), requirementModel.getName());
+				error(msg, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 			}
 		}
 	}
 	
-	protected void checkForRefinementOfANameNotInRefinedModel(RefinedRequireDeclaration requirement) {
-		Model RequirementModel = getModel(requirement);
-		if (RequirementModel != null){
-			if (!findRequirementName(RequirementModel, requirement.getName())){
-				error("Refining a part that is not defined in the Refined Model", requirement,
-						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);	
+	protected void checkForRefinementOfARequirementFieldThatsNotInModelBeingRefined(RefinedRequireDeclaration requirement) {
+		Model requirementModel = getModel(requirement);
+		if (requirementModel != null){
+			if (!findRequirementName(requirementModel, requirement.getName())){
+				String msg = String.format(
+						"The requirement '%s' cannot be refined without being defined in Model '%s' thats being refined",
+						requirement.getName(), requirementModel.getName());
+				error(msg, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);	
 			}
 		}
 	}
 	
 	
-	private Model getModel(RefinedRequireDeclaration requirement){
+	static private Model getModel(RefinedRequireDeclaration requirement){
 		if (requirement.eContainer().eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
 			return (Model)requirement.eContainer().eContainer();
 		}
 		return null;
 	}
 	
-	private boolean findRequirementName(Model model, String requirementName) {
+	static private boolean findRequirementName(Model model, String requirementName) {
 		boolean found = false;
 		Model parentModel = model.getRefinedModel();
 		

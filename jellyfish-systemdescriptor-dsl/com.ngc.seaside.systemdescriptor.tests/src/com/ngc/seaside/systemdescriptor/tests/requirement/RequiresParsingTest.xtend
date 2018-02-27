@@ -308,5 +308,26 @@ class RequiresParsingTest {
 		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION, null)
 	}
 	
+	@Test
+	def void testDoesNotParseRefinedModelOfARequireOnAModel() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.models.part.Clock
+			
+			model BigClock refines Clock{
+			
+				requires {
+					refine AnEmptyModel
+				}
+			}
+		     '''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.REQUIRE_DECLARATION, null)
+	}
+	
 
 }

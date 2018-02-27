@@ -24,7 +24,7 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
 			//Don't change order unless you have thought about what 
 			// should be checked first
 			checkForNonRefinedModelUsingRefinedParts(refinedPart);
-			checkForRefinementOfAType(refinedPart);
+			checkForRefinementOfAPartFieldThatsNotInModelBeingRefined(refinedPart);
 		}
 
 	}
@@ -34,18 +34,22 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
 		Model partModel = getModel(part);
 		if (partModel !=null) {
 			if (((Model)part.eContainer().eContainer()).getRefinedModel() == null) {
-				error("Refining a Parts model without the Model being refined", part,
-						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+				String msg = String.format(
+						"Cannot refine part '%s' if this model '%s' is not refining another model",
+						part.getName(), partModel.getName());
+				error(msg, part, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 			}
 		}
 	}
 	
-	protected void checkForRefinementOfAType(RefinedPartDeclaration part) {
+	protected void checkForRefinementOfAPartFieldThatsNotInModelBeingRefined(RefinedPartDeclaration part) {
 		Model partModel = getModel(part);
 		if (partModel != null){
 			if (!findPartName(partModel, part.getName())){
-				error("Refining a part that is not defined in the Refined Model", part,
-						SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);	
+				String msg = String.format(
+						"The requirement '%s' cannot be refined without being defined in Model '%s' thats being refined",
+						part.getName(), partModel.getName());
+				error(msg, part, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);	
 			}
 		}
 	}
