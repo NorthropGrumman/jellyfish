@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -47,6 +48,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public String getName() {
@@ -68,7 +70,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
          commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
-      ServiceConfigDto dto = new ServiceConfigDto()
+      ServiceConfigDto dto = new ServiceConfigDto(buildManagementService, commandOptions)
             .setModelName(model.getName())
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
@@ -154,6 +156,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       this.projectNamingService = ref;
       
    }
+
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
@@ -165,8 +168,19 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       this.packageNamingService = ref;
       
    }
+
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {

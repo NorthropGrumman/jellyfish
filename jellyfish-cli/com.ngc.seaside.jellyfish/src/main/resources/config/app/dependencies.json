@@ -85,6 +85,11 @@
          },
          {
             "groupId": "com.ngc.blocs",
+            "artifactId": "properties.resource.impl.common.propertiesresource",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
             "artifactId": "com.ngc.blocs:test.impl.common.testutilities",
             "scope": "BUILD"
          }
