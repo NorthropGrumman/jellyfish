@@ -22,7 +22,11 @@ class EnumFormattingTest {
 
 			FIELD1
 			FIELD2
-			FIELD3
+			FIELD3 {
+				metadata {
+					"a" : 1
+				}
+			}
 		}
   '''
 
