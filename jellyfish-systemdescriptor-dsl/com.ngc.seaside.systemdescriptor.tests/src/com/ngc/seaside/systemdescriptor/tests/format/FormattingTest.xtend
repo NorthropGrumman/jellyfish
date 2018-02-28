@@ -8,9 +8,11 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.InjectWith
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import org.eclipse.xtext.junit4.formatter.FormatterTester
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SystemDescriptorInjectorProvider))
+@Ignore("Delete this class")
 class FormattingTest {
 	@Inject extension FormatterTester
 	
