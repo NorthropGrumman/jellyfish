@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -29,7 +30,8 @@ public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishC
                                                        IPackageNamingService packageService,
                                                        IProjectNamingService projectService,
                                                        IJavaServiceGenerationService generationService,
-                                                       IDataFieldGenerationService dataFieldService) {
+                                                       IDataFieldGenerationService dataFieldService,
+                                                       IBuildManagementService buildManagementService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setScenarioService(scenarioService);
@@ -39,6 +41,7 @@ public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishC
       delegate.setProjectNamingService(projectService);
       delegate.setJavaServiceGenerationService(generationService);
       delegate.setDataFieldGenerationService(dataFieldService);
+      delegate.setBuildManagementService(buildManagementService);
       delegate.activate();
    }
 

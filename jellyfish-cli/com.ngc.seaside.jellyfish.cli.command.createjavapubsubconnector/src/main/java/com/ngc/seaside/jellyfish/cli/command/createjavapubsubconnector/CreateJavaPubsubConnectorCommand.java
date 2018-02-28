@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -83,6 +84,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
    private IProjectNamingService projectService;
    private IJavaServiceGenerationService generationService;
    private IDataFieldGenerationService dataFieldService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public String getName() {
@@ -105,7 +107,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
       IProjectInformation info = projectService.getConnectorProjectName(commandOptions, model);
 
-      ConnectorDto dto = new ConnectorDto();
+      ConnectorDto dto = new ConnectorDto(buildManagementService);
 
       final String packageName = packageService.getConnectorPackageName(commandOptions, model);
 
@@ -358,6 +360,15 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
 
    public void removeDataFieldGenerationService(IDataFieldGenerationService ref) {
       setDataFieldGenerationService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    /**

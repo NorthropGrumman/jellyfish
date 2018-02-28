@@ -5,14 +5,14 @@ dependencies {
    compile project(":$dependency")
 #end
 
-   compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-   compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
+   compile "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
+   compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}" "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
 
-   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
-   compile "org.osgi:osgi.core:${D}osgiVersion"
-   compile "org.osgi:osgi.enterprise:${D}osgiVersion"
+   compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   compile "${dto.getFormattedDependency('org.osgi:osgi.core')}"
+   compile "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
 
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsCoreVersion"
-   testCompile "junit:junit:${D}junitVersion"
-   testCompile "org.mockito:mockito-core:${D}mockitoVersion"
+   testCompile "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
+   testCompile "${dto.getFormattedDependency('junit:junit')}"
+   testCompile "${dto.getFormattedDependency('org.mockito:mockito-core')}"
 }

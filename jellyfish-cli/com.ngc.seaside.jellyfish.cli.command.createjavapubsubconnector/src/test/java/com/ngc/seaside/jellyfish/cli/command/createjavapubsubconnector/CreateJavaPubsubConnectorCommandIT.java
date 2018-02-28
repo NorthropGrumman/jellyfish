@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
@@ -57,6 +58,7 @@ public class CreateJavaPubsubConnectorCommandIT {
       cmd.setJavaServiceGenerationService(new MockedJavaServiceGenerationService());
       cmd.setScenarioService(new MockedScenarioService());
       cmd.setTransportConfigurationService(new MockedTransportConfigurationService());
+      cmd.setBuildManagementService(new MockedBuildManagementService());
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
          .setTemplateDirectory(CreateJavaPubsubConnectorCommand.class.getPackage().getName(),
                                                            Paths.get("src", "main", "template")));
