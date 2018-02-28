@@ -311,26 +311,4 @@ class PartParsingTest {
 
 		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PART_DECLARATION, null)
 	}
-	
-	@Test
-	def void testDoesNotParseRefinedPartOfAType() {
-		val source = '''
-			package clocks.models
-			
-			import clocks.models.part.Alarm
-			
-			model BigClock refines Alarm{
-			
-				parts {
-					refine AnEmptyModel
-					
-				}
-			}
-		     '''
-
-		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-		assertNotNull(invalidResult)
-
-		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PART_DECLARATION, null)
-	}
 }
