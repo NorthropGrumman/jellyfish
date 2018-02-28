@@ -1,26 +1,26 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.util.Optional;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public class WrappedBasePartModelReferenceFieldTest extends AbstractWrappedXtextTest {
 
-public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextTest {
+   private WrappedBasePartModelReferenceField wrapped;
 
-   private WrappedRequireModelReferenceField wrapped;
-
-   private RequireDeclaration requireDeclaration;
+   private BasePartDeclaration basePartDeclaration;
 
    private Model modelType;
 
@@ -32,16 +32,16 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
 
    @Before
    public void setup() throws Throwable {
-      requireDeclaration = factory().createRequireDeclaration();
-      requireDeclaration.setName("require1");
+      basePartDeclaration = factory().createBasePartDeclaration();
+      basePartDeclaration.setName("part1");
 
       modelType = factory().createModel();
       modelType.setName("MyType");
-      requireDeclaration.setType(modelType);
+      basePartDeclaration.setType(modelType);
 
       Model model = factory().createModel();
-      model.setRequires(factory().createRequires());
-      model.getRequires().getDeclarations().add(requireDeclaration);
+      model.setParts(factory().createParts());
+      model.getParts().getDeclarations().add(basePartDeclaration);
 
       IPackage p = mock(IPackage.class);
       when(p.getName()).thenReturn("some.package");
@@ -54,10 +54,10 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
+      wrapped = new WrappedBasePartModelReferenceField(resolver(), basePartDeclaration);
       assertEquals("name not correct!",
                    wrapped.getName(),
-                   requireDeclaration.getName());
+                   basePartDeclaration.getName());
       assertEquals("parent not correct!",
                    parent,
                    wrapped.getParent());
@@ -76,22 +76,22 @@ public class WrappedRequireModelReferenceFieldTest extends AbstractWrappedXtextT
       when(p.getName()).thenReturn("some.package");
       when(resolver().findXTextModel(newType.getName(), p.getName())).thenReturn(Optional.of(newXtextType));
 
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
+      wrapped = new WrappedBasePartModelReferenceField(resolver(), basePartDeclaration);
       wrapped.setType(newType);
       assertEquals("type not updated!",
                    newXtextType,
-                   requireDeclaration.getType());
+                   basePartDeclaration.getType());
    }
 
    @Test
    public void testDoesConvertToXtextObject() throws Throwable {
-      wrapped = new WrappedRequireModelReferenceField(resolver(), requireDeclaration);
-      RequireDeclaration xtext = WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
+      wrapped = new WrappedBasePartModelReferenceField(resolver(), basePartDeclaration);
+      BasePartDeclaration xtext = WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver(), wrapped);
       assertEquals("name not correct!",
-                   requireDeclaration.getName(),
+                   basePartDeclaration.getName(),
                    xtext.getName());
       assertEquals("type not correct!",
-                   requireDeclaration.getType(),
+                   basePartDeclaration.getType(),
                    xtext.getType());
    }
 }

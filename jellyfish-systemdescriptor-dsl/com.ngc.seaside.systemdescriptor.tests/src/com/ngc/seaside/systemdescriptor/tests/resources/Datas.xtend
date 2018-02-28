@@ -8,7 +8,6 @@ import java.util.ArrayList
 import java.util.Collection
 
 class Datas {
-
 	public static final ParsingTestResource EMPTY_DATA = resource(
 		'''
 			package foo
@@ -198,7 +197,7 @@ class Datas {
 		val all = new ArrayList()
 		for (Object o : resources) {
 			if (o instanceof ParsingTestResource) {
-				all.add(o as ParsingTestResource)
+				all.add(o)
 			} else if (o instanceof Collection) {
 				all.addAll(asCollectionOfResources(o as Collection<?>))
 			} else {

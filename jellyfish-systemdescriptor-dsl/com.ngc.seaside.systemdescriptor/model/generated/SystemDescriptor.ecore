@@ -69,16 +69,20 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//InputDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration" eSuperTypes="#//FieldDeclaration">
+  <eClassifiers xsi:type="ecore:EClass" name="PartDeclaration" eSuperTypes="#//FieldDeclaration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BasePartDeclaration" eSuperTypes="#//PartDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Model"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RefinedPartDeclaration" eSuperTypes="#//PartDeclaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="Parts">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//PartDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RequireDeclaration" eSuperTypes="#//FieldDeclaration">
+  <eClassifiers xsi:type="ecore:EClass" name="RequireDeclaration" eSuperTypes="#//FieldDeclaration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BaseRequireDeclaration" eSuperTypes="#//RequireDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Model"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RefinedRequireDeclaration" eSuperTypes="#//RequireDeclaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="Requires">
     <eStructuralFeatures xsi:type="ecore:EReference" name="declarations" upperBound="-1"
         eType="#//RequireDeclaration" containment="true"/>
@@ -116,6 +120,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LinkableReference"/>
   <eClassifiers xsi:type="ecore:EClass" name="LinkDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="refinedField" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//LinkableReference"
         containment="true"/>
@@ -139,6 +144,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DataModel" eSuperTypes="#//Element"/>
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refinedModel" eType="#//Model"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="requires" eType="#//Requires"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="input" eType="#//Input"

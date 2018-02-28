@@ -4,7 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,11 +16,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WrappedPartModelReferenceFieldTest extends AbstractWrappedXtextTest {
+public class WrappedBaseRequireModelReferenceFieldTest extends AbstractWrappedXtextTest {
 
-   private WrappedPartModelReferenceField wrapped;
+   private WrappedBaseRequireModelReferenceField wrapped;
 
-   private PartDeclaration partDeclaration;
+   private BaseRequireDeclaration baseRequireDeclaration;
 
    private Model modelType;
 
@@ -32,16 +32,16 @@ public class WrappedPartModelReferenceFieldTest extends AbstractWrappedXtextTest
 
    @Before
    public void setup() throws Throwable {
-      partDeclaration = factory().createPartDeclaration();
-      partDeclaration.setName("part1");
+      baseRequireDeclaration = factory().createBaseRequireDeclaration();
+      baseRequireDeclaration.setName("require1");
 
       modelType = factory().createModel();
       modelType.setName("MyType");
-      partDeclaration.setType(modelType);
+      baseRequireDeclaration.setType(modelType);
 
       Model model = factory().createModel();
-      model.setParts(factory().createParts());
-      model.getParts().getDeclarations().add(partDeclaration);
+      model.setRequires(factory().createRequires());
+      model.getRequires().getDeclarations().add(baseRequireDeclaration);
 
       IPackage p = mock(IPackage.class);
       when(p.getName()).thenReturn("some.package");
@@ -54,10 +54,10 @@ public class WrappedPartModelReferenceFieldTest extends AbstractWrappedXtextTest
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrapped = new WrappedPartModelReferenceField(resolver(), partDeclaration);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
       assertEquals("name not correct!",
                    wrapped.getName(),
-                   partDeclaration.getName());
+                   baseRequireDeclaration.getName());
       assertEquals("parent not correct!",
                    parent,
                    wrapped.getParent());
@@ -76,22 +76,22 @@ public class WrappedPartModelReferenceFieldTest extends AbstractWrappedXtextTest
       when(p.getName()).thenReturn("some.package");
       when(resolver().findXTextModel(newType.getName(), p.getName())).thenReturn(Optional.of(newXtextType));
 
-      wrapped = new WrappedPartModelReferenceField(resolver(), partDeclaration);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
       wrapped.setType(newType);
       assertEquals("type not updated!",
                    newXtextType,
-                   partDeclaration.getType());
+                   baseRequireDeclaration.getType());
    }
 
    @Test
    public void testDoesConvertToXtextObject() throws Throwable {
-      wrapped = new WrappedPartModelReferenceField(resolver(), partDeclaration);
-      PartDeclaration xtext = WrappedPartModelReferenceField.toXTextPartDeclaration(resolver(), wrapped);
+      wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
+      BaseRequireDeclaration xtext = WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
       assertEquals("name not correct!",
-                   partDeclaration.getName(),
+    		  	   baseRequireDeclaration.getName(),
                    xtext.getName());
       assertEquals("type not correct!",
-                   partDeclaration.getType(),
+    		  	   baseRequireDeclaration.getType(),
                    xtext.getType());
    }
 }

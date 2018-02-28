@@ -28,6 +28,7 @@ public class Model implements IModel {
    private final String name;
    private IPackage parent;
    private IMetadata metadata;
+   private IModel refinedModel;
    private final INamedChildCollection<IModel, IDataReferenceField> inputs;
    private final INamedChildCollection<IModel, IDataReferenceField> outputs;
    private final INamedChildCollection<IModel, IModelReferenceField> requiredModels;
@@ -62,6 +63,10 @@ public class Model implements IModel {
    public IMetadata getMetadata() {
       return metadata;
    }
+
+
+   @Override
+   public Optional<IModel> getRefinedModel() { return  Optional.of(refinedModel); }
 
    @Override
    public IModel setMetadata(IMetadata metadata) {
@@ -121,6 +126,11 @@ public class Model implements IModel {
       return this;
    }
 
+   public Model setRefinedModel(IModel model) {
+      refinedModel = model;
+      return this;
+   }
+
    public Model addInput(IDataReferenceField input) {
       inputs.add(input);
       return this;
@@ -162,6 +172,7 @@ public class Model implements IModel {
       Model model = (Model) o;
       return Objects.equals(name, model.name) &&
              parent == model.parent &&
+             refinedModel == model.refinedModel &&
              Objects.equals(metadata, model.metadata) &&
              Objects.equals(inputs, model.inputs) &&
              Objects.equals(outputs, model.outputs) &&
@@ -182,6 +193,7 @@ public class Model implements IModel {
       return "Model[" +
              "name='" + name + '\'' +
              ", parent=" + (parent == null ? "null" : parent.getName()) +
+             ", refinedModel=" + (refinedModel == null ? "null" : refinedModel.getName()) +
              ", metadata=" + metadata +
              ", inputs=" + inputs +
              ", outputs=" + outputs +
