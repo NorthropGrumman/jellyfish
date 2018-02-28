@@ -90,8 +90,13 @@
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "test.impl.common.testutilities",
+            "artifactId": "service.thread.impl.common.threadservice",
             "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "test.impl.common.testutilities",
+            "scope": "TEST"
          }
       ]
    },
@@ -113,6 +118,47 @@
             "groupId": "com.ngc.seaside",
             "artifactId": "service.correlation.impl.correlationservice",
             "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.defaulttransportservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.defaulttransportservice.module",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.testutils",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.topic.multicast",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.provider.multicast",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.impl.provider.multicast.module",
+            "scope": "BUILD"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "jellyfishVersion",
+      "version": "2.1.0-SNAPSHOT",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "guice.modules",
+            "scope": "BUILD"
          }
       ]
    },
@@ -123,6 +169,33 @@
          {
             "groupId": "com.google.guava",
             "artifactId": "guava",
+            "scope": "BUILD"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "guiceVersion",
+      "version": "4.1.0",
+      "artifacts": [
+         {
+            "groupId": "com.google.inject",
+            "artifactId": "guice",
+            "scope": "BUILD"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "cucumberVersion",
+      "version": "1.2.5",
+      "artifacts": [
+         {
+            "groupId": "info.cukes",
+            "artifactId": "cucumber-java",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "info.cukes",
+            "artifactId": "cucumber-guice",
             "scope": "BUILD"
          }
       ]
