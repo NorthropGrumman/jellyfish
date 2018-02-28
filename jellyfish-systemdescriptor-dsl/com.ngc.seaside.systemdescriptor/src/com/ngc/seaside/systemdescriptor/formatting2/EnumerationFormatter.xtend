@@ -6,10 +6,7 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 
 class EnumerationFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Enumeration enumeration, extension IFormattableDocument document) {
-        var begin = enumeration.regionFor.keyword('enum').prepend[noIndentation]
-        var end = enumeration.regionFor.keyword('}')
-        interior(begin, end)[indent]
-
+        enumeration.regionFor.keyword('enum').prepend[noIndentation]
         enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
         if (enumeration.metadata !== null) {

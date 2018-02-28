@@ -51,7 +51,7 @@ public class FormattingTestUtils {
    private FormatterTester formatterTester;
 
    /**
-    * Tests the formatter given a correctly-formatted code. This method transform the correctly-formatted code into several mal-formatted code strings, apply the formatter to the mal-formatted code
+    * Tests the formatter given correctly-formatted code. This method transform the correctly-formatted code into several mal-formatted code strings, apply the formatter to the mal-formatted code
     * and check that it has been formatted the same as the original correctly-formatted code.
     * 
     * @param correctFormat a correctly-formatted sd file as a string
