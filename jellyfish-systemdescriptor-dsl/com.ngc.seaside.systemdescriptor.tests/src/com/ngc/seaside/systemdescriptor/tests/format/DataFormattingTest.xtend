@@ -20,7 +20,7 @@ class DataFormattingTest {
 
 		data Data {
 			metadata {
-					"a" : 1
+				"a" : 1
 			}
 		
 			int field1
