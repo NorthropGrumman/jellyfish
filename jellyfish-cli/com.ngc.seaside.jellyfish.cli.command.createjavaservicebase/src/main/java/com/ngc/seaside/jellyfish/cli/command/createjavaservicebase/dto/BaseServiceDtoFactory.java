@@ -11,6 +11,7 @@ import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.CompletenessDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.EventDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -63,6 +64,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    private IScenarioService scenarioService;
    private IDataService dataService;
    private IDataFieldGenerationService dataFieldGenerationService;
+   private IBuildManagementService buildManagementService;
 
    @Inject
    public BaseServiceDtoFactory(IProjectNamingService projectService,
@@ -70,13 +72,16 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                 IJavaServiceGenerationService generateService,
                                 IScenarioService scenarioService,
                                 IDataService dataService,
-                                IDataFieldGenerationService dataFieldGenerationService, ILogService logService) {
+                                IDataFieldGenerationService dataFieldGenerationService,
+                                IBuildManagementService buildManagementService,
+                                ILogService logService) {
       this.projectService = projectService;
       this.packageService = packageService;
       this.generateService = generateService;
       this.scenarioService = scenarioService;
       this.dataService = dataService;
       this.dataFieldGenerationService = dataFieldGenerationService;
+      this.buildManagementService = buildManagementService;
       this.logService = logService;
    }
 
@@ -88,7 +93,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       ClassDto abstractClassDto = generateService.getBaseServiceDescription(options, model);
       EnumDto topicsDto = generateService.getTransportTopicsDescription(options, model);
 
-      BaseServiceDto dto = new BaseServiceDto();
+      BaseServiceDto dto = new BaseServiceDto(buildManagementService, options);
       dto.setProjectDirectoryName(projectService.getBaseServiceProjectName(options, model).getDirectoryName());
       dto.setProjectDependencies(projectDependencies);
       dto.setAbstractClass(abstractClassDto);

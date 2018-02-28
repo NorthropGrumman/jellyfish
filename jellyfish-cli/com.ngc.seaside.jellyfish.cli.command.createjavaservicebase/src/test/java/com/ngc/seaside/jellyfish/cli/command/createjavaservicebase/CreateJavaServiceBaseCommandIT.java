@@ -12,7 +12,9 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -90,13 +92,16 @@ public class CreateJavaServiceBaseCommandIT {
    @Mock
    private IDataFieldGenerationService dataFieldGenerationService;
 
+   private IBuildManagementService buildManagementService;
+
    private IModel model = newModelForTesting();
 
    @Before
    public void setup() throws Throwable {
       tempFolder.newFile("settings.gradle");
       outputDirectory = tempFolder.getRoot();
-      //outputDirectory = new File("build"); // TODO TH: remove this line.
+
+      buildManagementService = new MockedBuildManagementService();
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
@@ -104,7 +109,14 @@ public class CreateJavaServiceBaseCommandIT {
                   CreateJavaServiceBaseCommand.class.getPackage().getName(),
                   Paths.get("src", "main", "template"));
 
-      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      templateDaoFactory = new BaseServiceDtoFactory(projectService,
+                                                     packageService,
+                                                     generatorService,
+                                                     scenarioService,
+                                                     dataService,
+                                                     dataFieldGenerationService,
+                                                     buildManagementService,
+                                                     logService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
