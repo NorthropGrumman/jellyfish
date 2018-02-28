@@ -387,10 +387,9 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 		Data data,
 		extension IFormattableDocument document
 	) {
-		var begin = data.regionFor.keyword('data')
-		var end = data.regionFor.keyword('}')
+		data.regionFor.keyword('data').prepend[noIndentation]
+		data.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
-		data.prepend[setNewLines(2)]
 
 		if(data.metadata !== null) {
 			data.metadata.format;
@@ -401,7 +400,11 @@ class SystemDescriptorFormatter extends AbstractFormatter2 {
 			dec.prepend[newLine]
 			dec.format;
 		}
+		
+		data.regionFor.keyword('}').append[noSpace].append[newLine]
 
+		var begin = data.regionFor.keyword('data')
+		var end = data.regionFor.keyword('}')
 		interior(begin, end)[indent]
 	}
 

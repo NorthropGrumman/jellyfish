@@ -91,7 +91,7 @@ public class DataServiceTest {
    }
 
    private static void setupData(IData data, IData superClass, Object... fields) {
-      when(data.getSuperDataType()).thenReturn(Optional.ofNullable(superClass));
+      when(data.getExtendedDataType()).thenReturn(Optional.ofNullable(superClass));
       NamedChildCollection collection = new NamedChildCollection(data);
       int i = 0;
       for (Object field : fields) {

@@ -468,11 +468,11 @@ public class CreateDomainCommand implements IJellyFishCommand {
       dataTypes.addAll(queue);
       while (!queue.isEmpty()) {
          IData next = queue.poll();
-         IData parent = next.getSuperDataType().orElse(null);
+         IData parent = next.getExtendedDataType().orElse(null);
          while (parent != null) {
             if (superDataTypes.add(parent)) {
                queue.add(parent);
-               parent = parent.getSuperDataType().orElse(null);
+               parent = parent.getExtendedDataType().orElse(null);
             } else {
                break;
             }
@@ -516,7 +516,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       Tobject object = new Tobject();
       object.setAbstract(isAbstract);
-      data.getSuperDataType().ifPresent(superDataType -> {
+      data.getExtendedDataType().ifPresent(superDataType -> {
          String superPkg = packageGenerator.apply(superDataType);
          object.setExtends(superPkg + '.' + superDataType.getName());
       });
