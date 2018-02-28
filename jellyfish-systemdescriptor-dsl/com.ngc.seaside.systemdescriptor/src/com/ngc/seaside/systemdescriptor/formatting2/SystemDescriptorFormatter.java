@@ -69,10 +69,14 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.OUTPUT_DECLARATION);
         registerFormatter(new PartsFormatter(),
             SystemDescriptorPackage.Literals.PARTS,
-            SystemDescriptorPackage.Literals.PART_DECLARATION);
+            SystemDescriptorPackage.Literals.PART_DECLARATION,
+            SystemDescriptorPackage.Literals.BASE_PART_DECLARATION,
+            SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION);
         registerFormatter(new RequiresFormatter(),
             SystemDescriptorPackage.Literals.REQUIRES,
-            SystemDescriptorPackage.Literals.REQUIRE_DECLARATION);
+            SystemDescriptorPackage.Literals.REQUIRE_DECLARATION,
+            SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION,
+            SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION);
         registerFormatter(new LinksFormatter(),
             SystemDescriptorPackage.Literals.LINKS,
             SystemDescriptorPackage.Literals.LINK_DECLARATION);

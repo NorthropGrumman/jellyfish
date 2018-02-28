@@ -72,4 +72,11 @@ class ModelFormattingTest {
 		formattingUtils.testFormatter(formattedModel)
 	}
 	
+//	@Test
+//	def void testRefinedModelFormatting() {
+//		
+//	}
+//	
+//	@Test
+//	def void 
 }
