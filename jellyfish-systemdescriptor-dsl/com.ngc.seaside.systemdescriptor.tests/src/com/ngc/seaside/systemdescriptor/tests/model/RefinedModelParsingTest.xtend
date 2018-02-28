@@ -209,8 +209,7 @@ class RefinedModelParsingTest {
     }
     
     @Test
-    @Ignore 
-    def void testDoesNotParseModelRefining_Outputs() {
+    def void testDoesNotParseModelAdding_Requires() {
         val source = '''
             package clocks.models
 
@@ -218,8 +217,9 @@ class RefinedModelParsingTest {
             import clocks.datatypes.Time
 
             model RefinedModel refines Alarm {
-                output {
-                    refine Time time
+                requires {
+                    AnEmptyModel emptyModel
+                    Timer timer
                 }
             }
         '''

@@ -1,8 +1,10 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.validation.Check;
 
 public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorValidator {
@@ -16,6 +18,7 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         checkDoesNotParseModelThatRedeclaresInputs(model);
         checkDoesNotParseModelThatRedeclaresOutputs(model);
         checkDoesNotParseModelThatRedeclaresScenarios(model);
+        checkDoesNotParseModelThatRedeclaresRequires(model);
     }
 
     private void checkDoesNotParseModelThatRefinesUnloadableItem(Model model) {
@@ -46,6 +49,12 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         }
     }
 
+    private void checkDoesNotParseModelThatRedeclaresRequires(Model model) {
+        if (!refinedModelHasValidRequiresBlock(model, model.getRefinedModel())) {
+            causeUnpermittedAdditionErrorRegarding("requirements", model);
+        }
+    }
+
     private void checkDoesNotParseModelThatRedeclaresScenarios(Model model) {
         if (!model.getScenarios().isEmpty()) {
             causeUnpermittedAdditionErrorRegarding("scenarios", model);
@@ -55,5 +64,26 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
         String msg = String.format("A refined model cannot add %s!", typeOfRedefinition);
         error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+    }
+
+    private boolean refinedModelHasValidRequiresBlock(Model refinedModel, Model modelBeingRefined) {
+        return
+            !modelHasRequirementDeclarations(refinedModel) ||
+            findNumInvalidRequirementsInRefinedModel(refinedModel, modelBeingRefined) == 0;
+    }
+
+    private long findNumInvalidRequirementsInRefinedModel(Model refinedModel, Model modelBeingRefined) {
+        return modelRequirementDeclarations(refinedModel)
+            .stream()
+            .filter(r -> !modelRequirementDeclarations(modelBeingRefined).contains(r))
+            .count();
+    }
+
+    private EList<RequireDeclaration> modelRequirementDeclarations(Model model) {
+        return model.getRequires().getDeclarations();
+    }
+
+    private boolean modelHasRequirementDeclarations(Model model) {
+        return model.getRequires() != null && modelRequirementDeclarations(model) != null;
     }
 }
