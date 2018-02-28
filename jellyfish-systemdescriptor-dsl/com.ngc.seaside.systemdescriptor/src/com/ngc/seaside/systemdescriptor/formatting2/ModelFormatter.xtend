@@ -6,6 +6,10 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 class ModelFormatter extends AbstractSystemDescriptorFormatter {
 	def dispatch void format(Model model, extension IFormattableDocument document) {
 		model.regionFor.keyword('model').prepend[noIndentation]
+		
+		if (model.refinedModel !== null) {
+			model.regionFor.keyword('refines').prepend[oneSpace].append[oneSpace]
+		}
 
 		model.metadata?.format
 

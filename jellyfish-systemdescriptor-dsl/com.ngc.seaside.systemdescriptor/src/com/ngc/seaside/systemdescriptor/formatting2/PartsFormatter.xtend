@@ -38,7 +38,9 @@ class PartsFormatter extends AbstractSystemDescriptorFormatter {
     
     def dispatch void format(RefinedPartDeclaration declaration, extension IFormattableDocument document) {
     	formatDeclaration(declaration, document)
-    	// TODO TH: IMplement this
+    	declaration.regionFor.keyword('refine')
+    		.prepend[noSpace]
+    		.append[oneSpace]
     }
     
     private def void formatDeclaration(PartDeclaration declaration, extension IFormattableDocument document) {

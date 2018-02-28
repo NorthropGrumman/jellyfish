@@ -37,6 +37,9 @@ class RequiresFormatter extends AbstractSystemDescriptorFormatter {
     
     def dispatch void format(RefinedRequireDeclaration declaration, extension IFormattableDocument document) {
 		formatDeclaration(declaration, document)
+		declaration.regionFor.keyword('refine')
+    		.prepend[noSpace]
+    		.append[oneSpace]
     }
     
     private def void formatDeclaration(RequireDeclaration declaration, extension IFormattableDocument document) {

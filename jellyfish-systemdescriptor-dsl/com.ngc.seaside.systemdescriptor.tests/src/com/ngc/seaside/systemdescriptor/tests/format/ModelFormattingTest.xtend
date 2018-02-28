@@ -72,11 +72,39 @@ class ModelFormattingTest {
 		formattingUtils.testFormatter(formattedModel)
 	}
 	
-//	@Test
-//	def void testRefinedModelFormatting() {
-//		
-//	}
-//	
-//	@Test
-//	def void 
+	var refinedFormattedModel = '''
+		package com.ngc.test
+		
+		import com.ngc.import1.BaseModel
+
+		model Model refines BaseModel {
+			metadata {
+					"a" : 1
+			}
+		
+			parts {
+				refine part1
+				refine part2 {
+						metadata {
+								"a" : 1
+						}
+				}
+			}
+		
+			requires {
+				refine requirement1
+				refine requirement2 {
+						metadata {
+								"a" : 1
+						}
+				}
+			}
+		
+		}
+		'''
+	
+	@Test
+	def void testRefinedModelFormatting() {
+		formattingUtils.testFormatter(refinedFormattedModel)
+	}
 }
