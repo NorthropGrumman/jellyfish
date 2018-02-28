@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -21,7 +20,7 @@ class DataFormattingTest {
 
 		data Data {
 			metadata {
-				"a" : 1
+					"a" : 1
 			}
 		
 			int field1
@@ -35,11 +34,14 @@ class DataFormattingTest {
 			Data1 field9
 			many Data2 field10
 			com.ngc.import3.Data3 field11
-			many com.ngc.import4.Data4 field12
+			many com.ngc.import4.Data4 field12 {
+					metadata {
+							"a" : 1
+					}
+			}
 		}
 	'''
 	
-	@Ignore("until I re-add Tyler's changes")
 	@Test
 	def void testDataFormatting() {
 		formattingUtils.testFormatter(formattedData)
@@ -48,14 +50,12 @@ class DataFormattingTest {
 	var formattedDataWithExtension = '''
 		package com.ngc.test
 		
-		data Data : ParentData {
+		data Data extends ParentData {
 		}
 	'''
 	
-	@Ignore("until I re-add Tyler's changes")
 	@Test
 	def void testDataFormattingWithExtension() {
 		formattingUtils.testFormatter(formattedDataWithExtension)
 	}
-	
 }

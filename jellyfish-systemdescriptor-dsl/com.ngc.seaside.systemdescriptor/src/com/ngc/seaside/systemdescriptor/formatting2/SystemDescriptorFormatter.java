@@ -157,8 +157,6 @@ public class SystemDescriptorFormatter implements IFormatter2 {
 			}
 		}
 
-		System.out.println("OUT");
-		
 		return replacements;
 	}
 

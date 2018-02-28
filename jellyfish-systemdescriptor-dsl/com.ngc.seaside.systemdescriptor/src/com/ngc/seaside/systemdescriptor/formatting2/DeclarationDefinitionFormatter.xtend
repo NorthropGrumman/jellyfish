@@ -9,8 +9,6 @@ class DeclarationDefinitionFormatter extends AbstractSystemDescriptorFormatter {
         var end = definition.regionFor.keyword('}')
         interior(begin, end)[indent]
 
-        if (definition.metadata !== null) {
-            definition.metadata.format
-        }
+        definition.metadata?.format
     }
 }

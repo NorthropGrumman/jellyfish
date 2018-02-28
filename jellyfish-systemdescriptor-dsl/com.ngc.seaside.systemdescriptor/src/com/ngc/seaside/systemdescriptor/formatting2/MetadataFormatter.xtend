@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Member
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
 import org.eclipse.xtext.formatting2.IFormattableDocument
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.eclipse.xtext.EcoreUtil2
 
 class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 	def dispatch void format(Metadata metadata, extension IFormattableDocument document) {
@@ -14,7 +15,11 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 		metadata.regionFor.keyword('metadata').prepend[newLine]
 
 		metadata.json.format
-		metadata.append[setNewLines(2)]
+		if (EcoreUtil2.getAllSuperTypes(metadata.eContainer.eClass).contains(SystemDescriptorPackage.Literals.ELEMENT)) {
+			metadata.append[setNewLines(2)]
+		} else {
+			metadata.append[setNewLines(1)]
+		}
 	}
 
 	def dispatch void format(JsonObject json, extension IFormattableDocument document) {
