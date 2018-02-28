@@ -90,7 +90,7 @@
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "com.ngc.blocs:test.impl.common.testutilities",
+            "artifactId": "test.impl.common.testutilities",
             "scope": "BUILD"
          }
       ]
