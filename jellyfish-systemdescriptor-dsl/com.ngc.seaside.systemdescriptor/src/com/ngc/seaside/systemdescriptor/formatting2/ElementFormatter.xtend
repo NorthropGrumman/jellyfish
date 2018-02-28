@@ -10,7 +10,7 @@ class ElementFormatter extends AbstractSystemDescriptorFormatter {
         element.regionFor.feature(SystemDescriptorPackage.Literals.ELEMENT__NAME).prepend[oneSpace]
         element.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
-        element.metadata?.format;
+        element.metadata?.format
 
         var begin = element.regionFor.keyword('{')
         var end = element.regionFor.keyword('}').append[newLine]

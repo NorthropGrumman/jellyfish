@@ -9,10 +9,6 @@ class EnumerationFormatter extends AbstractSystemDescriptorFormatter {
         enumeration.regionFor.keyword('enum').prepend[noIndentation]
         enumeration.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
-        if (enumeration.metadata !== null) {
-            enumeration.metadata.format
-        }
-
         for (EnumerationValueDeclaration value : enumeration.values) {
             value.format
             value.append[newLine]

@@ -17,7 +17,7 @@ class EnumFormattingTest {
 
 		enum Enumeration {
 			metadata {
-					"a" : 1
+				"a" : 1
 			}
 
 			FIELD1
