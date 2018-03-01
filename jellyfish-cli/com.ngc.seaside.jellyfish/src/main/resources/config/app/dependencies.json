@@ -110,7 +110,7 @@
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "xml.resource.impl.common.xmlresourc",
+            "artifactId": "xml.resource.impl.common.xmlresource",
             "scope": "BUILD"
          },
          {
@@ -186,12 +186,12 @@
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.fault.impl.service.faultloggingservice",
+            "artifactId": "fault.impl.faultloggingservice",
             "scope": "BUILD"
          },
          {
             "groupId": "com.ngc.seaside",
-            "artifactId": "service.monitoring.impl.loggingmonitoringservice",
+            "artifactId": "monitoring.impl.loggingmonitoringservice",
             "scope": "BUILD"
          },
          {

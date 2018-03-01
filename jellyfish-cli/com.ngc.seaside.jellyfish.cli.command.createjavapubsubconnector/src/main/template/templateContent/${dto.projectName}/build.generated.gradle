@@ -6,7 +6,7 @@ dependencies {
 #end
 
    compile "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
-   compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}" "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
+   compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
 
    compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
    compile "${dto.getFormattedDependency('org.osgi:osgi.core')}"

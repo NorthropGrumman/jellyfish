@@ -20,8 +20,8 @@ dependencies {
 #end
 
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
-   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.fault.impl.faultloggingservice')}"
-   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.monitoring.impl.loggingmonitoringservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:fault.impl.faultloggingservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:monitoring.impl.loggingmonitoringservice')}"
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.topic.multicast')}"

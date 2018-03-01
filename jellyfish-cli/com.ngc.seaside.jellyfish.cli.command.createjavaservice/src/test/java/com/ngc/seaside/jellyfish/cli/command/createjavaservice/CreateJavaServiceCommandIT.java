@@ -110,7 +110,7 @@ public class CreateJavaServiceCommandIT {
 
       serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService, buildManagementService);
 
-      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, buildManagementService, logService);
       
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       IModel testModel = newModelForTesting();
