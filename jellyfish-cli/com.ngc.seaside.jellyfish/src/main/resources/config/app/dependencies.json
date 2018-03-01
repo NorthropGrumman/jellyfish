@@ -155,7 +155,7 @@
          },
          {
             "groupId": "com.ngc.blocs",
-            "artifactId": "",
+            "artifactId": "service.deployment.impl.common.autodeploymentservice",
             "scope": "BUILD"
          },
          {

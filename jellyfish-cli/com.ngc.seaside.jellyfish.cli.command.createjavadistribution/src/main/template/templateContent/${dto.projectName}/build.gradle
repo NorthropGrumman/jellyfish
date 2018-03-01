@@ -44,16 +44,16 @@ dependencies {
    blocs "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
 
    thirdParty 'com.google.guava:guava:17.0'
-   thirdParty2 "com.google.guava:guava:${D}{guavaVersion}" // Note we need 2 versions of guava so we have to do this.
+   thirdParty2 "${dto.getFormattedDependency('com.google.guava:guava')}"
    thirdParty 'commons-io:commons-io:1.4'
    thirdParty 'log4j:log4j-osgi:1.2.17' // This version has the corrected log4j manifest.
    thirdParty 'commons-beanutils:commons-beanutils:1.8.3'
    thirdParty 'commons-lang:commons-lang:2.4'
    thirdParty 'commons-collections:commons-collections:3.2.1'
    thirdParty 'commons-logging:commons-logging-osgi:1.1.1'
-   thirdParty "com.google.protobuf:protobuf-java:${D}protobufVersion"
+   thirdParty "${dto.getFormattedDependency('com.google.protobuf:protobuf-java')}"
 
-   platform "com.ngc.blocs:service.deployment.impl.common.autodeploymentservice:${D}{blocsCoreVersion}"
+   platform "${dto.getFormattedDependency('com.ngc.blocs:service.deployment.impl.common.autodeploymentservice')}"
    platform "org.eclipse.equinox:equinox-common:3.6.200.v20130402-1505"
    platform "org.eclipse.equinox:equinox-osgi-services:3.4.0.v20140312-2051"
    platform "org.eclipse.equinox:equinox-console:1.1.0.v20140131-1639"
