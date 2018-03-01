@@ -93,6 +93,7 @@ subprojects {
 		clean.doFirst {
 		    delete file('src-gen')
 		    delete file('xtend-gen')
+		    delete file('plugin.xml_gen')
 		}
 
         repositories {
