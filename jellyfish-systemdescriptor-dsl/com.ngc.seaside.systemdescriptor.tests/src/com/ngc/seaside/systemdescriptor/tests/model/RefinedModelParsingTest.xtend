@@ -115,7 +115,7 @@ class RefinedModelParsingTest {
 
     @Test
     def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
-        val refinedModels = Models.allOf(
+        val refinedModel = Models.allOf(
             resourceHelper,
             Models.INVALID_REFINED_MODEL
         )
@@ -128,7 +128,7 @@ class RefinedModelParsingTest {
             }
         '''
 
-        var invalidResult = parseHelper.parse(source, refinedModels.resourceSet)
+        var invalidResult = parseHelper.parse(source, refinedModel.resourceSet)
         assertNotNull(invalidResult)
 
         validationTester.assertError(
