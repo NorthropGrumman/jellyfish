@@ -50,9 +50,6 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     private void checkDoesNotParseModelThatDeclaresNewRequires(Model model) {
-//        if (!refinedModelHasValidRequiresBlock(model, model.getRefinedModel())) {
-//            causeUnpermittedAdditionErrorRegarding("requirements", model);
-//        }
     	if (refinedModelHasNewRequiresDeclarations(model)) {
     		causeUnpermittedAdditionErrorRegarding("requirements", model);
     	}
