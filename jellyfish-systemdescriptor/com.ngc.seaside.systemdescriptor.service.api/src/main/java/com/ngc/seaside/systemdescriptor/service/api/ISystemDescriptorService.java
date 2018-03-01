@@ -81,12 +81,12 @@ public interface ISystemDescriptorService {
     * Invoking {@link IModel#getInputs()}, {@link IModel#getOutputs()}, {@link IModel#getParts()}, {@link
     * IModel#getRequiredModels()}, {@link IModel#getScenarios()}, or {@link IModel#getLinks()} on the view will return
     * all values declared in the object as well as all values declared in the model the model refines.  {@link
-    * IModel#getLink(String)} will also attempt to receive the link with the given name using all links in the model as
-    * well as models that are refined.  If the model being refined also refines another model, those values will also be
-    * included.  Metadata functions in a similar manner.  Invoking {@link IModel#getMetadata()} returns all metadata
-    * declared directly by the model as well as metadata declared in refined model.  If duplicate metadata values are
-    * declared, the value closest to the original model in terms of the refinement hierarchy is used.  This makes it
-    * possible to <i>overwrite</i> metadata when refining models.
+    * IModel#getLinkByName(String)} will also attempt to receive the link with the given name using all links in the
+    * model as well as models that are refined.  If the model being refined also refines another model, those values
+    * will also be included.  Metadata functions in a similar manner.  Invoking {@link IModel#getMetadata()} returns all
+    * metadata declared directly by the model as well as metadata declared in refined model.  If duplicate metadata
+    * values are declared, the value closest to the original model in terms of the refinement hierarchy is used.  This
+    * makes it possible to <i>overwrite</i> metadata when refining models.
     *
     * <p/>
     *
