@@ -17,7 +17,6 @@ import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)

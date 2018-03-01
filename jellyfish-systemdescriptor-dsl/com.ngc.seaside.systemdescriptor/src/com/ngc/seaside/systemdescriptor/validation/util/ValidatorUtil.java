@@ -6,6 +6,7 @@ package com.ngc.seaside.systemdescriptor.validation.util;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 /**
  * Utility methods to help with validation 
@@ -22,7 +23,7 @@ public class ValidatorUtil {
 	 */
 	static public Model getModel(FieldDeclaration declaration){
 		if (declaration.eContainer().eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
-			return (Model)declaration.eContainer().eContainer();
+			return (Model) declaration.eContainer().eContainer();
 		}
 		return null;
 	}
@@ -98,11 +99,13 @@ public class ValidatorUtil {
 		//Bring us up to the part model
 		String msg = "";
 		Model fieldDeclarationModel = getModel(fieldDeclaration);
-		if (fieldDeclarationModel !=null) {
-			if (((Model)fieldDeclaration.eContainer().eContainer()).getRefinedModel() == null) {
+		if (fieldDeclarationModel != null) {
+			if (fieldDeclarationModel.getRefinedModel() == null) {
 				msg = String.format(
-						"Cannot refine field Declaration  '%s' if this model '%s' is not refining another model",
-						fieldDeclaration.getName(), fieldDeclarationModel.getName());
+						"Field '%s' cannot be refined because model '%s.%s.' does not refine another model.",
+						fieldDeclaration.getName(),
+						((Package) fieldDeclarationModel.eContainer()).getName(),
+						fieldDeclarationModel.getName());
 			}
 		}
 		return msg;
@@ -121,19 +124,22 @@ public class ValidatorUtil {
 			if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
 				if (!ValidatorUtil.findPartDeclarationName(fieldDeclarationModel, fieldDeclaration.getName())){
 					msg = String.format(
-							"The field Declaration '%s' cannot be refined without first being defined in Model"
-							+ " '%s' thats being refined or its hierarchy",
-							fieldDeclaration.getName(), fieldDeclarationModel.getRefinedModel().getName());	
+							"Cannot refine the part '%s' as no part with that name has been declared in the"
+					        + " refinement hierarcy of '%s.%s'.",
+							fieldDeclaration.getName(),
+							fieldDeclarationModel.getName(),
+							((Package) fieldDeclarationModel.eContainer()).getName());	
 				}
 			}
 			else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION)) {
 				if (!ValidatorUtil.findRequireDeclarationName(fieldDeclarationModel, fieldDeclaration.getName())){
 					msg = String.format(
-							"The field Declaration '%s' cannot be refined without first being defined in Model"
-							+ " '%s' thats being refined or its hierarchy",
-							fieldDeclaration.getName(), fieldDeclarationModel.getRefinedModel().getName());	
+							"Cannot refine the requirement '%s' as no requirement with that name has been declared in the"
+							+ " refinement hierarcy of '%s.%s'.",
+							fieldDeclaration.getName(),
+							fieldDeclarationModel.getName(),
+							((Package) fieldDeclarationModel.eContainer()).getName());	
 				}
-				
 			}
 			
 		}
