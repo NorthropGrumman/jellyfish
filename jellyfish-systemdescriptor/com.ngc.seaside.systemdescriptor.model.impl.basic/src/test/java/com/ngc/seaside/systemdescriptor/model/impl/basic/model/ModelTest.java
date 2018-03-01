@@ -68,12 +68,12 @@ public class ModelTest
       output.setMetadata(createMetadata("since", "2.0"));
       model.addOutput(output);
 
-      IModelReferenceField part = new ModelReferenceField("timer");
+      IModelReferenceField part = new BaseModelReferenceField("timer");
       part.setType(timer);
       part.setMetadata(createMetadata("description", "This is provided by 3rd party software"));
       model.addPart(part);
 
-      IModelReferenceField requireModel = new ModelReferenceField("thristQuencher");
+      IModelReferenceField requireModel = new BaseModelReferenceField("thristQuencher");
       requireModel.setType(gatorade);
       requireModel.setMetadata(createMetadata("flavor", "purple"));
       model.addRequiredModel(requireModel);

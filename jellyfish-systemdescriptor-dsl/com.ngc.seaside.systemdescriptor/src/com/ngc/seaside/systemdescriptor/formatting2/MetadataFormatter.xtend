@@ -1,0 +1,56 @@
+package com.ngc.seaside.systemdescriptor.formatting2
+
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Member
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
+import org.eclipse.xtext.formatting2.IFormattableDocument
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import org.eclipse.xtext.EcoreUtil2
+
+class MetadataFormatter extends AbstractSystemDescriptorFormatter {
+	def dispatch void format(Metadata metadata, extension IFormattableDocument document) {
+		metadata.prepend[noSpace]
+		metadata.regionFor.keyword('metadata').prepend[newLine]
+
+		metadata.json.format
+		if (EcoreUtil2.getAllSuperTypes(metadata.eContainer.eClass).contains(SystemDescriptorPackage.Literals.ELEMENT)) {
+			metadata.append[setNewLines(2)]
+		} else {
+			metadata.append[setNewLines(1)]
+		}
+	}
+
+	def dispatch void format(JsonObject json, extension IFormattableDocument document) {
+		var begin = json.regionFor.keyword('{').prepend[noSpace ; oneSpace]
+		var end = json.regionFor.keyword('}').append[noSpace]
+		interior(begin, end)[indent]
+
+		for (Member member : json.members) {
+			member.format
+			if(member == json.members.last) {
+				member.append[newLine]
+			}
+		}
+	}
+
+	def dispatch void format(Member member, extension IFormattableDocument document) {
+		member.prepend[newLine]
+		member.regionFor.feature(SystemDescriptorPackage.Literals.MEMBER__KEY)
+			.prepend[noSpace]
+
+		member.regionFor.keyword(':').prepend[oneSpace]
+		member.value.format.prepend[oneSpace]
+		member.prepend[newLine]
+	}
+
+	def dispatch void format(JsonValue json, extension IFormattableDocument document) {
+		json.value.format
+	}
+
+	def dispatch void format(ArrayValue array, extension IFormattableDocument document) {
+		array.value.regionFor.keyword('[').append[oneSpace]
+		array.value.regionFor.keyword(']').prepend[oneSpace]
+	}
+}

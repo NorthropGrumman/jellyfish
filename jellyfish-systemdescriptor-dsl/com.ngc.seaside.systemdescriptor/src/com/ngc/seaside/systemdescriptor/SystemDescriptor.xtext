@@ -239,8 +239,25 @@ Input
  * Declares a sub-part of a model via a referenced model type and an unqualified name.
  */
 PartDeclaration
+	: BasePartDeclaration
+	| RefinedPartDeclaration
+	;
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+BasePartDeclaration
 	: type=[Model|QualifiedName]
 	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
+	;
+
+/*
+ * Declares a sub-part of a model via a referenced model type and an unqualified name.
+ */
+RefinedPartDeclaration
+	: 'refine'
+	  name=UnqualifiedName  
 	  definition=DeclarationDefinition?
 	;
  
@@ -257,8 +274,20 @@ Parts
  * Declares a requirement on another model via a referenced model type
  * and an unqualified name.
  */
+ 
 RequireDeclaration
+	: BaseRequireDeclaration
+	| RefinedRequireDeclaration
+	;
+	
+BaseRequireDeclaration
 	: type=[Model|QualifiedName]
+	  name=UnqualifiedName
+	  definition=DeclarationDefinition?
+	;
+	
+RefinedRequireDeclaration
+	: 'refine'
 	  name=UnqualifiedName
 	  definition=DeclarationDefinition?
 	;
@@ -403,7 +432,8 @@ FieldReference returns LinkableReference
  * exchange information in some manner (ex. "link speaker to alarm.speaker").
  */
 LinkDeclaration
-	: 'link'
+	: (refinedField?='refine')?
+		'link'
 		name=UnqualifiedName?
 		source=LinkableExpression
 		'->'
@@ -459,7 +489,7 @@ DataModel
  * attributes of metadata and optional requires, input, output, and scenario attributes.
  */
 Model
-	: 'model' name=UnqualifiedName '{'
+	: 'model' name=UnqualifiedName ('refines' refinedModel=[Model|QualifiedName])? '{'
 		metadata=Metadata? &
 		requires=Requires? &
 		input=Input? &

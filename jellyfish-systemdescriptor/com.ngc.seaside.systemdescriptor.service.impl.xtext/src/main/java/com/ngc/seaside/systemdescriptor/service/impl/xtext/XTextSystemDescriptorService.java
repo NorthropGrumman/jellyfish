@@ -1,12 +1,18 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.impl.view.AggregatedDataView;
+import com.ngc.seaside.systemdescriptor.model.impl.view.AggregatedModelView;
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -20,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL. New instances
@@ -72,7 +79,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class XTextSystemDescriptorService implements ISystemDescriptorService {
 
+   /**
+    * Contains all registered step handlers.  A copy on write list is used for thread safely since we expect to read
+    * from this list much more often then we write to it.
+    */
    private final Collection<IScenarioStepHandler> stepHandlers = new CopyOnWriteArrayList<>();
+
+   /**
+    * An evicting cache that stores aggregated views of data.  This enables the flyweight pattern so we can reuse
+    * instances of the views.  The cache will only grow to a fixed size and then entries will be evicted.
+    */
+   private final Cache<Integer, AggregatedDataView> dataViews = CacheBuilder.newBuilder()
+         .maximumSize(25)
+         .build();
+
+
+   /**
+    * An evicting cache that stores aggregated views of models.  This enables the flyweight pattern so we can reuse
+    * instances of the views.  The cache will only grow to a fixed size and then entries will be evicted.
+    */
+   private final Cache<Integer, AggregatedModelView> modelViews = CacheBuilder.newBuilder()
+         .maximumSize(25)
+         .build();
 
    private final ILogService logService;
 
@@ -139,6 +167,32 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    }
 
    @Override
+   public IData getAggregatedView(IData data) {
+      Preconditions.checkNotNull(data, "data may not be null!");
+      // Use the identity of the actual object as a key.  This avoids computing the hash code from the state of the
+      // object.  If the object's state changes, we can still reuse the original view, so we don't want to use the
+      // real hashCode(..) implementation.  identityHashCode gives us a unique value for each instance of IData.
+      int key = System.identityHashCode(data);
+      try {
+         return dataViews.get(key, () -> new AggregatedDataView(data));
+      } catch (ExecutionException e) {
+         throw new RuntimeException(e.getMessage(), e);
+      }
+   }
+
+   @Override
+   public IModel getAggregatedView(IModel model) {
+      Preconditions.checkNotNull(model, "model may not be null!");
+      // See note above regarding the use of identityHashCode.
+      int key = System.identityHashCode(model);
+      try {
+         return modelViews.get(key, () -> new AggregatedModelView(model));
+      } catch (ExecutionException e) {
+         throw new RuntimeException(e.getMessage(), e);
+      }
+   }
+
+   @Override
    public Collection<IScenarioStepHandler> getScenarioStepHandlers() {
       return Collections.unmodifiableCollection(stepHandlers);
    }
@@ -175,8 +229,8 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
    }
 
    /**
-    * A value holder to hold {@link IScenarioStepHandler}s.  This is a workaround to Guice to
-    * enable optional constructor parameters.
+    * A value holder to hold {@link IScenarioStepHandler}s.  This is a workaround to Guice to enable optional
+    * constructor parameters.
     */
    public static class StepsHolder {
 

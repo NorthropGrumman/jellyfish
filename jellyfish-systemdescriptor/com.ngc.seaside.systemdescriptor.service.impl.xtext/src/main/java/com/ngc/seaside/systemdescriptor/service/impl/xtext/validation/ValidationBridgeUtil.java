@@ -188,7 +188,7 @@ public class ValidationBridgeUtil {
          case "getName":
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
-            return SystemDescriptorPackage.Literals.PART_DECLARATION__TYPE;
+            return SystemDescriptorPackage.Literals.BASE_PART_DECLARATION__TYPE;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
@@ -199,7 +199,7 @@ public class ValidationBridgeUtil {
          case "getName":
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
-            return SystemDescriptorPackage.Literals.REQUIRE_DECLARATION__TYPE;
+            return SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION__TYPE;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }

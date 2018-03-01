@@ -8,9 +8,11 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.InjectWith
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import org.eclipse.xtext.junit4.formatter.FormatterTester
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SystemDescriptorInjectorProvider))
+@Ignore("Delete this class")
 class FormattingTest {
 	@Inject extension FormatterTester
 	
@@ -222,6 +224,14 @@ class FormattingTest {
 			toBeFormatted = formattedExample5.replaceAll("\r|\n", " ")
 		]
 	}
+	
+	@Test
+	def void testJumbledExample6() {
+		assertFormatted[
+			expectation = formattedExample6
+			toBeFormatted = formattedExample6.replaceAll("\r|\n", " ")
+		]
+	}
 
 	var formattedExample1 = '''
 		package com.ngc.seaside.threateval
@@ -384,6 +394,19 @@ class FormattingTest {
 		data FooTime extends GPSTime {
 			int moreSeconds
 			int andStuff
+		}
+	'''
+	
+	var formattedExample6 = '''
+		package com.ngc.seaside.threateval
+		
+		import com.ngc.seaside.threateval.ThreatEvaluation
+		
+		model ThreatEvaluationTest refines ThreatEvaluation {
+			parts {
+				refine defendedAreaTrackPriorityService
+			}
+		
 		}
 	'''
 }
