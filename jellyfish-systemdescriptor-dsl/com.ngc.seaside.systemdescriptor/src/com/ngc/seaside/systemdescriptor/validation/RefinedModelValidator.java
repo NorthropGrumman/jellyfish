@@ -20,7 +20,7 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     }
 
     private void checkDoesNotParseModelThatRefinesData(Model model) {
-        if (model.getRefinedModel() != null && model.getRefinedModel().getName() == null) {
+        if (model.getRefinedModel().getName() == null) {
             String msg = "A model cannot refine data!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
         }
@@ -30,7 +30,8 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         if (model.getRefinedModel().equals(model)) {
             String msg = "A model cannot refine itself!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
-        } else if (model.getRefinedModel() != null && model.getRefinedModel().getRefinedModel() != null && model.getRefinedModel().getRefinedModel().getName().equals(model.getName())) {
+        } else if (model.getRefinedModel().getRefinedModel() != null &&
+                   model.getRefinedModel().getRefinedModel().getName().equals(model.getName())) {
             String msg = "A model cannot refine a model that refines the current model!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
         }
