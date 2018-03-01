@@ -198,7 +198,7 @@ class Datas {
 		for (Object o : resources) {
 			if (o instanceof ParsingTestResource) {
 				all.add(o)
-			} else if (o instanceof Collection) {
+			} else if (o instanceof Collection<?>) {
 				all.addAll(asCollectionOfResources(o as Collection<?>))
 			} else {
 				throw new IllegalArgumentException(
