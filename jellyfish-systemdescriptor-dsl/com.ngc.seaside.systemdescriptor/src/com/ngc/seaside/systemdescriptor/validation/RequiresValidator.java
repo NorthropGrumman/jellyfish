@@ -1,12 +1,8 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
-import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
@@ -17,9 +13,7 @@ import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
  **  Validates the refine Require Declaration portion of Requires
  */
 public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValidator {
-	
-	@Inject
-	private IQualifiedNameProvider nameProvider;
+
 
 	@Check
 	/**
@@ -42,8 +36,7 @@ public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValid
 	}
 	
 	private void setFieldDeclarationError(String error, FieldDeclaration requirement){
-		if (!error.isEmpty())
-		{
+		if (!error.isEmpty()) {
 			error(error, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
 		}
 	}

@@ -1,20 +1,13 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import java.util.Collections;
-
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.validation.Check;
 
-import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 
 public class DuplicateElementValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
-	@Inject
-	private IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
+//	@Inject
+//	private IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
 
 	@Check
 	public void checkForDuplicateDataDeclarations(Data data) {
@@ -41,22 +34,22 @@ public class DuplicateElementValidator extends AbstractUnregisteredSystemDescrip
 		*/
 	}
 
-	private Iterable<IEObjectDescription> getResourceDescriptions(Resource resource) {
-		Iterable<IEObjectDescription> descriptions = Collections.emptyList();
-
-		IResourceServiceProvider resourceServiceProvider = resourceServiceProviderRegistry
-				.getResourceServiceProvider(resource.getURI());
-
-		if (resourceServiceProvider != null) {
-			IResourceDescription.Manager manager = resourceServiceProvider.getResourceDescriptionManager();
-			if (manager != null) {
-				IResourceDescription description = manager.getResourceDescription(resource);
-				if (description != null) {
-					descriptions =  description.getExportedObjects();
-				}
-			}
-		}
-		
-		return descriptions;
-	}
+//	private Iterable<IEObjectDescription> getResourceDescriptions(Resource resource) {
+//		Iterable<IEObjectDescription> descriptions = Collections.emptyList();
+//
+//		IResourceServiceProvider resourceServiceProvider = resourceServiceProviderRegistry
+//				.getResourceServiceProvider(resource.getURI());
+//
+//		if (resourceServiceProvider != null) {
+//			IResourceDescription.Manager manager = resourceServiceProvider.getResourceDescriptionManager();
+//			if (manager != null) {
+//				IResourceDescription description = manager.getResourceDescription(resource);
+//				if (description != null) {
+//					descriptions =  description.getExportedObjects();
+//				}
+//			}
+//		}
+//		
+//		return descriptions;
+//	}
 }

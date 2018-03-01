@@ -8,8 +8,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
- * @author ceacide
- *
  * Utility methods to help with validation 
  */
 public class ValidatorUtil {
