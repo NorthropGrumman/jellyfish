@@ -37,6 +37,10 @@ eclipse.classpath.plusConfigurations += [configurations.mwe2]
 eclipseClasspath.enabled=false
 cleanEclipseClasspath.enabled=false
 
+tasks.getByName('javadoc') { doc ->
+    options.tags = ['model', 'generated', 'ordered']
+}
+
 jar {
    manifest {
       from('META-INF/MANIFEST.MF') {
