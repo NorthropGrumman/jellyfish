@@ -86,13 +86,18 @@ public class AggregatedModelView implements IModel {
    }
 
    @Override
-   public Optional<IModelLink<?>> getLink(String name) {
+   public Optional<IModelLink<?>> getLinkByName(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkState(!name.trim().isEmpty(), "name may not be empty!");
       return aggregatedLinks
             .stream()
             .filter(link -> name.equals(link.getName().orElse(null)))
             .findFirst();
+   }
+
+   @Override
+   public Optional<IModel> getRefinedModel() {
+      return wrapped.getRefinedModel();
    }
 
    @Override
@@ -137,9 +142,7 @@ public class AggregatedModelView implements IModel {
       IModel model = wrapped;
       while (model != null) {
          collection.addAll(fieldFinder.apply(model));
-         // TODO TH: implement this and remove the null assignment when model refinement is implemented.
-         //model = model.getRefinedModel().orElse(null);
-         model = null;
+         model = model.getRefinedModel().orElse(null);
       }
       return collection;
    }
@@ -149,9 +152,7 @@ public class AggregatedModelView implements IModel {
       IModel model = wrapped;
       while (model != null) {
          collection.addAll(model.getLinks());
-         // TODO TH: implement this and remove the null assignment when model refinement is implemented.
-         //model = model.getRefinedModel().orElse(null);
-         model = null;
+         model = model.getRefinedModel().orElse(null);
       }
       return collection;
    }

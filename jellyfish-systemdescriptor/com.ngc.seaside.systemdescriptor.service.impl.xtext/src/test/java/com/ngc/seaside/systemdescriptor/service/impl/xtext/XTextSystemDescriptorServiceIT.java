@@ -10,6 +10,7 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
@@ -117,12 +118,14 @@ public class XTextSystemDescriptorServiceIT {
       IData data = mock(IData.class);
       IData parent = mock(IData.class);
       INamedChildCollection<IData, IDataField> children = AggregatedDataViewTest.fields("a");
+      when(data.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(data.getFields()).thenReturn(children);
-      when(data.getSuperDataType()).thenReturn(Optional.of(parent));
+      when(data.getExtendedDataType()).thenReturn(Optional.of(parent));
 
       children = AggregatedDataViewTest.fields("b");
+      when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(parent.getFields()).thenReturn(children);
-      when(parent.getSuperDataType()).thenReturn(Optional.empty());
+      when(parent.getExtendedDataType()).thenReturn(Optional.empty());
 
       IData dataView = service.getAggregatedView(data);
       assertTrue("missing field on data object!",
@@ -146,24 +149,24 @@ public class XTextSystemDescriptorServiceIT {
       IModel parent = mock(IModel.class);
       INamedChildCollection<IModel, IDataReferenceField> dataRefFields;
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputA");
+      when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(model.getInputs()).thenReturn(dataRefFields);
       when(model.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(model.getParts()).thenReturn(new NamedChildCollection<>());
       when(model.getRequiredModels()).thenReturn(new NamedChildCollection<>());
       when(model.getScenarios()).thenReturn(new NamedChildCollection<>());
       when(model.getLinks()).thenReturn(Collections.emptyList());
-      // TODO TH: enable this once refinement is implemented.
-      //when(parent.getRefinedModel()).thenReturn(Optional.of(parent));
+      when(model.getRefinedModel()).thenReturn(Optional.of(parent));
 
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputB");
+      when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(parent.getInputs()).thenReturn(dataRefFields);
       when(parent.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(parent.getParts()).thenReturn(new NamedChildCollection<>());
       when(parent.getRequiredModels()).thenReturn(new NamedChildCollection<>());
       when(parent.getScenarios()).thenReturn(new NamedChildCollection<>());
       when(parent.getLinks()).thenReturn(Collections.emptyList());
-      // TODO TH: enable this once refinement is implemented.
-      //when(parent.getRefinedModel()).thenReturn(Optional.empty());
+      when(parent.getRefinedModel()).thenReturn(Optional.empty());
 
       IModel modelView = service.getAggregatedView(model);
       assertTrue("missing input field on model object!",

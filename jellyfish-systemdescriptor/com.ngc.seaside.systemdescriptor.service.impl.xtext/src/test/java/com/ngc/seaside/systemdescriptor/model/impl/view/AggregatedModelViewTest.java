@@ -10,7 +10,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.ModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 
 import org.junit.Before;
@@ -52,46 +51,46 @@ public class AggregatedModelViewTest {
       when(model.getInputs()).thenReturn(dataRefFields);
       dataRefFields = fields(DataReferenceField.class, "outputA");
       when(model.getOutputs()).thenReturn(dataRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "partA");
+      modelRefFields = fields(IModelReferenceField.class, "partA");
       when(model.getParts()).thenReturn(modelRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "requirementA");
+      modelRefFields = fields(IModelReferenceField.class, "requirementA");
       when(model.getRequiredModels()).thenReturn(modelRefFields);
       scenarios = fields(Scenario.class, "scenarioA");
       when(model.getScenarios()).thenReturn(scenarios);
       links = links("linkA");
       when(model.getLinks()).thenReturn(links);
       when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
-      // TODO TH: set refined relationship: when(model.getRefinedModel()).thenReturn(parent)
+      when(model.getRefinedModel()).thenReturn(Optional.of(parent));
 
       dataRefFields = fields(DataReferenceField.class, "inputB");
       when(parent.getInputs()).thenReturn(dataRefFields);
       dataRefFields = fields(DataReferenceField.class, "outputB");
       when(parent.getOutputs()).thenReturn(dataRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "partB");
+      modelRefFields = fields(IModelReferenceField.class, "partB");
       when(parent.getParts()).thenReturn(modelRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "requirementB");
+      modelRefFields = fields(IModelReferenceField.class, "requirementB");
       when(parent.getRequiredModels()).thenReturn(modelRefFields);
       scenarios = fields(Scenario.class, "scenarioB");
       when(parent.getScenarios()).thenReturn(scenarios);
       links = links("linkB");
       when(parent.getLinks()).thenReturn(links);
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
-      // TODO TH: set refined relationship: when(parent.getRefinedModel()).thenReturn(grandparent)
+      when(parent.getRefinedModel()).thenReturn(Optional.of(grandparent));
 
       dataRefFields = fields(DataReferenceField.class, "inputC");
       when(grandparent.getInputs()).thenReturn(dataRefFields);
       dataRefFields = fields(DataReferenceField.class, "outputC");
       when(grandparent.getOutputs()).thenReturn(dataRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "partC");
+      modelRefFields = fields(IModelReferenceField.class, "partC");
       when(grandparent.getParts()).thenReturn(modelRefFields);
-      modelRefFields = fields(ModelReferenceField.class, "requirementC");
+      modelRefFields = fields(IModelReferenceField.class, "requirementC");
       when(grandparent.getRequiredModels()).thenReturn(modelRefFields);
       scenarios = fields(Scenario.class, "scenarioC");
       when(grandparent.getScenarios()).thenReturn(scenarios);
       links = links("linkC");
       when(grandparent.getLinks()).thenReturn(links);
       when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
-      // TODO TH: set refined relationship: when(grandparent.getRefinedModel()).thenReturn(null)
+      when(grandparent.getRefinedModel()).thenReturn(Optional.empty());
 
       view = new AggregatedModelView(model);
    }
@@ -149,11 +148,11 @@ public class AggregatedModelViewTest {
    @Test
    public void testDoesGetLinksFromRefinedModels() {
       assertTrue("missing link on model object!",
-                 view.getLink("linkA").isPresent());
+                 view.getLinkByName("linkA").isPresent());
       assertTrue("missing link on parent model object!",
-                 view.getLink("linkB").isPresent());
+                 view.getLinkByName("linkB").isPresent());
       assertTrue("missing link on grandparent model object!",
-                 view.getLink("linkC").isPresent());
+                 view.getLinkByName("linkC").isPresent());
    }
 
    public static <T extends INamedChild<IModel>> INamedChildCollection<IModel, T> fields(Class<? extends T> fieldType,

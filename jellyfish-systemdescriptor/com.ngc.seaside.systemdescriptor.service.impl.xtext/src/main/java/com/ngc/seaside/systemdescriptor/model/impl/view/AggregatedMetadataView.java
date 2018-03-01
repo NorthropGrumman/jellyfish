@@ -45,7 +45,7 @@ public class AggregatedMetadataView {
             }
          }
 
-         data = data.getSuperDataType().orElse(null);
+         data = data.getExtendedDataType().orElse(null);
       }
 
       return new Metadata().setJson(aggregatedJson.build());
@@ -71,9 +71,7 @@ public class AggregatedMetadataView {
             }
          }
 
-         // TODO TH: implement this and remove the null assignment when model refinement is implemented.
-         //model = model.getRefinedModel().orElse(null);
-         model = null;
+         model = model.getRefinedModel().orElse(null);
       }
 
       return new Metadata().setJson(aggregatedJson.build());

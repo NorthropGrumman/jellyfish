@@ -36,17 +36,17 @@ public class AggregatedDataViewTest {
    public void setup() {
       INamedChildCollection<IData, IDataField> children = fields("a");
       when(data.getFields()).thenReturn(children);
-      when(data.getSuperDataType()).thenReturn(Optional.of(parent));
+      when(data.getExtendedDataType()).thenReturn(Optional.of(parent));
       when(data.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       children = fields("b");
       when(parent.getFields()).thenReturn(children);
-      when(parent.getSuperDataType()).thenReturn(Optional.of(grandparent));
+      when(parent.getExtendedDataType()).thenReturn(Optional.of(grandparent));
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       children = fields("c");
       when(grandparent.getFields()).thenReturn(children);
-      when(grandparent.getSuperDataType()).thenReturn(Optional.empty());
+      when(grandparent.getExtendedDataType()).thenReturn(Optional.empty());
       when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
 
       view = new AggregatedDataView(data);

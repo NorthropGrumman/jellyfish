@@ -39,13 +39,13 @@ public class AggregatedDataView implements IData {
    }
 
    @Override
-   public Optional<IData> getSuperDataType() {
-      return wrapped.getSuperDataType();
+   public Optional<IData> getExtendedDataType() {
+      return wrapped.getExtendedDataType();
    }
 
    @Override
-   public IData setSuperDataType(IData iData) {
-      wrapped.setSuperDataType(iData);
+   public IData setExtendedDataType(IData dataType) {
+      wrapped.setExtendedDataType(dataType);
       return this;
    }
 
@@ -95,7 +95,7 @@ public class AggregatedDataView implements IData {
       IData data = wrapped;
       while (data != null) {
          collection.addAll(data.getFields());
-         data = data.getSuperDataType().orElse(null);
+         data = data.getExtendedDataType().orElse(null);
       }
       return collection;
    }

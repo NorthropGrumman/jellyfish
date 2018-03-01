@@ -59,11 +59,11 @@ public class AggregatedMetadataViewTest {
             .build();
 
       when(data.getMetadata()).thenReturn(metadata(dataJson));
-      when(data.getSuperDataType()).thenReturn(Optional.of(parent));
+      when(data.getExtendedDataType()).thenReturn(Optional.of(parent));
       when(parent.getMetadata()).thenReturn(metadata(parentJson));
-      when(parent.getSuperDataType()).thenReturn(Optional.of(grandparent));
+      when(parent.getExtendedDataType()).thenReturn(Optional.of(grandparent));
       when(grandparent.getMetadata()).thenReturn(metadata(grandparentJson));
-      when(grandparent.getSuperDataType()).thenReturn(Optional.empty());
+      when(grandparent.getExtendedDataType()).thenReturn(Optional.empty());
    }
 
    private void setupForModel() {
@@ -85,12 +85,11 @@ public class AggregatedMetadataViewTest {
             .build();
 
       when(model.getMetadata()).thenReturn(metadata(modelJson));
-      // TODO TH: enable this code once model refinement is implemented.
-      //when(model.getRefinedModel()).thenReturn(Optional.of(parent));
+      when(model.getRefinedModel()).thenReturn(Optional.of(parent));
       when(parent.getMetadata()).thenReturn(metadata(parentJson));
-      //when(parent.getRefinedModel()).thenReturn(Optional.of(grandparent));
+      when(parent.getRefinedModel()).thenReturn(Optional.of(grandparent));
       when(grandparent.getMetadata()).thenReturn(metadata(grandparentJson));
-      //when(grandparent.getRefinedModel()).thenReturn(Optional.empty());
+      when(grandparent.getRefinedModel()).thenReturn(Optional.empty());
    }
 
    @Test
