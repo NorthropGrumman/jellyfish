@@ -95,6 +95,21 @@
          },
          {
             "groupId": "com.ngc.blocs",
+            "artifactId": "file.impl.common.fileutilities",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "security.impl.common.securityutilities",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
             "artifactId": "test.impl.common.testutilities",
             "scope": "TEST"
          }
@@ -117,6 +132,16 @@
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "service.correlation.impl.correlationservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.fault.impl.service.faultloggingservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.monitoring.impl.loggingmonitoringservice",
             "scope": "BUILD"
          },
          {

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -111,6 +112,7 @@ public class CreateJavaDistributionCommandTest {
       fixture.setTemplateService(templateService);
       fixture.setProjectNamingService(projectNamingService);
       fixture.setPackageNamingService(packageNamingService);
+      fixture.setBuildManagementService(new MockedBuildManagementService());
    }
 
    @Test

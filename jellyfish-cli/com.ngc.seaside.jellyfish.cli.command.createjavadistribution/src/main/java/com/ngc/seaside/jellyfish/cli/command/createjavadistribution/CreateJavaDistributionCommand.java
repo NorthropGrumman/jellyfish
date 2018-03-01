@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -51,6 +52,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
+   private IBuildManagementService buildManagementService;
 
 
    /**
@@ -103,7 +105,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
       String pkg = packageNamingService.getDistributionPackageName(commandOptions, model);
       parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, pkg));
 
-      ConfigDto dto = new ConfigDto();
+      ConfigDto dto = new ConfigDto(buildManagementService, commandOptions);
       
       dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(pkg);
@@ -234,7 +236,17 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
    }
-   
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
+   }
+
    protected void doCreateDirectories(Path outputDirectory) {
       try {
          Files.createDirectories(outputDirectory);

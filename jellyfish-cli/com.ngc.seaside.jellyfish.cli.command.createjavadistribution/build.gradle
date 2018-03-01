@@ -11,6 +11,7 @@ dependencies {
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
+    testImplementation project(':jellyfish.cli.command.testutils')
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
