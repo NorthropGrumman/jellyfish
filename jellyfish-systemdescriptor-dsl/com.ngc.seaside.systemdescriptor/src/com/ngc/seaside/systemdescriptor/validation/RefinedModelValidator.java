@@ -1,45 +1,60 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
+import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.validation.Check;
 
 public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
+	@Inject
+	private IQualifiedNameProvider nameProvider;
+	
 	@Check
 	public void checkRefinedModel(Model model) {
 		if (model == null || model.getRefinedModel() == null)
 			return;
 
-		checkDoesNotParseModelThatRefinesUnloadableItem(model);
-		checkDoesNotParseModelThatRefinesItself(model);
-		checkDoesNotParseModelThatRedeclaresInputs(model);
-		checkDoesNotParseModelThatRedeclaresOutputs(model);
-		checkDoesNotParseModelThatRedeclaresScenarios(model);
-		checkDoesNotParseModelThatDeclaresNewRequires(model);
+        checkDoesNotParseModelThatCircularlyRefinesAnotherModel(model);
+        checkDoesNotParseModelThatRedeclaresInputs(model);
+        checkDoesNotParseModelThatRedeclaresOutputs(model);
+        checkDoesNotParseModelThatRedeclaresScenarios(model);
+        checkDoesNotParseModelThatDeclaresNewRequires(model);
 	}
 
-	private void checkDoesNotParseModelThatRefinesUnloadableItem(Model model) {
-		// Caveat: Since we can't directly check for refinement of data types,
-		// circular dependencies,
-		// etc just prevent the user from refining anything that couldn't be
-		// loaded as a model.
-		if (model.getRefinedModel() != null && model.getRefinedModel().getName() == null) {
-			String msg = "Invalid model refinement due to model-load error!";
-			error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
-		}
-	}
-
-	private void checkDoesNotParseModelThatRefinesItself(Model model) {
+	private void checkDoesNotParseModelThatCircularlyRefinesAnotherModel(Model model) {
 		if (model.getRefinedModel().equals(model)) {
 			String msg = "A model cannot refine itself!";
 			error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+		} else {
+			Set<QualifiedName> refinedModelNames = new LinkedHashSet<>();
+			Model refinedModel = model;
+			while (refinedModel != null) {
+				QualifiedName name = nameProvider.getFullyQualifiedName(refinedModel);
+				if (!refinedModelNames.add(name)) {
+					StringBuilder msg = new StringBuilder("A cycle has been detected in the refinement hierarcy!  ");
+					for (Iterator<QualifiedName> i = refinedModelNames.iterator(); i.hasNext();) {
+						msg.append(i.next()).append(" refines ");
+						if (!i.hasNext()) {
+							msg.append(name);
+						}
+					}
+					error(msg.toString(), model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+					refinedModel = null;
+				}
+				refinedModel = refinedModel == null ? null : refinedModel.getRefinedModel();
+			}
 		}
 	}
 

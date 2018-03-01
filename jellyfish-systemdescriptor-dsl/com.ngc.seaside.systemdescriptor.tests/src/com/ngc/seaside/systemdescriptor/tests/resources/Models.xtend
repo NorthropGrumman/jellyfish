@@ -214,6 +214,17 @@ class Models {
         Datas.ALARM_STATUS
     )
 
+    public static final ParsingTestResource INVALID_REFINED_MODEL = resource(
+        '''
+            package refinement.test
+
+            import refinement.test.AnotherInvalidRefinedModel
+
+            model InvalidRefinedModel refines AnotherInvalidRefinedModel {
+            }
+        '''
+    )
+
     def static Resource allOf(ResourceHelper resourceHelper, ParsingTestResource... resources) {
         return Datas.allOf(resourceHelper, resources)
     }

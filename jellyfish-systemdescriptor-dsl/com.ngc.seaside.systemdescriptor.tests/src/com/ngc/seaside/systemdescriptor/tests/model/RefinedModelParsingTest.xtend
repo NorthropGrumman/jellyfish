@@ -17,6 +17,7 @@ import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
+import org.eclipse.xtext.diagnostics.Diagnostic
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -85,7 +86,7 @@ class RefinedModelParsingTest {
             }
         '''
 
-         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
 
         validationTester.assertError(
@@ -109,30 +110,31 @@ class RefinedModelParsingTest {
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
-            null)
+            Diagnostic.LINKING_DIAGNOSTIC)
     }
 
     @Test
     def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
+        val refinedModel = Models.allOf(
+            resourceHelper,
+            Models.INVALID_REFINED_MODEL
+        )
         val source = '''
-            package clocks.models
+            package refinement.test
 
-            model MyModelB refines clocks.models.MyModelA {
-            }
+            import refinement.test.InvalidRefinedModel
 
-            package clocks.models
-
-            model MyModelA refines clocks.models.MyModelB {
+            model AnotherInvalidRefinedModel refines InvalidRefinedModel {
             }
         '''
 
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        var invalidResult = parseHelper.parse(source, refinedModel.resourceSet)
         assertNotNull(invalidResult)
-
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
-            null)
+            null
+        )
     }
 
     @Test
