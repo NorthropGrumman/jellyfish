@@ -33,6 +33,6 @@ allprojects {
         // TODO TH: rename this file to properties.gradle or common.gradle.
         m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
         dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
-        m2DeploymentScritFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
+        m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
     }
 }
