@@ -66,7 +66,7 @@ Workflow {
 			formatter = {
 				// Generate a default formatter for the system descriptor files
 				generateStub = true
-				generateXtendStub = true
+				generateXtendStub = false
 			}
 		}
 	}

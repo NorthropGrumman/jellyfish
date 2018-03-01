@@ -16,6 +16,7 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         checkDoesNotParseModelThatRedeclaresInputs(model);
         checkDoesNotParseModelThatRedeclaresOutputs(model);
         checkDoesNotParseModelThatRedeclaresScenarios(model);
+        checkDoesNotParseModelThatDeclaresNewRequires(model);
     }
 
     private void checkDoesNotParseModelThatRefinesUnloadableItem(Model model) {
@@ -46,6 +47,15 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         }
     }
 
+    private void checkDoesNotParseModelThatDeclaresNewRequires(Model model) {
+//        if (!refinedModelHasValidRequiresBlock(model, model.getRefinedModel())) {
+//            causeUnpermittedAdditionErrorRegarding("requirements", model);
+//        }
+    	if (refinedModelHasNewRequiresDeclarations(model)) {
+    		causeUnpermittedAdditionErrorRegarding("requirements", model);
+    	}
+    }
+
     private void checkDoesNotParseModelThatRedeclaresScenarios(Model model) {
         if (!model.getScenarios().isEmpty()) {
             causeUnpermittedAdditionErrorRegarding("scenarios", model);
@@ -55,5 +65,13 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
     private void causeUnpermittedAdditionErrorRegarding(String typeOfRedefinition, Model model) {
         String msg = String.format("A refined model cannot add %s!", typeOfRedefinition);
         error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+    }
+    
+    private boolean refinedModelHasNewRequiresDeclarations(Model model) {
+    	return model.getRequires() != null
+    			&& model.getRequires().getDeclarations()
+    				.stream()
+    				.anyMatch(r -> r.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION));
+
     }
 }

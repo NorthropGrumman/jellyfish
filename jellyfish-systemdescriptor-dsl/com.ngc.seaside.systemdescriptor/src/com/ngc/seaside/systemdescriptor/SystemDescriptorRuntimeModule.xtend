@@ -4,7 +4,6 @@
 package com.ngc.seaside.systemdescriptor
 
 import com.google.inject.Binder
-import com.ngc.seaside.systemdescriptor.scoping.SdImportedNamespaceAwareLocalScopeProvider
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.

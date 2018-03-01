@@ -39,6 +39,7 @@ class RefinedModelParsingTest {
             resourceHelper,
             Models.ALARM,
             Models.TIMER,
+            Models.EMPTY_MODEL,
             Datas.TIME
         )
         validationTester.assertNoIssues(requiredResources)
@@ -209,17 +210,18 @@ class RefinedModelParsingTest {
     }
     
     @Test
-    @Ignore 
-    def void testDoesNotParseModelRefining_Outputs() {
+    def void testDoesNotParseModelAdding_Requires() {
         val source = '''
             package clocks.models
 
             import clocks.models.part.Alarm
-            import clocks.datatypes.Time
+            import clocks.models.part.Timer
+            import foo.AnEmptyModel
 
             model RefinedModel refines Alarm {
-                output {
-                    refine Time time
+                requires {
+                    AnEmptyModel emptyModel
+                    Timer timer
                 }
             }
         '''
