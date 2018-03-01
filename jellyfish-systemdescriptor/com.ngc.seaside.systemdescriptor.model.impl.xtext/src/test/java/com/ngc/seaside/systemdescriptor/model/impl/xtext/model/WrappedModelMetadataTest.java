@@ -1,8 +1,18 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition;
@@ -13,18 +23,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class WrappedModelMetadataTest extends AbstractWrappedXtextTest {
@@ -65,14 +65,14 @@ public class WrappedModelMetadataTest extends AbstractWrappedXtextTest {
       model.setOutput(factory().createOutput());
       model.getOutput().getDeclarations().add(output);
 
-      PartDeclaration part = factory().createPartDeclaration();
+      BasePartDeclaration part = factory().createBasePartDeclaration();
       part.setName("timer");
       part.setType(timer);
       part.setDefinition(getDefinition("description", "This is provided by 3rd party software"));
       model.setParts(factory().createParts());
       model.getParts().getDeclarations().add(part);
 
-      RequireDeclaration require = factory().createRequireDeclaration();
+      BaseRequireDeclaration require = factory().createBaseRequireDeclaration();
       require.setName("thristQuencher");
       require.setType(gatorade);
       require.setDefinition(getDefinition("flavor", "purple"));

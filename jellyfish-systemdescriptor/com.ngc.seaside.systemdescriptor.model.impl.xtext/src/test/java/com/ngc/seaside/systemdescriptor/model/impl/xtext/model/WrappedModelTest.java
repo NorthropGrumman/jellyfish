@@ -1,19 +1,9 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.LinkTestUtil;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLinkTest;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLinkTest;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,10 +11,20 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.LinkTestUtil;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLinkTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLinkTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 
 // Note we run this test with MockitoJUnitRunner.Silent to avoid UnnecessaryStubbingExceptions.  This happens because
 // we are cheating and reusing the setup code for the data and model link tests.
@@ -61,13 +61,13 @@ public class WrappedModelTest extends AbstractWrappedXtextTest {
       model.setOutput(factory().createOutput());
       model.getOutput().getDeclarations().add(output);
 
-      RequireDeclaration require = factory().createRequireDeclaration();
+      BaseRequireDeclaration require = factory().createBaseRequireDeclaration();
       require.setName("require");
       require.setType(modelType);
       model.setRequires(factory().createRequires());
       model.getRequires().getDeclarations().add(require);
 
-      PartDeclaration part = factory().createPartDeclaration();
+      BasePartDeclaration part = factory().createBasePartDeclaration();
       part.setName("part");
       part.setType(modelType);
       model.setParts(factory().createParts());

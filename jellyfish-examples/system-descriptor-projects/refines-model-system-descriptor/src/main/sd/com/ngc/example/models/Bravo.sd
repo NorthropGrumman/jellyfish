@@ -1,0 +1,10 @@
+package com.ngc.example.models
+
+import com.ngc.example.models.Alpha
+
+model Bravo refines Alpha {
+  metadata {
+    "stereotypes" : ["service", "example"]
+  }
+  
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.example.models.modelservice.domain.ExampleData" generated="true" abstract="false">
+        <property name="field1" type="int" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>

@@ -1,0 +1,28 @@
+rootProject.name = 'com.ngc.example.models.modelservice'
+
+include 'com.ngc.example.models.modelservice.domain'
+project(':com.ngc.example.models.modelservice.domain').name = 'modelservice.domain'
+
+include 'generated-projects/com.ngc.example.models.modelservice.events'
+project(':generated-projects/com.ngc.example.models.modelservice.events').name = 'modelservice.events'
+
+include 'com.ngc.example.models.modelservice.tests'
+project(':com.ngc.example.models.modelservice.tests').name = 'modelservice.tests'
+
+include 'com.ngc.example.models.modelservice.distribution'
+project(':com.ngc.example.models.modelservice.distribution').name = 'modelservice.distribution'
+
+include 'com.ngc.example.models.modelservice.impl'
+project(':com.ngc.example.models.modelservice.impl').name = 'modelservice.impl'
+
+include 'com.ngc.example.models.modelservice.config'
+project(':com.ngc.example.models.modelservice.config').name = 'modelservice.config'
+
+include 'generated-projects/com.ngc.example.models.modelservice.base'
+project(':generated-projects/com.ngc.example.models.modelservice.base').name = 'modelservice.base'
+
+include 'generated-projects/com.ngc.example.models.modelservice.connector'
+project(':generated-projects/com.ngc.example.models.modelservice.connector').name = 'modelservice.connector'
+
+include 'generated-projects/com.ngc.example.models.modelservice.messages'
+project(':generated-projects/com.ngc.example.models.modelservice.messages').name = 'modelservice.messages'

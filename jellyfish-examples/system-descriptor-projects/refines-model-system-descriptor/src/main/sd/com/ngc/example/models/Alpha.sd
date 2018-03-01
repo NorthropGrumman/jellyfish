@@ -1,0 +1,17 @@
+package com.ngc.example.models
+
+import com.ngc.example.models.ExampleData
+
+model Alpha {
+  metadata {
+    "stereotypes" : ["service", "example"]
+  }
+  
+  input {
+  	ExampleData inputAlpha
+  }
+  
+  output {
+  	ExampleData outputBravo
+  }
+}

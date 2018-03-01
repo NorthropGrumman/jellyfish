@@ -41,7 +41,8 @@ class ImportParsingTest {
 		requiredResources = Datas.allOf(
 			resourceHelper,
 			Datas.DATE_TIME.requiredResources,
-			Models.ALARM.requiredResources
+			Models.ALARM.requiredResources,
+			Models.EMPTY_MODEL
 		)
 	}
 

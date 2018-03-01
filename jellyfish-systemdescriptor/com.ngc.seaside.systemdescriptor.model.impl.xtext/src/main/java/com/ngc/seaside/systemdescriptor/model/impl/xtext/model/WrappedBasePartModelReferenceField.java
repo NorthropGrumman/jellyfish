@@ -1,12 +1,13 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.google.common.base.Preconditions;
+import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -15,9 +16,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
  *
  * This class is not threadsafe.
  */
-public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenceField<PartDeclaration, WrappedPartModelReferenceField> {
+public class WrappedBasePartModelReferenceField extends AbstractWrappedModelReferenceField<BasePartDeclaration, WrappedBasePartModelReferenceField> {
 
-   public WrappedPartModelReferenceField(IWrapperResolver resolver, PartDeclaration wrapped) {
+   public WrappedBasePartModelReferenceField(IWrapperResolver resolver, BasePartDeclaration wrapped) {
       super(resolver, wrapped);
    }
 
@@ -35,15 +36,20 @@ public class WrappedPartModelReferenceField extends AbstractWrappedModelReferenc
    }
 
    /**
-    * Creates a new {@code PartDeclaration} from the given field.
+    * Creates a new {@code BasePartDeclaration} from the given field.
     */
-   public static PartDeclaration toXTextPartDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
+   public static BasePartDeclaration toXTextPartDeclaration(IWrapperResolver resolver, IModelReferenceField field) {
       Preconditions.checkNotNull(resolver, "resolver may not be null!");
       Preconditions.checkNotNull(field, "field may not be null!");
-      PartDeclaration d = SystemDescriptorFactory.eINSTANCE.createPartDeclaration();
+      BasePartDeclaration d = SystemDescriptorFactory.eINSTANCE.createBasePartDeclaration();
       d.setName(field.getName());
       d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
       d.setType(doFindXtextModel(resolver, field.getType().getName(), field.getType().getParent().getName()));
       return d;
+   }
+
+   @Override
+   public Optional<IModelReferenceField> getRefinedField() {
+      return Optional.empty();
    }
 }
