@@ -89,6 +89,11 @@ subprojects {
         configurations.all {
             exclude group: 'asm'
         }
+		
+		clean.doFirst {
+		    delete file('src-gen')
+		    delete file('xtend-gen')
+		}
 
         repositories {
             mavenLocal()
