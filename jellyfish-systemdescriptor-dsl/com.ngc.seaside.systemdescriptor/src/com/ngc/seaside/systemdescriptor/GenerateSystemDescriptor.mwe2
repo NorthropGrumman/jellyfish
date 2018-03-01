@@ -59,8 +59,7 @@ Workflow {
 			}
 			
 			generator = {
-				// Don't generate the generator stub since we have our own.
-				generateXtendStub = false
+				generateStub = false
 			}
 			
 			formatter = {
