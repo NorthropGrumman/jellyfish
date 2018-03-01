@@ -15,6 +15,10 @@ dependencies {
 	mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
 }
 
+clean.doFirst {
+    delete file('model')
+}
+
 task generateXtextLanguage(type: JavaExec) {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.mwe2
