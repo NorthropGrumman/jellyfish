@@ -1,7 +1,9 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -21,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataR
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -28,12 +31,13 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Adapts an XText {@link Model} to an {@link IModel}.
@@ -74,6 +78,12 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
       return this;
    }
+   
+   @Override
+   public Optional<IModel> getRefinedModel() {
+	   IModel model = resolver.getWrapperFor(wrapped.getRefinedModel());
+	   return model == null ? Optional.empty() : Optional.of(model); 
+   }
 
    @Override
    public INamedChildCollection<IModel, IDataReferenceField> getInputs() {
@@ -106,7 +116,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    }
 
    @Override
-   public Optional<IModelLink<?>> getLink(String name) {
+   public Optional<IModelLink<?>> getLinkByName(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       return links.stream()
@@ -158,13 +168,13 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       m.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
       model.getRequiredModels()
             .stream()
-            .map(i -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, i))
+            .map(i -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, i))
             .forEach(m.getRequires().getDeclarations()::add);
 
       m.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
       model.getParts()
             .stream()
-            .map(i -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, i))
+            .map(i -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, i))
             .forEach(m.getParts().getDeclarations()::add);
 
       model.getScenarios()
@@ -216,8 +226,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private void initParts() {
       if (wrapped.getParts() == null) {
          parts = new SelfInitializingWrappingNamedChildCollection<>(
-               d -> new WrappedPartModelReferenceField(resolver, d),
-               d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
@@ -226,17 +236,27 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       } else {
          parts = new WrappingNamedChildCollection<>(
                wrapped.getParts().getDeclarations(),
-               d -> new WrappedPartModelReferenceField(resolver, d),
-               d -> WrappedPartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
                FieldDeclaration::getName);
+      }
+   }
+
+   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, PartDeclaration part) {
+      if (part instanceof BasePartDeclaration) {
+         return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);
+      } else if (part instanceof RefinedPartDeclaration) {
+         return new WrappedRefinedPartModelReferenceField(resolver, (RefinedPartDeclaration) part);
+      } else {
+         throw new IllegalStateException("Unknown PartDeclaration subclass: " + part.getClass());
       }
    }
 
    private void initRequires() {
       if (wrapped.getRequires() == null) {
          requires = new SelfInitializingWrappingNamedChildCollection<>(
-               d -> new WrappedRequireModelReferenceField(resolver, d),
-               d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+        	   d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
@@ -245,11 +265,22 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       } else {
          requires = new WrappingNamedChildCollection<>(
                wrapped.getRequires().getDeclarations(),
-               d -> new WrappedRequireModelReferenceField(resolver, d),
-               d -> WrappedRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
+               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName);
       }
    }
+   
+   private AbstractWrappedModelReferenceField<? extends RequireDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, RequireDeclaration require) {
+	      if (require instanceof BaseRequireDeclaration) {
+	         return new WrappedBaseRequireModelReferenceField(resolver, (BaseRequireDeclaration) require);
+	      } else if (require instanceof RefinedRequireDeclaration) {
+	         return new WrappedRefinedRequireModelReferenceField(resolver, (RefinedRequireDeclaration) require);
+	      } else {
+	         throw new IllegalStateException("Unknown RequireDeclaration subclass: " + require.getClass());
+	      }
+	   }
+
 
    private void initScenarios() {
       scenarios = new WrappingNamedChildCollection<>(
@@ -296,4 +327,5 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       // TODO TH: implement this
       throw new UnsupportedOperationException("modification of links is not currently supported!");
    }
+
 }

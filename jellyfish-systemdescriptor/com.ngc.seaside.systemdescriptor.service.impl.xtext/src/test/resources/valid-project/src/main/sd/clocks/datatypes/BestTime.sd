@@ -2,6 +2,6 @@ package clocks.datatypes
 
 import clocks.datatypes.BaseTime
 
-data BestTime : BaseTime {
+data BestTime extends BaseTime {
   int someValue
 }

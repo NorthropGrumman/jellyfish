@@ -51,6 +51,7 @@ public class ModelUtils {
 
       private final String name;
       private final IPackage parent;
+      private final IModel refinedModel;
       private final NamedChildCollection<IModel, IDataReferenceField> inputs;
       private final NamedChildCollection<IModel, IDataReferenceField> outputs;
       private final NamedChildCollection<IModel, IScenario> scenarios;
@@ -60,6 +61,7 @@ public class ModelUtils {
          assertTrue(fullyQualifiedName + " is not a fully qualified name", index >= 0);
          name = fullyQualifiedName.substring(index + 1);
          parent = mock(IPackage.class);
+         refinedModel = mock(IModel.class);
          when(parent.getName()).thenReturn(fullyQualifiedName.substring(0, index));
          inputs = new NamedChildCollection<>(this, IDataReferenceField.class);
          outputs = new NamedChildCollection<>(this, IDataReferenceField.class);
@@ -68,7 +70,7 @@ public class ModelUtils {
 
       /**
        * Adds the given field to this model's inputs.
-       * 
+       *
        * @param field data reference field
        */
       public void addInput(IDataReferenceField field) {
@@ -77,7 +79,7 @@ public class ModelUtils {
 
       /**
        * Adds the given field to this model's outputs.
-       * 
+       *
        * @param field data reference field
        */
       public void addOutput(IDataReferenceField field) {
@@ -90,7 +92,7 @@ public class ModelUtils {
 
       /**
        * Creates a mocked {@link IDataReferenceField} with the given name, given data, and {@link FieldCardinality#SINGLE} and adds it to this model's inputs.
-       * 
+       *
        * @param name reference field name
        * @param data reference field type
        * @return the mocked {@link IDataReferenceField}
@@ -107,7 +109,7 @@ public class ModelUtils {
 
       /**
        * Creates a mocked {@link IDataReferenceField} with the given name, given data, and {@link FieldCardinality#SINGLE} and adds it to this model's outputs.
-       * 
+       *
        * @param name reference field name
        * @param data reference field type
        * @return the mocked {@link IDataReferenceField}
@@ -125,7 +127,7 @@ public class ModelUtils {
       /**
        * Creates a mocked pub sub {@link IScenario} with the given name, receiving field, and publishing field and adds it to this model's scenarios. This method also adds the reference field types to
        * this model's the inputs and outputs.
-       * 
+       *
        * @param name name of scenario
        * @param receiving receiving field
        * @param publishing publishing field
@@ -141,7 +143,7 @@ public class ModelUtils {
        * Creates a mocked pub sub {@link IScenario} with the given name, receiving field, and publishing field and adds it to this model's scenarios. This method creates mocked
        * {@link IDataReferenceField} with the given names, given types, and {@link FieldCardinality#SINGLE} and adds the reference field types to
        * this model's the inputs and outputs.
-       * 
+       *
        * @param name name of scenario
        * @param receivingName name of receiving field
        * @param receiving type of receiving field
@@ -162,16 +164,16 @@ public class ModelUtils {
 
       /**
        * Creates a mocked pub sub {@link IScenario} with the given name.
-       * 
+       *
        * <p>
        * The step parameters supplied should be ordered by given statements first, followed by when statement, followed by then
        * statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}.
        * <p>
        * The given and when steps will be treated as {@link ReceiveStepHandler receive} steps, and then steps will be treated as {@link PublishStepHandler publish} steps.
-       * 
+       *
        * <p>
        * This method adds the scenario to this model's scenarios and data types to this model's inputs and outputs.
-       * 
+       *
        * @param name
        * @param givens number of given steps
        * @param whens number of when steps
@@ -240,7 +242,7 @@ public class ModelUtils {
 
       /**
        * Adds a correlation to the given scenario.
-       * 
+       *
        * @param scenario name of scenario
        * @param from first correlation statement
        * @param to second correlation statement
@@ -320,14 +322,17 @@ public class ModelUtils {
       }
 
       @Override
-      public Optional<IModelLink<?>> getLink(String name) {
+      public Optional<IModelLink<?>> getLinkByName(String name) {
          return Optional.empty();
       }
+
+      @Override
+      public Optional<IModel> getRefinedModel() { return Optional.empty(); }
    }
 
    /**
     * Returns a mock of the given {@link INamedChild} class. This method will mock out the name, the parent's name, and the fullyQualified name.
-    * 
+    *
     * @param cls INamed child instance class
     * @param fullyQualifiedName fully qualified name
     * @return a mock of the given {@link INamedChild} class
@@ -353,13 +358,13 @@ public class ModelUtils {
    /**
     * Adds mocking to the given data for the given superData type and fields. Each data field can be an {@link IDataField} or the fields can be specified with the parameters as follows: [String]
     * [FieldCardinality] (IData|IEnumeration|DataTypes). That is, an optional String for the field name, an optional cardinality, and either an IData, IEnumeration or DataTypes instance.
-    * 
+    *
     * @param data mocked data instance
     * @param superData super data type (can be null)
     * @param fields data fields
     */
    public static void mockData(IData data, IData superData, Object... fields) {
-      when(data.getSuperDataType()).thenReturn(Optional.ofNullable(superData));
+      when(data.getExtendedDataType()).thenReturn(Optional.ofNullable(superData));
       NamedChildCollection<IData, IDataField> collection = new NamedChildCollection<>(data, IDataField.class);
       for (int n = 0; n < fields.length; n++) {
          if (fields[n] instanceof IDataField) {
@@ -389,7 +394,7 @@ public class ModelUtils {
 
    /**
     * Returns a fully-implemented {@link INamedChildCollection} containing the given children.
-    * 
+    *
     * @param children collection of elements
     * @return an {@link INamedChildCollection} containing the given children
     */
@@ -417,7 +422,7 @@ public class ModelUtils {
       }
       return new NamedChildCollectionInstance();
    }
-   
+
    /**
     * A {@link INamedChildCollection} instance with helper methods for easily adding fields.
     *
@@ -450,7 +455,7 @@ public class ModelUtils {
       /**
        * Creates a mocked {@link IDataField} with the given name and {@link FieldCardinality#SINGLE} and adds it to this collection. The value can either be an {@link IData} instance, an
        * {@link IEnumeration} instance, or a {@link DataTypes}.
-       * 
+       *
        * @param name name of the field
        * @param value an IData, IEnumeration, or DataTypes
        * @return a mocked {@link IDataField}
@@ -463,7 +468,7 @@ public class ModelUtils {
       /**
        * Creates a mocked {@link IDataField} with the given name and cardinality and adds it to this collection. The value can either be an {@link IData} instance, an {@link IEnumeration} instance, or
        * a {@link DataTypes}.
-       * 
+       *
        * @param name name of the field
        * @param value an IData, IEnumeration, or DataTypes
        * @param single if true, the cardinality will be {@link FieldCardinality#SINGLE}
@@ -488,7 +493,7 @@ public class ModelUtils {
 
       /**
        * Creates a mocked {@link IDataReferenceField} with the given name, data, and {@link FieldCardinality#SINGLE}.
-       * 
+       *
        * @param name name of the field
        * @param data data reference
        * @return a mocked {@link IDataReferenceField}
@@ -500,7 +505,7 @@ public class ModelUtils {
 
       /**
        * Creates a mocked {@link IDataReferenceField} with the given name, data, and cardinality.
-       * 
+       *
        * @param name name of the field
        * @param data data reference
        * @param single if true, the cardinality will be {@link FieldCardinality#SINGLE}
@@ -517,7 +522,7 @@ public class ModelUtils {
 
       /**
        * Creates a mocked {@link IModelReferenceField} with the given name and model.
-       * 
+       *
        * @param name name of the field
        * @param model model reference
        * @return a mocked {@link IModelReferenceField}

@@ -1,0 +1,8 @@
+package com.ngc.example.correlation.datatype
+
+import com.ngc.example.correlation.datatype.MessageHeader
+
+data Butter {
+   MessageHeader header
+	boolean good
+}

@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -60,8 +61,10 @@ public class CreateJavaServiceBaseCommandIT {
 
    private DefaultParameterCollection parameters;
 
+   private File outputDirectory;
+
    @Rule
-   public final TemporaryFolder outputDirectory = new TemporaryFolder();
+   public final TemporaryFolder tempFolder = new TemporaryFolder();
 
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
@@ -91,7 +94,9 @@ public class CreateJavaServiceBaseCommandIT {
 
    @Before
    public void setup() throws Throwable {
-      outputDirectory.newFile("settings.gradle");
+      tempFolder.newFile("settings.gradle");
+      outputDirectory = tempFolder.getRoot();
+      //outputDirectory = new File("build"); // TODO TH: remove this line.
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
@@ -195,17 +200,17 @@ public class CreateJavaServiceBaseCommandIT {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                                     outputDirectory.getRoot().getAbsolutePath()));
+                                                     outputDirectory.getAbsolutePath()));
       
       command.run(jellyFishCommandOptions);
 
-      Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path gradleBuildPath = Paths.get(outputDirectory.getAbsolutePath(),
                                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                                        "build.generated.gradle");
 
       assertFileContains(gradleBuildPath, "project\\s*\\(\\s*['\"]:engagementtrackpriorityservice.events['\"]\\s*\\)");
 
-      Path abstractPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path abstractPath = Paths.get(outputDirectory.getAbsolutePath(),
                                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                                     "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/base/impl/AbstractEngagementTrackPriorityService.java");
 
@@ -216,7 +221,7 @@ public class CreateJavaServiceBaseCommandIT {
                          "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bpublishTrackPriority\\s*\\(");
 
-      Path interfacePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path interfacePath = Paths.get(outputDirectory.getAbsolutePath(),
                                      "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                                      "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/api/IEngagementTrackPriorityService.java");
 
@@ -224,7 +229,7 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(interfacePath,
                          "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
 
-      Path topicsPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path topicsPath = Paths.get(outputDirectory.getAbsolutePath(),
                                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
                                   "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/topic/EngagementTrackPriorityServiceTransportTopics.java");
 

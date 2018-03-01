@@ -138,15 +138,4 @@ public class ProjectInfoPage extends WizardPage {
       text.setLayoutData(gd);
    }
 
-   /**
-    * Adds an empty Label to the next cell in the container which uses a Grid layout.
-    * This is just to take up a cell.
-    * 
-    * @param container
-    *           The container to add the empty label to.
-    */
-   private void takeUpCellInGrid(Composite container) {
-      new Label(container, SWT.NONE);
-   }
-
 }

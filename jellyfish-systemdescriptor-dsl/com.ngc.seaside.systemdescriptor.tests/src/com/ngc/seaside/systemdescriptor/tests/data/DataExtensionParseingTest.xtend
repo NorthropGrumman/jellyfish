@@ -57,10 +57,10 @@ class DataExtensionParseingTest {
 		assertEquals(
 			"data superclass not correct!",
 			"Food",
-			hamburger.superclass.name
+			hamburger.extendedDataType.name
 		)
 
-		var caloriesField = hamburger.superclass.fields.get(0) as PrimitiveDataFieldDeclaration
+		var caloriesField = hamburger.extendedDataType.fields.get(0) as PrimitiveDataFieldDeclaration
 		assertEquals(
 			"inherited field name not correct!",
 			"calories",
@@ -93,13 +93,13 @@ class DataExtensionParseingTest {
 		assertEquals(
 			"data superclass not correct!",
 			"Hamburger",
-			sliders.superclass.name
+			sliders.extendedDataType.name
 		)
 
 		assertEquals(
 			"data superclass's superclass not correct!",
 			"Food",
-			sliders.superclass.superclass.name
+			sliders.extendedDataType.extendedDataType.name
 		)
 
 		var burgersField = sliders.fields.get(0)
