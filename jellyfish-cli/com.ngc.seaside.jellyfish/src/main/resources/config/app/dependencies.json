@@ -105,6 +105,56 @@
          },
          {
             "groupId": "com.ngc.blocs",
+            "artifactId": "jaxb.impl.common.jaxbutilities",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "xml.resource.impl.common.xmlresourc",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.log.impl.common.logservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.api",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.event.impl.common.eventservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.resource.impl.common.resourceservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "notification.impl.common.notificationsupport",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.framework.impl.common.frameworkmgmtservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "component.impl.common.componentutilities",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.notification.impl.common.notificationservice",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.blocs",
             "artifactId": "",
             "scope": "BUILD"
          },
