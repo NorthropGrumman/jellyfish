@@ -1,12 +1,6 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
-
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,6 +9,11 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.validation.Check;
+
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
@@ -44,12 +43,10 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
 				QualifiedName name = nameProvider.getFullyQualifiedName(refinedModel);
 				if (!refinedModelNames.add(name)) {
 					StringBuilder msg = new StringBuilder("A cycle has been detected in the refinement hierarcy!  ");
-					for (Iterator<QualifiedName> i = refinedModelNames.iterator(); i.hasNext();) {
-						msg.append(i.next()).append(" refines ");
-						if (!i.hasNext()) {
-							msg.append(name);
-						}
+					for(QualifiedName n : refinedModelNames) {
+						msg.append(n).append(" refines ");
 					}
+					msg.append(name);
 					error(msg.toString(), model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
 					refinedModel = null;
 				}
