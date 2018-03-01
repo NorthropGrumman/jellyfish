@@ -13,14 +13,13 @@ import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
  **  Validates the refine Require Declaration portion of Requires
  */
 public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValidator {
-
-
-	@Check
+	
 	/**
 	 * Entry into this validator for xtext
 	 * 
 	 * @param requirement thats being validated
 	 */
+	@Check
 	public void checkLinkDeclaration(RequireDeclaration requirement) {
 
 		if (requirement.eClass().equals(SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION)) {

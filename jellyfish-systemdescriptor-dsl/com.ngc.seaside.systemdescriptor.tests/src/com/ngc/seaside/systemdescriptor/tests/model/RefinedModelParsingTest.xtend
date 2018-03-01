@@ -156,32 +156,7 @@ class RefinedModelParsingTest {
 
         validationTester.assertError(
             invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
-            null)
-    }
-    
-     @Test
-     @Ignore 
-    def void testDoesNotParseModelRefining_Inputs() {
-        val source = '''
-            package clocks.models
-
-            import clocks.models.part.Alarm
-            import clocks.datatypes.Time
-
-            model RefinedModel refines Alarm {
-                Input {
-                    refine Time time
-                }
-            }
-        '''
-
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
+            SystemDescriptorPackage.Literals.INPUT_DECLARATION,
             null)
     }
 
@@ -205,7 +180,7 @@ class RefinedModelParsingTest {
 
         validationTester.assertError(
             invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
+            SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
             null)
     }
     
@@ -231,7 +206,7 @@ class RefinedModelParsingTest {
 
         validationTester.assertError(
             invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
+            SystemDescriptorPackage.Literals.REQUIRE_DECLARATION,
             null)
     }
 
@@ -253,7 +228,7 @@ class RefinedModelParsingTest {
 
         validationTester.assertError(
             invalidResult,
-            SystemDescriptorPackage.Literals.MODEL,
+            SystemDescriptorPackage.Literals.SCENARIO,
             null)
     }
 }

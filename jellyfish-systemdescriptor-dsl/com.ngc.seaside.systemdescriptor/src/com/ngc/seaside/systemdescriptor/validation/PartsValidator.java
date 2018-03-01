@@ -16,12 +16,12 @@ import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
  */
 public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
-	@Check
 	/**
 	 * Entry into this validator for xtext 
 	 * 
 	 * @param part thats being validated
 	 */
+	@Check
 	public void checkLinkDeclaration(PartDeclaration part) {
 
 		if (part.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
