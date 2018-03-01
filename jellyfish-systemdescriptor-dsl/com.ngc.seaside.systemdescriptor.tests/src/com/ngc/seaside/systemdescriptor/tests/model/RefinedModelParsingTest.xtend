@@ -86,7 +86,7 @@ class RefinedModelParsingTest {
             }
         '''
 
-         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
 
         validationTester.assertError(
@@ -115,25 +115,27 @@ class RefinedModelParsingTest {
 
     @Test
     def void testDoesNotParseModelsThatCircularlyRefineEachOther() {
+        val refinedModels = Models.allOf(
+            resourceHelper,
+            Models.INVALID_REFINED_MODEL
+        )
         val source = '''
-            package clocks.models
+            package refines.test
 
-            model MyModelB refines clocks.models.MyModelA {
-            }
+            import refines.test.InvalidRefinedModel
 
-            package clocks.models
-
-            model MyModelA refines clocks.models.MyModelB {
+            model AnotherInvalidRefinedModel refines InvalidRefinedModel {
             }
         '''
 
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        var invalidResult = parseHelper.parse(source, refinedModels.resourceSet)
         assertNotNull(invalidResult)
 
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
-            null)
+            null
+        )
     }
 
     @Test
@@ -160,8 +162,8 @@ class RefinedModelParsingTest {
             null)
     }
     
-     @Test
-     @Ignore 
+    @Test
+    @Ignore
     def void testDoesNotParseModelRefining_Inputs() {
         val source = '''
             package clocks.models

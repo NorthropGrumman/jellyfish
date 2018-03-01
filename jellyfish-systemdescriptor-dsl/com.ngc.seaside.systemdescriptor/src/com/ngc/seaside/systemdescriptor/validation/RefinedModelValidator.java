@@ -23,7 +23,10 @@ public class RefinedModelValidator extends AbstractUnregisteredSystemDescriptorV
         // Caveat: Since we can't directly check for refinement of data types, circular dependencies,
         // etc just prevent the user from refining anything that couldn't be loaded as a model.
         if (model.getRefinedModel() != null && model.getRefinedModel().getName() == null) {
-            String msg = "Invalid model refinement due to model-load error!";
+            String msg = "A model cannot refine data!";
+            error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
+        } else if (model.getRefinedModel() != null && model.getRefinedModel().getRefinedModel() != null && model.getRefinedModel().getRefinedModel().getName().equals(model.getName())) {
+            String msg = "A model cannot refine a model that refines the current model!";
             error(msg, model, SystemDescriptorPackage.Literals.MODEL__REFINED_MODEL);
         }
     }
