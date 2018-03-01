@@ -130,7 +130,6 @@ class RefinedModelParsingTest {
 
         var invalidResult = parseHelper.parse(source, refinedModel.resourceSet)
         assertNotNull(invalidResult)
-validationTester.assertNoIssues(invalidResult)
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.MODEL,
