@@ -2,12 +2,12 @@
 apply plugin: 'com.google.protobuf'
 
 dependencies {
-   compile "${dto.getFormattedDependency('com.google.protobuf:protobuf-java')}"
+   compile "${build.getFormattedDependency('com.google.protobuf:protobuf-java')}"
 }
 
 protobuf {
    protoc {
-      artifact = "${dto.getFormattedDependency('com.google.protobuf:protoc')}"
+      artifact = "${build.getFormattedDependency('com.google.protobuf:protoc')}"
    }
 }
 

@@ -48,7 +48,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
 
       IProjectInformation projectInfo = projectNamingService.getMessageProjectName(getOptions(), model);
-      MessagesDto messagesDto = new MessagesDto(buildManagementService, getOptions());
+      MessagesDto messagesDto = new MessagesDto();
       messagesDto.setProjectName(projectInfo.getDirectoryName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -58,7 +58,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       // The template does not need to reference this dependency.  However, we do this so the dependency for the
       // protobuf plugin is registered.
       buildManagementService.registerDependency(getOptions(), "com.google.protobuf", "protobuf-gradle-plugin");
-      buildManagementService.registerProject(getOptions(), projectInfo);
+      registerProject(projectInfo);
    }
 
    @Override
@@ -71,7 +71,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
 
       Map<INamedChild<IPackage>, Boolean> fields = dataService.aggregateNestedFields(model);
-      MessagesDto messagesDto = new MessagesDto(buildManagementService, getOptions());
+      MessagesDto messagesDto = new MessagesDto();
       messagesDto.setProjectName(projectInfo.getDirectoryName());
       messagesDto.setExportedPackages(fields.keySet()
                                             .stream()
