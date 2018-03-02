@@ -121,7 +121,7 @@ public class BuildManagementService implements IBuildManagementService {
 
    @Override
    public void registerProject(IProjectInformation project) {
-      throw new UnsupportedOperationException("not implemented");
+      //throw new UnsupportedOperationException("not implemented");
    }
 
    @Activate
