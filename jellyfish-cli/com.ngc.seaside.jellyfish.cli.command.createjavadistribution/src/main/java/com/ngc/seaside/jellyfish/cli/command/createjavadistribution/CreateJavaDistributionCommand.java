@@ -3,8 +3,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -131,26 +129,10 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
                              parameters,
                              outputDirectory,
                              clean);
-      
-      updateGradleDotSettings(outputDirectory, info);
+      buildManagementService.registerProject(info);
       
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
                       model.getName());
-   }
-   
-   protected void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
    }
 
    @Activate

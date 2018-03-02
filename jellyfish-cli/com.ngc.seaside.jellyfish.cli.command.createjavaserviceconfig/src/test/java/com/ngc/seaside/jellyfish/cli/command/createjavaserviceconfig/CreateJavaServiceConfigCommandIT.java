@@ -85,8 +85,6 @@ public class CreateJavaServiceConfigCommandIT {
          IModel model = args.getArgument(1);
          IProjectInformation info = mock(IProjectInformation.class);
          when(info.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".config");
-         when(info.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".config");
-         when(info.getGroupId()).thenReturn(model.getParent().getName());
          return info;
       });
       
@@ -125,11 +123,6 @@ public class CreateJavaServiceConfigCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-config-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.config", "build.gradle"));
-
-      assertFileLinesEquals(
-            "settings.gradle not correct!",
-            Paths.get("src", "test", "resources", "expectedfiles", "service-config-settings.gradle.expected"),
-            Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
       assertFileLinesEquals(
             "transport config not correct!",

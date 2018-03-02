@@ -8,7 +8,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 public class BuildManagementServiceGuiceWrapper implements IBuildManagementService {
@@ -51,5 +53,15 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
    public IBuildDependency getDependency(
          IJellyFishCommandOptions options, String groupAndArtifact) {
       return buildManagementService.getDependency(options, groupAndArtifact);
+   }
+
+   @Override
+   public Collection<IProjectInformation> getRegisteredProjects() {
+      return buildManagementService.getRegisteredProjects();
+   }
+
+   @Override
+   public void registerProject(IProjectInformation project) {
+      buildManagementService.registerProject(project);
    }
 }

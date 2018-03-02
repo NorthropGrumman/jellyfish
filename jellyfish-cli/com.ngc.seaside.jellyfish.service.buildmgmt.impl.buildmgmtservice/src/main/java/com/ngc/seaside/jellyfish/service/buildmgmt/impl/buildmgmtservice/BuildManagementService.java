@@ -12,6 +12,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.ArtifactGroup;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.DependencyArtifact;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -19,6 +20,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -110,6 +112,16 @@ public class BuildManagementService implements IBuildManagementService {
             "groupAndArtifact '%s' not in the correct format.  '<groupId>:<artifactId>' is required!",
             groupAndArtifact);
       return getDependency(options, parts[0], parts[1]);
+   }
+
+   @Override
+   public Collection<IProjectInformation> getRegisteredProjects() {
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public void registerProject(IProjectInformation project) {
+      throw new UnsupportedOperationException("not implemented");
    }
 
    @Activate

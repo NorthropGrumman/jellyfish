@@ -119,23 +119,8 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
          dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
          templateService.unpack(CreateJavaEventsCommand.class.getPackage().getName() + EVENTS_JAVA_TEMPLATE_SUFFIX, dataParameters, projectDirectory, false);
       });
-      
-      updateGradleDotSettings(outputDirectory, projectInfo);
-   }
-   
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ID.getName(), info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(), info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
+
+      buildManagementService.registerProject(projectInfo);
    }
 
    @Activate

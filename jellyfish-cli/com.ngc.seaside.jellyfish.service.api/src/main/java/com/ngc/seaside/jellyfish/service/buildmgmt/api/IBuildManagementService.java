@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.api;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import java.util.Collection;
 
@@ -9,6 +10,11 @@ import java.util.Collection;
  * use this service to option information about dependencies when these commands generate projects.  Commands can use
  * the {@link #registerDependency(IJellyFishCommandOptions, String) register} operations to both obtain information
  * about a dependencies and record that that dependency is required to build the newly generated project.
+ *
+ * <p/>
+ *
+ * Commands also use this service to {@link #registerProject(IProjectInformation) register projects} that are generated
+ * by the command.
  */
 public interface IBuildManagementService {
 
@@ -71,4 +77,18 @@ public interface IBuildManagementService {
     * @throws IllegalArgumentException if no dependency with the given group ID and artifact ID has been configured
     */
    IBuildDependency getDependency(IJellyFishCommandOptions options, String groupAndArtifact);
+
+   /**
+    * Gets all projects that have been registered via {@link #registerProject(IProjectInformation)}.
+    *
+    * @return all projects that have been registered
+    */
+   Collection<IProjectInformation> getRegisteredProjects();
+
+   /**
+    * Registers the given project.
+    *
+    * @param project the project to register
+    */
+   void registerProject(IProjectInformation project);
 }

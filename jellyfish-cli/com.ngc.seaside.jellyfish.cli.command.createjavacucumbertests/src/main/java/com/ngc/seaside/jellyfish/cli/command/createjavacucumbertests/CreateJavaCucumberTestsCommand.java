@@ -16,8 +16,6 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -40,8 +38,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    private static final String NAME = "create-java-cucumber-tests";
    private static final IUsage USAGE = createUsage();
 
-   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
@@ -96,7 +92,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                              outputDirectory,
                              clean);
       logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
-      updateGradleDotSettings(outputDirectory, info);
+      buildManagementService.registerProject(info);
    }
 
    @Override
@@ -211,22 +207,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
    public void removeBuildManagementService(IBuildManagementService ref) {
       setBuildManagementService(null);
-   }
-
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-                                                            outputDir.resolve(info.getDirectoryName()).getParent()
-                                                                  .toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
    }
 
    protected void doCreateDirectories(Path outputDirectory) {

@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -44,6 +45,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
    private ITemplateService templateService;
    private IBaseServiceDtoFactory templateDaoFactory;
    private IProjectNamingService projectNamingService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
@@ -66,23 +68,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                                                     CommonParameters.UPDATE_GRADLE_SETTING.getName(),
                                                     true)) {
-         updateGradleDotSettings(outputDir, projectInfo);
-      }
-   }
-
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-                                                            outputDir.resolve(info.getDirectoryName()).getParent()
-                                                                  .toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
+         buildManagementService.registerProject(projectInfo);
       }
    }
 
@@ -156,6 +142,15 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
 
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {

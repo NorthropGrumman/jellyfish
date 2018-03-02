@@ -106,8 +106,6 @@ public class CreateJavaCucumberTestsCommandIT {
       IProjectInformation info = mock(IProjectInformation.class);
       when(projectService.getCucumberTestsProjectName(any(), eq(model))).thenReturn(info);
       when(info.getDirectoryName()).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
-      when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".tests");
-      when(info.getGroupId()).thenReturn(pkg);
       
       info = mock(IProjectInformation.class);
       when(projectService.getBaseServiceProjectName(any(), eq(model))).thenReturn(info);

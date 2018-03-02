@@ -140,7 +140,7 @@ public class CreateJavaPubsubConnectorCommand implements IJellyFishCommand {
       if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                                                     CommonParameters.UPDATE_GRADLE_SETTING.getName(),
                                                     true)) {
-         updateGradleDotSettings(outputDirectory, info);
+         buildManagementService.registerProject(info);
       }
       logService.info(CreateJavaPubsubConnectorCommand.class, "%s project successfully created", modelName);
    }

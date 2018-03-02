@@ -362,9 +362,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                              ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
                              clean);
 
-//      Path outputDir = Paths.get(mergedOptions.getParameters()
-//                                       .getParameter(OUTPUT_DIRECTORY_PROPERTY)
-//                                       .getStringValue());
       updateGradleDotSettings(ctx.projectDirectory.toPath(), projectInfo);
    }
 

@@ -10,8 +10,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.jellyfish.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.jellyfish.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.jellyfish.api.CommandException;
@@ -66,9 +64,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    private static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
    static final String BLOCS_PLUGINS_DEPENDENCY = "com.ngc.blocs:gradle.plugin";
 
-   public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
-   public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
@@ -133,7 +128,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
       if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                                                     CommonParameters.UPDATE_GRADLE_SETTING.getName(),
                                                     true)) {
-         updateGradleDotSettings(outputDir, projectInfo);
+         buildManagementService.registerProject(projectInfo);
       }
 
       // Register blocs plugins as a required dependency.
@@ -221,23 +216,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    public void removeBuildManagementService(IBuildManagementService ref) {
       setBuildManagementService(null);
-   }
-
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.resolve(info.getDirectoryName())
-                  .getParent()
-                  .toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
    }
 
    @SuppressWarnings("unchecked")
@@ -454,7 +432,7 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    /**
     * Adds all of the inputs and outputs, their corresponding data objects that they extend, and the nested data of their fields to the given sets.
-    * 
+    *
     * @param model model to search
     * @param dataTypes data types used as input, outputs or fields
     * @param superDataTypes data types that are extends from any of the data in dataTypes

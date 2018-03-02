@@ -9,9 +9,6 @@ public enum CommonParameters implements IParameter<String> {
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
    GROUP_ARTIFACT_VERSION("gav",
                           "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
-   @Deprecated
-   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()
-                                            + ") The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>@<extension>"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
    INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
    MODEL("model", "The fully qualified path to the system descriptor model"),
@@ -21,6 +18,12 @@ public enum CommonParameters implements IParameter<String> {
    PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
+   PHASE("phase",
+         "Indicates which phase of the command should be executed.  Commands that generate projects under the generated-projects directory"),
+
+   @Deprecated
+   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()
+                                            + ") The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>@<extension>"),
    @Deprecated
    REPOSITORY_URL("repositoryUrl",
                   "(Deprecated, no longer used) The url of a system descriptor repository. If specified, "

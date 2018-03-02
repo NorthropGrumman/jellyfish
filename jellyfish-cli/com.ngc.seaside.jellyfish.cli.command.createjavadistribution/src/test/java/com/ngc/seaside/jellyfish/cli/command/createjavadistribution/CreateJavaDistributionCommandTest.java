@@ -39,7 +39,6 @@ public class CreateJavaDistributionCommandTest {
    private ITemplateService templateService = mock(ITemplateService.class);
    private IModel model = mock(IModel.class);
    private Path createDirectoriesPath;
-   private IParameterCollection addProjectParameters;
 
    @Before
    public void setup() throws IOException {
@@ -94,15 +93,6 @@ public class CreateJavaDistributionCommandTest {
       // Setup class under test
       fixture = new CreateJavaDistributionCommand() {
          @Override
-         protected void updateGradleDotSettings(Path outputDirectory, IProjectInformation info) {
-            DefaultParameterCollection parameters = new DefaultParameterCollection();
-            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
-            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.GROUP_ID_PROPERTY, info.getGroupId()));
-            parameters.addParameter(new DefaultParameter<>(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-            addProjectParameters = parameters;
-         }
-
-         @Override
          protected void doCreateDirectories(Path outputDirectory) {
             createDirectoriesPath = outputDirectory;
          }
@@ -126,15 +116,6 @@ public class CreateJavaDistributionCommandTest {
       verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals(model.getName().toLowerCase() + ".distribution",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals(model.getParent().getName(),
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
-                                   .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
    }
@@ -152,14 +133,6 @@ public class CreateJavaDistributionCommandTest {
       verify(model, times(1)).getParent();
 
       // Verify passed values
-      Assert.assertEquals(Paths.get("/just/a/mock/path").toString(),
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.OUTPUT_DIRECTORY_PROPERTY)
-                                   .getStringValue());
-      Assert.assertEquals("model.distribution", addProjectParameters.getParameter(CreateJavaDistributionCommand.ARTIFACT_ID_PROPERTY)
-               .getStringValue());
-      Assert.assertEquals("com.ngc.seaside.test",
-                          addProjectParameters.getParameter(CreateJavaDistributionCommand.GROUP_ID_PROPERTY)
-                                   .getStringValue());
       Assert.assertEquals(Paths.get("/just/a/mock/path").toAbsolutePath().toString(),
                           createDirectoriesPath.toAbsolutePath().toString());
    }

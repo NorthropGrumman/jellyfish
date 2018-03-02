@@ -4,7 +4,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 public class MockedBuildManagementService implements IBuildManagementService {
@@ -54,5 +56,14 @@ public class MockedBuildManagementService implements IBuildManagementService {
    @Override
    public IBuildDependency getDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
       throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public Collection<IProjectInformation> getRegisteredProjects() {
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public void registerProject(IProjectInformation project) {
    }
 }
