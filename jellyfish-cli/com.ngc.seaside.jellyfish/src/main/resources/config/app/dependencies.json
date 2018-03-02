@@ -228,12 +228,17 @@
    },
    {
       "versionPropertyName": "jellyfishVersion",
-      "version": "2.1.0-SNAPSHOT",
+      "version": "2.2.0-SNAPSHOT",
       "artifacts": [
          {
             "groupId": "com.ngc.seaside",
             "artifactId": "guice.modules",
             "scope": "BUILD"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "jellyfish.cli.gradle.plugins",
+            "scope": "BUILDSCRIPT"
          }
       ]
    },

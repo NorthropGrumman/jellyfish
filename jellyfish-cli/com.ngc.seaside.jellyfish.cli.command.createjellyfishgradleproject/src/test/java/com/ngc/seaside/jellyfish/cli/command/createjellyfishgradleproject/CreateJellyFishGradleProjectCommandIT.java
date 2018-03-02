@@ -52,7 +52,6 @@ public class CreateJellyFishGradleProjectCommandIT {
    @Before
    public void setup() throws IOException {
       outputDirectory = temporaryDirectory.newFolder();
-      outputDirectory = new File("build/foo");
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()

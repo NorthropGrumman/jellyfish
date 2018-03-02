@@ -2,8 +2,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -366,24 +364,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
                              ctx.projectDirectory.toPath().resolve(projectInfo.getDirectoryName()),
                              clean);
 
-      updateGradleDotSettings(ctx.projectDirectory.toPath(), projectInfo);
-   }
-
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(
-            OUTPUT_DIRECTORY_PROPERTY,
-            outputDir.resolve(info.getDirectoryName()).getParent().toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(CommonParameters.ARTIFACT_ID.getName(),
-                                                            info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
+      //updateGradleDotSettings(ctx.projectDirectory.toPath(), projectInfo);
    }
 
    private static class CommandInvocationContext {

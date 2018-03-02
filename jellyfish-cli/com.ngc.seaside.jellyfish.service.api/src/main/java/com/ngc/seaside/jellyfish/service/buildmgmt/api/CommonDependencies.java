@@ -14,7 +14,10 @@ public enum CommonDependencies {
    JUNIT("junit", "junit"),
    MOCKITO_CORE("org.mockito", "mockito-core"),
    SEASIDE_SERVICE_API("com.ngc.seaside", "service.api"),
-   SEASIDE_TRANSPORT_SERVICE_API("com.ngc.seaside", "service.transport.api");
+   SEASIDE_TRANSPORT_SERVICE_API("com.ngc.seaside", "service.transport.api"),
+   SEASIDE_GRADLE_PLUGINS("com.ngc.seaside", "gradle.plugins"),
+   JELLYFISH_GRADLE_PLUGINS("com.ngc.seaside", "jellyfish.cli.gradle.plugins"),
+   SONARQUBE_GRADLE_PLUGIN("org.sonarsource.scanner.gradle", "sonarqube-gradle-plugin");
 
    private final String gropuId;
    private final String artifactId;

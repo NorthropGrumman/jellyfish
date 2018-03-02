@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.GradleProjectDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -92,6 +93,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
 
+      registerRequiredDependencies(commandOptions);
+
       String groupId = collection.containsParameter(GROUP_ID_PROPERTY)
                        ? collection.getParameter(GROUP_ID_PROPERTY).getStringValue()
                        : DEFAULT_GROUP_ID;
@@ -159,6 +162,19 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
    public void removeBuildManagementService(IBuildManagementService ref) {
       setBuildManagementService(null);
+   }
+
+   private void registerRequiredDependencies(IJellyFishCommandOptions commandOptions) {
+      // These dependencies are required but are not registered directly by a template or command, so we do this here.
+      buildManagementService.registerDependency(commandOptions,
+                                                CommonDependencies.JELLYFISH_GRADLE_PLUGINS.getGropuId(),
+                                                CommonDependencies.JELLYFISH_GRADLE_PLUGINS.getArtifactId());
+      buildManagementService.registerDependency(commandOptions,
+                                                CommonDependencies.SEASIDE_GRADLE_PLUGINS.getGropuId(),
+                                                CommonDependencies.SEASIDE_GRADLE_PLUGINS.getArtifactId());
+      buildManagementService.registerDependency(commandOptions,
+                                                CommonDependencies.SONARQUBE_GRADLE_PLUGIN.getGropuId(),
+                                                CommonDependencies.SONARQUBE_GRADLE_PLUGIN.getArtifactId());
    }
 
    private Collection<IBuildDependency> getBuildScriptDependencies(IJellyFishCommandOptions commandOptions) {
