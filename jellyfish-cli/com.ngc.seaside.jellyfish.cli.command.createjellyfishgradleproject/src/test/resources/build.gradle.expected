@@ -12,17 +12,15 @@ buildscript {
     }
 
    dependencies {
-      #foreach ( $dependency in $dto.buildScriptDependencies )
-      classpath "${dependency.groupId}:${dependency.artifactId}:${dependency.version}"
-      #end
+      classpath "com.google.protobuf:protobuf-gradle-plugin:1.2.3"
    }
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
 systemDescriptor {
-   project = '${dto.systemDescriptorGav}'
-   model = '${dto.modelName}'
+   project = 'com.ngc.seaside.system1:system.descriptor:1.0-SNAPSHOT'
+   model = 'com.ngc.seaside.Model1'
 }
 
 subprojects {
@@ -33,12 +31,11 @@ subprojects {
       apply plugin: 'com.ngc.seaside.parent'
     }
 
-   group = '${dto.groupId}'
-   version = '${dto.version}'
+   group = 'com.ngc.seaside'
+   version = '1.0'
 
    ext {
-      #foreach ( $entry in $dto.versionProperties.entrySet() )
-      ${entry.key} = '${entry.value}'
-      #end
+      guavaVersion = '1.2.3'
+      testVersion = '1.4.5'
    }
 }
