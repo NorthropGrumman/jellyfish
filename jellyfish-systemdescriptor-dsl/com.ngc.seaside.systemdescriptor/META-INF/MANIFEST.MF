@@ -15,8 +15,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtend.lib,
  org.eclipse.emf.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: com.ngc.seaside.systemdescriptor.generator,
- com.ngc.seaside.systemdescriptor.parser.antlr.internal,
+Export-Package: com.ngc.seaside.systemdescriptor.parser.antlr.internal,
  com.ngc.seaside.systemdescriptor.systemDescriptor,
  com.ngc.seaside.systemdescriptor.systemDescriptor.impl,
  com.ngc.seaside.systemdescriptor.parser.antlr,
