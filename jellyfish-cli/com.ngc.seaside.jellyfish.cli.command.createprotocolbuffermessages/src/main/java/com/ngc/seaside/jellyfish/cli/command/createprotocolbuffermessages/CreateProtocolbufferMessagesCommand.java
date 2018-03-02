@@ -55,6 +55,9 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
       unpackSuffixedTemplate(MESSAGES_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
+      // The template does not need to reference this dependency.  However, we do this so the dependency for the
+      // protobuf plugin is registered.
+      buildManagementService.registerDependency(getOptions(), "com.google.protobuf", "protobuf-gradle-plugin");
       buildManagementService.registerProject(getOptions(), projectInfo);
    }
 
