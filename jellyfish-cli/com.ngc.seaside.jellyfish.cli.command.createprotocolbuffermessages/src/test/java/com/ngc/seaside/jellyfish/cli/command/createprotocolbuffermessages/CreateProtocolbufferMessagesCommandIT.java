@@ -95,36 +95,20 @@ public class CreateProtocolbufferMessagesCommandIT {
       IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enumeration");
       ModelUtils.mockData(data,
                           null,
-                          "dataField1",
-                          DataTypes.INT,
-                          "dataField2",
-                          FieldCardinality.MANY,
-                          DataTypes.STRING,
-                          "dataField3",
-                          FieldCardinality.MANY,
-                          enumeration);
+                          "dataField1", DataTypes.INT,
+                          "dataField2", FieldCardinality.MANY, DataTypes.STRING,
+                          "dataField3", FieldCardinality.MANY, enumeration);
       ModelUtils.mockData(base,
                           null,
-                          "baseField1",
-                          DataTypes.INT,
-                          "baseField2",
-                          FieldCardinality.MANY, DataTypes.STRING,
-                          "baseField3",
-                          FieldCardinality.MANY,
-                          enumeration,
-                          "baseField4",
-                          data);
+                          "baseField1", DataTypes.INT,
+                          "baseField2", FieldCardinality.MANY, DataTypes.STRING,
+                          "baseField3", FieldCardinality.MANY, enumeration,
+                          "baseField4", data);
       ModelUtils.mockData(child, base,
-                          "childField1",
-                          DataTypes.INT,
-                          "childField2",
-                          FieldCardinality.MANY,
-                          DataTypes.STRING,
-                          "childField3",
-                          FieldCardinality.MANY,
-                          enumeration,
-                          "childField4",
-                          data);
+                          "childField1", DataTypes.INT,
+                          "childField2", FieldCardinality.MANY, DataTypes.STRING,
+                          "childField3", FieldCardinality.MANY, enumeration,
+                          "childField4", data);
       ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.Model");
       model.addPubSub("scenario1", "input1", data, "output1", child);
       when(systemDescriptor.findModel("com.ngc.Model")).thenReturn(Optional.of(model));

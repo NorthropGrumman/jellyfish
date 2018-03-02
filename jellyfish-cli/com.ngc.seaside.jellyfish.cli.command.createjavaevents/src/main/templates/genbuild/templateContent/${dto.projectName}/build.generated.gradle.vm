@@ -1,7 +1,7 @@
 #set($D='$')
 
 dependencies {
-	compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+	compile "${build.getFormattedDependency('com.ngc.blocs:service.api')}"
 }
 
 #if(! $dto.exportedPackages.isEmpty() )

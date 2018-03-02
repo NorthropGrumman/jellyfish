@@ -11,6 +11,7 @@ public enum CommonDependencies {
    GAUVA("com.google.guava", "guava"),
    BLOCS_API("com.ngc.blocs", "api"),
    BLOCS_SERVICE_API("com.ngc.blocs", "service.api"),
+   BLOCS_GRADLE_PLUGINS("com.ngc.blocs", "gradle.plugin"),
    JUNIT("junit", "junit"),
    MOCKITO_CORE("org.mockito", "mockito-core"),
    SEASIDE_SERVICE_API("com.ngc.seaside", "service.api"),
