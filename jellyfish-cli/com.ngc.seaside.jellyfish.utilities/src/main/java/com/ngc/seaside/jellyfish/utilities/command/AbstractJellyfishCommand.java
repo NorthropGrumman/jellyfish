@@ -5,10 +5,13 @@ import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -18,10 +21,13 @@ import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.io.BufferedInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
+
+   public static final String BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE = "build";
 
    private final String name;
 
@@ -149,6 +155,11 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                                                    Path outputDirectory,
                                                    boolean clean) {
       Preconditions.checkState(templateService != null, "template service not set!");
+      if (buildManagementService != null) {
+         parameters = new DefaultParameterCollection(parameters)
+               .addParameter(new DefaultParameter<>(BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
+                                                    new BuildManagementHelper()));
+      }
       return templateService.unpack(getClass().getPackage().getName(), parameters, outputDirectory, clean);
    }
 
@@ -157,9 +168,33 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                                                     Path outputDirectory,
                                                     boolean clean) {
       Preconditions.checkState(templateService != null, "template service not set!");
+      if (buildManagementService != null) {
+         parameters = new DefaultParameterCollection(parameters)
+               .addParameter(new DefaultParameter<>(BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
+                                                    new BuildManagementHelper()));
+      }
       return templateService.unpack(getClass().getPackage().getName() + "-" + templateSuffix,
                                     parameters,
                                     outputDirectory,
                                     clean);
+   }
+
+   public class BuildManagementHelper {
+
+      private BuildManagementHelper() {
+      }
+
+      /**
+       * Gets a string that describes the given dependency in the format {@code groupId:artifactId:$versionPropertyName}.
+       *
+       * @return a string that describes the given dependency
+       */
+      public String getFormattedDependency(String groupAndArtifactId) {
+         IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
+         return String.format("%s:%s:$%s",
+                              dependency.getGroupId(),
+                              dependency.getArtifactId(),
+                              dependency.getVersionPropertyName());
+      }
    }
 }

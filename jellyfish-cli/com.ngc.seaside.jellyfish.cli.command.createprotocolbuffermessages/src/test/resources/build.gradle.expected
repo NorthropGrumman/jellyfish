@@ -1,0 +1,19 @@
+buildscript {
+	repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+	dependencies {
+		classpath "com.google.protobuf:protobuf-gradle-plugin:$version"
+	}
+}
+
+ext {
+    command = 'create-protocolbuffer-messages'
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

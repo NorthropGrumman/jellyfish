@@ -36,8 +36,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.MESSAGES_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.MESSAGES_PROTO_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.CreateProtocolbufferMessagesCommand.OUTPUT_DIRECTORY_PROPERTY;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -61,6 +63,10 @@ public class CreateProtocolbufferMessagesCommandIT {
             .useRealPropertyService()
             .setTemplateDirectory(
                   CreateProtocolbufferMessagesCommand.class.getPackage().getName() + "-"
+                  + MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", "genbuild"))
+            .setTemplateDirectory(
+                  CreateProtocolbufferMessagesCommand.class.getPackage().getName() + "-"
                   + MESSAGES_BUILD_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates", "build"))
             .setTemplateDirectory(
@@ -78,7 +84,6 @@ public class CreateProtocolbufferMessagesCommandIT {
 
       outputDirectory = Files.createTempDirectory(null);
       parameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
-      parameters.addParameter(new DefaultParameter<>(CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(options.getParameters()).thenReturn(parameters);
@@ -127,7 +132,8 @@ public class CreateProtocolbufferMessagesCommandIT {
    }
 
    @Test
-   public void testCommand() throws Exception {
+   public void testDoesRunDeferredPhase() throws Exception {
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED));
       cmd.run(options);
 
       Path projectDirectory = outputDirectory.resolve("com.ngc.model.message");
@@ -150,4 +156,14 @@ public class CreateProtocolbufferMessagesCommandIT {
       assertTrue(files.get(2).endsWith(Paths.get("com", "ngc", "enumeration", "message", "Enumeration.proto")));
    }
 
+   @Test
+   public void testDoesRunDefaultPhase() throws Throwable {
+      cmd.run(options);
+
+      Path projectDirectory = outputDirectory.resolve("com.ngc.model.message");
+      assertFileLinesEquals(
+            "build.gradle not correct!",
+            Paths.get("src", "test", "resources", "build.gradle.expected"),
+            projectDirectory.resolve("build.gradle"));
+   }
 }

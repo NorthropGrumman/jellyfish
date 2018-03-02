@@ -24,5 +24,4 @@ public interface IBuildDependency {
     * Gets the name of the property that can be used to identify the version of this dependency.
     */
    String getVersionPropertyName();
-
 }

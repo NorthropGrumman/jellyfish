@@ -1,12 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
-import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDataDto;
 import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDto;
@@ -16,11 +13,9 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -33,8 +28,9 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
 
    static final String NAME = "create-protocolbuffer-messages";
 
-   static final String MESSAGES_BUILD_TEMPLATE_SUFFIX = "build";
+   static final String MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String MESSAGES_PROTO_TEMPLATE_SUFFIX = "proto";
+   static final String MESSAGES_BUILD_TEMPLATE_SUFFIX = "build";
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
@@ -47,7 +43,19 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
 
    @Override
    protected void runDefaultPhase() {
-      // TODO TH: Generate the build script here.
+      IModel model = getModel();
+      Path outputDirectory = getOutputDirectory();
+      boolean clean = getBooleanParameter(CLEAN_PROPERTY);
+
+      IProjectInformation projectInfo = projectNamingService.getMessageProjectName(getOptions(), model);
+      MessagesDto messagesDto = new MessagesDto(buildManagementService, getOptions());
+      messagesDto.setProjectName(projectInfo.getDirectoryName());
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
+      unpackSuffixedTemplate(MESSAGES_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+
+      buildManagementService.registerProject(getOptions(), projectInfo);
    }
 
    @Override
@@ -69,7 +77,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
-      unpackSuffixedTemplate(MESSAGES_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      unpackSuffixedTemplate(MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
       fields.forEach((child, normal) -> {
          if (normal) {
