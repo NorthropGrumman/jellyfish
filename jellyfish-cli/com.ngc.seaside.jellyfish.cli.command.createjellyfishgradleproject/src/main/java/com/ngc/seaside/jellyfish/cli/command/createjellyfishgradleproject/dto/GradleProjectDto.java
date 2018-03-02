@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto;
 
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ public class GradleProjectDto {
    private String modelName;
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
+   private Collection<IProjectInformation> projects = new ArrayList<>();
 
    public String getGroupId() {
       return groupId;
@@ -78,6 +80,16 @@ public class GradleProjectDto {
 
    public GradleProjectDto setVersionProperties(SortedMap<String, String> versionProperties) {
       this.versionProperties = versionProperties;
+      return this;
+   }
+
+   public Collection<IProjectInformation> getProjects() {
+      return projects;
+   }
+
+   public GradleProjectDto setProjects(
+         Collection<IProjectInformation> projects) {
+      this.projects = projects;
       return this;
    }
 }

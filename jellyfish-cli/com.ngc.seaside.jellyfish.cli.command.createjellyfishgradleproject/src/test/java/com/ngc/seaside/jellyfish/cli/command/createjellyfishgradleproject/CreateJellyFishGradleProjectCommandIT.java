@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
 import org.junit.Before;
@@ -51,6 +52,7 @@ public class CreateJellyFishGradleProjectCommandIT {
    @Before
    public void setup() throws IOException {
       outputDirectory = temporaryDirectory.newFolder();
+      outputDirectory = new File("build/foo");
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
@@ -76,6 +78,10 @@ public class CreateJellyFishGradleProjectCommandIT {
             .thenReturn(Collections.singleton(dependency2));
       when(buildManagementService.getRegisteredDependencies(options, DependencyScope.TEST))
             .thenReturn(Collections.singleton(dependency3));
+
+      IProjectInformation project = newProject("project1", "p1");
+      when(buildManagementService.getRegisteredProjects())
+            .thenReturn(Collections.singleton(project));
 
       command = new CreateJellyFishGradleProjectCommand();
       command.setLogService(logService);
@@ -127,5 +133,12 @@ public class CreateJellyFishGradleProjectCommandIT {
       when(d.getVersion()).thenReturn(version);
       when(d.getVersionPropertyName()).thenReturn(versionProperty);
       return d;
+   }
+
+   private static IProjectInformation newProject(String directoryName, String artifactId) {
+      IProjectInformation project = mock(IProjectInformation.class);
+      when(project.getDirectoryName()).thenReturn(directoryName);
+      when(project.getArtifactId()).thenReturn(artifactId);
+      return project;
    }
 }

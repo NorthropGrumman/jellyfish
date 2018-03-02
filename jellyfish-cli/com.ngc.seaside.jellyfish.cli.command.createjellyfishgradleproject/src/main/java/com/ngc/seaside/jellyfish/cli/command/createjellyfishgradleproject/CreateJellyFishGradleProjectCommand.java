@@ -13,6 +13,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.Gr
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
 import org.osgi.service.component.annotations.Activate;
@@ -101,7 +102,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setSystemDescriptorGav(collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue())
             .setModelName(collection.getParameter(MODEL_NAME_PROPERTY).getStringValue())
             .setBuildScriptDependencies(getBuildScriptDependencies(commandOptions))
-            .setVersionProperties(getVersionProperties(commandOptions));
+            .setVersionProperties(getVersionProperties(commandOptions))
+            .setProjects(getProjects(commandOptions));
       collection.addParameter(new DefaultParameter<>("dto", dto));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
@@ -168,12 +170,16 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
 
       EnumSet<DependencyScope> scopes = EnumSet.complementOf(EnumSet.of(DependencyScope.BUILDSCRIPT));
       for (DependencyScope scope : scopes) {
-         for(IBuildDependency dependency : buildManagementService.getRegisteredDependencies(commandOptions, scope)) {
+         for (IBuildDependency dependency : buildManagementService.getRegisteredDependencies(commandOptions, scope)) {
             versions.put(dependency.getVersionPropertyName(), dependency.getVersion());
          }
       }
 
       return versions;
+   }
+
+   private Collection<IProjectInformation> getProjects(IJellyFishCommandOptions commandOptions) {
+      return buildManagementService.getRegisteredProjects();
    }
 
    /**
