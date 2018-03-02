@@ -1,22 +1,12 @@
 [
    {
-      "versionPropertyName": "protobufVersion",
+      "versionPropertyName": "protobufPluginVersion",
       "version": "0.8.3",
       "artifacts": [
          {
             "groupId": "com.google.protobuf",
             "artifactId": "protobuf-gradle-plugin",
             "scope": "BUILDSCRIPT"
-         },
-         {
-            "groupId": "com.google.protobuf",
-            "artifactId": "protobuf-java",
-            "scope": "BUILD"
-         },
-         {
-            "groupId": "com.google.protobuf",
-            "artifactId": "protoc",
-            "scope": "BUILD"
          }
       ]
    },
@@ -260,6 +250,22 @@
          {
             "groupId": "com.google.inject",
             "artifactId": "guice",
+            "scope": "BUILD"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "protobufVersion",
+      "version": "3.2.0",
+      "artifacts": [
+         {
+            "groupId": "com.google.protobuf",
+            "artifactId": "protobuf-java",
+            "scope": "BUILD"
+         },
+         {
+            "groupId": "com.google.protobuf",
+            "artifactId": "protoc",
             "scope": "BUILD"
          }
       ]
