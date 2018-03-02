@@ -19,7 +19,7 @@ public enum CommonParameters implements IParameter<String> {
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
    PHASE("phase",
-         "Indicates which phase of the command should be executed.  Commands that generate projects under the generated-projects directory"),
+         "Indicates which phase of the command should be executed.  This command supports the following phases: "),
 
    @Deprecated
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()
