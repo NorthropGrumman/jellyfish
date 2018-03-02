@@ -120,7 +120,6 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       CommandInvocationContext ctx = buildContext(commandOptions);
 
-      createJellyFishGradleProject(ctx);
       if (ctx.createDomain) {
          createDomainProject(ctx);
       }
@@ -133,6 +132,11 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       createJavaServiceBaseProject(ctx);
       createJavaPubsubConnectorProject(ctx);
       createProtocolBufferMessagesProject(ctx);
+
+      // Do this last after all the other commands have run.  We do this because the build mgmt service builds up
+      // state as the commands are run.  The next command will read this state, so we want to make sure all the other
+      // commands are finished.
+      createJellyFishGradleProject(ctx);
    }
 
    @Activate
