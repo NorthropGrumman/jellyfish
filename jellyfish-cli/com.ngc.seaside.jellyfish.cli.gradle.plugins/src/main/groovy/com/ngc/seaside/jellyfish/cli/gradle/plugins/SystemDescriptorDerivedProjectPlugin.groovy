@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.gradle.plugins
 
 import com.ngc.seaside.jellyfish.api.CommonParameters
 import com.ngc.seaside.jellyfish.cli.gradle.JellyFishProjectGenerator
+import com.ngc.seaside.jellyfish.utilities.command.JellyfishCommandPhase
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.GradleException
@@ -42,16 +43,18 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                 md5File.text = md5
             }
 
-            // test change
+            // test for file changes
             if (!file("${project.projectDir}/build.generated.gradle").exists()) {
                 logger.info(":${p.name}:generate")
                 def sdProject = parent.systemDescriptor.project
+                // Note when running Jellyfish from Gradle, we are always running in the deferred phase.
                 new JellyFishProjectGenerator(logger)
                       .setCommand(command)
                       .setArguments([(CommonParameters.MODEL.name)                  : "${parent.systemDescriptor.model}",
                                      (CommonParameters.GROUP_ARTIFACT_VERSION.name) : "${sdProject.group}:${sdProject.name}:${sdProject.version}",
                                      (CommonParameters.OUTPUT_DIRECTORY.name)       : "${project.rootDir.absolutePath}",
-                                     (CommonParameters.UPDATE_GRADLE_SETTING.name)  : 'false'])
+                                     (CommonParameters.UPDATE_GRADLE_SETTING.name)  : 'false',
+                                     (CommonParameters.PHASE) : JellyfishCommandPhase.DEFERRED.toString()])
                       .generate()
             }
 

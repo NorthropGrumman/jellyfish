@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.utilities.command;
 
+import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.IParameter;
@@ -17,22 +18,18 @@ public abstract class AbstractMultiphaseJellyfishCommand extends AbstractJellyfi
 
    @Override
    protected void doRun() {
-      IParameter<?> phase = getOptions().getParameters().getParameter(CommonParameters.PHASE.getName());
-      if (phase == null) {
-         runDefaultPhase();
-      } else {
-         switch (JellyfishCommandPhase.valueOf(phase.getStringValue().toUpperCase())) {
-            case DEFAULT:
-               runDefaultPhase();
-               break;
-            case DEFERRED:
-               runDeferredPhase();
-               break;
-            default:
-               throw new IllegalStateException("this abstract class needs to be updated to handle the phase "
-                                               + phase.getStringValue());
-         }
+      switch (getPhase()) {
+         case DEFERRED:
+            runDeferredPhase();
+            break;
+         default:
+            runDefaultPhase();
+            break;
       }
+   }
+
+   protected static IParameter<?> allPhasesParameter() {
+      return phaseParameter(JellyfishCommandPhase.DEFAULT, JellyfishCommandPhase.DEFERRED);
    }
 
    protected static IParameter<?> phaseParameter(JellyfishCommandPhase phase, JellyfishCommandPhase... phases) {
@@ -47,5 +44,20 @@ public abstract class AbstractMultiphaseJellyfishCommand extends AbstractJellyfi
       DefaultParameter<?> p = new DefaultParameter<>(CommonParameters.PHASE.getName());
       p.setDescription(description.toString());
       return p;
+   }
+
+   private JellyfishCommandPhase getPhase() {
+      JellyfishCommandPhase phase = JellyfishCommandPhase.DEFAULT;
+
+      IParameter<?> param = getOptions().getParameters().getParameter(CommonParameters.PHASE.getName());
+      if (param != null) {
+         try {
+            phase = JellyfishCommandPhase.valueOf(param.getStringValue().toUpperCase());
+         } catch (IllegalArgumentException e) {
+            throw new CommandException(param.getStringValue() + " is not a valid phase!");
+         }
+      }
+
+      return phase;
    }
 }

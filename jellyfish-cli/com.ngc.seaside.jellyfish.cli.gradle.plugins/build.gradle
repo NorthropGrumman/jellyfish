@@ -9,7 +9,7 @@ configurations {
 dependencies {
     implementation project(':jellyfish')
     implementation project(':jellyfish.api')
-
+    implementation project(':jellyfish.utilities')
     implementation project(':guice.modules')
     implementation project(':jellyfish.service.impl.templateservice')
 

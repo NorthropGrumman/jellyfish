@@ -3,6 +3,8 @@ package com.ngc.seaside.jellyfish.utilities.command;
 import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
@@ -13,8 +15,11 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
@@ -114,6 +119,24 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
    protected IJellyFishCommandOptions getOptions() {
       Preconditions.checkState(options != null, "request made to get options outside of run(..) invocation!");
       return options;
+   }
+
+   protected IModel getModel() {
+      ISystemDescriptor sd = getOptions().getSystemDescriptor();
+      IParameterCollection parameters = getOptions().getParameters();
+      final String modelName = parameters.getParameter(CommonParameters.MODEL.getName()).getStringValue();
+      return sd.findModel(modelName).orElseThrow(() -> new CommandException("Model not found: " + modelName));
+   }
+
+   protected Path getOutputDirectory() {
+      return Paths.get(getOptions()
+                             .getParameters()
+                             .getParameter(CommonParameters.OUTPUT_DIRECTORY.getName())
+                             .getStringValue());
+   }
+
+   protected boolean getBooleanParameter(String parameterName) {
+      return CommonParameters.evaluateBooleanParameter(getOptions().getParameters(), parameterName);
    }
 
    protected void registerProject(IProjectInformation project) {
