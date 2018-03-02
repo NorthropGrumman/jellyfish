@@ -54,7 +54,7 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                                      (CommonParameters.GROUP_ARTIFACT_VERSION.name) : "${sdProject.group}:${sdProject.name}:${sdProject.version}",
                                      (CommonParameters.OUTPUT_DIRECTORY.name)       : "${project.rootDir.absolutePath}",
                                      (CommonParameters.UPDATE_GRADLE_SETTING.name)  : 'false',
-                                     (CommonParameters.PHASE) : JellyfishCommandPhase.DEFERRED.toString()])
+                                     (CommonParameters.PHASE.name) : JellyfishCommandPhase.DEFERRED.toString()])
                       .generate()
             }
 
