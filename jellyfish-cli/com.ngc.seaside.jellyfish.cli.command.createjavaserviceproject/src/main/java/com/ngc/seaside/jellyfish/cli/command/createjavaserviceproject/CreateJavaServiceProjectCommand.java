@@ -268,10 +268,13 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
    private void createProtocolBufferMessagesProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
-      generateGradleBuildFileForGeneratedProjects(
-            ctx,
-            projectNamingService.getMessageProjectName(delegateOptions, ctx.model),
-            CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME);
+      doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
+
+//      IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
+//      generateGradleBuildFileForGeneratedProjects(
+//            ctx,
+//            projectNamingService.getMessageProjectName(delegateOptions, ctx.model),
+//            CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME);
    }
 
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {

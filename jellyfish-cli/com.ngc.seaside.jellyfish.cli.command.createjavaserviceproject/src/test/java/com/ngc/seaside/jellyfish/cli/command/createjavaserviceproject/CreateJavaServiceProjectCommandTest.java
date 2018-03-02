@@ -1,15 +1,15 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IParameter;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -75,15 +75,13 @@ public class CreateJavaServiceProjectCommandTest {
    private DefaultParameterCollection parameters;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(projectInformation.getDirectoryName()).thenReturn("projectDirectory");
       when(projectNamingService.getBaseServiceProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
       when(projectNamingService.getEventsProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
       when(projectNamingService.getConnectorProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
-      when(projectNamingService.getMessageProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
 
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
@@ -120,11 +118,6 @@ public class CreateJavaServiceProjectCommandTest {
                                                      "my.group"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY,
                                                      "my-project"));
-      //TODO remove or refactor
-//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.REPOSITORY_URL, 
-//    		  "http://10.207.42.137/nexus/repository/maven-public/"));
-//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.GROUP_ARTIFACT_VERSION_EXTENSION, 
-//    		  "com.ngc.seaside. threateval:threatevaluation.descriptor:2.0.0"));
 
       command.run(options);
 
@@ -167,12 +160,9 @@ public class CreateJavaServiceProjectCommandTest {
             any(Path.class),
             eq(false));
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreatePbMessagesCommand(capture.getValue(), "my-project");
 
       verify(templateService).unpack(
             eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
@@ -240,6 +230,13 @@ public class CreateJavaServiceProjectCommandTest {
 
    private void verifyParametersForCreateServiceConfigCommand(IJellyFishCommandOptions options,
                                                               String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreatePbMessagesCommand(IJellyFishCommandOptions options,
+                                                           String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
