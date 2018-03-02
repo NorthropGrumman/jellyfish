@@ -118,7 +118,7 @@ public class CreateProtocolbufferMessagesCommand implements IJellyFishCommand {
          }
       });
 
-      buildManagementService.registerProject(projectInfo);
+      buildManagementService.registerProject(options, projectInfo);
    }
 
    @Activate

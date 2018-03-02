@@ -64,6 +64,6 @@ public class MockedBuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public void registerProject(IProjectInformation project) {
+   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
    }
 }

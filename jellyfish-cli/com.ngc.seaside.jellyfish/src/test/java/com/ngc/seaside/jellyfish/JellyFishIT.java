@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore("This test is hanging right now due to the SD project not being installed.  Need to figure this out.")
+@Ignore("This test is hanging right now due to the SD project not being installed.  Need to figure this out.  Its string to download the system descriptor files for the Jellyfish project which doesn't exist.")
 public class JellyFishIT {
 
    private String previousNgFwHome;

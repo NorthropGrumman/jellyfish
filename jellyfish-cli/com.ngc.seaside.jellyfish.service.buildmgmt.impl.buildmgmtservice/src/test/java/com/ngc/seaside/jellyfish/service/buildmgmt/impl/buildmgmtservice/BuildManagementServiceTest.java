@@ -6,6 +6,7 @@ import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +14,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BuildManagementServiceTest {
@@ -28,6 +32,9 @@ public class BuildManagementServiceTest {
 
    @Mock
    private IJellyFishCommandOptions options;
+
+   @Mock
+   private IProjectInformation project;
 
    @Before
    public void setup() {
@@ -97,6 +104,20 @@ public class BuildManagementServiceTest {
       dependency = service.registerDependency(options, "com.ngc.seaside", "gradle.plugins");
       assertTrue("did not register buildscript dependency!",
                  service.getRegisteredDependencies(options, DependencyScope.BUILDSCRIPT).contains(dependency));
+   }
+
+   @Test
+   public void testDoesRegisterProjects() {
+      when(project.getDirectoryName()).thenReturn("generated-projects/artifactId");
+      service.registerProject(options, project);
+
+      Collection<IProjectInformation> projects = service.getRegisteredProjects();
+      assertEquals("did not return registered projects!",
+                   1,
+                   projects.size());
+      assertEquals("did not register project!",
+                   project,
+                   projects.iterator().next());
    }
 
    @Test(expected = IllegalArgumentException.class)

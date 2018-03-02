@@ -68,7 +68,7 @@ public class CreateJavaServiceBaseCommand implements IJellyFishCommand {
       if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                                                     CommonParameters.UPDATE_GRADLE_SETTING.getName(),
                                                     true)) {
-         buildManagementService.registerProject(projectInfo);
+         buildManagementService.registerProject(commandOptions, projectInfo);
       }
    }
 

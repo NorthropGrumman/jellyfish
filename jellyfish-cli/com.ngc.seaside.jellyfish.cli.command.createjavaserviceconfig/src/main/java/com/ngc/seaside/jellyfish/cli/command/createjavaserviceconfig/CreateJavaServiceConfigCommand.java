@@ -79,7 +79,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
                              outputDir,
                              clean);
 
-      buildManagementService.registerProject(projectInfo);
+      buildManagementService.registerProject(commandOptions, projectInfo);
    }
 
    @Activate

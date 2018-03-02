@@ -20,7 +20,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +50,12 @@ public class BuildManagementService implements IBuildManagementService {
     */
    private final Set<DependencyArtifact> registeredArtifacts = Collections.synchronizedSet(new TreeSet<>(
          Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
+
+   /**
+    * The registered projects.
+    */
+   private final Set<IProjectInformation> registeredProjects = Collections.synchronizedSet(new TreeSet<>(
+         Comparator.comparing(IProjectInformation::getDirectoryName)));
 
    /**
     * The artifact information loaded from the JSON file.
@@ -116,12 +121,13 @@ public class BuildManagementService implements IBuildManagementService {
 
    @Override
    public Collection<IProjectInformation> getRegisteredProjects() {
-      throw new UnsupportedOperationException("not implemented");
+      return registeredProjects;
    }
 
    @Override
-   public void registerProject(IProjectInformation project) {
-      //throw new UnsupportedOperationException("not implemented");
+   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
+      Preconditions.checkNotNull(project, "project may not be null!");
+      registeredProjects.add(project);
    }
 
    @Activate
@@ -129,10 +135,11 @@ public class BuildManagementService implements IBuildManagementService {
       IJsonResource<ArtifactGroup[]> json = new JsonResource<>(DEPENDENCIES_FILE,
                                                                ArtifactGroup[].class);
       if (!resourceService.readFileResource(json)) {
-         throw new IllegalStateException(String.format(
-               "Failed to read JSON file at '%s', please make sure this file exists is readable by this application!",
-               DEPENDENCIES_FILE,
-               json.getError()));
+         throw new IllegalStateException(
+               String.format("Failed to read JSON file at '%s', please make sure this file exists is readable"
+                             + " by this application!",
+                             DEPENDENCIES_FILE),
+               json.getError());
       }
       groups = Collections.unmodifiableCollection(Arrays.asList(json.get()));
       // Set the group pointer for each artifact.

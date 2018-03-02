@@ -129,7 +129,7 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
                              parameters,
                              outputDirectory,
                              clean);
-      buildManagementService.registerProject(info);
+      buildManagementService.registerProject(commandOptions, info);
       
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
                       model.getName());

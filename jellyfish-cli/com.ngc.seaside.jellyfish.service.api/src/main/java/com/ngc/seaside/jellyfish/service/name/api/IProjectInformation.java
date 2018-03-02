@@ -6,7 +6,7 @@ package com.ngc.seaside.jellyfish.service.name.api;
 public interface IProjectInformation {
 
    /**
-    * Gets the name of the directory that will contain a project.  This can be refereed in the {@code include} line of
+    * Gets the name of the directory that will contain a project.  This can be referred in the {@code include} line of
     * {@code settings.gradle} file.
     */
    String getDirectoryName();

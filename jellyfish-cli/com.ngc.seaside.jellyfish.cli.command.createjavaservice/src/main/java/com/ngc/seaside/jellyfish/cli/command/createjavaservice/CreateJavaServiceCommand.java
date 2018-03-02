@@ -67,7 +67,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
          outputDir,
          clean);
 
-      buildManagementService.registerProject(projectInfo);
+      buildManagementService.registerProject(commandOptions, projectInfo);
    }
 
    @Override

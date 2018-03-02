@@ -120,7 +120,7 @@ public class CreateJavaEventsCommand implements IJellyFishCommand {
          templateService.unpack(CreateJavaEventsCommand.class.getPackage().getName() + EVENTS_JAVA_TEMPLATE_SUFFIX, dataParameters, projectDirectory, false);
       });
 
-      buildManagementService.registerProject(projectInfo);
+      buildManagementService.registerProject(options, projectInfo);
    }
 
    @Activate

@@ -61,7 +61,7 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
    }
 
    @Override
-   public void registerProject(IProjectInformation project) {
-      buildManagementService.registerProject(project);
+   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
+      buildManagementService.registerProject(options, project);
    }
 }
