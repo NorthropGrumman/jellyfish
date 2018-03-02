@@ -121,7 +121,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
       if (ctx.createDomain) {
          createDomainProject(ctx);
       }
-      createEventsProject(ctx);
+
       createCucumberTestsProject(ctx);
       createDistributionProject(ctx);
       createJavaServiceProject(ctx);
@@ -129,6 +129,7 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
       createJavaServiceBaseProject(ctx);
       createJavaPubsubConnectorProject(ctx);
+      createEventsProject(ctx);
       createProtocolBufferMessagesProject(ctx);
 
       // Do this last after all the other commands have run.  We do this because the build mgmt service builds up
@@ -259,22 +260,12 @@ public class CreateJavaServiceProjectCommand implements IJellyFishCommand {
 
    private void createEventsProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
-      generateGradleBuildFileForGeneratedProjects(
-            ctx,
-            projectNamingService.getEventsProjectName(delegateOptions, ctx.model),
-            CREATE_JAVA_EVENTS_COMMAND_NAME);
+      doRunCommand(CREATE_JAVA_EVENTS_COMMAND_NAME, delegateOptions);
    }
-
 
    private void createProtocolBufferMessagesProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
       doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
-
-//      IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
-//      generateGradleBuildFileForGeneratedProjects(
-//            ctx,
-//            projectNamingService.getMessageProjectName(delegateOptions, ctx.model),
-//            CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME);
    }
 
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {

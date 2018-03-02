@@ -79,8 +79,6 @@ public class CreateJavaServiceProjectCommandTest {
       when(projectInformation.getDirectoryName()).thenReturn("projectDirectory");
       when(projectNamingService.getBaseServiceProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
-      when(projectNamingService.getEventsProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
       when(projectNamingService.getConnectorProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
 
@@ -153,12 +151,9 @@ public class CreateJavaServiceProjectCommandTest {
             any(Path.class),
             eq(false));
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateEventsCommand(capture.getValue(), "my-project");
 
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
                                   capture.capture());
@@ -237,6 +232,13 @@ public class CreateJavaServiceProjectCommandTest {
 
    private void verifyParametersForCreatePbMessagesCommand(IJellyFishCommandOptions options,
                                                            String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreateEventsCommand(IJellyFishCommandOptions options,
+                                                       String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
