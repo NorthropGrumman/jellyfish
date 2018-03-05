@@ -12,16 +12,35 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a simple way to configure dependencies that are referenced when projects are generated as code.  Note that
+ * many values can be hardcoded as strings or injected as {@link #propertyNamed(String) properties} at runtime.
+ *
+ * See {@link com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.DefaultDependenciesConfiguration} for an
+ * example.
+ */
 public class DependenciesConfiguration {
 
+   /**
+    * The name of the property that will resolve the current version of Jellyfish at runtime.
+    */
    public static String CURRENT_JELLYFISH_VERSION_PROPERTY_NAME = "jellyfish.version";
 
+   /**
+    * All groups in this configuration.
+    */
    private final Collection<Group> groups = new ArrayList<>();
 
+   /**
+    * Gets all the groups of this configuration.
+    */
    public Collection<Group> getGroups() {
       return Collections.unmodifiableCollection(groups);
    }
 
+   /**
+    * Adds a partial group that is not yet configured to this configuration and returns it for use.
+    */
    public PartialGroup addGroup() {
       Group group = new Group()
             .setComplete(false);
@@ -29,12 +48,20 @@ public class DependenciesConfiguration {
       return new PartialGroup(group);
    }
 
+   /**
+    * Injects the given properties into this configuration.
+    */
    public DependenciesConfiguration resolve(Properties properties) {
       Preconditions.checkNotNull(properties, "properties may not be null!");
       groups.forEach(g -> g.resolve(properties));
       return this;
    }
 
+   /**
+    * Validates the configuration.
+    *
+    * @throws IllegalStateException if the configuration is not valid
+    */
    public DependenciesConfiguration validate() {
       // Make sure all group configurations are complete.
       String message = groups.stream()

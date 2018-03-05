@@ -30,9 +30,19 @@ import java.util.stream.Collectors;
  * A stateful implementation of the {@code IBuildManagementService}.  Unlike most services, a new instance of this
  * service should be used for each generation of project in Jellyfish.  Since Jellyfish only generates a single project
  * per execution, this works fine.
+ *
+ * <p/>
+ *
+ * Dependencies and versions are configured by {@link DefaultDependenciesConfiguration}.  That configuration can
+ * reference any property declared in {@link #BUILD_PROPERTIES_FILE} as this file will be loaded from the classpath
+ * on activation.  This file typically has properties that are set during the build of Jellyfish.
  */
 public class BuildManagementService implements IBuildManagementService {
 
+   /**
+    * The properties file that should be loaded from the classpath.  This file contains properties that may be
+    * referenced in the configuration.
+    */
    private static final String BUILD_PROPERTIES_FILE = "com.ngc.seaside.jellyfish.service.buildmgmt.properties";
 
    /**
@@ -49,8 +59,12 @@ public class BuildManagementService implements IBuildManagementService {
    private final Set<IProjectInformation> registeredProjects = Collections.synchronizedSet(new TreeSet<>(
          Comparator.comparing(IProjectInformation::getDirectoryName)));
 
-   private ILogService logService;
+   /**
+    * The configuration.
+    */
    private DependenciesConfiguration config;
+
+   private ILogService logService;
 
    @Override
    public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
@@ -125,6 +139,7 @@ public class BuildManagementService implements IBuildManagementService {
       try (InputStream is = getClass().getClassLoader().getResourceAsStream(BUILD_PROPERTIES_FILE)) {
          Properties properties = new Properties();
          properties.load(is);
+         // Inject any properties into the configuration.
          config.resolve(properties);
       } catch (IOException e) {
          logService.error(getClass(), e, "Error while reading %s from classpath!", BUILD_PROPERTIES_FILE);

@@ -11,6 +11,8 @@ public class BuildManagementServiceModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(IBuildManagementService.class).to(BuildManagementServiceGuiceWrapper.class).in(Singleton.class);
+      // Register the config with Guice.  It is possible to override this configuration my registering a different
+      // instance of DependenciesConfiguration.
       bind(DependenciesConfiguration.class).toInstance(DefaultDependenciesConfiguration.getConfig());
    }
 }
