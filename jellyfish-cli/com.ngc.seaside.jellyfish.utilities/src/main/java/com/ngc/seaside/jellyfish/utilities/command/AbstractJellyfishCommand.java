@@ -21,7 +21,6 @@ import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-import java.io.BufferedInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -31,7 +30,7 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
    private final String name;
 
-   private final IUsage usage;
+   private IUsage usage;
 
    private IJellyFishCommandOptions options;
 
@@ -49,7 +48,6 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       this.name = name;
-      this.usage = createUsage();
    }
 
    @Override
@@ -58,7 +56,10 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
    }
 
    @Override
-   public IUsage getUsage() {
+   public synchronized IUsage getUsage() {
+      if (usage == null) {
+         usage = createUsage();
+      }
       return usage;
    }
 
