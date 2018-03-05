@@ -88,4 +88,22 @@ class PropertiesParsingTest {
 			declaration.name
 		)
 	}
+	
+	@Test
+	def void testDoesNotParseModelWithDuplicatePropertyNames() {
+		val source = '''
+			package clocks.models
+
+			model BigClock {
+				properties {
+					int intField
+					boolean intField
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(invalidResult, SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION, null)
+	}
 }
