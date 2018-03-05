@@ -79,7 +79,7 @@ Metadata
 Properties
 	: {Properties}
 	  'properties' '{'
-		declarations+=DataFieldDeclaration* 
+		declarations+=DataFieldDeclaration*
 	  '}'
 	;
 

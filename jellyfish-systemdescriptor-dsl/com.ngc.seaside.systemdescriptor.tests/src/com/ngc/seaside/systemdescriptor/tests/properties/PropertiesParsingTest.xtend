@@ -52,10 +52,10 @@ class PropertiesParsingTest {
 	def void testDoesParseModelWithPropertiesDeclaration() {
 		val source = '''
 			package clocks.models
-			
+
 			import clocks.datatypes.Time
 			import clocks.datatypes.TimeZone
-			
+
 			model BigClock {
 				properties {
 					int intField

@@ -75,7 +75,7 @@ class Datas {
 	public static final ParsingTestResource TIME_CONVENTION = resource(
 		'''
 			package clocks.datatypes
-			
+
 			enum TimeConvention {
 				TWELVE_HOUR TWENTY_FOUR_HOUR
 			}
