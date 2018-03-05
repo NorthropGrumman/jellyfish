@@ -13,3 +13,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
+
+processResources {
+    expand(version: version)
+}

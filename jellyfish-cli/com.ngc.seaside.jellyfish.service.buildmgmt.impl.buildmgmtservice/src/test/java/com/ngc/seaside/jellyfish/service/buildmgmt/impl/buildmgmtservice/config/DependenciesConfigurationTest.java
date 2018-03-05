@@ -26,8 +26,8 @@ public class DependenciesConfigurationTest {
    @Test
    public void testDoesConfigure() {
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion")
-            .atVersion("2.1.0")
+            .versionPropertyName("starfishVersion")
+            .version("2.1.0")
             .includes(artifact("service.api")
                             .groupId("com.ngc.seaside")
                             .scope(DependencyScope.BUILDSCRIPT));
@@ -68,10 +68,10 @@ public class DependenciesConfigurationTest {
    @Test
    public void testDoesConfigureWithDefaultValues() {
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion")
-            .atVersion("2.1.0")
-            .withDefaultGroupId("com.ngc.seaside")
-            .withDefaultScope(DependencyScope.BUILD)
+            .versionPropertyName("starfishVersion")
+            .version("2.1.0")
+            .defaultGroupId("com.ngc.seaside")
+            .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
                       artifact("service.transport.api"),
                       artifact("service.correlation.impl.correlationservice")
@@ -123,10 +123,10 @@ public class DependenciesConfigurationTest {
    @Test
    public void testDoesConfigureWithProperties() {
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion")
-            .atVersion(currentJellyfishVersion())
-            .withDefaultGroupId(propertyNamed("starfishGroupId"))
-            .withDefaultScope(DependencyScope.BUILD)
+            .versionPropertyName("starfishVersion")
+            .version(currentJellyfishVersion())
+            .defaultGroupId(propertyNamed("starfishGroupId"))
+            .defaultScope(DependencyScope.BUILD)
             .includes(artifact(propertyNamed("starfishApi")));
 
       Properties properties = new Properties();
@@ -171,17 +171,17 @@ public class DependenciesConfigurationTest {
    @Test(expected = IllegalStateException.class)
    public void testDoesFailValidationIfGroupIncomplete() {
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion");
+            .versionPropertyName("starfishVersion");
       config.validate();
    }
 
    @Test(expected = IllegalStateException.class)
    public void testDoesThrowErrorIfPropertyNotDefined() {
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion")
-            .atVersion(currentJellyfishVersion())
-            .withDefaultGroupId(propertyNamed("starfishGroupId"))
-            .withDefaultScope(DependencyScope.BUILD)
+            .versionPropertyName("starfishVersion")
+            .version(currentJellyfishVersion())
+            .defaultGroupId(propertyNamed("starfishGroupId"))
+            .defaultScope(DependencyScope.BUILD)
             .includes(artifact(propertyNamed("starfishApi")));
 
       Properties properties = new Properties();

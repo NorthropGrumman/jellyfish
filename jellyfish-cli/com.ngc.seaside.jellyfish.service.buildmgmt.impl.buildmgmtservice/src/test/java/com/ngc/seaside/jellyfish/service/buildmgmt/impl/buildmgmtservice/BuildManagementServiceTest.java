@@ -1,11 +1,10 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.blocs.test.impl.common.resource.MockedResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import org.junit.Before;
@@ -16,6 +15,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collection;
 
+import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration.artifact;
+import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration.currentJellyfishVersion;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -24,8 +25,6 @@ import static org.mockito.Mockito.when;
 public class BuildManagementServiceTest {
 
    private BuildManagementService service;
-
-   private IResourceService resourceService;
 
    @Mock
    private ILogService logService;
@@ -38,12 +37,23 @@ public class BuildManagementServiceTest {
 
    @Before
    public void setup() {
-      resourceService = new MockedResourceService()
-            .onNextReadDrain(getClass().getClassLoader().getResourceAsStream("dependencies.json"));
+      DependenciesConfiguration config = new DependenciesConfiguration();
+      config.addGroup()
+            .versionPropertyName("blocsCoreVersion")
+            .version("2.2.0")
+            .defaultGroupId("com.ngc.blocs")
+            .defaultScope(DependencyScope.BUILD)
+            .includes(artifact("api"),
+                      artifact("service.api"));
+      config.addGroup()
+            .versionPropertyName("gradlePluginsVersion")
+            .version(currentJellyfishVersion())
+            .defaultGroupId("com.ngc.seaside")
+            .includes(artifact("gradle.plugins").scope(DependencyScope.BUILDSCRIPT));
 
       service = new BuildManagementService();
       service.setLogService(logService);
-      service.setResourceService(resourceService);
+      service.setDependenciesConfiguration(config);
       service.activate();
    }
 

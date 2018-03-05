@@ -93,39 +93,39 @@ public class DependenciesConfiguration {
          return defaultGroupId.getValue();
       }
 
-      public Group usingVersionPropertyNamed(Property versionPropertyName) {
+      public Group versionPropertyName(Property versionPropertyName) {
          Preconditions.checkNotNull(versionPropertyName, "versionPropertyName may not be null!");
          this.versionPropertyName = new PropertyValue(versionPropertyName);
          return this;
       }
 
-      public Group usingVersionPropertyNamed(String versionPropertyName) {
+      public Group versionPropertyName(String versionPropertyName) {
          Preconditions.checkNotNull(versionPropertyName, "versionPropertyName may not be null!");
          Preconditions.checkArgument(!versionPropertyName.trim().isEmpty(), "versionPropertyName may not be empty!");
          this.versionPropertyName = PropertyValue.constant(versionPropertyName);
          return this;
       }
 
-      public Group atVersion(Property version) {
+      public Group version(Property version) {
          Preconditions.checkNotNull(version, "version may not be null!");
          this.version = new PropertyValue(version);
          return this;
       }
 
-      public Group atVersion(String version) {
+      public Group version(String version) {
          Preconditions.checkNotNull(version, "version may not be null!");
          Preconditions.checkArgument(!version.trim().isEmpty(), "version may not be empty!");
          this.version = PropertyValue.constant(version);
          return this;
       }
 
-      public Group withDefaultGroupId(Property defaultGroupId) {
+      public Group defaultGroupId(Property defaultGroupId) {
          Preconditions.checkNotNull(defaultGroupId, "defaultGroupId may not be null!");
          this.defaultGroupId = new PropertyValue(defaultGroupId);
          return this;
       }
 
-      public Group withDefaultGroupId(String defaultGroupId) {
+      public Group defaultGroupId(String defaultGroupId) {
          Preconditions.checkNotNull(defaultGroupId, "defaultGroupId may not be null!");
          Preconditions.checkArgument(!defaultGroupId.trim().isEmpty(), "defaultGroupId may not be empty!");
          this.defaultGroupId = PropertyValue.constant(defaultGroupId);
@@ -136,7 +136,7 @@ public class DependenciesConfiguration {
          return defaultScope;
       }
 
-      public Group withDefaultScope(DependencyScope defaultScope) {
+      public Group defaultScope(DependencyScope defaultScope) {
          this.defaultScope = Preconditions.checkNotNull(defaultScope, "defaultScope may not be null!");
          return this;
       }
@@ -192,22 +192,22 @@ public class DependenciesConfiguration {
          this.group = group;
       }
 
-      public PartialGroup usingVersionPropertyNamed(Property versionPropertyName) {
-         group.usingVersionPropertyNamed(versionPropertyName);
+      public PartialGroup versionPropertyName(Property versionPropertyName) {
+         group.versionPropertyName(versionPropertyName);
          return this;
       }
 
-      public PartialGroup usingVersionPropertyNamed(String versionPropertyName) {
-         group.usingVersionPropertyNamed(versionPropertyName);
+      public PartialGroup versionPropertyName(String versionPropertyName) {
+         group.versionPropertyName(versionPropertyName);
          return this;
       }
 
-      public Group atVersion(Property version) {
-         return group.atVersion(version).setComplete(true);
+      public Group version(Property version) {
+         return group.version(version).setComplete(true);
       }
 
-      public Group atVersion(String version) {
-         return group.atVersion(version).setComplete(true);
+      public Group version(String version) {
+         return group.version(version).setComplete(true);
       }
    }
 

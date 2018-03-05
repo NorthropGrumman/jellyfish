@@ -2,16 +2,12 @@ package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
 import com.google.common.base.Preconditions;
 
-import com.ngc.blocs.json.resource.impl.common.json.IJsonResource;
-import com.ngc.blocs.json.resource.impl.common.json.JsonResource;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.ArtifactGroup;
-import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.json.DependencyArtifact;
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import org.osgi.service.component.annotations.Activate;
@@ -20,10 +16,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -32,24 +30,18 @@ import java.util.stream.Collectors;
  * A stateful implementation of the {@code IBuildManagementService}.  Unlike most services, a new instance of this
  * service should be used for each generation of project in Jellyfish.  Since Jellyfish only generates a single project
  * per execution, this works fine.
- *
- * <p/>
- *
- * This implementation requires a JSON configuration file be located at {@link #DEPENDENCIES_FILE} when the service is
- * activated.
  */
 public class BuildManagementService implements IBuildManagementService {
 
-   /**
-    * The location of the file that contains the dependencies and their versions.
-    */
-   private static final String DEPENDENCIES_FILE = "config/app/dependencies.json";
+   private static final String BUILD_PROPERTIES_FILE = "com.ngc.seaside.jellyfish.service.buildmgmt.properties";
 
    /**
     * The registered artifacts.
     */
-   private final Set<DependencyArtifact> registeredArtifacts = Collections.synchronizedSet(new TreeSet<>(
-         Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
+   private final Set<DependenciesConfiguration.Artifact>
+         registeredArtifacts =
+         Collections.synchronizedSet(new TreeSet<>(
+               Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
 
    /**
     * The registered projects.
@@ -57,13 +49,8 @@ public class BuildManagementService implements IBuildManagementService {
    private final Set<IProjectInformation> registeredProjects = Collections.synchronizedSet(new TreeSet<>(
          Comparator.comparing(IProjectInformation::getDirectoryName)));
 
-   /**
-    * The artifact information loaded from the JSON file.
-    */
-   private Collection<ArtifactGroup> groups;
-
    private ILogService logService;
-   private IResourceService resourceService;
+   private DependenciesConfiguration config;
 
    @Override
    public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
@@ -77,38 +64,41 @@ public class BuildManagementService implements IBuildManagementService {
 
    @Override
    public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
-      DependencyArtifact dependency = getDependency(options, groupId, artifactId);
+      DependenciesConfiguration.Artifact dependency = getDependency(options, groupId, artifactId);
       registeredArtifacts.add(dependency);
       return dependency;
    }
 
    @Override
    public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
-      DependencyArtifact dependency = getDependency(options, groupAndArtifact);
+      DependenciesConfiguration.Artifact dependency = getDependency(options, groupAndArtifact);
       registeredArtifacts.add(dependency);
       return dependency;
    }
 
    @Override
-   public DependencyArtifact getDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+   public DependenciesConfiguration.Artifact getDependency(IJellyFishCommandOptions options,
+                                                           String groupId,
+                                                           String artifactId) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(groupId, "groupId may not be null!");
       Preconditions.checkNotNull(artifactId, "artifactId may not be null!");
       Preconditions.checkArgument(!groupId.trim().isEmpty(), "groupId may not be empty!");
       Preconditions.checkArgument(!artifactId.trim().isEmpty(), "artifactId may not be empty!");
 
-      return groups.stream()
+      return config.getGroups()
+            .stream()
             .flatMap(g -> g.getArtifacts().stream())
             .filter(a -> a.getGroupId().equalsIgnoreCase(groupId) && a.getArtifactId().equalsIgnoreCase(artifactId))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("no information for %s:%s configured in %s!",
+            .orElseThrow(() -> new IllegalArgumentException(String.format("no information for %s:%s configured!",
                                                                           groupId,
-                                                                          artifactId,
-                                                                          DEPENDENCIES_FILE)));
+                                                                          artifactId)));
    }
 
    @Override
-   public DependencyArtifact getDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public DependenciesConfiguration.Artifact getDependency(IJellyFishCommandOptions options,
+                                                           String groupAndArtifact) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(groupAndArtifact, "groupAndArtifact may not be null!");
       String[] parts = groupAndArtifact.split(":");
@@ -132,18 +122,14 @@ public class BuildManagementService implements IBuildManagementService {
 
    @Activate
    public void activate() {
-      IJsonResource<ArtifactGroup[]> json = new JsonResource<>(DEPENDENCIES_FILE,
-                                                               ArtifactGroup[].class);
-      if (!resourceService.readFileResource(json)) {
-         throw new IllegalStateException(
-               String.format("Failed to read JSON file at '%s', please make sure this file exists is readable"
-                             + " by this application!",
-                             DEPENDENCIES_FILE),
-               json.getError());
+      try (InputStream is = getClass().getClassLoader().getResourceAsStream(BUILD_PROPERTIES_FILE)) {
+         Properties properties = new Properties();
+         properties.load(is);
+         config.resolve(properties);
+      } catch (IOException e) {
+         logService.error(getClass(), e, "Error while reading %s from classpath!", BUILD_PROPERTIES_FILE);
       }
-      groups = Collections.unmodifiableCollection(Arrays.asList(json.get()));
-      // Set the group pointer for each artifact.
-      groups.forEach(g -> g.getArtifacts().forEach(a -> a.setGroup(g)));
+      config.validate();
 
       logService.debug(getClass(), "Activated.");
    }
@@ -163,14 +149,12 @@ public class BuildManagementService implements IBuildManagementService {
       setLogService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC)
-   public void setResourceService(IResourceService ref) {
-      this.resourceService = ref;
+   public void setDependenciesConfiguration(DependenciesConfiguration ref) {
+      this.config = ref;
    }
 
-   public void removeResourceService(IResourceService ref) {
-      setResourceService(null);
+   public void removeDependenciesConfiguration(DependenciesConfiguration ref) {
+      setDependenciesConfiguration(null);
    }
 
 }

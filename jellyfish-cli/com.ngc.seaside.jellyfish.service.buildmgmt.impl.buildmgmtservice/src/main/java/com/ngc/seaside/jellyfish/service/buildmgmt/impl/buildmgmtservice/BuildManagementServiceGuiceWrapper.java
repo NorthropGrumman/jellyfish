@@ -3,14 +3,13 @@ package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
-import java.nio.file.Path;
 import java.util.Collection;
 
 public class BuildManagementServiceGuiceWrapper implements IBuildManagementService {
@@ -19,10 +18,10 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
 
    @Inject
    public BuildManagementServiceGuiceWrapper(ILogService logService,
-                                             IResourceService resourceService) {
+                                             DependenciesConfiguration config) {
       buildManagementService = new BuildManagementService();
       buildManagementService.setLogService(logService);
-      buildManagementService.setResourceService(resourceService);
+      buildManagementService.setDependenciesConfiguration(config);
       buildManagementService.activate();
    }
 

@@ -3,8 +3,6 @@ package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
 
-import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration.currentJellyfishVersion;
-
 public class DefaultDependenciesConfiguration {
 
    private DefaultDependenciesConfiguration() {
@@ -14,19 +12,19 @@ public class DefaultDependenciesConfiguration {
       DependenciesConfiguration config = new DependenciesConfiguration();
 
       config.addGroup()
-            .usingVersionPropertyNamed("starfishVersion")
-            .atVersion("2.1.0")
-            .withDefaultGroupId("com.ngc.seaside")
-            .withDefaultScope(DependencyScope.BUILD);
+            .versionPropertyName("starfishVersion")
+            .version("2.1.0")
+            .defaultGroupId("com.ngc.seaside")
+            .defaultScope(DependencyScope.BUILD);
 
 
 //      DependenciesConfiguration config = new DependenciesConfiguration()
 //            .addGroup()
-//            .usingVersionPropertyNamed("starfishVersion")
-//            .atVersion("2.1.0")
-//            .atVersion(config.currentJellyfishVersion())
+//            .versionPropertyName("starfishVersion")
+//            .version("2.1.0")
+//            .version(config.currentJellyfishVersion())
 //            .withDefaultGropuId("mygroupId")
-//            .withDefaultScope(DependencyScope.BUILD)
+//            .defaultScope(DependencyScope.BUILD)
 //            .includes()
 //            .inScope(DependencyScope.BUILD)
 //            .groupId("com.ngc.seaside")
