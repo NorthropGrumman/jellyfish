@@ -90,6 +90,8 @@ project(':com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservic
 include 'com.ngc.seaside.jellyfish.service.feature.impl.featureservice'
 project(':com.ngc.seaside.jellyfish.service.feature.impl.featureservice').name = 'jellyfish.service.feature.impl.featureservice'
 
+include 'com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice'
+project(':com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice').name = 'jellyfish.service.buildmgmt.impl.buildmgmtservice'
 
 include 'com.ngc.blocs.guice.modules'
 project(':com.ngc.blocs.guice.modules').name = 'guice.modules'

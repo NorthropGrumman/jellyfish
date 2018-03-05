@@ -22,7 +22,7 @@ public class BaseServiceDto {
    private boolean correlationServiceRequired;
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
-   private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>(); 
+   private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>();
    private List<BasicPubSubDto> basicSinkMethods = new ArrayList<>();
    private List<CorrelationDto> correlationMethods = new ArrayList<>();
    private List<TriggerDto> triggerRegistrationMethods = new ArrayList<>();

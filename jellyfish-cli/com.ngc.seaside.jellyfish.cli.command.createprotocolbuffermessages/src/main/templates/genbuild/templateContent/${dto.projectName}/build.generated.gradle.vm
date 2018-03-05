@@ -1,0 +1,32 @@
+#set($D='$')
+apply plugin: 'com.google.protobuf'
+
+dependencies {
+   compile "${build.getFormattedDependency('com.google.protobuf:protobuf-java')}"
+}
+
+protobuf {
+   protoc {
+      artifact = "${build.getFormattedDependency('com.google.protobuf:protoc')}"
+   }
+}
+
+sourceSets.all {
+   java.srcDir "${D}{protobuf.generatedFilesBaseDir}/${D}name/java"
+}
+
+#if(! $dto.exportedPackages.isEmpty() )
+jar {
+   manifest {
+      attributes('Export-Package': 
+#foreach($pkg in $dto.exportedPackages)
+#if( $foreach.hasNext )
+         '$pkg.*,' + 
+#else
+         '$pkg.*')
+#end
+#end
+   }
+}
+
+#end

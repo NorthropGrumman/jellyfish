@@ -1,9 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -34,8 +33,6 @@ import java.nio.file.Paths;
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
 
-   static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
@@ -47,6 +44,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    private ITemplateService templateService;
    private IProjectNamingService projectNamingService;
    private IPackageNamingService packageNamingService;
+   private IBuildManagementService buildManagementService;
 
    @Override
    public String getName() {
@@ -68,7 +66,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
          commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
-      ServiceConfigDto dto = new ServiceConfigDto()
+      ServiceConfigDto dto = new ServiceConfigDto(buildManagementService, commandOptions)
             .setModelName(model.getName())
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
@@ -81,25 +79,8 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
                              outputDir,
                              clean);
 
-      updateGradleDotSettings(outputDir, projectInfo);
+      buildManagementService.registerProject(commandOptions, projectInfo);
    }
-   
-   private void updateGradleDotSettings(Path outputDir, IProjectInformation info) {
-      DefaultParameterCollection updatedParameters = new DefaultParameterCollection();
-      updatedParameters.addParameter(new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY,
-         outputDir.resolve(info.getDirectoryName()).getParent().toString()));
-      updatedParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY, info.getGroupId()));
-      updatedParameters.addParameter(new DefaultParameter<>(ARTIFACT_ID_PROPERTY, info.getArtifactId()));
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(updatedParameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         throw new CommandException("failed to update settings.gradle!", e);
-      }
-   }
-   
-   
 
    @Activate
    public void activate() {
@@ -154,6 +135,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       this.projectNamingService = ref;
       
    }
+
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
@@ -165,8 +147,19 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       this.packageNamingService = ref;
       
    }
+
    public void removePackageNamingService(IPackageNamingService ref) {
       setPackageNamingService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC)
+   public void setBuildManagementService(IBuildManagementService ref) {
+      this.buildManagementService = ref;
+   }
+
+   public void removeBuildManagementService(IBuildManagementService ref) {
+      setBuildManagementService(null);
    }
 
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {

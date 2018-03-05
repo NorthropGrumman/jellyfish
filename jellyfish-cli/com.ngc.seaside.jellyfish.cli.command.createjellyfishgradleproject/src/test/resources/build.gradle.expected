@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+            url nexusConsolidated
+        }
+    }
+
+   dependencies {
+      classpath "com.google.protobuf:protobuf-gradle-plugin:1.2.3"
+   }
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
+
+systemDescriptor {
+   project = 'com.ngc.seaside.system1:system.descriptor:1.0-SNAPSHOT'
+   model = 'com.ngc.seaside.Model1'
+}
+
+subprojects {
+
+   // Do not apply the parent plugin to the distribution project.
+   if(!name.endsWith('.distribution')
+       && !name.endsWith('.docker')) {
+      apply plugin: 'com.ngc.seaside.parent'
+    }
+
+   group = 'com.ngc.seaside'
+   version = '1.0'
+
+   ext {
+      guavaVersion = '1.2.3'
+      testVersion = '1.4.5'
+   }
+}

@@ -1,0 +1,99 @@
+[
+   {
+      "versionPropertyName": "protobufVersion",
+      "version": "0.8.3",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "com.google.protobuf",
+            "artifactId": "protobuf-gradle-plugin"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "sonarqubePluginVersion",
+      "version": "2.5",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "org.sonarsource.scanner.gradle",
+            "artifactId": "sonarqube-gradle-plugin"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "blocsPluginVersion",
+      "version": "0.5",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "gradle.plugin"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "seasidePluginsVersion",
+      "version": "2.3.0",
+      "type": "buildscript",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "gradle.plugins"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "osgiVersion",
+      "version": "6.0.0",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "org.osgi",
+            "artifactId": "osgi.core"
+         },
+         {
+            "groupId": "org.osgi",
+            "artifactId": "osgi.enterprise"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "blocsCoreVersion",
+      "version": "2.2.0",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "api"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "service.api"
+         },
+         {
+            "groupId": "com.ngc.blocs",
+            "artifactId": "com.ngc.blocs:test.impl.common.testutilities"
+         }
+      ]
+   },
+   {
+      "versionPropertyName": "starfishVersion",
+      "version": "2.1.0",
+      "type": "normal",
+      "artifacts": [
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "api"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.transport.api"
+         },
+         {
+            "groupId": "com.ngc.seaside",
+            "artifactId": "service.correlation.impl.correlationservice"
+         }
+      ]
+   }
+]

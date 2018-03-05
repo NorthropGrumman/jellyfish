@@ -2,14 +2,14 @@
 dependencies {
    compile project(':engagementtrackpriorityservice.base')
 
-   compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "com.ngc.blocs:properties.resource.impl.common.propertiesresource:$blocsCoreVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "com.google.guava:guava:$guavaVersion"
+   compile "com.ngc.seaside:service.transport.api:$version"
+   compile "com.ngc.blocs:service.api:$version"
+   compile "com.ngc.blocs:properties.resource.impl.common.propertiesresource:$version"
+   compile "org.osgi:osgi.core:$version"
+   compile "org.osgi:osgi.enterprise:$version"
+   compile "com.google.guava:guava:$version"
 
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testCompile "com.ngc.blocs:test.impl.common.testutilities:$version"
+   testCompile "junit:junit:$version"
+   testCompile "org.mockito:mockito-core:$version"
 }

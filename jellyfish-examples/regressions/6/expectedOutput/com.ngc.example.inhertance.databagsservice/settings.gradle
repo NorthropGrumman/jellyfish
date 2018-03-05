@@ -1,22 +1,19 @@
 rootProject.name = 'com.ngc.example.inhertance.databagsservice'
 
-include 'com.ngc.example.inhertance.databagsservice.domain'
-project(':com.ngc.example.inhertance.databagsservice.domain').name = 'databagsservice.domain'
-
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.events'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.events').name = 'databagsservice.events'
-
-include 'com.ngc.example.inhertance.databagsservice.tests'
-project(':com.ngc.example.inhertance.databagsservice.tests').name = 'databagsservice.tests'
+include 'com.ngc.example.inhertance.databagsservice.config'
+project(':com.ngc.example.inhertance.databagsservice.config').name = 'databagsservice.config'
 
 include 'com.ngc.example.inhertance.databagsservice.distribution'
 project(':com.ngc.example.inhertance.databagsservice.distribution').name = 'databagsservice.distribution'
 
+include 'com.ngc.example.inhertance.databagsservice.domain'
+project(':com.ngc.example.inhertance.databagsservice.domain').name = 'databagsservice.domain'
+
 include 'com.ngc.example.inhertance.databagsservice.impl'
 project(':com.ngc.example.inhertance.databagsservice.impl').name = 'databagsservice.impl'
 
-include 'com.ngc.example.inhertance.databagsservice.config'
-project(':com.ngc.example.inhertance.databagsservice.config').name = 'databagsservice.config'
+include 'com.ngc.example.inhertance.databagsservice.tests'
+project(':com.ngc.example.inhertance.databagsservice.tests').name = 'databagsservice.tests'
 
 include 'generated-projects/com.ngc.example.inhertance.databagsservice.base'
 project(':generated-projects/com.ngc.example.inhertance.databagsservice.base').name = 'databagsservice.base'
@@ -24,5 +21,9 @@ project(':generated-projects/com.ngc.example.inhertance.databagsservice.base').n
 include 'generated-projects/com.ngc.example.inhertance.databagsservice.connector'
 project(':generated-projects/com.ngc.example.inhertance.databagsservice.connector').name = 'databagsservice.connector'
 
+include 'generated-projects/com.ngc.example.inhertance.databagsservice.events'
+project(':generated-projects/com.ngc.example.inhertance.databagsservice.events').name = 'databagsservice.events'
+
 include 'generated-projects/com.ngc.example.inhertance.databagsservice.messages'
 project(':generated-projects/com.ngc.example.inhertance.databagsservice.messages').name = 'databagsservice.messages'
+

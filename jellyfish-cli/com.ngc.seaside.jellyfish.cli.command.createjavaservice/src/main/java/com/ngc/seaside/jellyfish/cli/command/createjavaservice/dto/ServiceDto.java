@@ -1,17 +1,29 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.Set;
 
 public class ServiceDto {
 
+   private final IBuildManagementService buildManagementService;
+   private final IJellyFishCommandOptions options;
+
    private String projectDirectoryName;
    private ClassDto service;
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
-   
+
+   public ServiceDto(IBuildManagementService buildManagementService,
+                     IJellyFishCommandOptions options) {
+      this.buildManagementService = buildManagementService;
+      this.options = options;
+   }
+
    public String getProjectDirectoryName() {
       return projectDirectoryName;
    }
@@ -56,6 +68,12 @@ public class ServiceDto {
       this.baseClass = baseClass;
       return this;
    }
-   
 
+   public String getFormattedDependency(String groupAndArtifactId) {
+      IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
+      return String.format("%s:%s:$%s",
+                           dependency.getGroupId(),
+                           dependency.getArtifactId(),
+                           dependency.getVersionPropertyName());
+   }
 }

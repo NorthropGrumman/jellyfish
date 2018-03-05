@@ -1,0 +1,20 @@
+#set($D='$')
+
+dependencies {
+	compile "${build.getFormattedDependency('com.ngc.blocs:service.api')}"
+}
+
+#if(! $dto.exportedPackages.isEmpty() )
+jar {
+   manifest {
+      attributes('Export-Package':
+#foreach($pkg in $dto.exportedPackages)
+#if( $foreach.hasNext )
+         '${pkg}.*,' +
+#else
+         '${pkg}.*')
+#end
+#end
+   }
+}
+#end
