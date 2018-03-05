@@ -140,7 +140,6 @@ public class CreateJavaPubsubConnectorCommand extends AbstractMultiphaseJellyfis
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(PUBSUB_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
-
       buildManagementService.registerProject(getOptions(), info);
    }
 

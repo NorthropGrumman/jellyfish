@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -13,9 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BaseServiceDto {
-
-   private final IBuildManagementService buildManagementService;
-   private final IJellyFishCommandOptions options;
 
    private String projectDirectoryName;
    private ClassDto interfacez;
@@ -28,17 +22,11 @@ public class BaseServiceDto {
    private boolean correlationServiceRequired;
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
-   private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>(); 
+   private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>();
    private List<BasicPubSubDto> basicSinkMethods = new ArrayList<>();
    private List<CorrelationDto> correlationMethods = new ArrayList<>();
    private List<TriggerDto> triggerRegistrationMethods = new ArrayList<>();
    private List<ComplexScenarioDto> complexScenarios = new ArrayList<>();
-
-   public BaseServiceDto(IBuildManagementService buildManagementService,
-                         IJellyFishCommandOptions options) {
-      this.buildManagementService = buildManagementService;
-      this.options = options;
-   }
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -187,13 +175,5 @@ public class BaseServiceDto {
    public BaseServiceDto setCorrelationServiceRequired(boolean correlationServiceRequired) {
       this.correlationServiceRequired = correlationServiceRequired;
       return this;
-   }
-
-   public String getFormattedDependency(String groupAndArtifactId) {
-      IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
-      return String.format("%s:%s:$%s",
-                           dependency.getGroupId(),
-                           dependency.getArtifactId(),
-                           dependency.getVersionPropertyName());
    }
 }
