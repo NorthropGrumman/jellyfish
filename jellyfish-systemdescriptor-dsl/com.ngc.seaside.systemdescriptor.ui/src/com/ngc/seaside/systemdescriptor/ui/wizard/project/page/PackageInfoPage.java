@@ -67,7 +67,7 @@ public class PackageInfoPage extends WizardPage {
 		updateControls();
 	}
 	
-	  /**
+   /**
     * Get the user's selected preference to determine if the package should be created.
     * 
     * @return true if the default package should be created.
@@ -78,7 +78,7 @@ public class PackageInfoPage extends WizardPage {
 
    /**
     * Get the value of the package. The value will be the fully qualified package using dot notation.
-    * @see {@link #getCreatePkg()}
+    * @see #getCreatePkg()
     * @return the string representation of the package.
     */
    public String getPkg() {
@@ -95,7 +95,7 @@ public class PackageInfoPage extends WizardPage {
 
    /**
     * Get the name of the default .sd file.
-    * @see {@link PackageInfoPage#getCreateFile()}
+    * @see #getCreateFile()
     * @return the file (without the .sd extension)
     */
    public String getFileName() {

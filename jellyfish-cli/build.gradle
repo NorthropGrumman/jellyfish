@@ -31,6 +31,6 @@ subprojects {
     seasideCi {
         m2OutputDirectory = m2directory
         dependencyInfoReportFile = dependenciesReportFile
-        deploymentScriptFile = m2DeploymentScritFile
+        deploymentScriptFile = m2DeploymentScriptFile
     }
 }

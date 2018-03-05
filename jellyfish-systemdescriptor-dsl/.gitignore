@@ -48,5 +48,4 @@ src-gen
 # xtend and xtext
 xtend-gen/
 src-gen/
-
-/com/ 
+plugin.xml_gen

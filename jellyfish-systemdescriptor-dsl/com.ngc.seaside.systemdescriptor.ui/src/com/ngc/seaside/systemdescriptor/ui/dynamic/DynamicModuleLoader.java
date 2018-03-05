@@ -37,7 +37,7 @@ public class DynamicModuleLoader {
 	/**
 	 * Gets all Guice modules that have been installed thus far.
 	 * 
-	 * @return
+	 * @return all Guice modules that have been installed thus far
 	 */
 	public Collection<Module> loadModules() {
 		Collection<Module> modules = new ArrayList<>();

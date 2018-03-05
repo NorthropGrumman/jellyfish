@@ -199,7 +199,7 @@ class Datas {
 			if (o instanceof ParsingTestResource) {
 				all.add(o)
 			} else if (o instanceof Collection<?>) {
-				all.addAll(asCollectionOfResources(o as Collection<?>))
+				all.addAll(asCollectionOfResources(o))
 			} else {
 				throw new IllegalArgumentException(
 					"resources must be a ParsingTestResource or a collection of ParsingTestResources!")

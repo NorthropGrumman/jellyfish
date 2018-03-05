@@ -21,70 +21,71 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
-	/**
-	 * Provides scope for a link expression of the form
-	 * {@code link someInput to somePart.someMoreInput}.
-	 * 
-	 * @param context
-	 * @param reference
-	 * @return
-	 */
-	public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
-		// Get the field reference thus far. If we are parsing the expression
-		// link someInput to somePart.someMoreInput
-		// than ref will equal the part "somePart".
-		FieldReference ref = (FieldReference) context.getRef();
-		// Get the field declaration the reference is pointing to.
-		FieldDeclaration fieldDeclaration = ref.getFieldDeclaration();
+   /**
+    * Provides scope for a link expression of the form
+    * {@code link someInput to somePart.someMoreInput}.
+    *
+    * @param context
+    * @param reference
+    * @return scope for a link expression
+    */
+   public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
+      // Get the field reference thus far. If we are parsing the expression
+      // link someInput to somePart.someMoreInput
+      // than ref will equal the part "somePart".
+      FieldReference ref = (FieldReference) context.getRef();
+      // Get the field declaration the reference is pointing to.
+      FieldDeclaration fieldDeclaration = ref.getFieldDeclaration();
 
-		IScope scope;
+      IScope scope;
 
-		// We need to determine the type of the field declaration. Right now we
-		// only support nested expressions for models. More requires and parts
-		// can declare other models as fields. Input and output must declare
-		// data as fields. Since we can't yet reference the contents of data,
-		// we don't have to worry aobut referencing input or output.
-		if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION)) {
-			BaseRequireDeclaration casted = (BaseRequireDeclaration) fieldDeclaration;
-			// Include all field declarations of the referenced model in the
-			// scope.
-			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
-			// Include all field declarations of the referenced model in the
-			// scope.
-			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;	
-			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} else {
-			// Otherwise, do the default behavior.
-			scope = delegateGetScope(context, reference);
-		}
+      // We need to determine the type of the field declaration. Right now we
+      // only support nested expressions for models. More requires and parts
+      // can declare other models as fields. Input and output must declare
+      // data as fields. Since we can't yet reference the contents of data,
+      // we don't have to worry about referencing input or output.
+      if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION)) {
+         BaseRequireDeclaration casted = (BaseRequireDeclaration) fieldDeclaration;
+         // Include all field declarations of the referenced model in the
+         // scope.
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+      } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
+         // Include all field declarations of the referenced model in the
+         // scope.
+         BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+      } else {
+         // Otherwise, do the default behavior.
+         scope = delegateGetScope(context, reference);
+      }
 
-		return scope;
-	}
+      return scope;
+   }
 
-	/**
-	 * Gets all field declarations that can be referenced that are contained by
-	 * the given model.
-	 * 
-	 * @param model
-	 * @return
-	 */
-	private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
-		// TODO TH: we can limit the items in scope by examining the type of the
-		// item on the left hand side of the expression.
-		Collection<FieldDeclaration> fields = new ArrayList<>();
-		if (model.getInput() != null) {
-			fields.addAll(model.getInput().getDeclarations());
-		}
-		if (model.getOutput() != null) {
-			fields.addAll(model.getOutput().getDeclarations());
-		}
-		if (model.getRequires() != null) {
-			fields.addAll(model.getRequires().getDeclarations());
-		}
-		if (model.getParts() != null) {
-			fields.addAll(model.getParts().getDeclarations());
-		}
-		return fields;
-	}
+   /**
+    * Gets all field declarations that can be referenced that are contained by
+    * the given model.
+    *
+    * @param model
+    * @return all field declarations that can be referenced that are contained by
+    *         the given model
+    */
+   private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
+      // TODO TH: we can limit the items in scope by examining the type of the
+      // item on the left hand side of the expression.
+      Collection<FieldDeclaration> fields = new ArrayList<>();
+      if (model.getInput() != null) {
+         fields.addAll(model.getInput().getDeclarations());
+      }
+      if (model.getOutput() != null) {
+         fields.addAll(model.getOutput().getDeclarations());
+      }
+      if (model.getRequires() != null) {
+         fields.addAll(model.getRequires().getDeclarations());
+      }
+      if (model.getParts() != null) {
+         fields.addAll(model.getParts().getDeclarations());
+      }
+      return fields;
+   }
 }
