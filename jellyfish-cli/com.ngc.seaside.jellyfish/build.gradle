@@ -2,7 +2,6 @@ apply plugin: 'com.ngc.seaside.application'
 
 configurations {
     commandTemplate
-    jfResources
 }
 
 dependencies {
@@ -102,10 +101,6 @@ task copyCommandTemplate(type: Copy) {
     into "${buildDir}/commands-templates/templates/"
 }
 
-task createResourcesZip(type: Zip) {
-    from "src/main/resources"
-}
-
 seasideApplication {
     mainClassName = 'com.ngc.seaside.jellyfish.JellyFish'
     includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
@@ -124,8 +119,4 @@ seasideApplication {
 
 copyApplicationResources {
     dependsOn copyCommandTemplate
-}
-
-artifacts {
-    jfResources createResourcesZip
 }
