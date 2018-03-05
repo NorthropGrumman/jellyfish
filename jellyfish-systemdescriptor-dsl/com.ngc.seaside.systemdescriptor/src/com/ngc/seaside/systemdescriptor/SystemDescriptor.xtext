@@ -76,6 +76,11 @@ Metadata
 	: 'metadata' json=JsonObject
 	;
 
+/*
+ * Properties are used to define specific information for a model. Any
+ * model that refines a model must assign values to those declared 
+ * properties.
+ */
 Properties
 	: {Properties}
 	  'properties' '{'
