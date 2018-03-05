@@ -56,11 +56,6 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
       parameters.addParameter(new DefaultParameter<>("dto", eventsDto));
       unpackSuffixedTemplate(EVENTS_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
-      // The template does not need to reference this dependency.  However, we do this so the dependency for the
-      // blocs plugins are registered.
-      buildManagementService.registerDependency(getOptions(),
-                                                CommonDependencies.BLOCS_GRADLE_PLUGINS.getGropuId(),
-                                                CommonDependencies.BLOCS_GRADLE_PLUGINS.getArtifactId());
       registerProject(projectInfo);
    }
 

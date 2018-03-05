@@ -106,7 +106,7 @@ public class CreateJavaServiceProjectCommandTest {
    }
 
    @Test
-   public void testDoesCreateProjectWithSuppliedParameters() throws Throwable {
+   public void testDoesCreateProjectWithSuppliedParameters() {
 
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.MODEL_PROPERTY,
                                                      model.getFullyQualifiedName()));
@@ -169,7 +169,7 @@ public class CreateJavaServiceProjectCommandTest {
 
 
    @Test
-   public void testWithoutDomain() throws Throwable {
+   public void testWithoutDomain() {
       String modelName = model.getFullyQualifiedName();
 
       parameters.addParameter(
