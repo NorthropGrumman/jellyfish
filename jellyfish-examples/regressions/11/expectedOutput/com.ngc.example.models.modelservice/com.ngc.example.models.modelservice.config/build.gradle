@@ -2,7 +2,7 @@
 dependencies {
    compile project(':modelservice.base')
 
-   compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
+   compile "com.ngc.seaside:service.transport.api:$starfishVersion"
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
    compile "com.ngc.blocs:properties.resource.impl.common.propertiesresource:$blocsCoreVersion"
    compile "org.osgi:osgi.core:$osgiVersion"

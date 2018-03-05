@@ -3,7 +3,7 @@ dependencies {
    compile project(':etps.events')
    compile project(':etps.base')
 
-   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+   compile "com.ngc.seaside:service.api:$starfishVersion"
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
    compile "org.osgi:osgi.core:$osgiVersion"
    compile "org.osgi:osgi.enterprise:$osgiVersion"
