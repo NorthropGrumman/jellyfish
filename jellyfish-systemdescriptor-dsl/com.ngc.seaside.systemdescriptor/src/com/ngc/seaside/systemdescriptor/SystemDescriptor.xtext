@@ -76,6 +76,13 @@ Metadata
 	: 'metadata' json=JsonObject
 	;
 
+Properties
+	: {Properties}
+	  'properties' '{'
+		declarations+=DataFieldDeclaration* 
+	  '}'
+	;
+
 /*
  * A declaration definition is used by fields and links to describe the 
  * metadata and other details of that declaration.  This block is used
@@ -491,6 +498,7 @@ DataModel
 Model
 	: 'model' name=UnqualifiedName ('refines' refinedModel=[Model|QualifiedName])? '{'
 		metadata=Metadata? &
+		properties=Properties? &
 		requires=Requires? &
 		input=Input? &
 		output=Output? &
