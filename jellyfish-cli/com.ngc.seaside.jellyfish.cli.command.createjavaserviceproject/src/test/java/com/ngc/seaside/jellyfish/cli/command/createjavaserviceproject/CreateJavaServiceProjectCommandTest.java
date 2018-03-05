@@ -79,8 +79,6 @@ public class CreateJavaServiceProjectCommandTest {
       when(projectInformation.getDirectoryName()).thenReturn("projectDirectory");
       when(projectNamingService.getBaseServiceProjectName(any(IJellyFishCommandOptions.class), eq(model)))
             .thenReturn(projectInformation);
-      when(projectNamingService.getConnectorProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
 
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
@@ -159,12 +157,9 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreatePbMessagesCommand(capture.getValue(), "my-project");
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreatePubsubConnectorCommand(capture.getValue(), "my-project");
    }
 
 
@@ -231,6 +226,13 @@ public class CreateJavaServiceProjectCommandTest {
    }
 
    private void verifyParametersForCreatePbMessagesCommand(IJellyFishCommandOptions options,
+                                                           String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreatePubsubConnectorCommand(IJellyFishCommandOptions options,
                                                            String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
