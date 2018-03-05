@@ -12,7 +12,7 @@ public class ScenarioValidator extends AbstractUnregisteredSystemDescriptorValid
 	 * Validates that the user did not try to escape a keyword with ^ in the
 	 * name of the model.
 	 * 
-	 * @param model is the model to evaluate
+	 * @param scenario is the scenario to evaluate
 	 */	
 	@Check
 	public void checkUsageOfEscapeHatCharacter(Scenario scenario) {

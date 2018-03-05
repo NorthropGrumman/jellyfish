@@ -55,7 +55,7 @@ subprojects {
     seasideCi {
         m2OutputDirectory = m2directory
         dependencyInfoReportFile = dependenciesReportFile
-        deploymentScriptFile = m2DeploymentScritFile
+        deploymentScriptFile = m2DeploymentScriptFile
     }
 
     if(name == 'systemdescriptor.ui') {
@@ -89,6 +89,12 @@ subprojects {
         configurations.all {
             exclude group: 'asm'
         }
+		
+		clean.doFirst {
+		    delete file('src-gen')
+		    delete file('xtend-gen')
+		    delete file('plugin.xml_gen')
+		}
 
         repositories {
             mavenLocal()

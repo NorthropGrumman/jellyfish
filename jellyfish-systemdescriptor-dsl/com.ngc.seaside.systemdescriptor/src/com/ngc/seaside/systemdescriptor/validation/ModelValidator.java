@@ -467,7 +467,7 @@ public class ModelValidator extends AbstractUnregisteredSystemDescriptorValidato
 	 * If the model is using a base class in the links, scenarios, output, or input fields
 	 * it needs to warn the user.
 	 * 
-	 * @param Model
+	 * @param model
 	 */
 	@Check
 	public void checkForSuperClassDataObject(Model model) {
