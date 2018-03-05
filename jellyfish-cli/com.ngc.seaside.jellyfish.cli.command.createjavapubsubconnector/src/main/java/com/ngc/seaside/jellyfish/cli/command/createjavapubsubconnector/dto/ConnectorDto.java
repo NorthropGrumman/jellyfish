@@ -1,9 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto;
 
 import com.google.common.base.Objects;
+
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -21,8 +20,6 @@ import java.util.function.Function;
 
 public class ConnectorDto {
 
-   private final IBuildManagementService buildManagementService;
-
    private IModel model;
    private String packageName;
    private Function<IData, Collection<IDataField>> fields;
@@ -37,10 +34,6 @@ public class ConnectorDto {
    private IPackageNamingService packageService;
    private IDataFieldGenerationService dataFieldService;
    private IJellyFishCommandOptions options;
-
-   public ConnectorDto(IBuildManagementService buildManagementService) {
-      this.buildManagementService = buildManagementService;
-   }
 
    public IModel getModel() {
       return model;
@@ -282,13 +275,5 @@ public class ConnectorDto {
 
    public String messageRepeatedCount(IDataField field) {
       return dataFieldService.getMessagesField(options, field).getJavaField().getRepeatedJavaCountName();
-   }
-
-   public String getFormattedDependency(String groupAndArtifactId) {
-      IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
-      return String.format("%s:%s:$%s",
-                           dependency.getGroupId(),
-                           dependency.getArtifactId(),
-                           dependency.getVersionPropertyName());
    }
 }
