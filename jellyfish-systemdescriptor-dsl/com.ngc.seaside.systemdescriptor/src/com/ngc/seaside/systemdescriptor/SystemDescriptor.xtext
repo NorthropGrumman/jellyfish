@@ -84,8 +84,35 @@ Metadata
 Properties
 	: {Properties}
 	  'properties' '{'
-		declarations+=DataFieldDeclaration*
+		declarations+=PropertyFieldDeclaration*
 	  '}'
+	;
+
+/*
+ * A property declaration may either be a primitive type or reference another
+ * data type.
+ */
+PropertyFieldDeclaration
+	: PrimitivePropertyFieldDeclaration
+	| ReferencedPropertyFieldDeclaration
+	;
+
+/*
+ * A primitive property declaration consists of a type and unqualified name.
+ */
+PrimitivePropertyFieldDeclaration
+	: // cardinality=Cardinality?
+	  type=PrimitiveDataType
+	  name=UnqualifiedName
+	;
+
+/*
+ * A referenced property declaration is used to reference another data model type.
+ */	
+ReferencedPropertyFieldDeclaration
+	: // cardinality=Cardinality?
+	  dataModel=[DataModel|QualifiedName]
+	  name=UnqualifiedName
 	;
 
 /*
