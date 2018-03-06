@@ -432,15 +432,35 @@ FieldReference returns LinkableReference
  * exchange information in some manner (ex. "link speaker to alarm.speaker").
  */
 LinkDeclaration
-	: (refinedField?='refine')?
-		'link'
+	: BaseLinkDeclaration
+	| RefinedLinkNameDeclaration
+	| RefinedLinkDeclaration
+	;
+	
+BaseLinkDeclaration
+	:	'link'
 		name=UnqualifiedName?
 		source=LinkableExpression
 		'->'
 		target=LinkableExpression
 		definition=DeclarationDefinition?
 	;
-
+	
+RefinedLinkNameDeclaration
+	: 'refine'
+		name=UnqualifiedName
+		definition=DeclarationDefinition?
+	;
+	
+RefinedLinkDeclaration
+	:	'refine'
+		name=UnqualifiedName?
+		source=LinkableExpression
+		'->'
+		target=LinkableExpression
+		definition=DeclarationDefinition?
+	;
+	
 /*
  * Defines links in a model.
  */

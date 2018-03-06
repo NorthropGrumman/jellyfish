@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -78,7 +79,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as FieldReference
 		var linkTarget = link.target as LinkableExpression
 
@@ -125,7 +126,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as LinkableExpression
 		var linkTarget = link.target as LinkableExpression
 		assertEquals(
@@ -178,7 +179,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as LinkableExpression
 		var linkTarget = link.target as FieldReference
 		assertEquals(

@@ -30,6 +30,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
@@ -339,7 +340,7 @@ public class ValidationDelegateTest {
       FieldReference t = factory().createFieldReference();
       t.setFieldDeclaration(targetField);
 
-      LinkDeclaration source = factory().createLinkDeclaration();
+      BaseLinkDeclaration source = factory().createBaseLinkDeclaration();
       source.setSource(s);
       source.setTarget(t);
 

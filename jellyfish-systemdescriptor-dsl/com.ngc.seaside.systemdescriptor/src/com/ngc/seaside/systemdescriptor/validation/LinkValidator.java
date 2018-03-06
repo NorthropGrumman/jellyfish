@@ -4,6 +4,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
@@ -25,7 +26,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 	private IQualifiedNameProvider nameProvider;
 	
 	@Check
-	public void checkLinkDeclaration(LinkDeclaration link) {
+	public void checkLinkDeclaration(BaseLinkDeclaration link) {
 		checkForValidLinks(link);
 		checkForTypeSafeLinks(link);
 		checkForDuplicateLinks(link);
@@ -54,7 +55,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		checkForInputField_To_OutputField(link);
 	}
 
-	protected void checkForValidLinks(LinkDeclaration link) {
+	protected void checkForValidLinks(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -66,7 +67,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 			String msg = String.format(
 					"The field '%s' cannot be linked to itself.",
 					sourceField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 		}
 
 		// Make sure the fields are not both inputs, outputs, parts, or
@@ -77,11 +78,11 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					sourceField.eContainer().eClass().getName().toLowerCase(),
 					sourceField.getName(),
 					targetField.eContainer().eClass().getName().toLowerCase());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 		}
 	}
 
-	protected void checkForTypeSafeLinks(LinkDeclaration link) {
+	protected void checkForTypeSafeLinks(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -98,7 +99,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					sourceField.getName(),
 					targetTypeName,
 					sourceTypeName);
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 		}
 	}
 
@@ -196,7 +197,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 	}
 
-	protected void checkForPartOutputField_To_PartOutputField(LinkDeclaration link) {
+	protected void checkForPartOutputField_To_PartOutputField(BaseLinkDeclaration link) {
 
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
@@ -211,12 +212,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output field '%s' to another output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}
 
-	protected void checkForPartInputField_To_PartOutputField(LinkDeclaration link) {
+	protected void checkForPartInputField_To_PartOutputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -231,12 +232,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}
 
-	protected void checkForPartOutputField_To_InputField(LinkDeclaration link) {
+	protected void checkForPartOutputField_To_InputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -254,12 +255,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output '%s' to this model's own input '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}
 
-	protected void checkForInputField_To_PartOutputField(LinkDeclaration link) {
+	protected void checkForInputField_To_PartOutputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -276,12 +277,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}
 
-	protected void checkForOutputField_To_PartOutputField(LinkDeclaration link) {
+	protected void checkForOutputField_To_PartOutputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -298,12 +299,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the output field '%s' to another output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}
 
-	protected void checkForInputField_To_OutputField(LinkDeclaration link) {
+	protected void checkForInputField_To_OutputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
 
@@ -320,7 +321,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 					"Cannot link the input field '%s' directly to an output field '%s'.",
 					sourceField.getName(),
 					targetField.getName());
-			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET);
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
 		}
 	}

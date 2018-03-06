@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -36,8 +37,11 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     */
    public WrappedModelReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
-      source = getReferenceTo(wrapped.getSource());
-      target = getReferenceTo(wrapped.getTarget());
+      if (wrapped.eClass().equals(SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION))
+      {
+    	  source = getReferenceTo(((BaseLinkDeclaration)wrapped).getSource());
+    	  target = getReferenceTo(((BaseLinkDeclaration)wrapped).getTarget());
+      }
    }
 
    @Override

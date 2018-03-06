@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.formatting2
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration
 
 class LinksFormatter extends AbstractSystemDescriptorFormatter {
     def dispatch void format(Links links, extension IFormattableDocument document) {
@@ -22,10 +23,10 @@ class LinksFormatter extends AbstractSystemDescriptorFormatter {
         }
     }
 
-    def dispatch void format(LinkDeclaration declaration, extension IFormattableDocument document) {
+    def dispatch void format(BaseLinkDeclaration declaration, extension IFormattableDocument document) {
         declaration.regionFor.keyword('link').append[oneSpace]
 
-        if(declaration.name != null && !declaration.name.empty) {
+        if(declaration.name !== null && !declaration.name.empty) {
             declaration.source.prepend[declaration.name]
             declaration.source.prepend[oneSpace]
         }
