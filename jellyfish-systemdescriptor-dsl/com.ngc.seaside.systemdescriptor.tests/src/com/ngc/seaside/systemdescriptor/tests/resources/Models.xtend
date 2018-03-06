@@ -24,6 +24,11 @@ class Models {
 
             model Clock {
 
+                input {
+                   ZonedTime inputTime {
+                   	}
+                }
+                
                 output {
                     ZonedTime currentTime {
                     }
@@ -40,6 +45,41 @@ class Models {
         ''',
         Datas.ZONED_TIME, 
         Models.EMPTY_MODEL
+    )
+    
+    public static final ParsingTestResource LINKED_CLOCK = resource(
+        '''
+            package clocks.models.part
+
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Clock
+            import foo.AnEmptyModel
+
+            model LinkedClock {
+
+                output {
+                    ZonedTime currentTime {
+                    }
+                }
+                
+                parts {
+                    Clock clock
+                    Clock clockA
+                }
+                
+                requires {
+                    AnEmptyModel requiresEmptyModel
+                }
+                
+                links {
+                    link namedLink currentTime -> clock.inputTime
+                    link currentTime -> clockA.inputTime	
+                }
+            }
+        ''',
+        Datas.ZONED_TIME, 
+        Models.EMPTY_MODEL,
+        Models.CLOCK
     )
 
     public static final ParsingTestResource ALARM = resource(

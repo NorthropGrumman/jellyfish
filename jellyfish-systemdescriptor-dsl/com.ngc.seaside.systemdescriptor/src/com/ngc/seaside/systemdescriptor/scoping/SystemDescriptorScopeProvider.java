@@ -2,8 +2,12 @@ package com.ngc.seaside.systemdescriptor.scoping;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
@@ -36,7 +40,15 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       FieldReference ref = (FieldReference) context.getRef();
       // Get the field declaration the reference is pointing to.
       FieldDeclaration fieldDeclaration = ref.getFieldDeclaration();
-
+      
+      if (fieldDeclaration.getName() == null)
+      {
+	      List<INode> nodes = NodeModelUtils.findNodesForFeature(ref, SystemDescriptorPackage.Literals.FIELD_REFERENCE__FIELD_DECLARATION);
+	      String fieldName = NodeModelUtils.getTokenText(nodes.get(0));
+	      System.out.println(fieldName);
+	      fieldDeclaration = getFieldWithName(fieldName, context.eContainer().eContainer().eContainer());
+      }
+      
       IScope scope;
 
       // We need to determine the type of the field declaration. Right now we
@@ -54,6 +66,11 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // scope.
          BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
          scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+      } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION)) {
+          // Include all field declarations of the referenced model in the
+          // scope.
+          BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
+          scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
       } else {
          // Otherwise, do the default behavior.
          scope = delegateGetScope(context, reference);
@@ -74,18 +91,45 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       // TODO TH: we can limit the items in scope by examining the type of the
       // item on the left hand side of the expression.
       Collection<FieldDeclaration> fields = new ArrayList<>();
-      if (model.getInput() != null) {
-         fields.addAll(model.getInput().getDeclarations());
-      }
-      if (model.getOutput() != null) {
-         fields.addAll(model.getOutput().getDeclarations());
-      }
-      if (model.getRequires() != null) {
-         fields.addAll(model.getRequires().getDeclarations());
-      }
-      if (model.getParts() != null) {
-         fields.addAll(model.getParts().getDeclarations());
-      }
+		
+      do{
+	      if (model.getInput() != null) {
+	         fields.addAll(model.getInput().getDeclarations());
+	      }
+	      if (model.getOutput() != null) {
+	         fields.addAll(model.getOutput().getDeclarations());
+	      }
+	      if (model.getRequires() != null) {
+	         fields.addAll(model.getRequires().getDeclarations());
+	      }
+	      if (model.getParts() != null) {
+	         fields.addAll(model.getParts().getDeclarations());
+	      }
+	      model = model.getRefinedModel();
+      } while (model != null);
+      
       return fields;
+   }
+   
+   private static FieldDeclaration getFieldWithName(String fieldName, EObject model) {
+	   FieldDeclaration fieldDeclaration = null;
+
+		Model parentModel = ((Model) model).getRefinedModel();
+		
+		while (parentModel != null) {
+			// Part Declaration
+			if (parentModel.getParts() != null && 
+					parentModel.getParts().getDeclarations() != null) {
+				for(FieldDeclaration fieldDec : parentModel.getParts().getDeclarations()) {
+					if (fieldDec.getName().equals(fieldName)) {
+						fieldDeclaration = fieldDec;
+						break;
+					}
+				}
+			}
+			parentModel = parentModel.getRefinedModel();
+		}
+
+	   return fieldDeclaration;
    }
 }
