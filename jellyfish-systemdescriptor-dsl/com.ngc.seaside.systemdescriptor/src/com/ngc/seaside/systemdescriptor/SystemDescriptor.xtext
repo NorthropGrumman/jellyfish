@@ -77,6 +77,45 @@ Metadata
 	;
 
 /*
+ * Properties are used to define specific information for a model. Any
+ * model that refines a model must assign values to those declared 
+ * properties.
+ */
+Properties
+	: {Properties}
+	  'properties' '{'
+		declarations+=PropertyFieldDeclaration*
+	  '}'
+	;
+
+/*
+ * A property declaration may either be a primitive type or reference another
+ * data type.
+ */
+PropertyFieldDeclaration
+	: PrimitivePropertyFieldDeclaration
+	| ReferencedPropertyFieldDeclaration
+	;
+
+/*
+ * A primitive property declaration consists of a type and unqualified name.
+ */
+PrimitivePropertyFieldDeclaration
+	: // cardinality=Cardinality?
+	  type=PrimitiveDataType
+	  name=UnqualifiedName
+	;
+
+/*
+ * A referenced property declaration is used to reference another data model type.
+ */	
+ReferencedPropertyFieldDeclaration
+	: // cardinality=Cardinality?
+	  dataModel=[DataModel|QualifiedName]
+	  name=UnqualifiedName
+	;
+
+/*
  * A declaration definition is used by fields and links to describe the 
  * metadata and other details of that declaration.  This block is used
  * to "define" the details for those field and link declarations.  
@@ -511,6 +550,7 @@ DataModel
 Model
 	: 'model' name=UnqualifiedName ('refines' refinedModel=[Model|QualifiedName])? '{'
 		metadata=Metadata? &
+		properties=Properties? &
 		requires=Requires? &
 		input=Input? &
 		output=Output? &
