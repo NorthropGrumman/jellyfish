@@ -21,6 +21,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import org.junit.Ignore
+import org.eclipse.xtext.diagnostics.Diagnostic
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -112,9 +113,29 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseModelIfPropertyNotDeclared() {
-		fail("not yet implemented");
+		val source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					int intField
+					float floatField
+					boolean booleanField
+					string stringField
+					
+					fooField = 1
+				}
+			}
+		'''
+
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE_ASSIGNMENT,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
 	}
 
 	@Test
@@ -150,11 +171,11 @@ class ModelPropertyValuesParsingTest {
 		)
 		val value = property.value;
 		assertTrue(
-			"property not correct type!",
+			"property type not correct!",
 			value.eClass.isSuperTypeOf(attribute.EContainingClass)
 		)
 		assertEquals(
-			"value not correct!",
+			"property value not correct!",
 			expected,
 			value.eGet(attribute)
 		)

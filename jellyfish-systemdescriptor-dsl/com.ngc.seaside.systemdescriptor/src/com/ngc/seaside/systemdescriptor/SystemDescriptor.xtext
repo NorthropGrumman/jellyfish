@@ -122,6 +122,7 @@ PropertyValueAssignment
 	  value=PropertyValue
 	;
 
+// TODO TH: for use later with complex types.
 // 	declaration=PropertyDeclarationReference
 //PropertyDeclarationReference
 //	: declaration=[PropertyFieldDeclaration|QualifiedName]
