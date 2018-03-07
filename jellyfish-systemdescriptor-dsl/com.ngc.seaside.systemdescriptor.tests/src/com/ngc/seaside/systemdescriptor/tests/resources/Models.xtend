@@ -41,6 +41,10 @@ class Models {
                 requires {
                 	AnEmptyModel requiresEmptyModel
                 }
+                
+                properties {
+                	ZonedTime releaseDate
+                }
             }
         ''',
         Datas.ZONED_TIME, 

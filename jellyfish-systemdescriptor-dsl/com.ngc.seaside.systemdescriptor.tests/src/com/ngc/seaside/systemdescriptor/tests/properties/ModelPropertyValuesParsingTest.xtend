@@ -18,7 +18,6 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -47,7 +46,8 @@ class ModelPropertyValuesParsingTest {
 			Datas.TIME,
 			Datas.TIME_ZONE,
 			Datas.TIME_CONVENTION,
-			Datas.ZONED_TIME
+			Datas.ZONED_TIME,
+			Models.CLOCK
 		)
 		validationTester.assertNoIssues(requiredResources)
 	}
@@ -187,9 +187,43 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesParseModelWithPropertiesFromRefinedModel() {
-		fail("not yet implemented");
+		val source = '''
+            package clocks.models.part
+
+            import clocks.models.part.Clock
+            import clocks.datatypes.TimeZone
+
+            model BetaClock refines Clock {
+            	
+                properties {
+                	releaseDate.timeZone = TimeZone.CST
+                	releaseDate.dataTime.date.day = 1
+                }
+            }
+        '''
+        
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val properties = model.properties
+		assertNotNull(
+			"did not parse properties",
+			properties
+		)
+
+		var property = properties.assignments.get(0)
+		assertComplexPropertyEnumValue(property, "releaseDate.timeZone", "TimeZone", "CST")
+		
+		property = properties.assignments.get(1)
+		assertComplexPropertyValue(
+			property, 
+			"releaseDate.dataTime.date.day", 
+			SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 
+			1
+		)
 	}
 
 	@Test

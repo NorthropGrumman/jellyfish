@@ -32,6 +32,37 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
+	/**
+	 * Places all declared properties of the current model as well as any
+	 * refined models in scope for property value expressions.
+	 * 
+	 * @return the scope for a property value expression
+	 */
+	public IScope scope_PropertyValueExpression_declaration(
+			PropertyValueExpression context,
+			EReference reference) {
+		Collection<PropertyFieldDeclaration> properties = new ArrayList<>();
+
+		Model model = (Model) context.eContainer() // PropertyValueAssignment
+				.eContainer() // Properties
+				.eContainer(); // Model
+
+		do {
+			if (model.getProperties() != null) {
+				properties.addAll(model.getProperties().getDeclarations());
+			}
+			model = model.getRefinedModel();
+		} while (model != null);
+
+		return Scopes.scopeFor(properties);
+	}
+
+	/**
+	 * Places all data fields of a data type in scope for property path segment
+	 * where a value of a complex type is being set.
+	 * 
+	 * @return the scope of the segment
+	 */
 	public IScope scope_PropertyValueExpressionPathSegment_fieldDeclaration(
 			PropertyValueExpressionPathSegment segment,
 			EReference reference) {
@@ -40,14 +71,14 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
 		for (int i = 0; i < exp.getPathSegments().indexOf(segment) && data != null; i++) {
 			// Get the text value of the field. We have to do this because the
-			// linking has not yet completed and proxy objects are set in the data
-			// model.
+			// linking has not yet completed and proxy objects are set in the
+			// data model.
 			List<INode> nodes = NodeModelUtils.findNodesForFeature(
 					exp.getPathSegments().get(i),
 					SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
 			String fieldName = NodeModelUtils.getTokenText(nodes.get(0));
-			
-			// Get the field with that name.  Then filter for fields that have a 
+
+			// Get the field with that name. Then filter for fields that have a
 			// complex data type (ie, not a primitive).
 			ReferencedDataModelFieldDeclaration dataField = data.getFields().stream()
 					.filter(f -> f.getName().equals(fieldName))
@@ -63,7 +94,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 					? (Data) dataField.getDataModel()
 					: null;
 		}
-		
+
 		return data != null
 				? Scopes.scopeFor(data.getFields())
 				: delegateGetScope(segment, reference);
@@ -72,9 +103,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 	/**
 	 * Provides scope for a link expression of the form
 	 * {@code link someInput to somePart.someMoreInput}.
-	 *
-	 * @param context
-	 * @param reference
+	 * 
 	 * @return scope for a link expression
 	 */
 	public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
@@ -178,7 +207,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
 		return fieldDeclaration;
 	}
-	
+
 	private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
 		Preconditions.checkState(
 				declaration instanceof ReferencedPropertyFieldDeclaration,
