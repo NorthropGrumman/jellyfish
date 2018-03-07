@@ -132,14 +132,14 @@ class ModelPropertyValuesParsingTest {
 		val source = '''
 			package clocks.models
 			
-			//import clocks.datatypes.TimeZone
+			import clocks.datatypes.TimeZone
 			import clocks.datatypes.ZonedTime
 			
 			model BigClock {
 				properties {
 					ZonedTime complexProperty
 					
-					//complexProperty.timeZone = TimeZone.CST
+					complexProperty.timeZone = TimeZone.CST
 					complexProperty.dataTime.date.day = 1
 					complexProperty.dataTime.date.month = 2
 					complexProperty.dataTime.date.year = 3
@@ -157,6 +157,33 @@ class ModelPropertyValuesParsingTest {
 			"did not parse properties",
 			properties
 		)
+
+		var property = properties.assignments.get(0)
+		assertComplexPropertyEnumValue(property, "complexProperty.timeZone", "TimeZone", "CST")
+		
+		property = properties.assignments.get(1)
+		assertComplexPropertyValue(
+			property, 
+			"complexProperty.dataTime.date.day", 
+			SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 
+			1
+		)
+		
+		property = properties.assignments.get(2)
+		assertComplexPropertyValue(
+			property, 
+			"complexProperty.dataTime.date.month", 
+			SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 
+			2
+		)
+		
+		property = properties.assignments.get(3)
+		assertComplexPropertyValue(
+			property, 
+			"complexProperty.dataTime.date.year", 
+			SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 
+			3
+		)
 	}
 
 	@Test
@@ -164,7 +191,7 @@ class ModelPropertyValuesParsingTest {
 	def void testDoesParseModelWithPropertiesFromRefinedModel() {
 		fail("not yet implemented");
 	}
-	
+
 	@Test
 	def void testDoesAllowForOverridingProperties() {
 		val source = '''
@@ -238,7 +265,7 @@ class ModelPropertyValuesParsingTest {
 			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
 			null
 		)
-		
+
 		source = '''
 			package clocks.models
 			
@@ -257,7 +284,7 @@ class ModelPropertyValuesParsingTest {
 			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
 			null
 		)
-		
+
 		source = '''
 			package clocks.models
 			
@@ -276,7 +303,7 @@ class ModelPropertyValuesParsingTest {
 			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
 			null
 		)
-		
+
 		source = '''
 			package clocks.models
 			
@@ -295,7 +322,7 @@ class ModelPropertyValuesParsingTest {
 			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
 			null
 		)
-		
+
 		source = '''
 			package clocks.models
 			
@@ -334,7 +361,7 @@ class ModelPropertyValuesParsingTest {
 				}
 			}
 		'''
-		
+
 		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
@@ -359,7 +386,7 @@ class ModelPropertyValuesParsingTest {
 				}
 			}
 		'''
-		
+
 		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
 		assertNotNull(invalidResult)
 		validationTester.assertError(
@@ -399,6 +426,27 @@ class ModelPropertyValuesParsingTest {
 			value.eGet(attribute)
 		)
 	}
+	
+	def private static void assertComplexPropertyValue(PropertyValueAssignment property, String path, EAttribute attribute,
+		Object expected) {
+		val value = property.value;
+		assertTrue(
+			"property type not correct!",
+			value.eClass.isSuperTypeOf(attribute.EContainingClass)
+		)
+		assertEquals(
+			"property value not correct!",
+			expected,
+			value.eGet(attribute)
+		)
+		val actualPath = new StringBuilder(property.expression.declaration.name)
+		property.expression.pathSegments.forEach[s|actualPath.append(".").append(s.fieldDeclaration.name)]
+		assertEquals(
+			"property path not correct!",
+			path,
+			actualPath.toString()
+		)
+	}
 
 	def private static void assertPropertyEnumValue(PropertyValueAssignment property, String name,
 		String enumerationTypeName, String expected) {
@@ -421,6 +469,33 @@ class ModelPropertyValuesParsingTest {
 			"value not correct!",
 			expected,
 			(value as EnumPropertyValue).value
+		)
+	}
+
+	def private static void assertComplexPropertyEnumValue(PropertyValueAssignment property, String path,
+		String enumerationTypeName, String expected) {
+		val value = property.value
+		assertTrue(
+			"value is not a enum property value!",
+			value instanceof EnumPropertyValue
+		)
+		assertEquals(
+			"enumeration type not correct!",
+			enumerationTypeName,
+			(value as EnumPropertyValue).enumeration.name
+		)
+		assertEquals(
+			"value not correct!",
+			expected,
+			(value as EnumPropertyValue).value
+		)
+
+		val actualPath = new StringBuilder(property.expression.declaration.name)
+		property.expression.pathSegments.forEach[s|actualPath.append(".").append(s.fieldDeclaration.name)]
+		assertEquals(
+			"property path not correct!",
+			path,
+			actualPath.toString()
 		)
 	}
 }
