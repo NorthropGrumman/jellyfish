@@ -32,32 +32,37 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 
 	@Check
 	public void checkPrimitivePropertyValue(PropertyValue value) {
-		PropertyValueExpression exp = ((PropertyValueAssignment) value.eContainer())
-				.getExpression();
+		// Note that PropertyValues and metadata values use the same
+		// types. Thus, we only due the validation if the container
+		// is properties related.
+		if (value.eContainer() instanceof PropertyValueAssignment) {
+			PropertyValueExpression exp = ((PropertyValueAssignment) value.eContainer())
+					.getExpression();
 
-		try {
-			switch (value.eClass().getClassifierID()) {
-			case SystemDescriptorPackage.INT_VALUE:
-				checkIntMatchesPropertyType(exp, (IntValue) value);
-				break;
-			case SystemDescriptorPackage.DBL_VALUE:
-				checkFloatMatchesPropertyType(exp, (DblValue) value);
-				break;
-			case SystemDescriptorPackage.BOOLEAN_VALUE:
-				checkBooleanMatchesPropertyType(exp, (BooleanValue) value);
-				break;
-			case SystemDescriptorPackage.STRING_VALUE:
-				checkStringMatchesPropertyType(exp, (StringValue) value);
-				break;
-			case SystemDescriptorPackage.ENUM_PROPERTY_VALUE:
-				checkEnumValueTypeMatchesPropertyType(exp, (EnumPropertyValue) value);
-				checkEnumValueIsValidConstant((EnumPropertyValue) value);
-				break;
+			try {
+				switch (value.eClass().getClassifierID()) {
+				case SystemDescriptorPackage.INT_VALUE:
+					checkIntMatchesPropertyType(exp, (IntValue) value);
+					break;
+				case SystemDescriptorPackage.DBL_VALUE:
+					checkFloatMatchesPropertyType(exp, (DblValue) value);
+					break;
+				case SystemDescriptorPackage.BOOLEAN_VALUE:
+					checkBooleanMatchesPropertyType(exp, (BooleanValue) value);
+					break;
+				case SystemDescriptorPackage.STRING_VALUE:
+					checkStringMatchesPropertyType(exp, (StringValue) value);
+					break;
+				case SystemDescriptorPackage.ENUM_PROPERTY_VALUE:
+					checkEnumValueTypeMatchesPropertyType(exp, (EnumPropertyValue) value);
+					checkEnumValueIsValidConstant((EnumPropertyValue) value);
+					break;
+				}
+			} catch (AbortValidationDueToLinkingFailureException e) {
+				// Do nothing. This exception is just used to short circuit the
+				// validation logic. We don't need to do anything because the
+				// elements are already invalid due to linking failures.
 			}
-		} catch (AbortValidationDueToLinkingFailureException e) {
-			// Do nothing. This exception is just used to short circuit the
-			// validation logic. We don't need to do anything because the
-			// elements are already invalid due to linking failures.
 		}
 	}
 
