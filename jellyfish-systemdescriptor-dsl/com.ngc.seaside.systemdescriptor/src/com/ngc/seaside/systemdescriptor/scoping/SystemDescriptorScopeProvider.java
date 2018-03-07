@@ -12,18 +12,62 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
+
+	public IScope scope_PropertyValueExpressionPathSegment_fieldDeclaration(
+			PropertyValueExpressionPathSegment segment,
+			EReference reference) {
+		PropertyValueExpression exp = (PropertyValueExpression) segment.eContainer();
+		Data data = getDataModelForProperty(exp.getDeclaration());
+
+		for (int i = 0; i < exp.getPathSegments().indexOf(segment) && data != null; i++) {
+			// Get the text value of the field. We have to do this because the
+			// linking has not yet completed and proxy objects are set in the data
+			// model.
+			List<INode> nodes = NodeModelUtils.findNodesForFeature(
+					exp.getPathSegments().get(i),
+					SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
+			String fieldName = NodeModelUtils.getTokenText(nodes.get(0));
+			
+			// Get the field with that name.  Then filter for fields that have a 
+			// complex data type (ie, not a primitive).
+			ReferencedDataModelFieldDeclaration dataField = data.getFields().stream()
+					.filter(f -> f.getName().equals(fieldName))
+					.filter(f -> f instanceof ReferencedDataModelFieldDeclaration)
+					.map(f -> (ReferencedDataModelFieldDeclaration) f)
+					.findFirst()
+					.orElse(null);
+
+			// Note that the data model can be an enumeration at this point
+			// (if the user created an invalid path, the validators will
+			// catch it after scoping is finished).
+			data = dataField.getDataModel() instanceof Data
+					? (Data) dataField.getDataModel()
+					: null;
+		}
+		
+		return data != null
+				? Scopes.scopeFor(data.getFields())
+				: delegateGetScope(segment, reference);
+	}
 
 	/**
 	 * Provides scope for a link expression of the form
@@ -133,5 +177,19 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 		}
 
 		return fieldDeclaration;
+	}
+	
+	private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
+		Preconditions.checkState(
+				declaration instanceof ReferencedPropertyFieldDeclaration,
+				"expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
+						+ "  Otherwise, why would the declaration need scoping help?");
+		ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
+
+		Preconditions.checkState(
+				referencedDeclaration.getDataModel() instanceof Data,
+				"expected the declaration to have a data model of data instead of an enumeration!"
+						+ "  Otherwise, you can't have a complex expression!");
+		return (Data) referencedDeclaration.getDataModel();
 	}
 }

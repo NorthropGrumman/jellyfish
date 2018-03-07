@@ -118,17 +118,16 @@ ReferencedPropertyFieldDeclaration
 
 PropertyValueExpression
 	: declaration=[PropertyFieldDeclaration|UnqualifiedName]
-	  ('.' path=PropertyValueExpressionPath)?
+	  ('.' pathSegments+=PropertyValueExpressionPathSegment)*
 	;
 	
-PropertyValueExpressionPath
-	: PropertyValueExpressionPathSegment
-	  ({PropertyValueExpressionPath.path=current} '.' segment=PropertyValueExpressionPathSegment)*
-	;
+//PropertyValueExpressionPath
+//	: segment=PropertyValueExpressionPathSegment
+//	  ('.' segments+=PropertyValueExpressionPath)*
+//	;
 	
 PropertyValueExpressionPathSegment
-	: {PropertyValueExpressionPathSegment}
-	  fieldDeclaration=[DataFieldDeclaration|UnqualifiedName]
+	: fieldDeclaration=[DataFieldDeclaration|UnqualifiedName]
 	;
 
 PropertyValueAssignment

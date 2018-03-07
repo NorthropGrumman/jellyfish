@@ -128,19 +128,18 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesParseModelWithComplexDataTypePropertyValues() {
 		val source = '''
 			package clocks.models
 			
-			import clocks.datatypes.TimeZone
+			//import clocks.datatypes.TimeZone
 			import clocks.datatypes.ZonedTime
 			
 			model BigClock {
 				properties {
 					ZonedTime complexProperty
 					
-					complexProperty.timeZone = TimeZone.CST
+					//complexProperty.timeZone = TimeZone.CST
 					complexProperty.dataTime.date.day = 1
 					complexProperty.dataTime.date.month = 2
 					complexProperty.dataTime.date.year = 3
