@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.tests.properties
 
 import com.google.inject.Inject
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment
@@ -10,20 +11,18 @@ import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.junit.Ignore
-import org.eclipse.xtext.diagnostics.Diagnostic
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue
-import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -169,9 +168,28 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseModelIfEnumPropertyValueIsNotAnEnumConstant() {
-		fail("not yet implemented");
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			
+			model BigClock {
+				properties {
+					TimeZone userTimeZone
+					
+					userTimeZone = TimeZone.FOO
+				}
+			}
+		'''
+		
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.ENUM_PROPERTY_VALUE,
+			null
+		)
 	}
 
 	@Test
