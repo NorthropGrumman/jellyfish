@@ -85,6 +85,7 @@ Properties
 	: {Properties}
 	  'properties' '{'
 		declarations+=PropertyFieldDeclaration*
+		assignments+=PropertyValueAssignment*
 	  '}'
 	;
 
@@ -115,6 +116,18 @@ ReferencedPropertyFieldDeclaration
 	  name=UnqualifiedName
 	;
 
+PropertyValueAssignment
+	: declaration=[PropertyFieldDeclaration|QualifiedName]
+	  '='
+	  value=PropertyValue
+	;
+
+// 	declaration=PropertyDeclarationReference
+//PropertyDeclarationReference
+//	: declaration=[PropertyFieldDeclaration|QualifiedName]
+//	  field=[FieldDeclaration]
+//	;
+
 /*
  * A declaration definition is used by fields and links to describe the 
  * metadata and other details of that declaration.  This block is used
@@ -126,6 +139,7 @@ DeclarationDefinition
 		// block ( ie, "Foo myInput {}" ) is declared.
 		{DeclarationDefinition} 
 		metadata=Metadata?
+		// TODO TH: add properties here
 	  '}'
 	;	
 	
@@ -568,6 +582,16 @@ Element
 	: DataModel
 	| Model
 	;	
+	
+// -------------------------
+// ---- Property values ----
+// -------------------------
+PropertyValue
+	: StringValue
+	| BooleanValue
+	| IntValue
+	| DblValue
+	;
 	
 // ----------------------
 // ---- JSON support ----
