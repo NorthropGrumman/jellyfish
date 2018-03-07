@@ -28,6 +28,8 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 	@Inject
 	private IQualifiedNameProvider nameProvider;
 
+	// TODO TH: I don't think this class is needed.
+	
 	/**
 	 * Entry into this validator for xtext 
 	 * 

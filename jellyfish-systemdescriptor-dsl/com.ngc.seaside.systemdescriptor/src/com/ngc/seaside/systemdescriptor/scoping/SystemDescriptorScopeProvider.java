@@ -114,14 +114,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 		// Get the field declaration the reference is pointing to.
 		FieldDeclaration fieldDeclaration = ref.getFieldDeclaration();
 
-		if (fieldDeclaration.getName() == null) {
-			List<INode> nodes = NodeModelUtils.findNodesForFeature(ref,
-					SystemDescriptorPackage.Literals.FIELD_REFERENCE__FIELD_DECLARATION);
-			String fieldName = NodeModelUtils.getTokenText(nodes.get(0));
-			System.out.println(fieldName);
-			fieldDeclaration = getFieldWithName(fieldName, context.eContainer().eContainer().eContainer());
-		}
-
 		IScope scope;
 
 		// We need to determine the type of the field declaration. Right now we

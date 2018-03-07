@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.tests.link
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.resource.Resource
@@ -15,8 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -69,7 +68,6 @@ class RefinedLinkParsingTest {
 	}
 	
 	@Test
-    @Ignore
     def void testDoesParseModelWithRefinedLink(){
         var source = '''
             package clocks.models
@@ -79,7 +77,7 @@ class RefinedLinkParsingTest {
             model AlarmClock refines LinkedClock {
 
                 links {
-                    refine currentTime -> clockA.inputTime
+                    refine link currentTime -> clockA.inputTime
                 }
             }
         '''
@@ -90,7 +88,6 @@ class RefinedLinkParsingTest {
     }
     
     @Test
-    @Ignore
     def void testDoesNotParseNonRefinedModelWithRefinedLink() {
 
         var source = '''
@@ -99,7 +96,7 @@ class RefinedLinkParsingTest {
             model AlarmClock {
 
                 links {
-                    refine currentTime -> clockA.inputTime
+                    refine link currentTime -> clockA.inputTime
                 }
             }
         '''

@@ -510,6 +510,7 @@ RefinedLinkNameDeclaration
 	
 RefinedLinkDeclaration
 	:	'refine'
+		'link'
 		name=UnqualifiedName?
 		source=LinkableExpression
 		'->'
