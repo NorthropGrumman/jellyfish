@@ -112,7 +112,7 @@ PrimitivePropertyFieldDeclaration
  */	
 ReferencedPropertyFieldDeclaration
 	: // cardinality=Cardinality?
-	  dataModel=[DataModel|UnqualifiedName] // TODO TH: can this be made a QualifiedName
+	  dataModel=[DataModel|QualifiedName]
 	  name=UnqualifiedName
 	;
 
@@ -136,13 +136,6 @@ PropertyValueAssignment
 	  '='
 	  value=PropertyValue
 	;
-
-// TODO TH: for use later with complex types.
-// 	declaration=PropertyDeclarationReference
-//PropertyDeclarationReference
-//	: declaration=[PropertyFieldDeclaration|QualifiedName]
-//	  field=[FieldDeclaration]
-//	;
 
 /*
  * A declaration definition is used by fields and links to describe the 
