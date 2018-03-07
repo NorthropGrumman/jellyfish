@@ -112,12 +112,27 @@ PrimitivePropertyFieldDeclaration
  */	
 ReferencedPropertyFieldDeclaration
 	: // cardinality=Cardinality?
-	  dataModel=[DataModel|QualifiedName]
+	  dataModel=[DataModel|UnqualifiedName] // TODO TH: can this be made a QualifiedName
 	  name=UnqualifiedName
 	;
 
+PropertyValueExpression
+	: declaration=[PropertyFieldDeclaration|UnqualifiedName]
+	  ('.' path=PropertyValueExpressionPath)?
+	;
+	
+PropertyValueExpressionPath
+	: PropertyValueExpressionPathSegment
+	  ({PropertyValueExpressionPath.path=current} '.' segment=PropertyValueExpressionPathSegment)*
+	;
+	
+PropertyValueExpressionPathSegment
+	: {PropertyValueExpressionPathSegment}
+	  fieldDeclaration=[DataFieldDeclaration|UnqualifiedName]
+	;
+
 PropertyValueAssignment
-	: declaration=[PropertyFieldDeclaration|QualifiedName]
+	: expression=PropertyValueExpression
 	  '='
 	  value=PropertyValue
 	;

@@ -26,7 +26,9 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 
 	@Check
 	public void checkPrimitivePropertyValue(PropertyValue value) {
-		PropertyFieldDeclaration declaration = ((PropertyValueAssignment) value.eContainer()).getDeclaration();
+		PropertyFieldDeclaration declaration = ((PropertyValueAssignment) value.eContainer())
+				.getExpression()
+				.getDeclaration();
 
 		switch (value.eClass().getClassifierID()) {
 		case SystemDescriptorPackage.INT_VALUE:
