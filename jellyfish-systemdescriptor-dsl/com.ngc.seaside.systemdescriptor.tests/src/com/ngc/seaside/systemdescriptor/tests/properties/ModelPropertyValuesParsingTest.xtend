@@ -162,9 +162,129 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseModelIfPrimitivePropertyValueTypesNotCorrect() {
-		fail("not yet implemented");
+		var source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					int intField
+					
+					intField = 0.95
+				}
+			}
+		'''
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
+			null
+		)
+		
+		source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					float floatField
+					
+					floatField = 1
+				}
+			}
+		'''
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
+			null
+		)
+		
+		source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					boolean booleanField
+					
+					booleanField = "hello"
+				}
+			}
+		'''
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
+			null
+		)
+		
+		source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					string stringField
+					
+					stringField = false
+				}
+			}
+		'''
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
+			null
+		)
+		
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			
+			model BigClock {
+				properties {
+					string stringField
+					
+					stringField = TimeZone.CST
+				}
+			}
+		'''
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE,
+			null
+		)
+	}
+
+	@Test
+	def void testDoesNotParseModelIfEnumPropertyValueTypeNotCorrect() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			import clocks.datatypes.TimeConvention
+			
+			model BigClock {
+				properties {
+					TimeZone userTimeZone
+					
+					userTimeZone = TimeConvention.TWELVE_HOUR
+				}
+			}
+		'''
+		
+		val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.ENUM_PROPERTY_VALUE,
+			null
+		)
 	}
 
 	@Test
