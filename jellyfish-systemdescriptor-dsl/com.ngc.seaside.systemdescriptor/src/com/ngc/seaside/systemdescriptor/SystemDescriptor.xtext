@@ -121,11 +121,6 @@ PropertyValueExpression
 	  ('.' pathSegments+=PropertyValueExpressionPathSegment)*
 	;
 	
-//PropertyValueExpressionPath
-//	: segment=PropertyValueExpressionPathSegment
-//	  ('.' segments+=PropertyValueExpressionPath)*
-//	;
-	
 PropertyValueExpressionPathSegment
 	: fieldDeclaration=[DataFieldDeclaration|UnqualifiedName]
 	;

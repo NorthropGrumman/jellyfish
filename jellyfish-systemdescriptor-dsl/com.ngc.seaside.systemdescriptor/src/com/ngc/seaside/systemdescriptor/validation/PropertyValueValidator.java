@@ -35,10 +35,7 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 		PropertyValueExpression exp = ((PropertyValueAssignment) value.eContainer())
 				.getExpression();
 
-		// If the field declaration references a field that cannot be found
-		// the linker will create the error for us.  In this case, a proxy
-		// object has been set and we just need to do nothing.
-		if (!exp.getDeclaration().eIsProxy()) {
+		try {
 			switch (value.eClass().getClassifierID()) {
 			case SystemDescriptorPackage.INT_VALUE:
 				checkIntMatchesPropertyType(exp, (IntValue) value);
@@ -57,6 +54,10 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 				checkEnumValueIsValidConstant((EnumPropertyValue) value);
 				break;
 			}
+		} catch (AbortValidationDueToLinkingFailureException e) {
+			// Do nothing. This exception is just used to short circuit the
+			// validation logic. We don't need to do anything because the
+			// elements are already invalid due to linking failures.
 		}
 	}
 
@@ -132,12 +133,12 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 		String propertyTypeName = propertyType instanceof Enum
 				? propertyType.toString()
 				: nameProvider.getFullyQualifiedName((EObject) propertyType).toString();
-				
+
 		String propertyPath = expression.getPathSegments()
 				.stream()
 				.map(s -> s.getFieldDeclaration().getName())
 				.collect(Collectors.joining("."));
-				
+
 		String msg = String.format(
 				"Expected a value of type '%s' for the property '%s%s'.",
 				propertyTypeName,
@@ -145,11 +146,11 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 				propertyPath.isEmpty() ? "" : "." + propertyPath);
 		error(msg, value, feature);
 	}
-	
+
 	private static Object getPropertyType(PropertyValueExpression expression) {
 		Object type;
-		
-		if(expression.getPathSegments().isEmpty()) {
+
+		if (expression.getPathSegments().isEmpty()) {
 			type = getPropertyType(expression.getDeclaration());
 		} else {
 			DataFieldDeclaration lastField = expression.getPathSegments()
@@ -162,12 +163,15 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 			case SystemDescriptorPackage.REFERENCED_DATA_MODEL_FIELD_DECLARATION:
 				type = ((ReferencedDataModelFieldDeclaration) lastField).getDataModel();
 				break;
+			case SystemDescriptorPackage.DATA_FIELD_DECLARATION:
+				// This means the field is a proxy and linking has failed.
+				throw new AbortValidationDueToLinkingFailureException();
 			default:
 				throw new IllegalStateException(
 						"update this method to support the new data field declaration " + lastField);
 			}
 		}
-		
+
 		return type;
 	}
 
@@ -180,11 +184,13 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 		case SystemDescriptorPackage.REFERENCED_PROPERTY_FIELD_DECLARATION:
 			type = ((ReferencedPropertyFieldDeclaration) declaration).getDataModel();
 			break;
+		case SystemDescriptorPackage.PROPERTY_FIELD_DECLARATION:
+			// This means the field is a proxy and linking has failed.
+			throw new AbortValidationDueToLinkingFailureException();
 		default:
 			throw new IllegalStateException(
 					"update this method to support the new property declaration " + declaration);
 		}
 		return type;
 	}
-
 }

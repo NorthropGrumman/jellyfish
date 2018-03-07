@@ -449,9 +449,75 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseModelIfComplexDataTypePathIsNotCorrect() {
-		fail("not yet implemented");
+		var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.dataTime.date.day = 1
+					complexProperty.dataTime.this.is.invalid = 2
+				}
+			}
+		'''
+		
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+		
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.dataTime.date.day = 1
+					complexProperty.this.is.invalid = 2
+				}
+			}
+		'''
+		
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
+		
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.dataTime.date.day = 1
+					this.is.invalid = 2
+				}
+			}
+		'''
+		
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT,
+			Diagnostic.LINKING_DIAGNOSTIC
+		)
 	}
 
 	def private static void assertPropertyValue(PropertyValueAssignment property, String name, EAttribute attribute,
