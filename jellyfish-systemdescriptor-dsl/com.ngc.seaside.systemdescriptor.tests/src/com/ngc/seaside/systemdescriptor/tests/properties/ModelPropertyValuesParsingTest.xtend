@@ -397,9 +397,55 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesNotParseModelIfComplexDataTypePropertyValueTypeIsNotCorrect() {
-		fail("not yet implemented");
+		var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.timeZone = 123
+					complexProperty.dataTime.date.day = 1
+					complexProperty.dataTime.date.month = 2
+					complexProperty.dataTime.date.year = 3
+				}
+			}
+		'''
+
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.INT_VALUE,
+			null
+		)
+		
+		source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.timeZone = TimeZone.CST
+					complexProperty.dataTime.date.day = "foo"
+				}
+			}
+		'''
+		
+		invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
+			invalidResult,
+			SystemDescriptorPackage.Literals.STRING_VALUE,
+			null
+		)
 	}
 
 	@Test
