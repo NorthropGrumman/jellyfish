@@ -46,7 +46,8 @@ class ModelPropertyValuesParsingTest {
 			Datas.DATE,
 			Datas.TIME,
 			Datas.TIME_ZONE,
-			Datas.TIME_CONVENTION
+			Datas.TIME_CONVENTION,
+			Datas.ZONED_TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
 	}
@@ -127,15 +128,71 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesParseModelWithComplexDataTypePropertyValues() {
-		fail("not yet implemented");
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			import clocks.datatypes.ZonedTime
+			
+			model BigClock {
+				properties {
+					ZonedTime complexProperty
+					
+					complexProperty.timeZone = TimeZone.CST
+					complexProperty.dataTime.date.day = 1
+					complexProperty.dataTime.date.month = 2
+					complexProperty.dataTime.date.year = 3
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val properties = model.properties
+		assertNotNull(
+			"did not parse properties",
+			properties
+		)
 	}
 
 	@Test
 	@Ignore
 	def void testDoesParseModelWithPropertiesFromRefinedModel() {
 		fail("not yet implemented");
+	}
+	
+	@Test
+	def void testDoesAllowForOverridingProperties() {
+		val source = '''
+			package clocks.models
+			
+			model BigClock {
+				properties {
+					int intField
+					
+					intField = 1
+					intField = 2
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val properties = model.properties
+		assertNotNull(
+			"did not parse properties",
+			properties
+		)
+
+		var property = properties.assignments.get(1)
+		assertPropertyValue(property, "intField", SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 2)
 	}
 
 	@Test

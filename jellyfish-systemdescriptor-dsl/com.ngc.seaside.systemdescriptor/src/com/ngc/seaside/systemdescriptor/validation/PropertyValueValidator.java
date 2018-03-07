@@ -50,7 +50,7 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 
 	private void checkIntMatchesPropertyType(PropertyFieldDeclaration declaration, IntValue value) {
 		Object propertyType = getPropertyType(declaration);
-		if (!propertyType.equals(PrimitiveDataType.INT_VALUE)) {
+		if (!propertyType.equals(PrimitiveDataType.INT)) {
 			declareInvalidPropertyTypeError(value,
 					declaration,
 					propertyType,
@@ -60,7 +60,7 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
 
 	private void checkFloatMatchesPropertyType(PropertyFieldDeclaration declaration, DblValue value) {
 		Object propertyType = getPropertyType(declaration);
-		if (!propertyType.equals(PrimitiveDataType.FLOAT_VALUE)) {
+		if (!propertyType.equals(PrimitiveDataType.FLOAT)) {
 			declareInvalidPropertyTypeError(value,
 					declaration,
 					propertyType,
