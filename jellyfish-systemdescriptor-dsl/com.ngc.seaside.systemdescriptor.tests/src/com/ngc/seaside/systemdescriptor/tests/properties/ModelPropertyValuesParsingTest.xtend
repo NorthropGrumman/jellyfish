@@ -22,6 +22,8 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.*
 import org.junit.Ignore
 import org.eclipse.xtext.diagnostics.Diagnostic
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -95,9 +97,34 @@ class ModelPropertyValuesParsingTest {
 	}
 
 	@Test
-	@Ignore
 	def void testDoesParseModelWithEnumPropertyValues() {
-		fail("not yet implemented");
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.TimeZone
+			
+			model BigClock {
+				properties {
+					TimeZone userTimeZone
+					
+					userTimeZone = TimeZone.CST
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+
+		val model = result.element as Model
+		val properties = model.properties
+		assertNotNull(
+			"did not parse properties",
+			properties
+		)
+
+		var property = properties.assignments.get(0)
+		assertPropertyEnumValue(property, "userTimeZone", "TimeZone", "CST")
 	}
 
 	@Test
@@ -120,9 +147,6 @@ class ModelPropertyValuesParsingTest {
 			model BigClock {
 				properties {
 					int intField
-					float floatField
-					boolean booleanField
-					string stringField
 					
 					fooField = 1
 				}
@@ -178,6 +202,30 @@ class ModelPropertyValuesParsingTest {
 			"property value not correct!",
 			expected,
 			value.eGet(attribute)
+		)
+	}
+
+	def private static void assertPropertyEnumValue(PropertyValueAssignment property, String name,
+		String enumerationTypeName, String expected) {
+		val value = property.value
+		assertTrue(
+			"value is not a enum property value!",
+			value instanceof EnumPropertyValue
+		)
+		assertEquals(
+			"property name not correct!",
+			name,
+			property.declaration.name
+		)
+		assertEquals(
+			"enumeration type not correct!",
+			enumerationTypeName,
+			(value as EnumPropertyValue).enumeration.name
+		)
+		assertEquals(
+			"value not correct!",
+			expected,
+			(value as EnumPropertyValue).value
 		)
 	}
 }
