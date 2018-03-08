@@ -3,10 +3,12 @@ package com.ngc.seaside.systemdescriptor.validation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -25,8 +27,9 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 				.eContainer() // Links
 				.eContainer(); // Model
 
-		if(checkModelRefinesAnotherModel(link, model)) {
+		if (checkModelRefinesAnotherModel(link, model)) {
 			// Only do these checks if a model is being refined.
+			checkLinkDoesNotDeclareANewName(link, model);
 		}
 	}
 
@@ -43,7 +46,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 
 	private boolean checkModelRefinesAnotherModel(LinkDeclaration link, Model model) {
 		boolean refinesModel = model.getRefinedModel() != null;
-		
+
 		if (!refinesModel) {
 			Links links = (Links) link.eContainer();
 			String msg = String.format(
@@ -52,7 +55,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 			int index = links.getDeclarations().indexOf(link);
 			error(msg, links, SystemDescriptorPackage.Literals.LINKS__DECLARATIONS, index);
 		}
-		
+
 		return refinesModel;
 	}
 
@@ -67,6 +70,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 						.filter(l -> l.getName() != null)
 						.forEach(l -> linkNames.add(l.getName()));
 			}
+
 			refinedModel = refinedModel.getRefinedModel();
 		}
 
@@ -77,5 +81,45 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 					nameProvider.getFullyQualifiedName(model));
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
+	}
+
+	private void checkLinkDoesNotDeclareANewName(RefinedLinkDeclaration link, Model model) {
+		BaseLinkDeclaration baseLink = getBaseLinkDeclaration(link, model);
+		if (baseLink != null
+				&& !baseLink.getName().equals(link.getName())) {
+			Model baseLinkModel = (Model) baseLink
+					.eContainer() // Links
+					.eContainer(); // Model
+			String msg = String.format(
+					"Cannot change the name of a refined link; the model '%s'"
+							+ " declares the same link with the name '%s'.",
+					nameProvider.getFullyQualifiedName(baseLinkModel),
+					baseLink.getName());
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+		}
+	}
+
+	private static BaseLinkDeclaration getBaseLinkDeclaration(
+			RefinedLinkDeclaration refinedLink,
+			Model model) {
+		BaseLinkDeclaration baseLink = null;
+
+		model = model.getRefinedModel();
+		while (model != null && baseLink == null) {
+			if (model.getLinks() != null) {
+				baseLink = model.getLinks().getDeclarations()
+						.stream()
+						.filter(l -> l instanceof BaseLinkDeclaration)
+						.map(l -> (BaseLinkDeclaration) l)
+						.filter(l -> EcoreUtil.equals(l.getSource(), refinedLink.getSource()))
+						.filter(l -> EcoreUtil.equals(l.getTarget(), refinedLink.getTarget()))
+						.findFirst()
+						.orElse(null);
+			}
+
+			model = model.getRefinedModel();
+		}
+
+		return baseLink;
 	}
 }

@@ -190,7 +190,6 @@ class RefinedLinkParsingTest {
         
          var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        validationTester.assertNoIssues(invalidResult)
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.LINK_DECLARATION,
