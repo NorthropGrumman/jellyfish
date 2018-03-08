@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.util.Collection;
@@ -30,6 +31,27 @@ public interface IModel extends INamedChild<IPackage> {
     * @return this model type
     */
    IModel setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the properties of this model.
+    *
+    * @return the properties of this model (never {@code null})
+    */
+   default IProperties getProperties() {
+      // TODO: make this method abstract once implemented
+      throw new UnsupportedOperationException("Not implemented");
+   }
+
+   /**
+    * Sets the properties of this model.
+    *
+    * @param properties the properties of this model
+    * @return this model
+    */
+   default IModel setProperties(IProperties properties) {
+      // TODO: make this method abstract once implemented
+      throw new UnsupportedOperationException("Not implemented");
+   }
 
    /**
     * Gets the data inputs declared by this model.  The returned collection may not be modifiable if this object is

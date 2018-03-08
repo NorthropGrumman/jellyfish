@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.api.model.link;
 
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 
 import java.util.Optional;
 
@@ -13,6 +14,27 @@ import java.util.Optional;
  * @param <T> the type of reference field that link is connecting
  */
 public interface IModelLink<T extends IReferenceField> {
+
+   /**
+    * Gets the properties of this link.
+    *
+    * @return the properties of this link (never {@code null})
+    */
+   default IProperties getProperties() {
+      // TODO: make this method abstract once implemented
+      throw new UnsupportedOperationException("Not implemented");
+   }
+
+   /**
+    * Sets the properties of this link.
+    *
+    * @param properties the properties of this link
+    * @return this link
+    */
+   default IModelLink<T> setProperties(IProperties properties) {
+      // TODO: make this method abstract once implemented
+      throw new UnsupportedOperationException("Not implemented");
+   }
 
    /**
     * Gets the source of the link.
@@ -42,11 +64,11 @@ public interface IModelLink<T extends IReferenceField> {
     */
    IModelLink<T> setTarget(T target);
 
-   /**
-    * Gets the link's name, if it has one.
-    *
-    * @return the name of the link, if one exists.
-    */
+    /**
+     * Gets the link's name, if it has one.
+     *
+     * @return the name of the link, if one exists.
+     */
     Optional<String> getName();
 
     /**
