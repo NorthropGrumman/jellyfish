@@ -25,6 +25,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
@@ -100,6 +101,19 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 				: delegateGetScope(segment, reference);
 	}
 
+	public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
+		IScope scope;
+		if (context.eContainer() instanceof RefinedLinkDeclaration) {
+			Model model = (Model) context.eContainer() // RefinedLinkDeclaration
+					.eContainer() // Links
+					.eContainer(); // Model
+			scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
+		} else {
+			scope = delegateGetScope(context, reference);
+		}
+		return scope;
+	}
+
 	/**
 	 * Provides scope for a link expression of the form
 	 * {@code link someInput to somePart.someMoreInput}.
@@ -131,15 +145,17 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 			// scope.
 			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION)) {
+		} /*else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION)) {
 			// Include all field declarations of the referenced model in the
 			// scope.
 			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} else {
+		}*/ else {
 			// Otherwise, do the default behavior.
 			scope = delegateGetScope(context, reference);
 		}
+		
+		// TODO TH: if field is proxy, get name, and use name to resolve type.
 
 		return scope;
 	}
