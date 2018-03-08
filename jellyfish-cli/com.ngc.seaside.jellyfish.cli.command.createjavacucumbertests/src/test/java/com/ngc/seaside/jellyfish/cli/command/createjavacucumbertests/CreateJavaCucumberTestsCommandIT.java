@@ -9,7 +9,9 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -68,9 +70,13 @@ public class CreateJavaCucumberTestsCommandIT {
    @Mock
    private IPackageNamingService packageService;
 
+   private IBuildManagementService buildManagementService;
+
    @Before
    public void setup() throws IOException {
       outputDirectory = tempFolder.newFolder().toPath();
+
+      buildManagementService = new MockedBuildManagementService();
 
       templateService = new MockedTemplateService().useRealPropertyService().setTemplateDirectory(
          CreateJavaCucumberTestsCommandIT.class.getPackage().getName(),
@@ -87,6 +93,7 @@ public class CreateJavaCucumberTestsCommandIT {
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
       command.setJavaServiceGenerationService(generationService);
+      command.setBuildManagementService(buildManagementService);
       command.activate();
    }
 
@@ -99,8 +106,6 @@ public class CreateJavaCucumberTestsCommandIT {
       IProjectInformation info = mock(IProjectInformation.class);
       when(projectService.getCucumberTestsProjectName(any(), eq(model))).thenReturn(info);
       when(info.getDirectoryName()).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
-      when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".tests");
-      when(info.getGroupId()).thenReturn(pkg);
       
       info = mock(IProjectInformation.class);
       when(projectService.getBaseServiceProjectName(any(), eq(model))).thenReturn(info);

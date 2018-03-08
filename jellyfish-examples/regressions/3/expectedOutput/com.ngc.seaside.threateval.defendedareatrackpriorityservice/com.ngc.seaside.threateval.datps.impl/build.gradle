@@ -3,7 +3,7 @@ dependencies {
    compile project(':datps.events')
    compile project(':datps.base')
 
-   compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+   compile "com.ngc.seaside:service.api:$starfishVersion"
    compile "com.ngc.blocs:service.api:$blocsCoreVersion"
    compile "org.osgi:osgi.core:$osgiVersion"
    compile "org.osgi:osgi.enterprise:$osgiVersion"

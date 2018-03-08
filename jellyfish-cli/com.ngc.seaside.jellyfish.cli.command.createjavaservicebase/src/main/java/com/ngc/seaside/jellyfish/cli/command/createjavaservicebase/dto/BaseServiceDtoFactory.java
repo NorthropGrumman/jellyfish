@@ -70,7 +70,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                 IJavaServiceGenerationService generateService,
                                 IScenarioService scenarioService,
                                 IDataService dataService,
-                                IDataFieldGenerationService dataFieldGenerationService, ILogService logService) {
+                                IDataFieldGenerationService dataFieldGenerationService,
+                                ILogService logService) {
       this.projectService = projectService;
       this.packageService = packageService;
       this.generateService = generateService;

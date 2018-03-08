@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createdomain;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
@@ -13,7 +14,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -44,6 +46,9 @@ public class CreateDomainCommandIT {
    @Mock
    private IJellyFishCommandOptions options;
 
+   @Mock
+   private IBuildManagementService buildManagementService;
+
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
    private Path outputDirectory;
@@ -53,6 +58,7 @@ public class CreateDomainCommandIT {
    public void setup() throws IOException {
       cmd = new CreateDomainCommand();
       cmd.setLogService(mock(ILogService.class));
+      cmd.setBuildManagementService(buildManagementService);
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
                                                         .setTemplateDirectory(
                                                            CreateDomainCommand.class.getPackage().getName(),
@@ -88,6 +94,9 @@ public class CreateDomainCommandIT {
       model.addInput("input2", child);
       when(systemDescriptor.findModel("com.ngc.Model")).thenReturn(Optional.of(model));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(), model.getFullyQualifiedName()));
+
+      when(buildManagementService.registerDependency(options, CreateDomainCommand.BLOCS_PLUGINS_DEPENDENCY))
+            .thenReturn(null);
    }
 
    @Test
@@ -101,6 +110,8 @@ public class CreateDomainCommandIT {
 
       Path domain = projectDir.resolve(CreateDomainCommand.DOMAIN_PATH).resolve("com.ngc.Model.xml");
       assertTrue(Files.isRegularFile(domain));
+
+      verify(buildManagementService).registerDependency(options, CreateDomainCommand.BLOCS_PLUGINS_DEPENDENCY);
    }
 
    private void checkGradleBuild(Path projectDir, String... fileContents) throws IOException {

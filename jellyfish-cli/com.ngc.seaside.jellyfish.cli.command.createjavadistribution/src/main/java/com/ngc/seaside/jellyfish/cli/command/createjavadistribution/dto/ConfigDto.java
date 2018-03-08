@@ -1,14 +1,27 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Set;
 
 public class ConfigDto {
+
+   private final IBuildManagementService buildManagementService;
+   private final IJellyFishCommandOptions options;
+
    private IModel model;
    private String packageName;
    private String projectName;
    private Set<String> projectDependencies;
+
+   public ConfigDto(IBuildManagementService buildManagementService,
+                    IJellyFishCommandOptions options) {
+      this.buildManagementService = buildManagementService;
+      this.options = options;
+   }
 
    public IModel getModel() {
       return model;
@@ -43,5 +56,13 @@ public class ConfigDto {
 
    public void setProjectDependencies(Set<String> projectDependencies) {
       this.projectDependencies = projectDependencies;
+   }
+
+   public String getFormattedDependency(String groupAndArtifactId) {
+      IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
+      return String.format("%s:%s:$%s",
+                           dependency.getGroupId(),
+                           dependency.getArtifactId(),
+                           dependency.getVersionPropertyName());
    }
 }

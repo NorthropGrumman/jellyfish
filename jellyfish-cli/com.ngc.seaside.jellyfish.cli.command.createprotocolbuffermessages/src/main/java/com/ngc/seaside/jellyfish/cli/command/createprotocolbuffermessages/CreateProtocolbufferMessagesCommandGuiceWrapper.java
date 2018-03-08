@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -26,13 +27,15 @@ public class CreateProtocolbufferMessagesCommandGuiceWrapper implements IJellyFi
                                                           IPackageNamingService packageNamingService,
                                                           ITemplateService templateService,
                                                           IDataService dataService,
-                                                          IDataFieldGenerationService dataFieldGenerationService) {
+                                                          IDataFieldGenerationService dataFieldGenerationService,
+                                                          IBuildManagementService buildManagementService) {
       delegate.setLogService(logService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
       delegate.setTemplateService(templateService);
       delegate.setDataService(dataService);
       delegate.setDataFieldGenerationService(dataFieldGenerationService);
+      delegate.setBuildManagementService(buildManagementService);
       delegate.activate();
    }
 

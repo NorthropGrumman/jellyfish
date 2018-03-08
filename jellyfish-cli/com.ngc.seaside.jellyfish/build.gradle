@@ -68,8 +68,6 @@ dependencies {
     implementation project(':jellyfish.cli.command.createjavacucumbertests')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
 
-
-
     implementation project(':guice.modules')
     implementation project(':jellyfish.service.name.impl.namingservices')
     implementation project(':jellyfish.service.codegen.impl.codegenservices')
@@ -78,6 +76,7 @@ dependencies {
     implementation project(':jellyfish.service.config.impl.transportconfigurationservice')
     implementation project(':jellyfish.service.requirements.impl.requirementsservice')
     implementation project(':jellyfish.service.feature.impl.featureservice')
+    implementation project(':jellyfish.service.buildmgmt.impl.buildmgmtservice')
 
     implementation project(':jellyfish.service.impl.parameterservice')
     implementation project(':jellyfish.service.impl.promptuserservice')
@@ -121,4 +120,3 @@ seasideApplication {
 copyApplicationResources {
     dependsOn copyCommandTemplate
 }
-

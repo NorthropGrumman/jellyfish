@@ -37,5 +37,4 @@ public class EventsDto {
       this.exportedPackages = exportedPackages;
       return this;
    }
-
 }

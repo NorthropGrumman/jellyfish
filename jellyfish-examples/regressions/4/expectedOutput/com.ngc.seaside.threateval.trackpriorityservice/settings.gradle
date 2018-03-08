@@ -1,22 +1,19 @@
 rootProject.name = 'com.ngc.seaside.threateval.trackpriorityservice'
 
-include 'com.ngc.seaside.threateval.tps.domain'
-project(':com.ngc.seaside.threateval.tps.domain').name = 'tps.domain'
-
-include 'generated-projects/com.ngc.seaside.threateval.tps.events'
-project(':generated-projects/com.ngc.seaside.threateval.tps.events').name = 'tps.events'
-
-include 'com.ngc.seaside.threateval.tps.tests'
-project(':com.ngc.seaside.threateval.tps.tests').name = 'tps.tests'
+include 'com.ngc.seaside.threateval.tps.config'
+project(':com.ngc.seaside.threateval.tps.config').name = 'tps.config'
 
 include 'com.ngc.seaside.threateval.tps.distribution'
 project(':com.ngc.seaside.threateval.tps.distribution').name = 'tps.distribution'
 
+include 'com.ngc.seaside.threateval.tps.domain'
+project(':com.ngc.seaside.threateval.tps.domain').name = 'tps.domain'
+
 include 'com.ngc.seaside.threateval.tps.impl'
 project(':com.ngc.seaside.threateval.tps.impl').name = 'tps.impl'
 
-include 'com.ngc.seaside.threateval.tps.config'
-project(':com.ngc.seaside.threateval.tps.config').name = 'tps.config'
+include 'com.ngc.seaside.threateval.tps.tests'
+project(':com.ngc.seaside.threateval.tps.tests').name = 'tps.tests'
 
 include 'generated-projects/com.ngc.seaside.threateval.tps.base'
 project(':generated-projects/com.ngc.seaside.threateval.tps.base').name = 'tps.base'
@@ -24,5 +21,9 @@ project(':generated-projects/com.ngc.seaside.threateval.tps.base').name = 'tps.b
 include 'generated-projects/com.ngc.seaside.threateval.tps.connector'
 project(':generated-projects/com.ngc.seaside.threateval.tps.connector').name = 'tps.connector'
 
+include 'generated-projects/com.ngc.seaside.threateval.tps.events'
+project(':generated-projects/com.ngc.seaside.threateval.tps.events').name = 'tps.events'
+
 include 'generated-projects/com.ngc.seaside.threateval.tps.messages'
 project(':generated-projects/com.ngc.seaside.threateval.tps.messages').name = 'tps.messages'
+

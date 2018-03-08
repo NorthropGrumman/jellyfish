@@ -9,7 +9,9 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -58,9 +60,13 @@ public class CreateJavaServiceConfigCommandIT {
    @Mock
    private IPackageNamingService packageService;
 
+   private IBuildManagementService buildManagementService;
+
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
+
+      buildManagementService = new MockedBuildManagementService();
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
@@ -79,8 +85,6 @@ public class CreateJavaServiceConfigCommandIT {
          IModel model = args.getArgument(1);
          IProjectInformation info = mock(IProjectInformation.class);
          when(info.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".config");
-         when(info.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".config");
-         when(info.getGroupId()).thenReturn(model.getParent().getName());
          return info;
       });
       
@@ -102,6 +106,7 @@ public class CreateJavaServiceConfigCommandIT {
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
       command.setTemplateService(templateService);
+      command.setBuildManagementService(buildManagementService);
    }
 
    @Test
@@ -118,11 +123,6 @@ public class CreateJavaServiceConfigCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-config-build.gradle.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.config", "build.gradle"));
-
-      assertFileLinesEquals(
-            "settings.gradle not correct!",
-            Paths.get("src", "test", "resources", "expectedfiles", "service-config-settings.gradle.expected"),
-            Paths.get(outputDirectory.getRoot().getAbsolutePath(), "settings.gradle"));
 
       assertFileLinesEquals(
             "transport config not correct!",

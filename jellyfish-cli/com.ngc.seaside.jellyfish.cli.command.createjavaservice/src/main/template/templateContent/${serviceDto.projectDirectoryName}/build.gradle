@@ -5,12 +5,12 @@ dependencies {
    compile project(':${project}')
 #end
 
-   compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
-   compile "org.osgi:osgi.core:${D}osgiVersion"
-   compile "org.osgi:osgi.enterprise:${D}osgiVersion"
-   compile "com.google.guava:guava:${D}guavaVersion"
+   compile "${serviceDto.getFormattedDependency('com.ngc.seaside:service.api')}"
+   compile "${serviceDto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   compile "${serviceDto.getFormattedDependency('org.osgi:osgi.core')}"
+   compile "${serviceDto.getFormattedDependency('org.osgi:osgi.enterprise')}"
+   compile "${serviceDto.getFormattedDependency('com.google.guava:guava')}"
 
-   testCompile "junit:junit:${D}junitVersion"
-   testCompile "org.mockito:mockito-core:${D}mockitoVersion"
+   testCompile "${serviceDto.getFormattedDependency('junit:junit')}"
+   testCompile "${serviceDto.getFormattedDependency('org.mockito:mockito-core')}"
 }

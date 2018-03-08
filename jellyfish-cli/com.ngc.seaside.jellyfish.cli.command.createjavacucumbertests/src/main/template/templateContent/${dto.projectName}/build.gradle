@@ -7,24 +7,24 @@ dependencies {
     compile project(":${dependency}")
 #end
 
-    compile "com.ngc.seaside:service.api:${D}starfishCoreVersion"
-    compile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsCoreVersion"
-    compile "com.ngc.blocs:service.thread.impl.common.threadservice:${D}blocsCoreVersion"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
+    compile "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
+    compile "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
 
-    compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:${D}transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.testutils:${D}transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.topic.multicast:${D}multicastTransportVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast:${D}multicastTransportVersion"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.testutils')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.topic.multicast')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.provider.multicast')}"
 
-    compile "com.ngc.seaside:guice.modules:${D}jellyfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:${D}transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:${D}multicastTransportVersion"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:guice.modules')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice.module')}"
+    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.provider.multicast.module')}"
 
-    compile "com.google.inject:guice:${D}guiceVersion"
-    compile "com.google.guava:guava:${D}guavaVersion"
-    compile "info.cukes:cucumber-java:${D}cucumberVersion"
-    compile "info.cukes:cucumber-guice:${D}cucumberVersion"
+    compile "${dto.getFormattedDependency('com.google.inject:guice')}"
+    compile "${dto.getFormattedDependency('com.google.guava:guava')}"
+    compile "${dto.getFormattedDependency('info.cukes:cucumber-java')}"
+    compile "${dto.getFormattedDependency('info.cukes:cucumber-guice')}"
 }
 
 ext {
