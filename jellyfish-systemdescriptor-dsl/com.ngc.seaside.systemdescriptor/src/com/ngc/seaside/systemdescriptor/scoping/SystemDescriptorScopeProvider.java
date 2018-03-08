@@ -104,7 +104,22 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 	public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
 		IScope scope;
 		if (context.eContainer() instanceof RefinedLinkDeclaration) {
-			Model model = (Model) context.eContainer() // RefinedLinkDeclaration
+			// This indicates the source or target of a link is directly
+			// referencing an input or output. In the example below "a",
+			// is the current context.
+			// link a -> some.thing
+			Model model = (Model) context
+					.eContainer() // RefinedLinkDeclaration
+					.eContainer() // Links
+					.eContainer(); // Model
+			scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
+		} else if (context.eContainer() instanceof LinkableExpression) {
+			// This indicates the source or target of a link is an expression.
+			// In the example below, "some", is the current context.
+			// link a -> some.thing
+			Model model = (Model) context
+					.eContainer() // LinkableExpression
+					.eContainer() // RefinedLinkDeclaration
 					.eContainer() // Links
 					.eContainer(); // Model
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
@@ -145,18 +160,13 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 			// scope.
 			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
 			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		} /*else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION)) {
-			// Include all field declarations of the referenced model in the
-			// scope.
-			BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
-			scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-		}*/ else {
+		} else {
 			// Otherwise, do the default behavior.
 			scope = delegateGetScope(context, reference);
 		}
-		
-		// TODO TH: if field is proxy, get name, and use name to resolve type.
 
+		// TODO TH: if field is proxy, get name, and use name to resolve type.
+		System.out.println("In scope exp: " + scope.getAllElements());
 		return scope;
 	}
 
@@ -169,8 +179,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 	 *         by the given model
 	 */
 	private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
-		// TODO TH: we can limit the items in scope by examining the type of the
-		// item on the left hand side of the expression.
 		Collection<FieldDeclaration> fields = new ArrayList<>();
 
 		do {

@@ -61,9 +61,8 @@ class Models {
 
             model LinkedClock {
 
-                output {
-                    ZonedTime currentTime {
-                    }
+               input {
+                    ZonedTime currentTime
                 }
                 
                 parts {

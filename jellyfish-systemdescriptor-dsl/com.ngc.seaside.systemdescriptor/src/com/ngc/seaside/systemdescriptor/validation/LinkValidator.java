@@ -21,10 +21,10 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
-	
+
 	@Inject
 	private IQualifiedNameProvider nameProvider;
-	
+
 	@Check
 	public void checkLinkDeclaration(BaseLinkDeclaration link) {
 		checkForValidLinks(link);
@@ -53,6 +53,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		checkForInputField_To_PartOutputField(link);
 		checkForOutputField_To_PartOutputField(link);
 		checkForInputField_To_OutputField(link);
+		checkForOutputField_To_PartInputField(link);
 	}
 
 	protected void checkForValidLinks(BaseLinkDeclaration link) {
@@ -107,7 +108,6 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		// TODO TH: declare duplicate links as a warning, not an error.
 	}
 
-	
 	protected void checkUsageOfEscapeHatCharacterInLinkName(LinkDeclaration link) {
 		// Verify the link name doesn't not have the escape hat
 		if (link.getName().indexOf('^') >= 0) {
@@ -118,7 +118,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 
 	}
-	
+
 	protected void checkForDuplicateLinkNames(LinkDeclaration link) {
 		Links links = (Links) link.eContainer();
 		Model model = (Model) links.eContainer();
@@ -244,7 +244,8 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		FieldDeclaration sourceField = resolveField(source);
 		FieldDeclaration targetField = resolveField(target);
 
-		// Do not allow an expression of an output field to link to an input field of
+		// Do not allow an expression of an output field to link to an input
+		// field of
 		// the model that contains the link.
 		if (isLinkableExpression(source)
 				&& isFieldReference(target)
@@ -267,7 +268,8 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		FieldDeclaration sourceField = resolveField(source);
 		FieldDeclaration targetField = resolveField(target);
 
-		// Do not allow an input field of the model to link to an expression of an outout field.
+		// Do not allow an input field of the model to link to an expression of
+		// an outout field.
 		if (isFieldReference(source)
 				&& isLinkableExpression(target)
 				&& sourceField.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION)
@@ -304,6 +306,25 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 	}
 
+	protected void checkForOutputField_To_PartInputField(BaseLinkDeclaration link) {
+		LinkableReference source = link.getSource();
+		LinkableReference target = link.getTarget();
+
+		FieldDeclaration sourceField = resolveField(source);
+		FieldDeclaration targetField = resolveField(target);
+
+		if (isFieldReference(source)
+				&& isLinkableExpression(target)
+				&& sourceField.eClass().equals(SystemDescriptorPackage.Literals.OUTPUT_DECLARATION)
+				&& targetField.eClass().equals(SystemDescriptorPackage.Literals.INPUT_DECLARATION)) {
+
+			String msg = String.format(
+					"Cannot link the output field '%s' of the current model to any input field of a part or requirement.",
+					sourceField.getName());
+			error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+		}
+	}
+
 	protected void checkForInputField_To_OutputField(BaseLinkDeclaration link) {
 		LinkableReference source = link.getSource();
 		LinkableReference target = link.getTarget();
@@ -334,7 +355,7 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 		return "";
 	}
-	
+
 	private static FieldDeclaration resolveField(LinkableReference ref) {
 		FieldDeclaration field;
 		if (ref.eClass().equals(SystemDescriptorPackage.Literals.FIELD_REFERENCE)) {
@@ -346,11 +367,11 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
 		}
 		return field;
 	}
-	
+
 	private static boolean isLinkableExpression(LinkableReference ref) {
 		return ref.eClass().equals(SystemDescriptorPackage.Literals.LINKABLE_EXPRESSION);
 	}
-	
+
 	private static boolean isFieldReference(LinkableReference ref) {
 		return !isLinkableExpression(ref);
 	}

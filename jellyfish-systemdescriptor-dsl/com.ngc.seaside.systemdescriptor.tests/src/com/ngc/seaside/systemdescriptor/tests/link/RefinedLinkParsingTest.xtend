@@ -16,6 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -97,6 +98,33 @@ class RefinedLinkParsingTest {
 
                 links {
                     refine link currentTime -> clockA.inputTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    }
+    
+    @Test
+    @Ignore("Fix this")
+    def void testDoesNotParseRefinedModelWithRefinedLinkThatIsNotInTheModelBeginRefined() {
+
+        var source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model AlarmClock refines LinkedClock {
+
+                links {
+                    refine link clockA.currentTime -> clockA.inputTime
                 }
             }
         '''

@@ -383,10 +383,43 @@ class LinkSourceAndTargetParsingTest {
         )
 	}
 	
-		@Test
-	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
+	@Test
+	def void testDoesNotParseModelWithLink_From_OutputField_To_PartInputField() {
+		var source = '''
+            package clocks.models
 
-		        var source = '''
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Alarm
+            import clocks.models.part.Clock
+
+            model AlarmClock {
+                output {
+                    ZonedTime currentTime
+                }
+
+                parts {
+                    Alarm alarm
+                    Clock clock
+                }
+
+                links {
+                    link currentTime -> clock.inputTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
+		var source = '''
             package clocks.models
 
             import clocks.datatypes.ZonedTime
