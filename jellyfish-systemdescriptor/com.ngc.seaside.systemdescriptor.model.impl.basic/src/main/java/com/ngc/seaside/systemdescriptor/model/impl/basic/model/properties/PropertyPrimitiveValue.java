@@ -11,7 +11,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrim
 public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPrimitiveValue {
 
    private final Object value;
-   
+
    /**
     * Constructs an unset PropertyPrimitiveValue of the given type.
     * @param type the value's type
@@ -20,31 +20,31 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
       super(type, false);
       this.value = null;
    }
-   
+
    public PropertyPrimitiveValue(BigInteger value) {
       super(DataTypes.INT, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
-   
+
    public PropertyPrimitiveValue(BigDecimal value) {
       super(DataTypes.FLOAT, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
-   
+
    public PropertyPrimitiveValue(String value) {
       super(DataTypes.STRING, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
-   
+
    public PropertyPrimitiveValue(boolean value) {
       super(DataTypes.BOOLEAN, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
-   
+
    @Override
    public BigInteger getInteger() {
       checkType(DataTypes.INT);
@@ -68,14 +68,14 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
       checkType(DataTypes.STRING);
       return (String) value;
    }
-   
+
    private void checkType(DataTypes expectedType) {
       super.checkIsSet();
       if (getType() != expectedType) {
          throw new IllegalStateException("Cannot get a value of type " + expectedType + ": actual type is " + getType());
       }
    }
-   
+
    @Override
    public int hashCode() {
       return Objects.hash(value);
@@ -97,5 +97,5 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
    public String toString() {
       return "PropertyPrimitiveValue[type=" + getType() + ", value=" + value + "]";
    }
-   
+
 }
