@@ -2,9 +2,12 @@ package com.ngc.seaside.jellyfish.cli.gradle;
 
 import com.google.inject.Module;
 
-import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateServiceGuiceModule;
+import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.seaside.jellyfish.JellyFish;
 import com.ngc.seaside.jellyfish.JellyFishServiceModule;
+import com.ngc.seaside.jellyfish.cli.gradle.adapter.ClasspathResourceService;
+import com.ngc.seaside.jellyfish.cli.gradle.adapter.ClasspathTemplateService;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateServiceGuiceModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class GradleJellyFishRunner {
       // Do no load these modules if they are present.
       ignoring.add(XTextSystemDescriptorServiceModule.class);
       ignoring.add(TemplateServiceGuiceModule.class);
+      ignoring.add(ResourceServiceModule.class);
       MODULES_TO_IGNORE = Collections.unmodifiableSet(ignoring);
    }
 
@@ -44,8 +48,9 @@ public class GradleJellyFishRunner {
       }
       // Register the standalone version of the XText service.
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      // Register the custom template service used for gradle builds.
-      modules.add(JarTemplateService.MODULE);
+      // Register the custom services used for gradle builds.
+      modules.add(ClasspathTemplateService.MODULE);
+      modules.add(ClasspathResourceService.MODULE);
       return modules;
    }
 

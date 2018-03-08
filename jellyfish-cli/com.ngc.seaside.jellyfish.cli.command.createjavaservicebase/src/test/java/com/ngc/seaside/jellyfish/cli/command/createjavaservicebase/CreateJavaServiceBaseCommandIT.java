@@ -1,18 +1,24 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -24,6 +30,8 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.JellyfishCommandPhase;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -80,7 +88,7 @@ public class CreateJavaServiceBaseCommandIT {
 
    @Mock
    private IJavaServiceGenerationService generatorService;
-   
+
    @Mock
    private IScenarioService scenarioService;
 
@@ -90,21 +98,35 @@ public class CreateJavaServiceBaseCommandIT {
    @Mock
    private IDataFieldGenerationService dataFieldGenerationService;
 
+   private IBuildManagementService buildManagementService;
+
    private IModel model = newModelForTesting();
 
    @Before
    public void setup() throws Throwable {
       tempFolder.newFile("settings.gradle");
       outputDirectory = tempFolder.getRoot();
-      //outputDirectory = new File("build"); // TODO TH: remove this line.
+
+      buildManagementService = new MockedBuildManagementService();
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
-                  CreateJavaServiceBaseCommand.class.getPackage().getName(),
-                  Paths.get("src", "main", "template"));
+                  CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
+                  + SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", "genbuild"))
+            .setTemplateDirectory(
+                  CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
+                  + SERVICE_BASE_BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", "build"));
 
-      templateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      templateDaoFactory = new BaseServiceDtoFactory(projectService,
+                                                     packageService,
+                                                     generatorService,
+                                                     scenarioService,
+                                                     dataService,
+                                                     dataFieldGenerationService,
+                                                     logService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
@@ -119,6 +141,7 @@ public class CreateJavaServiceBaseCommandIT {
       command.setTemplateDaoFactory(templateDaoFactory);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
+      command.setBuildManagementService(buildManagementService);
 
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
@@ -173,7 +196,7 @@ public class CreateJavaServiceBaseCommandIT {
          typeDto.setTypeName(child.getName());
          return typeDto;
       });
-      
+
       when(generatorService.getTransportTopicsDescription(any(), eq(model))).thenAnswer(args -> {
          EnumDto dto = new EnumDto();
          dto.setName("EngagementTrackPriorityServiceTransportTopics");
@@ -182,9 +205,8 @@ public class CreateJavaServiceBaseCommandIT {
          dto.setValues(new LinkedHashSet<>(Arrays.asList("TRACK_ENGAGEMENT_STATUS", "TRACK_PRIORITY")));
          return dto;
       });
-      
-      
-      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);  
+
+      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);
       IScenario scenario = model.getScenarios().getByName("calculateTrackPriority").get();
       IDataReferenceField input = model.getInputs().iterator().next();
       IDataReferenceField output = model.getOutputs().iterator().next();
@@ -193,15 +215,16 @@ public class CreateJavaServiceBaseCommandIT {
       when(flow.getOutputs()).thenReturn(Collections.singleton(output));
       when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
       when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
+
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
+                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
+                                                     outputDirectory.getAbsolutePath()));
    }
 
    @Test
-   public void testGeneratePubSub() throws Throwable {
-      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.MODEL_PROPERTY,
-                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
-      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceBaseCommand.OUTPUT_DIRECTORY_PROPERTY,
-                                                     outputDirectory.getAbsolutePath()));
-      
+   public void testDoesRunDeferredPhase() throws Throwable {
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED));
       command.run(jellyFishCommandOptions);
 
       Path gradleBuildPath = Paths.get(outputDirectory.getAbsolutePath(),
@@ -237,6 +260,19 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(topicsPath, "\\bimplements\\s+\\S*\\bITransportTopic\\b");
       assertFileContains(topicsPath, "TRACK_ENGAGEMENT_STATUS");
       assertFileContains(topicsPath, "TRACK_PRIORITY");
+   }
+
+   @Test
+   public void testDoesRunDefaultPhase() throws Throwable {
+      command.run(jellyFishCommandOptions);
+
+      Path projectDirectory = outputDirectory
+            .toPath()
+            .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.base");
+      assertFileLinesEquals(
+            "build.gradle not correct!",
+            Paths.get("src", "test", "resources", "build.gradle.expected"),
+            projectDirectory.resolve("build.gradle"));
    }
 
    public static IModel newModelForTesting() {

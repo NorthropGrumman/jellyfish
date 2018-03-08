@@ -5,19 +5,19 @@ dependencies {
     compile project(":etps.messages")
     compile project(":etps.base")
 
-    compile "com.ngc.seaside:service.api:$starfishCoreVersion"
+    compile "com.ngc.seaside:service.api:$starfishVersion"
     compile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
     compile "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
 
-    compile "com.ngc.seaside:service.transport.api:$transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:$transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.testutils:$transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.topic.multicast:$multicastTransportVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast:$multicastTransportVersion"
+    compile "com.ngc.seaside:service.transport.api:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.testutils:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.topic.multicast:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast:$starfishVersion"
 
     compile "com.ngc.seaside:guice.modules:$jellyfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$transportServiceVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$multicastTransportVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$starfishVersion"
 
     compile "com.google.inject:guice:$guiceVersion"
     compile "com.google.guava:guava:$guavaVersion"

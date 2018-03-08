@@ -1,22 +1,19 @@
 rootProject.name = 'com.ngc.example.correlation.peanutbutterservice'
 
-include 'com.ngc.example.correlation.pbs.domain'
-project(':com.ngc.example.correlation.pbs.domain').name = 'pbs.domain'
-
-include 'generated-projects/com.ngc.example.correlation.pbs.events'
-project(':generated-projects/com.ngc.example.correlation.pbs.events').name = 'pbs.events'
-
-include 'com.ngc.example.correlation.pbs.tests'
-project(':com.ngc.example.correlation.pbs.tests').name = 'pbs.tests'
+include 'com.ngc.example.correlation.pbs.config'
+project(':com.ngc.example.correlation.pbs.config').name = 'pbs.config'
 
 include 'com.ngc.example.correlation.pbs.distribution'
 project(':com.ngc.example.correlation.pbs.distribution').name = 'pbs.distribution'
 
+include 'com.ngc.example.correlation.pbs.domain'
+project(':com.ngc.example.correlation.pbs.domain').name = 'pbs.domain'
+
 include 'com.ngc.example.correlation.pbs.impl'
 project(':com.ngc.example.correlation.pbs.impl').name = 'pbs.impl'
 
-include 'com.ngc.example.correlation.pbs.config'
-project(':com.ngc.example.correlation.pbs.config').name = 'pbs.config'
+include 'com.ngc.example.correlation.pbs.tests'
+project(':com.ngc.example.correlation.pbs.tests').name = 'pbs.tests'
 
 include 'generated-projects/com.ngc.example.correlation.pbs.base'
 project(':generated-projects/com.ngc.example.correlation.pbs.base').name = 'pbs.base'
@@ -24,5 +21,9 @@ project(':generated-projects/com.ngc.example.correlation.pbs.base').name = 'pbs.
 include 'generated-projects/com.ngc.example.correlation.pbs.connector'
 project(':generated-projects/com.ngc.example.correlation.pbs.connector').name = 'pbs.connector'
 
+include 'generated-projects/com.ngc.example.correlation.pbs.events'
+project(':generated-projects/com.ngc.example.correlation.pbs.events').name = 'pbs.events'
+
 include 'generated-projects/com.ngc.example.correlation.pbs.messages'
 project(':generated-projects/com.ngc.example.correlation.pbs.messages').name = 'pbs.messages'
+

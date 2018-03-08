@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto;
 
 import com.google.common.base.Objects;
+
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class ConnectorDto {
+
    private IModel model;
    private String packageName;
    private Function<IData, Collection<IDataField>> fields;
@@ -274,5 +276,4 @@ public class ConnectorDto {
    public String messageRepeatedCount(IDataField field) {
       return dataFieldService.getMessagesField(options, field).getJavaField().getRepeatedJavaCountName();
    }
-
 }

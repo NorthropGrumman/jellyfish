@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservice;
 
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +14,9 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFa
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
-import com.ngc.seaside.jellyfish.cli.command.test.template.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -91,9 +94,12 @@ public class CreateJavaServiceCommandIT {
 
    @Mock
    private IDataFieldGenerationService dataFieldGenerationService;
+
+   private IBuildManagementService buildManagementService;
    
    @Before
    public void setup() throws Throwable {
+      buildManagementService = new MockedBuildManagementService();
       outputDirectory.newFile("settings.gradle");
 
       templateService = new MockedTemplateService()
@@ -102,9 +108,15 @@ public class CreateJavaServiceCommandIT {
                      CreateJavaServiceCommand.class.getPackage().getName(),
                      Paths.get("src", "main", "template"));
 
-      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService);
+      serviceTemplateDaoFactory = new ServiceDtoFactory(projectService, packageService, buildManagementService);
 
-      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService, packageService, generatorService, scenarioService, dataService, dataFieldGenerationService, logService);
+      baseServiceTemplateDaoFactory = new BaseServiceDtoFactory(projectService,
+                                                                packageService,
+                                                                generatorService,
+                                                                scenarioService,
+                                                                dataService,
+                                                                dataFieldGenerationService,
+                                                                logService);
       
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       IModel testModel = newModelForTesting();
@@ -122,6 +134,7 @@ public class CreateJavaServiceCommandIT {
       command.setBaseServiceTemplateDaoFactory(baseServiceTemplateDaoFactory);
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
+      command.setBuildManagementService(buildManagementService);
 
       when(projectService.getServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);

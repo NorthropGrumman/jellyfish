@@ -1,22 +1,19 @@
 rootProject.name = 'com.ngc.seaside.threateval.classificationtrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.ctps.domain'
-project(':com.ngc.seaside.threateval.ctps.domain').name = 'ctps.domain'
-
-include 'generated-projects/com.ngc.seaside.threateval.ctps.events'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.events').name = 'ctps.events'
-
-include 'com.ngc.seaside.threateval.ctps.tests'
-project(':com.ngc.seaside.threateval.ctps.tests').name = 'ctps.tests'
+include 'com.ngc.seaside.threateval.ctps.config'
+project(':com.ngc.seaside.threateval.ctps.config').name = 'ctps.config'
 
 include 'com.ngc.seaside.threateval.ctps.distribution'
 project(':com.ngc.seaside.threateval.ctps.distribution').name = 'ctps.distribution'
 
+include 'com.ngc.seaside.threateval.ctps.domain'
+project(':com.ngc.seaside.threateval.ctps.domain').name = 'ctps.domain'
+
 include 'com.ngc.seaside.threateval.ctps.impl'
 project(':com.ngc.seaside.threateval.ctps.impl').name = 'ctps.impl'
 
-include 'com.ngc.seaside.threateval.ctps.config'
-project(':com.ngc.seaside.threateval.ctps.config').name = 'ctps.config'
+include 'com.ngc.seaside.threateval.ctps.tests'
+project(':com.ngc.seaside.threateval.ctps.tests').name = 'ctps.tests'
 
 include 'generated-projects/com.ngc.seaside.threateval.ctps.base'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.base').name = 'ctps.base'
@@ -24,5 +21,9 @@ project(':generated-projects/com.ngc.seaside.threateval.ctps.base').name = 'ctps
 include 'generated-projects/com.ngc.seaside.threateval.ctps.connector'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.connector').name = 'ctps.connector'
 
+include 'generated-projects/com.ngc.seaside.threateval.ctps.events'
+project(':generated-projects/com.ngc.seaside.threateval.ctps.events').name = 'ctps.events'
+
 include 'generated-projects/com.ngc.seaside.threateval.ctps.messages'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.messages').name = 'ctps.messages'
+

@@ -7,12 +7,19 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Default implementation of the {@link IParameterCollection} interface that is backed by a
- * {@link java.util.LinkedHashMap}
+ * Default implementation of the {@link IParameterCollection} interface that is backed by a {@link
+ * java.util.LinkedHashMap}
  */
 public class DefaultParameterCollection implements IParameterCollection {
 
    private Map<String, IParameter<?>> parameterMap = new LinkedHashMap<>();
+
+   public DefaultParameterCollection() {
+   }
+
+   public DefaultParameterCollection(IParameterCollection collection) {
+      parameterMap.putAll(collection.getParameterMap());
+   }
 
    @Override
    public boolean isEmpty() {
@@ -43,18 +50,22 @@ public class DefaultParameterCollection implements IParameterCollection {
     * Add parameters to the collection.
     *
     * @param parameter the parameter to add.
+    * @return this collection
     */
-   public void addParameter(IParameter<?> parameter) {
+   public DefaultParameterCollection addParameter(IParameter<?> parameter) {
       parameterMap.put(parameter.getName(), parameter);
+      return this;
    }
 
    /**
     * Add the given parameters to the collection in the order that they are in the list.
     *
     * @param parameters the parameters to add.
+    * @return this collection
     */
-   public void addParameters(List<IParameter<?>> parameters) {
+   public DefaultParameterCollection addParameters(List<IParameter<?>> parameters) {
       parameters.forEach(this::addParameter);
+      return this;
    }
 
    @Override

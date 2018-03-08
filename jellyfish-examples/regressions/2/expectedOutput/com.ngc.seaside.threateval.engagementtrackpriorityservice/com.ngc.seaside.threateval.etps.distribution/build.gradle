@@ -22,33 +22,32 @@ dependencies {
    bundles project(":etps.messages")
    bundles project(":etps.impl")
 
-   bundles "com.ngc.seaside:service.api:$starfishCoreVersion"
-   bundles "com.ngc.seaside:fault.impl.faultloggingservice:$starfishCoreVersion"
-   bundles "com.ngc.seaside:monitoring.impl.loggingmonitoringservice:$starfishCoreVersion"
-   bundles "com.ngc.seaside:service.transport.api:$transportServiceVersion"
-   bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:$transportServiceVersion"
-   bundles "com.ngc.seaside:service.transport.impl.topic.multicast:$multicastTransportVersion"
-   bundles "com.ngc.seaside:service.transport.impl.provider.multicast:$multicastTransportVersion"
+   bundles "com.ngc.seaside:service.api:$starfishVersion"
+   bundles "com.ngc.seaside:fault.impl.faultloggingservice:$starfishVersion"
+   bundles "com.ngc.seaside:monitoring.impl.loggingmonitoringservice:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.api:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.impl.topic.multicast:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.impl.provider.multicast:$starfishVersion"
 
-   blocs "com.ngc.blocs:api:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:file.impl.common.fileutilities:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:security.impl.common.securityutilities:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:jaxb.impl.common.jaxbutilities:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:xml.resource.impl.common.xmlresource:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.log.impl.common.logservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.api:${blocsCoreVersion}"
-   //blocs "com.ngc.blocs:service.lifecycle.impl.common.basiclifecyclemgmtservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.event.impl.common.eventservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.resource.impl.common.resourceservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:notification.impl.common.notificationsupport:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:properties.resource.impl.common.propertiesresource:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.framework.impl.common.frameworkmgmtservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:component.impl.common.componentutilities:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.notification.impl.common.notificationservice:${blocsCoreVersion}"
-   blocs "com.ngc.blocs:service.thread.impl.common.threadservice:${blocsCoreVersion}"
+   blocs "com.ngc.blocs:api:$blocsCoreVersion"
+   blocs "com.ngc.blocs:file.impl.common.fileutilities:$blocsCoreVersion"
+   blocs "com.ngc.blocs:security.impl.common.securityutilities:$blocsCoreVersion"
+   blocs "com.ngc.blocs:jaxb.impl.common.jaxbutilities:$blocsCoreVersion"
+   blocs "com.ngc.blocs:xml.resource.impl.common.xmlresource:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.log.impl.common.logservice:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.api:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.event.impl.common.eventservice:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsCoreVersion"
+   blocs "com.ngc.blocs:notification.impl.common.notificationsupport:$blocsCoreVersion"
+   blocs "com.ngc.blocs:properties.resource.impl.common.propertiesresource:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.framework.impl.common.frameworkmgmtservice:$blocsCoreVersion"
+   blocs "com.ngc.blocs:component.impl.common.componentutilities:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.notification.impl.common.notificationservice:$blocsCoreVersion"
+   blocs "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
 
    thirdParty 'com.google.guava:guava:17.0'
-   thirdParty2 "com.google.guava:guava:${guavaVersion}" // Note we need 2 versions of guava so we have to do this.
+   thirdParty2 "com.google.guava:guava:$guavaVersion"
    thirdParty 'commons-io:commons-io:1.4'
    thirdParty 'log4j:log4j-osgi:1.2.17' // This version has the corrected log4j manifest.
    thirdParty 'commons-beanutils:commons-beanutils:1.8.3'
@@ -57,7 +56,7 @@ dependencies {
    thirdParty 'commons-logging:commons-logging-osgi:1.1.1'
    thirdParty "com.google.protobuf:protobuf-java:$protobufVersion"
 
-   platform "com.ngc.blocs:service.deployment.impl.common.autodeploymentservice:${blocsCoreVersion}"
+   platform "com.ngc.blocs:service.deployment.impl.common.autodeploymentservice:$blocsCoreVersion"
    platform "org.eclipse.equinox:equinox-common:3.6.200.v20130402-1505"
    platform "org.eclipse.equinox:equinox-osgi-services:3.4.0.v20140312-2051"
    platform "org.eclipse.equinox:equinox-console:1.1.0.v20140131-1639"

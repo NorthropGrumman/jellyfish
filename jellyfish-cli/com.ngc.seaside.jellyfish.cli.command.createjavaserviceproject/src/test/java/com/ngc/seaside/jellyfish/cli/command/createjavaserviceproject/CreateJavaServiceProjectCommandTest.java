@@ -1,15 +1,10 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IParameter;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -23,15 +18,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -50,12 +41,6 @@ public class CreateJavaServiceProjectCommandTest {
    private ILogService logService;
 
    @Mock
-   private ITemplateService templateService;
-
-   @Mock
-   private IProjectNamingService projectNamingService;
-
-   @Mock
    private IJellyFishCommandProvider commandProvider;
 
    @Mock
@@ -63,9 +48,6 @@ public class CreateJavaServiceProjectCommandTest {
 
    @Mock
    private IModel model;
-
-   @Mock
-   private IProjectInformation projectInformation;
 
    @Rule
    public TemporaryFolder outputDirectory = new TemporaryFolder();
@@ -75,17 +57,7 @@ public class CreateJavaServiceProjectCommandTest {
    private DefaultParameterCollection parameters;
 
    @Before
-   public void setup() throws Throwable {
-      when(projectInformation.getDirectoryName()).thenReturn("projectDirectory");
-      when(projectNamingService.getBaseServiceProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
-      when(projectNamingService.getEventsProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
-      when(projectNamingService.getConnectorProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
-      when(projectNamingService.getMessageProjectName(any(IJellyFishCommandOptions.class), eq(model)))
-            .thenReturn(projectInformation);
-
+   public void setup() {
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
       IPackage packagez = mock(IPackage.class);
@@ -104,13 +76,11 @@ public class CreateJavaServiceProjectCommandTest {
       command = new CreateJavaServiceProjectCommand();
       command.setLogService(logService);
       command.setJellyFishCommandProvider(commandProvider);
-      command.setTemplateService(templateService);
-      command.setProjectNamingService(projectNamingService);
       command.activate();
    }
 
    @Test
-   public void testDoesCreateProjectWithSuppliedParameters() throws Throwable {
+   public void testDoesCreateProjectWithSuppliedParameters() {
 
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.MODEL_PROPERTY,
                                                      model.getFullyQualifiedName()));
@@ -120,11 +90,6 @@ public class CreateJavaServiceProjectCommandTest {
                                                      "my.group"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.PROJECT_NAME_PROPERTY,
                                                      "my-project"));
-      //TODO remove or refactor
-//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.REPOSITORY_URL, 
-//    		  "http://10.207.42.137/nexus/repository/maven-public/"));
-//      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceProjectCommand.GROUP_ARTIFACT_VERSION_EXTENSION, 
-//    		  "com.ngc.seaside. threateval:threatevaluation.descriptor:2.0.0"));
 
       command.run(options);
 
@@ -153,38 +118,26 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateServiceConfigCommand(capture.getValue(), "my-project");
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_BASE_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateServiceBaseCommand(capture.getValue(), "my-project");
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_EVENTS_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreateEventsCommand(capture.getValue(), "my-project");
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreatePbMessagesCommand(capture.getValue(), "my-project");
 
-      verify(templateService).unpack(
-            eq(CreateJavaServiceProjectCommand.class.getPackage().getName()),
-            withParameter(CreateJavaServiceProjectCommand.GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME,
-                          CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
-            any(Path.class),
-            eq(false));
+      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
+                                  capture.capture());
+      verifyParametersForCreatePubsubConnectorCommand(capture.getValue(), "my-project");
    }
 
 
    @Test
-   public void testWithoutDomain() throws Throwable {
+   public void testWithoutDomain() {
       String modelName = model.getFullyQualifiedName();
 
       parameters.addParameter(
@@ -238,8 +191,36 @@ public class CreateJavaServiceProjectCommandTest {
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
 
+   private void verifyParametersForCreateServiceBaseCommand(IJellyFishCommandOptions options,
+                                                            String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
    private void verifyParametersForCreateServiceConfigCommand(IJellyFishCommandOptions options,
                                                               String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreatePbMessagesCommand(IJellyFishCommandOptions options,
+                                                           String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreatePubsubConnectorCommand(IJellyFishCommandOptions options,
+                                                                String projectName) {
+      requireParameter(options,
+                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
+                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
+   }
+
+   private void verifyParametersForCreateEventsCommand(IJellyFishCommandOptions options,
+                                                       String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
@@ -251,12 +232,5 @@ public class CreateJavaServiceProjectCommandTest {
       assertEquals("value of parameter " + parameter + " incorrect!",
                    value,
                    options.getParameters().getParameter(parameter).getValue());
-   }
-
-   private static IParameterCollection withParameter(final String name, final Object value) {
-      return argThat(argument -> {
-         IParameter<?> param = argument.getParameter(name);
-         return param != null & Objects.equals(value, param.getValue());
-      });
    }
 }

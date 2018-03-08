@@ -3,14 +3,14 @@
 dependencies {
    compile project(':${dto.baseProjectArtifactName}')
 
-   compile "com.ngc.seaside:service.transport.api:${D}transportServiceVersion"
-   compile "com.ngc.blocs:service.api:${D}blocsCoreVersion"
-   compile "com.ngc.blocs:properties.resource.impl.common.propertiesresource:${D}blocsCoreVersion"
-   compile "org.osgi:osgi.core:${D}osgiVersion"
-   compile "org.osgi:osgi.enterprise:${D}osgiVersion"
-   compile "com.google.guava:guava:${D}guavaVersion"
+   compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+   compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   compile "${dto.getFormattedDependency('com.ngc.blocs:properties.resource.impl.common.propertiesresource')}"
+   compile "${dto.getFormattedDependency('org.osgi:osgi.core')}"
+   compile "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
+   compile "${dto.getFormattedDependency('com.google.guava:guava')}"
 
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsCoreVersion"
-   testCompile "junit:junit:${D}junitVersion"
-   testCompile "org.mockito:mockito-core:${D}mockitoVersion"
+   testCompile "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
+   testCompile "${dto.getFormattedDependency('junit:junit')}"
+   testCompile "${dto.getFormattedDependency('org.mockito:mockito-core')}"
 }

@@ -1,16 +1,11 @@
 package com.ngc.seaside.jellyfish.cli.command.samplecommand;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
-import com.ngc.seaside.jellyfish.api.CommandException;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,8 +15,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
- * The default java bundle built using Gradle. This command does have a template and should be modified
- * to support any structural changes to the project.
+ * The default java bundle built using Gradle. This command does have a template and should be modified to support any
+ * structural changes to the project.
  */
 @Component(service = IJellyFishCommand.class)
 public class SampleCommand implements IJellyFishCommand {
@@ -76,16 +71,6 @@ public class SampleCommand implements IJellyFishCommand {
 
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
-      IParameterCollection parameters = commandOptions.getParameters();
-
-      try {
-         if (!GradleSettingsUtilities.tryAddProject(parameters)) {
-            logService.warn(getClass(), "Unable to add the new project to settings.gradle.");
-         }
-      } catch (FileUtilitiesException e) {
-         logService.warn(getClass(), e, "Unable to add the new project to settings.gradle.");
-         throw new CommandException(e);
-      }
    }
 
    /**
@@ -95,11 +80,11 @@ public class SampleCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-         "Create a new Java bundle. This requires that a settings.gradle file be present in the output directory. See the init-java-gradle-repo command.",
-         CommonParameters.CLASSNAME.required(),
-         CommonParameters.GROUP_ID.required(),
-         CommonParameters.ARTIFACT_ID.required(),
-         CommonParameters.PACKAGE.required(),
-         CommonParameters.OUTPUT_DIRECTORY.required());
+            "Create a new Java bundle. This requires that a settings.gradle file be present in the output directory. See the init-java-gradle-repo command.",
+            CommonParameters.CLASSNAME.required(),
+            CommonParameters.GROUP_ID.required(),
+            CommonParameters.ARTIFACT_ID.required(),
+            CommonParameters.PACKAGE.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required());
    }
 }

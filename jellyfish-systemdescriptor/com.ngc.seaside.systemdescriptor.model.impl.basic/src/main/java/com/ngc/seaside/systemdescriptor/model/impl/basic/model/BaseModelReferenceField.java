@@ -6,6 +6,8 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -19,11 +21,13 @@ public class BaseModelReferenceField implements IModelReferenceField {
    protected IMetadata metadata;
    protected IModel type;
    protected IModel parent;
+   protected IProperties properties;
 
    public BaseModelReferenceField(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       this.name = name;
+      this.properties = new Properties();
    }
 
    @Override
@@ -62,6 +66,17 @@ public class BaseModelReferenceField implements IModelReferenceField {
       parent = model;
 
    }
+   
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IReferenceField setProperties(IProperties properties) {
+      this.properties = properties;
+      return this;
+   }
 
    @Override
    public boolean equals(Object o) {
@@ -75,12 +90,13 @@ public class BaseModelReferenceField implements IModelReferenceField {
       return Objects.equals(name, that.name) &&
              Objects.equals(metadata, that.metadata) &&
              Objects.equals(type, that.type) &&
-             parent == that.parent;
+             parent == that.parent &&
+             Objects.equals(properties, that.properties);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, metadata, type, System.identityHashCode(parent));
+      return Objects.hash(name, metadata, type, System.identityHashCode(parent), properties);
    }
 
    @Override
@@ -90,6 +106,7 @@ public class BaseModelReferenceField implements IModelReferenceField {
              ", metadata=" + metadata +
              ", type=" + type +
              ", parent=" + (parent == null ? "null" : parent.getName()) +
+             ", properties=" + properties +
              ']';
    }
 

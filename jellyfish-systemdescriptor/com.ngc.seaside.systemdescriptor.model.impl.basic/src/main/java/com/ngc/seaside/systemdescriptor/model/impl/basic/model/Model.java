@@ -1,7 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model;
 
-import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -9,19 +13,13 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
 
 /**
- * Implements the IModel inteface.  Maintains all the data associated with the IModel.
- *
- * @author psnell
+ * Implements the IModel interface.  Maintains all the data associated with the IModel.
  */
 public class Model implements IModel {
 
@@ -35,6 +33,7 @@ public class Model implements IModel {
    private final INamedChildCollection<IModel, IModelReferenceField> parts;
    private final INamedChildCollection<IModel, IScenario> scenarios;
    private final Collection<IModelLink<?>> links;
+   private IProperties properties;
 
    public Model(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
@@ -47,6 +46,7 @@ public class Model implements IModel {
       this.parts = new NamedChildCollection<>();
       this.scenarios = new NamedChildCollection<>();
       this.links = new ArrayList<>();
+      this.properties = new Properties();
    }
 
    @Override
@@ -63,7 +63,6 @@ public class Model implements IModel {
    public IMetadata getMetadata() {
       return metadata;
    }
-
 
    @Override
    public Optional<IModel> getRefinedModel() { return  Optional.of(refinedModel); }
@@ -160,6 +159,17 @@ public class Model implements IModel {
       links.add(link);
       return this;
    }
+   
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IModel setProperties(IProperties properties) {
+      this.properties = properties;
+      return this;
+   }
 
    @Override
    public boolean equals(Object o) {
@@ -179,13 +189,14 @@ public class Model implements IModel {
              Objects.equals(requiredModels, model.requiredModels) &&
              Objects.equals(parts, model.parts) &&
              Objects.equals(scenarios, model.scenarios) &&
-             Objects.equals(links, model.links);
+             Objects.equals(links, model.links) &&
+             Objects.equals(properties, model.properties);
    }
 
    @Override
    public int hashCode() {
       return Objects.hash(name, System.identityHashCode(parent),
-                          metadata, inputs, outputs, requiredModels, parts, scenarios, links);
+                          metadata, inputs, outputs, requiredModels, parts, scenarios, links, properties);
    }
 
    @Override
@@ -201,6 +212,7 @@ public class Model implements IModel {
              ", parts=" + parts +
              ", scenarios=" + scenarios +
              ", links=" + links +
+             ", properties=" + properties +
              ']';
    }
 }

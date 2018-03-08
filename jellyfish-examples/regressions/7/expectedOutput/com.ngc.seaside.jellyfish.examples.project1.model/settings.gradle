@@ -1,22 +1,19 @@
 rootProject.name = 'com.ngc.seaside.jellyfish.examples.project1.model'
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.domain'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.domain').name = 'model.domain'
-
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events').name = 'model.events'
-
-include 'com.ngc.seaside.jellyfish.examples.project1.model.tests'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.tests').name = 'model.tests'
+include 'com.ngc.seaside.jellyfish.examples.project1.model.config'
+project(':com.ngc.seaside.jellyfish.examples.project1.model.config').name = 'model.config'
 
 include 'com.ngc.seaside.jellyfish.examples.project1.model.distribution'
 project(':com.ngc.seaside.jellyfish.examples.project1.model.distribution').name = 'model.distribution'
 
+include 'com.ngc.seaside.jellyfish.examples.project1.model.domain'
+project(':com.ngc.seaside.jellyfish.examples.project1.model.domain').name = 'model.domain'
+
 include 'com.ngc.seaside.jellyfish.examples.project1.model.impl'
 project(':com.ngc.seaside.jellyfish.examples.project1.model.impl').name = 'model.impl'
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.config'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.config').name = 'model.config'
+include 'com.ngc.seaside.jellyfish.examples.project1.model.tests'
+project(':com.ngc.seaside.jellyfish.examples.project1.model.tests').name = 'model.tests'
 
 include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.base'
 project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.base').name = 'model.base'
@@ -24,5 +21,9 @@ project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.b
 include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.connector'
 project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.connector').name = 'model.connector'
 
+include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events'
+project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events').name = 'model.events'
+
 include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages'
 project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages').name = 'model.messages'
+

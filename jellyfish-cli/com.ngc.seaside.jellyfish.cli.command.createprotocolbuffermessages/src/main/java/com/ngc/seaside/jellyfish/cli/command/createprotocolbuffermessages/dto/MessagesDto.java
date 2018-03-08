@@ -37,5 +37,4 @@ public class MessagesDto {
       this.exportedPackages = exportedPackages;
       return this;
    }
-
 }
