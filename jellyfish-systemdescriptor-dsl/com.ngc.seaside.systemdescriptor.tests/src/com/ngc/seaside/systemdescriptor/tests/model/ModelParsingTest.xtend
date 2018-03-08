@@ -4,7 +4,9 @@ import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
@@ -14,13 +16,10 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.util.ResourceHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
-import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -424,36 +423,6 @@ class ModelParsingTest {
 		validationTester.assertError(
 			invalidResult,
 			SystemDescriptorPackage.Literals.OUTPUT_DECLARATION,
-			null
-		)
-	}
-
-	@Test
-	@Ignore("Does not check for duplicate model declarations in the same package yet")
-	def void testDoesRequireUnqiueNames() {
-		val modelResource = resourceHelper.resource(
-			'''
-				package clocks.models
-							
-				model Timer {
-				}
-			''',
-			URI.createURI("models.sd")
-		)
-		validationTester.assertNoIssues(modelResource)
-
-		val source = '''
-			package clocks.models
-			
-			model Timer {
-			}
-		'''
-
-		val invalidResult = parseHelper.parse(source, modelResource.resourceSet)
-		assertNotNull(invalidResult)
-		validationTester.assertError(
-			invalidResult,
-			SystemDescriptorPackage.Literals.MODEL,
 			null
 		)
 	}
