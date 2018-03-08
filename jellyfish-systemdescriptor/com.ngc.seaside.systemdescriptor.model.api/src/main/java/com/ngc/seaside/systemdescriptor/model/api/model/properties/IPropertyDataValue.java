@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -9,8 +10,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Contains the value of a property when that value is a user defined data type.  This type of property value may be
- * defined recursively.  Note that if {@link #isSet()} returns true, all fields (including recursively defined) fields
+ * Contains the value of a property when that value is a user defined data type. This type of property value may be
+ * defined recursively. Note that if {@link #isSet()} returns true, all fields (including recursively defined) fields
  * will have values.
  */
 public interface IPropertyDataValue extends IPropertyValue {
@@ -40,7 +41,17 @@ public interface IPropertyDataValue extends IPropertyValue {
     * @throws IllegalArgumentException if the field is not a member of the {@link #getReferencedDataType() referenced data type}
     * @throws IllegalStateException if the field's cardinality is not {@link FieldCardinality#SINGLE}
     */
-   IPropertyValue getValue(IDataField field);
+   default IPropertyValue getValue(IDataField field) {
+      Preconditions.checkNotNull(field, "field may not be null!");
+      switch (field.getType()) {
+      case DATA:
+         return getData(field);
+      case ENUM:
+         return getEnumeration(field);
+      default:
+         return getPrimitive(field);
+      }
+   }
 
    /**
     * Gets the primitive value of the given field.
@@ -80,7 +91,19 @@ public interface IPropertyDataValue extends IPropertyValue {
     * @throws IllegalArgumentException if the field is not a member of the {@link #getReferencedDataType() referenced data type}
     * @throws IllegalStateException if the field's cardinality is not {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyValue> getValues(IDataField field);
+   @SuppressWarnings("unchecked")
+   default Collection<IPropertyValue> getValues(IDataField field) {
+      Preconditions.checkNotNull(field, "field may not be null!");
+      switch (field.getType()) {
+      case DATA:
+         return (Collection<IPropertyValue>) (Collection<?>) getDatas(field);
+      case ENUM:
+         return (Collection<IPropertyValue>) (Collection<?>) getEnumerations(field);
+      default:
+         return (Collection<IPropertyValue>) (Collection<?>) getPrimitives(field);
+      }
+
+   }
 
    /**
     * Gets the primitive values of the given field.
