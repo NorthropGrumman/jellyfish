@@ -1,78 +1,81 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Input;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
-import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
 
 public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorValidator {
-	
+
 	@Inject
 	private IQualifiedNameProvider nameProvider;
 
-	// TODO TH: I don't think this class is needed.
-	
-	/**
-	 * Entry into this validator for xtext 
-	 * 
-	 * @param link thats being validated
-	 */
 	@Check
-	public void checkLinkDeclaration(LinkDeclaration link) {
+	public void checkRefinedLinkedDeclaration(RefinedLinkDeclaration link) {
+		Model model = (Model) link
+				.eContainer() // Links
+				.eContainer(); // Model
 
-		if (link.eClass().equals(SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION)) {
-			//Don't change order unless you have thought about what 
-			// should be checked first
-//			setFieldDeclarationError(ValidatorUtil.checkForNonRefinedModelUsingRefinedfields(link),
-//					link);
-//			setFieldDeclarationError(ValidatorUtil.checkForRefinementOfAFieldThatsNotInModelBeingRefined(link),
-//					link);
+		if(checkModelRefinesAnotherModel(link, model)) {
+			// Only do these checks if a model is being refined.
+		}
+	}
+
+	@Check
+	public void checkRefinedLinkedDeclaration(RefinedLinkNameDeclaration link) {
+		Model model = (Model) link
+				.eContainer() // Links
+				.eContainer(); // Model
+		if (checkModelRefinesAnotherModel(link, model)) {
+			// Only do these checks if a model is being refined.
+			checkLinkIsDeclaredInRefinedModel(link, model);
+		}
+	}
+
+	private boolean checkModelRefinesAnotherModel(LinkDeclaration link, Model model) {
+		boolean refinesModel = model.getRefinedModel() != null;
+		
+		if (!refinesModel) {
+			Links links = (Links) link.eContainer();
+			String msg = String.format(
+					"Cannot refine a link because the model '%s' does not refine another model.",
+					nameProvider.getFullyQualifiedName(model));
+			int index = links.getDeclarations().indexOf(link);
+			error(msg, links, SystemDescriptorPackage.Literals.LINKS__DECLARATIONS, index);
+		}
+		
+		return refinesModel;
+	}
+
+	private void checkLinkIsDeclaredInRefinedModel(RefinedLinkNameDeclaration link, Model model) {
+		Set<String> linkNames = new HashSet<>();
+
+		Model refinedModel = model.getRefinedModel();
+		while (refinedModel != null) {
+			if (refinedModel.getLinks() != null) {
+				refinedModel.getLinks().getDeclarations()
+						.stream()
+						.filter(l -> l.getName() != null)
+						.forEach(l -> linkNames.add(l.getName()));
+			}
+			refinedModel = refinedModel.getRefinedModel();
 		}
 
-	}
-	
-	/**
-	 * Validates that the Model thats not refining another Model can't then do a refine on
-	 *  a fieldDeclaration 
-	 *  
-	 * @param fieldDeclaration thats being validated 
-	 */
-	static public String checkForNonRefinedModelUsingRefinedfields(FieldDeclaration fieldDeclaration) {
-		//Bring us up to the part model
-		String msg = "";
-//		//Model fieldDeclarationModel = getModel(fieldDeclaration);
-//		if (fieldDeclarationModel != null) {
-//			if (fieldDeclarationModel.getRefinedModel() == null) {
-//				msg = String.format(
-//						"Field '%s' cannot be refined because model '%s.%s.' does not refine another model.",
-//						fieldDeclaration.getName(),
-//						((Package) fieldDeclarationModel.eContainer()).getName(),
-//						fieldDeclarationModel.getName());
-//			}
-//		}
-		return msg;
-	}
-	private void setFieldDeclarationError(String error, FieldDeclaration requirement){
-		if (!error.isEmpty()) {
-			error(error, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+		if (!linkNames.contains(link.getName())) {
+			String msg = String.format(
+					"No link named '%s' declared in the refinement hierarchy of '%s'.",
+					link.getName(),
+					nameProvider.getFullyQualifiedName(model));
+			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
 		}
 	}
 }

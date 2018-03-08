@@ -27,6 +27,7 @@ import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 		DataValidator.class,
 		PackageValidator.class,
 		PartsValidator.class,
+		RefinedLinkValidator.class,
 		RequiresValidator.class,
 		PropertiesValidator.class,
 		PropertyValueValidator.class})

@@ -16,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -89,33 +88,68 @@ class RefinedLinkParsingTest {
     }
     
     @Test
-    def void testDoesNotParseNonRefinedModelWithRefinedLink() {
+    def void testDoesNotParseModelWithRefinedNamedLinkIfLinkNotDeclared() {
+    	var source = '''
+			package clocks.models
+			
+			import clocks.models.part.LinkedClock
+			
+			model AlarmClock refines LinkedClock {
 
-        var source = '''
-            package clocks.models
-            
-            model AlarmClock {
+			    links {
+			    	refine foo {
+			             metadata {
+			                 "name" : "My Link"
+			             }
+			        }
+			    }
+			}
+		'''
 
-                links {
-                    refine link currentTime -> clockA.inputTime
-                }
-            }
-        '''
-
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-        
-        validationTester.assertError(
+		var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(invalidResult)
+		validationTester.assertError(
             invalidResult,
-            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            SystemDescriptorPackage.Literals.REFINED_LINK_NAME_DECLARATION,
             null
         )
     }
     
     @Test
-    @Ignore("Fix this")
-    def void testDoesNotParseRefinedModelWithRefinedLinkThatIsNotInTheModelBeginRefined() {
+    def void testDoesNotParseNonRefinedModelWithRefinedLink() {
 
+        var source = '''
+			package clocks.models
+			
+			import clocks.datatypes.ZonedTime
+			import clocks.models.part.Clock
+
+			model AlarmClock {
+				input {
+					ZonedTime currentTime
+				}
+			
+				parts {
+					Clock clock
+				}
+
+				links {
+					refine link currentTime -> clock.inputTime
+				}
+			}
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINKS,
+            null
+        )
+    }
+    
+    @Test
+    def void testDoesNotParseRefinedModelWithRefinedLinkThatIsNotInTheModelBeginRefined() {
         var source = '''
             package clocks.models
             
@@ -124,18 +158,43 @@ class RefinedLinkParsingTest {
             model AlarmClock refines LinkedClock {
 
                 links {
-                    refine link clockA.currentTime -> clockA.inputTime
+                    refine link currentTime -> clockB.inputTime
                 }
             }
         '''
 
         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(invalidResult)
-        
+        validationTester.assertNoIssues(invalidResult)
         validationTester.assertError(
             invalidResult,
             SystemDescriptorPackage.Literals.LINK_DECLARATION,
             null
         )
     }
+    
+    @Test
+    def void testDoesNotParseModelIfRefinedLinkedTriesToChangeNames() {
+    	var source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model AlarmClock refines LinkedClock {
+
+                links {
+                    refine link newName currentTime -> clock.inputTime
+                }
+            }
+        '''
+        
+         var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertNoIssues(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+    } 
 }

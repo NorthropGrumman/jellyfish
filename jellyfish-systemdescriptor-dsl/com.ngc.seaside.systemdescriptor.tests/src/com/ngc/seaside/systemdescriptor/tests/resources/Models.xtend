@@ -68,6 +68,7 @@ class Models {
                 parts {
                     Clock clock
                     Clock clockA
+                    Clock clockB
                 }
                 
                 requires {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -165,8 +164,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 			scope = delegateGetScope(context, reference);
 		}
 
-		// TODO TH: if field is proxy, get name, and use name to resolve type.
-		System.out.println("In scope exp: " + scope.getAllElements());
 		return scope;
 	}
 
@@ -198,30 +195,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 		} while (model != null);
 
 		return fields;
-	}
-
-	private static FieldDeclaration getFieldWithName(String fieldName, EObject model) {
-		FieldDeclaration fieldDeclaration = null;
-
-		Model parentModel = ((Model) model).getRefinedModel();
-
-		while (parentModel != null) {
-			// Part Declaration
-			// TODO TH: this should reference parts, requirements, inputs
-			// fields, and output fields.
-			if (parentModel.getParts() != null &&
-					parentModel.getParts().getDeclarations() != null) {
-				for (FieldDeclaration fieldDec : parentModel.getParts().getDeclarations()) {
-					if (fieldDec.getName().equals(fieldName)) {
-						fieldDeclaration = fieldDec;
-						break;
-					}
-				}
-			}
-			parentModel = parentModel.getRefinedModel();
-		}
-
-		return fieldDeclaration;
 	}
 
 	private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
