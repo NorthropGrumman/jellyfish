@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
+import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -30,6 +31,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 		if (checkModelRefinesAnotherModel(link, model)) {
 			// Only do these checks if a model is being refined.
 			checkLinkDoesNotDeclareANewName(link, model);
+			checkLinkRefinesABaseLink(link, model);
 		}
 	}
 
@@ -86,7 +88,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 	private void checkLinkDoesNotDeclareANewName(RefinedLinkDeclaration link, Model model) {
 		BaseLinkDeclaration baseLink = getBaseLinkDeclaration(link, model);
 		if (baseLink != null
-				&& !baseLink.getName().equals(link.getName())) {
+				&& !Objects.equal(link.getName(), baseLink.getName())) {
 			Model baseLinkModel = (Model) baseLink
 					.eContainer() // Links
 					.eContainer(); // Model
@@ -96,6 +98,18 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 					nameProvider.getFullyQualifiedName(baseLinkModel),
 					baseLink.getName());
 			error(msg, link, SystemDescriptorPackage.Literals.LINK_DECLARATION__NAME);
+		}
+	}
+
+	private void checkLinkRefinesABaseLink(RefinedLinkDeclaration link, Model model) {
+		if (getBaseLinkDeclaration(link, model) == null) {
+			Links links = (Links) link.eContainer();
+			String msg = String.format(
+					"Cannot refine a link that is not declared in the refinement"
+							+ " hierarchy of '%s'.",
+					nameProvider.getFullyQualifiedName(model));
+			int index = links.getDeclarations().indexOf(link);
+			error(msg, links, SystemDescriptorPackage.Literals.LINKS__DECLARATIONS, index);
 		}
 	}
 
