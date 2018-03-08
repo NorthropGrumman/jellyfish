@@ -18,8 +18,9 @@ class ScenarioFormatter extends AbstractSystemDescriptorFormatter {
 		var end = scenario.regionFor.keyword('}')
 		interior(begin, end)[indent]
 
-		scenario.regionFor.feature(SystemDescriptorPackage.Literals.SCENARIO__NAME).prepend[newLines = 0; oneSpace].
-			append[oneSpace]
+		scenario.regionFor.feature(SystemDescriptorPackage.Literals.SCENARIO__NAME)
+			.prepend[newLines = 0; oneSpace]
+			.append[oneSpace]
 
 		scenario.regionFor.keyword('{').prepend[oneSpace].append[newLine]
 
@@ -61,12 +62,11 @@ class ScenarioFormatter extends AbstractSystemDescriptorFormatter {
 
 	def dispatch void format(Step step, extension IFormattableDocument document) {
 		step.append[newLine]
-		step.regionFor.feature(SystemDescriptorPackage.Literals.STEP__KEYWORD).prepend[newLines = 0; oneSpace].append [
-			oneSpace
-		]
+		step.regionFor.feature(SystemDescriptorPackage.Literals.STEP__KEYWORD)
+			.prepend[newLines = 0; oneSpace]
+			.append[oneSpace]
 
 		for (ISemanticRegion param : step.regionFor.features(SystemDescriptorPackage.Literals.STEP__PARAMETERS)) {
-			//param.prepend[newLines = 0; oneSpace].append[newLine]
 			param.append[oneSpace]
 		}
 	}
