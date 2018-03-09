@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
@@ -52,6 +53,16 @@ public class AggregatedModelView implements IModel {
    public IModel setMetadata(IMetadata metadata) {
       wrapped.setMetadata(metadata);
       aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      return this;
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return null;
+   }
+
+   @Override
+   public IModel setProperties(IProperties properties) {
       return this;
    }
 
