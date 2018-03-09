@@ -37,10 +37,7 @@ public interface IModel extends INamedChild<IPackage> {
     *
     * @return the properties of this model (never {@code null})
     */
-   default IProperties getProperties() {
-      // TODO: make this method abstract once implemented
-      throw new UnsupportedOperationException("Not implemented");
-   }
+   IProperties getProperties();
 
    /**
     * Sets the properties of this model.
@@ -48,10 +45,7 @@ public interface IModel extends INamedChild<IPackage> {
     * @param properties the properties of this model
     * @return this model
     */
-   default IModel setProperties(IProperties properties) {
-      // TODO: make this method abstract once implemented
-      throw new UnsupportedOperationException("Not implemented");
-   }
+   IModel setProperties(IProperties properties);
 
    /**
     * Gets the data inputs declared by this model.  The returned collection may not be modifiable if this object is

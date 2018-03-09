@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -39,29 +40,30 @@ public class Property implements IProperty {
     * @param name property name
     * @param type property type
     * @param cardinality property cardinality
-    * @param values values of the property
+    * @param values values of the property, can be null for unset properties with many cardinality
+    * @param referencedType data/enum that the property referenced, can be null
     * @throws IllegalArgumentException if the number or type of values does not match the type or cardinality of the property
     */
    public Property(String name, DataTypes type, FieldCardinality cardinality,
-                   Collection<? extends IPropertyValue> values) {
+                   Collection<? extends IPropertyValue> values, INamedChild<? extends IPackage> referencedType) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
-      Preconditions.checkNotNull(values, "values may not be null!");
+      Preconditions.checkArgument(cardinality == FieldCardinality.MANY || values != null, "values cannot be null for single cardinality properties!");
       if (cardinality == FieldCardinality.SINGLE && values.size() != 1) {
          throw new IllegalArgumentException("Expected a single property value");
       }
-      if (type == DataTypes.DATA && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
+      if (type == DataTypes.DATA && values != null && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyDataValue");
       }
-      if (type == DataTypes.ENUM && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
+      if (type == DataTypes.ENUM && values != null && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
       }
       if ((type != DataTypes.DATA && type != DataTypes.ENUM)
-         && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
+         && values != null && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
       }
-      if (values.isEmpty()) {
+      if (referencedType == null && (values == null || values.isEmpty())) {
          throw new IllegalArgumentException("Cannot determine referenced type when the values collection is empty");
       }
       this.name = name;
@@ -69,50 +71,17 @@ public class Property implements IProperty {
       this.cardinality = cardinality;
       this.value = Collections.unmodifiableList(new ArrayList<>(values));
       if (type == DataTypes.DATA) {
-         this.referencedType = ((IPropertyDataValue) this.value.get(0)).getReferencedDataType();
+         Preconditions.checkArgument(referencedType == null || referencedType instanceof IData, "referenced type must be IData");
+         this.referencedType = referencedType == null ? ((IPropertyDataValue) this.value.get(0)).getReferencedDataType() : referencedType;
       } else if (type == DataTypes.ENUM) {
-         this.referencedType = ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration();
+         Preconditions.checkArgument(referencedType == null || referencedType instanceof IEnumeration, "referenced type must be IEnumeration");
+         this.referencedType = referencedType == null ? ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration() : referencedType;
       } else {
+         Preconditions.checkArgument(referencedType == null, "cannot referenced type for primitive values");
          this.referencedType = null;
       }
    }
-
-   /**
-    * Constructs a property with many cardinality, data/enumeration type and with the given referenced type. This can be used in the case that the values are empty.
-    *
-    * @param name property name
-    * @param values values of the property
-    * @param referencedType the type of data or enumeration
-    * @throws IllegalArgumentException if the type of values does not match the type of the property
-    */
-   public Property(String name, Collection<? extends IPropertyValue> values,
-                   INamedChild<? extends IPackage> referencedType) {
-      Preconditions.checkNotNull(name, "name may not be null!");
-      Preconditions.checkNotNull(values, "values may not be null!");
-      Preconditions.checkNotNull(referencedType, "referenced type may not be null!");
-      if (referencedType instanceof IData) {
-         type = DataTypes.DATA;
-      } else if (referencedType instanceof IEnumeration) {
-         type = DataTypes.ENUM;
-      } else {
-         throw new IllegalArgumentException("Invalid referenced type: " + referencedType);
-      }
-      if (type == DataTypes.DATA && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
-         throw new IllegalArgumentException("Expected property values to be of type IPropertyDataValue");
-      }
-      if (type == DataTypes.ENUM && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
-         throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
-      }
-      if ((type != DataTypes.DATA && type != DataTypes.ENUM)
-         && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
-         throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
-      }
-      this.name = name;
-      this.value = Collections.unmodifiableList(new ArrayList<>(values));
-      this.cardinality = FieldCardinality.MANY;
-      this.referencedType = referencedType;
-   }
-
+   
    @Override
    public String getName() {
       return name;
@@ -170,23 +139,23 @@ public class Property implements IProperty {
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyDataValue> getDatas() {
+   public Optional<Collection<IPropertyDataValue>> getDatas() {
       checkTypeAndCardinality("data", FieldCardinality.MANY, DataTypes.DATA);
-      return (Collection<IPropertyDataValue>) value;
+      return Optional.ofNullable((Collection<IPropertyDataValue>) value);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyEnumerationValue> getEnumerations() {
+   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations() {
       checkTypeAndCardinality("enumeration", FieldCardinality.MANY, DataTypes.ENUM);
-      return (Collection<IPropertyEnumerationValue>) value;
+      return Optional.ofNullable((Collection<IPropertyEnumerationValue>) value);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyPrimitiveValue> getPrimitives() {
+   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
       checkTypeAndCardinality("primitive", FieldCardinality.MANY, PRIMITIVES);
-      return (Collection<IPropertyPrimitiveValue>) value;
+      return Optional.ofNullable((Collection<IPropertyPrimitiveValue>) value);
    }
 
    private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {

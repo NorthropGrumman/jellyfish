@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -28,7 +29,7 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
     * Constructs a PropertyDataValue.
     *
     * @param data IData type representing this value
-    * @param fieldValues values of the type's fields
+    * @param fieldValues values of the type's fields, collections can be null for unset properties
     * @throws IllegalArgumentException if the fields values don't match the data's fields
     */
    public PropertyDataValue(IData data, Map<String, Collection<IPropertyValue>> fieldValues) {
@@ -65,23 +66,23 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyPrimitiveValue> getPrimitives(IDataField field) {
+   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives(IDataField field) {
       checkField(field, FieldCardinality.MANY, Property.PRIMITIVES);
-      return (Collection<IPropertyPrimitiveValue>) fieldValues.get(field.getName());
+      return Optional.ofNullable((Collection<IPropertyPrimitiveValue>) fieldValues.get(field.getName()));
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyEnumerationValue> getEnumerations(IDataField field) {
+   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.ENUM);
-      return (Collection<IPropertyEnumerationValue>) fieldValues.get(field.getName());
+      return Optional.ofNullable((Collection<IPropertyEnumerationValue>) fieldValues.get(field.getName()));
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Collection<IPropertyDataValue> getDatas(IDataField field) {
+   public Optional<Collection<IPropertyDataValue>> getDatas(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.DATA);
-      return (Collection<IPropertyDataValue>) fieldValues.get(field.getName());
+      return Optional.ofNullable((Collection<IPropertyDataValue>) fieldValues.get(field.getName()));
    }
 
    private void checkField(IDataField field, FieldCardinality expectedCardinality, DataTypes... expectedDataTypes) {
@@ -115,17 +116,20 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
          }
          IDataField field = dataFields.getByName(fieldName).get();
          Collection<IPropertyValue> fieldValues = entry.getValue();
-         Preconditions.checkNotNull(fieldValues, "field values may not contain a null collection!");
-         if (field.getCardinality() == FieldCardinality.SINGLE && fieldValues.size() != 1) {
+         if (field.getCardinality() == FieldCardinality.SINGLE && (fieldValues == null || fieldValues.size() != 1)) {
             throw new IllegalArgumentException("field " + field.getName() + " must have exactly 1 property value");
          }
-         for (IPropertyValue fieldValue : fieldValues) {
-            Preconditions.checkNotNull(fieldValue, "field values may not contain a null value!");
-            if (field.getType() != fieldValue.getType()) {
-               throw new IllegalArgumentException("field " + fieldName + " has a type of " + field.getType()
-                  + ", but the property value was of type " + fieldValue.getType());
+         if (fieldValues == null) {
+            allSet = false;
+         } else {
+            for (IPropertyValue fieldValue : fieldValues) {
+               Preconditions.checkNotNull(fieldValue, "field values may not contain a null value!");
+               if (field.getType() != fieldValue.getType()) {
+                  throw new IllegalArgumentException("field " + fieldName + " has a type of " + field.getType()
+                     + ", but the property value was of type " + fieldValue.getType());
+               }
+               allSet &= fieldValue.isSet();
             }
-            allSet &= fieldValue.isSet();
          }
       }
       return allSet;

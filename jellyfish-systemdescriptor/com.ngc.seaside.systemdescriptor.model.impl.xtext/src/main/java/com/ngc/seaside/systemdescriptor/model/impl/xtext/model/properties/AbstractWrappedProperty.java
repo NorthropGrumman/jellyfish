@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -71,17 +72,17 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
    }
 
    @Override
-   public Collection<IPropertyDataValue> getDatas() {
+   public Optional<Collection<IPropertyDataValue>> getDatas() {
       throw new IllegalStateException("property is not a data type");
    }
 
    @Override
-   public Collection<IPropertyEnumerationValue> getEnumerations() {
+   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations() {
       throw new IllegalStateException("property is not an enumeration type");
    }
 
    @Override
-   public Collection<IPropertyPrimitiveValue> getPrimitives() {
+   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
       throw new IllegalStateException("property is not a primitive type");
    }
 

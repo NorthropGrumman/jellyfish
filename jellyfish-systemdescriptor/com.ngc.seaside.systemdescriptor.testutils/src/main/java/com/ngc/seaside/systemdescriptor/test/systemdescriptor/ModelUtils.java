@@ -7,25 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
-
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +20,26 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+
 /**
  * Utility class for mocking system descriptor elements.
  */
@@ -51,7 +52,6 @@ public class ModelUtils {
 
       private final String name;
       private final IPackage parent;
-      private final IModel refinedModel;
       private final NamedChildCollection<IModel, IDataReferenceField> inputs;
       private final NamedChildCollection<IModel, IDataReferenceField> outputs;
       private final NamedChildCollection<IModel, IScenario> scenarios;
@@ -61,7 +61,6 @@ public class ModelUtils {
          assertTrue(fullyQualifiedName + " is not a fully qualified name", index >= 0);
          name = fullyQualifiedName.substring(index + 1);
          parent = mock(IPackage.class);
-         refinedModel = mock(IModel.class);
          when(parent.getName()).thenReturn(fullyQualifiedName.substring(0, index));
          inputs = new NamedChildCollection<>(this, IDataReferenceField.class);
          outputs = new NamedChildCollection<>(this, IDataReferenceField.class);
@@ -303,6 +302,16 @@ public class ModelUtils {
 
       @Override
       public IModel setMetadata(IMetadata metadata) {
+         throw new UnsupportedOperationException();
+      }
+      
+      @Override
+      public IProperties getProperties() {
+         return null;
+      }
+
+      @Override
+      public IModel setProperties(IProperties properties) {
          throw new UnsupportedOperationException();
       }
 

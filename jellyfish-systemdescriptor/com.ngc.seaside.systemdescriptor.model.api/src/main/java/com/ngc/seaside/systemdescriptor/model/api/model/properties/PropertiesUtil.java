@@ -34,8 +34,8 @@ class PropertiesUtil {
    static <T> Optional<Collection<T>> resolveCollection(
          IProperties properties,
          Predicate<DataTypes> predicate,
-         Function<IProperty, Collection<T>> propertyFunction,
-         BiFunction<IPropertyDataValue, IDataField, Collection<T>> dataValueFunction,
+         Function<IProperty, Optional<Collection<T>>> propertyFunction,
+         BiFunction<IPropertyDataValue, IDataField, Optional<Collection<T>>> dataValueFunction,
          String propertyName,
          String[] fieldNames) {
       Preconditions.checkNotNull(propertyName, "property name must not be null!");
@@ -48,7 +48,7 @@ class PropertiesUtil {
       if (fieldNames.length == 0) {
          return property.filter(p -> p.getCardinality() == FieldCardinality.MANY)
                .filter(p -> predicate.test(p.getType()))
-               .map(propertyFunction);
+               .flatMap(propertyFunction);
       }
 
       Optional<IPropertyValue> value = property.filter(p -> p.getCardinality() == FieldCardinality.SINGLE)
@@ -70,6 +70,6 @@ class PropertiesUtil {
             .flatMap(dataValue -> dataValue.getFieldByName(lastField)
                   .filter(field -> predicate.test(field.getType()))
                   .filter(field -> field.getCardinality() == FieldCardinality.MANY)
-                  .map(field -> dataValueFunction.apply(dataValue, field)));
+                  .flatMap(field -> dataValueFunction.apply(dataValue, field)));
    }
 }

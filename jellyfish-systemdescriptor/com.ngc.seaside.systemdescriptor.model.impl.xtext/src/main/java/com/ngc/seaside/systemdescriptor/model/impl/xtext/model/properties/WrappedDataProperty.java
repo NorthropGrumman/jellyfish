@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -37,7 +38,7 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
    }
 
    @Override
-   public Collection<IPropertyDataValue> getDatas() {
+   public Optional<Collection<IPropertyDataValue>> getDatas() {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("not implemented");
    }

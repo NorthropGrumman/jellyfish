@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * A property is a combination of a <i>declaration</i> and an optional value. Properties can be declared on a variety of
@@ -93,48 +94,48 @@ public interface IProperty extends INamedChild<IProperties> {
    IPropertyPrimitiveValue getPrimitive();
 
    /**
-    * Gets the values of this property.
+    * Gets the values of this property, or {@link Optional#empty()} if the property is not set.
     *
     * @return the value of this property
     * @throws IllegalStateException if the cardinality is not {@link FieldCardinality#MANY}
     */
    @SuppressWarnings("unchecked")
-   default Collection<IPropertyValue> getValues() {
+   default Optional<Collection<IPropertyValue>> getValues() {
       switch (getType()) {
          case DATA:
-            return (Collection<IPropertyValue>) ((Collection<?>) getDatas());
+            return (Optional<Collection<IPropertyValue>>) (Optional<?>) getDatas();
          case ENUM:
-            return (Collection<IPropertyValue>) ((Collection<?>) getEnumerations());
+            return (Optional<Collection<IPropertyValue>>) (Optional<?>) getEnumerations();
          default:
-            return (Collection<IPropertyValue>) ((Collection<?>) getPrimitives());
+            return (Optional<Collection<IPropertyValue>>) (Optional<?>) getPrimitives();
       }
    }
 
    /**
-    * Gets the data values of this property.
+    * Gets the data values of this property, or {@link Optional#empty()} if the property is not set.
     *
     * @return the data value of this property
     * @throws IllegalStateException if the type of this property is not {@link DataTypes#DATA} or the cardinality is not
     *                               {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyDataValue> getDatas();
+   Optional<Collection<IPropertyDataValue>> getDatas();
 
    /**
-    * Gets the enumeration values of this property.
+    * Gets the enumeration values of this property, or {@link Optional#empty()} if the property is not set.
     *
     * @return the enumeration value of this property
     * @throws IllegalStateException if the type of this property is not {@link DataTypes#ENUM} or the cardinality is not
     *                               {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyEnumerationValue> getEnumerations();
+   Optional<Collection<IPropertyEnumerationValue>> getEnumerations();
 
    /**
-    * Gets the data values of this property.
+    * Gets the data values of this property, or {@link Optional#empty()} if the property is not set.
     *
     * @return the data value of this property
     * @throws IllegalStateException if the type of this property is not a primitive type or the cardinality is not
     *                               {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyPrimitiveValue> getPrimitives();
+   Optional<Collection<IPropertyPrimitiveValue>> getPrimitives();
 
 }

@@ -383,10 +383,10 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the integer values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<Collection<BigInteger>> resolveAsIntegers(String propertyName, String... fieldNames) {
-      final Function<Collection<IPropertyPrimitiveValue>, Collection<BigInteger>> fcn =
-            primitives -> primitives.stream()
+      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigInteger>>> fcn =
+            primitives -> primitives.map(p -> p.stream()
                   .map(IPropertyPrimitiveValue::getInteger)
-                  .collect(Collectors.toList());
+                  .collect(Collectors.toList()));
       return PropertiesUtil.resolveCollection(this,
                                               DataTypes.INT::equals,
                                               property -> fcn.apply(property.getPrimitives()),
@@ -415,10 +415,10 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the decimal values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<Collection<BigDecimal>> resolveAsDecimals(String propertyName, String... fieldNames) {
-      final Function<Collection<IPropertyPrimitiveValue>, Collection<BigDecimal>> fcn =
-            primitives -> primitives.stream()
+      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigDecimal>>> fcn =
+            primitives -> primitives.map(p -> p.stream()
                   .map(IPropertyPrimitiveValue::getDecimal)
-                  .collect(Collectors.toList());
+                  .collect(Collectors.toList()));
       return PropertiesUtil.resolveCollection(this,
                                               DataTypes.FLOAT::equals,
                                               property -> fcn.apply(property.getPrimitives()),
@@ -447,9 +447,10 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the boolean values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<Collection<Boolean>> resolveAsBooleans(String propertyName, String... fieldNames) {
-      final Function<Collection<IPropertyPrimitiveValue>, Collection<Boolean>> fcn = primitives -> primitives.stream()
+      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<Boolean>>> fcn = 
+            primitives -> primitives.map(p -> p.stream()
             .map(IPropertyPrimitiveValue::getBoolean)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
       return PropertiesUtil.resolveCollection(this,
                                               DataTypes.BOOLEAN::equals,
                                               property -> fcn.apply(property.getPrimitives()),
@@ -477,9 +478,10 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the string values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<Collection<String>> resolveAsStrings(String propertyName, String... fieldNames) {
-      final Function<Collection<IPropertyPrimitiveValue>, Collection<String>> fcn = primitives -> primitives.stream()
+      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<String>>> fcn = 
+            primitives -> primitives.map(p -> p.stream()
             .map(IPropertyPrimitiveValue::getString)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
       return PropertiesUtil.resolveCollection(this,
                                               DataTypes.STRING::equals,
                                               property -> fcn.apply(property.getPrimitives()),

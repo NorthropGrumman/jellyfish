@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -25,7 +26,7 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
    }
 
    @Override
-   public Collection<IPropertyPrimitiveValue> getPrimitives() {
+   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("not implemented");
    }

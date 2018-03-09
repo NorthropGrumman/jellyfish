@@ -84,7 +84,7 @@ public interface IPropertyDataValue extends IPropertyValue {
    IPropertyDataValue getData(IDataField field);
 
    /**
-    * Gets the values of the given field.
+    * Gets the values of the given field, or {@link Optional#empty()} if the property is not set.
     *
     * @param field the field to get the value for
     * @return the values of the given data field
@@ -92,47 +92,47 @@ public interface IPropertyDataValue extends IPropertyValue {
     * @throws IllegalStateException if the field's cardinality is not {@link FieldCardinality#MANY}
     */
    @SuppressWarnings("unchecked")
-   default Collection<IPropertyValue> getValues(IDataField field) {
+   default Optional<Collection<IPropertyValue>> getValues(IDataField field) {
       Preconditions.checkNotNull(field, "field may not be null!");
       switch (field.getType()) {
       case DATA:
-         return (Collection<IPropertyValue>) (Collection<?>) getDatas(field);
+         return (Optional<Collection<IPropertyValue>>) (Optional<?>) getDatas(field);
       case ENUM:
-         return (Collection<IPropertyValue>) (Collection<?>) getEnumerations(field);
+         return (Optional<Collection<IPropertyValue>>) (Optional<?>) getEnumerations(field);
       default:
-         return (Collection<IPropertyValue>) (Collection<?>) getPrimitives(field);
+         return (Optional<Collection<IPropertyValue>>) (Optional<?>) getPrimitives(field);
       }
 
    }
 
    /**
-    * Gets the primitive values of the given field.
+    * Gets the primitive values of the given field, or {@link Optional#empty()} if the property is not set.
     *
     * @param field the field to get the value for
     * @return the primitives value of the given data field
     * @throws IllegalArgumentException if the field is not a member of the {@link #getReferencedDataType() referenced data type}
     * @throws IllegalStateException if the field's type is not primitive or the field's cardinality is not {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyPrimitiveValue> getPrimitives(IDataField field);
+   Optional<Collection<IPropertyPrimitiveValue>> getPrimitives(IDataField field);
 
    /**
-    * Gets the enumeration values of the given field.
+    * Gets the enumeration values of the given field, or {@link Optional#empty()} if the property is not set.
     *
     * @param field the field to get the value for
     * @return the enumeration values of the given data field
     * @throws IllegalArgumentException if the field is not a member of the {@link #getReferencedDataType() referenced data type}
     * @throws IllegalStateException if the field's type is not {@link DataTypes#ENUM} or the field's cardinality is not {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyEnumerationValue> getEnumerations(IDataField field);
+   Optional<Collection<IPropertyEnumerationValue>> getEnumerations(IDataField field);
 
    /**
-    * Gets the data values of the given field.
+    * Gets the data values of the given field, or {@link Optional#empty()} if the property is not set.
     *
     * @param field the field to get the value for
     * @return the enumeration values of the given data field
     * @throws IllegalArgumentException if the field is not a member of the {@link #getReferencedDataType() referenced data type}
     * @throws IllegalStateException if the field's type is not {@link DataTypes#DATA} or the field's cardinality is not {@link FieldCardinality#MANY}
     */
-   Collection<IPropertyDataValue> getDatas(IDataField field);
+   Optional<Collection<IPropertyDataValue>> getDatas(IDataField field);
 
 }
