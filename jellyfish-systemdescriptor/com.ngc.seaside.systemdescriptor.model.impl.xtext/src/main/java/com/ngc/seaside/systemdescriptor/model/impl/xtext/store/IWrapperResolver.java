@@ -4,10 +4,12 @@ import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 
 import java.util.Optional;
 
@@ -48,6 +50,14 @@ public interface IWrapperResolver {
     * @throws IllegalStateException if no wrapper for the given package could be found.
     */
    IPackage getWrapperFor(Package systemDescriptorPackage);
+
+   /**
+    * Finds the {@code IProperties} wrapper for the given XTest properties.
+    *
+    * @return the wrapper for the properties (never {@code null})
+    * @throws IllegalStateException if no wrapper for the given properties could be found.
+    */
+   IProperties getWrapperFor(Properties properties);
 
    /**
     * Attempts to find the XText {@link Enumeration} with the given name and package.  If no enum is found, an empty

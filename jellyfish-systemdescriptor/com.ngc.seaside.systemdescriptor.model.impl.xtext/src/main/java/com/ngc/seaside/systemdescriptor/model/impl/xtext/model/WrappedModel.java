@@ -11,6 +11,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
@@ -21,9 +22,13 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedX
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.AbstractWrappedProperty;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.SelfInitializingProperties;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.WrappedProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -31,11 +36,10 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -47,6 +51,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
 
    private IMetadata metadata;
+   private IProperties properties;
    private WrappingNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
    private WrappingNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
    private WrappingNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
@@ -64,6 +69,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       initParts();
       initScenarios();
       initLinks();
+      initProperties();
    }
 
    @Override
@@ -78,11 +84,11 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
       return this;
    }
-   
+
    @Override
    public Optional<IModel> getRefinedModel() {
 	   IModel model = resolver.getWrapperFor(wrapped.getRefinedModel());
-	   return model == null ? Optional.empty() : Optional.of(model); 
+	   return Optional.ofNullable(model);
    }
 
    @Override
@@ -122,6 +128,19 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       return links.stream()
             .filter(link -> name.equals(link.getName().orElse(null)))
             .findFirst();
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IModel setProperties(IProperties properties) {
+      Preconditions.checkNotNull(properties, "properties may not be null!");
+      this.properties = properties;
+      wrapped.setProperties(WrappedProperties.toXtext(resolver, properties));
+      return this;
    }
 
    @Override
@@ -270,7 +289,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
                FieldDeclaration::getName);
       }
    }
-   
+
    private AbstractWrappedModelReferenceField<? extends RequireDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, RequireDeclaration require) {
 	      if (require instanceof BaseRequireDeclaration) {
 	         return new WrappedBaseRequireModelReferenceField(resolver, (BaseRequireDeclaration) require);
@@ -326,6 +345,25 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private LinkDeclaration unwrapModelLink(IModelLink<?> link) {
       // TODO TH: implement this
       throw new UnsupportedOperationException("modification of links is not currently supported!");
+   }
+
+   private void initProperties() {
+      if (wrapped.getProperties() == null) {
+         properties = new SelfInitializingProperties(
+                  d -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, d),
+                     d -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, d),
+                     PropertyFieldDeclaration::getName,
+                     () -> {
+                        wrapped.setProperties(SystemDescriptorFactory.eINSTANCE.createProperties());
+                        return wrapped.getProperties().getDeclarations();
+                     });
+      } else {
+         properties = new WrappedProperties(
+               wrapped.getProperties().getDeclarations(),
+               d -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, d),
+               d -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, d),
+               PropertyFieldDeclaration::getName);
+      }
    }
 
 }
