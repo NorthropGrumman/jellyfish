@@ -167,7 +167,7 @@ class ModelFieldPropertiesParsingTest {
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
-			SystemDescriptorPackage.Literals.DECLARATION_DEFINITION,
+			SystemDescriptorPackage.Literals.PROPERTIES,
 			null
 		)
 	}
@@ -192,7 +192,7 @@ class ModelFieldPropertiesParsingTest {
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
-			SystemDescriptorPackage.Literals.DECLARATION_DEFINITION,
+			SystemDescriptorPackage.Literals.PROPERTIES,
 			null
 		)
 	}
@@ -213,7 +213,7 @@ class ModelFieldPropertiesParsingTest {
 		assertNotNull(invalidResult)
 		validationTester.assertError(
 			invalidResult,
-			SystemDescriptorPackage.Literals.DECLARATION_DEFINITION,
+			SystemDescriptorPackage.Literals.PROPERTIES,
 			null
 		)
 	}
