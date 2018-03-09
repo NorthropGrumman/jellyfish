@@ -32,4 +32,12 @@ public class WrappedProperties extends WrappingNamedChildCollection<PropertyFiel
       return xtextProperties;
    }
 
+   public static IProperties fromXtext(IWrapperResolver resolver, Properties properties) {
+      return properties == null ? IProperties.EMPTY_PROPERTIES : new WrappedProperties(
+         properties.getDeclarations(),
+         property -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, property),
+         property -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, property),
+         property -> property.getName());
+   }
+
 }

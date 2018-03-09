@@ -1,17 +1,17 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
-import com.google.common.base.Preconditions;
-
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-
+import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 
 /**
  * Internal utility used to implement default methods of {@link IProperties}.
@@ -71,5 +71,8 @@ class PropertiesUtil {
                   .filter(field -> predicate.test(field.getType()))
                   .filter(field -> field.getCardinality() == FieldCardinality.MANY)
                   .flatMap(field -> dataValueFunction.apply(dataValue, field)));
+   }
+
+   static abstract class SimplePropertiesImpl extends AbstractList<IProperty> implements IProperties {
    }
 }

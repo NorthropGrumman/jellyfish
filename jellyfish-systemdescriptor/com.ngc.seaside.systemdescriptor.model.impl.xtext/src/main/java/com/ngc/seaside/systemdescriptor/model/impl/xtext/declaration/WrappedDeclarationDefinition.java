@@ -24,10 +24,22 @@ public class WrappedDeclarationDefinition {
     */
    public static IMetadata metadataFromXtext(DeclarationDefinition definition) {
       IMetadata metadata = IMetadata.EMPTY_METADATA;
-      if (definition != null) {
+      if (definition != null && definition.getMetadata() != null) {
          metadata = WrappedMetadata.fromXtext(definition.getMetadata());
       }
       return metadata;
+   }
+
+   /**
+    * Creates a new {@code IProperties} instance using the given {@code DeclarationDefinition}.  If the definition is
+    * {@code null}, an empty IProperties is returned.
+    */
+   public static IProperties propertiesFromXtext(IWrapperResolver resolver, DeclarationDefinition definition) {
+      IProperties properties = IProperties.EMPTY_PROPERTIES;
+      if (definition != null && definition.getProperties() != null) {
+         properties = WrappedProperties.fromXtext(resolver, definition.getProperties());
+      }
+      return properties;
    }
 
    /**

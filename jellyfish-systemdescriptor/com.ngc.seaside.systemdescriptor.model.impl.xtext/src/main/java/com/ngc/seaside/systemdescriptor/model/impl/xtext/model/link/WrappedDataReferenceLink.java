@@ -1,9 +1,10 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
+import java.util.Optional;
+
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
@@ -15,15 +16,12 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-import java.util.Optional;
-
 /**
  * Adapts a {@link LinkDeclaration} to an {@link IModelLink} that links together data elements.
  *
  * This class is not threadsafe.
  */
-public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
-      implements IModelLink<IDataReferenceField> {
+public class WrappedDataReferenceLink extends WrappedReferenceLink<IDataReferenceField> {
 
    private IDataReferenceField source;
    private IDataReferenceField target;
