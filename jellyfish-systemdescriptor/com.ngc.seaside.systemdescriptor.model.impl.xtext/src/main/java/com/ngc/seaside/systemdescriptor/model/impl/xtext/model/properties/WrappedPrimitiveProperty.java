@@ -10,7 +10,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitivePropertyFieldDeclaration> {
@@ -36,7 +35,7 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
       return DataTypes.valueOf(wrapped.getType().name());
    }
 
-   public static PropertyFieldDeclaration toXtextPrimitivePropertyFieldDeclaration(IWrapperResolver resolver,
+   public static PrimitivePropertyFieldDeclaration toXtextPrimitivePropertyFieldDeclaration(IWrapperResolver resolver,
             IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");

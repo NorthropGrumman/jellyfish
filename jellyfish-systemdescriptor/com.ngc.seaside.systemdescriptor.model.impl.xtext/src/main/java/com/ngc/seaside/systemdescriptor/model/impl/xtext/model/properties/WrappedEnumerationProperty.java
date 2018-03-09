@@ -4,23 +4,30 @@ import java.util.Collection;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.data.WrappedEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 public class WrappedEnumerationProperty extends AbstractWrappedProperty<ReferencedPropertyFieldDeclaration> {
+
+   private final IEnumeration referencedType;
 
    public WrappedEnumerationProperty(IWrapperResolver resolver, ReferencedPropertyFieldDeclaration wrapped) {
       super(resolver, wrapped);
       if (!(wrapped.getDataModel() instanceof Enumeration)) {
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
+      this.referencedType = resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
+   }
+
+   @Override
+   public IEnumeration getReferencedEnumeration() {
+      return referencedType;
    }
 
    @Override
@@ -40,7 +47,7 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
       return DataTypes.ENUM;
    }
 
-   public static PropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
+   public static ReferencedPropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
             IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");
@@ -50,7 +57,8 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
       ReferencedPropertyFieldDeclaration declaration = SystemDescriptorFactory.eINSTANCE.createReferencedPropertyFieldDeclaration();
       declaration.setName(property.getName());
       declaration.setCardinality(ConversionUtil.convertCardinalityToXtext(property.getCardinality()));
-      declaration.setDataModel(WrappedEnumeration.toXTextEnumeration(resolver, property.getReferencedEnumeration()));
+      IEnumeration enumeration = property.getReferencedEnumeration();
+      declaration.setDataModel(resolver.findXTextEnum(enumeration.getName(), enumeration.getParent().getName()).get());
       return declaration;
    }
 
