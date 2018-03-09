@@ -3,6 +3,8 @@ package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 
 import java.util.Collection;
 
@@ -22,7 +24,23 @@ public interface IProperty extends INamedChild<IProperties> {
     * @return the type of this property
     */
    DataTypes getType();
-
+   
+   /**
+    * Gets the data type this property is referencing.
+    *
+    * @return the data type this property is referencing
+    * @throws IllegalStateException if the {@link #getType() type} is not {@link DataTypes#DATA}
+    */
+   IData getReferencedDataType();
+   
+   /**
+    * Gets the enumeration type this property is referencing.
+    *
+    * @return the enumeration type this property is referencing
+    * @throws IllegalStateException if the {@link #getType() type} is not {@link DataTypes#ENUM}
+    */
+   IEnumeration getReferencedEnumeration();
+   
    /**
     * Gets the cardinality of this property. This indicates if the property has at most a single value or many values.
     *

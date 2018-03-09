@@ -9,7 +9,11 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
@@ -27,6 +31,7 @@ public class Property implements IProperty {
    private final DataTypes type;
    private final FieldCardinality cardinality;
    private final List<? extends IPropertyValue> value;
+   private final INamedChild<? extends IPackage> referencedType;
 
    /**
     * Constructs a property.
@@ -37,7 +42,8 @@ public class Property implements IProperty {
     * @param values values of the property
     * @throws IllegalArgumentException if the number or type of values does not match the type or cardinality of the property
     */
-   public Property(String name, DataTypes type, FieldCardinality cardinality, Collection<? extends IPropertyValue> values) {
+   public Property(String name, DataTypes type, FieldCardinality cardinality,
+                   Collection<? extends IPropertyValue> values) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
@@ -51,13 +57,60 @@ public class Property implements IProperty {
       if (type == DataTypes.ENUM && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
       }
-      if ((type != DataTypes.DATA && type != DataTypes.ENUM) && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
+      if ((type != DataTypes.DATA && type != DataTypes.ENUM)
+         && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
+      }
+      if (values.isEmpty()) {
+         throw new IllegalArgumentException("Cannot determine referenced type when the values collection is empty");
       }
       this.name = name;
       this.type = type;
       this.cardinality = cardinality;
       this.value = Collections.unmodifiableList(new ArrayList<>(values));
+      if (type == DataTypes.DATA) {
+         this.referencedType = ((IPropertyDataValue) this.value.get(0)).getReferencedDataType();
+      } else if (type == DataTypes.ENUM) {
+         this.referencedType = ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration();
+      } else {
+         this.referencedType = null;
+      }
+   }
+
+   /**
+    * Constructs a property with many cardinality, data/enumeration type and with the given referenced type. This can be used in the case that the values are empty.
+    *
+    * @param name property name
+    * @param values values of the property
+    * @param referencedType the type of data or enumeration
+    * @throws IllegalArgumentException if the type of values does not match the type of the property
+    */
+   public Property(String name, Collection<? extends IPropertyValue> values,
+                   INamedChild<? extends IPackage> referencedType) {
+      Preconditions.checkNotNull(name, "name may not be null!");
+      Preconditions.checkNotNull(values, "values may not be null!");
+      Preconditions.checkNotNull(referencedType, "referenced type may not be null!");
+      if (referencedType instanceof IData) {
+         type = DataTypes.DATA;
+      } else if (referencedType instanceof IEnumeration) {
+         type = DataTypes.ENUM;
+      } else {
+         throw new IllegalArgumentException("Invalid referenced type: " + referencedType);
+      }
+      if (type == DataTypes.DATA && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
+         throw new IllegalArgumentException("Expected property values to be of type IPropertyDataValue");
+      }
+      if (type == DataTypes.ENUM && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
+         throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
+      }
+      if ((type != DataTypes.DATA && type != DataTypes.ENUM)
+         && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
+         throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
+      }
+      this.name = name;
+      this.value = Collections.unmodifiableList(new ArrayList<>(values));
+      this.cardinality = FieldCardinality.MANY;
+      this.referencedType = referencedType;
    }
 
    @Override
@@ -83,6 +136,18 @@ public class Property implements IProperty {
    @Override
    public FieldCardinality getCardinality() {
       return cardinality;
+   }
+
+   @Override
+   public IData getReferencedDataType() {
+      checkTypeAndCardinality("data", null, DataTypes.DATA);
+      return (IData) referencedType;
+   }
+
+   @Override
+   public IEnumeration getReferencedEnumeration() {
+      checkTypeAndCardinality("enumeration", null, DataTypes.ENUM);
+      return (IEnumeration) referencedType;
    }
 
    @Override
@@ -125,14 +190,15 @@ public class Property implements IProperty {
    }
 
    private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {
-      if (this.cardinality != cardinality) {
+      if (cardinality != null && this.cardinality != cardinality) {
          throw new IllegalStateException(
             "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
                + ": expected cardinality to be FieldCardinality." + cardinality);
       }
       if (!Arrays.asList(types).contains(this.type)) {
-         throw new IllegalStateException("cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-            + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
+         throw new IllegalStateException(
+            "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
+               + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
       }
    }
 
@@ -151,23 +217,20 @@ public class Property implements IProperty {
       }
       Property that = (Property) obj;
       return Objects.equals(name, that.name) &&
-               Objects.equals(type, that.type) &&
-               parent == that.parent &&
-               Objects.equals(cardinality, that.cardinality) &&
-               Objects.equals(value, that.value);
+         Objects.equals(type, that.type) &&
+         parent == that.parent &&
+         Objects.equals(cardinality, that.cardinality) &&
+         Objects.equals(value, that.value);
    }
 
    @Override
    public String toString() {
       return "Property[name=" + name +
-               ", parent=" + parent +
-               ", type=" + type +
-               ", cardinality=" + cardinality +
-               ", value=" + value +
-               "]";
+         ", parent=" + parent +
+         ", type=" + type +
+         ", cardinality=" + cardinality +
+         ", value=" + value +
+         "]";
    }
-
-
-
 
 }
