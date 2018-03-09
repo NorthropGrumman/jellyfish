@@ -35,7 +35,7 @@ public class AutoWrappingCollectionTest extends AbstractWrappedXtextTest {
       wrapped = new AutoWrappingCollection<>(
             data.getFields(),
             f -> new WrappedPrimitiveDataField(resolver(), (PrimitiveDataFieldDeclaration) f),
-            WrappedPrimitiveDataField::toXtext);
+            f -> WrappedPrimitiveDataField.toXtext(resolver(), f));
 
       PrimitiveDataFieldDeclaration field = factory().createPrimitiveDataFieldDeclaration();
       field.setName("field1");

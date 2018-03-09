@@ -42,7 +42,7 @@ public class WrappedBaseRequireModelReferenceField extends AbstractWrappedModelR
       Preconditions.checkNotNull(field, "field may not be null!");
       BaseRequireDeclaration d = SystemDescriptorFactory.eINSTANCE.createBaseRequireDeclaration();
       d.setName(field.getName());
-      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       d.setType(doFindXtextModel(resolver, field.getType().getName(), field.getType().getParent().getName()));
       return d;
    }

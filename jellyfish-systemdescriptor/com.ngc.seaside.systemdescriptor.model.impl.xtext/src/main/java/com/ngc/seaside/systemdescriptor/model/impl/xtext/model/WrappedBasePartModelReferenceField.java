@@ -43,7 +43,7 @@ public class WrappedBasePartModelReferenceField extends AbstractWrappedModelRefe
       Preconditions.checkNotNull(field, "field may not be null!");
       BasePartDeclaration d = SystemDescriptorFactory.eINSTANCE.createBasePartDeclaration();
       d.setName(field.getName());
-      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       d.setType(doFindXtextModel(resolver, field.getType().getName(), field.getType().getParent().getName()));
       return d;
    }

@@ -51,7 +51,7 @@ public abstract class AbstractWrappedDataField<T extends DataFieldDeclaration> e
    public IDataField setMetadata(IMetadata metadata) {
       Preconditions.checkNotNull(metadata, "metadata may not be null!");
       this.metadata = metadata;
-      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, metadata, null));
       return this;
    }
 

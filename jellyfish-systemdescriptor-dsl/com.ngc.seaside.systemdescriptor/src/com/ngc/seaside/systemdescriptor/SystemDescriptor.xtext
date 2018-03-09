@@ -142,7 +142,7 @@ DeclarationDefinition
 		// block ( ie, "Foo myInput {}" ) is declared.
 		{DeclarationDefinition} 
 		metadata=Metadata?
-		// TODO TH: add properties here
+		properties=Properties?
 	  '}'
 	;	
 	
