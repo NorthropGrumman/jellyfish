@@ -32,7 +32,8 @@ public class AggregatedModelView implements IModel {
    private final INamedChildCollection<IModel, IScenario> aggregatedScenarios;
    private final Collection<IModelLink<?>> aggregatedLinks;
    private IMetadata aggregatedMetadata;
-
+   private IProperties aggregatedProperties;
+   
    public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedInputs = getAggregatedFields(IModel::getInputs);
@@ -42,6 +43,7 @@ public class AggregatedModelView implements IModel {
       this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios);
       this.aggregatedLinks = getAggregatedLinks();
       this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      this.aggregatedProperties = AggregatedPropertiesView.getAggregatedProperties(wrapped);
    }
 
    @Override
@@ -58,11 +60,13 @@ public class AggregatedModelView implements IModel {
 
    @Override
    public IProperties getProperties() {
-      return null;
+      return aggregatedProperties;
    }
 
    @Override
    public IModel setProperties(IProperties properties) {
+      wrapped.setProperties(properties);
+      aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
       return this;
    }
 

@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
@@ -27,14 +30,63 @@ public class AggregatedPropertiesView {
    private AggregatedPropertiesView() {}
 
    /**
-    * Gets an instance of {@code IProperties} that contains all the properties from the given object and its extended
+    * Gets an instance of {@code IProperties} that contains all the properties from the given model and its refined
     * types.
     */
    public static IProperties getAggregatedProperties(IModel model) {
-      Properties properties = new Properties();
+      return getAggregatedProperties(model, m -> m.getRefinedModel().orElse(null), IModel::getProperties);
+   }
 
-      while (true) {
-         for (IProperty property : model.getProperties()) {
+   /**
+    * Gets an instance of {@code IProperties} that contains all the properties from the given part or required field
+    * and its extended types.
+    */
+   public static IProperties getAggregatedProperties(IModelReferenceField field) {
+      return getAggregatedProperties(field, f -> {
+         Optional<IModel> model = Optional.of(f.getParent());
+         while ((model = model.get().getRefinedModel()).isPresent()) {
+            Optional<IModelReferenceField> refinedField = f.getRefinedField();
+            if (refinedField.isPresent()) {
+               return refinedField.get();
+            }
+         }
+         return null;
+      }, IModelReferenceField::getProperties);
+   }
+
+   /**
+    * Gets an instance of {@code IProperties} that contains all the properties from the given link
+    * and its extended types.
+    */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public static IProperties getAggregatedProperties(IModelLink<?> link) {
+      return getAggregatedProperties(link, l -> {
+         Optional<IModel> model = Optional.of(l.getParent());
+         while ((model = model.get().getRefinedModel()).isPresent()) {
+            Optional<IModelLink<?>> refinedLink = Optional.empty(); // TODO when link refinement is completed
+            if (refinedLink.isPresent()) {
+               return (IModelLink) refinedLink.get();
+            }
+         }
+         return null;
+      }, IModelLink::getProperties);
+   }
+
+   /**
+    * Gets an instance of {@code IProperties} that contains all the properties from the given object
+    * and its extended types.
+    * 
+    * @param initial initial value
+    * @param parentFunction function to get the refined/parent value from the current value
+    * @param propertiesFunction function to get the properties from the current value
+    * @return the aggregated properties for the type
+    */
+   private static <T> IProperties getAggregatedProperties(T initial, Function<T, T> parentFunction,
+            Function<T, IProperties> propertiesFunction) {
+      Properties properties = new Properties();
+      T current = initial;
+      while (current != null) {
+         for (IProperty property : propertiesFunction.apply(current)) {
             Optional<IProperty> newerPropertyOptional = properties.getByName(property.getName());
             if (newerPropertyOptional.isPresent()) {
                IProperty newerProperty = newerPropertyOptional.get();
@@ -54,11 +106,7 @@ public class AggregatedPropertiesView {
                properties.add(property);
             }
          }
-         Optional<IModel> refined = model.getRefinedModel();
-         if (!refined.isPresent()) {
-            break;
-         }
-         model = refined.get();
+         current = parentFunction.apply(current);
       }
 
       return properties;
