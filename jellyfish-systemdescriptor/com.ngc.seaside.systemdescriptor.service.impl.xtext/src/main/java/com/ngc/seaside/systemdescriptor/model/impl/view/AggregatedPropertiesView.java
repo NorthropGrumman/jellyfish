@@ -42,16 +42,7 @@ public class AggregatedPropertiesView {
     * and its extended types.
     */
    public static IProperties getAggregatedProperties(IModelReferenceField field) {
-      return getAggregatedProperties(field, f -> {
-         Optional<IModel> model = Optional.of(f.getParent());
-         while ((model = model.get().getRefinedModel()).isPresent()) {
-            Optional<IModelReferenceField> refinedField = f.getRefinedField();
-            if (refinedField.isPresent()) {
-               return refinedField.get();
-            }
-         }
-         return null;
-      }, IModelReferenceField::getProperties);
+      return getAggregatedProperties(field, f -> f.getRefinedField().orElse(null), IModelReferenceField::getProperties);
    }
 
    /**
@@ -60,16 +51,7 @@ public class AggregatedPropertiesView {
     */
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static IProperties getAggregatedProperties(IModelLink<?> link) {
-      return getAggregatedProperties(link, l -> {
-         Optional<IModel> model = Optional.of(l.getParent());
-         while ((model = model.get().getRefinedModel()).isPresent()) {
-            Optional<IModelLink<?>> refinedLink = Optional.empty(); // TODO when link refinement is completed
-            if (refinedLink.isPresent()) {
-               return (IModelLink) refinedLink.get();
-            }
-         }
-         return null;
-      }, IModelLink::getProperties);
+      return getAggregatedProperties(link, l -> l.getRefinedLink().orElse(null), IModelLink::getProperties);
    }
 
    /**
