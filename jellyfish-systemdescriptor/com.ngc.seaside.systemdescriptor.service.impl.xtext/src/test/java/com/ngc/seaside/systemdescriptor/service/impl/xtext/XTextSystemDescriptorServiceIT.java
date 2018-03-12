@@ -13,6 +13,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
@@ -150,6 +151,7 @@ public class XTextSystemDescriptorServiceIT {
       INamedChildCollection<IModel, IDataReferenceField> dataRefFields;
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputA");
       when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(model.getInputs()).thenReturn(dataRefFields);
       when(model.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(model.getParts()).thenReturn(new NamedChildCollection<>());
@@ -160,6 +162,7 @@ public class XTextSystemDescriptorServiceIT {
 
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputB");
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(parent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(parent.getInputs()).thenReturn(dataRefFields);
       when(parent.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(parent.getParts()).thenReturn(new NamedChildCollection<>());

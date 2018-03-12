@@ -1,16 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.view;
 
-import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +14,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AggregatedModelViewTest {
@@ -61,6 +62,7 @@ public class AggregatedModelViewTest {
       when(model.getLinks()).thenReturn(links);
       when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(model.getRefinedModel()).thenReturn(Optional.of(parent));
+      when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
 
       dataRefFields = fields(DataReferenceField.class, "inputB");
       when(parent.getInputs()).thenReturn(dataRefFields);
@@ -75,6 +77,7 @@ public class AggregatedModelViewTest {
       links = links("linkB");
       when(parent.getLinks()).thenReturn(links);
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(parent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(parent.getRefinedModel()).thenReturn(Optional.of(grandparent));
 
       dataRefFields = fields(DataReferenceField.class, "inputC");
@@ -90,6 +93,7 @@ public class AggregatedModelViewTest {
       links = links("linkC");
       when(grandparent.getLinks()).thenReturn(links);
       when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(grandparent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(grandparent.getRefinedModel()).thenReturn(Optional.empty());
 
       view = new AggregatedModelView(model);
