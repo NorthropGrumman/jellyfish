@@ -51,17 +51,16 @@ public class ModelUtils {
 
       private final String name;
       private final IPackage parent;
-      private final IModel refinedModel;
       private final NamedChildCollection<IModel, IDataReferenceField> inputs;
       private final NamedChildCollection<IModel, IDataReferenceField> outputs;
       private final NamedChildCollection<IModel, IScenario> scenarios;
+      private IModel refinedModel;
 
       public PubSubModel(String fullyQualifiedName) {
          int index = fullyQualifiedName.lastIndexOf('.');
          assertTrue(fullyQualifiedName + " is not a fully qualified name", index >= 0);
          name = fullyQualifiedName.substring(index + 1);
          parent = mock(IPackage.class);
-         refinedModel = mock(IModel.class);
          when(parent.getName()).thenReturn(fullyQualifiedName.substring(0, index));
          inputs = new NamedChildCollection<>(this, IDataReferenceField.class);
          outputs = new NamedChildCollection<>(this, IDataReferenceField.class);
@@ -327,7 +326,15 @@ public class ModelUtils {
       }
 
       @Override
-      public Optional<IModel> getRefinedModel() { return Optional.empty(); }
+      public Optional<IModel> getRefinedModel() {
+         return Optional.ofNullable(refinedModel);
+      }
+
+      @Override
+      public IModel setRefinedModel(IModel refinedModel) {
+         this.refinedModel = refinedModel;
+         return this;
+      }
    }
 
    /**
