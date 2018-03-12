@@ -15,7 +15,7 @@ class PropertiesFormatter extends AbstractSystemDescriptorFormatter {
 	) {
 		var begin = properties.regionFor.keyword('properties')
 		var end = properties.regionFor.keyword('}')
-			.append[newLines = 2]
+			.append[newLine]
 		interior(begin, end)[indent]
 
 		properties.regionFor.keyword('{')
