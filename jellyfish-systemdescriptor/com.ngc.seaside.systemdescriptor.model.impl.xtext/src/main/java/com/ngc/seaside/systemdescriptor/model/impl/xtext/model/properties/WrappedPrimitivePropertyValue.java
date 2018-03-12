@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -22,7 +23,9 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public BigInteger getInteger() {
-      return null;
+      Preconditions.checkState(isSet(), "property is not set!");
+      Preconditions.checkState(getType() == DataTypes.INT, "property is not an integer!");
+      return new BigInteger(Integer.toString(((IntValue) wrapped).getValue()));
    }
 
    @Override
@@ -61,6 +64,7 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public boolean isSet() {
-      return (getType() == DataTypes.BOOLEAN && ((BooleanValue) wrapped).getValue() != null);
+      return (getType() == DataTypes.BOOLEAN && ((BooleanValue) wrapped).getValue() != null) ||
+             getType() == DataTypes.INT;
    }
 }
