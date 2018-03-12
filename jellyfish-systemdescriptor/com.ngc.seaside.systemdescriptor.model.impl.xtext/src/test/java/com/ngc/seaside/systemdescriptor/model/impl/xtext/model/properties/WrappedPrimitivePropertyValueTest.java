@@ -48,6 +48,11 @@ public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest 
       PROPERTY_BOOLEAN_VALUE.setValue("true");
       wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
       assertTrue("boolean value is not set but should be!", wrappedBooleanValue.isSet());
+
+      assertFalse("string value is set but shouldn't be", wrappedStringValue.isSet());
+      PROPERTY_STRING_VALUE.setValue("string");
+      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_STRING_VALUE);
+      assertTrue("string value is not set but should be!", wrappedStringValue.isSet());
    }
 
    @Test
