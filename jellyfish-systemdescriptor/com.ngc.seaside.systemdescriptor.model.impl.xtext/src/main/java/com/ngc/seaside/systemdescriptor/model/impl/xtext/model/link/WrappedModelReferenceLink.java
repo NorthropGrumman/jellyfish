@@ -13,6 +13,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.util.Optional;
@@ -37,10 +38,18 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     */
    public WrappedModelReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
-      if (wrapped.eClass().equals(SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION))
-      {
-    	  source = getReferenceTo(((BaseLinkDeclaration)wrapped).getSource());
-    	  target = getReferenceTo(((BaseLinkDeclaration)wrapped).getTarget());
+      switch (wrapped.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.BASE_LINK_DECLARATION:
+            source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
+            target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
+            break;
+         case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
+            // This may not have a name, may need to search by target/source for this type of link
+         case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
+            // Get refined link from parent.
+            break;
+         default:
+            throw new UnrecognizedXtextTypeException(wrapped);
       }
    }
 
@@ -75,6 +84,16 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
    public IModelLink<IModelReferenceField> setName(String name) {
       wrapped.setName(name);
       return this;
+   }
+
+   @Override
+   public Optional<IModelLink<IModelReferenceField>> getRefinedLink() {
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public IModelLink<IModelReferenceField> setRefinedLink(IModelLink<IModelReferenceField> refinedLink) {
+      throw new UnsupportedOperationException("not implemented");
    }
 
    @Override

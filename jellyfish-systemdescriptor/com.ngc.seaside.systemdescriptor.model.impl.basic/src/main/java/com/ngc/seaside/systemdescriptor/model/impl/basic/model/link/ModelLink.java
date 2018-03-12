@@ -21,6 +21,7 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private final IModel parent;
    private String name;
    private IProperties properties;
+   private IModelLink<T> refinedLink;
 
    public ModelLink(IModel p) {
       parent = p;
@@ -61,6 +62,17 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    }
 
    @Override
+   public Optional<IModelLink<T>> getRefinedLink() {
+      return Optional.ofNullable(refinedLink);
+   }
+
+   @Override
+   public IModelLink<T> setRefinedLink(IModelLink<T> refinedLink) {
+      this.refinedLink = refinedLink;
+      return this;
+   }
+
+   @Override
    public IModel getParent() {
       return parent;
    }
@@ -84,13 +96,13 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
       if (!(o instanceof ModelLink)) {
          return false;
       }
-
-      ModelLink<?> link = (ModelLink<?>) o;
-      return Objects.equals(name, link.name) &&
-             source == link.source &&
-             target == link.target &&
-             parent == link.parent &&
-             Objects.equals(properties, link.properties);
+      ModelLink<?> modelLink = (ModelLink<?>) o;
+      return source == modelLink.source &&
+             target == modelLink.target &&
+             parent == modelLink.parent &&
+             Objects.equals(name, modelLink.name) &&
+             Objects.equals(properties, modelLink.properties) &&
+             refinedLink == modelLink.refinedLink;
    }
 
    @Override
@@ -98,17 +110,20 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
       return Objects.hash(System.identityHashCode(source),
                           System.identityHashCode(target),
                           System.identityHashCode(parent),
-                          properties);
+                          name,
+                          properties,
+                          System.identityHashCode(refinedLink));
    }
 
    @Override
    public String toString() {
-      return "ModelLink[" +
-             "name='" + name +
-             "'source='" + (source == null ? "null" : source) +
-             "'target='" + (target == null ? "null" : target) +
-             "'parent='" + (parent == null ? "null" : parent) +
-             "properties=" + (properties == null ? "null" : properties) +
-             ']';
+      return "ModelLink{" +
+             "source=" + source +
+             ", target=" + target +
+             ", parent=" + parent +
+             ", name='" + name + '\'' +
+             ", properties=" + properties +
+             ", refinedLink=" + refinedLink +
+             '}';
    }
 }

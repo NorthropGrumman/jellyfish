@@ -65,7 +65,15 @@ public class Model implements IModel {
    }
 
    @Override
-   public Optional<IModel> getRefinedModel() { return  Optional.of(refinedModel); }
+   public Optional<IModel> getRefinedModel() {
+      return Optional.ofNullable(refinedModel);
+   }
+
+   @Override
+   public Model setRefinedModel(IModel model) {
+      refinedModel = model;
+      return this;
+   }
 
    @Override
    public IModel setMetadata(IMetadata metadata) {
@@ -122,11 +130,6 @@ public class Model implements IModel {
 
    public Model setParent(IPackage p) {
       parent = p;
-      return this;
-   }
-
-   public Model setRefinedModel(IModel model) {
-      refinedModel = model;
       return this;
    }
 

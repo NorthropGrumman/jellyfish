@@ -64,20 +64,35 @@ public interface IModelLink<T extends IReferenceField> {
     */
    IModelLink<T> setTarget(T target);
 
-    /**
-     * Gets the link's name, if it has one.
-     *
-     * @return the name of the link, if one exists.
-     */
-    Optional<String> getName();
+   /**
+    * Gets the link's name, if it has one.
+    *
+    * @return the name of the link, if one exists.
+    */
+   Optional<String> getName();
 
-    /**
-     * Sets the link name.
-     *
-     * @param name the name for the link
-     * @return this link
-     */
-    IModelLink<T> setName(String name);
+   /**
+    * Sets the link name.
+    *
+    * @param name the name for the link
+    * @return this link
+    */
+   IModelLink<T> setName(String name);
+
+   /**
+    * Gets the link that this link refines. If this link does not refine a link ,the optional is empty.
+    *
+    * @return the link this link is refining
+    */
+   Optional<IModelLink<T>> getRefinedLink();
+
+   /**
+    * Gets the link that this link is refining.
+    *
+    * @param refinedLink the link that this lin is refining
+    * @return this link
+    */
+   IModelLink<T> setRefinedLink(IModelLink<T> refinedLink);
 
    /**
     * Gets the parent model that contains this link.

@@ -78,6 +78,16 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
    }
 
    @Override
+   public Optional<IModelLink<IDataReferenceField>> getRefinedLink() {
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public IModelLink<IDataReferenceField> setRefinedLink(IModelLink<IDataReferenceField> refinedLink) {
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
    public IModel getParent() {
       return resolver.getWrapperFor((Model) wrapped.eContainer().eContainer());
    }

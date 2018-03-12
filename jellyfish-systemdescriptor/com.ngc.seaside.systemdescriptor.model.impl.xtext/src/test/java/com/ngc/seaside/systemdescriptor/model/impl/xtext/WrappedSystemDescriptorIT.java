@@ -17,6 +17,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.emf.common.util.URI;
@@ -397,6 +398,37 @@ public class WrappedSystemDescriptorIT {
       assertTrue("missing enum value!",
                  timeZone.get().getValues().contains("PST"));
 
+   }
+
+   @Test
+   public void testDoesCreateWrappedDescriptorWithRefinedModels() throws Throwable {
+      resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/models/Timer.sd"));
+      resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
+      resourceOf(pathTo("clocks/models/Speaker.sd"));
+      resourceOf(pathTo("clocks/models/Alarm.sd"));
+      resourceOf(pathTo("clocks/AlarmClock.sd"));
+      Resource refinedResource = resourceOf(pathTo("clocks/LoudAlarmClock.sd"));
+
+      IParseResult result = ((XtextResource) refinedResource).getParseResult();
+      assertFalse("should not have errors!",
+                  result.hasSyntaxErrors());
+
+      Package p = (Package) refinedResource.getContents().get(0);
+      wrapped = new WrappedSystemDescriptor(p);
+
+      Optional<IModel> loudClock = wrapped.findModel("clocks", "LoudAlarmClock");
+      assertTrue("did not find refined model!",
+                 loudClock.isPresent());
+      assertTrue("refined model not set!",
+                 loudClock.get().getRefinedModel().isPresent());
+      assertEquals("refined model not correct!",
+                   wrapped.findModel("clocks", "AlarmClock").get(),
+                   loudClock.get().getRefinedModel().get());
+      assertTrue("refined field not correct!",
+                 loudClock.get().getParts().getByName("speaker").get().getRefinedField().isPresent());
+      assertTrue("refined link not correct!",
+                 loudClock.get().getLinkByName("speakerConnection").get().getRefinedLink().isPresent());
    }
 
    @After

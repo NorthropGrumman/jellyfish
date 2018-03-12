@@ -1,0 +1,25 @@
+package clocks
+
+import clocks.AlarmClock
+
+model LoudAlarmClock refines AlarmClock {
+  metadata {
+    "description": "Refines AlarmClock to make a louder clock."
+  }
+
+  parts {
+    refine speaker {
+      metadata {
+        "defaultVolume": "high"
+      }
+    }
+  }
+
+  links {
+    refine speakerConnection {
+      metadata {
+        "wire": "15-gauge"
+      }
+    }
+  }
+}
