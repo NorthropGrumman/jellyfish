@@ -45,8 +45,12 @@ public class WrappedRefinedRequireModelReferenceField extends AbstractWrappedMod
 
    @Override
    public Optional<IModelReferenceField> getRefinedField() {
-      IModel refinedModel = getParent().getRefinedModel().orElseThrow(() -> new IllegalStateException("Refined model missing for refined required field " + getName()));
-      IModelReferenceField field = refinedModel.getRequiredModels().getByName(getName()).orElseThrow(() -> new IllegalStateException("Required " + getName() + " missing from refined model"));
+      IModel refinedModel = getParent().getRefinedModel()
+            .orElseThrow(() -> new IllegalStateException("Refined model missing for refined required field "
+                                                         + getName()));
+      IModelReferenceField field = refinedModel.getRequiredModels()
+            .getByName(getName())
+            .orElseThrow(() -> new IllegalStateException("Required " + getName() + " missing from refined model"));
       return Optional.of(field);
    }
 }

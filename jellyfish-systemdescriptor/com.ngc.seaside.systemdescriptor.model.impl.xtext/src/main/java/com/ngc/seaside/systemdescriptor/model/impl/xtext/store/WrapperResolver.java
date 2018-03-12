@@ -61,8 +61,8 @@ public class WrapperResolver implements IWrapperResolver {
    public IPackage getWrapperFor(Package systemDescriptorPackage) {
       Preconditions.checkNotNull(systemDescriptorPackage, "systemDescriptorPackage may not be null!");
       return systemDescriptor.getPackages().getByName(systemDescriptorPackage.getName())
-            .orElseThrow(
-                  () -> new IllegalStateException("could not find IPackage wrapper for " + systemDescriptorPackage));
+            .orElseThrow(() -> new IllegalStateException("could not find IPackage wrapper for "
+                                                         + systemDescriptorPackage));
    }
 
    @Override

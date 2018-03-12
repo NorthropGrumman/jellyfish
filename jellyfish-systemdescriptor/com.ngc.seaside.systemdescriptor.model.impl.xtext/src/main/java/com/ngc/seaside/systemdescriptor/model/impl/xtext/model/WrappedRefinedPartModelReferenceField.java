@@ -48,8 +48,11 @@ public class WrappedRefinedPartModelReferenceField extends AbstractWrappedModelR
    @Override
    public Optional<IModelReferenceField> getRefinedField() {
       IModel model = Preconditions.checkNotNull(getParent());
-      IModel refinedModel = model.getRefinedModel().orElseThrow(() -> new IllegalStateException("Refined model missing for refined part field" + getName()));
-      IModelReferenceField field = refinedModel.getParts().getByName(getName()).orElseThrow(() -> new IllegalStateException("Part " + getName() + " missing from refined model"));
+      IModel refinedModel = model.getRefinedModel()
+            .orElseThrow(() -> new IllegalStateException("Refined model missing for refined part field" + getName()));
+      IModelReferenceField field = refinedModel.getParts()
+            .getByName(getName())
+            .orElseThrow(() -> new IllegalStateException("Part " + getName() + " missing from refined model"));
       return Optional.of(field);
    }
 }
