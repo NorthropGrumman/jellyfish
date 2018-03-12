@@ -11,5 +11,6 @@ class DeclarationDefinitionFormatter extends AbstractSystemDescriptorFormatter {
         interior(begin, end)[indent]
 
         definition.metadata?.format
+        definition.properties?.format
     }
 }

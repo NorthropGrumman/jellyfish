@@ -88,6 +88,10 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.WHEN_STEP,
             SystemDescriptorPackage.Literals.THEN_DECLARATION,
             SystemDescriptorPackage.Literals.THEN_STEP);
+        registerFormatter(new PropertiesFormatter(),
+        	SystemDescriptorPackage.Literals.PROPERTIES,
+        	SystemDescriptorPackage.Literals.PRIMITIVE_PROPERTY_FIELD_DECLARATION,
+        	SystemDescriptorPackage.Literals.REFERENCED_PROPERTY_FIELD_DECLARATION);
         // End formatter registration.
 
         formatters = Collections.unmodifiableMap(formatters);
