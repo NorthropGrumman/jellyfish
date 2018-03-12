@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static org.junit.Assert.*;
@@ -70,5 +71,17 @@ public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest 
       PROPERTY_INTEGER_VALUE.setValue(1);
       wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_INTEGER_VALUE);
       assertEquals("integer property value is incorrect!", new BigInteger("1"), wrappedIntegerValue.getInteger());
+
+      PROPERTY_FLOAT_VALUE.setValue(-1.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      assertEquals("float property value is incorrect!", new BigDecimal(-1.0), wrappedFloatValue.getDecimal());
+
+      PROPERTY_FLOAT_VALUE.setValue(0.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      assertEquals("float property value is incorrect!", new BigDecimal(0.0), wrappedFloatValue.getDecimal());
+
+      PROPERTY_FLOAT_VALUE.setValue(1.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      assertEquals("float property value is incorrect!", new BigDecimal(1.0), wrappedFloatValue.getDecimal());
    }
 }
