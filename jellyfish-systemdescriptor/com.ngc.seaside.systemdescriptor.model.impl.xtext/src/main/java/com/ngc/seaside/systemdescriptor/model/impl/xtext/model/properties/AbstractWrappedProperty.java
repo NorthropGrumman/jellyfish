@@ -86,7 +86,9 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
       throw new IllegalStateException("property is not a primitive type");
    }
 
-   public static AbstractWrappedProperty<? extends PropertyFieldDeclaration> getWrappedPropertiesFieldReference(IWrapperResolver resolver, PropertyFieldDeclaration property) {
+   public static AbstractWrappedProperty<? extends PropertyFieldDeclaration> getWrappedPropertiesFieldReference(
+         IWrapperResolver resolver,
+         PropertyFieldDeclaration property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");
       if (property instanceof PrimitivePropertyFieldDeclaration) {

@@ -122,7 +122,7 @@ public class ParsingDelegate {
       do {
          result.addIssues(validator.validate(resource, CheckMode.ALL, null));
          resource = i.hasNext() ? i.next() : null;
-      } while (i.hasNext()); // TODO TH: is this skipping the last resource?
+      } while (resource != null);
 
       return result;
    }
