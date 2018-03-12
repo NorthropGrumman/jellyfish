@@ -437,6 +437,8 @@ public class WrappedSystemDescriptorIT {
                  loudClock.get().getParts().getByName("speaker").get().getRefinedField().isPresent());
       assertTrue("refined link not correct!",
                  loudClock.get().getLinkByName("speakerConnection").get().getRefinedLink().isPresent());
+      assertTrue("refined link not correct!",
+                 loudClock.get().getLinks().iterator().next().getRefinedLink().isPresent());
    }
 
    @After

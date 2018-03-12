@@ -1,10 +1,14 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
+import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -17,6 +21,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import java.util.Optional;
 
 /**
@@ -27,6 +33,7 @@ import java.util.Optional;
 public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
       implements IModelLink<IDataReferenceField> {
 
+   private IModelLink<IDataReferenceField> refinedLink;
    private IDataReferenceField source;
    private IDataReferenceField target;
 
@@ -45,11 +52,11 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
             target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
             break;
          case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
-            //refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
-            //break;
+            refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
+            break;
          case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
-            //refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
-            //break;
+            refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
+            break;
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
       }
@@ -88,12 +95,12 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
 
    @Override
    public Optional<IModelLink<IDataReferenceField>> getRefinedLink() {
-      throw new UnsupportedOperationException("not implemented");
+      return Optional.ofNullable(refinedLink);
    }
 
    @Override
    public IModelLink<IDataReferenceField> setRefinedLink(IModelLink<IDataReferenceField> refinedLink) {
-      throw new UnsupportedOperationException("not implemented");
+      throw new UnsupportedOperationException("refined link cannot be changed!");
    }
 
    @Override
@@ -146,5 +153,65 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
             "could not find input or output field named %s in model %s!",
             declaration.getName(),
             parent)));
+   }
+
+   @SuppressWarnings({"unchecked"})
+   private IModelLink<IDataReferenceField> getRefinedLink(RefinedLinkDeclaration link) {
+      IModelLink<IDataReferenceField> refinedLink = null;
+
+      IModel model = getParent().getRefinedModel().orElse(null);
+      while (model != null && refinedLink == null) {
+         // Get the refined model.
+         Model xtext = resolver.findXTextModel(model.getName(), model.getParent().getName())
+               .orElse(null);
+         if (xtext == null) {
+            throw XtextObjectNotFoundException.forModel(model);
+         }
+
+         // Does the refined model contain the link?
+         LinkDeclaration xtextLink = xtext.getLinks().getDeclarations()
+               .stream()
+               .filter(l -> l instanceof BaseLinkDeclaration)
+               .map(l -> (BaseLinkDeclaration) l)
+               .filter(l -> EcoreUtil.equals(l.getSource(), link.getSource()))
+               .filter(l -> EcoreUtil.equals(l.getTarget(), link.getTarget()))
+               .findFirst()
+               .orElse(null);
+         if (xtextLink != null) {
+            // If so, find the wrapped link in the wrapped model.
+            for (IModelLink<?> wrappedLink : resolver.getWrapperFor(xtext).getLinks()) {
+               // Note both WrappedDataReferenceLink and WrappedModelReferenceLink extend
+               // AbstractWrappedXtext<LinkDeclaration> so this cast is safe.
+               AbstractWrappedXtext<LinkDeclaration> casted = (AbstractWrappedXtext<LinkDeclaration>) wrappedLink;
+               if (casted.unwrap().equals(xtextLink)) {
+                  refinedLink = (IModelLink<IDataReferenceField>) casted;
+               }
+            }
+         }
+
+         model = model.getRefinedModel().orElse(null);
+      }
+
+      Preconditions.checkState(refinedLink != null,
+                               "unable to find refined link in refine hierarchy of %s!",
+                               getParent().getFullyQualifiedName());
+      return refinedLink;
+   }
+
+   @SuppressWarnings({"unchecked"})
+   private IModelLink<IDataReferenceField> getRefinedLink(RefinedLinkNameDeclaration link) {
+      IModelLink<IDataReferenceField> refinedLink = null;
+
+      IModel model = getParent().getRefinedModel().orElse(null);
+      while (model != null && refinedLink == null) {
+         refinedLink = (IModelLink<IDataReferenceField>) model.getLinkByName(link.getName()).orElse(null);
+         model = model.getRefinedModel().orElse(null);
+      }
+
+      Preconditions.checkState(refinedLink != null,
+                               "unable to find refined link with name '%s' in refine hierarchy of %s!",
+                               link.getName(),
+                               getParent().getFullyQualifiedName());
+      return refinedLink;
    }
 }

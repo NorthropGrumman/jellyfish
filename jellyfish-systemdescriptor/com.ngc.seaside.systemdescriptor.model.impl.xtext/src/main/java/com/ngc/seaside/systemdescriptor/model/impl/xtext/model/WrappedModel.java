@@ -82,8 +82,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
    @Override
    public Optional<IModel> getRefinedModel() {
-      IModel model = resolver.getWrapperFor(wrapped.getRefinedModel());
-      return Optional.ofNullable(model);
+      return wrapped.getRefinedModel() == null
+             ? Optional.empty()
+             : Optional.of(resolver.getWrapperFor(wrapped.getRefinedModel()));
    }
 
    @Override

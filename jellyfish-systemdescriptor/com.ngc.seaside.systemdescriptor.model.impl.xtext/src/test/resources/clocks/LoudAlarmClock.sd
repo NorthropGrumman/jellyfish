@@ -16,6 +16,12 @@ model LoudAlarmClock refines AlarmClock {
   }
 
   links {
+    refine link timer.currentTime -> display.currentTime {
+      metadata {
+         "font": "big"
+      }
+    }
+
     refine speakerConnection {
       metadata {
         "wire": "15-gauge"

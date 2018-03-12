@@ -12,7 +12,9 @@ import org.eclipse.emf.ecore.EClass;
 public class XtextObjectNotFoundException extends RuntimeException {
 
    public XtextObjectNotFoundException(EClass eclass, String fullyQualifiedName) {
-      super(String.format("could not find XText %s type with name %s.", eclass.getName(), fullyQualifiedName));
+      super(String.format("could not find XText %s type with name %s.",
+                          eclass.getName().toLowerCase(),
+                          fullyQualifiedName));
    }
 
    public static XtextObjectNotFoundException forModel(IModel model) {

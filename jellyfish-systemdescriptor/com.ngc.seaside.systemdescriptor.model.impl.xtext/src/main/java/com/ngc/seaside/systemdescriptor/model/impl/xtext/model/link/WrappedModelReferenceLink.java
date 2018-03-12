@@ -161,7 +161,7 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
       IModel model = getParent().getRefinedModel().orElse(null);
       while (model != null && refinedLink == null) {
          // Get the refined model.
-         Model xtext = resolver.findXTextModel(model.getParent().getName(), model.getName())
+         Model xtext = resolver.findXTextModel(model.getName(), model.getParent().getName())
                .orElse(null);
          if (xtext == null) {
             throw XtextObjectNotFoundException.forModel(model);
