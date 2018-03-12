@@ -1,10 +1,13 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
+import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
@@ -29,7 +32,9 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public boolean getBoolean() {
-      return false;
+      Preconditions.checkState(isSet(), "property is not set!");
+      Preconditions.checkState(getType() == DataTypes.BOOLEAN, "property is not a boolean!");
+      return Boolean.parseBoolean(((BooleanValue) wrapped).getValue());
    }
 
    @Override
@@ -56,6 +61,6 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public boolean isSet() {
-      return false;
+      return (getType() == DataTypes.BOOLEAN && ((BooleanValue) wrapped).getValue() != null);
    }
 }

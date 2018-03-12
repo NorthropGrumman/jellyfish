@@ -10,7 +10,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest {
    private final static BooleanValue PROPERTY_BOOLEAN_VALUE = factory().createBooleanValue();
@@ -37,5 +37,24 @@ public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest 
       assertEquals("integer property type is incorrect!", wrappedIntegerValue.getType(), DataTypes.INT);
       assertEquals("float property type is incorrect!", wrappedFloatValue.getType(), DataTypes.FLOAT);
       assertEquals("string property type is incorrect!", wrappedStringValue.getType(), DataTypes.STRING);
+   }
+
+   @Test
+   public void testDoesCorrectlyDetermineIfValueIsSet() {
+      assertFalse("boolean value is set but shouldn't be", wrappedBooleanValue.isSet());
+      PROPERTY_BOOLEAN_VALUE.setValue("true");
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
+      assertTrue("boolean value is not set but should be!", wrappedBooleanValue.isSet());
+   }
+
+   @Test
+   public void testDoesCorrectlyRetrieveSetPropertyValue() {
+      PROPERTY_BOOLEAN_VALUE.setValue("true");
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
+      assertTrue("boolean property value is incorrect!", wrappedBooleanValue.getBoolean());
+
+      PROPERTY_BOOLEAN_VALUE.setValue("false");
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
+      assertFalse("boolean property value is incorrect!", wrappedBooleanValue.getBoolean());
    }
 }
