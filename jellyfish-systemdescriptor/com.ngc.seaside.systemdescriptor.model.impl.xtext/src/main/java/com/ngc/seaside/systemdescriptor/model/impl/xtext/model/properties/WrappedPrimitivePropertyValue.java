@@ -3,8 +3,10 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -38,7 +40,18 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public DataTypes getType() {
-      return null;
+      switch (wrapped.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.BOOLEAN_VALUE:
+            return DataTypes.BOOLEAN;
+         case SystemDescriptorPackage.INT_VALUE:
+            return DataTypes.INT;
+         case SystemDescriptorPackage.DBL_VALUE:
+            return DataTypes.FLOAT;
+         case SystemDescriptorPackage.STRING_VALUE:
+            return DataTypes.STRING;
+         default:
+            throw new UnrecognizedXtextTypeException(wrapped);
+      }
    }
 
    @Override
