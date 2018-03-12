@@ -78,4 +78,35 @@ class PropertiesFormattingTest {
 	def void testModelFieldPropertiesFormatting() {
 		formattingUtils.testFormatter(formattedModelWithFields)
 	}
+	
+	var formattedModelWithLinks = '''
+		package com.ngc.test
+		
+		import com.ngc.imports.Model1
+		import com.ngc.imports.Model2
+		import com.ngc.imports.MyEnum
+
+		model Model {
+			links {
+				link foo -> bar {
+					properties {
+						int a
+						float b
+						string c
+						boolean d
+						MyEnum status
+						com.ngc.imports.Config config
+						many int lots
+						many MyEnum ofEnums
+					}
+				}
+			}
+		
+		}
+		'''
+	
+	@Test
+	def void testModelLinkPropertiesFormatting() {
+		formattingUtils.testFormatter(formattedModelWithLinks)
+	}
 }
