@@ -83,5 +83,9 @@ public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest 
       PROPERTY_FLOAT_VALUE.setValue(1.0);
       wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
       assertEquals("float property value is incorrect!", new BigDecimal(1.0), wrappedFloatValue.getDecimal());
+
+      PROPERTY_STRING_VALUE.setValue("string");
+      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_STRING_VALUE);
+      assertEquals("string property value is incorrect!", "string", wrappedStringValue.getString());
    }
 }

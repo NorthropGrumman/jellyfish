@@ -11,6 +11,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.math.BigDecimal;
@@ -45,8 +46,9 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public String getString() {
-      return null;
-
+      Preconditions.checkState(isSet(), "property is not set!");
+      Preconditions.checkState(getType() == DataTypes.STRING, "property is not a string!");
+      return ((StringValue) wrapped).getValue();
    }
 
    @Override
@@ -68,6 +70,7 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
    @Override
    public boolean isSet() {
       return (getType() == DataTypes.BOOLEAN && ((BooleanValue) wrapped).getValue() != null) ||
+             (getType() == DataTypes.STRING && ((StringValue) wrapped).getValue() != null) ||
              getType() == DataTypes.FLOAT || getType() == DataTypes.INT;
    }
 }
