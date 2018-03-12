@@ -70,7 +70,7 @@ class LinkNameParsingTest {
         assertNotNull(result)
         validationTester.assertNoIssues(result)
 
-        var model = result.element as Model;
+        var model = result.element as Model
         var unnamedLink = model.links.declarations.get(0)
         assertNull(
             "unnamedLink not correct!",
