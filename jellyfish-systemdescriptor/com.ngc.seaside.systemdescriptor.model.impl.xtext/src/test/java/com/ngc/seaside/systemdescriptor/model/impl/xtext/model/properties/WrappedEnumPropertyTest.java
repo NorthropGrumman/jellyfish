@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.model.impl.xtext.properties;
+package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -8,32 +8,33 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.WrappedDataProperty;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 
-public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
-
-   private WrappedDataProperty wrappedProperty;
+@RunWith(MockitoJUnitRunner.class)
+public class WrappedEnumPropertyTest extends AbstractWrappedXtextTest {
+   private WrappedEnumerationProperty wrappedProperty;
 
    private ReferencedPropertyFieldDeclaration property;
 
-   private Data referencedData;
+   private Enumeration referencedEnum;
 
    @Mock
-   private IData referenced;
+   private IEnumeration referenced;
 
    @Mock
    private IProperties parent;
@@ -45,40 +46,40 @@ public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
    public void setup() throws Throwable {
       Properties parentData = factory().createProperties();
 
-      referencedData = factory().createData();
-      referencedData.setName("referencedData");
+      referencedEnum = factory().createEnumeration();
+      referencedEnum.setName("ReferencedEnum");
 
       Package packageZ = factory().createPackage();
-      packageZ.setName("my.foo.data");
-      packageZ.setElement(referencedData);
+      packageZ.setName("my.foo.enums");
+      packageZ.setElement(referencedEnum);
 
       property = factory().createReferencedPropertyFieldDeclaration();
       property.setName("property1");
-      property.setDataModel(referencedData);
+      property.setDataModel(referencedEnum);
       property.setCardinality(Cardinality.DEFAULT);
       parentData.getDeclarations().add(property);
 
-      when(referenced.getName()).thenReturn(referencedData.getName());
+      when(referenced.getName()).thenReturn(referencedEnum.getName());
       when(referenced.getParent()).thenReturn(pack);
       when(pack.getName()).thenReturn(packageZ.getName());
 
       when(resolver().getWrapperFor(parentData)).thenReturn(parent);
-      when(resolver().getWrapperFor(referencedData)).thenReturn(referenced);
-      when(resolver().findXTextData(referenced.getName(), packageZ.getName())).thenReturn(Optional.of(referencedData));
+      when(resolver().getWrapperFor(referencedEnum)).thenReturn(referenced);
+      when(resolver().findXTextEnum(referenced.getName(), packageZ.getName())).thenReturn(Optional.of(referencedEnum));
    }
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrappedProperty = new WrappedDataProperty(resolver(), property);
+      wrappedProperty = new WrappedEnumerationProperty(resolver(), property);
       assertEquals("name not correct!",
                    wrappedProperty.getName(),
                    property.getName());
       assertEquals("parent not correct!",
                    parent,
                    wrappedProperty.getParent());
-      assertEquals("referenced data not correct!",
+      assertEquals("referenced enum not correct!",
                    referenced,
-                   wrappedProperty.getReferencedDataType());
+                   wrappedProperty.getReferencedEnumeration());
       assertEquals("cardinality not correct!",
                    FieldCardinality.SINGLE,
                    wrappedProperty.getCardinality());
@@ -86,18 +87,18 @@ public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesCreateXtextObject() throws Throwable {
-      IProperty newField = mock(IProperty.class);
-      when(newField.getName()).thenReturn("newField");
-      when(newField.getType()).thenReturn(DataTypes.DATA);
-      when(newField.getReferencedDataType()).thenReturn(referenced);
-      when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
+      IProperty newProperty = mock(IProperty.class);
+      when(newProperty.getName()).thenReturn("newProperty");
+      when(newProperty.getType()).thenReturn(DataTypes.ENUM);
+      when(newProperty.getReferencedEnumeration()).thenReturn(referenced);
+      when(newProperty.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      ReferencedPropertyFieldDeclaration xtext = WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newField);
+      ReferencedPropertyFieldDeclaration xtext = WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
       assertEquals("name not correct!",
-                   newField.getName(),
+                   newProperty.getName(),
                    xtext.getName());
-      assertEquals("referenced data not correct!",
-                   referencedData,
+      assertEquals("referenced enum not correct!",
+                   referencedEnum,
                    xtext.getDataModel());
       assertEquals("cardinality not correct!",
                    xtext.getCardinality(),
@@ -108,13 +109,13 @@ public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
    public void testDoesNotCreateXtextObjectForPrimitiveType() throws Throwable {
       IProperty newProperty = mock(IProperty.class);
       when(newProperty.getType()).thenReturn(DataTypes.INT);
-      WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
+      WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void testDoesNotCreateXtextObjectForEnumType() throws Throwable {
+   public void testDoesNotCreateXtextObjectForDataType() throws Throwable {
       IProperty newProperty = mock(IProperty.class);
-      when(newProperty.getType()).thenReturn(DataTypes.ENUM);
-      WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
+      when(newProperty.getType()).thenReturn(DataTypes.DATA);
+      WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
    }
 }
