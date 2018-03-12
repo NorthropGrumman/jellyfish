@@ -13,6 +13,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.util.Optional;
@@ -37,10 +39,19 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
     */
    public WrappedDataReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
-      if (wrapped.eClass().equals(SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION))
-      {
-    	  source = getReferenceTo(((BaseLinkDeclaration)wrapped).getSource());
-    	  target = getReferenceTo(((BaseLinkDeclaration)wrapped).getTarget());
+      switch (wrapped.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.BASE_LINK_DECLARATION:
+            source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
+            target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
+            break;
+         case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
+            //refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
+            //break;
+         case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
+            //refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
+            //break;
+         default:
+            throw new UnrecognizedXtextTypeException(wrapped);
       }
    }
 
@@ -51,8 +62,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
 
    @Override
    public IModelLink<IDataReferenceField> setSource(IDataReferenceField source) {
-      // TODO TH: figure out how to implement this.
-      throw new UnsupportedOperationException("not implemented");
+      throw new UnsupportedOperationException("the source of a link cannot be currently modified!");
    }
 
    @Override
@@ -62,8 +72,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
 
    @Override
    public IModelLink<IDataReferenceField> setTarget(IDataReferenceField target) {
-      // TODO TH: figure out how to implement this.
-      throw new UnsupportedOperationException("not implemented");
+      throw new UnsupportedOperationException("the target of a link cannot be currently modified!");
    }
 
    @Override

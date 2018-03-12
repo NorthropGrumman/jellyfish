@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitiali
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
@@ -337,7 +338,6 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    }
 
    private LinkDeclaration unwrapModelLink(IModelLink<?> link) {
-      // TODO TH: implement this
       throw new UnsupportedOperationException("modification of links is not currently supported!");
    }
 
@@ -347,7 +347,6 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
 
    private static Model getXtextModel(IModel model, IWrapperResolver resolver) {
       return resolver.findXTextModel(model.getName(), model.getParent().getName())
-            .orElseThrow(() -> new IllegalArgumentException("unable to find Xtext model for "
-                                                            + model.getFullyQualifiedName()));
+            .orElseThrow(() -> XtextObjectNotFoundException.forModel(model));
    }
 }

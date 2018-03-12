@@ -91,7 +91,7 @@ public class WrappedModelReferenceLinkTest extends AbstractWrappedXtextTest {
    }
 
    @Test
-   public void testDoesWrapXTextObject() throws Throwable {
+   public void testDoesWrapXTextObject() {
       wrapped = new WrappedModelReferenceLink(resolver(), declaration);
       assertEquals("parent not correct!",
                    parent,

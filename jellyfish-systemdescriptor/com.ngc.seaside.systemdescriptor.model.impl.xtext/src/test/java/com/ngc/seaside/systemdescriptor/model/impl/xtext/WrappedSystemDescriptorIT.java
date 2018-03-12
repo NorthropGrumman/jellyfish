@@ -23,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
@@ -52,6 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.json.JsonObject;
 
@@ -59,6 +61,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WrappedSystemDescriptorIT {
@@ -132,6 +135,7 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/models/Speaker.sd"));
       resourceOf(pathTo("clocks/models/Alarm.sd"));
       resourceOf(pathTo("clocks/AlarmClock.sd"));
+      assertValid();
 
       // This is how you get the parsing result from an XText resource.  The result has the errors.
       IParseResult result = ((XtextResource) timerResource).getParseResult();
@@ -340,6 +344,7 @@ public class WrappedSystemDescriptorIT {
    @Test
    public void testDoesCreateWrappedDescriptorWithDataInheritance() throws Throwable {
       resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/datatypes/TimeZone.sd"));
       Resource goTimeResource = resourceOf(pathTo("clocks/datatypes/GoTime.sd"));
       resourceOf(pathTo("clocks/models/Timer.sd"));
       resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
@@ -351,6 +356,7 @@ public class WrappedSystemDescriptorIT {
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
+      assertValid();
 
       Package p = (Package) goTimeResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
@@ -381,6 +387,7 @@ public class WrappedSystemDescriptorIT {
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
+      assertValid();
 
       Package p = (Package) goTimeResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
@@ -413,6 +420,7 @@ public class WrappedSystemDescriptorIT {
       IParseResult result = ((XtextResource) refinedResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
+      assertValid();
 
       Package p = (Package) refinedResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
@@ -432,16 +440,27 @@ public class WrappedSystemDescriptorIT {
    }
 
    @After
-   public void teardown() throws Throwable {
+   public void teardown() {
       streams.values().forEach(Closeables::closeQuietly);
    }
 
-   public static Path pathTo(String... packagesAndFile) {
-      Collection<String> parts = new ArrayList<>();
-      parts.add("resources");
-      parts.add("test");
-      parts.addAll(Arrays.asList(packagesAndFile));
-      return Paths.get("build", parts.toArray(new String[parts.size()]));
+   private void assertValid() {
+      Iterator<Resource> i = resourceSet.getResources().iterator();
+      XtextResource resource = (XtextResource) i.next();
+      // Get the validator.
+      IResourceValidator validator = resource.getResourceServiceProvider().getResourceValidator();
+      do {
+         List<Issue> issues = validator.validate(resource, CheckMode.ALL, null);
+         issues = issues.stream()
+               .filter(issue -> issue.getSeverity() == Severity.ERROR)
+               .collect(Collectors.toList());
+         if(!issues.isEmpty()) {
+            StringBuilder sb = new StringBuilder("files failed validation!  ");
+            issues.forEach(issue -> sb.append(issue.getMessage()));
+            fail(sb.toString());
+         }
+         resource = i.hasNext() ? (XtextResource) i.next() : null;
+      } while(resource != null);
    }
 
    private InputStream streamOf(Path file) throws IOException {
@@ -455,5 +474,13 @@ public class WrappedSystemDescriptorIT {
             URI.createFileURI(file.toAbsolutePath().toFile().toString()));
       r.load(streamOf(file), resourceSet.getLoadOptions());
       return r;
+   }
+
+   public static Path pathTo(String... packagesAndFile) {
+      Collection<String> parts = new ArrayList<>();
+      parts.add("resources");
+      parts.add("test");
+      parts.addAll(Arrays.asList(packagesAndFile));
+      return Paths.get("build", parts.toArray(new String[parts.size()]));
    }
 }
