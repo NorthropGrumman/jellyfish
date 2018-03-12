@@ -2,12 +2,14 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -32,6 +34,7 @@ import java.util.Optional;
 public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
       implements IModelLink<IModelReferenceField> {
 
+   private IMetadata metadata;
    private IModelLink<IModelReferenceField> refinedLink;
    private IModelReferenceField source;
    private IModelReferenceField target;
@@ -45,6 +48,7 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     */
    public WrappedModelReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
+      this.metadata = WrappedMetadata.fromXtext(wrapped.getDefinition());
       switch (wrapped.eClass().getClassifierID()) {
          case SystemDescriptorPackage.BASE_LINK_DECLARATION:
             source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
@@ -59,6 +63,17 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
       }
+   }
+
+   @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public WrappedModelReferenceLink setMetadata(IMetadata metadata) {
+      this.metadata = metadata;
+      return this;
    }
 
    @Override

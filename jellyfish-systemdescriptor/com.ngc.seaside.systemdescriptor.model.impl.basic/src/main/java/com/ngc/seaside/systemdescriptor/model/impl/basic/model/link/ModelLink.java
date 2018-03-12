@@ -1,13 +1,14 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.link;
 
-import java.util.Objects;
-import java.util.Optional;
-
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implements the IModelLink interface.  Maintains the source of the link and the target of the link.
@@ -22,10 +23,22 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private String name;
    private IProperties properties;
    private IModelLink<T> refinedLink;
+   private IMetadata metadata;
 
    public ModelLink(IModel p) {
       parent = p;
       this.properties = new Properties();
+   }
+
+   @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public IModelLink<T> setMetadata(IMetadata metadata) {
+      this.metadata = metadata;
+      return this;
    }
 
    @Override
@@ -52,13 +65,13 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
    @Override
    public Optional<String> getName() {
-	   return Optional.ofNullable(name);
+      return Optional.ofNullable(name);
    }
 
    @Override
    public IModelLink<T> setName(String name) {
-	   this.name = name;
-	   return this;
+      this.name = name;
+      return this;
    }
 
    @Override
@@ -76,7 +89,7 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    public IModel getParent() {
       return parent;
    }
-   
+
    @Override
    public IProperties getProperties() {
       return properties;
@@ -102,7 +115,8 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
              parent == modelLink.parent &&
              Objects.equals(name, modelLink.name) &&
              Objects.equals(properties, modelLink.properties) &&
-             refinedLink == modelLink.refinedLink;
+             refinedLink == modelLink.refinedLink &&
+             Objects.equals(metadata, modelLink.metadata);
    }
 
    @Override
@@ -112,7 +126,8 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
                           System.identityHashCode(parent),
                           name,
                           properties,
-                          System.identityHashCode(refinedLink));
+                          System.identityHashCode(refinedLink),
+                          metadata);
    }
 
    @Override

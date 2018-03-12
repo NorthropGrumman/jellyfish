@@ -101,6 +101,12 @@ public class AggregatedModelView implements IModel {
    }
 
    @Override
+   public IModel setRefinedModel(IModel refinedModel) {
+      wrapped.setRefinedModel(refinedModel);
+      return this;
+   }
+
+   @Override
    public String getFullyQualifiedName() {
       return wrapped.getFullyQualifiedName();
    }

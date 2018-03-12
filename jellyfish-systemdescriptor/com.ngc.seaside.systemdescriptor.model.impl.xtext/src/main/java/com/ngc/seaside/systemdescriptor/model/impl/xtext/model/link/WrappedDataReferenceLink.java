@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -9,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -33,6 +35,7 @@ import java.util.Optional;
 public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
       implements IModelLink<IDataReferenceField> {
 
+   private IMetadata metadata;
    private IModelLink<IDataReferenceField> refinedLink;
    private IDataReferenceField source;
    private IDataReferenceField target;
@@ -46,6 +49,7 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
     */
    public WrappedDataReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
+      this.metadata = WrappedMetadata.fromXtext(wrapped.getDefinition());
       switch (wrapped.eClass().getClassifierID()) {
          case SystemDescriptorPackage.BASE_LINK_DECLARATION:
             source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
@@ -60,6 +64,17 @@ public class WrappedDataReferenceLink extends AbstractWrappedXtext<LinkDeclarati
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
       }
+   }
+
+   @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public WrappedDataReferenceLink setMetadata(IMetadata metadata) {
+      this.metadata = metadata;
+      return this;
    }
 
    @Override

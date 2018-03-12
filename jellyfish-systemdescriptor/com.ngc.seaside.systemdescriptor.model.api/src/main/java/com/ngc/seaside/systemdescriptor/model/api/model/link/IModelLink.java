@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.link;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
@@ -14,6 +15,21 @@ import java.util.Optional;
  * @param <T> the type of reference field that link is connecting
  */
 public interface IModelLink<T extends IReferenceField> {
+
+   /**
+    * Gets the metadata for this link.
+    *
+    * @return the metadata for this link
+    */
+   IMetadata getMetadata();
+
+   /**
+    * Sets the metadata for this link.
+    *
+    * @param metadata the metadata for this link
+    * @return this link
+    */
+   IModelLink<T> setMetadata(IMetadata metadata);
 
    /**
     * Gets the properties of this link.
