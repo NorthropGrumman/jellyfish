@@ -39,7 +39,7 @@ public class WrappedRefinedRequireModelReferenceField extends AbstractWrappedMod
       Preconditions.checkNotNull(field, "field may not be null!");
       RefinedRequireDeclaration d = SystemDescriptorFactory.eINSTANCE.createRefinedRequireDeclaration();
       d.setName(field.getName());
-      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       return d;
    }
 

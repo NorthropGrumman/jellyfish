@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
@@ -33,7 +34,19 @@ public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclarat
    @SuppressWarnings("unchecked")
    @Override
    public I setMetadata(IMetadata metadata) {
-      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, metadata, getProperties()));
+      return (I) this;
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return WrappedDeclarationDefinition.propertiesFromXtext(resolver, wrapped.getDefinition());
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public I setProperties(IProperties properties) {
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, getMetadata(), properties));
       return (I) this;
    }
 

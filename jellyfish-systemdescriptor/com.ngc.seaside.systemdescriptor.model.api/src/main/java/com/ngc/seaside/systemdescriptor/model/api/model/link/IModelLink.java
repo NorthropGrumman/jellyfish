@@ -36,10 +36,7 @@ public interface IModelLink<T extends IReferenceField> {
     *
     * @return the properties of this link (never {@code null})
     */
-   default IProperties getProperties() {
-      // TODO: make this method abstract once implemented
-      throw new UnsupportedOperationException("Not implemented");
-   }
+   IProperties getProperties();
 
    /**
     * Sets the properties of this link.
@@ -47,10 +44,7 @@ public interface IModelLink<T extends IReferenceField> {
     * @param properties the properties of this link
     * @return this link
     */
-   default IModelLink<T> setProperties(IProperties properties) {
-      // TODO: make this method abstract once implemented
-      throw new UnsupportedOperationException("Not implemented");
-   }
+   IModelLink<T> setProperties(IProperties properties);
 
    /**
     * Gets the source of the link.

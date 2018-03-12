@@ -102,7 +102,7 @@ PropertyFieldDeclaration
  * A primitive property declaration consists of a type and unqualified name.
  */
 PrimitivePropertyFieldDeclaration
-	: // cardinality=Cardinality?
+	: cardinality=Cardinality?
 	  type=PrimitiveDataType
 	  name=UnqualifiedName
 	;
@@ -111,7 +111,7 @@ PrimitivePropertyFieldDeclaration
  * A referenced property declaration is used to reference another data model type.
  */	
 ReferencedPropertyFieldDeclaration
-	: // cardinality=Cardinality?
+	: cardinality=Cardinality?
 	  dataModel=[DataModel|QualifiedName]
 	  name=UnqualifiedName
 	;
@@ -142,7 +142,7 @@ DeclarationDefinition
 		// block ( ie, "Foo myInput {}" ) is declared.
 		{DeclarationDefinition} 
 		metadata=Metadata?
-		// TODO TH: add properties here
+		properties=Properties?
 	  '}'
 	;	
 	

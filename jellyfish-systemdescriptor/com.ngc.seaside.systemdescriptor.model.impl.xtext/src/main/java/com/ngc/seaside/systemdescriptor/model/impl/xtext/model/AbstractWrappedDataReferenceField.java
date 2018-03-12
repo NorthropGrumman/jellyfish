@@ -34,7 +34,7 @@ public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclarati
    @SuppressWarnings("unchecked")
    @Override
    public I setMetadata(IMetadata metadata) {
-      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, metadata, null));
       return (I) this;
    }
 

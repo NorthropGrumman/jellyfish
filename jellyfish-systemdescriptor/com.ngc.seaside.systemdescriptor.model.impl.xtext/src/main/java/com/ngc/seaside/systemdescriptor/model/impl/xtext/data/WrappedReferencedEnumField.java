@@ -1,13 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
@@ -92,7 +90,7 @@ public class WrappedReferencedEnumField extends AbstractWrappedDataField<Referen
       ReferencedDataModelFieldDeclaration x =
             SystemDescriptorFactory.eINSTANCE.createReferencedDataModelFieldDeclaration();
       x.setName(dataRef.getName());
-      x.setDefinition(WrappedDeclarationDefinition.toXtext(dataRef.getMetadata()));
+      x.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, dataRef.getMetadata(), null));
       x.setDataModel(resolver.findXTextEnum(dataRef.getReferencedEnumeration().getName(),
                                             dataRef.getReferencedEnumeration().getParent().getName()).get());
       x.setCardinality(ConversionUtil.convertCardinalityToXtext(dataRef.getCardinality()));

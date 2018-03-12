@@ -61,21 +61,21 @@ public class WrappedDeclarationDefinitionTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesConvertMetadataToXtext() {
       IMetadata metadata = newMetadata("hello", "world");
-      DeclarationDefinition to = WrappedDeclarationDefinition.toXtext(metadata);
+      DeclarationDefinition to = WrappedDeclarationDefinition.toXtext(resolver(), metadata, null);
       assertNotNull("did not convert to XText!",
                     to);
       assertEquals("did not convert metadata correctly!",
                    1,
                    to.getMetadata().getJson().getMembers().size());
 
-      to = WrappedDeclarationDefinition.toXtext(metadata);
+      to = WrappedDeclarationDefinition.toXtext(resolver(), metadata, null);
       assertNotNull("did not convert to XText!",
                     to);
       assertEquals("did not convert metadata correctly!",
                    1,
                    to.getMetadata().getJson().getMembers().size());
 
-      to = WrappedDeclarationDefinition.toXtext(null);
+      to = WrappedDeclarationDefinition.toXtext(resolver(), null, null);
       assertNull("null metadata should result in a null definition!",
                     to);
    }

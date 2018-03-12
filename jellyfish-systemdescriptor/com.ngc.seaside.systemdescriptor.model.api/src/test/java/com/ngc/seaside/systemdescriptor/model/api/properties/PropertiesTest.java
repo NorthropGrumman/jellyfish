@@ -137,8 +137,8 @@ public class PropertiesTest {
       when(field1Value.getType()).thenReturn(DataTypes.DATA);
       when(field1Value.isData()).thenReturn(true);
       when(field1Value.getFieldByName(FIELD2_NAME)).thenReturn(Optional.of(field2));
-      when(field1Value.getValues(field2)).thenReturn(Arrays.asList(field2Value1, field2Value2));
-      when(field1Value.getPrimitives(field2)).thenReturn(Arrays.asList(field2Value1, field2Value2));
+      when(field1Value.getValues(field2)).thenReturn(Optional.of(Arrays.asList(field2Value1, field2Value2)));
+      when(field1Value.getPrimitives(field2)).thenReturn(Optional.of(Arrays.asList(field2Value1, field2Value2)));
 
       when(field2.getType()).thenReturn(DataTypes.INT);
       when(field2.getCardinality()).thenReturn(FieldCardinality.MANY);

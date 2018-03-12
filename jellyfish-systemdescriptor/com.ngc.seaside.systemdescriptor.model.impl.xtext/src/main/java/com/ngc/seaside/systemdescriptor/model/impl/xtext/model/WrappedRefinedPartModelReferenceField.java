@@ -7,7 +7,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
@@ -41,7 +40,7 @@ public class WrappedRefinedPartModelReferenceField extends AbstractWrappedModelR
       Preconditions.checkNotNull(field, "field may not be null!");
       RefinedPartDeclaration d = SystemDescriptorFactory.eINSTANCE.createRefinedPartDeclaration();
       d.setName(field.getName());
-      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       return d;
    }
 

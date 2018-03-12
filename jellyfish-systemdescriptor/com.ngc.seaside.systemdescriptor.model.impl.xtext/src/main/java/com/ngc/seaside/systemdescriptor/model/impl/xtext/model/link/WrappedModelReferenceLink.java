@@ -1,15 +1,9 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
-import com.google.common.base.Preconditions;
-
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -22,8 +16,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 import java.util.Optional;
 
 /**
@@ -31,11 +23,8 @@ import java.util.Optional;
  *
  * This class is not threadsafe.
  */
-public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
-      implements IModelLink<IModelReferenceField> {
+public class WrappedModelReferenceLink extends WrappedReferenceLink<IModelReferenceField> {
 
-   private IMetadata metadata;
-   private IModelLink<IModelReferenceField> refinedLink;
    private IModelReferenceField source;
    private IModelReferenceField target;
 
@@ -48,7 +37,6 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     */
    public WrappedModelReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
-      this.metadata = WrappedMetadata.fromXtext(wrapped.getDefinition());
       switch (wrapped.eClass().getClassifierID()) {
          case SystemDescriptorPackage.BASE_LINK_DECLARATION:
             source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
@@ -63,17 +51,6 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
       }
-   }
-
-   @Override
-   public IMetadata getMetadata() {
-      return metadata;
-   }
-
-   @Override
-   public WrappedModelReferenceLink setMetadata(IMetadata metadata) {
-      this.metadata = metadata;
-      return this;
    }
 
    @Override
@@ -105,16 +82,6 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
    public IModelLink<IModelReferenceField> setName(String name) {
       wrapped.setName(name);
       return this;
-   }
-
-   @Override
-   public Optional<IModelLink<IModelReferenceField>> getRefinedLink() {
-      return Optional.ofNullable(refinedLink);
-   }
-
-   @Override
-   public IModelLink<IModelReferenceField> setRefinedLink(IModelLink<IModelReferenceField> refinedLink) {
-      throw new UnsupportedOperationException("refined link cannot be changed!");
    }
 
    @Override
@@ -167,65 +134,5 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
             "could not find part or requirement field named %s in model %s!",
             declaration.getName(),
             parent)));
-   }
-
-   @SuppressWarnings({"unchecked"})
-   private IModelLink<IModelReferenceField> getRefinedLink(RefinedLinkDeclaration link) {
-      IModelLink<IModelReferenceField> refinedLink = null;
-
-      IModel model = getParent().getRefinedModel().orElse(null);
-      while (model != null && refinedLink == null) {
-         // Get the refined model.
-         Model xtext = resolver.findXTextModel(model.getName(), model.getParent().getName())
-               .orElse(null);
-         if (xtext == null) {
-            throw XtextObjectNotFoundException.forModel(model);
-         }
-
-         // Does the refined model contain the link?
-         LinkDeclaration xtextLink = xtext.getLinks().getDeclarations()
-               .stream()
-               .filter(l -> l instanceof BaseLinkDeclaration)
-               .map(l -> (BaseLinkDeclaration) l)
-               .filter(l -> EcoreUtil.equals(l.getSource(), link.getSource()))
-               .filter(l -> EcoreUtil.equals(l.getTarget(), link.getTarget()))
-               .findFirst()
-               .orElse(null);
-         if (xtextLink != null) {
-            // If so, find the wrapped link in the wrapped model.
-            for (IModelLink<?> wrappedLink : resolver.getWrapperFor(xtext).getLinks()) {
-               // Note both WrappedDataReferenceLink and WrappedModelReferenceLink extend
-               // AbstractWrappedXtext<LinkDeclaration> so this cast is safe.
-               AbstractWrappedXtext<LinkDeclaration> casted = (AbstractWrappedXtext<LinkDeclaration>) wrappedLink;
-               if (casted.unwrap().equals(xtextLink)) {
-                  refinedLink = (IModelLink<IModelReferenceField>) casted;
-               }
-            }
-         }
-
-         model = model.getRefinedModel().orElse(null);
-      }
-
-      Preconditions.checkState(refinedLink != null,
-                               "unable to find refined link in refine hierarchy of %s!",
-                               getParent().getFullyQualifiedName());
-      return refinedLink;
-   }
-
-   @SuppressWarnings({"unchecked"})
-   private IModelLink<IModelReferenceField> getRefinedLink(RefinedLinkNameDeclaration link) {
-      IModelLink<IModelReferenceField> refinedLink = null;
-
-      IModel model = getParent().getRefinedModel().orElse(null);
-      while (model != null && refinedLink == null) {
-         refinedLink = (IModelLink<IModelReferenceField>) model.getLinkByName(link.getName()).orElse(null);
-         model = model.getRefinedModel().orElse(null);
-      }
-
-      Preconditions.checkState(refinedLink != null,
-                               "unable to find refined link with name '%s' in refine hierarchy of %s!",
-                               link.getName(),
-                               getParent().getFullyQualifiedName());
-      return refinedLink;
    }
 }

@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
@@ -31,7 +32,8 @@ public class AggregatedModelView implements IModel {
    private final INamedChildCollection<IModel, IScenario> aggregatedScenarios;
    private final Collection<IModelLink<?>> aggregatedLinks;
    private IMetadata aggregatedMetadata;
-
+   private IProperties aggregatedProperties;
+   
    public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedInputs = getAggregatedFields(IModel::getInputs);
@@ -41,6 +43,7 @@ public class AggregatedModelView implements IModel {
       this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios);
       this.aggregatedLinks = getAggregatedLinks();
       this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      this.aggregatedProperties = AggregatedPropertiesView.getAggregatedProperties(wrapped);
    }
 
    @Override
@@ -51,6 +54,18 @@ public class AggregatedModelView implements IModel {
    @Override
    public IModel setMetadata(IMetadata metadata) {
       wrapped.setMetadata(metadata);
+      aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
+      return this;
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return aggregatedProperties;
+   }
+
+   @Override
+   public IModel setProperties(IProperties properties) {
+      wrapped.setProperties(properties);
       aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
       return this;
    }
