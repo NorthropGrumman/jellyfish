@@ -122,7 +122,7 @@ public class ParsingDelegate {
       do {
          result.addIssues(validator.validate(resource, CheckMode.ALL, null));
          resource = i.hasNext() ? i.next() : null;
-      } while (resource != null);
+      } while (i.hasNext());
 
       return result;
    }

@@ -172,7 +172,9 @@ public class AggregatedModelView implements IModel {
       Collection<IModelLink<?>> collection = new ArrayList<>();
       IModel model = wrapped;
       while (model != null) {
-         collection.addAll(model.getLinks());
+         for(IModelLink<?> link : model.getLinks()) {
+            collection.add(new AggregatedLinkView<>(link));
+         }
          model = model.getRefinedModel().orElse(null);
       }
       return collection;

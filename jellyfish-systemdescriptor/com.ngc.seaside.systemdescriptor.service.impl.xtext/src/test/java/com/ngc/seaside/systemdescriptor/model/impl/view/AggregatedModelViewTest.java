@@ -178,6 +178,8 @@ public class AggregatedModelViewTest {
          for (String name : names) {
             IModelLink<?> link = Mockito.mock(IModelLink.class);
             when(link.getName()).thenReturn(Optional.ofNullable(name));
+            when(link.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
+            when(link.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
             collection.add(link);
          }
       }
