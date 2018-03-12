@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -94,6 +95,17 @@ class RefinedLinkParsingTest {
         var result = parseHelper.parse(source, requiredResources.resourceSet)
         assertNotNull(result)
         validationTester.assertNoIssues(result)
+        
+        var model = result.element as Model
+		var refinedLink = model.links.declarations.get(0) as RefinedLinkDeclaration
+        assertNotNull(
+            "refinedLink not correct!",
+            refinedLink.source
+        )
+        assertNotNull(
+            "refinedLink not correct!",
+            refinedLink.target
+        )
     }
     
     @Test
