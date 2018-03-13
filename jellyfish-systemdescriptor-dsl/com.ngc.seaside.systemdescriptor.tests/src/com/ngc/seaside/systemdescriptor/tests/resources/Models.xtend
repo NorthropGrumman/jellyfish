@@ -69,6 +69,7 @@ class Models {
                     Clock clock
                     Clock clockA
                     Clock clockB
+                    Clock clockC
                 }
                 
                 requires {
@@ -77,7 +78,12 @@ class Models {
                 
                 links {
                     link namedLink currentTime -> clock.inputTime
-                    link currentTime -> clockA.inputTime	
+                    link currentTime -> clockA.inputTime
+                    link propNamedLink 	currentTime -> clockC.inputTime {
+                        properties {
+                            int intLinkedClockField
+                        }
+                    }
                 }
             }
         ''',

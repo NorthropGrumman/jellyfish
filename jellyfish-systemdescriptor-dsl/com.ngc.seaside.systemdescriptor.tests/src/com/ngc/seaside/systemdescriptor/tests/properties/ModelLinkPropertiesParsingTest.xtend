@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -137,5 +138,30 @@ class ModelLinkPropertiesParsingTest {
 		val refinedDeclaration = refinedProperties.declarations.get(0)
 		assertEquals("property name not correct", "stringField", refinedDeclaration.name)
 	}
+	
+	@Test
+	@Ignore
+    def void testDoesParseModelWithRefinedLinkPropertiesWithValueSet() {
+        val source = '''
+            package clocks.models.part
+
+            import clocks.models.part.LinkedClock
+
+            model BigClock refines LinkedClock {
+
+                links {
+                    refine propNamedLink {
+                        properties {
+                             intLinkedClockField = 1
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
 }
