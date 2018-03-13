@@ -23,7 +23,7 @@ public class WrappedEnumerationPropertyValue extends AbstractWrappedXtext<Enumer
    @Override
    public String getValue() {
       Preconditions.checkState(isSet(), "property is not set!");
-      return null;
+      return wrapped.getValue();
    }
 
    @Override
