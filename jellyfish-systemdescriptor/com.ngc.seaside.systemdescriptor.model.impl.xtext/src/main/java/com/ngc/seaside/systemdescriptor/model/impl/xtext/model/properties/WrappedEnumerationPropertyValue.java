@@ -7,17 +7,18 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumerationValueDeclaration;
 
-public class WrappedEnumerationPropertyValue extends AbstractWrappedXtext<EnumerationValueDeclaration>
+public class WrappedEnumerationPropertyValue extends AbstractWrappedXtext<EnumPropertyValue>
       implements IPropertyEnumerationValue {
-   public WrappedEnumerationPropertyValue(IWrapperResolver resolver, EnumerationValueDeclaration wrapped) {
+   public WrappedEnumerationPropertyValue(IWrapperResolver resolver, EnumPropertyValue wrapped) {
       super(resolver, wrapped);
    }
 
    @Override
    public IEnumeration getReferencedEnumeration() {
-      return null;
+      return resolver.getWrapperFor(wrapped.getEnumeration());
    }
 
    @Override
