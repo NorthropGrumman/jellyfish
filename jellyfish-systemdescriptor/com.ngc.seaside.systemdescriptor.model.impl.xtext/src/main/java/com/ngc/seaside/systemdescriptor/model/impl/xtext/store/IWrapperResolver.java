@@ -20,7 +20,7 @@ import java.util.Optional;
 public interface IWrapperResolver {
 
    /**
-    * Finds the {@code IEnumeration} wrapper for the given XTest enum.
+    * Finds the {@code IEnumeration} wrapper for the given XText enum.
     *
     * @return the wrapper for the data (never {@code null})
     * @throws IllegalStateException if no wrapper for the given enumeration could be found.
@@ -28,7 +28,7 @@ public interface IWrapperResolver {
    IEnumeration getWrapperFor(Enumeration enumeration);
 
    /**
-    * Finds the {@code IData} wrapper for the given XTest data.
+    * Finds the {@code IData} wrapper for the given XText data.
     *
     * @return the wrapper for the data (never {@code null})
     * @throws IllegalStateException if no wrapper for the given data could be found.
@@ -36,7 +36,7 @@ public interface IWrapperResolver {
    IData getWrapperFor(Data data);
 
    /**
-    * Finds the {@code IModel} wrapper for the given XTest model.
+    * Finds the {@code IModel} wrapper for the given XText model.
     *
     * @return the wrapper for the model (never {@code null})
     * @throws IllegalStateException if no wrapper for the given model could be found.
@@ -44,7 +44,7 @@ public interface IWrapperResolver {
    IModel getWrapperFor(Model model);
 
    /**
-    * Finds the {@code IPackage} wrapper for the given XTest package.
+    * Finds the {@code IPackage} wrapper for the given XText package.
     *
     * @return the wrapper for the package (never {@code null})
     * @throws IllegalStateException if no wrapper for the given package could be found.
@@ -52,7 +52,7 @@ public interface IWrapperResolver {
    IPackage getWrapperFor(Package systemDescriptorPackage);
 
    /**
-    * Finds the {@code IProperties} wrapper for the given XTest properties.
+    * Finds the {@code IProperties} wrapper for the given XText properties.
     *
     * @return the wrapper for the properties (never {@code null})
     * @throws IllegalStateException if no wrapper for the given properties could be found.
