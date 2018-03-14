@@ -11,6 +11,7 @@ model Model {
 	}
 	output {
 		Data1 output1
+		com.ngc.seaside.jellyfish.examples.project3.Data3 output2
 	}
 	scenario scenario1 {
 		when receiving input1
@@ -18,7 +19,7 @@ model Model {
 	}
 	scenario scenario2 {
 		when receiving input2
-		then willPublish output1
+		then willPublish output2
 	}
 	
 }
