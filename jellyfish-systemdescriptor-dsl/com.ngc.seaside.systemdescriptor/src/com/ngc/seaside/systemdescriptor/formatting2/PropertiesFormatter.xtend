@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldD
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment
 
 class PropertiesFormatter extends AbstractSystemDescriptorFormatter {
 
@@ -24,11 +25,16 @@ class PropertiesFormatter extends AbstractSystemDescriptorFormatter {
 			
 		for (PropertyFieldDeclaration d : properties.declarations) {
 			d.format
-			if (d != properties.declarations.last) {
-				d.append[newLine]
+			if(d == properties.declarations.last && !properties.assignments.empty) {
+				d.append[newLines = 2]
 			} else {
 				d.append[newLine]
 			}
+		}
+		
+		for(PropertyValueAssignment a : properties.assignments) {
+			a.format
+			a.append[newLine]
 		}	
 	}
 
@@ -46,7 +52,6 @@ class PropertiesFormatter extends AbstractSystemDescriptorFormatter {
 			
 		declaration.regionFor.feature(SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION__NAME)
 			.prepend[oneSpace ; newLines = 0]
-			.append[newLine]
 	}
 
 	def dispatch void format(
@@ -63,7 +68,6 @@ class PropertiesFormatter extends AbstractSystemDescriptorFormatter {
 			
 		declaration.regionFor.feature(SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION__NAME)
 			.prepend[oneSpace ; newLines = 0]
-			.append[newLine]
 	}
 
 }
