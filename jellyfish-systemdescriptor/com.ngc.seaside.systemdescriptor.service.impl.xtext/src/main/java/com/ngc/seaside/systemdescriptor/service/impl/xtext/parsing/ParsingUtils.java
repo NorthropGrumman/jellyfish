@@ -32,7 +32,7 @@ class ParsingUtils {
 
    private static final Path SD_CLASSPATH = Paths.get("build", "resources", "main");
 
-   private static final Path POM_PATH = Paths.get("build", "poms");
+   private static final Path[] POM_PATHS = {Paths.get("build", "poms"), Paths.get("build", "publications", "mavenSd")};
 
    private static final String TESTS_CLASSIFIER = "tests";
 
@@ -97,23 +97,29 @@ class ParsingUtils {
          }
       }
 
-      Path pom = projectDirectory.resolve(POM_PATH);
-      if (Files.isDirectory(pom)) {
-         List<Path> poms = Files.list(pom)
-                                .filter(file -> file.toString().endsWith(".pom") || file.toString().endsWith(".xml"))
-                                .collect(Collectors.toList());
-         if (poms.isEmpty()) {
-            pom = null;
-         } else if (poms.size() == 1) {
-            pom = poms.get(0);
-         } else {
-            pom = pom.resolve("pom-default.xml");
-            if (!Files.isRegularFile(pom)) {
+      Path pom = null;
+      for (Path pomPath : POM_PATHS) {
+         pom = projectDirectory.resolve(pomPath);
+         if (Files.isDirectory(pom)) {
+            List<Path> poms = Files.list(pom)
+                                   .filter(file -> file.toString().endsWith(".pom") || file.toString().endsWith(".xml"))
+                                   .collect(Collectors.toList());
+            if (poms.isEmpty()) {
                pom = null;
+            } else if (poms.size() == 1) {
+               pom = poms.get(0);
+            } else {
+               pom = pom.resolve("pom-default.xml");
+               if (!Files.isRegularFile(pom)) {
+                  pom = null;
+               }
             }
+         } else {
+            pom = null;
          }
-      } else {
-         pom = null;
+         if (pom != null) {
+            break;
+         }
       }
 
       Collection<XtextResource> resources = new LinkedHashSet<>();
