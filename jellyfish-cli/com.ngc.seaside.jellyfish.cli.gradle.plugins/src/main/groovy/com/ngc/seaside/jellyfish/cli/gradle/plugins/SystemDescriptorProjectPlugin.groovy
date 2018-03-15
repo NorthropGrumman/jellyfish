@@ -105,9 +105,9 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 validateTask.dependsOn tasks.withType(GenerateMavenPom)
                 // Dependent local projects must be built and installed first
                 project.configurations.sd.allDependencies.withType(ProjectDependency).all { dependency ->
-                	dependency.dependencyProject.tasks.matching { it.name == 'install' }.all {
-                		validateTask.dependsOn it
-                	}
+                    dependency.dependencyProject.tasks.matching { it.name == 'install' }.all {
+                        validateTask.dependsOn it
+                    }
                 }
             }
 

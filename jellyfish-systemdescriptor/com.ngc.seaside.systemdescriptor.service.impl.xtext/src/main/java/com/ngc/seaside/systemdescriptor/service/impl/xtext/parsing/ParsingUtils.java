@@ -1,14 +1,5 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
-import com.google.common.base.Preconditions;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
-import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.xtext.resource.XtextResource;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -22,6 +13,16 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.xtext.resource.XtextResource;
+
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
+
 class ParsingUtils {
 
    /**
@@ -32,7 +33,8 @@ class ParsingUtils {
 
    private static final Path SD_CLASSPATH = Paths.get("build", "resources", "main");
 
-   private static final Path[] POM_PATHS = {Paths.get("build", "poms"), Paths.get("build", "publications", "mavenSd")};
+   private static final Path[] POM_PATHS = { Paths.get("build", "poms"),
+            Paths.get("build", "publications", "mavenSd") };
 
    private static final String TESTS_CLASSIFIER = "tests";
 
@@ -41,10 +43,10 @@ class ParsingUtils {
    public ParsingUtils(IRepositoryService repositoryService) {
       this.repositoryService = repositoryService;
    }
-   
+
    /**
     * Returns the parsed XtextResources for the given project.
-    * 
+    *
     * @param projectDirectory directory of project
     * @param ctx parsing context
     * @return collection of parsed XtextResources
@@ -61,7 +63,7 @@ class ParsingUtils {
 
    /**
     * Returns the parsed XtextResources for the project with the given gav.
-    * 
+    *
     * @param gav groupId:artifactId:version
     * @param ctx parsing context
     * @return collection of parsed XtextResources
@@ -70,9 +72,8 @@ class ParsingUtils {
       Preconditions.checkNotNull(gav, "gav may not be null!");
       Preconditions.checkArgument(gav.matches("[^:\\s]+:[^:\\s]+:[^:\\s]+"), "invalid gav: " + gav);
       Preconditions.checkNotNull(ctx, "parsing context may not be null!");
-      Collection<XtextResource> resources = new LinkedHashSet<>();
       try {
-         return parseDependencies(gav, ctx, true);
+         return parseDependencies(Collections.singleton(gav), ctx, true);
       } catch (IOException e) {
          throw new ParsingException(e);
       }
@@ -81,7 +82,7 @@ class ParsingUtils {
    /**
     * Parses the gradle project in the given directory. This project will attempt to locate system descriptor files in the projectDirectory/build/resources/main; otherwise it will locate system
     * descriptor files in src/main/sd. Dependencies to the project are determined by the pom file found in projectDirectory/build/poms.
-    * 
+    *
     * @param projectDirectory directory of project
     * @param ctx parsing context
     * @return collection of parsed XtextResources
@@ -144,7 +145,7 @@ class ParsingUtils {
 
    /**
     * Returns the parsed XtextResources contained in the given jar.
-    * 
+    *
     * @param jar jar file
     * @param ctx parsing context
     * @return collection of parsed XtextResources
@@ -169,7 +170,7 @@ class ParsingUtils {
 
    /**
     * Uses the given maven pom file to locate the corresponding project and its dependencies and returns the parsed XtextResources from them.
-    * 
+    *
     * @param pom maven pom file
     * @param ctx parsing context
     * @param includeSelf if {@code true} include the main project represented in the pom; otherwise, include only the pom's dependencies
@@ -187,42 +188,60 @@ class ParsingUtils {
       } catch (Exception e) {
          return Collections.emptySet();
       }
-
-      String gav = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
-
-      return parseDependencies(gav, ctx, includeSelf);
+      Collection<String> gavs;
+      if (includeSelf) {
+         String gav = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
+         gavs = Collections.singleton(gav);
+      } else {
+         // Because the project may not have been installed, parse the dependencies of this project's dependencies
+         gavs = new LinkedHashSet<>();
+         for (Dependency dependency : model.getDependencies()) {
+            String gav = String.format("%s:%s:%s",
+               dependency.getGroupId(),
+               dependency.getArtifactId(),
+               dependency.getVersion());
+            gavs.add(gav);
+         }
+         includeSelf = true;
+      }
+      return parseDependencies(gavs, ctx, includeSelf);
    }
 
    /**
-    * Locates the project corresponding to the given gav and its dependencies and returns the parsed XtextResources from them.
-    * 
-    * @param gav project gav
+    * Locates the projects corresponding to the given gavs and their dependencies and returns the parsed XtextResources from them.
+    *
+    * @param gavs project gavs
     * @param ctx parsing context
-    * @param includeSelf if {@code true} include the main project represented by the gav; otherwise, include only the pom's dependencies
+    * @param includeSelf if {@code true} include the main projects represented by the gavs; otherwise, include only the poms' dependencies
     * @return collection of parsed XtextResources
     * @throws IOException
     */
-   private Collection<XtextResource> parseDependencies(String gav, ParsingContext ctx, boolean includeSelf)
+   private Collection<XtextResource> parseDependencies(Collection<String> gavs, ParsingContext ctx, boolean includeSelf)
       throws IOException {
-      Collection<XtextResource> resources = new LinkedHashSet<>();
-      String[] splitGav = gav.split(":");
-      String artifactGav = String.format("%s:%s:zip:%s", splitGav[0], splitGav[1], splitGav[2]);
-      // We also need to download the tests classifier for the project.  This is needed because Gradle will refuse to
-      // download the tests later since the ZIP file will already be in the local Maven repository.  In this case,
-      // Gradle thinks that the entire artifact has been downloaded and won't try to download the tests.  Thus, we
-      // need to download them both.
-      String testArtifactGav = String.format("%s:%s:zip:%s:%s",
-                                             splitGav[0],
-                                             splitGav[1],
-                                             TESTS_CLASSIFIER,
-                                             splitGav[2]);
-      if (includeSelf) {
-         resources.addAll(parseJar(repositoryService.getArtifact(artifactGav), ctx));
-         // Force the download of the tests artifact.  We don't actually need it do anything.
-         repositoryService.getArtifact(testArtifactGav);
+      if (gavs == null || gavs.isEmpty()) {
+         return Collections.emptySet();
       }
-      for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
-         resources.addAll(parseJar(path, ctx));
+      Collection<XtextResource> resources = new LinkedHashSet<>();
+      for (String gav : gavs) {
+         String[] splitGav = gav.split(":");
+         String artifactGav = String.format("%s:%s:zip:%s", splitGav[0], splitGav[1], splitGav[2]);
+         // We also need to download the tests classifier for the project. This is needed because Gradle will refuse to
+         // download the tests later since the ZIP file will already be in the local Maven repository. In this case,
+         // Gradle thinks that the entire artifact has been downloaded and won't try to download the tests. Thus, we
+         // need to download them both.
+         String testArtifactGav = String.format("%s:%s:zip:%s:%s",
+            splitGav[0],
+            splitGav[1],
+            TESTS_CLASSIFIER,
+            splitGav[2]);
+         if (includeSelf) {
+            resources.addAll(parseJar(repositoryService.getArtifact(artifactGav), ctx));
+            // Force the download of the tests artifact. We don't actually need it do anything.
+            repositoryService.getArtifact(testArtifactGav);
+         }
+         for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
+            resources.addAll(parseJar(path, ctx));
+         }
       }
       return resources;
    }
