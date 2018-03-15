@@ -1,78 +1,230 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import com.google.common.base.Preconditions;
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import java.util.stream.Collectors;
 
 /**
  * Internal utility used to implement default methods of {@link IProperties}.
  */
 class PropertiesUtil {
 
-   /**
-    * Helper method to resolve the values of a property with the given name and fields.
-    *
-    * @param properties        instance of IProperties
-    * @param predicate         checks if the given type is the correct type for the collection
-    * @param propertyFunction  a function that, given a property and no fields to access, returns the collection of the
-    *                          correct type
-    * @param dataValueFunction a function that, given the second to last data value and the last data field, returns the
-    *                          collection of the correct type
-    * @param propertyName      the name of the property
-    * @param fieldNames        the optional names of the fields in the nested type
-    * @return the values of the property, or {@link Optional#empty()} if the values cannot be determined
-    */
-   static <T> Optional<Collection<T>> resolveCollection(
-         IProperties properties,
-         Predicate<DataTypes> predicate,
-         Function<IProperty, Optional<Collection<T>>> propertyFunction,
-         BiFunction<IPropertyDataValue, IDataField, Optional<Collection<T>>> dataValueFunction,
-         String propertyName,
-         String[] fieldNames) {
+
+   static <T> IPropertyValues<T> resolveValues(IProperties properties,
+                                               Predicate<IPropertyValue> propertyValueVerifier,
+                                               Function<IPropertyValue, T> propertyValueMapper,
+                                               String propertyName,
+                                               String... fieldNames) {
       Preconditions.checkNotNull(propertyName, "property name must not be null!");
+      Preconditions.checkArgument(!propertyName.trim().isEmpty(), "property name must not be empty!");
       Preconditions.checkNotNull(fieldNames, "field names must not be null!");
       for (String fieldName : fieldNames) {
          Preconditions.checkNotNull(fieldName, "field names cannot contain a null value!");
+         Preconditions.checkArgument(!fieldName.trim().isEmpty(), "field name must not be empty!");
       }
 
-      Optional<IProperty> property = properties.getByName(propertyName);
+      IPropertyValues<T> values;
       if (fieldNames.length == 0) {
-         return property.filter(p -> p.getCardinality() == FieldCardinality.MANY)
-               .filter(p -> predicate.test(p.getType()))
-               .flatMap(propertyFunction);
+         values = resolveValuesDirectlyFromProperty(properties,
+                                                    propertyName,
+                                                    propertyValueVerifier,
+                                                    propertyValueMapper);
+      } else {
+         values = resolveValuesFromComplexDataType(properties,
+                                                   propertyName,
+                                                   fieldNames,
+                                                   propertyValueVerifier,
+                                                   propertyValueMapper);
       }
 
-      Optional<IPropertyValue> value = property.filter(p -> p.getCardinality() == FieldCardinality.SINGLE)
-            .map(IProperty::getValue);
-
-      for (String fieldName : Arrays.asList(fieldNames).subList(0, fieldNames.length - 1)) {
-         // Intermediate property values must be IPropertyDataValues and have a cardinality of single
-         value = value.filter(IPropertyValue::isData)
-               .map(IPropertyDataValue.class::cast)
-               .flatMap(dataValue -> dataValue.getFieldByName(fieldName)
-                     .filter(f -> f.getCardinality() == FieldCardinality.SINGLE)
-                     .map(dataValue::getValue));
-      }
-
-      String lastField = fieldNames[fieldNames.length - 1];
-
-      return value.filter(IPropertyValue::isData)
-            .map(IPropertyDataValue.class::cast)
-            .flatMap(dataValue -> dataValue.getFieldByName(lastField)
-                  .filter(field -> predicate.test(field.getType()))
-                  .filter(field -> field.getCardinality() == FieldCardinality.MANY)
-                  .flatMap(field -> dataValueFunction.apply(dataValue, field)));
+      return values;
    }
 
-   static abstract class SimplePropertiesImpl extends AbstractList<IProperty> implements IProperties {
+   private static <T> IPropertyValues<T> resolveValuesDirectlyFromProperty(
+         IProperties properties,
+         String propertyName,
+         Predicate<IPropertyValue> propertyValueVerifier,
+         Function<IPropertyValue, T> propertyValueMapper) {
+      IPropertyValues<T> values = IPropertyValues.emptyPropertyValues();
+
+      Optional<IProperty> optional = properties.getByName(propertyName);
+      // Does the property exist?
+      if (optional.isPresent()) {
+         IProperty property = optional.get();
+         // Does the property have multiple values and is the property set?
+         if (property.getCardinality() == FieldCardinality.MANY && property.getValues().isSet()) {
+            // Get the values, converting them to the appropriate type.
+            values = property.getValues()
+                  .stream()
+                  .filter(propertyValueVerifier) // Ensure that the type of the property value matches the expected type
+                  .map(propertyValueMapper) // Map the IPropertyValue to whatever type is is supposed to be.
+                  .collect(Collectors.toCollection(ArrayListPropertyValues::new)); // Build a collection of values.
+         }
+      }
+      return values;
+   }
+
+   private static <T> IPropertyValues<T> resolveValuesFromComplexDataType(
+         IProperties properties,
+         String propertyName,
+         String[] fieldNames,
+         Predicate<IPropertyValue> propertyValueVerifier,
+         Function<IPropertyValue, T> propertyValueMapper) {
+      IPropertyValues<T> values = IPropertyValues.emptyPropertyValues();
+
+      Optional<IProperty> optional = properties.getByName(propertyName);
+      // Does the property exist?
+      if (optional.isPresent()) {
+         IProperty property = optional.get();
+
+         FieldCardinality cardinality = property.getCardinality();
+         DataTypes type = property.getType();
+
+         // Require the cardinality of the property to be single and the value of the property to be a data type.
+         if (cardinality == FieldCardinality.SINGLE && type == DataTypes.DATA) {
+            IPropertyDataValue data = property.getData();
+
+            // Resolve all the nested fields except for the last field.  Require all the intermediate property values
+            // to have a cardinality of single and be a data type.
+            for (int i = 0;
+                 i < fieldNames.length - 1
+                 && cardinality == FieldCardinality.SINGLE
+                 && type == DataTypes.DATA;
+                 i++) {
+               IDataField field = data.getFieldByName(fieldNames[i]).orElse(null);
+               // Was the field with the given name actually found.
+               if (field != null) {
+                  // Continue resolving the data type.
+                  data = data.getData(field);
+                  type = data.getType();
+                  cardinality = field.getCardinality();
+               } else {
+                  // If not, exit the loop and return unset properties.
+                  data = null;
+                  type = null;
+                  cardinality = null;
+               }
+            }
+
+            // Did we find the last data type?
+            if (data != null) {
+               IDataField field = data.getFieldByName(fieldNames[fieldNames.length - 1]).orElse(null);
+               // If the field exists and the cardinality is many, get the values.
+               if (field != null && field.getCardinality() == FieldCardinality.MANY) {
+                  IPropertyValues<? extends IPropertyValue> dataValues = data.getValues(field);
+                  // Only convert the values if the values are set.
+                  if (dataValues.isSet()) {
+                     values = dataValues.stream()
+                           // Ensure that the type of the property value matches the expected type
+                           .filter(propertyValueVerifier)
+                           // Map the IPropertyValue to whatever type is is supposed to be.
+                           .map(propertyValueMapper)
+                           // Build a collection of values
+                           .collect(Collectors.toCollection(ArrayListPropertyValues::new));
+                  }
+               }
+            }
+         }
+      }
+
+      return values;
+   }
+//
+//   /**
+//    * Helper method to resolve the values of a property with the given name and fields.
+//    *
+//    * @param properties        instance of IProperties
+//    * @param predicate         checks if the given type is the correct type for the collection
+//    * @param propertyFunction  a function that, given a property and no fields to access, returns the collection of the
+//    *                          correct type
+//    * @param dataValueFunction a function that, given the second to last data value and the last data field, returns the
+//    *                          collection of the correct type
+//    * @param propertyName      the name of the property
+//    * @param fieldNames        the optional names of the fields in the nested type
+//    * @return the values of the property
+//    */
+//   static <T extends IPropertyValue> IPropertyValues<T> resolveCollection(
+//         IProperties properties,
+//         Predicate<DataTypes> predicate,
+//         Function<IProperty, IPropertyValues<T>> propertyFunction,
+//         BiFunction<IPropertyDataValue, IDataField, IPropertyValues<T>> dataValueFunction,
+//         String propertyName,
+//         String[] fieldNames) {
+//      Preconditions.checkNotNull(propertyName, "property name must not be null!");
+//      Preconditions.checkNotNull(fieldNames, "field names must not be null!");
+//      for (String fieldName : fieldNames) {
+//         Preconditions.checkNotNull(fieldName, "field names cannot contain a null value!");
+//      }
+//
+//      Optional<IProperty> property = properties.getByName(propertyName);
+//      if (fieldNames.length == 0) {
+//         return property.filter(p -> p.getCardinality() == FieldCardinality.MANY)
+//               .filter(p -> predicate.test(p.getType()))
+//               .map(propertyFunction)
+//               .orElse(IPropertyValues.emptyPropertyValues());
+//      }
+//
+//      Optional<IPropertyValue> value = property.filter(p -> p.getCardinality() == FieldCardinality.SINGLE)
+//            .map(IProperty::getValue);
+//
+//      for (String fieldName : Arrays.asList(fieldNames).subList(0, fieldNames.length - 1)) {
+//         // Intermediate property values must be IPropertyDataValues and have a cardinality of single
+//         value = value.filter(IPropertyValue::isData)
+//               .map(IPropertyDataValue.class::cast)
+//               .flatMap(dataValue -> dataValue.getFieldByName(fieldName)
+//                     .filter(f -> f.getCardinality() == FieldCardinality.SINGLE)
+//                     .map(dataValue::getValue));
+//      }
+//
+//      String lastField = fieldNames[fieldNames.length - 1];
+//
+//      return null;
+////      return value.filter(IPropertyValue::isData)
+////            .map(IPropertyDataValue.class::cast)
+////            .flatMap(dataValue -> dataValue.getFieldByName(lastField)
+////                  .filter(field -> predicate.test(field.getType()))
+////                  .filter(field -> field.getCardinality() == FieldCardinality.MANY)
+////                  .map(field -> dataValueFunction.apply(dataValue, field)));
+//   }
+
+   static class ArrayListPropertyValues<T>
+         extends ArrayList<T>
+         implements IPropertyValues<T> {
+
+      ArrayListPropertyValues() {
+      }
+
+      ArrayListPropertyValues(Collection<? extends T> c) {
+         super(c);
+      }
+
+      @Override
+      public boolean isSet() {
+         return true;
+      }
+   }
+
+   static abstract class SimplePropertyValues<T>
+         extends AbstractList<T>
+         implements IPropertyValues<T> {
+
+   }
+
+   static abstract class SimplePropertiesImpl
+         extends AbstractList<IProperty>
+         implements IProperties {
+
    }
 }

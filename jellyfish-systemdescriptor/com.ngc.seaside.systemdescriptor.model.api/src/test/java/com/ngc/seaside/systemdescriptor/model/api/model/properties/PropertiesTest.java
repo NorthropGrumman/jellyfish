@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.model.api.properties;
+package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,16 +11,14 @@ import static org.mockito.Mockito.when;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +90,45 @@ public class PropertiesTest {
       assertEquals(value, optional.get());
    }
 
+   @SuppressWarnings({"unchecked"})
+   @Test
+   public void testValidManyCaseDirectlyFromProperty() {
+      /**
+       * properties {
+       *     A property
+       *     property = [10, 20]
+       * }
+       * data A {
+       *     B field1
+       * }
+       * data B {
+       *     many int field2
+       * }
+       *
+       * properties.resolveAsIntegers("property")
+       */
+      final List<BigInteger> values = Collections.singletonList(BigInteger.valueOf(10));
+
+      final IProperty property = mock(IProperty.class);
+      final IPropertyPrimitiveValue propertyValue = mock(IPropertyPrimitiveValue.class);
+
+      when(properties.getByName(PROPERTY_NAME)).thenReturn(Optional.of(property));
+      when(property.getName()).thenReturn(PROPERTY_NAME);
+      when(property.getCardinality()).thenReturn(FieldCardinality.MANY);
+      when(property.getType()).thenReturn(DataTypes.INT);
+      when(property.getValues()).thenReturn((IPropertyValues) IPropertyValues.of(Collections.singleton(propertyValue)));
+
+      when(propertyValue.getType()).thenReturn(DataTypes.INT);
+      when(propertyValue.isPrimitive()).thenReturn(true);
+      when(propertyValue.getInteger()).thenReturn(values.get(0));
+
+      IPropertyValues<BigInteger> intValues = properties.resolveAsIntegers(PROPERTY_NAME);
+      assertNotNull(intValues);
+      assertTrue(intValues.isSet());
+      assertEquals(new ArrayList<>(values), new ArrayList<>(intValues));
+   }
+
+   @SuppressWarnings({"unchecked"})
    @Test
    public void testValidManyCase() {
       /**
@@ -137,8 +174,10 @@ public class PropertiesTest {
       when(field1Value.getType()).thenReturn(DataTypes.DATA);
       when(field1Value.isData()).thenReturn(true);
       when(field1Value.getFieldByName(FIELD2_NAME)).thenReturn(Optional.of(field2));
-      when(field1Value.getValues(field2)).thenReturn(Optional.of(Arrays.asList(field2Value1, field2Value2)));
-      when(field1Value.getPrimitives(field2)).thenReturn(Optional.of(Arrays.asList(field2Value1, field2Value2)));
+      when(field1Value.getValues(field2)).thenReturn((IPropertyValues) IPropertyValues.of(Arrays.asList(field2Value1,
+                                                                                                        field2Value2)));
+      when(field1Value.getPrimitives(field2)).thenReturn(IPropertyValues.of(Arrays.asList(field2Value1,
+                                                                                          field2Value2)));
 
       when(field2.getType()).thenReturn(DataTypes.INT);
       when(field2.getCardinality()).thenReturn(FieldCardinality.MANY);
@@ -151,10 +190,10 @@ public class PropertiesTest {
       when(field2Value2.isPrimitive()).thenReturn(true);
       when(field2Value2.getInteger()).thenReturn(values.get(1));
 
-      Optional<Collection<BigInteger>> optional = properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
-      assertNotNull(optional);
-      assertTrue(optional.isPresent());
-      assertEquals(values, optional.get());
+      IPropertyValues<BigInteger> intValues = properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
+      assertNotNull(intValues);
+      assertTrue(intValues.isSet());
+      assertEquals(new ArrayList<>(values), new ArrayList<>(intValues));
    }
 
    @Test
@@ -260,9 +299,10 @@ public class PropertiesTest {
       assertNotNull(optional1);
       assertFalse(optional1.isPresent());
 
-      Optional<Collection<BigInteger>> optional2 = properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
-      assertNotNull(optional2);
-      assertFalse(optional2.isPresent());
+      IPropertyValues<BigInteger> intValues =  properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
+      assertNotNull(intValues);
+      assertFalse("values that could not be resolved should not be set!",
+                  intValues.isSet());
    }
 
    @Test

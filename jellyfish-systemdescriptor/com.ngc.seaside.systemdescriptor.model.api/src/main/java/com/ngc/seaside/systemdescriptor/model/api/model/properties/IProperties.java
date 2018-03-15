@@ -1,16 +1,17 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 
 /**
  * A type of collection that contains properties. This type of collection contains extra operations to help resolve the
@@ -52,7 +53,7 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
 
       @Override
       public IProperty get(int index) {
-         throw new IndexOutOfBoundsException("Properties container is empty");
+         throw new IndexOutOfBoundsException("properties is empty");
       }
 
       @Override
@@ -90,10 +91,11 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
             .map(IProperty::getValue);
       for (String fieldName : fieldNames) {
          Preconditions.checkNotNull(fieldName, "field names cannot contain a null value!");
-         value = value.filter(dataValue -> dataValue.isData())
+         value = value.filter(IPropertyValue::isData)
                .map(IPropertyDataValue.class::cast)
                .flatMap(dataValue -> dataValue.getFieldByName(fieldName)
-                     .filter(field -> field.getCardinality() == FieldCardinality.SINGLE).map(dataValue::getValue));
+                     .filter(field -> field.getCardinality() == FieldCardinality.SINGLE)
+                     .map(dataValue::getValue));
       }
       return value;
    }
@@ -119,7 +121,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the data value of the property, or {@link Optional#empty()} if the value cannot be determined
     */
    default Optional<IPropertyDataValue> resolveAsData(String propertyName, String... fieldNames) {
-      return resolveValue(propertyName, fieldNames).filter(IPropertyValue::isData)
+      return resolveValue(propertyName, fieldNames)
+            .filter(IPropertyValue::isData)
             .map(IPropertyDataValue.class::cast);
    }
 
@@ -145,7 +148,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the enumeration value of the property, or {@link Optional#empty()} if the value cannot be determined
     */
    default Optional<IPropertyEnumerationValue> resolveAsEnumeration(String propertyName, String... fieldNames) {
-      return resolveValue(propertyName, fieldNames).filter(IPropertyValue::isEnumeration)
+      return resolveValue(propertyName, fieldNames)
+            .filter(IPropertyValue::isEnumeration)
             .map(IPropertyEnumerationValue.class::cast);
    }
 
@@ -171,7 +175,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the primitive value of the property, or {@link Optional#empty()} if the value cannot be determined
     */
    default Optional<IPropertyPrimitiveValue> resolveAsPrimitive(String propertyName, String... fieldNames) {
-      return resolveValue(propertyName, fieldNames).filter(IPropertyValue::isPrimitive)
+      return resolveValue(propertyName, fieldNames)
+            .filter(IPropertyValue::isPrimitive)
             .map(IPropertyPrimitiveValue.class::cast);
    }
 
@@ -195,7 +200,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the integer value of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<BigInteger> resolveAsInteger(String propertyName, String... fieldNames) {
-      return resolveAsPrimitive(propertyName, fieldNames).filter(v -> v.getType() == DataTypes.INT)
+      return resolveAsPrimitive(propertyName, fieldNames)
+            .filter(v -> v.getType() == DataTypes.INT)
             .map(IPropertyPrimitiveValue::getInteger);
    }
 
@@ -219,7 +225,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the decimal value of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<BigDecimal> resolveAsDecimal(String propertyName, String... fieldNames) {
-      return resolveAsPrimitive(propertyName, fieldNames).filter(v -> v.getType() == DataTypes.FLOAT)
+      return resolveAsPrimitive(propertyName, fieldNames)
+            .filter(v -> v.getType() == DataTypes.FLOAT)
             .map(IPropertyPrimitiveValue::getDecimal);
    }
 
@@ -243,7 +250,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the boolean value of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<Boolean> resolveAsBoolean(String propertyName, String... fieldNames) {
-      return resolveAsPrimitive(propertyName, fieldNames).filter(v -> v.getType() == DataTypes.BOOLEAN)
+      return resolveAsPrimitive(propertyName, fieldNames)
+            .filter(v -> v.getType() == DataTypes.BOOLEAN)
             .map(IPropertyPrimitiveValue::getBoolean);
    }
 
@@ -266,7 +274,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @return the string value of the property, or {@link Optional#empty()} if the values cannot be determined
     */
    default Optional<String> resolveAsString(String propertyName, String... fieldNames) {
-      return resolveAsPrimitive(propertyName, fieldNames).filter(v -> v.getType() == DataTypes.STRING)
+      return resolveAsPrimitive(propertyName, fieldNames)
+            .filter(v -> v.getType() == DataTypes.STRING)
             .map(IPropertyPrimitiveValue::getString);
    }
 
@@ -286,16 +295,16 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the values of the property,
     */
-   default Optional<Collection<IPropertyValue>> resolveValues(String propertyName, String... fieldNames) {
-      return PropertiesUtil.resolveCollection(this,
-                                              __ -> true,
-                                              IProperty::getValues,
-                                              IPropertyDataValue::getValues,
-                                              propertyName,
-                                              fieldNames);
-   }
+   @SuppressWarnings({"unchecked"})
+//   default IPropertyValues<? extends IPropertyValue> resolveValues(String propertyName, String... fieldNames) {
+//      return PropertiesUtil.resolveCollection(this,
+//                                              null, //__ -> true
+//                                              p -> (IPropertyValues) p.getValues(), //IProperty::getValues
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 
    /**
     * Attempts to resolve the data values of the property with the given name. Returns {@link Optional#empty()} if the
@@ -316,14 +325,14 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the data values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<IPropertyDataValue>> resolveAsDatas(String propertyName, String... fieldNames) {
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.DATA::equals,
-                                              IProperty::getDatas,
-                                              IPropertyDataValue::getDatas,
-                                              propertyName,
-                                              fieldNames);
-   }
+//   default Collection<IPropertyDataValue> resolveAsDatas(String propertyName, String... fieldNames) {
+//      return PropertiesUtil.resolveCollection(this,
+//                                              DataTypes.DATA::equals,
+//                                              IProperty::getDatas,
+//                                              IPropertyDataValue::getDatas,
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 
    /**
     * Attempts to resolve the enumeration values of the property with the given name. Returns {@link Optional#empty()}
@@ -343,8 +352,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the enumeration values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<IPropertyEnumerationValue>> resolveAsEnumerations(String propertyName,
-                                                                                 String... fieldNames) {
+   default Collection<IPropertyEnumerationValue> resolveAsEnumerations(String propertyName,
+                                                                       String... fieldNames) {
       return PropertiesUtil.resolveCollection(this,
                                               DataTypes.ENUM::equals,
                                               IProperty::getEnumerations,
@@ -372,15 +381,15 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the primitive values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<IPropertyPrimitiveValue>> resolveAsPrimitives(String propertyName,
-                                                                             String... fieldNames) {
-      return PropertiesUtil.resolveCollection(this,
-                                              type -> type != DataTypes.DATA && type != DataTypes.ENUM,
-                                              IProperty::getPrimitives,
-                                              IPropertyDataValue::getPrimitives,
-                                              propertyName,
-                                              fieldNames);
-   }
+//   default Collection<IPropertyPrimitiveValue> resolveAsPrimitives(String propertyName,
+//                                                                             String... fieldNames) {
+//      return PropertiesUtil.resolveCollection(this,
+//                                              type -> type != DataTypes.DATA && type != DataTypes.ENUM,
+//                                              IProperty::getPrimitives,
+//                                              IPropertyDataValue::getPrimitives,
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 
    /**
     * Attempts to resolve the integer values of the property with the given name. Returns {@link Optional#empty()} if
@@ -401,17 +410,16 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the integer values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<BigInteger>> resolveAsIntegers(String propertyName, String... fieldNames) {
+   default IPropertyValues<BigInteger> resolveAsIntegers(String propertyName, String... fieldNames) {
       final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigInteger>>> fcn =
             primitives -> primitives.map(p -> p.stream()
                   .map(IPropertyPrimitiveValue::getInteger)
                   .collect(Collectors.toList()));
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.INT::equals,
-                                              property -> fcn.apply(property.getPrimitives()),
-                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-                                              propertyName,
-                                              fieldNames);
+      return PropertiesUtil.resolveValues(this,
+                                          p -> p.isPrimitive() && p.getType() == DataTypes.INT,
+                                          p -> ((IPropertyPrimitiveValue) p).getInteger(),
+                                          propertyName,
+                                          fieldNames);
    }
 
    /**
@@ -433,18 +441,18 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the decimal values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<BigDecimal>> resolveAsDecimals(String propertyName, String... fieldNames) {
-      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigDecimal>>> fcn =
-            primitives -> primitives.map(p -> p.stream()
-                  .map(IPropertyPrimitiveValue::getDecimal)
-                  .collect(Collectors.toList()));
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.FLOAT::equals,
-                                              property -> fcn.apply(property.getPrimitives()),
-                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-                                              propertyName,
-                                              fieldNames);
-   }
+//   default Optional<Collection<BigDecimal>> resolveAsDecimals(String propertyName, String... fieldNames) {
+//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigDecimal>>> fcn =
+//            primitives -> primitives.map(p -> p.stream()
+//                  .map(IPropertyPrimitiveValue::getDecimal)
+//                  .collect(Collectors.toList()));
+//      return PropertiesUtil.resolveCollection(this,
+//                                              DataTypes.FLOAT::equals,
+//                                              property -> fcn.apply(property.getPrimitives()),
+//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 
    /**
     * Attempts to resolve the boolean values of the property with the given name. Returns {@link Optional#empty()} if
@@ -465,18 +473,18 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the boolean values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<Boolean>> resolveAsBooleans(String propertyName, String... fieldNames) {
-      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<Boolean>>> fcn =
-            primitives -> primitives.map(p -> p.stream()
-            .map(IPropertyPrimitiveValue::getBoolean)
-            .collect(Collectors.toList()));
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.BOOLEAN::equals,
-                                              property -> fcn.apply(property.getPrimitives()),
-                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-                                              propertyName,
-                                              fieldNames);
-   }
+//   default Optional<Collection<Boolean>> resolveAsBooleans(String propertyName, String... fieldNames) {
+//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<Boolean>>> fcn =
+//            primitives -> primitives.map(p -> p.stream()
+//            .map(IPropertyPrimitiveValue::getBoolean)
+//            .collect(Collectors.toList()));
+//      return PropertiesUtil.resolveCollection(this,
+//                                              DataTypes.BOOLEAN::equals,
+//                                              property -> fcn.apply(property.getPrimitives()),
+//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 
    /**
     * Attempts to resolve the string values of the property with the given name. Returns {@link Optional#empty()} if the
@@ -496,17 +504,17 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the string values of the property, or {@link Optional#empty()} if the values cannot be determined
     */
-   default Optional<Collection<String>> resolveAsStrings(String propertyName, String... fieldNames) {
-      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<String>>> fcn =
-            primitives -> primitives.map(p -> p.stream()
-            .map(IPropertyPrimitiveValue::getString)
-            .collect(Collectors.toList()));
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.STRING::equals,
-                                              property -> fcn.apply(property.getPrimitives()),
-                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-                                              propertyName,
-                                              fieldNames);
-   }
+//   default Optional<Collection<String>> resolveAsStrings(String propertyName, String... fieldNames) {
+//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<String>>> fcn =
+//            primitives -> primitives.map(p -> p.stream()
+//            .map(IPropertyPrimitiveValue::getString)
+//            .collect(Collectors.toList()));
+//      return PropertiesUtil.resolveCollection(this,
+//                                              DataTypes.STRING::equals,
+//                                              property -> fcn.apply(property.getPrimitives()),
+//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
+//                                              propertyName,
+//                                              fieldNames);
+//   }
 }
 
