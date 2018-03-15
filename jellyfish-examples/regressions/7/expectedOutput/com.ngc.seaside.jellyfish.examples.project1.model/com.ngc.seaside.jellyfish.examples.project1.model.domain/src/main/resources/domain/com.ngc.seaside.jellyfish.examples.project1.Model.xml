@@ -13,4 +13,7 @@
     <object class="com.ngc.seaside.jellyfish.examples.project1.model.domain.Data1" generated="true" abstract="false">
         <property name="field1" type="int" multiple="false" abstract="false"/>
     </object>
+    <object class="com.ngc.seaside.jellyfish.examples.project1.model.domain.project3.Data3" generated="true" abstract="false">
+        <property name="field3" type="int" multiple="false" abstract="false"/>
+    </object>
 </ns2:domain>

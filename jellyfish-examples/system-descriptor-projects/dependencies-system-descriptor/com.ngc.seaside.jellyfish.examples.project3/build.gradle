@@ -1,4 +1,3 @@
 dependencies {
-    // Removed for SEA18-79 since a DSL change as been made that makes this model invalid.
-    //sd "com.ngc.seaside.threateval:threatevaluation.descriptor:$threatEvalVersion"
+    sd "com.ngc.seaside.threateval:threatevaluation.descriptor:$threatEvalVersion"
 }
