@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.examples.project1.model.base.impl.AbstractModel
 import com.ngc.seaside.jellyfish.examples.project1.model.event.Data1;
 import com.ngc.seaside.jellyfish.examples.project1.model.event.common.datatype.GPSTime;
 import com.ngc.seaside.jellyfish.examples.project1.model.event.project2.Data2;
+import com.ngc.seaside.jellyfish.examples.project1.model.event.project3.Data3;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -27,7 +28,7 @@ public class Model extends AbstractModel {
       throw new UnsupportedOperationException("not implemented");
    }
    @Override
-   public Data1 scenario2(GPSTime input2) throws ServiceFaultException {
+   public Data3 scenario2(GPSTime input2) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }

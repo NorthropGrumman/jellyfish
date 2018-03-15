@@ -21,7 +21,7 @@ model ModelService {
   }
   
   scenario refined {
-  	when recieving inputA
-  	then willpublish outputB
+  	when receiving inputA
+  	then willPublish outputB
   }
 }
