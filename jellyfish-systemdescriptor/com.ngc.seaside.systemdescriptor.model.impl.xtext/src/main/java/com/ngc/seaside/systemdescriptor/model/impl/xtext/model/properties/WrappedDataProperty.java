@@ -1,13 +1,12 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -38,7 +37,7 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
    }
 
    @Override
-   public Optional<Collection<IPropertyDataValue>> getDatas() {
+   public IPropertyValues<IPropertyDataValue> getDatas() {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("not implemented");
    }
@@ -49,13 +48,14 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
    }
 
    public static ReferencedPropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
-            IProperty property) {
+                                                                                              IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");
       if (property.getType() != DataTypes.DATA) {
          throw new IllegalArgumentException("property is not of type data");
       }
-      ReferencedPropertyFieldDeclaration declaration = SystemDescriptorFactory.eINSTANCE.createReferencedPropertyFieldDeclaration();
+      ReferencedPropertyFieldDeclaration declaration =
+            SystemDescriptorFactory.eINSTANCE.createReferencedPropertyFieldDeclaration();
       declaration.setName(property.getName());
       declaration.setCardinality(ConversionUtil.convertCardinalityToXtext(property.getCardinality()));
       IData data = property.getReferencedDataType();

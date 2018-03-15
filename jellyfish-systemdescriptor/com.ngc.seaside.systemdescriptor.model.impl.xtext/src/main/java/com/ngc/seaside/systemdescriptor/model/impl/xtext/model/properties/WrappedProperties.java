@@ -24,11 +24,11 @@ public class WrappedProperties extends WrappingNamedChildCollection<PropertyFiel
 
    public static Properties toXtext(IWrapperResolver resolver, IProperties properties) {
       Properties xtextProperties = SystemDescriptorFactory.eINSTANCE.createProperties();
-      
+
       for (IProperty property : properties) {
          xtextProperties.getDeclarations().add(AbstractWrappedProperty.toXTextPartDeclaration(resolver, property));
       }
-      
+
       return xtextProperties;
    }
 
@@ -37,7 +37,7 @@ public class WrappedProperties extends WrappingNamedChildCollection<PropertyFiel
          properties.getDeclarations(),
          property -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, property),
          property -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, property),
-         property -> property.getName());
+         PropertyFieldDeclaration::getName);
    }
 
 }

@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
@@ -26,7 +27,7 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
    }
 
    @Override
-   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
+   public IPropertyValues<IPropertyPrimitiveValue> getPrimitives() {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("not implemented");
    }
@@ -43,7 +44,8 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
       if (property.getType() == DataTypes.DATA || property.getType() == DataTypes.ENUM) {
          throw new IllegalArgumentException("property is not a primitive type");
       }
-      PrimitivePropertyFieldDeclaration declaration = SystemDescriptorFactory.eINSTANCE.createPrimitivePropertyFieldDeclaration();
+      PrimitivePropertyFieldDeclaration declaration =
+            SystemDescriptorFactory.eINSTANCE.createPrimitivePropertyFieldDeclaration();
       declaration.setName(property.getName());
       declaration.setCardinality(ConversionUtil.convertCardinalityToXtext(property.getCardinality()));
       declaration.setType(PrimitiveDataType.valueOf(property.getType().toString()));

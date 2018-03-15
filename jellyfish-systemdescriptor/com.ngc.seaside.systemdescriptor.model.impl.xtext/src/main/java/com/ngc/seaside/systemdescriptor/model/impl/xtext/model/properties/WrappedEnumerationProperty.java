@@ -1,13 +1,12 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
@@ -38,7 +37,7 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
    }
 
    @Override
-   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations() {
+   public IPropertyValues<IPropertyEnumerationValue> getEnumerations() {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("not implemented");
    }
@@ -49,13 +48,14 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
    }
 
    public static ReferencedPropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
-            IProperty property) {
+                                                                                              IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");
       if (property.getType() != DataTypes.ENUM) {
          throw new IllegalArgumentException("property is not of type enumeration");
       }
-      ReferencedPropertyFieldDeclaration declaration = SystemDescriptorFactory.eINSTANCE.createReferencedPropertyFieldDeclaration();
+      ReferencedPropertyFieldDeclaration declaration =
+            SystemDescriptorFactory.eINSTANCE.createReferencedPropertyFieldDeclaration();
       declaration.setName(property.getName());
       declaration.setCardinality(ConversionUtil.convertCardinalityToXtext(property.getCardinality()));
       IEnumeration enumeration = property.getReferencedEnumeration();

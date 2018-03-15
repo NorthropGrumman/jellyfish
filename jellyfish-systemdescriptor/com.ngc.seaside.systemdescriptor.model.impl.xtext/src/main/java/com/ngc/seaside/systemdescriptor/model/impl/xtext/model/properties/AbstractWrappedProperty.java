@@ -1,9 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
@@ -12,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
@@ -23,8 +22,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 
-public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration> extends AbstractWrappedXtext<T>
-         implements IProperty {
+public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration>
+      extends AbstractWrappedXtext<T>
+      implements IProperty {
 
    public AbstractWrappedProperty(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
@@ -72,17 +72,17 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
    }
 
    @Override
-   public Optional<Collection<IPropertyDataValue>> getDatas() {
+   public IPropertyValues<IPropertyDataValue> getDatas() {
       throw new IllegalStateException("property is not a data type");
    }
 
    @Override
-   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations() {
+   public IPropertyValues<IPropertyEnumerationValue> getEnumerations() {
       throw new IllegalStateException("property is not an enumeration type");
    }
 
    @Override
-   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
+   public IPropertyValues<IPropertyPrimitiveValue> getPrimitives() {
       throw new IllegalStateException("property is not a primitive type");
    }
 
@@ -111,13 +111,13 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
    public static PropertyFieldDeclaration toXTextPartDeclaration(IWrapperResolver resolver, IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");
       Preconditions.checkNotNull(property, "property must not be null!");
-      switch(property.getType()) {
-      case DATA:
-         return WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver, property);
-      case ENUM:
-         return WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver, property);
-      default:
-         return WrappedPrimitiveProperty.toXtextPrimitivePropertyFieldDeclaration(resolver, property);
+      switch (property.getType()) {
+         case DATA:
+            return WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver, property);
+         case ENUM:
+            return WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver, property);
+         default:
+            return WrappedPrimitiveProperty.toXtextPrimitivePropertyFieldDeclaration(resolver, property);
       }
    }
 
