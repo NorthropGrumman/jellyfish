@@ -8,10 +8,8 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -21,7 +19,18 @@ import java.util.stream.Collectors;
  */
 class PropertiesUtil {
 
-
+   /**
+    * Helper method to resolve the values of a property with the given name and fields.
+    *
+    * @param properties            the properties to start the resolution from
+    * @param propertyValueVerifier a predicate that checks if the given property should be considered as a value to
+    *                              resolve the values for the property
+    * @param propertyValueMapper   a function that maps an {@code IPropertyValue} to an instance of {@code T}
+    * @param propertyName          the name of the property
+    * @param fieldNames            the optional names of the fields in the nested type
+    * @param <T>                   the type of value in the collection of property values
+    * @return the values of the property which my be set or unset
+    */
    static <T> IPropertyValues<T> resolveValues(IProperties properties,
                                                Predicate<IPropertyValue> propertyValueVerifier,
                                                Function<IPropertyValue, T> propertyValueMapper,
@@ -50,6 +59,48 @@ class PropertiesUtil {
       }
 
       return values;
+   }
+
+   /**
+    * Implementation of {@code IPropertyValues} that can store anything and is mutable.
+    *
+    * @param <T> the type of values in the collection
+    */
+   static class ArrayListPropertyValues<T>
+         extends ArrayList<T>
+         implements IPropertyValues<T> {
+
+      ArrayListPropertyValues() {
+      }
+
+      ArrayListPropertyValues(Collection<? extends T> c) {
+         super(c);
+      }
+
+      @Override
+      public boolean isSet() {
+         return true;
+      }
+   }
+
+   /**
+    * Implementation of {@code IPropertyValues} that is not mutable.
+    *
+    * @param <T> the type of value in the collection
+    */
+   static abstract class SimplePropertyValues<T>
+         extends AbstractList<T>
+         implements IPropertyValues<T> {
+
+   }
+
+   /**
+    * Implementation of {@code IProperties} that is not mutable.
+    */
+   static abstract class SimplePropertiesImpl
+         extends AbstractList<IProperty>
+         implements IProperties {
+
    }
 
    private static <T> IPropertyValues<T> resolveValuesDirectlyFromProperty(
@@ -140,91 +191,5 @@ class PropertiesUtil {
       }
 
       return values;
-   }
-//
-//   /**
-//    * Helper method to resolve the values of a property with the given name and fields.
-//    *
-//    * @param properties        instance of IProperties
-//    * @param predicate         checks if the given type is the correct type for the collection
-//    * @param propertyFunction  a function that, given a property and no fields to access, returns the collection of the
-//    *                          correct type
-//    * @param dataValueFunction a function that, given the second to last data value and the last data field, returns the
-//    *                          collection of the correct type
-//    * @param propertyName      the name of the property
-//    * @param fieldNames        the optional names of the fields in the nested type
-//    * @return the values of the property
-//    */
-//   static <T extends IPropertyValue> IPropertyValues<T> resolveCollection(
-//         IProperties properties,
-//         Predicate<DataTypes> predicate,
-//         Function<IProperty, IPropertyValues<T>> propertyFunction,
-//         BiFunction<IPropertyDataValue, IDataField, IPropertyValues<T>> dataValueFunction,
-//         String propertyName,
-//         String[] fieldNames) {
-//      Preconditions.checkNotNull(propertyName, "property name must not be null!");
-//      Preconditions.checkNotNull(fieldNames, "field names must not be null!");
-//      for (String fieldName : fieldNames) {
-//         Preconditions.checkNotNull(fieldName, "field names cannot contain a null value!");
-//      }
-//
-//      Optional<IProperty> property = properties.getByName(propertyName);
-//      if (fieldNames.length == 0) {
-//         return property.filter(p -> p.getCardinality() == FieldCardinality.MANY)
-//               .filter(p -> predicate.test(p.getType()))
-//               .map(propertyFunction)
-//               .orElse(IPropertyValues.emptyPropertyValues());
-//      }
-//
-//      Optional<IPropertyValue> value = property.filter(p -> p.getCardinality() == FieldCardinality.SINGLE)
-//            .map(IProperty::getValue);
-//
-//      for (String fieldName : Arrays.asList(fieldNames).subList(0, fieldNames.length - 1)) {
-//         // Intermediate property values must be IPropertyDataValues and have a cardinality of single
-//         value = value.filter(IPropertyValue::isData)
-//               .map(IPropertyDataValue.class::cast)
-//               .flatMap(dataValue -> dataValue.getFieldByName(fieldName)
-//                     .filter(f -> f.getCardinality() == FieldCardinality.SINGLE)
-//                     .map(dataValue::getValue));
-//      }
-//
-//      String lastField = fieldNames[fieldNames.length - 1];
-//
-//      return null;
-////      return value.filter(IPropertyValue::isData)
-////            .map(IPropertyDataValue.class::cast)
-////            .flatMap(dataValue -> dataValue.getFieldByName(lastField)
-////                  .filter(field -> predicate.test(field.getType()))
-////                  .filter(field -> field.getCardinality() == FieldCardinality.MANY)
-////                  .map(field -> dataValueFunction.apply(dataValue, field)));
-//   }
-
-   static class ArrayListPropertyValues<T>
-         extends ArrayList<T>
-         implements IPropertyValues<T> {
-
-      ArrayListPropertyValues() {
-      }
-
-      ArrayListPropertyValues(Collection<? extends T> c) {
-         super(c);
-      }
-
-      @Override
-      public boolean isSet() {
-         return true;
-      }
-   }
-
-   static abstract class SimplePropertyValues<T>
-         extends AbstractList<T>
-         implements IPropertyValues<T> {
-
-   }
-
-   static abstract class SimplePropertiesImpl
-         extends AbstractList<IProperty>
-         implements IProperties {
-
    }
 }

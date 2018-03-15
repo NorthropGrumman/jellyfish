@@ -1,13 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -17,10 +9,18 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PropertiesTest {
 
@@ -194,6 +194,16 @@ public class PropertiesTest {
       assertNotNull(intValues);
       assertTrue(intValues.isSet());
       assertEquals(new ArrayList<>(values), new ArrayList<>(intValues));
+
+      IPropertyValues<IPropertyPrimitiveValue> primitiveValues = properties.resolveAsPrimitives(PROPERTY_NAME,
+                                                                                                FIELD1_NAME,
+                                                                                                FIELD2_NAME);
+      assertNotNull(primitiveValues);
+      assertTrue(primitiveValues.isSet());
+      assertEquals(new ArrayList<>(values),
+                   primitiveValues.stream()
+                         .map(IPropertyPrimitiveValue::getInteger)
+                         .collect(Collectors.toList()));
    }
 
    @Test
@@ -299,7 +309,7 @@ public class PropertiesTest {
       assertNotNull(optional1);
       assertFalse(optional1.isPresent());
 
-      IPropertyValues<BigInteger> intValues =  properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
+      IPropertyValues<BigInteger> intValues = properties.resolveAsIntegers(PROPERTY_NAME, FIELD1_NAME, FIELD2_NAME);
       assertNotNull(intValues);
       assertFalse("values that could not be resolved should not be set!",
                   intValues.isSet());

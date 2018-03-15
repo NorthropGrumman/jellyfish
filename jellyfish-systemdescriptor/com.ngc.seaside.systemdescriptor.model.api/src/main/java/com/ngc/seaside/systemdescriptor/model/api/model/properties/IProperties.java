@@ -8,10 +8,8 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * A type of collection that contains properties. This type of collection contains extra operations to help resolve the
@@ -280,8 +278,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    }
 
    /**
-    * Attempts to resolve the values of the property with the given name. Returns {@link Optional#empty()} if the values
-    * cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the values of the property with the given name. Returns {@link IPropertyValues#isSet() unset
+    * values} if the values cannot be resolved, including but not limited to the following cases:
     *
     * <pre>
     * <ul>
@@ -295,20 +293,20 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the values of the property,
+    * @return the values of the property which may not bet set
     */
    @SuppressWarnings({"unchecked"})
-//   default IPropertyValues<? extends IPropertyValue> resolveValues(String propertyName, String... fieldNames) {
-//      return PropertiesUtil.resolveCollection(this,
-//                                              null, //__ -> true
-//                                              p -> (IPropertyValues) p.getValues(), //IProperty::getValues
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<IPropertyValue> resolveValues(String propertyName, String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          p -> true,
+                                          Function.identity(),
+                                          propertyName,
+                                          fieldNames);
+   }
 
    /**
-    * Attempts to resolve the data values of the property with the given name. Returns {@link Optional#empty()} if the
-    * values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the data values of the property with the given name. Returns {@link IPropertyValues#isSet()
+    * unset values} if the values cannot be resolved, including but not limited to the following cases:
     *
     * <pre>
     * <ul>
@@ -323,20 +321,20 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the data values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the data values of the property which may not bet set
     */
-//   default Collection<IPropertyDataValue> resolveAsDatas(String propertyName, String... fieldNames) {
-//      return PropertiesUtil.resolveCollection(this,
-//                                              DataTypes.DATA::equals,
-//                                              IProperty::getDatas,
-//                                              IPropertyDataValue::getDatas,
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<IPropertyDataValue> resolveAsDatas(String propertyName, String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          IPropertyValue::isData,
+                                          p -> (IPropertyDataValue) p,
+                                          propertyName,
+                                          fieldNames);
+   }
 
    /**
-    * Attempts to resolve the enumeration values of the property with the given name. Returns {@link Optional#empty()}
-    * if the values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the enumeration values of the property with the given name. Returns {@link
+    * IPropertyValues#isSet() unset values} if the values cannot be resolved, including but not limited to the following
+    * cases:
     *
     * <pre>
     * <ul>
@@ -350,21 +348,21 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the enumeration values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the enumeration values of the property which may not bet set
     */
-   default Collection<IPropertyEnumerationValue> resolveAsEnumerations(String propertyName,
-                                                                       String... fieldNames) {
-      return PropertiesUtil.resolveCollection(this,
-                                              DataTypes.ENUM::equals,
-                                              IProperty::getEnumerations,
-                                              IPropertyDataValue::getEnumerations,
-                                              propertyName,
-                                              fieldNames);
+   default IPropertyValues<IPropertyEnumerationValue> resolveAsEnumerations(String propertyName,
+                                                                            String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          IPropertyValue::isEnumeration,
+                                          p -> (IPropertyEnumerationValue) p,
+                                          propertyName,
+                                          fieldNames);
    }
 
    /**
-    * Attempts to resolve the primitive values of the property with the given name. Returns {@link Optional#empty()} if
-    * the values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the primitive values of the property with the given name. Returns {@link
+    * IPropertyValues#isSet() unset values} if the values cannot be resolved, including but not limited to the following
+    * cases:
     *
     * <pre>
     * <ul>
@@ -379,21 +377,20 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the primitive values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the primitive values of the property which may not bet set
     */
-//   default Collection<IPropertyPrimitiveValue> resolveAsPrimitives(String propertyName,
-//                                                                             String... fieldNames) {
-//      return PropertiesUtil.resolveCollection(this,
-//                                              type -> type != DataTypes.DATA && type != DataTypes.ENUM,
-//                                              IProperty::getPrimitives,
-//                                              IPropertyDataValue::getPrimitives,
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<IPropertyPrimitiveValue> resolveAsPrimitives(String propertyName,
+                                                                        String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          IPropertyValue::isPrimitive,
+                                          p -> (IPropertyPrimitiveValue) p,
+                                          propertyName,
+                                          fieldNames);
+   }
 
    /**
-    * Attempts to resolve the integer values of the property with the given name. Returns {@link Optional#empty()} if
-    * the values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the integer values of the property with the given name. Returns {@link IPropertyValues#isSet()
+    * unset values} if the values cannot be resolved, including but not limited to the following cases:
     *
     * <pre>
     * <ul>
@@ -408,13 +405,9 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the integer values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the integer values of the property which may not bet set
     */
    default IPropertyValues<BigInteger> resolveAsIntegers(String propertyName, String... fieldNames) {
-      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigInteger>>> fcn =
-            primitives -> primitives.map(p -> p.stream()
-                  .map(IPropertyPrimitiveValue::getInteger)
-                  .collect(Collectors.toList()));
       return PropertiesUtil.resolveValues(this,
                                           p -> p.isPrimitive() && p.getType() == DataTypes.INT,
                                           p -> ((IPropertyPrimitiveValue) p).getInteger(),
@@ -423,8 +416,8 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    }
 
    /**
-    * Attempts to resolve the decimal values of the property with the given name. Returns {@link Optional#empty()} if
-    * the values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the decimal values of the property with the given name. Returns {@link IPropertyValues#isSet()
+    * unset values} if the values cannot be resolved, including but not limited to the following cases:
     *
     * <pre>
     * <ul>
@@ -439,24 +432,19 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the decimal values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the decimal values of the property which may not bet set
     */
-//   default Optional<Collection<BigDecimal>> resolveAsDecimals(String propertyName, String... fieldNames) {
-//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<BigDecimal>>> fcn =
-//            primitives -> primitives.map(p -> p.stream()
-//                  .map(IPropertyPrimitiveValue::getDecimal)
-//                  .collect(Collectors.toList()));
-//      return PropertiesUtil.resolveCollection(this,
-//                                              DataTypes.FLOAT::equals,
-//                                              property -> fcn.apply(property.getPrimitives()),
-//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<BigDecimal> resolveAsDecimals(String propertyName, String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          p -> p.isPrimitive() && p.getType() == DataTypes.FLOAT,
+                                          p -> ((IPropertyPrimitiveValue) p).getDecimal(),
+                                          propertyName,
+                                          fieldNames);
+   }
 
    /**
-    * Attempts to resolve the boolean values of the property with the given name. Returns {@link Optional#empty()} if
-    * the values cannot be resolved, including but not limited to the following cases:
+    * Attempts to resolve the boolean values of the property with the given name. Returns {@link IPropertyValues#isSet()
+    * unset values} if the values cannot be resolved, including but not limited to the following cases:
     *
     * <pre>
     * <ul>
@@ -471,25 +459,20 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the boolean values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the boolean values of the property which may not bet set
     */
-//   default Optional<Collection<Boolean>> resolveAsBooleans(String propertyName, String... fieldNames) {
-//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<Boolean>>> fcn =
-//            primitives -> primitives.map(p -> p.stream()
-//            .map(IPropertyPrimitiveValue::getBoolean)
-//            .collect(Collectors.toList()));
-//      return PropertiesUtil.resolveCollection(this,
-//                                              DataTypes.BOOLEAN::equals,
-//                                              property -> fcn.apply(property.getPrimitives()),
-//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<Boolean> resolveAsBooleans(String propertyName, String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          p -> p.isPrimitive() && p.getType() == DataTypes.BOOLEAN,
+                                          p -> ((IPropertyPrimitiveValue) p).getBoolean(),
+                                          propertyName,
+                                          fieldNames);
+   }
 
    /**
     * Attempts to resolve the string values of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-
+    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -502,19 +485,14 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *
     * @param propertyName the name of the property
     * @param fieldNames   the optional names of the fields in the nested type
-    * @return the string values of the property, or {@link Optional#empty()} if the values cannot be determined
+    * @return the string values of the property which may not bet set
     */
-//   default Optional<Collection<String>> resolveAsStrings(String propertyName, String... fieldNames) {
-//      final Function<Optional<Collection<IPropertyPrimitiveValue>>, Optional<Collection<String>>> fcn =
-//            primitives -> primitives.map(p -> p.stream()
-//            .map(IPropertyPrimitiveValue::getString)
-//            .collect(Collectors.toList()));
-//      return PropertiesUtil.resolveCollection(this,
-//                                              DataTypes.STRING::equals,
-//                                              property -> fcn.apply(property.getPrimitives()),
-//                                              (dataValue, field) -> fcn.apply(dataValue.getPrimitives(field)),
-//                                              propertyName,
-//                                              fieldNames);
-//   }
+   default IPropertyValues<String> resolveAsStrings(String propertyName, String... fieldNames) {
+      return PropertiesUtil.resolveValues(this,
+                                          p -> p.isPrimitive() && p.getType() == DataTypes.STRING,
+                                          p -> ((IPropertyPrimitiveValue) p).getString(),
+                                          propertyName,
+                                          fieldNames);
+   }
 }
 
