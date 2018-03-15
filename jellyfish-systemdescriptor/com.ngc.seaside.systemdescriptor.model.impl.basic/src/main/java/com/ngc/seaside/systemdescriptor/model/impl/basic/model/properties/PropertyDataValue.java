@@ -3,11 +3,13 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -19,6 +21,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyData
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 
 public class PropertyDataValue extends PropertyValue implements IPropertyDataValue {
 
@@ -66,23 +69,35 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives(IDataField field) {
+   public IPropertyValues<IPropertyPrimitiveValue> getPrimitives(IDataField field) {
       checkField(field, FieldCardinality.MANY, Property.PRIMITIVES);
-      return Optional.ofNullable((Collection<IPropertyPrimitiveValue>) fieldValues.get(field.getName()));
+      Collection<IPropertyPrimitiveValue> values = fieldValues.get(field.getName())
+            .stream()
+            .map(p -> (IPropertyPrimitiveValue) p)
+            .collect(Collectors.toList());
+      return IPropertyValues.of(values);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations(IDataField field) {
+   public IPropertyValues<IPropertyEnumerationValue> getEnumerations(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.ENUM);
-      return Optional.ofNullable((Collection<IPropertyEnumerationValue>) fieldValues.get(field.getName()));
+      Collection<IPropertyEnumerationValue> values = fieldValues.get(field.getName())
+            .stream()
+            .map(p -> (IPropertyEnumerationValue) p)
+            .collect(Collectors.toList());
+      return IPropertyValues.of(values);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyDataValue>> getDatas(IDataField field) {
+   public IPropertyValues<IPropertyDataValue> getDatas(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.DATA);
-      return Optional.ofNullable((Collection<IPropertyDataValue>) fieldValues.get(field.getName()));
+      Collection<IPropertyDataValue> values = fieldValues.get(field.getName())
+            .stream()
+            .map(p -> (IPropertyDataValue) p)
+            .collect(Collectors.toList());
+      return IPropertyValues.of(values);
    }
 
    private void checkField(IDataField field, FieldCardinality expectedCardinality, DataTypes... expectedDataTypes) {

@@ -41,7 +41,6 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
 
    public PropertyPrimitiveValue(boolean value) {
       super(DataTypes.BOOLEAN, true);
-      Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
 
@@ -86,7 +85,7 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
       if (this == obj) {
          return true;
       }
-      if (!(obj instanceof PropertyDataValue)) {
+      if (!(obj instanceof PropertyPrimitiveValue)) {
          return false;
       }
       PropertyPrimitiveValue that = (PropertyPrimitiveValue) obj;

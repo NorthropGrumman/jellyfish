@@ -1,14 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -21,11 +14,19 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyData
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class Property implements IProperty {
 
-   static final DataTypes[] PRIMITIVES = { DataTypes.INT, DataTypes.FLOAT, DataTypes.BOOLEAN,
-            DataTypes.STRING };
+   static final DataTypes[] PRIMITIVES = {DataTypes.INT, DataTypes.FLOAT, DataTypes.BOOLEAN,
+                                          DataTypes.STRING};
 
    private final String name;
    private IProperties parent;
@@ -37,51 +38,62 @@ public class Property implements IProperty {
    /**
     * Constructs a property.
     *
-    * @param name property name
-    * @param type property type
-    * @param cardinality property cardinality
-    * @param values values of the property, can be null for unset properties with many cardinality
+    * @param name           property name
+    * @param type           property type
+    * @param cardinality    property cardinality
+    * @param values         values of the property, can be null for unset properties with many cardinality
     * @param referencedType data/enum that the property referenced, can be null
-    * @throws IllegalArgumentException if the number or type of values does not match the type or cardinality of the property
+    * @throws IllegalArgumentException if the number or type of values does not match the type or cardinality of the
+    *                                  property
     */
    public Property(String name, DataTypes type, FieldCardinality cardinality,
                    Collection<? extends IPropertyValue> values, INamedChild<? extends IPackage> referencedType) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkNotNull(type, "type may not be null!");
+      Preconditions.checkNotNull(values, "values may not be null!");
       Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
-      Preconditions.checkArgument(cardinality == FieldCardinality.MANY || values != null, "values cannot be null for single cardinality properties!");
+      Preconditions.checkArgument(cardinality == FieldCardinality.MANY || values != null,
+                                  "values cannot be null for single cardinality properties!");
       if (cardinality == FieldCardinality.SINGLE && values.size() != 1) {
          throw new IllegalArgumentException("Expected a single property value");
       }
-      if (type == DataTypes.DATA && values != null && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
+      if (type == DataTypes.DATA && !values.stream().allMatch(IPropertyDataValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyDataValue");
       }
-      if (type == DataTypes.ENUM && values != null && !values.stream().allMatch(IPropertyEnumerationValue.class::isInstance)) {
+      if (type == DataTypes.ENUM && !values.stream()
+            .allMatch(IPropertyEnumerationValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
       }
       if ((type != DataTypes.DATA && type != DataTypes.ENUM)
-         && values != null && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
+          && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
       }
-      if (referencedType == null && (values == null || values.isEmpty())) {
+      if (referencedType == null && values.isEmpty()) {
          throw new IllegalArgumentException("Cannot determine referenced type when the values collection is empty");
       }
+
       this.name = name;
       this.type = type;
       this.cardinality = cardinality;
       this.value = Collections.unmodifiableList(new ArrayList<>(values));
       if (type == DataTypes.DATA) {
-         Preconditions.checkArgument(referencedType == null || referencedType instanceof IData, "referenced type must be IData");
-         this.referencedType = referencedType == null ? ((IPropertyDataValue) this.value.get(0)).getReferencedDataType() : referencedType;
+         Preconditions.checkArgument(referencedType == null || referencedType instanceof IData,
+                                     "referenced type must be IData");
+         this.referencedType =
+               referencedType == null ? ((IPropertyDataValue) this.value.get(0)).getReferencedDataType()
+                                      : referencedType;
       } else if (type == DataTypes.ENUM) {
-         Preconditions.checkArgument(referencedType == null || referencedType instanceof IEnumeration, "referenced type must be IEnumeration");
-         this.referencedType = referencedType == null ? ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration() : referencedType;
+         Preconditions.checkArgument(referencedType == null || referencedType instanceof IEnumeration,
+                                     "referenced type must be IEnumeration");
+         this.referencedType =
+               referencedType == null ? ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration()
+                                      : referencedType;
       } else {
          Preconditions.checkArgument(referencedType == null, "cannot referenced type for primitive values");
          this.referencedType = null;
       }
    }
-   
+
    @Override
    public String getName() {
       return name;
@@ -139,36 +151,23 @@ public class Property implements IProperty {
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyDataValue>> getDatas() {
+   public IPropertyValues<IPropertyDataValue> getDatas() {
       checkTypeAndCardinality("data", FieldCardinality.MANY, DataTypes.DATA);
-      return Optional.ofNullable((Collection<IPropertyDataValue>) value);
+      return IPropertyValues.of((IPropertyValues<IPropertyDataValue>) Collections.singleton(value));
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyEnumerationValue>> getEnumerations() {
+   public IPropertyValues<IPropertyEnumerationValue> getEnumerations() {
       checkTypeAndCardinality("enumeration", FieldCardinality.MANY, DataTypes.ENUM);
-      return Optional.ofNullable((Collection<IPropertyEnumerationValue>) value);
+      return IPropertyValues.of((IPropertyValues<IPropertyEnumerationValue>) Collections.singleton(value));
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public Optional<Collection<IPropertyPrimitiveValue>> getPrimitives() {
+   public IPropertyValues<IPropertyPrimitiveValue> getPrimitives() {
       checkTypeAndCardinality("primitive", FieldCardinality.MANY, PRIMITIVES);
-      return Optional.ofNullable((Collection<IPropertyPrimitiveValue>) value);
-   }
-
-   private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {
-      if (cardinality != null && this.cardinality != cardinality) {
-         throw new IllegalStateException(
-            "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected cardinality to be FieldCardinality." + cardinality);
-      }
-      if (!Arrays.asList(types).contains(this.type)) {
-         throw new IllegalStateException(
-            "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
-      }
+      return IPropertyValues.of((IPropertyValues<IPropertyPrimitiveValue>) Collections.singleton(value));
    }
 
    @Override
@@ -186,20 +185,32 @@ public class Property implements IProperty {
       }
       Property that = (Property) obj;
       return Objects.equals(name, that.name) &&
-         Objects.equals(type, that.type) &&
-         parent == that.parent &&
-         Objects.equals(cardinality, that.cardinality) &&
-         Objects.equals(value, that.value);
+             Objects.equals(type, that.type) &&
+             parent == that.parent &&
+             Objects.equals(cardinality, that.cardinality) &&
+             Objects.equals(value, that.value);
    }
 
    @Override
    public String toString() {
       return "Property[name=" + name +
-         ", parent=" + parent +
-         ", type=" + type +
-         ", cardinality=" + cardinality +
-         ", value=" + value +
-         "]";
+             ", parent=" + parent +
+             ", type=" + type +
+             ", cardinality=" + cardinality +
+             ", value=" + value +
+             "]";
    }
 
+   private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {
+      if (cardinality != null && this.cardinality != cardinality) {
+         throw new IllegalStateException(
+               "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
+               + ": expected cardinality to be FieldCardinality." + cardinality);
+      }
+      if (!Arrays.asList(types).contains(this.type)) {
+         throw new IllegalStateException(
+               "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
+               + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
+      }
+   }
 }

@@ -52,7 +52,7 @@ public class PropertyEnumerationValue extends PropertyValue implements IProperty
       if (this == obj) {
          return true;
       }
-      if (!(obj instanceof PropertyDataValue)) {
+      if (!(obj instanceof PropertyEnumerationValue)) {
          return false;
       }
       PropertyEnumerationValue that = (PropertyEnumerationValue) obj;
