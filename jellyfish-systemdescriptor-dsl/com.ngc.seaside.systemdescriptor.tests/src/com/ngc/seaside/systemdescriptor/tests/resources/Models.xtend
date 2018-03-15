@@ -1,5 +1,10 @@
 package com.ngc.seaside.systemdescriptor.tests.resources
 
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.junit4.util.ResourceHelper
+
+import static com.ngc.seaside.systemdescriptor.tests.resources.ParsingTestResource.resource
+
 class Models {
     public static final ParsingTestResource EMPTY_MODEL = resource(
         '''
