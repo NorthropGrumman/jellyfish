@@ -1,0 +1,10 @@
+package com.ngc.example
+
+import com.ngc.example.Data1
+
+model Model1 {
+	input {
+		Data1 input1
+	}
+
+}
