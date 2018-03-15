@@ -7,6 +7,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.bundling.Jar
 import com.ngc.seaside.gradle.plugins.release.SeasideReleaseRootProjectPlugin
 
@@ -95,13 +96,19 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             }
 
             // Validate the model is correct.
-            task('validateSd', type: JellyFishCliCommandTask) {
+            task('validateSd', type: JellyFishCliCommandTask) { validateTask ->
                 command = 'validate'
                 arguments = [(CommonParameters.INPUT_DIRECTORY.name): "${project.projectDir}"]
-                build.dependsOn it
-                sdJar.dependsOn it
-                testJar.dependsOn it
-                it.dependsOn tasks.withType(GenerateMavenPom)
+                build.dependsOn validateTask
+                sdJar.dependsOn validateTask
+                testJar.dependsOn validateTask
+                validateTask.dependsOn tasks.withType(GenerateMavenPom)
+                // Dependent local projects must be built and installed first
+                project.configurations.sd.allDependencies.withType(ProjectDependency).all { dependency ->
+                    dependency.dependencyProject.tasks.matching { it.name == 'install' }.all {
+                        validateTask.dependsOn it
+                    }
+                }
             }
 
             afterEvaluate {

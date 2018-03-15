@@ -10,6 +10,7 @@ jar {
       attributes('Export-Package': 
          'com.ngc.seaside.jellyfish.examples.project1.model.domain.*,' + 
          'com.ngc.seaside.jellyfish.examples.project1.model.domain.common.datatype.*,' + 
-         'com.ngc.seaside.jellyfish.examples.project1.model.domain.project2.*')
+         'com.ngc.seaside.jellyfish.examples.project1.model.domain.project2.*,' + 
+         'com.ngc.seaside.jellyfish.examples.project1.model.domain.project3.*')
    }
 }
