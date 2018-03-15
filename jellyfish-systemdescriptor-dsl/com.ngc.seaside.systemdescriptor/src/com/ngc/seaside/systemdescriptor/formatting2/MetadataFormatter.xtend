@@ -8,6 +8,10 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Metadata
 import org.eclipse.xtext.formatting2.IFormattableDocument
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import org.eclipse.xtext.EcoreUtil2
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue
 
 class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 	def dispatch void format(Metadata metadata, extension IFormattableDocument document) {
@@ -41,8 +45,7 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 			.prepend[noSpace]
 
 		member.regionFor.keyword(':').prepend[oneSpace]
-		member.value.format.prepend[oneSpace]
-		member.prepend[newLine]
+		member.value.format
 	}
 
 	def dispatch void format(JsonValue json, extension IFormattableDocument document) {
@@ -52,5 +55,29 @@ class MetadataFormatter extends AbstractSystemDescriptorFormatter {
 	def dispatch void format(ArrayValue array, extension IFormattableDocument document) {
 		array.value.regionFor.keyword('[').append[oneSpace]
 		array.value.regionFor.keyword(']').prepend[oneSpace]
+	}
+	
+	def dispatch void format(StringValue value, extension IFormattableDocument document) {
+		value.regionFor.feature(SystemDescriptorPackage.Literals.STRING_VALUE__VALUE)
+			.prepend[oneSpace]
+			.append[noSpace]
+	}
+	
+	def dispatch void format(IntValue value, extension IFormattableDocument document) {
+		value.regionFor.feature(SystemDescriptorPackage.Literals.INT_VALUE__VALUE)
+			.prepend[oneSpace]
+			.append[noSpace]
+	}
+	
+	def dispatch void format(DblValue value, extension IFormattableDocument document) {
+		value.regionFor.feature(SystemDescriptorPackage.Literals.DBL_VALUE__VALUE)
+			.prepend[oneSpace]
+			.append[noSpace]
+	}
+	
+	def dispatch void format(BooleanValue value, extension IFormattableDocument document) {
+		value.regionFor.feature(SystemDescriptorPackage.Literals.BOOLEAN_VALUE__VALUE)
+			.prepend[oneSpace]
+			.append[noSpace]
 	}
 }

@@ -8,8 +8,8 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 public interface IPropertyEnumerationValue extends IPropertyValue {
 
    /**
-    * Gets the enumeration type that is property is declared as.  The value of this property, if set, will be one of the
-    * values contained in {@link IEnumeration#getValues()}.
+    * Gets the enumeration type that this property is declared as.  The value of this property, if set, will be one of
+    * the values contained in {@link IEnumeration#getValues()}.
     */
    IEnumeration getReferencedEnumeration();
 
