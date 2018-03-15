@@ -32,7 +32,7 @@ public class Property implements IProperty {
    private IProperties parent;
    private final DataTypes type;
    private final FieldCardinality cardinality;
-   private final List<? extends IPropertyValue> value;
+   private final List<? extends IPropertyValue> values;
    private final INamedChild<? extends IPackage> referencedType;
 
    /**
@@ -52,8 +52,6 @@ public class Property implements IProperty {
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkNotNull(values, "values may not be null!");
       Preconditions.checkNotNull(cardinality, "cardinality may not be null!");
-      Preconditions.checkArgument(cardinality == FieldCardinality.MANY || values != null,
-                                  "values cannot be null for single cardinality properties!");
       if (cardinality == FieldCardinality.SINGLE && values.size() != 1) {
          throw new IllegalArgumentException("Expected a single property value");
       }
@@ -75,18 +73,18 @@ public class Property implements IProperty {
       this.name = name;
       this.type = type;
       this.cardinality = cardinality;
-      this.value = Collections.unmodifiableList(new ArrayList<>(values));
+      this.values = Collections.unmodifiableList(new ArrayList<>(values));
       if (type == DataTypes.DATA) {
          Preconditions.checkArgument(referencedType == null || referencedType instanceof IData,
                                      "referenced type must be IData");
          this.referencedType =
-               referencedType == null ? ((IPropertyDataValue) this.value.get(0)).getReferencedDataType()
+               referencedType == null ? ((IPropertyDataValue) this.values.get(0)).getReferencedDataType()
                                       : referencedType;
       } else if (type == DataTypes.ENUM) {
          Preconditions.checkArgument(referencedType == null || referencedType instanceof IEnumeration,
                                      "referenced type must be IEnumeration");
          this.referencedType =
-               referencedType == null ? ((IPropertyEnumerationValue) this.value.get(0)).getReferencedEnumeration()
+               referencedType == null ? ((IPropertyEnumerationValue) this.values.get(0)).getReferencedEnumeration()
                                       : referencedType;
       } else {
          Preconditions.checkArgument(referencedType == null, "cannot referenced type for primitive values");
@@ -134,45 +132,45 @@ public class Property implements IProperty {
    @Override
    public IPropertyDataValue getData() {
       checkTypeAndCardinality("data", FieldCardinality.SINGLE, DataTypes.DATA);
-      return (PropertyDataValue) value.get(0);
+      return (PropertyDataValue) values.get(0);
    }
 
    @Override
    public IPropertyEnumerationValue getEnumeration() {
       checkTypeAndCardinality("enumeration", FieldCardinality.SINGLE, DataTypes.ENUM);
-      return (PropertyEnumerationValue) value.get(0);
+      return (PropertyEnumerationValue) values.get(0);
    }
 
    @Override
    public IPropertyPrimitiveValue getPrimitive() {
       checkTypeAndCardinality("primitive", FieldCardinality.SINGLE, PRIMITIVES);
-      return (PropertyPrimitiveValue) value.get(0);
+      return (PropertyPrimitiveValue) values.get(0);
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyDataValue> getDatas() {
       checkTypeAndCardinality("data", FieldCardinality.MANY, DataTypes.DATA);
-      return IPropertyValues.of((IPropertyValues<IPropertyDataValue>) Collections.singleton(value));
+      return IPropertyValues.of((Collection) values);
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyEnumerationValue> getEnumerations() {
       checkTypeAndCardinality("enumeration", FieldCardinality.MANY, DataTypes.ENUM);
-      return IPropertyValues.of((IPropertyValues<IPropertyEnumerationValue>) Collections.singleton(value));
+      return IPropertyValues.of((Collection) values);
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyPrimitiveValue> getPrimitives() {
       checkTypeAndCardinality("primitive", FieldCardinality.MANY, PRIMITIVES);
-      return IPropertyValues.of((IPropertyValues<IPropertyPrimitiveValue>) Collections.singleton(value));
+      return IPropertyValues.of((Collection) values);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, cardinality, System.identityHashCode(parent), type, value);
+      return Objects.hash(name, cardinality, System.identityHashCode(parent), type, values);
    }
 
    @Override
@@ -188,7 +186,7 @@ public class Property implements IProperty {
              Objects.equals(type, that.type) &&
              parent == that.parent &&
              Objects.equals(cardinality, that.cardinality) &&
-             Objects.equals(value, that.value);
+             Objects.equals(values, that.values);
    }
 
    @Override
@@ -197,7 +195,7 @@ public class Property implements IProperty {
              ", parent=" + parent +
              ", type=" + type +
              ", cardinality=" + cardinality +
-             ", value=" + value +
+             ", values=" + values +
              "]";
    }
 
