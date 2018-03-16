@@ -98,7 +98,8 @@ class ModelFieldPropertiesParsingTest {
 				requires {
 					Clock clock {
 						properties {
-							int intField
+							int intField 
+							intField = 20
 						}
 					}
 				}
@@ -116,6 +117,54 @@ class ModelFieldPropertiesParsingTest {
 		val declaration = properties.declarations.get(0)
 		assertEquals("property name not correct", "intField", declaration.name)
 	}
+
+    @Test
+    def void testDoesParseModelWithRequiresPropertiesBeingDeclaredAndAssigned() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock{
+                requires {
+                   refine reqClock {
+                        properties {
+                            int intRequiresField
+                            intRequiresField = 100
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
+    
+    @Test
+    def void testDoesParseModelWithPartsPropertiesBeingDeclaredAndAssigned() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock{
+                parts {
+                   refine clockD {
+                        properties {
+                        int intMyPartsField
+                        intMyPartsField = 100
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
 	@Test
 	def void testDoesParseModelWithRefinedRequiresProperties() {
@@ -146,6 +195,55 @@ class ModelFieldPropertiesParsingTest {
 		val declaration = properties.declarations.get(0)
 		assertEquals("property name not correct", "intField", declaration.name)
 	}
+	
+	@Test
+    def void testDoesParseModelWithRefinedRequiresPropertiesSet() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock {
+                requires {
+                    refine reqClock {
+                        properties {
+                            intRequiredField = 1
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+        
+    }
+    
+    @Test
+    def void testDoesParseModelWithRefinedPartsPropertiesSet() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock {
+                parts {
+                    refine clockD {
+                        properties {
+                            intPartsField = 100
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+        
+    }
+    
 
 	@Test
 	def void testDoesNotParseModelWithInputProperties() {
@@ -217,5 +315,59 @@ class ModelFieldPropertiesParsingTest {
 			null
 		)
 	}
+	
+	@Test
+    def void testDoesNotParsePartsWithRedifnedPropety() {
+        val source = '''
+            package clocks.models
+                        
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock {
+                parts {
+                    refine clockD {
+                        properties {
+                            int intPartsField
+                        }
+                    }
+                }
+            }
+        '''
+
+        val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.PROPERTIES,
+            null
+        )
+    }
+    
+    @Test
+    def void testDoesNotParseRequiresWithRedifnedPropety() {
+        val source = '''
+            package clocks.models
+                        
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock {
+                requires {
+                    refine reqClock {
+                        properties {
+                           int intRequiredField
+                        }
+                    }
+                }
+            }
+        '''
+
+        val invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.PROPERTIES,
+            null
+        )
+    }
 
 }

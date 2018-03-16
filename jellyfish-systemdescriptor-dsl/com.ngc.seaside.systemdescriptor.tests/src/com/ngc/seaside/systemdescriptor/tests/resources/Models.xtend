@@ -70,11 +70,21 @@ class Models {
                     Clock clockA
                     Clock clockB
                     Clock clockC
-                    Clock clockD
+                    Clock clockD {
+                         properties {
+                            int intPartsField
+                        }
+                            
                 }
                 
                 requires {
                     AnEmptyModel requiresEmptyModel
+                    Clock reqClock {
+                        properties {
+                            int intRequiredField
+                            intRequiredField = 10
+                        }
+                    }
                 }
                 
                 links {
@@ -88,6 +98,7 @@ class Models {
                     link valueNamedLink  currentTime -> clockD.inputTime {
                         properties {
                             int intValueClockField
+                            intValueClockField = 100
                         }
                     }
                 }
