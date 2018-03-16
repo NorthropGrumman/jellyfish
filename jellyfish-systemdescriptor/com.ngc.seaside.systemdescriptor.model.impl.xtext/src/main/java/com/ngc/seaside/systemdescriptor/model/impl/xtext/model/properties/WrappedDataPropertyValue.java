@@ -26,6 +26,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       Preconditions.checkArgument(SystemDescriptors.isPrimitiveDataFieldDeclaration(field),
                                   "cannot get the primitive value of a field whose type is %s!",
                                   field.getType());
+      Preconditions.checkState(isSet(), "this value is not set!");
 
       IPropertyPrimitiveValue value = UnsetProperties.UNSET_PRIMITIVE_VALUE;
       Optional<PropertyValueAssignment> optional = getAssignmentFor(Collections.singleton(field.getName()));
@@ -69,6 +71,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       Preconditions.checkArgument(field.getType() == DataTypes.ENUM,
                                   "cannot get the enum value of a field whose type is %s!",
                                   field.getType());
+      Preconditions.checkState(isSet(), "this value is not set!");
 
       IPropertyEnumerationValue value = UnsetProperties.UNSET_ENUMERATION_VALUE;
       Optional<PropertyValueAssignment> optional = getAssignmentFor(Collections.singleton(field.getName()));
@@ -81,7 +84,22 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
 
    @Override
    public IPropertyDataValue getData(IDataField field) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(field, "field may not be null!");
+      Preconditions.checkArgument(field.getType() == DataTypes.DATA,
+                                  "cannot get the data value of a field whose type is %s!",
+                                  field.getType());
+      Preconditions.checkState(isSet(), "this value is not set!");
+
+      IPropertyDataValue value = UnsetProperties.UNSET_DATA_VALUE;
+      Collection<String> fieldNames = Collections.singleton(field.getName());
+      Optional<PropertyValueAssignment> optional = getAssignmentFor(fieldNames);
+      if (optional.isPresent()) {
+         List<PropertyValueExpressionPathSegment> segments = optional.get().getExpression().getPathSegments();
+         value = new NestedDataPropertyValue(
+               resolver.getWrapperFor((Data) segments.get(segments.size() - 1).getFieldDeclaration().eContainer()),
+               fieldNames);
+      }
+      return value;
    }
 
    @Override
@@ -168,5 +186,72 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
             .map(s -> s.getFieldDeclaration().getName())
             .collect(Collectors.joining("."));
       return flatPath.equals(flatSegmentPath);
+   }
+
+   private class NestedDataPropertyValue implements IPropertyDataValue {
+
+      private final IData data;
+      private final Collection<String> paths;
+
+      private NestedDataPropertyValue(IData data, Collection<String> paths) {
+         this.data = data;
+         this.paths = paths;
+      }
+
+      @Override
+      public IData getReferencedDataType() {
+         return data;
+      }
+
+      @Override
+      public IPropertyPrimitiveValue getPrimitive(IDataField field) {
+         Preconditions.checkNotNull(field, "field may not be null!");
+         Preconditions.checkArgument(SystemDescriptors.isPrimitiveDataFieldDeclaration(field),
+                                     "cannot get the primitive value of a field whose type is %s!",
+                                     field.getType());
+
+         IPropertyPrimitiveValue value = UnsetProperties.UNSET_PRIMITIVE_VALUE;
+         Optional<PropertyValueAssignment> optional = getAssignmentFor(appendTo(paths, field.getName()));
+         if (optional.isPresent()) {
+            value = new WrappedPrimitivePropertyValue(resolver, optional.get().getValue());
+         }
+
+         return value;
+      }
+
+      @Override
+      public IPropertyEnumerationValue getEnumeration(IDataField field) {
+         throw new UnsupportedOperationException("not implemented");
+      }
+
+      @Override
+      public IPropertyDataValue getData(IDataField field) {
+         throw new UnsupportedOperationException("not implemented");
+      }
+
+      @Override
+      public IPropertyValues<IPropertyPrimitiveValue> getPrimitives(IDataField field) {
+         throw new UnsupportedOperationException("cardinality of many not currently supported!");
+      }
+
+      @Override
+      public IPropertyValues<IPropertyEnumerationValue> getEnumerations(IDataField field) {
+         throw new UnsupportedOperationException("cardinality of many not currently supported!");
+      }
+
+      @Override
+      public IPropertyValues<IPropertyDataValue> getDatas(IDataField field) {
+         throw new UnsupportedOperationException("cardinality of many not currently supported!");
+      }
+
+      @Override
+      public DataTypes getType() {
+         return DataTypes.DATA;
+      }
+
+      @Override
+      public boolean isSet() {
+         return true;
+      }
    }
 }

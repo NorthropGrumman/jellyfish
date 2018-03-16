@@ -72,7 +72,13 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       enumField.setCardinality(Cardinality.DEFAULT);
       enumField.setDataModel(enumeration);
 
+      PrimitiveDataFieldDeclaration nestedIntField = factory().createPrimitiveDataFieldDeclaration();
+      nestedIntField.setName("foo");
+      nestedIntField.setCardinality(Cardinality.DEFAULT);
+
       nestedData = factory().createData();
+      nestedData.getFields().add(nestedIntField);
+
       ReferencedDataModelFieldDeclaration dataField = factory().createReferencedDataModelFieldDeclaration();
       dataField.setName("z");
       dataField.setCardinality(Cardinality.DEFAULT);
@@ -95,9 +101,8 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    }
 
    @Test
-   public void testDoesWrapUnsetData() {
+   public void testDoesWrapUnsetData1() {
       value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
-
       assertEquals("value type not correct!",
                    DataTypes.DATA,
                    value.getType());
@@ -106,17 +111,34 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
                    value.getReferencedDataType());
       assertFalse("should not be set!",
                   value.isSet());
+   }
 
+   @Test
+   public void testDoesWrapUnsetData2() {
       setupForPrimitiveProperty();
       value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
       assertFalse("should not be set!",
                   value.isSet());
+   }
 
+   @Test
+   public void testDoesWrapUnsetData3() {
+      setupForPrimitiveProperty();
       setupForEnumProperty();
       value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
       assertFalse("should not be set!",
                   value.isSet());
 
+      setupForDataProperty();
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      assertTrue("should be set!",
+                 value.isSet());
+   }
+
+   @Test
+   public void testDoesWrapUnsetData4() {
+      setupForPrimitiveProperty();
+      setupForEnumProperty();
       setupForDataProperty();
       value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
       assertTrue("should be set!",
@@ -191,12 +213,6 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    }
 
    private void setupForDataProperty() {
-      PrimitiveDataFieldDeclaration intField = factory().createPrimitiveDataFieldDeclaration();
-      intField.setName("foo");
-      intField.setCardinality(Cardinality.DEFAULT);
-
-      nestedData.getFields().add(intField);
-
       IntValue value = factory().createIntValue();
       value.setValue(100);
 
@@ -206,7 +222,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
                                          .findFirst()
                                          .get());
       PropertyValueExpressionPathSegment segment2 = factory().createPropertyValueExpressionPathSegment();
-      segment2.setFieldDeclaration(intField);
+      segment2.setFieldDeclaration(nestedData.getFields().iterator().next());
 
       PropertyValueExpression exp = factory().createPropertyValueExpression();
       exp.setDeclaration(propertyDeclaration);
