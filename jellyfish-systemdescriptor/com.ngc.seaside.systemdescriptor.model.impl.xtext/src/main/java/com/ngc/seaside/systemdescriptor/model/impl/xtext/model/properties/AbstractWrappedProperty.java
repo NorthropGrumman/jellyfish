@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
@@ -119,6 +120,10 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
          default:
             return WrappedPrimitiveProperty.toXtextPrimitivePropertyFieldDeclaration(resolver, property);
       }
+   }
+
+   static <T extends IPropertyValue> T firstOrDefault(IPropertyValues<T> values, T defaultValue) {
+      return values.isSet() && !values.isEmpty() ? values.iterator().next() : defaultValue;
    }
 
    private static AbstractWrappedProperty<? extends PropertyFieldDeclaration> wrapPrimitiveProperty(
