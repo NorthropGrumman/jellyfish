@@ -1,0 +1,39 @@
+package clocks.datatypes
+
+import clocks.datatypes.TimeZone
+
+data ComplexTime {
+  metadata {
+    "name": "ComplexTime",
+    "description": "Represents a local time (does not account for timezones)."
+  }
+
+  int hour {
+    metadata {
+      "validation": {
+        "min": 0,
+        "max": 23
+      }
+    }
+  }
+
+  int minute {
+    metadata {
+      "validation": {
+        "min": 0,
+        "max": 60
+      }
+    }
+  }
+
+  int second {
+    metadata {
+      "validation": {
+        "min": 0,
+        "max": 60
+      }
+    }
+  }
+
+  TimeZone timeZone
+}

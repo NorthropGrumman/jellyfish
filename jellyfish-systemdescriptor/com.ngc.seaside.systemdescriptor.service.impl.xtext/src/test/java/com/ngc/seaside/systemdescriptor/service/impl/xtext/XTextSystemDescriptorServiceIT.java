@@ -187,6 +187,29 @@ public class XTextSystemDescriptorServiceIT {
                  service.getAggregatedView(model));
    }
 
+   @Test
+   public void testDoesManageProperties() {
+      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "properties-project"));
+      assertTrue("did not parse project!",
+                 result.isSuccessful());
+
+      IModel model = service.getAggregatedView(
+            result.getSystemDescriptor().findModel("clocks.RefinedAlarmClock").get());
+
+      assertEquals("property config.port1 not correct!",
+                   1,
+                   model.getProperties().resolveAsInteger("config", "port1").get().intValue());
+      assertEquals("property config.port2 not correct!",
+                   2,
+                   model.getProperties().resolveAsInteger("config", "port2").get().intValue());
+      assertEquals("property config.name not correct!",
+                   "hello",
+                   model.getProperties().resolveAsString("config", "name").get());
+      assertEquals("property config.host not correct!",
+                   "world",
+                   model.getProperties().resolveAsString("config", "host").get());
+   }
+
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"
            + " by itself to make sure the standalone configuration works.")
    @Test

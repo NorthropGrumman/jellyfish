@@ -1,0 +1,8 @@
+package clocks.datatypes
+
+data Config {
+  int port1
+  int port2
+  string name
+  string host
+}

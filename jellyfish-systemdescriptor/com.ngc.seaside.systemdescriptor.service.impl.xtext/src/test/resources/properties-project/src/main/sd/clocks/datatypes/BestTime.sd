@@ -1,0 +1,7 @@
+package clocks.datatypes
+
+import clocks.datatypes.BaseTime
+
+data BestTime extends BaseTime {
+  int someValue
+}

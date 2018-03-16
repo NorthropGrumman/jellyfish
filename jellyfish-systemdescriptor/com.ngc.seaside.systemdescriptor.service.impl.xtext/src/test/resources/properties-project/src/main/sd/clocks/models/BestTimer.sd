@@ -1,0 +1,15 @@
+package clocks.models
+
+import clocks.datatypes.BestTime
+
+model BestTimer {
+
+  output {
+    BestTime currentTime
+  }
+
+  scenario tick {
+    when periodOf 1 sec elapses
+    then publish currentTime
+  }
+}
