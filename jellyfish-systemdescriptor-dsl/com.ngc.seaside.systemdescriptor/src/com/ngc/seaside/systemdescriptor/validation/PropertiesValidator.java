@@ -94,7 +94,7 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
                String msg = String.format(
                   "Cannot redefine property '%s' because '%s' model has that property already defined.",
                   propFieldDec.eClass().getName(),
-                  parentFieldDecModel);
+                  parentFieldDecModel.getName());
                error(msg, properties, null);
                break;
             }
