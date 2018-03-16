@@ -1,9 +1,19 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.LinkTestUtil;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLinkTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLinkTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,29 +21,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.LinkTestUtil;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLinkTest;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLinkTest;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
-
-import java.util.Optional;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 // Note we run this test with MockitoJUnitRunner.Silent to avoid UnnecessaryStubbingExceptions.  This happens because
 // we are cheating and reusing the setup code for the data and model link tests.
@@ -86,15 +77,6 @@ public class WrappedModelTest extends AbstractWrappedXtextTest {
       scenario.setName("myScenario");
       model.getScenarios().add(scenario);
 
-      PrimitivePropertyFieldDeclaration primitiveProperty = factory().createPrimitivePropertyFieldDeclaration();
-      primitiveProperty.setType(PrimitiveDataType.INT);
-      primitiveProperty.setCardinality(Cardinality.DEFAULT);
-      primitiveProperty.setName("x");
-
-      Properties properties = factory().createProperties();
-      properties.getDeclarations().add(primitiveProperty);
-      model.setProperties(properties);
-
       Package p = factory().createPackage();
       p.setName("my.package");
       p.setElement(model);
@@ -141,17 +123,6 @@ public class WrappedModelTest extends AbstractWrappedXtextTest {
       assertEquals("did not get scenario!",
                    scenarioName,
                    wrapped.getScenarios().getByName(scenarioName).get().getName());
-
-      String propertyName = model.getProperties().getDeclarations().get(0).getName();
-      Optional<IProperty> property = wrapped.getProperties().getByName(propertyName);
-      assertTrue("property not present!",
-                 property.isPresent());
-      assertEquals("property type not correct!",
-                   DataTypes.INT,
-                   property.get().getType());
-      assertEquals("cardinality not correct!",
-                   FieldCardinality.SINGLE,
-                   property.get().getCardinality());
    }
 
    @Test

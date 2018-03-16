@@ -90,7 +90,9 @@ public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
       when(newField.getReferencedDataType()).thenReturn(referenced);
       when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      ReferencedPropertyFieldDeclaration xtext = WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newField);
+      ReferencedPropertyFieldDeclaration xtext = WrappedDataProperty.toXtextReferencedPropertyFieldDeclaration(
+            resolver(),
+            newField);
       assertEquals("name not correct!",
                    newField.getName(),
                    xtext.getName());

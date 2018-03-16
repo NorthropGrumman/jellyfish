@@ -60,7 +60,9 @@ public class WrappedPrimitivePropertyTest extends AbstractWrappedXtextTest {
       when(newProperty.getType()).thenReturn(DataTypes.INT);
       when(newProperty.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      PrimitivePropertyFieldDeclaration xtext = WrappedPrimitiveProperty.toXtextPrimitivePropertyFieldDeclaration(resolver(), newProperty);
+      PrimitivePropertyFieldDeclaration xtext = WrappedPrimitiveProperty.toXtextPrimitivePropertyFieldDeclaration(
+            resolver(),
+            newProperty);
       assertEquals("name not correct!",
                    newProperty.getName(),
                    xtext.getName());

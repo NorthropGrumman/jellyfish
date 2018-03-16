@@ -93,7 +93,9 @@ public class WrappedEnumPropertyTest extends AbstractWrappedXtextTest {
       when(newProperty.getReferencedEnumeration()).thenReturn(referenced);
       when(newProperty.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      ReferencedPropertyFieldDeclaration xtext = WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(resolver(), newProperty);
+      ReferencedPropertyFieldDeclaration xtext = WrappedEnumerationProperty.toXtextReferencedPropertyFieldDeclaration(
+            resolver(),
+            newProperty);
       assertEquals("name not correct!",
                    newProperty.getName(),
                    xtext.getName());
