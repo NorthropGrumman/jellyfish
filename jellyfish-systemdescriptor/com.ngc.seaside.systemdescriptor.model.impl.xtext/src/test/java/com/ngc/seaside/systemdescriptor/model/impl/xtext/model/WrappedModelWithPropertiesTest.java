@@ -3,6 +3,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
@@ -25,7 +26,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldD
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 
@@ -54,11 +54,16 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
 
    private Enumeration enumeration;
 
+   private Data propertyData;
+
    @Mock
    private IPackage parent;
 
    @Mock
    private IEnumeration wrappedEnum;
+
+   @Mock
+   private IData wrappedData;
 
    @Before
    public void setup() throws Throwable {
@@ -102,11 +107,15 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
       enumeration = factory().createEnumeration();
       enumeration.setName("MyEnum");
 
+      propertyData = factory().createData();
+      propertyData.setName("MyData");
+
       Package p = factory().createPackage();
       p.setName("my.package");
       p.setElement(model);
       when(resolver().getWrapperFor(p)).thenReturn(parent);
       when(resolver().getWrapperFor(enumeration)).thenReturn(wrappedEnum);
+      when(resolver().getWrapperFor(propertyData)).thenReturn(wrappedData);
    }
 
    @Test
@@ -264,5 +273,36 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
       assertEquals("reference enum from value not correct!",
                    wrappedEnum,
                    ((IPropertyEnumerationValue) wrappedValue).getReferencedEnumeration());
+   }
+
+   @Test
+   public void testDoesWrapModelWithUnsetDataProperties() {
+      ReferencedPropertyFieldDeclaration enumProperty = factory().createReferencedPropertyFieldDeclaration();
+      enumProperty.setDataModel(propertyData);
+      enumProperty.setCardinality(Cardinality.DEFAULT);
+      enumProperty.setName("x");
+
+      Properties properties = factory().createProperties();
+      properties.getDeclarations().add(enumProperty);
+      model.setProperties(properties);
+
+      wrapped = new WrappedModel(resolver(), model);
+      String propertyName = model.getProperties().getDeclarations().get(0).getName();
+      Optional<IProperty> property = wrapped.getProperties().getByName(propertyName);
+      assertTrue("property not present!",
+                 property.isPresent());
+      assertEquals("property type not correct!",
+                   DataTypes.DATA,
+                   property.get().getType());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   property.get().getCardinality());
+      assertEquals("data type not correct on property!",
+                   wrappedData,
+                   property.get().getReferencedDataType());
+
+      IPropertyValue wrappedValue = property.get().getValue();
+      assertFalse("value should not be set",
+                  wrappedValue.isSet());
    }
 }

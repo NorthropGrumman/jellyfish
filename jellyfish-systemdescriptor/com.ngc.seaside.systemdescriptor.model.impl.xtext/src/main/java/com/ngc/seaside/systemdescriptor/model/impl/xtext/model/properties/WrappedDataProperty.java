@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPropertyFieldDeclaration> {
 
    private final IData referencedType;
+   private final IPropertyValues<IPropertyDataValue> values;
 
    public WrappedDataProperty(IWrapperResolver resolver, ReferencedPropertyFieldDeclaration wrapped) {
       super(resolver, wrapped);
@@ -23,6 +24,7 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
       this.referencedType = resolver.getWrapperFor((Data) wrapped.getDataModel());
+      this.values = WrappedPropertyValues.getValues(resolver, this);
    }
 
    @Override
@@ -32,14 +34,12 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
 
    @Override
    public IPropertyDataValue getData() {
-      // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("not implemented");
+      return firstOrDefault(getDatas(), UnsetProperties.UNSET_DATA_VALUE);
    }
 
    @Override
    public IPropertyValues<IPropertyDataValue> getDatas() {
-      // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("not implemented");
+      return values;
    }
 
    @Override

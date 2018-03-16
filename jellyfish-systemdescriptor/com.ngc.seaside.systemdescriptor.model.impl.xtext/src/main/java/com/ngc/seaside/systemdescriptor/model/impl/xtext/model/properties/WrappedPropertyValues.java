@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
@@ -42,6 +43,11 @@ public class WrappedPropertyValues {
       }
 
       return values;
+   }
+
+   public static IPropertyValues<IPropertyDataValue> getValues(IWrapperResolver resolver,
+                                                               WrappedDataProperty property) {
+      return null;
    }
 
    private static Optional<PropertyValueAssignment> getAssignment(AbstractWrappedProperty<?> property) {
