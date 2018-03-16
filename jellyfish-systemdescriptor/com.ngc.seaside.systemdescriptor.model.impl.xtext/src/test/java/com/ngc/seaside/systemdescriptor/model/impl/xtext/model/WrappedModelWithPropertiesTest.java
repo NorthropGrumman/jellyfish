@@ -3,7 +3,9 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
@@ -11,6 +13,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -21,6 +25,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldD
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 
 import org.junit.Before;
@@ -46,8 +52,13 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
 
    private Model model;
 
+   private Enumeration enumeration;
+
    @Mock
    private IPackage parent;
+
+   @Mock
+   private IEnumeration wrappedEnum;
 
    @Before
    public void setup() throws Throwable {
@@ -88,14 +99,18 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
       scenario.setName("myScenario");
       model.getScenarios().add(scenario);
 
+      enumeration = factory().createEnumeration();
+      enumeration.setName("MyEnum");
+
       Package p = factory().createPackage();
       p.setName("my.package");
       p.setElement(model);
       when(resolver().getWrapperFor(p)).thenReturn(parent);
+      when(resolver().getWrapperFor(enumeration)).thenReturn(wrappedEnum);
    }
 
    @Test
-   public void testDoesWrapModelWithUnsetProperties() {
+   public void testDoesWrapModelWithUnsetPrimitiveProperties() {
       PrimitivePropertyFieldDeclaration primitiveProperty = factory().createPrimitivePropertyFieldDeclaration();
       primitiveProperty.setType(PrimitiveDataType.INT);
       primitiveProperty.setCardinality(Cardinality.DEFAULT);
@@ -167,5 +182,87 @@ public class WrappedModelWithPropertiesTest extends AbstractWrappedXtextTest {
       assertEquals("value not correct!",
                    BigInteger.ONE,
                    ((IPropertyPrimitiveValue) wrappedValue).getInteger());
+   }
+
+   @Test
+   public void testDoesWrapModelWithUnsetEnumProperties() {
+      ReferencedPropertyFieldDeclaration enumProperty = factory().createReferencedPropertyFieldDeclaration();
+      enumProperty.setDataModel(enumeration);
+      enumProperty.setCardinality(Cardinality.DEFAULT);
+      enumProperty.setName("x");
+
+      Properties properties = factory().createProperties();
+      properties.getDeclarations().add(enumProperty);
+      model.setProperties(properties);
+
+      wrapped = new WrappedModel(resolver(), model);
+      String propertyName = model.getProperties().getDeclarations().get(0).getName();
+      Optional<IProperty> property = wrapped.getProperties().getByName(propertyName);
+      assertTrue("property not present!",
+                 property.isPresent());
+      assertEquals("property type not correct!",
+                   DataTypes.ENUM,
+                   property.get().getType());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   property.get().getCardinality());
+      assertEquals("enum type not correct on property!",
+                   wrappedEnum,
+                   property.get().getReferencedEnumeration());
+
+      IPropertyValue wrappedValue = property.get().getValue();
+      assertFalse("value should not be set",
+                  wrappedValue.isSet());
+   }
+
+   @Test
+   public void testDoesWrapModelWithSetEnumProperties() {
+      ReferencedPropertyFieldDeclaration enumProperty = factory().createReferencedPropertyFieldDeclaration();
+      enumProperty.setDataModel(enumeration);
+      enumProperty.setCardinality(Cardinality.DEFAULT);
+      enumProperty.setName("x");
+
+      EnumPropertyValue value = factory().createEnumPropertyValue();
+      value.setEnumeration(enumeration);
+      value.setValue("HELLO_WORLD");
+
+      PropertyValueExpression exp = factory().createPropertyValueExpression();
+      exp.setDeclaration(enumProperty);
+
+      PropertyValueAssignment assignment = factory().createPropertyValueAssignment();
+      assignment.setExpression(exp);
+      assignment.setValue(value);
+
+      Properties properties = factory().createProperties();
+      properties.getDeclarations().add(enumProperty);
+      properties.getAssignments().add(assignment);
+      model.setProperties(properties);
+
+      wrapped = new WrappedModel(resolver(), model);
+      String propertyName = model.getProperties().getDeclarations().get(0).getName();
+      Optional<IProperty> property = wrapped.getProperties().getByName(propertyName);
+      assertTrue("property not present!",
+                 property.isPresent());
+      assertEquals("property type not correct!",
+                   DataTypes.ENUM,
+                   property.get().getType());
+      assertEquals("cardinality not correct!",
+                   FieldCardinality.SINGLE,
+                   property.get().getCardinality());
+
+      IPropertyValue wrappedValue = property.get().getValue();
+      assertTrue("value should be set!",
+                 wrappedValue.isSet());
+      assertTrue("should be an enum value!",
+                 wrappedValue.isEnumeration());
+      assertEquals("value type not correct!",
+                   DataTypes.ENUM,
+                   wrappedValue.getType());
+      assertEquals("value not correct!",
+                   value.getValue(),
+                   ((IPropertyEnumerationValue) wrappedValue).getValue());
+      assertEquals("reference enum from value not correct!",
+                   wrappedEnum,
+                   ((IPropertyEnumerationValue) wrappedValue).getReferencedEnumeration());
    }
 }
