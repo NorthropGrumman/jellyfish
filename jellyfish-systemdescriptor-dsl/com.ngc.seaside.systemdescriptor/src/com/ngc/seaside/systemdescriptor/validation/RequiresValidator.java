@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.Check;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
@@ -45,22 +43,22 @@ public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValid
 		}
 	}
 	
-	   /** Checks that the properties are not being redefined on links.
+	   /** Checks that the properties are not being redefined on Requirements.
 	    * 
-	    * @param properties
+	    * @param properties that are being checked
 	    */
 	   @Check
 	   public void checkRedefiningRequiresProperties(Properties properties) {
 	      EList<PropertyFieldDeclaration> fieldDecs = properties.getDeclarations();
 
 	      if (!fieldDecs.isEmpty()) {
-	         Model parentModel = getModelForRequires(fieldDecs.get(0)).getRefinedModel();
+	         Model parentModel = ValidatorUtil.getModel(fieldDecs.get(0)).getRefinedModel();
 	         Map<String, PropertyFieldDeclaration> hierarchyLinkProps = getRequiresProperties(parentModel);
 
 	         for (PropertyFieldDeclaration propFieldDec : fieldDecs) {
 	            if (hierarchyLinkProps.containsKey(propFieldDec.getName())) {
 	               PropertyFieldDeclaration parentFieldDec = hierarchyLinkProps.get(propFieldDec.getName());
-	               Model parentFieldDecModel = getModelForRequires(parentFieldDec);
+	               Model parentFieldDecModel = ValidatorUtil.getModel(parentFieldDec);
 	               String msg = String.format(
 	                  "Cannot redefine property '%s' because '%s' model has that property already defined.",
 	                  propFieldDec.eClass().getName(),
@@ -73,30 +71,7 @@ public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValid
 	   }
 	   
 	   /**
-	    * 
-	    * Grabs the container that contains the field declaration for this requirement
-	    * 
-	    * @param proFieldDec that we want its Model container for
-	    * @return Model that contains the refined part
-	    */
-	   private static Model getModelForRequires(PropertyFieldDeclaration proFieldDec) {
-	      EObject currentObject = proFieldDec;
-	      boolean modelFound = false;
-	      Model model = null;
-	      do {
-	         if (currentObject.eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
-	            model = (Model) currentObject.eContainer();
-	            modelFound = true;
-	         } else {
-	            currentObject = currentObject.eContainer();
-	         }
-	      } while (!modelFound && currentObject != null);
-
-	      return model;
-	   }
-
-	   /**
-	    * Goes through the Model hierarchy and retrieves all the links properties
+	    * Goes through the Model hierarchy and retrieves all the Requirements properties
 	    * 
 	    * @param model thats the starting point in the hierarchy
 	    * @return A collection of all the properties

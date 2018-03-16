@@ -8,23 +8,34 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.emf.ecore.EObject;
+
 /**
  * Utility methods to help with validation
  */
 public class ValidatorUtil {
-
+   
    /**
     * 
-    * Grabs the container that contains the field declaration for this requirement
+    * Retrieves the model that this object belongs to 
     * 
-    * @param declaration that we want its Model container for
-    * @return Model that contains the refined part
+    * @param currentObject that you want the model for 
+    * @return The model for this object 
     */
-   public static Model getModel(FieldDeclaration declaration) {
-      if (declaration.eContainer().eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
-         return (Model) declaration.eContainer().eContainer();
-      }
-      return null;
+   public static Model getModel(EObject currentObject) {
+      //EObject currentObject = proFieldDec;
+      boolean modelFound = false;
+      Model model = null;
+      do {
+         if (currentObject.eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
+            model = (Model) currentObject.eContainer();
+            modelFound = true;
+         } else {
+            currentObject = currentObject.eContainer();
+         }
+      } while (!modelFound && currentObject != null);
+
+      return model;
    }
    
    /**

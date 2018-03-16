@@ -81,7 +81,6 @@ class RefinedLinkParsingTest {
         )
     }
 
-    @Ignore
     @Test
     def void testDoesParseModelWithRefinedIOLinks() {
         val model1 = '''
