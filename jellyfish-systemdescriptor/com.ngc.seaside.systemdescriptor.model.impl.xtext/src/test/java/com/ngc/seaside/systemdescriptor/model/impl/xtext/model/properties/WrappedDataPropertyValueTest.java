@@ -96,8 +96,6 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       properties.getDeclarations().add(propertyDeclaration);
 
       when(resolver().getWrapperFor(data)).thenReturn(wrappedData);
-      when(resolver().getWrapperFor(enumeration)).thenReturn(wrappedEnumeration);
-      when(resolver().getWrapperFor(nestedData)).thenReturn(wrappedNestedData);
    }
 
    @Test
@@ -196,7 +194,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
                  dataValue.isSet());
       assertEquals("dataValue not correct!",
                    new BigInteger("100"),
-                   dataValue.getPrimitive(fieldWithName("foo", DataTypes.INT)));
+                   dataValue.getPrimitive(fieldWithName("foo", DataTypes.INT)).getInteger());
    }
 
    private void setupForPrimitiveProperty() {

@@ -26,7 +26,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,13 +55,9 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                   field.getType());
       Preconditions.checkState(isSet(), "this value is not set!");
 
-      IPropertyPrimitiveValue value = UnsetProperties.UNSET_PRIMITIVE_VALUE;
-      Optional<PropertyValueAssignment> optional = getAssignmentFor(Collections.singleton(field.getName()));
-      if (optional.isPresent()) {
-         value = new WrappedPrimitivePropertyValue(resolver, optional.get().getValue());
-      }
-
-      return value;
+      PropertyValueAssignment assignment = getAssignmentFor(Collections.singleton(field.getName()))
+            .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+      return new WrappedPrimitivePropertyValue(resolver, assignment.getValue());
    }
 
    @Override
@@ -73,13 +68,9 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                   field.getType());
       Preconditions.checkState(isSet(), "this value is not set!");
 
-      IPropertyEnumerationValue value = UnsetProperties.UNSET_ENUMERATION_VALUE;
-      Optional<PropertyValueAssignment> optional = getAssignmentFor(Collections.singleton(field.getName()));
-      if (optional.isPresent()) {
-         value = new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) optional.get().getValue());
-      }
-
-      return value;
+      PropertyValueAssignment assignment = getAssignmentFor(Collections.singleton(field.getName()))
+            .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+      return new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) assignment.getValue());
    }
 
    @Override
@@ -89,17 +80,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                   "cannot get the data value of a field whose type is %s!",
                                   field.getType());
       Preconditions.checkState(isSet(), "this value is not set!");
-
-      IPropertyDataValue value = UnsetProperties.UNSET_DATA_VALUE;
-      Collection<String> fieldNames = Collections.singleton(field.getName());
-      Optional<PropertyValueAssignment> optional = getAssignmentFor(fieldNames);
-      if (optional.isPresent()) {
-         List<PropertyValueExpressionPathSegment> segments = optional.get().getExpression().getPathSegments();
-         value = new NestedDataPropertyValue(
-               resolver.getWrapperFor((Data) segments.get(segments.size() - 1).getFieldDeclaration().eContainer()),
-               fieldNames);
-      }
-      return value;
+      return new NestedDataPropertyValue(field.getReferencedDataType(), Collections.singleton(field.getName()));
    }
 
    @Override
@@ -210,23 +191,30 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                      "cannot get the primitive value of a field whose type is %s!",
                                      field.getType());
 
-         IPropertyPrimitiveValue value = UnsetProperties.UNSET_PRIMITIVE_VALUE;
-         Optional<PropertyValueAssignment> optional = getAssignmentFor(appendTo(paths, field.getName()));
-         if (optional.isPresent()) {
-            value = new WrappedPrimitivePropertyValue(resolver, optional.get().getValue());
-         }
-
-         return value;
+         PropertyValueAssignment assignment = getAssignmentFor(appendTo(paths, field.getName()))
+               .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+         return new WrappedPrimitivePropertyValue(resolver, assignment.getValue());
       }
 
       @Override
       public IPropertyEnumerationValue getEnumeration(IDataField field) {
-         throw new UnsupportedOperationException("not implemented");
+         Preconditions.checkNotNull(field, "field may not be null!");
+         Preconditions.checkArgument(field.getType() == DataTypes.ENUM,
+                                     "cannot get the enum value of a field whose type is %s!",
+                                     field.getType());
+
+         PropertyValueAssignment assignment = getAssignmentFor(appendTo(paths, field.getName()))
+               .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+         return new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) assignment.getValue());
       }
 
       @Override
       public IPropertyDataValue getData(IDataField field) {
-         throw new UnsupportedOperationException("not implemented");
+         Preconditions.checkNotNull(field, "field may not be null!");
+         Preconditions.checkArgument(field.getType() == DataTypes.DATA,
+                                     "cannot get the data value of a field whose type is %s!",
+                                     field.getType());
+         return new NestedDataPropertyValue(field.getReferencedDataType(), appendTo(paths, field.getName()));
       }
 
       @Override
