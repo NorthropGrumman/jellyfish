@@ -26,7 +26,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WrappedEnumPropertyTest extends AbstractWrappedXtextTest {
+public class WrappedEnumerationPropertyTest extends AbstractWrappedXtextTest {
    private WrappedEnumerationProperty wrappedProperty;
 
    private ReferencedPropertyFieldDeclaration property;

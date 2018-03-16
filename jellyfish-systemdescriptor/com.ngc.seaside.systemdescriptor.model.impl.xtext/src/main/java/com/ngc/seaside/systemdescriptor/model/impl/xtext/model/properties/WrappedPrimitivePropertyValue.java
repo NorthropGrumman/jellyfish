@@ -25,28 +25,24 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public BigInteger getInteger() {
-      Preconditions.checkState(isSet(), "property is not set!");
       Preconditions.checkState(getType() == DataTypes.INT, "property is not an integer!");
       return new BigInteger(Integer.toString(((IntValue) wrapped).getValue()));
    }
 
    @Override
    public BigDecimal getDecimal() {
-      Preconditions.checkState(isSet(), "property is not set!");
       Preconditions.checkState(getType() == DataTypes.FLOAT, "property is not a floating-point number!");
       return new BigDecimal(((DblValue) wrapped).getValue());
    }
 
    @Override
    public boolean getBoolean() {
-      Preconditions.checkState(isSet(), "property is not set!");
       Preconditions.checkState(getType() == DataTypes.BOOLEAN, "property is not a boolean!");
       return Boolean.parseBoolean(((BooleanValue) wrapped).getValue());
    }
 
    @Override
    public String getString() {
-      Preconditions.checkState(isSet(), "property is not set!");
       Preconditions.checkState(getType() == DataTypes.STRING, "property is not a string!");
       return ((StringValue) wrapped).getValue();
    }

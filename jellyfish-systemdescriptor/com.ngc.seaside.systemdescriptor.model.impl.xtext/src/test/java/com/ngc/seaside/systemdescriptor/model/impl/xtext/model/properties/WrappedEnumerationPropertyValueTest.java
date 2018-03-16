@@ -37,21 +37,18 @@ public class WrappedEnumerationPropertyValueTest extends AbstractWrappedXtextTes
    @Test
    public void testDoesReturnCorrectPropertyValueType() {
       assertEquals("enumeration property type is incorrect!", DataTypes.ENUM, unsetWrappedEnumValue.getType());
+      assertTrue("enumeration property value is not set but should be!", setWrappedEnumValue.isSet());
    }
 
    @Test
    public void testDoesReturnCorrectEnumeration() {
       assertEquals("referenced enumeration is incorrect!", "Enumeration", setWrappedEnumValue.getReferencedEnumeration().getName());
+      assertTrue("enumeration property value is not set but should be!", setWrappedEnumValue.isSet());
    }
 
    @Test
    public void testDoesReturnCorrectValue() {
       assertEquals("enumeration property value is incorrect!", PROPERTY_ENUM_VALUE, setWrappedEnumValue.getValue());
-   }
-
-   @Test
-   public void testDoesCorrectlyDetermineIfValueIsSet() {
-      assertFalse("enumeration property value is set but shouldn't be!", unsetWrappedEnumValue.isSet());
       assertTrue("enumeration property value is not set but should be!", setWrappedEnumValue.isSet());
    }
 }

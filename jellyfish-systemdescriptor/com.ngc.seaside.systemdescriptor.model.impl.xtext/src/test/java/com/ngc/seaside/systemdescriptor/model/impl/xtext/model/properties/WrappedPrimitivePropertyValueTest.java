@@ -13,25 +13,28 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest {
-   private final static BooleanValue PROPERTY_BOOLEAN_VALUE = factory().createBooleanValue();
-   private final static IntValue PROPERTY_INTEGER_VALUE = factory().createIntValue();
-   private final static DblValue PROPERTY_FLOAT_VALUE = factory().createDblValue();
-   private final static StringValue PROPERTY_STRING_VALUE = factory().createStringValue();
 
    private WrappedPrimitivePropertyValue wrappedBooleanValue;
    private WrappedPrimitivePropertyValue wrappedIntegerValue;
    private WrappedPrimitivePropertyValue wrappedFloatValue;
    private WrappedPrimitivePropertyValue wrappedStringValue;
 
+   private BooleanValue propertyBooleanValue = factory().createBooleanValue();
+   private IntValue propertyIntegerValue = factory().createIntValue();
+   private DblValue propertyFloatValue = factory().createDblValue();
+   private StringValue propertyStringValue = factory().createStringValue();
+
    @Before
    public void setup() {
-      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
-      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_INTEGER_VALUE);
-      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
-      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_STRING_VALUE);
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), propertyBooleanValue);
+      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), propertyIntegerValue);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), propertyFloatValue);
+      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), propertyStringValue);
    }
 
    @Test
@@ -43,54 +46,50 @@ public class WrappedPrimitivePropertyValueTest extends AbstractWrappedXtextTest 
    }
 
    @Test
-   public void testDoesCorrectlyDetermineIfValueIsSet() {
-      assertFalse("boolean value is set but shouldn't be", wrappedBooleanValue.isSet());
-      PROPERTY_BOOLEAN_VALUE.setValue("true");
-      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
-      assertTrue("boolean value is not set but should be!", wrappedBooleanValue.isSet());
-
-      assertFalse("string value is set but shouldn't be", wrappedStringValue.isSet());
-      PROPERTY_STRING_VALUE.setValue("string");
-      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_STRING_VALUE);
-      assertTrue("string value is not set but should be!", wrappedStringValue.isSet());
-   }
-
-   @Test
    public void testDoesCorrectlyRetrieveSetPropertyValue() {
-      PROPERTY_BOOLEAN_VALUE.setValue("true");
-      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
+      propertyBooleanValue.setValue("true");
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), propertyBooleanValue);
       assertTrue("boolean property value is incorrect!", wrappedBooleanValue.getBoolean());
+      assertTrue("value should be set!", wrappedBooleanValue.isSet());
 
-      PROPERTY_BOOLEAN_VALUE.setValue("false");
-      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_BOOLEAN_VALUE);
+      propertyBooleanValue.setValue("false");
+      wrappedBooleanValue = new WrappedPrimitivePropertyValue(resolver(), propertyBooleanValue);
       assertFalse("boolean property value is incorrect!", wrappedBooleanValue.getBoolean());
+      assertTrue("value should be set!", wrappedBooleanValue.isSet());
 
-      PROPERTY_INTEGER_VALUE.setValue(-1);
-      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_INTEGER_VALUE);
+      propertyIntegerValue.setValue(-1);
+      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), propertyIntegerValue);
       assertEquals("integer property value is incorrect!", new BigInteger("-1"), wrappedIntegerValue.getInteger());
+      assertTrue("value should be set!", wrappedIntegerValue.isSet());
 
-      PROPERTY_INTEGER_VALUE.setValue(0);
-      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_INTEGER_VALUE);
+      propertyIntegerValue.setValue(0);
+      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), propertyIntegerValue);
       assertEquals("integer property value is incorrect!", new BigInteger("0"), wrappedIntegerValue.getInteger());
+      assertTrue("value should be set!", wrappedIntegerValue.isSet());
 
-      PROPERTY_INTEGER_VALUE.setValue(1);
-      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_INTEGER_VALUE);
+      propertyIntegerValue.setValue(1);
+      wrappedIntegerValue = new WrappedPrimitivePropertyValue(resolver(), propertyIntegerValue);
       assertEquals("integer property value is incorrect!", new BigInteger("1"), wrappedIntegerValue.getInteger());
+      assertTrue("value should be set!", wrappedIntegerValue.isSet());
 
-      PROPERTY_FLOAT_VALUE.setValue(-1.0);
-      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      propertyFloatValue.setValue(-1.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), propertyFloatValue);
       assertEquals("float property value is incorrect!", new BigDecimal(-1.0), wrappedFloatValue.getDecimal());
+      assertTrue("value should be set!", wrappedFloatValue.isSet());
 
-      PROPERTY_FLOAT_VALUE.setValue(0.0);
-      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      propertyFloatValue.setValue(0.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), propertyFloatValue);
       assertEquals("float property value is incorrect!", new BigDecimal(0.0), wrappedFloatValue.getDecimal());
+      assertTrue("value should be set!", wrappedFloatValue.isSet());
 
-      PROPERTY_FLOAT_VALUE.setValue(1.0);
-      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_FLOAT_VALUE);
+      propertyFloatValue.setValue(1.0);
+      wrappedFloatValue = new WrappedPrimitivePropertyValue(resolver(), propertyFloatValue);
       assertEquals("float property value is incorrect!", new BigDecimal(1.0), wrappedFloatValue.getDecimal());
+      assertTrue("value should be set!", wrappedFloatValue.isSet());
 
-      PROPERTY_STRING_VALUE.setValue("string");
-      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), PROPERTY_STRING_VALUE);
+      propertyStringValue.setValue("string");
+      wrappedStringValue = new WrappedPrimitivePropertyValue(resolver(), propertyStringValue);
       assertEquals("string property value is incorrect!", "string", wrappedStringValue.getString());
+      assertTrue("value should be set!", wrappedStringValue.isSet());
    }
 }
