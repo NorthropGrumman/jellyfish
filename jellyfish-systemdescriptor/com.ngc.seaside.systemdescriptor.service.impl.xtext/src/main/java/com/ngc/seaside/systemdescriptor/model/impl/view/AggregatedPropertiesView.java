@@ -105,36 +105,37 @@ public class AggregatedPropertiesView {
     * @return the merged IPropertyDataValue
     */
    private static IPropertyDataValue merge(IPropertyDataValue baseProperty, IPropertyDataValue newProperty) {
-      IData data = newProperty.getReferencedDataType();
-      Map<String, Collection<IPropertyValue>> map = new HashMap<>();
-      for (IDataField field : data.getFields()) {
-         String name = field.getName();
-         if (field.getCardinality() == FieldCardinality.MANY) {
-            Optional<Collection<IPropertyValue>> newValues = newProperty.getValues(field);
-            Optional<Collection<IPropertyValue>> baseValues = baseProperty.getValues(field);
-            if (newValues.isPresent()) {
-               map.put(name, newValues.get());
-            } else if (baseValues.isPresent()) {
-               map.put(name, baseValues.get());
-            } else {
-               map.put(name, null);
-            }
-         } else if (field.getType() == DataTypes.DATA) {
-            IPropertyDataValue newValue = newProperty.getData(field);
-            IPropertyDataValue baseValue = baseProperty.getData(field);
-            IPropertyDataValue mergedValue = merge(baseValue, newValue);
-            map.put(name, Collections.singletonList(mergedValue));
-         } else {
-            IPropertyValue newValue = newProperty.getValue(field);
-            IPropertyValue baseValue = baseProperty.getValue(field);
-            if (newValue.isSet() || !baseValue.isSet()) {
-               map.put(name, Collections.singletonList(newValue));
-            } else {
-               map.put(name, Collections.singletonList(baseValue));
-            }
-         }
-      }
-      return new PropertyDataValue(data, map);
+      throw new UnsupportedOperationException("not updated yet; TODO");
+//      IData data = newProperty.getReferencedDataType();
+//      Map<String, Collection<IPropertyValue>> map = new HashMap<>();
+//      for (IDataField field : data.getFields()) {
+//         String name = field.getName();
+//         if (field.getCardinality() == FieldCardinality.MANY) {
+//            Optional<Collection<IPropertyValue>> newValues = newProperty.getValues(field);
+//            Optional<Collection<IPropertyValue>> baseValues = baseProperty.getValues(field);
+//            if (newValues.isPresent()) {
+//               map.put(name, newValues.get());
+//            } else if (baseValues.isPresent()) {
+//               map.put(name, baseValues.get());
+//            } else {
+//               map.put(name, null);
+//            }
+//         } else if (field.getType() == DataTypes.DATA) {
+//            IPropertyDataValue newValue = newProperty.getData(field);
+//            IPropertyDataValue baseValue = baseProperty.getData(field);
+//            IPropertyDataValue mergedValue = merge(baseValue, newValue);
+//            map.put(name, Collections.singletonList(mergedValue));
+//         } else {
+//            IPropertyValue newValue = newProperty.getValue(field);
+//            IPropertyValue baseValue = baseProperty.getValue(field);
+//            if (newValue.isSet() || !baseValue.isSet()) {
+//               map.put(name, Collections.singletonList(newValue));
+//            } else {
+//               map.put(name, Collections.singletonList(baseValue));
+//            }
+//         }
+//      }
+//      return new PropertyDataValue(data, map);
    }
 
 }

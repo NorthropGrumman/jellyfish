@@ -568,13 +568,13 @@ DataModel
 Model
 	: 'model' name=UnqualifiedName ('refines' refinedModel=[Model|QualifiedName])? '{'
 		metadata=Metadata? &
-		properties=Properties? &
 		requires=Requires? &
 		input=Input? &
 		output=Output? &
 		scenarios+=Scenario* &
 		parts=Parts? &
-		links=Links?
+		links=Links? &
+		properties=Properties? 
 	  '}'
 	;
 
