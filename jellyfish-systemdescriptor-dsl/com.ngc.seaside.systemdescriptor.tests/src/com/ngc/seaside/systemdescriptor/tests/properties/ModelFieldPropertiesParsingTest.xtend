@@ -98,7 +98,8 @@ class ModelFieldPropertiesParsingTest {
 				requires {
 					Clock clock {
 						properties {
-							int intField
+							int intField 
+							intField = 20
 						}
 					}
 				}
@@ -116,6 +117,54 @@ class ModelFieldPropertiesParsingTest {
 		val declaration = properties.declarations.get(0)
 		assertEquals("property name not correct", "intField", declaration.name)
 	}
+
+    @Test
+    def void testDoesParseModelWithRequiresPropertiesBeingDeclaredAndAssigned() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock{
+                requires {
+                   refine reqClock {
+                        properties {
+                            int intRequiresField
+                            intRequiresField = 100
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
+    
+    @Test
+    def void testDoesParseModelWithPartsPropertiesBeingDeclaredAndAssigned() {
+        val source = '''
+            package clocks.models
+            
+            import clocks.models.part.LinkedClock
+            
+            model BigClock refines LinkedClock{
+                parts {
+                   refine clockD {
+                        properties {
+                        int intMyPartsField
+                        intMyPartsField = 100
+                        }
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
 	@Test
 	def void testDoesParseModelWithRefinedRequiresProperties() {

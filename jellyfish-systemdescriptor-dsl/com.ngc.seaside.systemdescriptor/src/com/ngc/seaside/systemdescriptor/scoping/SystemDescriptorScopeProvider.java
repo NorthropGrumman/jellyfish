@@ -304,7 +304,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       Collection<PartDeclaration> parts = new ArrayList<>();
       Collection<PropertyFieldDeclaration> fields = new ArrayList<>();
       do {
-         if (model.getRequires() != null) {
+         if (model.getParts() != null) {
             parts.addAll(model.getParts().getDeclarations());
          }
          model = model.getRefinedModel();
