@@ -47,7 +47,14 @@ public class WrappedPropertyValues {
 
    public static IPropertyValues<IPropertyDataValue> getValues(IWrapperResolver resolver,
                                                                WrappedDataProperty property) {
-      return null;
+      IPropertyValues<IPropertyDataValue> values = IPropertyValues.emptyPropertyValues();
+
+      WrappedDataPropertyValue wrappedValue = new WrappedDataPropertyValue(resolver, property.unwrap());
+      if (wrappedValue.isSet()) {
+         values = IPropertyValues.of(Collections.singleton(wrappedValue));
+      }
+
+      return values;
    }
 
    private static Optional<PropertyValueAssignment> getAssignment(AbstractWrappedProperty<?> property) {

@@ -56,7 +56,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       Preconditions.checkState(isSet(), "this value is not set!");
 
       PropertyValueAssignment assignment = getAssignmentFor(Collections.singleton(field.getName()))
-            .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+            .orElseThrow(() -> new IllegalStateException("no value for supposedly set property " + field));
       return new WrappedPrimitivePropertyValue(resolver, assignment.getValue());
    }
 
@@ -69,7 +69,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       Preconditions.checkState(isSet(), "this value is not set!");
 
       PropertyValueAssignment assignment = getAssignmentFor(Collections.singleton(field.getName()))
-            .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+            .orElseThrow(() -> new IllegalStateException("no value for supposedly set property " + field));
       return new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) assignment.getValue());
    }
 
@@ -192,7 +192,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                      field.getType());
 
          PropertyValueAssignment assignment = getAssignmentFor(appendTo(paths, field.getName()))
-               .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+               .orElseThrow(() -> new IllegalStateException("no value for supposedly set property " + field));
          return new WrappedPrimitivePropertyValue(resolver, assignment.getValue());
       }
 
@@ -204,7 +204,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                      field.getType());
 
          PropertyValueAssignment assignment = getAssignmentFor(appendTo(paths, field.getName()))
-               .orElseThrow(() -> new IllegalStateException("not value for supposedly set property " + field));
+               .orElseThrow(() -> new IllegalStateException("no value for supposedly set property " + field));
          return new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) assignment.getValue());
       }
 

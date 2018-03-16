@@ -54,12 +54,6 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    @Mock
    private IData wrappedData;
 
-   @Mock
-   private IEnumeration wrappedEnumeration;
-
-   @Mock
-   private IData wrappedNestedData;
-
    @Before
    public void setup() throws Throwable {
       PrimitiveDataFieldDeclaration intField = factory().createPrimitiveDataFieldDeclaration();
@@ -252,7 +246,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       properties.getAssignments().add(assignment);
    }
 
-   private static IDataField fieldWithName(String name, DataTypes type) {
+   public static IDataField fieldWithName(String name, DataTypes type) {
       IDataField field = mock(IDataField.class);
       when(field.getName()).thenReturn(name);
       when(field.getType()).thenReturn(type);
