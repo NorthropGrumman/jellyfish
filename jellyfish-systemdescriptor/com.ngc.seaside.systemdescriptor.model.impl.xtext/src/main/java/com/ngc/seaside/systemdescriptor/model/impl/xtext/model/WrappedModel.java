@@ -367,18 +367,14 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       if (wrapped.getProperties() == null) {
          properties = new SelfInitializingProperties(
                d -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, d),
-               d -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, d),
+               d -> AbstractWrappedProperty.toXTextPropertyFieldDeclaration(resolver, d),
                PropertyFieldDeclaration::getName,
                () -> {
                   wrapped.setProperties(SystemDescriptorFactory.eINSTANCE.createProperties());
                   return wrapped.getProperties().getDeclarations();
                });
       } else {
-         properties = new WrappedProperties(
-               wrapped.getProperties().getDeclarations(),
-               d -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, d),
-               d -> AbstractWrappedProperty.toXTextPartDeclaration(resolver, d),
-               PropertyFieldDeclaration::getName);
+         properties = WrappedProperties.fromXtext(resolver, wrapped.getProperties());
       }
    }
 

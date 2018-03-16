@@ -69,8 +69,6 @@ public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<Property
 
    @Override
    public boolean isSet() {
-      return (getType() == DataTypes.BOOLEAN && ((BooleanValue) wrapped).getValue() != null) ||
-             (getType() == DataTypes.STRING && ((StringValue) wrapped).getValue() != null) ||
-             getType() == DataTypes.FLOAT || getType() == DataTypes.INT;
+      return true;
    }
 }
