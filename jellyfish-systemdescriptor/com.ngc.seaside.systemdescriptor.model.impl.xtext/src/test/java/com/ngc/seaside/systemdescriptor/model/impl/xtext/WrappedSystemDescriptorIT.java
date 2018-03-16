@@ -15,9 +15,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.emf.common.util.URI;
@@ -41,6 +41,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -408,8 +409,10 @@ public class WrappedSystemDescriptorIT {
    }
 
    @Test
-   public void testDoesCreateWrappedDescriptorWithRefinedModels() throws Throwable {
+   public void testDoesCreateWrappedDescriptorWithRefinedModelsAndProperties() throws Throwable {
       resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/datatypes/TimeZone.sd"));
+      resourceOf(pathTo("clocks/datatypes/ConfigData.sd"));
       resourceOf(pathTo("clocks/models/Timer.sd"));
       resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
       resourceOf(pathTo("clocks/models/Speaker.sd"));
@@ -439,6 +442,36 @@ public class WrappedSystemDescriptorIT {
                  loudClock.get().getLinkByName("speakerConnection").get().getRefinedLink().isPresent());
       assertTrue("refined link not correct!",
                  loudClock.get().getLinks().iterator().next().getRefinedLink().isPresent());
+
+      IProperties properties = loudClock.get().getProperties();
+      assertEquals("property value not correct!",
+                   BigInteger.ONE,
+                   properties.resolveAsInteger("a").orElse(null));
+      assertEquals("property value not correct!",
+                   "hello",
+                   properties.resolveAsString("b").orElse(null));
+      assertEquals("property value not correct!",
+                   true,
+                   properties.resolveAsBoolean("c").orElse(null));
+      assertEquals("property value not correct!",
+                   "CST",
+                   properties.resolveAsEnumeration("zone").get().getValue());
+
+      assertEquals("property value not correct!",
+                   new BigInteger("2"),
+                   properties.resolveAsInteger("config", "x").orElse(null));
+      assertEquals("property value not correct!",
+                   "world",
+                   properties.resolveAsString("config", "y").orElse(null));
+      assertEquals("property value not correct!",
+                   false,
+                   properties.resolveAsBoolean("config", "z").orElse(null));
+      assertEquals("property value not correct!",
+                   "CST",
+                   properties.resolveAsEnumeration("config", "timeZone").get().getValue());
+
+      assertFalse("missing property should not be present!",
+                  properties.resolveAsData("foo").isPresent());
    }
 
    @After
@@ -456,13 +489,13 @@ public class WrappedSystemDescriptorIT {
          issues = issues.stream()
                .filter(issue -> issue.getSeverity() == Severity.ERROR)
                .collect(Collectors.toList());
-         if(!issues.isEmpty()) {
+         if (!issues.isEmpty()) {
             StringBuilder sb = new StringBuilder("files failed validation!  ");
             issues.forEach(issue -> sb.append(issue.getMessage()));
             fail(sb.toString());
          }
          resource = i.hasNext() ? (XtextResource) i.next() : null;
-      } while(resource != null);
+      } while (resource != null);
    }
 
    private InputStream streamOf(Path file) throws IOException {

@@ -1,6 +1,8 @@
 package clocks
 
 import clocks.AlarmClock
+import clocks.datatypes.TimeZone
+import clocks.datatypes.ConfigData
 
 model LoudAlarmClock refines AlarmClock {
   metadata {
@@ -27,5 +29,22 @@ model LoudAlarmClock refines AlarmClock {
         "wire": "15-gauge"
       }
     }
+  }
+
+  properties {
+    int a
+    string b
+    boolean c
+    TimeZone zone
+    ConfigData config
+
+    a = 1
+    b = "hello"
+    c = true
+    zone = TimeZone.CST
+    config.x = 2
+    config.y = "world"
+    config.z = false
+    config.timeZone = TimeZone.CST
   }
 }
