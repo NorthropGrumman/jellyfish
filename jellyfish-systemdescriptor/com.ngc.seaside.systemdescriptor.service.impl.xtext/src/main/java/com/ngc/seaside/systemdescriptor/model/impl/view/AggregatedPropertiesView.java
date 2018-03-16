@@ -36,6 +36,7 @@ public class AggregatedPropertiesView {
     * types.
     */
    public static IProperties getAggregatedProperties(IModel model) {
+      System.out.println("Begin for model");
       return getAggregatedProperties(model, m -> m.getRefinedModel().orElse(null), IModel::getProperties);
    }
 
@@ -44,6 +45,7 @@ public class AggregatedPropertiesView {
     * its extended types.
     */
    public static IProperties getAggregatedProperties(IModelReferenceField field) {
+      System.out.println("Begin for model ref field");
       return getAggregatedProperties(field, f -> f.getRefinedField().orElse(null), IModelReferenceField::getProperties);
    }
 
@@ -53,6 +55,7 @@ public class AggregatedPropertiesView {
     */
    @SuppressWarnings({"unchecked", "rawtypes"})
    public static IProperties getAggregatedProperties(IModelLink<?> link) {
+      System.out.println("Begin for link");
       return getAggregatedProperties(link, l -> l.getRefinedLink().orElse(null), IModelLink::getProperties);
    }
 
@@ -65,12 +68,16 @@ public class AggregatedPropertiesView {
     * @param propertiesFunction function to get the properties from the current value
     * @return the aggregated properties for the type
     */
-   private static <T> IProperties getAggregatedProperties(T initial, Function<T, T> parentFunction,
+   private static <T> IProperties getAggregatedProperties(T initial,
+                                                          Function<T, T> parentFunction,
                                                           Function<T, IProperties> propertiesFunction) {
       Properties properties = new Properties();
       T current = initial;
+
       while (current != null) {
          for (IProperty property : propertiesFunction.apply(current)) {
+            System.out.println("Found declaratoin " + property.getName());
+
             Optional<IProperty> newerPropertyOptional = properties.getByName(property.getName());
             if (newerPropertyOptional.isPresent()) {
                IProperty newerProperty = newerPropertyOptional.get();
