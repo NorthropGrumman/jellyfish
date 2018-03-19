@@ -13,7 +13,8 @@ import java.util.Objects;
  *
  * @param <T> the type being wrapped
  */
-public abstract class AbstractWrappedXtext<T extends EObject> implements IUnwrappable<T> {
+public abstract class AbstractWrappedXtext<T extends EObject>
+      implements IUnwrappable<T>, DeferredInitialization.IDeferredInitialization {
 
    /**
     * The resolver that can resolve existing wrappers for other XText objects.
@@ -36,6 +37,11 @@ public abstract class AbstractWrappedXtext<T extends EObject> implements IUnwrap
    }
 
    @Override
+   public void postPackagesWrapped() {
+      // Do nothing by default.
+   }
+
+   @Override
    public boolean equals(Object o) {
       if (this == o) {
          return true;
@@ -55,5 +61,13 @@ public abstract class AbstractWrappedXtext<T extends EObject> implements IUnwrap
    @Override
    public String toString() {
       return wrapped.toString();
+   }
+
+   /**
+    * Configures this component so that the {@code postPackagesWrapped} callback is invoked after all packages and types
+    * have been wrapped.
+    */
+   protected void requiresDeferredInitialization() {
+      DeferredInitialization.register(this);
    }
 }

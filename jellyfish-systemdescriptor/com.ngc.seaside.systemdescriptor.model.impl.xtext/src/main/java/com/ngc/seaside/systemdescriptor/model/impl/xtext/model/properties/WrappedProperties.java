@@ -16,9 +16,6 @@ public class WrappedProperties extends NamedChildCollection<IProperties, IProper
       implements IProperties {
 
    public WrappedProperties(IWrapperResolver resolver, Properties properties) {
-      // TODO: Create wrappers first using assignments, then default to declarations.
-      // TODO TH: FIX
-
       WrapperPropertyFactory factory = new WrapperPropertyFactory(resolver);
       Set<String> propertyNamesAlreadyAdded = new HashSet<>();
       for (PropertyValueAssignment assignment : properties.getAssignments()) {
@@ -34,21 +31,6 @@ public class WrappedProperties extends NamedChildCollection<IProperties, IProper
       }
    }
 
-   //   public WrappedProperties(EList<PropertyFieldDeclaration> wrapped,
-//                            Function<PropertyFieldDeclaration, IProperty> wrapperFunction,
-//                            Function<IProperty, PropertyFieldDeclaration> unwrapperFunction,
-//                            Function<PropertyFieldDeclaration, String> namingFunction) {
-//      super(wrapped, wrapperFunction, unwrapperFunction, namingFunction);
-//   }
-//
-//   public static IProperties fromXtext(IWrapperResolver resolver, Properties properties) {
-//      return new WrappedProperties(
-//            properties.getDeclarations(),
-//            property -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, property),
-//            property -> AbstractWrappedProperty.toXTextPropertyFieldDeclaration(resolver, property),
-//            PropertyFieldDeclaration::getName);
-//   }
-//
    public static Properties toXtext(IWrapperResolver resolver, IProperties properties) {
       Properties xtextProperties = SystemDescriptorFactory.eINSTANCE.createProperties();
 

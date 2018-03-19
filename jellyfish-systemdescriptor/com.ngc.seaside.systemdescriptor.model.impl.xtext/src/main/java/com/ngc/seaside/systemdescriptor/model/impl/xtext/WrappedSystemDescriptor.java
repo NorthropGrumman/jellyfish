@@ -36,6 +36,9 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
       resolver = newResolver();
       // Register all packages that XText parsed.
       findAllPackages();
+
+      // Perform any initialize that needs to happen after all packages are registered.
+      DeferredInitialization.packagesWrapped();
    }
 
    @Override

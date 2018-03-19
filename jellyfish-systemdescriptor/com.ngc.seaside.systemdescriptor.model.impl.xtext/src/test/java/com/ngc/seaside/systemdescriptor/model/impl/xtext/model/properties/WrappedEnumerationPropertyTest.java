@@ -72,6 +72,8 @@ public class WrappedEnumerationPropertyTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
       wrappedProperty = new WrappedEnumerationProperty(resolver(), property, IPropertyValues.emptyPropertyValues());
+      wrappedProperty.postPackagesWrapped();
+
       assertEquals("name not correct!",
                    wrappedProperty.getName(),
                    property.getName());

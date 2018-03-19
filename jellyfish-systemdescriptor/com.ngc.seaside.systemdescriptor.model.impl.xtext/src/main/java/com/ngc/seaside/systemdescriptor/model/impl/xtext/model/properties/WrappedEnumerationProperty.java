@@ -6,7 +6,6 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
@@ -16,8 +15,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 
 public class WrappedEnumerationProperty extends AbstractWrappedProperty<ReferencedPropertyFieldDeclaration> {
 
-   private final IEnumeration referencedType;
    private final IPropertyValues<IPropertyEnumerationValue> values;
+   private IEnumeration referencedType;
 
    public WrappedEnumerationProperty(IWrapperResolver resolver,
                                      ReferencedPropertyFieldDeclaration wrapped,
@@ -26,8 +25,13 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
       if (!(wrapped.getDataModel() instanceof Enumeration)) {
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
-      this.referencedType = resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
       this.values = Preconditions.checkNotNull(values, "values may not be null!");
+      requiresDeferredInitialization();
+   }
+
+   @Override
+   public void postPackagesWrapped() {
+      this.referencedType = resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
    }
 
    @Override

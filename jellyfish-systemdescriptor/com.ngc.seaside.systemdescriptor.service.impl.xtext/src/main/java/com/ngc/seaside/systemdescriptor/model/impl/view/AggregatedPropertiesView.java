@@ -76,6 +76,7 @@ public class AggregatedPropertiesView {
 
       while (current != null) {
          for (IProperty property : propertiesFunction.apply(current)) {
+            // TODO TH: Remove this
             System.out.println("Found declaratoin " + property.getName());
 
             Optional<IProperty> newerPropertyOptional = properties.getByName(property.getName());
