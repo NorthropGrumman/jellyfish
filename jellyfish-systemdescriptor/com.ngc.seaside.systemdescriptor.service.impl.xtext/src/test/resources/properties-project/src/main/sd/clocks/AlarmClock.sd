@@ -26,9 +26,11 @@ model AlarmClock {
 
   links {
       link timer.currentTime -> display.currentTime {
+        /*
         properties {
           Config linkConfig
         }
+        */
       }
       link timer.currentTime -> alarm.currentTime
       link speaker -> alarm.speaker

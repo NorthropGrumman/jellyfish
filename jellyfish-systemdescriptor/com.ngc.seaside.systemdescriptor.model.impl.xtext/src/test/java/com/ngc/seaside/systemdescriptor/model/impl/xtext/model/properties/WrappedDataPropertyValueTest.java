@@ -3,7 +3,6 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
-import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
@@ -94,7 +93,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesWrapUnsetData1() {
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertEquals("value type not correct!",
                    DataTypes.DATA,
                    value.getType());
@@ -108,7 +107,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesWrapUnsetData2() {
       setupForPrimitiveProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertFalse("should not be set!",
                   value.isSet());
    }
@@ -117,12 +116,12 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    public void testDoesWrapUnsetData3() {
       setupForPrimitiveProperty();
       setupForEnumProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertFalse("should not be set!",
                   value.isSet());
 
       setupForDataProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
    }
@@ -132,7 +131,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForPrimitiveProperty();
       setupForEnumProperty();
       setupForDataProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
    }
@@ -143,7 +142,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -161,7 +160,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -179,7 +178,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration);
+      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -229,15 +228,15 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    }
 
    private void setupAssignmentFor(String propertyName, PropertyValue propertyValue) {
-      PropertyValueExpressionPathSegment segment = factory().createPropertyValueExpressionPathSegment();
-      segment.setFieldDeclaration(data.getFields().stream()
+      PropertyValueExpressionPathSegment segment1 = factory().createPropertyValueExpressionPathSegment();
+      segment1.setFieldDeclaration(data.getFields().stream()
                                         .filter(f -> f.getName().equals(propertyName))
                                         .findFirst()
                                         .get());
 
       PropertyValueExpression exp = factory().createPropertyValueExpression();
       exp.setDeclaration(propertyDeclaration);
-      exp.getPathSegments().add(segment);
+      exp.getPathSegments().add(segment1);
 
       PropertyValueAssignment assignment = factory().createPropertyValueAssignment();
       assignment.setExpression(exp);

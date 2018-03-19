@@ -6,4 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 
 public class Properties extends NamedChildCollection<IProperties, IProperty> implements IProperties {
 
+   public boolean hasProperty(String name) {
+      return getByName(name).isPresent();
+   }
 }

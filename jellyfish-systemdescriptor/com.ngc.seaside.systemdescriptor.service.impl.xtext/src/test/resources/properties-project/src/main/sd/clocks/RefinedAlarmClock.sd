@@ -4,6 +4,7 @@ import clocks.AlarmClock
 
 model RefinedAlarmClock refines AlarmClock {
 
+/*
   links {
       link timer.currentTime -> display.currentTime {
         properties {
@@ -14,6 +15,7 @@ model RefinedAlarmClock refines AlarmClock {
         }
       }
   }
+*/
 
   properties {
       config.port1 = 1

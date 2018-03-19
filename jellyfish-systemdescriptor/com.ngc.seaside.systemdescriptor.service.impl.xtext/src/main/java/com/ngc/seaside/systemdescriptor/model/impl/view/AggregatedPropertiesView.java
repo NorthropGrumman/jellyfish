@@ -13,14 +13,12 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyData
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Property;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.PropertyDataValue;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -36,8 +34,11 @@ public class AggregatedPropertiesView {
     * types.
     */
    public static IProperties getAggregatedProperties(IModel model) {
-      System.out.println("Begin for model");
-      return getAggregatedProperties(model, m -> m.getRefinedModel().orElse(null), IModel::getProperties);
+      System.out.println("Begin for model " + model.getFullyQualifiedName());
+      return getAggregatedProperties(model, m -> {
+         System.out.println("nested " + m.getRefinedModel());
+         return m.getRefinedModel().orElse(null);
+      }, IModel::getProperties);
    }
 
    /**
@@ -46,7 +47,10 @@ public class AggregatedPropertiesView {
     */
    public static IProperties getAggregatedProperties(IModelReferenceField field) {
       System.out.println("Begin for model ref field");
-      return getAggregatedProperties(field, f -> f.getRefinedField().orElse(null), IModelReferenceField::getProperties);
+      return getAggregatedProperties(field, f -> {
+         System.out.println("nested " + f.getParent().getFullyQualifiedName());
+         return f.getRefinedField().orElse(null);
+      }, IModelReferenceField::getProperties);
    }
 
    /**
@@ -79,23 +83,29 @@ public class AggregatedPropertiesView {
             // TODO TH: Remove this
             System.out.println("Found declaratoin " + property.getName());
 
-            Optional<IProperty> newerPropertyOptional = properties.getByName(property.getName());
-            if (newerPropertyOptional.isPresent()) {
-               IProperty newerProperty = newerPropertyOptional.get();
-               if (newerProperty.getType() == DataTypes.DATA
-                   && newerProperty.getCardinality() == FieldCardinality.SINGLE) {
-                  IPropertyDataValue merged = merge(property.getData(), newerProperty.getData());
-                  Property mergedProperty = new Property(newerProperty.getName(),
-                                                         newerProperty.getType(),
-                                                         newerProperty.getCardinality(),
-                                                         Collections.singletonList(merged),
-                                                         newerProperty.getReferencedDataType());
-                  mergedProperty.setProperties(newerProperty.getParent());
-                  properties.add(mergedProperty);
-               }
-            } else {
+            if (!properties.hasProperty(property.getName())) {
                properties.add(property);
+            } else {
+               System.out.println("Not override property");
             }
+
+//            Optional<IProperty> newerPropertyOptional = properties.getByName(property.getName());
+//            if (newerPropertyOptional.isPresent()) {
+//               IProperty newerProperty = newerPropertyOptional.get();
+//               if (newerProperty.getType() == DataTypes.DATA
+//                   && newerProperty.getCardinality() == FieldCardinality.SINGLE) {
+//                  IPropertyDataValue merged = merge(property.getData(), newerProperty.getData());
+//                  Property mergedProperty = new Property(newerProperty.getName(),
+//                                                         newerProperty.getType(),
+//                                                         newerProperty.getCardinality(),
+//                                                         Collections.singletonList(merged),
+//                                                         newerProperty.getReferencedDataType());
+//                  mergedProperty.setProperties(newerProperty.getParent());
+//                  properties.add(mergedProperty);
+//               }
+//            } else {
+//               properties.add(property);
+//            }
          }
          current = parentFunction.apply(current);
       }

@@ -33,11 +33,16 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
 
    private final IWrapperResolver resolver;
    private final ReferencedPropertyFieldDeclaration propertyDeclaration;
+   private final Properties propertiesContainer;
 
-   public WrappedDataPropertyValue(IWrapperResolver resolver, ReferencedPropertyFieldDeclaration propertyDeclaration) {
+   public WrappedDataPropertyValue(IWrapperResolver resolver,
+                                   ReferencedPropertyFieldDeclaration propertyDeclaration,
+                                   Properties propertiesContainer) {
       this.resolver = Preconditions.checkNotNull(resolver, "resolver may not be null!");
       this.propertyDeclaration = Preconditions.checkNotNull(propertyDeclaration,
                                                             "propertyDeclaration may not be null!");
+      this.propertiesContainer = Preconditions.checkNotNull(propertiesContainer,
+                                                            "propertiesContainer may not be null!");
       Preconditions.checkArgument(propertyDeclaration.getDataModel() instanceof Data,
                                   "propertyDeclaration must reference a Data object!");
    }
@@ -146,10 +151,8 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
    }
 
    private Optional<PropertyValueAssignment> getAssignmentFor(Collection<String> fieldNames) {
-      // TODO TH: need to scan refinement hierarchy here.
       String flatPath = fieldNames.stream().collect(Collectors.joining("."));
-      Properties properties = (Properties) propertyDeclaration.eContainer();
-      return properties.getAssignments()
+      return propertiesContainer.getAssignments()
             .stream()
             .filter(a -> a.getExpression().getDeclaration().equals(propertyDeclaration))
             .filter(a -> arePathsSame(flatPath, a.getExpression().getPathSegments()))
