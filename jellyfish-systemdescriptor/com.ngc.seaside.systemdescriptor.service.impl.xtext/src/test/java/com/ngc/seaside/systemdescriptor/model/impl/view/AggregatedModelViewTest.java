@@ -1,19 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.impl.view;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -26,6 +12,20 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AggregatedModelViewTest {
@@ -166,6 +166,10 @@ public class AggregatedModelViewTest {
          for (String name : names) {
             T field = Mockito.mock(fieldType);
             when(field.getName()).thenReturn(name);
+            if (IModelReferenceField.class.isAssignableFrom(fieldType)) {
+               when(((IModelReferenceField) field).getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+               when(((IModelReferenceField) field).getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
+            }
             collection.add(field);
          }
       }
