@@ -22,6 +22,12 @@ model BaseModel {
 						many string baseUnsetManyStringField
 						many Enum1 baseUnsetManyEnumField
 						many Data1 baseUnsetManyDataField
+						
+						baseUnsetIntField = 99
+                  baseUnsetBooleanField = false
+                  baseUnsetFloatField = 9.3
+                  baseUnsetStringField = "stringField"
+                  baseUnsetEnumField = Enum1.FIELD1
 				}
 		}
 	}
