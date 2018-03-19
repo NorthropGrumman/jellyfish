@@ -54,7 +54,6 @@ public class WrapperPropertyFactory {
          case SystemDescriptorPackage.REFERENCED_PROPERTY_FIELD_DECLARATION:
             ReferencedPropertyFieldDeclaration refDef = (ReferencedPropertyFieldDeclaration) declaration;
             DataModel data = refDef.getDataModel();
-            System.out.println("!@!@ DATA MODEL TYPE = " + data.getClass());
             switch (data.eClass().getClassifierID()) {
                case SystemDescriptorPackage.ENUMERATION:
                   return newEnumProperty(refDef);
