@@ -40,7 +40,7 @@ public class WrapperPropertyFactory {
                case SystemDescriptorPackage.DATA:
                   return newDataProperty(assignment);
                default:
-                  throw new UnrecognizedXtextTypeException(assignment.getExpression().getDeclaration());
+                  throw new UnrecognizedXtextTypeException(data);
             }
          default:
             throw new UnrecognizedXtextTypeException(assignment.getExpression().getDeclaration());
