@@ -39,6 +39,8 @@ public class WrapperPropertyFactory {
                   return newEnumProperty(assignment);
                case SystemDescriptorPackage.DATA:
                   return newDataProperty(assignment);
+               default:
+                  throw new UnrecognizedXtextTypeException(assignment.getExpression().getDeclaration());
             }
          default:
             throw new UnrecognizedXtextTypeException(assignment.getExpression().getDeclaration());
@@ -57,6 +59,8 @@ public class WrapperPropertyFactory {
                   return newEnumProperty(refDef);
                case SystemDescriptorPackage.DATA:
                   return newDataProperty(refDef);
+               default:
+                  throw new UnrecognizedXtextTypeException(declaration);
             }
          default:
             throw new UnrecognizedXtextTypeException(declaration);
