@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -67,7 +68,7 @@ public class WrappedDataPropertyTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesWrapXtextObject() throws Throwable {
-      wrappedProperty = new WrappedDataProperty(resolver(), property);
+      wrappedProperty = new WrappedDataProperty(resolver(), property, IPropertyValues.emptyPropertyValues());
       assertEquals("name not correct!",
                    wrappedProperty.getName(),
                    property.getName());

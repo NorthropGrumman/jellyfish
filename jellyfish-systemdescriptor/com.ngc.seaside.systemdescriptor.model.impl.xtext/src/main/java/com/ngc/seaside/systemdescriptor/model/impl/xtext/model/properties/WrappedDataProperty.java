@@ -18,13 +18,15 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
    private final IData referencedType;
    private final IPropertyValues<IPropertyDataValue> values;
 
-   public WrappedDataProperty(IWrapperResolver resolver, ReferencedPropertyFieldDeclaration wrapped) {
+   public WrappedDataProperty(IWrapperResolver resolver,
+                              ReferencedPropertyFieldDeclaration wrapped,
+                              IPropertyValues<IPropertyDataValue> values) {
       super(resolver, wrapped);
       if (!(wrapped.getDataModel() instanceof Data)) {
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
       this.referencedType = resolver.getWrapperFor((Data) wrapped.getDataModel());
-      this.values = WrappedPropertyValues.getValues(resolver, this);
+      this.values = Preconditions.checkNotNull(values, "values may not be null!");
    }
 
    @Override

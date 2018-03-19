@@ -27,7 +27,7 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
       this.referencedType = resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
-      this.values = values;
+      this.values = Preconditions.checkNotNull(values, "values may not be null!");
    }
 
    @Override

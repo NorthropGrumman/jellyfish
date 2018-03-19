@@ -20,7 +20,7 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
                                    PrimitivePropertyFieldDeclaration wrapped,
                                    IPropertyValues<IPropertyPrimitiveValue> values) {
       super(resolver, wrapped);
-      this.values = values;
+      this.values = Preconditions.checkNotNull(values, "values may not be null!");
    }
 
    @Override

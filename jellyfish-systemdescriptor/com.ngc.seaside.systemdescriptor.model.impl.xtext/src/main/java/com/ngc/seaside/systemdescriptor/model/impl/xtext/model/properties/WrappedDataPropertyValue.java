@@ -146,6 +146,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
    }
 
    private Optional<PropertyValueAssignment> getAssignmentFor(Collection<String> fieldNames) {
+      // TODO TH: need to scan refinement hierarchy here.
       String flatPath = fieldNames.stream().collect(Collectors.joining("."));
       Properties properties = (Properties) propertyDeclaration.eContainer();
       return properties.getAssignments()
