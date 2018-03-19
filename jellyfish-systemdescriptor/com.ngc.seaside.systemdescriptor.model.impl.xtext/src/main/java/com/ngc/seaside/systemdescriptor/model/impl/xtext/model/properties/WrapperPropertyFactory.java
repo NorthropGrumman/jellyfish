@@ -60,7 +60,7 @@ public class WrapperPropertyFactory {
                case SystemDescriptorPackage.DATA:
                   return newDataProperty(refDef);
                default:
-                  throw new UnrecognizedXtextTypeException(declaration);
+                  throw new UnrecognizedXtextTypeException(data);
             }
          default:
             throw new UnrecognizedXtextTypeException(declaration);
