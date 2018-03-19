@@ -18,7 +18,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataModel;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
@@ -27,13 +26,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class WrappedDataPropertyValue implements IPropertyDataValue {
 
    private final IWrapperResolver resolver;
    private final ReferencedPropertyFieldDeclaration propertyDeclaration;
-   private final Properties propertiesContainer;
+   private final NestedPropertyValueResolver propertyValueResolver;
 
    public WrappedDataPropertyValue(IWrapperResolver resolver,
                                    ReferencedPropertyFieldDeclaration propertyDeclaration,
@@ -41,10 +39,11 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       this.resolver = Preconditions.checkNotNull(resolver, "resolver may not be null!");
       this.propertyDeclaration = Preconditions.checkNotNull(propertyDeclaration,
                                                             "propertyDeclaration may not be null!");
-      this.propertiesContainer = Preconditions.checkNotNull(propertiesContainer,
-                                                            "propertiesContainer may not be null!");
+      Preconditions.checkNotNull(propertiesContainer,
+                                 "propertiesContainer may not be null!");
       Preconditions.checkArgument(propertyDeclaration.getDataModel() instanceof Data,
                                   "propertyDeclaration must reference a Data object!");
+      this.propertyValueResolver = createValueResolver(propertyDeclaration, propertiesContainer);
    }
 
    @Override
@@ -113,6 +112,12 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
       return doIsSet(propertyDeclaration.getDataModel(), Collections.emptyList());
    }
 
+   protected NestedPropertyValueResolver createValueResolver(ReferencedPropertyFieldDeclaration propertyDeclaration,
+                                                             Properties propertiesContainer) {
+      // This method is used to make testing easier.
+      return new NestedPropertyValueResolver(propertyDeclaration, propertiesContainer);
+   }
+
    private boolean doIsSet(DataModel dataModel, Collection<String> fieldNames) {
       boolean set;
 
@@ -151,26 +156,13 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
    }
 
    private Optional<PropertyValueAssignment> getAssignmentFor(Collection<String> fieldNames) {
-      String flatPath = fieldNames.stream().collect(Collectors.joining("."));
-      return propertiesContainer.getAssignments()
-            .stream()
-            .filter(a -> a.getExpression().getDeclaration().equals(propertyDeclaration))
-            .filter(a -> arePathsSame(flatPath, a.getExpression().getPathSegments()))
-            .findFirst();
+      return propertyValueResolver.resoleValue(fieldNames);
    }
 
    private static Collection<String> appendTo(Collection<String> collection, String value) {
       Collection<String> copy = new ArrayList<>(collection);
       copy.add(value);
       return copy;
-   }
-
-   private static boolean arePathsSame(String flatPath,
-                                       Collection<PropertyValueExpressionPathSegment> segments) {
-      String flatSegmentPath = segments.stream()
-            .map(s -> s.getFieldDeclaration().getName())
-            .collect(Collectors.joining("."));
-      return flatPath.equals(flatSegmentPath);
    }
 
    private class NestedDataPropertyValue implements IPropertyDataValue {

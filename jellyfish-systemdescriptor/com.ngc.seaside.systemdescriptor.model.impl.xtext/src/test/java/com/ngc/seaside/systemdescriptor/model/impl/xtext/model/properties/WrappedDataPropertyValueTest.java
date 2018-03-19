@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyData
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.EnumPropertyValue;
@@ -93,7 +94,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesWrapUnsetData1() {
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertEquals("value type not correct!",
                    DataTypes.DATA,
                    value.getType());
@@ -107,7 +108,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesWrapUnsetData2() {
       setupForPrimitiveProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertFalse("should not be set!",
                   value.isSet());
    }
@@ -116,12 +117,12 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    public void testDoesWrapUnsetData3() {
       setupForPrimitiveProperty();
       setupForEnumProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertFalse("should not be set!",
                   value.isSet());
 
       setupForDataProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
    }
@@ -131,7 +132,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForPrimitiveProperty();
       setupForEnumProperty();
       setupForDataProperty();
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
    }
@@ -142,7 +143,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -160,7 +161,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -178,7 +179,7 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       setupForEnumProperty();
       setupForDataProperty();
 
-      value = new WrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
+      value = new TestableWrappedDataPropertyValue(resolver(), propertyDeclaration, properties);
       assertTrue("should be set!",
                  value.isSet());
 
@@ -230,9 +231,9 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
    private void setupAssignmentFor(String propertyName, PropertyValue propertyValue) {
       PropertyValueExpressionPathSegment segment1 = factory().createPropertyValueExpressionPathSegment();
       segment1.setFieldDeclaration(data.getFields().stream()
-                                        .filter(f -> f.getName().equals(propertyName))
-                                        .findFirst()
-                                        .get());
+                                         .filter(f -> f.getName().equals(propertyName))
+                                         .findFirst()
+                                         .get());
 
       PropertyValueExpression exp = factory().createPropertyValueExpression();
       exp.setDeclaration(propertyDeclaration);
@@ -250,5 +251,35 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       when(field.getName()).thenReturn(name);
       when(field.getType()).thenReturn(type);
       return field;
+   }
+
+   private static class TestableWrappedDataPropertyValue extends WrappedDataPropertyValue {
+
+      public TestableWrappedDataPropertyValue(
+            IWrapperResolver resolver,
+            ReferencedPropertyFieldDeclaration propertyDeclaration,
+            Properties propertiesContainer) {
+         super(resolver, propertyDeclaration, propertiesContainer);
+      }
+
+      @Override
+      protected NestedPropertyValueResolver createValueResolver(ReferencedPropertyFieldDeclaration propertyDeclaration,
+                                                                Properties propertiesContainer) {
+         return new NonTraversingPropertyValueResolver(propertyDeclaration, propertiesContainer);
+      }
+   }
+
+   private static class NonTraversingPropertyValueResolver extends NestedPropertyValueResolver {
+
+      public NonTraversingPropertyValueResolver(
+            ReferencedPropertyFieldDeclaration declaration,
+            Properties properties) {
+         super(declaration, properties);
+      }
+
+      @Override
+      protected void handleUnrecognizedPropertiesContainer(Properties properties) {
+         propertiesToSearch.add(properties);
+      }
    }
 }
