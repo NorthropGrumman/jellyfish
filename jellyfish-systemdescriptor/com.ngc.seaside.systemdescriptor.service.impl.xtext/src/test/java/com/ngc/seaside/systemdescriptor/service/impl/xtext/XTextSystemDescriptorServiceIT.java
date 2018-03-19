@@ -229,6 +229,29 @@ public class XTextSystemDescriptorServiceIT {
       assertEquals("property zone not correct!",
                    "CST",
                    speaker.getProperties().resolveAsEnumeration("zone").get().getValue());
+
+      // Test multiple levels of refinement.
+      model = service.getAggregatedView(
+            result.getSystemDescriptor().findModel("clocks.BetterAlarmClock").get());
+      assertEquals("property config.port1 not correct!",
+                   100,
+                   model.getProperties().resolveAsInteger("config", "port1").get().intValue());
+      assertEquals("property config.port2 not correct!",
+                   2,
+                   model.getProperties().resolveAsInteger("config", "port2").get().intValue());
+
+      link = model.getLinkByName("timer2Display").get();
+      assertEquals("property linkConfig.port1 not correct!",
+                   300,
+                   link.getProperties().resolveAsInteger("linkConfig", "port1").get().intValue());
+      assertEquals("property linkConfig.port2 not correct!",
+                   4,
+                   link.getProperties().resolveAsInteger("linkConfig", "port2").get().intValue());
+
+      speaker = model.getParts().getByName("speaker").get();
+      assertEquals("property zone not correct!",
+                   "MST",
+                   speaker.getProperties().resolveAsEnumeration("zone").get().getValue());
    }
 
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"
