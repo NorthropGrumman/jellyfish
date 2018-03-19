@@ -43,7 +43,7 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
                                  "propertiesContainer may not be null!");
       Preconditions.checkArgument(propertyDeclaration.getDataModel() instanceof Data,
                                   "propertyDeclaration must reference a Data object!");
-      this.propertyValueResolver = new NestedPropertyValueResolver(propertyDeclaration, propertiesContainer);
+      this.propertyValueResolver = createValueResolver(propertyDeclaration, propertiesContainer);
    }
 
    @Override
@@ -110,6 +110,12 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
    @Override
    public boolean isSet() {
       return doIsSet(propertyDeclaration.getDataModel(), Collections.emptyList());
+   }
+
+   protected NestedPropertyValueResolver createValueResolver(ReferencedPropertyFieldDeclaration propertyDeclaration,
+                                                             Properties propertiesContainer) {
+      // This method is used to make testing easier.
+      return new NestedPropertyValueResolver(propertyDeclaration, propertiesContainer);
    }
 
    private boolean doIsSet(DataModel dataModel, Collection<String> fieldNames) {

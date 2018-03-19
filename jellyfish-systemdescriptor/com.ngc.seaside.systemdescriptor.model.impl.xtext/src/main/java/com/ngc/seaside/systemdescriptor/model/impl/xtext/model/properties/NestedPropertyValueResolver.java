@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class NestedPropertyValueResolver {
 
-   private final Collection<Properties> propertiesToSearch = new ArrayList<>();
-   private final ReferencedPropertyFieldDeclaration declaration;
+   protected final Collection<Properties> propertiesToSearch = new ArrayList<>();
+   protected final ReferencedPropertyFieldDeclaration declaration;
 
    public NestedPropertyValueResolver(ReferencedPropertyFieldDeclaration declaration,
                                       Properties properties) {
@@ -35,7 +35,7 @@ public class NestedPropertyValueResolver {
       } else if (arePropertiesOfField(properties)) {
          populatePropertiesFromField(properties);
       } else {
-         throw new UnrecognizedXtextTypeException(properties.eContainer());
+         handleUnrecognizedPropertiesContainer(properties);
       }
    }
 
@@ -83,6 +83,11 @@ public class NestedPropertyValueResolver {
          }
          model = model.getRefinedModel();
       }
+   }
+
+   protected void handleUnrecognizedPropertiesContainer(Properties properties) {
+      // Tests will override this method to make them easier to write.
+      throw new UnrecognizedXtextTypeException(properties.eContainer());
    }
 
    private void populatePropertiesFromField(Properties properties) {
