@@ -26,11 +26,13 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
       implements IModelLink<T> {
 
    private IMetadata metadata;
+   private IProperties properties;
    protected IModelLink<T> refinedLink;
 
    protected WrappedReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getDefinition());
+      this.properties = WrappedDeclarationDefinition.propertiesFromXtext(resolver, wrapped.getDefinition());
    }
 
    @Override
@@ -46,12 +48,13 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
 
    @Override
    public IProperties getProperties() {
-      return WrappedDeclarationDefinition.propertiesFromXtext(resolver, wrapped.getDefinition());
+      return properties;
    }
 
    @Override
    public IModelLink<T> setProperties(IProperties properties) {
       wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, null, properties));
+      this.properties = properties;
       return this;
    }
 

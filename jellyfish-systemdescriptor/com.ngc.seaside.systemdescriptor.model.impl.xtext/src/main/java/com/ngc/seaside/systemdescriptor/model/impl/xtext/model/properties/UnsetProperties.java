@@ -12,6 +12,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValu
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * Contains constants for unset property values.
+ */
 public class UnsetProperties {
 
    private UnsetProperties() {

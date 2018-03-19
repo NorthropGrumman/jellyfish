@@ -33,14 +33,14 @@ public class AggregatedModelView implements IModel {
    private final Collection<IModelLink<?>> aggregatedLinks;
    private IMetadata aggregatedMetadata;
    private IProperties aggregatedProperties;
-   
+
    public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
-      this.aggregatedInputs = getAggregatedFields(IModel::getInputs);
-      this.aggregatedOutputs = getAggregatedFields(IModel::getOutputs);
-      this.aggregatedParts = getAggregatedFields(IModel::getParts);
-      this.aggregatedRequirements = getAggregatedFields(IModel::getRequiredModels);
-      this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios);
+      this.aggregatedInputs = getAggregatedFields(IModel::getInputs, Function.identity());
+      this.aggregatedOutputs = getAggregatedFields(IModel::getOutputs, Function.identity());
+      this.aggregatedParts = getAggregatedFields(IModel::getParts, AggregatedModelFieldView::new);
+      this.aggregatedRequirements = getAggregatedFields(IModel::getRequiredModels, AggregatedModelFieldView::new);
+      this.aggregatedScenarios = getAggregatedFields(IModel::getScenarios, Function.identity());
       this.aggregatedLinks = getAggregatedLinks();
       this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
       this.aggregatedProperties = AggregatedPropertiesView.getAggregatedProperties(wrapped);
@@ -158,11 +158,20 @@ public class AggregatedModelView implements IModel {
    }
 
    private <T extends INamedChild<IModel>> INamedChildCollection<IModel, T> getAggregatedFields(
-         Function<IModel, INamedChildCollection<IModel, T>> fieldFinder) {
+         Function<IModel, INamedChildCollection<IModel, T>> fieldFinder,
+         Function<T, T> fieldAggregatorTransformer) {
       NamedChildCollection<IModel, T> collection = new NamedChildCollection<>();
       IModel model = wrapped;
       while (model != null) {
-         collection.addAll(fieldFinder.apply(model));
+         fieldFinder.apply(model)
+               .stream()
+               // Give the function a chance to apply an aggregated view on top of the field.
+               .map(fieldAggregatorTransformer)
+               // Prevent fields that has already been added to the collection from being added again.  This is needed
+               // to avoid adding duplicates for refined fields.
+               .filter(f -> !collection.getByName(f.getName()).isPresent())
+               // Add each field to the collection.
+               .forEach(collection::add);
          model = model.getRefinedModel().orElse(null);
       }
       return collection;
@@ -172,7 +181,7 @@ public class AggregatedModelView implements IModel {
       Collection<IModelLink<?>> collection = new ArrayList<>();
       IModel model = wrapped;
       while (model != null) {
-         for(IModelLink<?> link : model.getLinks()) {
+         for (IModelLink<?> link : model.getLinks()) {
             collection.add(new AggregatedLinkView<>(link));
          }
          model = model.getRefinedModel().orElse(null);

@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 
@@ -47,6 +48,14 @@ public class AggregatedMetadataView {
     */
    public static IMetadata getAggregatedMetadata(IModelLink<?> wrapped) {
       return getAggregatedMetadata(wrapped, IModelLink::getRefinedLink, IModelLink::getMetadata);
+   }
+
+   /**
+    * Gets an instance of {@code IMetadata} that contains all the metadata from the given reference field and its
+    * refined fields.
+    */
+   public static IMetadata getAggregatedMetadata(IModelReferenceField wrapped) {
+      return getAggregatedMetadata(wrapped, IModelReferenceField::getRefinedField, IModelReferenceField::getMetadata);
    }
 
    private static <T> IMetadata getAggregatedMetadata(T wrapped,

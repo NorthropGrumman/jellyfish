@@ -37,8 +37,7 @@ public class WrappedDeclarationDefinition {
    public static IProperties propertiesFromXtext(IWrapperResolver resolver, DeclarationDefinition definition) {
       IProperties properties = IProperties.EMPTY_PROPERTIES;
       if (definition != null && definition.getProperties() != null) {
-         // TODO TH: FIX THIS
-         //properties = WrappedProperties.fromXtext(resolver, definition.getProperties());
+         properties = new WrappedProperties(resolver, definition.getProperties());
       }
       return properties;
    }

@@ -1,12 +1,20 @@
 package clocks
 
 import clocks.AlarmClock
+import clocks.datatypes.TimeZone
 
 model RefinedAlarmClock refines AlarmClock {
 
-/*
+  parts {
+    refine speaker {
+      properties {
+        zone = TimeZone.CST
+      }
+    }
+  }
+
   links {
-      link timer.currentTime -> display.currentTime {
+      refine timer2Display {
         properties {
             linkConfig.port1 = 3
             linkConfig.port2 = 4
@@ -15,7 +23,6 @@ model RefinedAlarmClock refines AlarmClock {
         }
       }
   }
-*/
 
   properties {
       config.port1 = 1

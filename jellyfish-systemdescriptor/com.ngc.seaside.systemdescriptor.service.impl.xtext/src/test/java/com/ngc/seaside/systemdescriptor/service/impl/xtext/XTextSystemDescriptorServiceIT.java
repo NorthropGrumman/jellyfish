@@ -13,6 +13,8 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
@@ -188,7 +190,6 @@ public class XTextSystemDescriptorServiceIT {
    }
 
    @Test
-   //@Ignore("not working yet")
    public void testDoesManageProperties() {
       IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "properties-project"));
       assertTrue("did not parse project!",
@@ -209,6 +210,25 @@ public class XTextSystemDescriptorServiceIT {
       assertEquals("property config.host not correct!",
                    "world",
                    model.getProperties().resolveAsString("config", "host").get());
+
+      IModelLink<?> link = model.getLinkByName("timer2Display").get();
+      assertEquals("property linkConfig.port1 not correct!",
+                   3,
+                   link.getProperties().resolveAsInteger("linkConfig", "port1").get().intValue());
+      assertEquals("property linkConfig.port2 not correct!",
+                   4,
+                   link.getProperties().resolveAsInteger("linkConfig", "port2").get().intValue());
+      assertEquals("property linkConfig.name not correct!",
+                   "foo",
+                   link.getProperties().resolveAsString("linkConfig", "name").get());
+      assertEquals("property linkConfig.host not correct!",
+                   "bar",
+                   link.getProperties().resolveAsString("linkConfig", "host").get());
+
+      IModelReferenceField speaker = model.getParts().getByName("speaker").get();
+      assertEquals("property zone not correct!",
+                   "CST",
+                   speaker.getProperties().resolveAsEnumeration("zone").get().getValue());
    }
 
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"
