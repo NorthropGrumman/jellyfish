@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public class WrappedPropertyValues {
 
+   // TODO TH: delete this class
+
    private WrappedPropertyValues() {
    }
 

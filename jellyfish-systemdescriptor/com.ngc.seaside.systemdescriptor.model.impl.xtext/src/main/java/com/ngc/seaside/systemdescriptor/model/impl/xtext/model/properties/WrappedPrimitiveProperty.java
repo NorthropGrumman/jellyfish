@@ -10,16 +10,17 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitivePropertyFieldDeclaration> {
 
    private final IPropertyValues<IPropertyPrimitiveValue> values;
 
-   public WrappedPrimitiveProperty(IWrapperResolver resolver, PrimitivePropertyFieldDeclaration wrapped) {
+   public WrappedPrimitiveProperty(IWrapperResolver resolver,
+                                   PrimitivePropertyFieldDeclaration wrapped,
+                                   IPropertyValues<IPropertyPrimitiveValue> values) {
       super(resolver, wrapped);
-      this.values = WrappedPropertyValues.getValues(resolver, this);
+      this.values = values;
    }
 
    @Override
@@ -51,9 +52,4 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
       declaration.setType(PrimitiveDataType.valueOf(property.getType().toString()));
       return declaration;
    }
-
-   protected PropertyValueAssignment findPropertyValueAssignment() {
-      return null;
-   }
-
 }

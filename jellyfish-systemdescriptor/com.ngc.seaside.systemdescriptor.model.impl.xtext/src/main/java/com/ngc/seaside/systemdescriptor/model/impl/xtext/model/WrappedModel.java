@@ -21,8 +21,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNo
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.AbstractWrappedProperty;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.SelfInitializingProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.WrappedProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
@@ -35,7 +33,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -364,18 +361,8 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    }
 
    private void initProperties() {
-      if (wrapped.getProperties() == null) {
-         properties = new SelfInitializingProperties(
-               d -> AbstractWrappedProperty.getWrappedPropertiesFieldReference(resolver, d),
-               d -> AbstractWrappedProperty.toXTextPropertyFieldDeclaration(resolver, d),
-               PropertyFieldDeclaration::getName,
-               () -> {
-                  wrapped.setProperties(SystemDescriptorFactory.eINSTANCE.createProperties());
-                  return wrapped.getProperties().getDeclarations();
-               });
-      } else {
-         properties = WrappedProperties.fromXtext(resolver, wrapped.getProperties());
-      }
+      properties = wrapped.getProperties() == null ? IProperties.EMPTY_PROPERTIES
+                                                   : new WrappedProperties(resolver, wrapped.getProperties());
    }
 
 }
