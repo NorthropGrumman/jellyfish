@@ -16,7 +16,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 public class WrappedEnumerationProperty extends AbstractWrappedProperty<ReferencedPropertyFieldDeclaration> {
 
    private final IPropertyValues<IPropertyEnumerationValue> values;
-   private IEnumeration referencedType;
 
    public WrappedEnumerationProperty(IWrapperResolver resolver,
                                      ReferencedPropertyFieldDeclaration wrapped,
@@ -26,17 +25,11 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
          throw new IllegalArgumentException("Expected reference property field declaration to be an enumeration");
       }
       this.values = Preconditions.checkNotNull(values, "values may not be null!");
-      requiresDeferredInitialization();
-   }
-
-   @Override
-   public void postPackagesWrapped() {
-      this.referencedType = resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
    }
 
    @Override
    public IEnumeration getReferencedEnumeration() {
-      return referencedType;
+      return resolver.getWrapperFor((Enumeration) wrapped.getDataModel());
    }
 
    @Override
