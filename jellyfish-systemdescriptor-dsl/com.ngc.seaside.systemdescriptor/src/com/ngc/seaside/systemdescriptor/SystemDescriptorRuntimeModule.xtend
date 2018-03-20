@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.scoping.ExceptionRethrowingScopeProvider
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 import org.eclipse.xtext.util.PolymorphicDispatcher.ErrorHandler
+import org.eclipse.xtext.util.IResourceScopeCache
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -18,5 +19,10 @@ class SystemDescriptorRuntimeModule extends AbstractSystemDescriptorRuntimeModul
 		binder.bind(new TypeLiteral<ErrorHandler<IScope>>(){})
 			.annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_ERROR_HANDLER))
 			.to(ExceptionRethrowingScopeProviderErrrorHandler)
+	}
+	
+	def void configureCaches(Binder binder) {
+		binder.bind(IResourceScopeCache)
+			.toInstance(IResourceScopeCache.NullImpl.INSTANCE);
 	}
 }
