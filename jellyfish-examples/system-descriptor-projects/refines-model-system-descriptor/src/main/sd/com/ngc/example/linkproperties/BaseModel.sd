@@ -16,7 +16,7 @@ model BaseModel {
 	}
 
 	links {
-		link part2.output1 -> part1.input1 {
+		link workaroundLink part2.output1 -> part1.input1 {
 			properties {
 				int baseUnsetIntField
 				boolean baseUnsetBooleanField
