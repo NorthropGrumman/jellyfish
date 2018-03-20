@@ -20,7 +20,6 @@ import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration
 import com.ngc.seaside.systemdescriptor.tests.resources.Datas
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)

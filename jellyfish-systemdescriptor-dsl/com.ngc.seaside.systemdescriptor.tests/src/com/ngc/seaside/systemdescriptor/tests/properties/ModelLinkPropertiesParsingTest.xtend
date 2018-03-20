@@ -17,7 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.junit.Ignore
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 
 @RunWith(XtextRunner)
