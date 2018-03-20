@@ -35,7 +35,7 @@ import java.util.List;
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
-
+   
    /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
@@ -259,6 +259,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       return Scopes.scopeFor(properties);
    }
 
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a link.
+    */
    private static IScope getScopeForLinkPropertyValueExpression(PropertyValueExpression context) {
       Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
       LinkDeclaration link = (LinkDeclaration) context.eContainer() // PropertyValueAssignment
@@ -271,12 +274,12 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       do {
          LinkDeclaration currentLink = findLink(model, link);
          // There is an issue when refining an unnamed link and setting a value on
-         // a property of that link.  If the link is refining another link, we need
-         // to find the base link where the property is declared.  This works fine 
-         // for links with names.  However, if the link has no name we can find the
-         // base link using the target and source.  However, the definition on that
+         // a property of that link. If the link is refining another link, we need
+         // to find the base link where the property is declared. This works fine
+         // for links with names. However, if the link has no name we can find the
+         // base link using the target and source. However, the definition on that
          // base link (which contains the properties) is null even thought that link
-         // has properties declared in the source.  This seems to be an XText issue
+         // has properties declared in the source. This seems to be an XText issue
          // since the definition object should definitely not be null.
          if (currentLink != null
             && currentLink.getDefinition() != null
@@ -288,7 +291,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
       return Scopes.scopeFor(propertyDeclarations);
    }
-
+   
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a part.
+    */
    private static IScope getScopeForPartPropertyValueExpression(PropertyValueExpression context) {
       Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
       PartDeclaration part = (PartDeclaration) context.eContainer() // PropertyValueAssignment
@@ -318,6 +324,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       return Scopes.scopeFor(propertyDeclarations);
    }
 
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a requirement.
+    */
    private static IScope getScopeForRequirementPropertyValueExpression(PropertyValueExpression context) {
       Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
       RequireDeclaration requirement = (RequireDeclaration) context.eContainer() // PropertyValueAssignment
@@ -347,6 +356,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       return Scopes.scopeFor(propertyDeclarations);
    }
 
+   /**
+    * Gets the data type of the given property. This method can only be called for properties
+    * whose type is a complex data type, not an enum or primitive.
+    */
    private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
       // Note it is possible that the declaration is a proxy. If so, abort.
       if (declaration.eIsProxy()) {
@@ -409,6 +422,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       return null;
    }
 
+   /**
+    * Gets the text value of the source of a link.
+    */
    private static String getPathOfSource(LinkDeclaration link) {
       List<INode> nodes;
 
@@ -423,6 +439,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
    }
 
+   /**
+    * Gets the text value of the target of a link.
+    */
    private static String getPathOfTarget(LinkDeclaration link) {
       List<INode> nodes;
 

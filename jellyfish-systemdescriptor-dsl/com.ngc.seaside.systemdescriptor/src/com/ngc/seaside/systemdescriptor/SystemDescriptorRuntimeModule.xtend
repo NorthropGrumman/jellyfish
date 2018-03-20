@@ -22,6 +22,8 @@ class SystemDescriptorRuntimeModule extends AbstractSystemDescriptorRuntimeModul
 	}
 	
 	def void configureCaches(Binder binder) {
+		// Disable caching of scopes.  This is a workaround to the bug regarding
+		// issues where valid imports cannot be resolved.
 		binder.bind(IResourceScopeCache)
 			.toInstance(IResourceScopeCache.NullImpl.INSTANCE);
 	}

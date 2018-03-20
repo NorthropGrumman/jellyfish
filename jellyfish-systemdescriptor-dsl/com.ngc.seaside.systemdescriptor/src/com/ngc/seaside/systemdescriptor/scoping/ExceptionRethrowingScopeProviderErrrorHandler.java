@@ -5,6 +5,12 @@ import com.ngc.seaside.systemdescriptor.exception.UnhandledScopingException;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.util.PolymorphicDispatcher.ErrorHandler;
 
+/**
+ * A type of error handler that is used by the scope provider.  This error handler 
+ * will rethrow any important exception as an {@code UnhandledScopingException}.  
+ * This is important since the default error handler will silently consume any 
+ * exceptions.
+ */
 public class ExceptionRethrowingScopeProviderErrrorHandler implements ErrorHandler<IScope> {
 
    @Override
@@ -18,7 +24,6 @@ public class ExceptionRethrowingScopeProviderErrrorHandler implements ErrorHandl
       }
       // Otherwise, this could be a bug in the scope provider so rethrow it
       // so the bug and exception is visible.
-      throwable.printStackTrace();
       throw new UnhandledScopingException(throwable.getMessage(), throwable);
    }
 
