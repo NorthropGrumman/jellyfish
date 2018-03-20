@@ -36,8 +36,8 @@ public class BuildScriptUpdater {
       // Replace the offending lines.
       lines = lines.stream()
             .map(line -> {
-               if (line.trim().startsWith("classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:")) {
-                  line = String.format("      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:%s'", version);
+               if (line.trim().startsWith("classpath \"com.ngc.seaside:jellyfish.cli.gradle.plugins:")) {
+                  line = String.format("      classpath \"com.ngc.seaside:jellyfish.cli.gradle.plugins:%s\"", version);
                }
                else if (line.trim().startsWith("jellyfishVersion = ")) {
                   line = String.format("      jellyfishVersion = '%s'", version);
