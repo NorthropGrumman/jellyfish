@@ -154,6 +154,12 @@ class ModelLinkPropertiesParsingTest {
                              intLinkedClockField = 1
                         }
                     }
+                    
+                    refine link currentTime -> clockA.inputTime {
+                    	properties {
+                    		anotherIntField = 2
+                    	}
+                    }
                 }
             }
         '''

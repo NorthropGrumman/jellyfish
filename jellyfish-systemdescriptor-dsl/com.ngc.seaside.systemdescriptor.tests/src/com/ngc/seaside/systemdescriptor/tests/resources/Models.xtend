@@ -89,7 +89,11 @@ class Models {
                 
                 links {
                     link namedLink currentTime -> clock.inputTime
-                    link currentTime -> clockA.inputTime
+                    link currentTime -> clockA.inputTime {
+                    	properties {
+                    		int anotherIntField
+                    	}
+                    }
                     link propNamedLink 	currentTime -> clockC.inputTime {
                         properties {
                             int intLinkedClockField
