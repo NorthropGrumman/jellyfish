@@ -1,7 +1,9 @@
 package com.ngc.seaside.systemdescriptor.model.api.model.link;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 
 import java.util.Optional;
 
@@ -13,6 +15,36 @@ import java.util.Optional;
  * @param <T> the type of reference field that link is connecting
  */
 public interface IModelLink<T extends IReferenceField> {
+
+   /**
+    * Gets the metadata for this link.
+    *
+    * @return the metadata for this link
+    */
+   IMetadata getMetadata();
+
+   /**
+    * Sets the metadata for this link.
+    *
+    * @param metadata the metadata for this link
+    * @return this link
+    */
+   IModelLink<T> setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the properties of this link.
+    *
+    * @return the properties of this link (never {@code null})
+    */
+   IProperties getProperties();
+
+   /**
+    * Sets the properties of this link.
+    *
+    * @param properties the properties of this link
+    * @return this link
+    */
+   IModelLink<T> setProperties(IProperties properties);
 
    /**
     * Gets the source of the link.
@@ -47,15 +79,30 @@ public interface IModelLink<T extends IReferenceField> {
     *
     * @return the name of the link, if one exists.
     */
-    Optional<String> getName();
+   Optional<String> getName();
 
-    /**
-     * Sets the link name.
-     *
-     * @param name the name for the link
-     * @return this link
-     */
-    IModelLink<T> setName(String name);
+   /**
+    * Sets the link name.
+    *
+    * @param name the name for the link
+    * @return this link
+    */
+   IModelLink<T> setName(String name);
+
+   /**
+    * Gets the link that this link refines. If this link does not refine a link ,the optional is empty.
+    *
+    * @return the link this link is refining
+    */
+   Optional<IModelLink<T>> getRefinedLink();
+
+   /**
+    * Gets the link that this link is refining.
+    *
+    * @param refinedLink the link that this lin is refining
+    * @return this link
+    */
+   IModelLink<T> setRefinedLink(IModelLink<T> refinedLink);
 
    /**
     * Gets the parent model that contains this link.

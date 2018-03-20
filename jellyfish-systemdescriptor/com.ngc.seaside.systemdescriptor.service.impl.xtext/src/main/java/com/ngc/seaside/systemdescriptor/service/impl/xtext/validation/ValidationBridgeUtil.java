@@ -118,9 +118,9 @@ public class ValidationBridgeUtil {
    private static EStructuralFeature doGetFeature(IModelLink<?> object, EObject xtext, Method method) {
       switch (method.getName()) {
          case "getSource":
-            return SystemDescriptorPackage.Literals.LINK_DECLARATION__SOURCE;
+            return SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE;
          case "getTarget":
-            return SystemDescriptorPackage.Literals.LINK_DECLARATION__TARGET;
+            return SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET;
       }
       throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }

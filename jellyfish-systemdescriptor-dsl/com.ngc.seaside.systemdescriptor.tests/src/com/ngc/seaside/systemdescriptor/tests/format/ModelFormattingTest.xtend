@@ -1,4 +1,4 @@
-package com.ngc.  seaside.systemdescriptor.tests.format
+package com.ngc.seaside.systemdescriptor.tests.format
 
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider
@@ -10,7 +10,9 @@ import org.junit.runner.RunWith
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SystemDescriptorInjectorProvider))
 class ModelFormattingTest {
-	@Inject FormattingTestUtils formattingUtils
+	
+	@Inject
+	FormattingTestUtils formattingUtils
 	
 	var formattedModel = '''
 		package com.ngc.test
@@ -58,12 +60,7 @@ class ModelFormattingTest {
 				Model2 require1
 				com.ngc.import4.Model4 require4
 			}
-		
-			links {
-				link input1 -> output1
-				link input2.field2 -> output2.field3.field4
-			}
-		
+
 		}
 		'''
 	

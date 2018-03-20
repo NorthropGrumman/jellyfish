@@ -1,9 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.link;
 
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -12,7 +14,6 @@ import java.util.Optional;
  * Implements the IModelLink interface.  Maintains the source of the link and the target of the link.
  *
  * @param <T> IReferenceField type
- * @author psnell
  */
 public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
@@ -20,9 +21,24 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private T target;
    private final IModel parent;
    private String name;
+   private IProperties properties;
+   private IModelLink<T> refinedLink;
+   private IMetadata metadata;
 
    public ModelLink(IModel p) {
       parent = p;
+      this.properties = new Properties();
+   }
+
+   @Override
+   public IMetadata getMetadata() {
+      return metadata;
+   }
+
+   @Override
+   public IModelLink<T> setMetadata(IMetadata metadata) {
+      this.metadata = metadata;
+      return this;
    }
 
    @Override
@@ -49,18 +65,40 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
    @Override
    public Optional<String> getName() {
-	   return Optional.ofNullable(name);
+      return Optional.ofNullable(name);
    }
 
    @Override
    public IModelLink<T> setName(String name) {
-	   this.name = name;
-	   return this;
+      this.name = name;
+      return this;
+   }
+
+   @Override
+   public Optional<IModelLink<T>> getRefinedLink() {
+      return Optional.ofNullable(refinedLink);
+   }
+
+   @Override
+   public IModelLink<T> setRefinedLink(IModelLink<T> refinedLink) {
+      this.refinedLink = refinedLink;
+      return this;
    }
 
    @Override
    public IModel getParent() {
       return parent;
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IModelLink<T> setProperties(IProperties properties) {
+      this.properties = properties;
+      return this;
    }
 
    @Override
@@ -71,28 +109,36 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
       if (!(o instanceof ModelLink)) {
          return false;
       }
-
-      ModelLink<?> link = (ModelLink<?>) o;
-      return Objects.equals(name, link.name) &&
-             source == link.source &&
-             target == link.target &&
-             parent == link.parent;
+      ModelLink<?> modelLink = (ModelLink<?>) o;
+      return source == modelLink.source &&
+             target == modelLink.target &&
+             parent == modelLink.parent &&
+             Objects.equals(name, modelLink.name) &&
+             Objects.equals(properties, modelLink.properties) &&
+             refinedLink == modelLink.refinedLink &&
+             Objects.equals(metadata, modelLink.metadata);
    }
 
    @Override
    public int hashCode() {
       return Objects.hash(System.identityHashCode(source),
                           System.identityHashCode(target),
-                          System.identityHashCode(parent));
+                          System.identityHashCode(parent),
+                          name,
+                          properties,
+                          System.identityHashCode(refinedLink),
+                          metadata);
    }
 
    @Override
    public String toString() {
-      return "ModelLink[" +
-             "name='" + name +
-             "source='" + (source == null ? "null" : source) +
-             "target='" + (target == null ? "null" : target) +
-             "parent='" + (parent == null ? "null" : parent) +
-             ']';
+      return "ModelLink{" +
+             "source=" + source +
+             ", target=" + target +
+             ", parent=" + parent +
+             ", name='" + name + '\'' +
+             ", properties=" + properties +
+             ", refinedLink=" + refinedLink +
+             '}';
    }
 }

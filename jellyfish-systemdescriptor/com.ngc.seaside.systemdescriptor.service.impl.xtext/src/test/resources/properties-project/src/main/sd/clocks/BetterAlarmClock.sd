@@ -1,0 +1,27 @@
+package clocks
+
+import clocks.RefinedAlarmClock
+import clocks.datatypes.TimeZone
+
+model BetterAlarmClock refines RefinedAlarmClock {
+
+  parts {
+    refine speaker {
+      properties {
+        zone = TimeZone.MST
+      }
+    }
+  }
+
+  links {
+      refine timer2Display {
+        properties {
+            linkConfig.port1 = 300
+        }
+      }
+  }
+
+  properties {
+      config.port1 = 100
+  }
+}

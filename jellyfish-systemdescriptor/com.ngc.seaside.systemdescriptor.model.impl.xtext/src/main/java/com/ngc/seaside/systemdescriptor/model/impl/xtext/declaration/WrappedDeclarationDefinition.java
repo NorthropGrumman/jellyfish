@@ -1,7 +1,10 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.WrappedProperties;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
@@ -21,24 +24,41 @@ public class WrappedDeclarationDefinition {
     */
    public static IMetadata metadataFromXtext(DeclarationDefinition definition) {
       IMetadata metadata = IMetadata.EMPTY_METADATA;
-      if (definition != null) {
+      if (definition != null && definition.getMetadata() != null) {
          metadata = WrappedMetadata.fromXtext(definition.getMetadata());
       }
       return metadata;
    }
 
    /**
-    * Converts the given metadata returning a {@code DeclarationDefinition} which contains the converted metadata.  If
-    * {@code metadata} is {@code null} or is {@code empty} the returned definition will be {@code null}.
+    * Creates a new {@code IProperties} instance using the given {@code DeclarationDefinition}.  If the definition is
+    * {@code null}, an empty IProperties is returned.
     */
-   public static DeclarationDefinition toXtext(IMetadata metadata) {
-      DeclarationDefinition xtext = null;
+   public static IProperties propertiesFromXtext(IWrapperResolver resolver, DeclarationDefinition definition) {
+      IProperties properties = IProperties.EMPTY_PROPERTIES;
+      if (definition != null && definition.getProperties() != null) {
+         properties = new WrappedProperties(resolver, definition.getProperties());
+      }
+      return properties;
+   }
+
+   /**
+    * Converts the given metadata and properties and returns a {@code DeclarationDefinition} which contains the
+    * converted metadata and properties. Returns {@code null} if both {@code metadata} and {@code properties} are null
+    * or empty.
+    */
+   public static DeclarationDefinition toXtext(IWrapperResolver resolver, IMetadata metadata, IProperties properties) {
+      if ((metadata == null || metadata.getJson() == null || metadata.getJson().isEmpty())
+         && (properties == null || properties.isEmpty())) {
+         return null;
+      }
+      DeclarationDefinition xtext = SystemDescriptorFactory.eINSTANCE.createDeclarationDefinition();
       if (metadata != null && metadata.getJson() != null && !metadata.getJson().isEmpty()) {
-         xtext = SystemDescriptorFactory.eINSTANCE.createDeclarationDefinition();
          xtext.setMetadata(WrappedMetadata.toXtext(metadata));
+      }
+      if (properties != null && !properties.isEmpty()) {
+         xtext.setProperties(WrappedProperties.toXtext(resolver, properties));
       }
       return xtext;
    }
-
-   // TODO TH: add support for properties here when the DSL is updated
 }

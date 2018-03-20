@@ -6,6 +6,7 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -19,6 +20,7 @@ public class RefinedModelReferenceField implements IModelReferenceField {
    protected IMetadata metadata;
    protected IModelReferenceField refinedField;
    protected IModel parent;
+   protected IProperties properties;
 
    public RefinedModelReferenceField(String name, IModelReferenceField refinedField) {
       Preconditions.checkNotNull(name, "name may not be null!");
@@ -36,6 +38,17 @@ public class RefinedModelReferenceField implements IModelReferenceField {
    @Override
    public IReferenceField setMetadata(IMetadata metadata) {
       this.metadata = metadata;
+      return this;
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IReferenceField setProperties(IProperties properties) {
+      this.properties = properties;
       return this;
    }
 

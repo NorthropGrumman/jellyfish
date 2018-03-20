@@ -1,0 +1,15 @@
+package com.ngc.example
+
+import com.ngc.example.Data1
+import com.ngc.example.Model1
+
+model Model2 {
+	output {
+		Data1 output1
+	}
+
+	parts {
+		Model1 part1
+	}
+
+}

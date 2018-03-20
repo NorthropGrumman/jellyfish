@@ -252,7 +252,7 @@ public class ValidationDelegate implements IValidatorExtension {
                    helper);
              doValidation(ctx12);
              break;
-         case SystemDescriptorPackage.LINK_DECLARATION:
+         case SystemDescriptorPackage.BASE_LINK_DECLARATION:
             modelName = ((Model) source.eContainer().eContainer()).getName();
             packageName = ((Package) source.eContainer().eContainer().eContainer()).getName();
             IValidationContext<IModelLink<?>> ctx13 = newContext(

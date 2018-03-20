@@ -1,0 +1,27 @@
+package clocks.models
+
+import clocks.datatypes.Time
+import clocks.models.Speaker
+
+model Alarm {
+  metadata {
+    "description": "Generates alerts based on times set for alarms.",
+    "stereotypes": ["service"]
+     }
+
+     requires {
+        Speaker speaker
+     }
+
+     input {
+       Time currentTime
+       many Time alarmTimes
+     }
+
+     scenario triggerAlerts {
+         given alarmTimes hasBeenReceived
+         when receiving currentTime
+         and anyOf alarmsTimes equals currentTime
+         then ask speaker to buzz
+     }
+}

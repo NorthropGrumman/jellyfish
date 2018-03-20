@@ -1,0 +1,70 @@
+package com.ngc.example.linkproperties
+
+import com.ngc.example.Data1
+import com.ngc.example.Enum1
+import com.ngc.example.Model2
+import com.ngc.example.Model1
+
+model BaseModel {
+	input {
+		Data1 input1
+	}
+
+	parts {
+		Model1 part1
+		Model2 part2
+	}
+
+	links {
+		link workaroundLink part2.output1 -> part1.input1 {
+			properties {
+				int baseUnsetIntField
+				boolean baseUnsetBooleanField
+				float baseUnsetFloatField
+				string baseUnsetStringField
+				Enum1 baseUnsetEnumField
+				com.ngc.example.Enum2 baseUnsetQualifiedEnumField
+				Data1 baseUnsetDataField
+				com.ngc.example.Data2 baseUnsetQualifiedDataField
+				many int baseUnsetManyIntField
+				many boolean baseUnsetManyBooleanField
+				many float baseUnsetManyFloatField
+				many string baseUnsetManyStringField
+				many Enum1 baseUnsetManyEnumField
+				many Data1 baseUnsetManyDataField
+				
+				baseUnsetIntField = 11
+            baseUnsetBooleanField = false
+            baseUnsetFloatField = 1.5
+            baseUnsetStringField = "basedUnit"
+            baseUnsetEnumField = Enum1.FIELD1
+			}
+		}
+
+		link namedLink input1 -> part1.input1 {
+			properties {
+				int baseUnsetIntField
+				boolean baseUnsetBooleanField
+				float baseUnsetFloatField
+				string baseUnsetStringField
+				Enum1 baseUnsetEnumField
+				com.ngc.example.Enum2 baseUnsetQualifiedEnumField
+				Data1 baseUnsetDataField
+				com.ngc.example.Data2 baseUnsetQualifiedDataField
+				many int baseUnsetManyIntField
+				many boolean baseUnsetManyBooleanField
+				many float baseUnsetManyFloatField
+				many string baseUnsetManyStringField
+				many Enum1 baseUnsetManyEnumField
+				many Data1 baseUnsetManyDataField
+				
+				baseUnsetIntField = 11
+            baseUnsetBooleanField = false
+            baseUnsetFloatField = 1.5
+            baseUnsetStringField = "basedUnit"
+            baseUnsetEnumField = Enum1.FIELD1
+			}
+		}
+	}
+
+}

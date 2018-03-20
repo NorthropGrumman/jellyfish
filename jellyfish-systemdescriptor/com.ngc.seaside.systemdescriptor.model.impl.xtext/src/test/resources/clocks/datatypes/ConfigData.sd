@@ -1,0 +1,10 @@
+package clocks.datatypes
+
+import clocks.datatypes.TimeZone
+
+data ConfigData {
+  int x
+  string y
+  boolean z
+  TimeZone timeZone
+}

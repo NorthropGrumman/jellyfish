@@ -39,14 +39,18 @@ public class WrappedRefinedRequireModelReferenceField extends AbstractWrappedMod
       Preconditions.checkNotNull(field, "field may not be null!");
       RefinedRequireDeclaration d = SystemDescriptorFactory.eINSTANCE.createRefinedRequireDeclaration();
       d.setName(field.getName());
-      d.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      d.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       return d;
    }
 
    @Override
    public Optional<IModelReferenceField> getRefinedField() {
-      IModel refinedModel = getParent().getRefinedModel().orElseThrow(() -> new IllegalStateException("Refined model missing for refined required field " + getName()));
-      IModelReferenceField field = refinedModel.getRequiredModels().getByName(getName()).orElseThrow(() -> new IllegalStateException("Required " + getName() + " missing from refined model"));
+      IModel refinedModel = getParent().getRefinedModel()
+            .orElseThrow(() -> new IllegalStateException("Refined model missing for refined required field "
+                                                         + getName()));
+      IModelReferenceField field = refinedModel.getRequiredModels()
+            .getByName(getName())
+            .orElseThrow(() -> new IllegalStateException("Required " + getName() + " missing from refined model"));
       return Optional.of(field);
    }
 }

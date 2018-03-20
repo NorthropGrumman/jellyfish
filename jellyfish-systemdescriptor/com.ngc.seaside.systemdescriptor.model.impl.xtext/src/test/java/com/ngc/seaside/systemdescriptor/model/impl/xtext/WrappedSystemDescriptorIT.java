@@ -15,6 +15,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
@@ -22,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
@@ -39,6 +41,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +54,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.json.JsonObject;
 
@@ -58,6 +62,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WrappedSystemDescriptorIT {
@@ -131,6 +136,7 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/models/Speaker.sd"));
       resourceOf(pathTo("clocks/models/Alarm.sd"));
       resourceOf(pathTo("clocks/AlarmClock.sd"));
+      assertValid();
 
       // This is how you get the parsing result from an XText resource.  The result has the errors.
       IParseResult result = ((XtextResource) timerResource).getParseResult();
@@ -339,6 +345,7 @@ public class WrappedSystemDescriptorIT {
    @Test
    public void testDoesCreateWrappedDescriptorWithDataInheritance() throws Throwable {
       resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/datatypes/TimeZone.sd"));
       Resource goTimeResource = resourceOf(pathTo("clocks/datatypes/GoTime.sd"));
       resourceOf(pathTo("clocks/models/Timer.sd"));
       resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
@@ -350,6 +357,7 @@ public class WrappedSystemDescriptorIT {
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
+      assertValid();
 
       Package p = (Package) goTimeResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
@@ -380,6 +388,7 @@ public class WrappedSystemDescriptorIT {
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
+      assertValid();
 
       Package p = (Package) goTimeResource.getContents().get(0);
       wrapped = new WrappedSystemDescriptor(p);
@@ -399,17 +408,94 @@ public class WrappedSystemDescriptorIT {
 
    }
 
+   @Test
+   public void testDoesCreateWrappedDescriptorWithRefinedModelsAndProperties() throws Throwable {
+      resourceOf(pathTo("clocks/datatypes/Time.sd"));
+      resourceOf(pathTo("clocks/datatypes/TimeZone.sd"));
+      resourceOf(pathTo("clocks/datatypes/ConfigData.sd"));
+      resourceOf(pathTo("clocks/models/Timer.sd"));
+      resourceOf(pathTo("clocks/models/ClockDisplay.sd"));
+      resourceOf(pathTo("clocks/models/Speaker.sd"));
+      resourceOf(pathTo("clocks/models/Alarm.sd"));
+      resourceOf(pathTo("clocks/AlarmClock.sd"));
+      Resource refinedResource = resourceOf(pathTo("clocks/LoudAlarmClock.sd"));
+
+      IParseResult result = ((XtextResource) refinedResource).getParseResult();
+      assertFalse("should not have errors!",
+                  result.hasSyntaxErrors());
+      assertValid();
+
+      Package p = (Package) refinedResource.getContents().get(0);
+      wrapped = new WrappedSystemDescriptor(p);
+
+      Optional<IModel> loudClock = wrapped.findModel("clocks", "LoudAlarmClock");
+      assertTrue("did not find refined model!",
+                 loudClock.isPresent());
+      assertTrue("refined model not set!",
+                 loudClock.get().getRefinedModel().isPresent());
+      assertEquals("refined model not correct!",
+                   wrapped.findModel("clocks", "AlarmClock").get(),
+                   loudClock.get().getRefinedModel().get());
+      assertTrue("refined field not correct!",
+                 loudClock.get().getParts().getByName("speaker").get().getRefinedField().isPresent());
+      assertTrue("refined link not correct!",
+                 loudClock.get().getLinkByName("speakerConnection").get().getRefinedLink().isPresent());
+      assertTrue("refined link not correct!",
+                 loudClock.get().getLinks().iterator().next().getRefinedLink().isPresent());
+
+      IProperties properties = loudClock.get().getProperties();
+      assertEquals("property value not correct!",
+                   BigInteger.ONE,
+                   properties.resolveAsInteger("a").orElse(null));
+      assertEquals("property value not correct!",
+                   "hello",
+                   properties.resolveAsString("b").orElse(null));
+      assertEquals("property value not correct!",
+                   true,
+                   properties.resolveAsBoolean("c").orElse(null));
+      assertEquals("property value not correct!",
+                   "CST",
+                   properties.resolveAsEnumeration("zone").get().getValue());
+
+      assertEquals("property value not correct!",
+                   new BigInteger("2"),
+                   properties.resolveAsInteger("config", "x").orElse(null));
+      assertEquals("property value not correct!",
+                   "world",
+                   properties.resolveAsString("config", "y").orElse(null));
+      assertEquals("property value not correct!",
+                   false,
+                   properties.resolveAsBoolean("config", "z").orElse(null));
+      assertEquals("property value not correct!",
+                   "CST",
+                   properties.resolveAsEnumeration("config", "timeZone").get().getValue());
+
+      assertFalse("missing property should not be present!",
+                  properties.resolveAsData("foo").isPresent());
+   }
+
    @After
-   public void teardown() throws Throwable {
+   public void teardown() {
       streams.values().forEach(Closeables::closeQuietly);
    }
 
-   public static Path pathTo(String... packagesAndFile) {
-      Collection<String> parts = new ArrayList<>();
-      parts.add("resources");
-      parts.add("test");
-      parts.addAll(Arrays.asList(packagesAndFile));
-      return Paths.get("build", parts.toArray(new String[parts.size()]));
+   private void assertValid() {
+      Iterator<Resource> i = resourceSet.getResources().iterator();
+      XtextResource resource = (XtextResource) i.next();
+      // Get the validator.
+      IResourceValidator validator = resource.getResourceServiceProvider().getResourceValidator();
+      do {
+         List<Issue> issues = validator.validate(resource, CheckMode.ALL, null);
+         issues = issues.stream()
+               .filter(issue -> issue.getSeverity() == Severity.ERROR)
+               .collect(Collectors.toList());
+         if (!issues.isEmpty()) {
+            StringBuilder sb = new StringBuilder("files failed validation!  ");
+            issues.forEach(issue -> sb.append(issue.getMessage()));
+            fail(sb.toString());
+         }
+         resource = i.hasNext() ? (XtextResource) i.next() : null;
+      } while (resource != null);
    }
 
    private InputStream streamOf(Path file) throws IOException {
@@ -423,5 +509,13 @@ public class WrappedSystemDescriptorIT {
             URI.createFileURI(file.toAbsolutePath().toFile().toString()));
       r.load(streamOf(file), resourceSet.getLoadOptions());
       return r;
+   }
+
+   public static Path pathTo(String... packagesAndFile) {
+      Collection<String> parts = new ArrayList<>();
+      parts.add("resources");
+      parts.add("test");
+      parts.addAll(Arrays.asList(packagesAndFile));
+      return Paths.get("build", parts.toArray(new String[parts.size()]));
    }
 }

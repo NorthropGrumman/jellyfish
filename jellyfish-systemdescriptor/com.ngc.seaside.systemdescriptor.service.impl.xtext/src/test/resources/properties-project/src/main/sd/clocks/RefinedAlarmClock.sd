@@ -1,0 +1,33 @@
+package clocks
+
+import clocks.AlarmClock
+import clocks.datatypes.TimeZone
+
+model RefinedAlarmClock refines AlarmClock {
+
+  parts {
+    refine speaker {
+      properties {
+        zone = TimeZone.CST
+      }
+    }
+  }
+
+  links {
+      refine timer2Display {
+        properties {
+            linkConfig.port1 = 3
+            linkConfig.port2 = 4
+            linkConfig.name = "foo"
+            linkConfig.host = "bar"
+        }
+      }
+  }
+
+  properties {
+      config.port1 = 1
+      config.port2 = 2
+      config.name = "hello"
+      config.host = "world"
+  }
+}

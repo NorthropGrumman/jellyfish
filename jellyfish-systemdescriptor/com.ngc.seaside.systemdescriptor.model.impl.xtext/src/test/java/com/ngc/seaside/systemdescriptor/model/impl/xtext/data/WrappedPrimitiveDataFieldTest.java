@@ -82,7 +82,7 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
       when(newField.getType()).thenReturn(DataTypes.INT);
       when(newField.getCardinality()).thenReturn(FieldCardinality.MANY);
 
-      PrimitiveDataFieldDeclaration xtext = WrappedPrimitiveDataField.toXtext(newField);
+      PrimitiveDataFieldDeclaration xtext = WrappedPrimitiveDataField.toXtext(resolver(), newField);
       assertEquals("name not correct!",
                    newField.getName(),
                    xtext.getName());
@@ -110,13 +110,13 @@ public class WrappedPrimitiveDataFieldTest extends AbstractWrappedXtextTest {
    public void testDoesNotCreateXtextObjectForNonPrimitiveType() throws Throwable {
       IDataField newField = mock(IDataField.class);
       when(newField.getType()).thenReturn(DataTypes.DATA);
-      WrappedPrimitiveDataField.toXtext(newField);
+      WrappedPrimitiveDataField.toXtext(resolver(), newField);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void testDoesNotCreateXtextObjectForNonPrimitiveType2() throws Throwable {
       IDataField newField = mock(IDataField.class);
       when(newField.getType()).thenReturn(DataTypes.ENUM);
-      WrappedPrimitiveDataField.toXtext(newField);
+      WrappedPrimitiveDataField.toXtext(resolver(), newField);
    }
 }

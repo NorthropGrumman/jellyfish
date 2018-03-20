@@ -77,6 +77,61 @@ Metadata
 	;
 
 /*
+ * Properties are used to define specific information for a model. Any
+ * model that refines a model must assign values to those declared 
+ * properties.
+ */
+Properties
+	: {Properties}
+	  'properties' '{'
+		declarations+=PropertyFieldDeclaration*
+		assignments+=PropertyValueAssignment*
+	  '}'
+	;
+
+/*
+ * A property declaration may either be a primitive type or reference another
+ * data type.
+ */
+PropertyFieldDeclaration
+	: PrimitivePropertyFieldDeclaration
+	| ReferencedPropertyFieldDeclaration
+	;
+
+/*
+ * A primitive property declaration consists of a type and unqualified name.
+ */
+PrimitivePropertyFieldDeclaration
+	: cardinality=Cardinality?
+	  type=PrimitiveDataType
+	  name=UnqualifiedName
+	;
+
+/*
+ * A referenced property declaration is used to reference another data model type.
+ */	
+ReferencedPropertyFieldDeclaration
+	: cardinality=Cardinality?
+	  dataModel=[DataModel|QualifiedName]
+	  name=UnqualifiedName
+	;
+
+PropertyValueExpression
+	: declaration=[PropertyFieldDeclaration|UnqualifiedName]
+	  ('.' pathSegments+=PropertyValueExpressionPathSegment)*
+	;
+	
+PropertyValueExpressionPathSegment
+	: fieldDeclaration=[DataFieldDeclaration|UnqualifiedName]
+	;
+
+PropertyValueAssignment
+	: expression=PropertyValueExpression
+	  '='
+	  value=PropertyValue
+	;
+
+/*
  * A declaration definition is used by fields and links to describe the 
  * metadata and other details of that declaration.  This block is used
  * to "define" the details for those field and link declarations.  
@@ -87,6 +142,7 @@ DeclarationDefinition
 		// block ( ie, "Foo myInput {}" ) is declared.
 		{DeclarationDefinition} 
 		metadata=Metadata?
+		properties=Properties?
 	  '}'
 	;	
 	
@@ -432,7 +488,28 @@ FieldReference returns LinkableReference
  * exchange information in some manner (ex. "link speaker to alarm.speaker").
  */
 LinkDeclaration
-	: (refinedField?='refine')?
+	: BaseLinkDeclaration
+	| RefinedLinkNameDeclaration
+	| RefinedLinkDeclaration
+	;
+	
+BaseLinkDeclaration
+	:	'link'
+		name=UnqualifiedName?
+		source=LinkableExpression
+		'->'
+		target=LinkableExpression
+		definition=DeclarationDefinition?
+	;
+	
+RefinedLinkNameDeclaration
+	: 'refine'
+		name=UnqualifiedName
+		definition=DeclarationDefinition?
+	;
+	
+RefinedLinkDeclaration
+	:	'refine'
 		'link'
 		name=UnqualifiedName?
 		source=LinkableExpression
@@ -440,7 +517,7 @@ LinkDeclaration
 		target=LinkableExpression
 		definition=DeclarationDefinition?
 	;
-
+	
 /*
  * Defines links in a model.
  */
@@ -496,7 +573,8 @@ Model
 		output=Output? &
 		scenarios+=Scenario* &
 		parts=Parts? &
-		links=Links?
+		links=Links? &
+		properties=Properties? 
 	  '}'
 	;
 
@@ -508,6 +586,35 @@ Element
 	: DataModel
 	| Model
 	;	
+	
+// -------------------------
+// ---- Property values ----
+// -------------------------
+
+/*
+ * Note the that the enumeration type must be referenced with an unqualified name.  This is
+ * because we use a . symbol to separate the enumeration type from the value.  If we a 
+ * qualified name, warnings are generated when the parser is generated and the parser attempts
+ * to use the entire string as the type name.  For example,
+ *   timeZone = TimeZone.CST
+ * the parser will treat TimeZone.CST as the qualified name of the enumeration type instead of
+ * just TimeZone.  Therefore, we use an unqualified name for the enumeration type.  This means
+ * the user must import the enumeration.  They cannot use a qualified name to set the value
+ * of an enum property.
+ */
+EnumPropertyValue
+	: enumeration=[Enumeration|UnqualifiedName]
+	  '.'
+	  value=UnqualifiedName
+	;
+
+PropertyValue
+	: StringValue
+	| BooleanValue
+	| IntValue
+	| DblValue
+	| EnumPropertyValue
+	;
 	
 // ----------------------
 // ---- JSON support ----

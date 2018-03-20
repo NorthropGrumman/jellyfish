@@ -18,6 +18,7 @@ import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenDeclaration;
@@ -417,8 +418,11 @@ public class ModelValidator extends AbstractUnregisteredSystemDescriptorValidato
 
 				List<LinkableReference> linksList = new ArrayList<LinkableReference>();
 				//compile linkable references from sources and targets.
-				linksList.add(linkDecs.get(i).getSource());
-				linksList.add(linkDecs.get(i).getTarget());
+				if (linkDecs.get(i).eClass().equals(SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION))
+				{
+					linksList.add(((BaseLinkDeclaration)linkDecs.get(i)).getSource());
+					linksList.add(((BaseLinkDeclaration)linkDecs.get(i)).getTarget());
+				}
 					
 				for(LinkableReference linkRef : linksList){
 					//For linkable references

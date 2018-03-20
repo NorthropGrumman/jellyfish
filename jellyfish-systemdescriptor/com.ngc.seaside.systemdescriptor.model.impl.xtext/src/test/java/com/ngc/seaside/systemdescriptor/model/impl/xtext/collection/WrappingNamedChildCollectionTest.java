@@ -39,7 +39,7 @@ public class WrappingNamedChildCollectionTest extends AbstractWrappedXtextTest {
       wrapped = new WrappingNamedChildCollection<>(
             parent.getFields(),
             f -> new WrappedPrimitiveDataField(resolver(), (PrimitiveDataFieldDeclaration) f),
-            WrappedPrimitiveDataField::toXtext,
+            f -> WrappedPrimitiveDataField.toXtext(resolver(), f),
             DataFieldDeclaration::getName);
 
       PrimitiveDataFieldDeclaration field = factory().createPrimitiveDataFieldDeclaration();

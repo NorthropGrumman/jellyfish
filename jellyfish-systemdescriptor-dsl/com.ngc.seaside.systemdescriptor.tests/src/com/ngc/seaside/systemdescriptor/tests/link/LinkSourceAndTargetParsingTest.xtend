@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -78,7 +79,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as FieldReference
 		var linkTarget = link.target as LinkableExpression
 
@@ -125,7 +126,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as LinkableExpression
 		var linkTarget = link.target as LinkableExpression
 		assertEquals(
@@ -178,7 +179,7 @@ class LinkSourceAndTargetParsingTest {
 		validationTester.assertNoIssues(result)
 
 		var model = result.element as Model;
-		var link = model.links.declarations.get(0)
+		var link = model.links.declarations.get(0) as BaseLinkDeclaration
 		var linkSource = link.source as LinkableExpression
 		var linkTarget = link.target as FieldReference
 		assertEquals(
@@ -382,10 +383,43 @@ class LinkSourceAndTargetParsingTest {
         )
 	}
 	
-		@Test
-	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
+	@Test
+	def void testDoesNotParseModelWithLink_From_OutputField_To_PartInputField() {
+		var source = '''
+            package clocks.models
 
-		        var source = '''
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Alarm
+            import clocks.models.part.Clock
+
+            model AlarmClock {
+                output {
+                    ZonedTime currentTime
+                }
+
+                parts {
+                    Alarm alarm
+                    Clock clock
+                }
+
+                links {
+                    link currentTime -> clock.inputTime
+                }
+            }
+        '''
+
+        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(invalidResult)
+        validationTester.assertError(
+            invalidResult,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION,
+            null
+        )
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithLink_From_OutputField_To_PartOutputField() {
+		var source = '''
             package clocks.models
 
             import clocks.datatypes.ZonedTime

@@ -22,19 +22,23 @@ public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclarati
       extends AbstractWrappedXtext<T>
       implements IDataReferenceField {
 
+   private IMetadata metadata;
+
    public AbstractWrappedDataReferenceField(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
+      this.metadata = WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
    }
 
    @Override
    public IMetadata getMetadata() {
-      return WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
+      return metadata;
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public I setMetadata(IMetadata metadata) {
-      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(metadata));
+      wrapped.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, metadata, null));
+      this.metadata = metadata;
       return (I) this;
    }
 

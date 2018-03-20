@@ -3,15 +3,17 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import java.util.Optional;
@@ -21,8 +23,7 @@ import java.util.Optional;
  *
  * This class is not threadsafe.
  */
-public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclaration>
-      implements IModelLink<IModelReferenceField> {
+public class WrappedModelReferenceLink extends WrappedReferenceLink<IModelReferenceField> {
 
    private IModelReferenceField source;
    private IModelReferenceField target;
@@ -36,8 +37,20 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
     */
    public WrappedModelReferenceLink(IWrapperResolver resolver, LinkDeclaration wrapped) {
       super(resolver, wrapped);
-      source = getReferenceTo(wrapped.getSource());
-      target = getReferenceTo(wrapped.getTarget());
+      switch (wrapped.eClass().getClassifierID()) {
+         case SystemDescriptorPackage.BASE_LINK_DECLARATION:
+            source = getReferenceTo(((BaseLinkDeclaration) wrapped).getSource());
+            target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
+            break;
+         case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
+            refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
+            break;
+         case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
+            refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
+            break;
+         default:
+            throw new UnrecognizedXtextTypeException(wrapped);
+      }
    }
 
    @Override
@@ -47,8 +60,7 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
 
    @Override
    public IModelLink<IModelReferenceField> setSource(IModelReferenceField source) {
-      // TODO TH: figure out how to implement this.
-      throw new UnsupportedOperationException("not implemented");
+      throw new UnsupportedOperationException("the source of a link cannot be currently modified!");
    }
 
    @Override
@@ -58,8 +70,7 @@ public class WrappedModelReferenceLink extends AbstractWrappedXtext<LinkDeclarat
 
    @Override
    public IModelLink<IModelReferenceField> setTarget(IModelReferenceField target) {
-      // TODO TH: figure out how to implement this.
-      throw new UnsupportedOperationException("not implemented");
+      throw new UnsupportedOperationException("the target of a link cannot be currently modified!");
    }
 
    @Override

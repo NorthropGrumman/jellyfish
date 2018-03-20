@@ -1,0 +1,11 @@
+package com.ngc.example
+
+import com.ngc.example.Enum1
+
+data Data2 {
+	int intField
+	boolean booleanField
+	string stringField
+	float floatField
+	Enum1 enumField
+}

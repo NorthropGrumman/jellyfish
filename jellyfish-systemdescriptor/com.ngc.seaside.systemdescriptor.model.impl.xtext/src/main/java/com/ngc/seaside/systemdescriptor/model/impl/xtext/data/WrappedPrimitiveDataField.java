@@ -1,13 +1,11 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.util.ConversionUtil;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
@@ -73,13 +71,13 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
     * Creates a new {@code PrimitiveDataFieldDeclaration} that is equivalent to the given field.  Changes to the {@code
     * IDataField} are not reflected in the returned {@code PrimitiveDataFieldDeclaration} after construction.
     */
-   public static PrimitiveDataFieldDeclaration toXtext(IDataField field) {
+   public static PrimitiveDataFieldDeclaration toXtext(IWrapperResolver resolver, IDataField field) {
       Preconditions.checkNotNull(field, "field may not be null!");
       Preconditions.checkArgument(
             field.getType() != DataTypes.DATA && field.getType() != DataTypes.ENUM,
             "cannot create a PrimitiveDataFieldDeclaration for an IDataField that references other data or enums!");
       PrimitiveDataFieldDeclaration x = SystemDescriptorFactory.eINSTANCE.createPrimitiveDataFieldDeclaration();
-      x.setDefinition(WrappedDeclarationDefinition.toXtext(field.getMetadata()));
+      x.setDefinition(WrappedDeclarationDefinition.toXtext(resolver, field.getMetadata(), null));
       x.setName(field.getName());
       x.setType(PrimitiveDataType.valueOf(field.getType().name()));
       x.setCardinality(ConversionUtil.convertCardinalityToXtext(field.getCardinality()));
