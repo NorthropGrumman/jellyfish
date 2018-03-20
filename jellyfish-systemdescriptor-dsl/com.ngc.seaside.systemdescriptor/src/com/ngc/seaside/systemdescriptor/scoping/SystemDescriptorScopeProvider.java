@@ -1,18 +1,5 @@
 package com.ngc.seaside.systemdescriptor.scoping;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.scoping.IScope;
-import org.eclipse.xtext.scoping.Scopes;
-import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
-
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
@@ -33,12 +20,23 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
+import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
-	/**
+   /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
     * 
@@ -272,6 +270,14 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
       do {
          LinkDeclaration currentLink = findLink(model, link);
+         // There is an issue when refining an unnamed link and setting a value on
+         // a property of that link.  If the link is refining another link, we need
+         // to find the base link where the property is declared.  This works fine 
+         // for links with names.  However, if the link has no name we can find the
+         // base link using the target and source.  However, the definition on that
+         // base link (which contains the properties) is null even thought that link
+         // has properties declared in the source.  This seems to be an XText issue
+         // since the definition object should definitely not be null.
          if (currentLink != null
             && currentLink.getDefinition() != null
             && currentLink.getDefinition().getProperties() != null) {
@@ -354,7 +360,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
 
       // More proxy checking.
-      if(referencedDeclaration.getDataModel().eIsProxy()) {
+      if (referencedDeclaration.getDataModel().eIsProxy()) {
          return null;
       }
       Preconditions.checkState(
@@ -388,28 +394,46 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          return null;
       }
 
-      EObject source;
-      EObject target;
-      if (linkDeclaration instanceof BaseLinkDeclaration) {
-         source = ((BaseLinkDeclaration) linkDeclaration).getSource();
-         target = ((BaseLinkDeclaration) linkDeclaration).getTarget();
-      } else {
-         source = ((RefinedLinkDeclaration) linkDeclaration).getSource();
-         target = ((RefinedLinkDeclaration) linkDeclaration).getSource();
-      }
+      String sourcePath = getPathOfSource(linkDeclaration);
+      String targetPath = getPathOfTarget(linkDeclaration);
+      // Note sourcePat and targetPath must be non-null here because
+      // the link does not have a name so the target and source must be
+      // set.
 
       for (LinkDeclaration link : model.getLinks().getDeclarations()) {
-         if (link instanceof BaseLinkDeclaration
-            && EcoreUtil.equals(source, ((BaseLinkDeclaration) link).getSource())
-            && EcoreUtil.equals(target, ((BaseLinkDeclaration) link).getTarget())) {
-            return link;
-         } else if (link instanceof RefinedLinkDeclaration
-            && EcoreUtil.equals(source, ((RefinedLinkDeclaration) link).getSource())
-            && EcoreUtil.equals(target, ((RefinedLinkDeclaration) link).getTarget())) {
+         if (sourcePath.equals(getPathOfSource(link)) && targetPath.equals(getPathOfTarget(link))) {
             return link;
          }
       }
 
       return null;
+   }
+
+   private static String getPathOfSource(LinkDeclaration link) {
+      List<INode> nodes;
+
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__SOURCE);
+      }
+
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
+   }
+
+   private static String getPathOfTarget(LinkDeclaration link) {
+      List<INode> nodes;
+
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__TARGET);
+      }
+
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
    }
 }
