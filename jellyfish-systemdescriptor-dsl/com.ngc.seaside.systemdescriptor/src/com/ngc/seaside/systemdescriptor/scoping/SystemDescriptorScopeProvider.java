@@ -37,7 +37,7 @@ import java.util.List;
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
-   
+
    /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
@@ -60,7 +60,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       } else {
          scope = delegateGetScope(context, reference);
       }
-      
+
       return scope;
    }
 
@@ -99,7 +99,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // Note that the data model can be an enumeration at this point
          // (if the user created an invalid path, the validators will
          // catch it after scoping is finished).
-         data = dataField.getDataModel() instanceof Data
+         data = dataField != null && dataField.getDataModel() instanceof Data
                   ? (Data) dataField.getDataModel()
                   : null;
       }
@@ -337,6 +337,11 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    }
 
    private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
+      // Note it is possible that the declaration is a proxy.  If so, abort.
+      if (declaration.eIsProxy()) {
+         return null;
+      }
+
       Preconditions.checkState(
          declaration instanceof ReferencedPropertyFieldDeclaration,
          "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"

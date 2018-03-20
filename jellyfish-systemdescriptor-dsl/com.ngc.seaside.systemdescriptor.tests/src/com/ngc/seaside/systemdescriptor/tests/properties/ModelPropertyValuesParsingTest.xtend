@@ -493,7 +493,7 @@ class ModelPropertyValuesParsingTest {
 				properties {
 					ZonedTime complexProperty
 					
-					complexProperty.dataTime.date.day = 1
+					//complexProperty.dataTime.date.day = 1
 					complexProperty.dataTime.this.is.invalid = 2
 				}
 			}
