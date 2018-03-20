@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
@@ -30,7 +31,7 @@ public class WrappedModelReferenceLinkTest extends AbstractWrappedXtextTest {
 
    private WrappedModelReferenceLink wrapped;
 
-   private LinkDeclaration declaration;
+   private BaseLinkDeclaration declaration;
 
    @Mock
    private IModel parent;
@@ -68,7 +69,7 @@ public class WrappedModelReferenceLinkTest extends AbstractWrappedXtextTest {
       targetExpression.setTail(target);
 
       Model xtextParent = factory().createModel();
-      declaration = factory().createLinkDeclaration();
+      declaration = factory().createBaseLinkDeclaration();
       declaration.setSource(sourceRef);
       declaration.setTarget(targetExpression);
       xtextParent.setLinks(factory().createLinks());
@@ -90,7 +91,7 @@ public class WrappedModelReferenceLinkTest extends AbstractWrappedXtextTest {
    }
 
    @Test
-   public void testDoesWrapXTextObject() throws Throwable {
+   public void testDoesWrapXTextObject() {
       wrapped = new WrappedModelReferenceLink(resolver(), declaration);
       assertEquals("parent not correct!",
                    parent,

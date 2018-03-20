@@ -147,7 +147,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
          case ENUM:
             return WrappedReferencedEnumField.toXtext(wrapperResolver, field);
          default:
-            return WrappedPrimitiveDataField.toXtext(field);
+            return WrappedPrimitiveDataField.toXtext(wrapperResolver, field);
       }
    }
 

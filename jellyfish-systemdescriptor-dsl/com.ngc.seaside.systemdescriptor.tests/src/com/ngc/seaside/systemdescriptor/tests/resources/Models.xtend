@@ -9,7 +9,7 @@ class Models {
     public static final ParsingTestResource EMPTY_MODEL = resource(
         '''
             package foo
-
+            
             model AnEmptyModel {
             }
         '''
@@ -18,12 +18,17 @@ class Models {
     public static final ParsingTestResource CLOCK = resource(
         '''
             package clocks.models.part
-
+            
             import clocks.datatypes.ZonedTime
             import foo.AnEmptyModel
-
+            
             model Clock {
-
+            
+                input {
+                   ZonedTime inputTime {
+                   	}
+                }
+                
                 output {
                     ZonedTime currentTime {
                     }
@@ -36,42 +41,108 @@ class Models {
                 requires {
                 	AnEmptyModel requiresEmptyModel
                 }
+                
+                properties {
+                	ZonedTime releaseDate
+                }
             }
         ''',
-        Datas.ZONED_TIME, 
+        Datas.ZONED_TIME,
         Models.EMPTY_MODEL
+    )
+
+    public static final ParsingTestResource LINKED_CLOCK = resource(
+        '''
+            package clocks.models.part
+            
+            import clocks.datatypes.ZonedTime
+            import clocks.models.part.Clock
+            import foo.AnEmptyModel
+            
+            model LinkedClock {
+            
+               input {
+                    ZonedTime currentTime
+                }
+                
+                parts {
+                    Clock clock
+                    Clock clockA
+                    Clock clockB
+                    Clock clockC
+                    Clock clockD {
+                         properties {
+                            int intPartsField
+                        }
+                            
+                }
+                
+                requires {
+                    AnEmptyModel requiresEmptyModel
+                    Clock reqClock {
+                        properties {
+                            int intRequiredField
+                            intRequiredField = 10
+                        }
+                    }
+                }
+                
+                links {
+                    link namedLink currentTime -> clock.inputTime
+                    link currentTime -> clockA.inputTime {
+                    	properties {
+                    		int anotherIntField
+                    	}
+                    }
+                    link propNamedLink 	currentTime -> clockC.inputTime {
+                        properties {
+                            int intLinkedClockField
+                        }
+                    }
+                    link valueNamedLink  currentTime -> clockD.inputTime {
+                        properties {
+                            int intValueClockField
+                            intValueClockField = 100
+                        }
+                    }
+                }
+            }
+        ''',
+        Datas.ZONED_TIME,
+        Models.EMPTY_MODEL,
+        Models.CLOCK
     )
 
     public static final ParsingTestResource ALARM = resource(
         '''
             package clocks.models.part
-
+            
             import clocks.datatypes.ZonedTime
             import clocks.datatypes.AlarmAcknowledgement
             import clocks.datatypes.AlarmStatus
             import foo.AnEmptyModel
-
+            
             model Alarm {
-
+            
                 input {
                     ZonedTime currentTime
                     ZonedTime alarmTime
                     AlarmAcknowledgement alarmAcknowledgement
                 }
-
+            
                 output {
-                    AlarmStatus alarmStatus
-                    ZonedTime outputTime
+                AlarmStatus alarmStatus
+                ZonedTime outputTime
                 }
-
+            
                 requires {
-                    AnEmptyModel emptyModel
+                AnEmptyModel emptyModel
                 }
-
+            
                 scenario triggerAlert {
-                    given alarmTime hasBeenReceived
-                    when receiving alarmTime
-                    then doSomething withThis
+                given alarmTime hasBeenReceived
+                when receiving alarmTime
+                then doSomething withThis
                 }
             }
         ''',
@@ -84,7 +155,7 @@ class Models {
     public static final ParsingTestResource TIMER = resource(
         '''
             package clocks.models.part
-
+            
             model Timer {
             }
         '''
@@ -93,22 +164,22 @@ class Models {
     public static final ParsingTestResource SPEAKER = resource(
         '''
             package clocks.models.part
-
+            
             import clocks.datatypes.ZonedTime
-
+            
             model Speaker {
-
+            
                 input {
                     ZonedTime alarmTime
                 }
-
+            
                 scenario buzz {
-                    metadata {
-                        "name": "someName",
-                        "description": "someDescription"
-                    }
-                    when receiving alarmTime
-                    then doSomething withThis
+                metadata {
+                    "name": "someName",
+                    "description": "someDescription"
+                }
+                when receiving alarmTime
+                then doSomething withThis
                 }
             }
         ''',
@@ -118,28 +189,28 @@ class Models {
     public static final ParsingTestResource GENERIC_MODEL_WITH_MULTIPLE_GIVEN_STEPS = resource(
         '''
             package scenarios.test
-
+            
             import clocks.datatypes.ZonedTime
             import clocks.datatypes.AlarmAcknowledgement
             import clocks.datatypes.AlarmStatus
-
+            
             model ScenarioTestWithManyGivens {
-
+            
                 input {
                     ZonedTime currentTime
                     ZonedTime alarmTime
                     AlarmAcknowledgement alarmAcknowledgement
                 }
-
+            
                 output {
-                    AlarmStatus alarmStatus
+                AlarmStatus alarmStatus
                 }
-
+            
                 scenario triggerAlert {
-                    given alarmTime hasBeenReceived
-                    and alarmTime is not too early
-                    when receiving alarmTime
-                    then doSomething
+                given alarmTime hasBeenReceived
+                and alarmTime is not too early
+                when receiving alarmTime
+                then doSomething
                 }
             }
         ''',
@@ -151,28 +222,28 @@ class Models {
     public static final ParsingTestResource GENERIC_MODEL_WITH_MULTIPLE_WHEN_STEPS = resource(
         '''
             package scenarios.test
-
+            
             import clocks.datatypes.ZonedTime
             import clocks.datatypes.AlarmAcknowledgement
             import clocks.datatypes.AlarmStatus
-
+            
             model ScenarioTestWithManyGivens {
-
+            
                 input {
                     ZonedTime currentTime
                     ZonedTime alarmTime
                     AlarmAcknowledgement alarmAcknowledgement
                 }
-
+            
                 output {
-                    AlarmStatus alarmStatus
+                AlarmStatus alarmStatus
                 }
-
+            
                 scenario triggerAlert {
-                    given alarmTime hasBeenReceived
-                    when receiving alarmTime
-                    and something is cool
-                    then doSomething
+                given alarmTime hasBeenReceived
+                when receiving alarmTime
+                and something is cool
+                then doSomething
                 }
             }
         ''',
@@ -183,31 +254,31 @@ class Models {
 
     public static final ParsingTestResource GENERIC_MODEL_WITH_MULTIPLE_THEN_STEPS = resource(
         '''
-            package scenarios.test
-
-            import clocks.datatypes.ZonedTime
-            import clocks.datatypes.AlarmAcknowledgement
-            import clocks.datatypes.AlarmStatus
-
-            model ScenarioTestWithManyGivens {
-
+                package scenarios.test
+            
+                import clocks.datatypes.ZonedTime
+                import clocks.datatypes.AlarmAcknowledgement
+                import clocks.datatypes.AlarmStatus
+            
+                model ScenarioTestWithManyGivens {
+            
                 input {
                     ZonedTime currentTime
                     ZonedTime alarmTime
                     AlarmAcknowledgement alarmAcknowledgement
                 }
-
-                output {
-                    AlarmStatus alarmStatus
-                }
-
-                scenario triggerAlert {
-                    given alarmTime hasBeenReceived
-                    when receiving alarmTime
-                    then doSomething
-                    and something is cool
-                }
-        }
+            
+                    output {
+                AlarmStatus alarmStatus
+                    }
+            
+                    scenario triggerAlert {
+                given alarmTime hasBeenReceived
+                when receiving alarmTime
+                then doSomething
+                and something is cool
+                    }
+            }
         ''',
         Datas.ZONED_TIME,
         Datas.ALARM_ACKNOWLEDGEMENT,
@@ -217,9 +288,9 @@ class Models {
     public static final ParsingTestResource INVALID_REFINED_MODEL = resource(
         '''
             package refinement.test
-
+            
             import refinement.test.AnotherInvalidRefinedModel
-
+            
             model InvalidRefinedModel refines AnotherInvalidRefinedModel {
             }
         '''

@@ -2,6 +2,8 @@ package com.ngc.seaside.systemdescriptor.model.api.model;
 
 import java.util.Optional;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+
 /**
  * Represents a field declared in an {@link IModel} that references another model.  Operations that change the state of
  * this object may throw {@code UnsupportedOperationException}s if the object is immutable.
@@ -30,4 +32,18 @@ public interface IModelReferenceField extends IReferenceField {
     */
    Optional<IModelReferenceField> getRefinedField();
 
+   /**
+    * Gets the properties of this field.
+    *
+    * @return the properties of this field (never {@code null})
+    */
+   IProperties getProperties();
+
+   /**
+    * Sets the properties of this field.
+    *
+    * @param properties the properties of this field
+    * @return this field
+    */
+   IReferenceField setProperties(IProperties properties);
 }

@@ -53,7 +53,11 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.JSON_OBJECT,
             SystemDescriptorPackage.Literals.MEMBER,
             SystemDescriptorPackage.Literals.JSON_VALUE,
-            SystemDescriptorPackage.Literals.ARRAY_VALUE);
+            SystemDescriptorPackage.Literals.ARRAY_VALUE,
+            SystemDescriptorPackage.Literals.STRING_VALUE,
+            SystemDescriptorPackage.Literals.INT_VALUE,
+            SystemDescriptorPackage.Literals.DBL_VALUE,
+            SystemDescriptorPackage.Literals.BOOLEAN_VALUE);
         registerFormatter(new EnumerationFormatter(),
             SystemDescriptorPackage.Literals.ENUMERATION,
             SystemDescriptorPackage.Literals.ENUMERATION_VALUE_DECLARATION);
@@ -88,6 +92,14 @@ public class SystemDescriptorFormatter implements IFormatter2 {
             SystemDescriptorPackage.Literals.WHEN_STEP,
             SystemDescriptorPackage.Literals.THEN_DECLARATION,
             SystemDescriptorPackage.Literals.THEN_STEP);
+        registerFormatter(new PropertiesFormatter(),
+        	SystemDescriptorPackage.Literals.PROPERTIES,
+        	SystemDescriptorPackage.Literals.PRIMITIVE_PROPERTY_FIELD_DECLARATION,
+        	SystemDescriptorPackage.Literals.REFERENCED_PROPERTY_FIELD_DECLARATION);
+        registerFormatter(new PropertyValuesFormatter(),
+        	SystemDescriptorPackage.Literals.PROPERTY_VALUE_ASSIGNMENT,
+        	SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION,
+        	SystemDescriptorPackage.Literals.ENUM_PROPERTY_VALUE);
         // End formatter registration.
 
         formatters = Collections.unmodifiableMap(formatters);

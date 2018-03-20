@@ -13,6 +13,9 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
@@ -150,6 +153,7 @@ public class XTextSystemDescriptorServiceIT {
       INamedChildCollection<IModel, IDataReferenceField> dataRefFields;
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputA");
       when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(model.getInputs()).thenReturn(dataRefFields);
       when(model.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(model.getParts()).thenReturn(new NamedChildCollection<>());
@@ -160,6 +164,7 @@ public class XTextSystemDescriptorServiceIT {
 
       dataRefFields = AggregatedModelViewTest.fields(DataReferenceField.class, "inputB");
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(parent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(parent.getInputs()).thenReturn(dataRefFields);
       when(parent.getOutputs()).thenReturn(new NamedChildCollection<>());
       when(parent.getParts()).thenReturn(new NamedChildCollection<>());
@@ -182,6 +187,71 @@ public class XTextSystemDescriptorServiceIT {
       assertSame("did not cache view!",
                  modelView,
                  service.getAggregatedView(model));
+   }
+
+   @Test
+   public void testDoesManageProperties() {
+      IParsingResult result = service.parseProject(Paths.get("build", "resources", "test", "properties-project"));
+      assertTrue("did not parse project!",
+                 result.isSuccessful());
+
+      IModel model = service.getAggregatedView(
+            result.getSystemDescriptor().findModel("clocks.RefinedAlarmClock").get());
+
+      assertEquals("property config.port1 not correct!",
+                   1,
+                   model.getProperties().resolveAsInteger("config", "port1").get().intValue());
+      assertEquals("property config.port2 not correct!",
+                   2,
+                   model.getProperties().resolveAsInteger("config", "port2").get().intValue());
+      assertEquals("property config.name not correct!",
+                   "hello",
+                   model.getProperties().resolveAsString("config", "name").get());
+      assertEquals("property config.host not correct!",
+                   "world",
+                   model.getProperties().resolveAsString("config", "host").get());
+
+      IModelLink<?> link = model.getLinkByName("timer2Display").get();
+      assertEquals("property linkConfig.port1 not correct!",
+                   3,
+                   link.getProperties().resolveAsInteger("linkConfig", "port1").get().intValue());
+      assertEquals("property linkConfig.port2 not correct!",
+                   4,
+                   link.getProperties().resolveAsInteger("linkConfig", "port2").get().intValue());
+      assertEquals("property linkConfig.name not correct!",
+                   "foo",
+                   link.getProperties().resolveAsString("linkConfig", "name").get());
+      assertEquals("property linkConfig.host not correct!",
+                   "bar",
+                   link.getProperties().resolveAsString("linkConfig", "host").get());
+
+      IModelReferenceField speaker = model.getParts().getByName("speaker").get();
+      assertEquals("property zone not correct!",
+                   "CST",
+                   speaker.getProperties().resolveAsEnumeration("zone").get().getValue());
+
+      // Test multiple levels of refinement.
+      model = service.getAggregatedView(
+            result.getSystemDescriptor().findModel("clocks.BetterAlarmClock").get());
+      assertEquals("property config.port1 not correct!",
+                   100,
+                   model.getProperties().resolveAsInteger("config", "port1").get().intValue());
+      assertEquals("property config.port2 not correct!",
+                   2,
+                   model.getProperties().resolveAsInteger("config", "port2").get().intValue());
+
+      link = model.getLinkByName("timer2Display").get();
+      assertEquals("property linkConfig.port1 not correct!",
+                   300,
+                   link.getProperties().resolveAsInteger("linkConfig", "port1").get().intValue());
+      assertEquals("property linkConfig.port2 not correct!",
+                   4,
+                   link.getProperties().resolveAsInteger("linkConfig", "port2").get().intValue());
+
+      speaker = model.getParts().getByName("speaker").get();
+      assertEquals("property zone not correct!",
+                   "MST",
+                   speaker.getProperties().resolveAsEnumeration("zone").get().getValue());
    }
 
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"

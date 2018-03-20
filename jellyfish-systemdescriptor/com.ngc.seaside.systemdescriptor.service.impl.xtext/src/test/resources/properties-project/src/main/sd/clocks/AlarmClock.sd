@@ -1,0 +1,46 @@
+package clocks
+
+import clocks.datatypes.Time
+import clocks.datatypes.TimeZone
+import clocks.datatypes.Config
+import clocks.models.Timer
+import clocks.models.ClockDisplay
+import clocks.models.Alarm
+import clocks.models.Speaker
+
+model AlarmClock {
+  metadata {
+    "description": "The top level alarm clock system.  It requires the alarmTimes from some other component.",
+    "stereotypes": ["virtual", "system"]
+  }
+
+  input {
+    many Time alarmTimes
+  }
+
+  parts {
+    Timer timer
+    ClockDisplay display
+    Alarm alarm
+    Speaker speaker {
+      properties {
+        TimeZone zone
+      }
+    }
+  }
+
+  links {
+      link timer2Display timer.currentTime -> display.currentTime {
+        properties {
+          Config linkConfig
+        }
+      }
+      link timer.currentTime -> alarm.currentTime
+      link speaker -> alarm.speaker
+      link alarmTimes -> alarm.alarmTimes
+  }
+
+  properties {
+      Config config
+  }
+}

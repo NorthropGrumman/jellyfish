@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Array;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ArrayValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BooleanValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DblValue;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.IntValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonObject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.JsonValue;
@@ -59,6 +60,15 @@ public class WrappedMetadata implements IMetadata {
       this.json = json;
       return this;
    }
+
+   /**
+    * Creates a new {@code IMetadata} instance that is equivalent to the given {@code Metadata} if the definition is not
+    * {@code null} and has non-null metadata.
+    */
+   public static IMetadata fromXtext(DeclarationDefinition definition) {
+      return definition == null ? IMetadata.EMPTY_METADATA : fromXtext(definition.getMetadata());
+   }
+
 
    /**
     * Creates a new {@code IMetadata} instance that is equivalent to the given {@code Metadata}.

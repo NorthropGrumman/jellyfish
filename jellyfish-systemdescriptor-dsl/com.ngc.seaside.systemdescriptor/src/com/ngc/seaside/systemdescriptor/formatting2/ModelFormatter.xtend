@@ -18,6 +18,7 @@ class ModelFormatter extends AbstractSystemDescriptorFormatter {
 		model.requires?.format
 		model.parts?.format
 		model.links?.format
+		model.properties?.format
 		model.scenarios.forEach[format]
 	}
 }

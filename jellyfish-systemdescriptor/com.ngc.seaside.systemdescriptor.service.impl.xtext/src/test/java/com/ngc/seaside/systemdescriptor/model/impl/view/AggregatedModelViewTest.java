@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
@@ -61,6 +62,7 @@ public class AggregatedModelViewTest {
       when(model.getLinks()).thenReturn(links);
       when(model.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(model.getRefinedModel()).thenReturn(Optional.of(parent));
+      when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
 
       dataRefFields = fields(DataReferenceField.class, "inputB");
       when(parent.getInputs()).thenReturn(dataRefFields);
@@ -75,6 +77,7 @@ public class AggregatedModelViewTest {
       links = links("linkB");
       when(parent.getLinks()).thenReturn(links);
       when(parent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(parent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(parent.getRefinedModel()).thenReturn(Optional.of(grandparent));
 
       dataRefFields = fields(DataReferenceField.class, "inputC");
@@ -90,6 +93,7 @@ public class AggregatedModelViewTest {
       links = links("linkC");
       when(grandparent.getLinks()).thenReturn(links);
       when(grandparent.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+      when(grandparent.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
       when(grandparent.getRefinedModel()).thenReturn(Optional.empty());
 
       view = new AggregatedModelView(model);
@@ -162,6 +166,10 @@ public class AggregatedModelViewTest {
          for (String name : names) {
             T field = Mockito.mock(fieldType);
             when(field.getName()).thenReturn(name);
+            if (IModelReferenceField.class.isAssignableFrom(fieldType)) {
+               when(((IModelReferenceField) field).getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
+               when(((IModelReferenceField) field).getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
+            }
             collection.add(field);
          }
       }
@@ -174,6 +182,8 @@ public class AggregatedModelViewTest {
          for (String name : names) {
             IModelLink<?> link = Mockito.mock(IModelLink.class);
             when(link.getName()).thenReturn(Optional.ofNullable(name));
+            when(link.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
+            when(link.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
             collection.add(link);
          }
       }

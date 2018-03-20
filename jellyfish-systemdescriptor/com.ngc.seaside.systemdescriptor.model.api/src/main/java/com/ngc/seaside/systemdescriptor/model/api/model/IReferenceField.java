@@ -24,4 +24,5 @@ public interface IReferenceField extends INamedChild<IModel> {
     * @return this field
     */
    IReferenceField setMetadata(IMetadata metadata);
+
 }

@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import java.util.Collection;
@@ -30,6 +31,36 @@ public interface IModel extends INamedChild<IPackage> {
     * @return this model type
     */
    IModel setMetadata(IMetadata metadata);
+
+   /**
+    * Gets the properties of this model.
+    *
+    * @return the properties of this model (never {@code null})
+    */
+   IProperties getProperties();
+
+   /**
+    * Sets the properties of this model.
+    *
+    * @param properties the properties of this model
+    * @return this model
+    */
+   IModel setProperties(IProperties properties);
+
+   /**
+    * Gets the model this model is refining.  If this model is not refining another model, the optional is empty.
+    *
+    * @return the model that this model is refining
+    */
+   Optional<IModel> getRefinedModel();
+
+   /**
+    * Sets the model this model is refining.
+    *
+    * @param refinedModel the model that this model should refine
+    * @return this model
+    */
+   IModel setRefinedModel(IModel refinedModel);
 
    /**
     * Gets the data inputs declared by this model.  The returned collection may not be modifiable if this object is
@@ -72,7 +103,8 @@ public interface IModel extends INamedChild<IPackage> {
    INamedChildCollection<IModel, IScenario> getScenarios();
 
    /**
-    * Gets the links declared by this model.  The returned collection may not be modifiable if this object is immutable.
+    * Gets the links declared by this model.  The returned collection may not be modifiable if this object is
+    * immutable.
     *
     * @return the links declared by this model
     */
@@ -95,11 +127,4 @@ public interface IModel extends INamedChild<IPackage> {
     * @return the fully qualified name of this model type
     */
    String getFullyQualifiedName();
-
-   /**
-    * Gets the model this model is refining.  If this model is not refining another model, the optional is empty.
-    *
-    * @returns an optional with the model that this model is refining or an empty optional if this model does not refine anything.
-    */
-   Optional<IModel> getRefinedModel();
 }

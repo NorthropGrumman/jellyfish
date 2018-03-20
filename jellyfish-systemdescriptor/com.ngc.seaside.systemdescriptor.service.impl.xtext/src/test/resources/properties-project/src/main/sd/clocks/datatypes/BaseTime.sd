@@ -1,0 +1,7 @@
+package clocks.datatypes
+
+data BaseTime {
+  int hour
+  int minute
+  int second
+}

@@ -1,0 +1,5 @@
+package com.ngc.example
+
+enum Enum1 {
+	FIELD1
+}

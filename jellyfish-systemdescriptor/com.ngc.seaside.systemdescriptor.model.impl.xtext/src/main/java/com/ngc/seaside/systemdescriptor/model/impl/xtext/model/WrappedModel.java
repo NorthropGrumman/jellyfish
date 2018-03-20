@@ -1,9 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -11,6 +9,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
@@ -18,12 +17,15 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitiali
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.SelfInitializingWrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedDataReferenceLink;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedModelReferenceLink;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties.WrappedProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.scenario.WrappedScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -31,13 +33,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Adapts an XText {@link Model} to an {@link IModel}.
@@ -47,6 +50,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
 
    private IMetadata metadata;
+   private IProperties properties;
    private WrappingNamedChildCollection<InputDeclaration, IModel, IDataReferenceField> inputs;
    private WrappingNamedChildCollection<OutputDeclaration, IModel, IDataReferenceField> outputs;
    private WrappingNamedChildCollection<RequireDeclaration, IModel, IModelReferenceField> requires;
@@ -64,6 +68,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       initParts();
       initScenarios();
       initLinks();
+      initProperties();
    }
 
    @Override
@@ -78,11 +83,21 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       wrapped.setMetadata(WrappedMetadata.toXtext(metadata));
       return this;
    }
-   
+
    @Override
    public Optional<IModel> getRefinedModel() {
-	   IModel model = resolver.getWrapperFor(wrapped.getRefinedModel());
-	   return model == null ? Optional.empty() : Optional.of(model); 
+      return wrapped.getRefinedModel() == null
+             ? Optional.empty()
+             : Optional.of(resolver.getWrapperFor(wrapped.getRefinedModel()));
+   }
+
+   @Override
+   public IModel setRefinedModel(IModel refinedModel) {
+      wrapped.setRefinedModel(refinedModel == null
+                              ? null
+                              : resolver.findXTextModel(refinedModel.getName(), refinedModel.getParent().getName())
+                                    .orElseThrow(() -> XtextObjectNotFoundException.forModel(refinedModel)));
+      return this;
    }
 
    @Override
@@ -122,6 +137,19 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       return links.stream()
             .filter(link -> name.equals(link.getName().orElse(null)))
             .findFirst();
+   }
+
+   @Override
+   public IProperties getProperties() {
+      return properties;
+   }
+
+   @Override
+   public IModel setProperties(IProperties properties) {
+      Preconditions.checkNotNull(properties, "properties may not be null!");
+      this.properties = properties;
+      wrapped.setProperties(WrappedProperties.toXtext(resolver, properties));
+      return this;
    }
 
    @Override
@@ -242,7 +270,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       }
    }
 
-   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, PartDeclaration part) {
+   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(
+         IWrapperResolver resolver,
+         PartDeclaration part) {
       if (part instanceof BasePartDeclaration) {
          return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);
       } else if (part instanceof RefinedPartDeclaration) {
@@ -255,7 +285,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private void initRequires() {
       if (wrapped.getRequires() == null) {
          requires = new SelfInitializingWrappingNamedChildCollection<>(
-        	   d -> getWrappedModelReferenceField(resolver, d),
+               d -> getWrappedModelReferenceField(resolver, d),
                d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName,
                () -> {
@@ -270,16 +300,18 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
                FieldDeclaration::getName);
       }
    }
-   
-   private AbstractWrappedModelReferenceField<? extends RequireDeclaration, ?> getWrappedModelReferenceField(IWrapperResolver resolver, RequireDeclaration require) {
-	      if (require instanceof BaseRequireDeclaration) {
-	         return new WrappedBaseRequireModelReferenceField(resolver, (BaseRequireDeclaration) require);
-	      } else if (require instanceof RefinedRequireDeclaration) {
-	         return new WrappedRefinedRequireModelReferenceField(resolver, (RefinedRequireDeclaration) require);
-	      } else {
-	         throw new IllegalStateException("Unknown RequireDeclaration subclass: " + require.getClass());
-	      }
-	   }
+
+   private AbstractWrappedModelReferenceField<? extends RequireDeclaration, ?> getWrappedModelReferenceField(
+         IWrapperResolver resolver,
+         RequireDeclaration require) {
+      if (require instanceof BaseRequireDeclaration) {
+         return new WrappedBaseRequireModelReferenceField(resolver, (BaseRequireDeclaration) require);
+      } else if (require instanceof RefinedRequireDeclaration) {
+         return new WrappedRefinedRequireModelReferenceField(resolver, (RefinedRequireDeclaration) require);
+      } else {
+         throw new IllegalStateException("Unknown RequireDeclaration subclass: " + require.getClass());
+      }
+   }
 
 
    private void initScenarios() {
@@ -326,6 +358,11 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private LinkDeclaration unwrapModelLink(IModelLink<?> link) {
       // TODO TH: implement this
       throw new UnsupportedOperationException("modification of links is not currently supported!");
+   }
+
+   private void initProperties() {
+      properties = wrapped.getProperties() == null ? IProperties.EMPTY_PROPERTIES
+                                                   : new WrappedProperties(resolver, wrapped.getProperties());
    }
 
 }

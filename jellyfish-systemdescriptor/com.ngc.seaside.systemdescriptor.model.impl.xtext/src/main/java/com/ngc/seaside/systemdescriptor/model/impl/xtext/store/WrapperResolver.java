@@ -1,26 +1,27 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.store;
 
-import com.google.common.base.Preconditions;
-
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
+import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Element;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 /**
  * Simple implementation of {@code IWrapperResolver}.  It largley delegates to the containing {@code ISystemDescriptor}
@@ -61,8 +62,18 @@ public class WrapperResolver implements IWrapperResolver {
    public IPackage getWrapperFor(Package systemDescriptorPackage) {
       Preconditions.checkNotNull(systemDescriptorPackage, "systemDescriptorPackage may not be null!");
       return systemDescriptor.getPackages().getByName(systemDescriptorPackage.getName())
-            .orElseThrow(
-                  () -> new IllegalStateException("could not find IPackage wrapper for " + systemDescriptorPackage));
+            .orElseThrow(() -> new IllegalStateException("could not find IPackage wrapper for "
+                                                         + systemDescriptorPackage));
+   }
+
+   @Override
+   public IProperties getWrapperFor(Properties properties) {
+      Preconditions.checkNotNull(properties, "properties may not be null!");
+      EObject parent = properties.eContainer();
+      if (parent instanceof Model) {
+         return getWrapperFor((Model) parent).getProperties();
+      }
+      throw new IllegalStateException("Cannot find IProperties wrapper for properties " + properties);
    }
 
    @Override
@@ -142,4 +153,5 @@ public class WrapperResolver implements IWrapperResolver {
 
       return packages;
    }
+
 }

@@ -1,32 +1,142 @@
 package com.ngc.seaside.systemdescriptor.scoping;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 
-import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
+   
+   /**
+    * Places all declared properties of the current element as well as any
+    * refined models in scope for property value expressions.
+    * 
+    * @return the scope for a property value expression
+    */
+   public IScope scope_PropertyValueExpression_declaration(
+            PropertyValueExpression context,
+            EReference reference) {
+      IScope scope = null;
+
+      if (isExpressionForModelProperty(context)) {
+         scope = getScopeForModelPropertyValueExpression(context);
+      } else if (isExpressionForLinkProperty(context)) {
+         scope = getScopeForLinkPropertyValueExpression(context);
+      } else if (isExpressionForRequirementProperty(context)) {
+         scope = getScopeForRequirementPropertyValueExpression(context);
+      } else if (isExpressionForPartProperty(context)) {
+         scope = getScopeForPartPropertyValueExpression(context);
+      } else {
+         scope = delegateGetScope(context, reference);
+      }
+
+      return scope;
+   }
+
+   /**
+    * Places all data fields of a data type in scope for property path segment
+    * where a value of a complex type is being set.
+    * 
+    * @return the scope of the segment
+    */
+   public IScope scope_PropertyValueExpressionPathSegment_fieldDeclaration(
+            PropertyValueExpressionPathSegment segment,
+            EReference reference) {
+      PropertyValueExpression exp = (PropertyValueExpression) segment.eContainer();
+      Data data = getDataModelForProperty(exp.getDeclaration());
+
+      for (int i = 0; i < exp.getPathSegments().indexOf(segment) && data != null; i++) {
+         // Get the text value of the field. We have to do this because the
+         // linking has not yet completed and proxy objects are set in the
+         // data model.
+         List<INode> nodes = NodeModelUtils.findNodesForFeature(
+            exp.getPathSegments().get(i),
+            SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
+         String fieldName = NodeModelUtils.getTokenText(nodes.get(0));
+
+         // Get the field with that name. Then filter for fields that have a
+         // complex data type (ie, not a primitive).
+         ReferencedDataModelFieldDeclaration dataField = data.getFields()
+                                                             .stream()
+                                                             .filter(f -> f.getName().equals(fieldName))
+                                                             .filter(
+                                                                f -> f instanceof ReferencedDataModelFieldDeclaration)
+                                                             .map(f -> (ReferencedDataModelFieldDeclaration) f)
+                                                             .findFirst()
+                                                             .orElse(null);
+
+         // Note that the data model can be an enumeration at this point
+         // (if the user created an invalid path, the validators will
+         // catch it after scoping is finished).
+         data = dataField != null && dataField.getDataModel() instanceof Data
+                  ? (Data) dataField.getDataModel()
+                  : null;
+      }
+
+      return data != null
+               ? Scopes.scopeFor(data.getFields())
+               : delegateGetScope(segment, reference);
+   }
+
+   public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
+      IScope scope;
+      if (context.eContainer() instanceof RefinedLinkDeclaration) {
+         // This indicates the source or target of a link is directly
+         // referencing an input or output. In the example below "a",
+         // is the current context.
+         // link a -> some.thing
+         Model model = (Model) context.eContainer() // RefinedLinkDeclaration
+                                      .eContainer() // Links
+                                      .eContainer(); // Model
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
+      } else if (context.eContainer() instanceof LinkableExpression) {
+         // This indicates the source or target of a link is an expression.
+         // In the example below, "some", is the current context.
+         // link a -> some.thing
+         Model model = (Model) context.eContainer() // LinkableExpression
+                                      .eContainer() // RefinedLinkDeclaration
+                                      .eContainer() // Links
+                                      .eContainer(); // Model
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
+      } else {
+         scope = delegateGetScope(context, reference);
+      }
+      return scope;
+   }
 
    /**
     * Provides scope for a link expression of the form
     * {@code link someInput to somePart.someMoreInput}.
-    *
-    * @param context
-    * @param reference
+    * 
     * @return scope for a link expression
     */
    public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
@@ -66,26 +176,283 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     * Gets all field declarations that can be referenced that are contained by
     * the given model.
     *
-    * @param model
-    * @return all field declarations that can be referenced that are contained by
-    *         the given model
+    * @return all field declarations that can be referenced that are contained
+    *         by the given model
     */
    private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
-      // TODO TH: we can limit the items in scope by examining the type of the
-      // item on the left hand side of the expression.
       Collection<FieldDeclaration> fields = new ArrayList<>();
-      if (model.getInput() != null) {
-         fields.addAll(model.getInput().getDeclarations());
-      }
-      if (model.getOutput() != null) {
-         fields.addAll(model.getOutput().getDeclarations());
-      }
-      if (model.getRequires() != null) {
-         fields.addAll(model.getRequires().getDeclarations());
-      }
-      if (model.getParts() != null) {
-         fields.addAll(model.getParts().getDeclarations());
-      }
+
+      do {
+         if (model.getInput() != null) {
+            fields.addAll(model.getInput().getDeclarations());
+         }
+         if (model.getOutput() != null) {
+            fields.addAll(model.getOutput().getDeclarations());
+         }
+         if (model.getRequires() != null) {
+            fields.addAll(model.getRequires().getDeclarations());
+         }
+         if (model.getParts() != null) {
+            fields.addAll(model.getParts().getDeclarations());
+         }
+         model = model.getRefinedModel();
+      } while (model != null);
+
       return fields;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a model property.
+    */
+   private static boolean isExpressionForModelProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() instanceof Model;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property of a link.
+    */
+   private static boolean isExpressionForLinkProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof LinkDeclaration;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property if a part field.
+    */
+   private static boolean isExpressionForPartProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof PartDeclaration;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property of a requirement field.
+    */
+   private static boolean isExpressionForRequirementProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof RequireDeclaration;
+   }
+
+   /**
+    * Gets scope for a property value expression that is part of a property declared directly
+    * on a model.
+    */
+   private static IScope getScopeForModelPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> properties = new ArrayList<>();
+      Model model = (Model) context.eContainer() // PropertyValueAssignment
+                                   .eContainer() // Properties
+                                   .eContainer(); // Model
+      // Get all properties declared on the model and any base refined models.
+      do {
+         if (model.getProperties() != null) {
+            properties.addAll(model.getProperties().getDeclarations());
+         }
+         model = model.getRefinedModel();
+      } while (model != null);
+      return Scopes.scopeFor(properties);
+   }
+
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a link.
+    */
+   private static IScope getScopeForLinkPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      LinkDeclaration link = (LinkDeclaration) context.eContainer() // PropertyValueAssignment
+                                                      .eContainer() // Properties
+                                                      .eContainer() // DeclarationsDefinition
+                                                      .eContainer(); // LinkDeclaration
+      Model model = (Model) link.eContainer() // Links
+                                .eContainer(); // Model
+
+      do {
+         LinkDeclaration currentLink = findLink(model, link);
+         // There is an issue when refining an unnamed link and setting a value on
+         // a property of that link. If the link is refining another link, we need
+         // to find the base link where the property is declared. This works fine
+         // for links with names. However, if the link has no name we can find the
+         // base link using the target and source. However, the definition on that
+         // base link (which contains the properties) is null even thought that link
+         // has properties declared in the source. This seems to be an XText issue
+         // since the definition object should definitely not be null.
+         if (currentLink != null
+            && currentLink.getDefinition() != null
+            && currentLink.getDefinition().getProperties() != null) {
+            propertyDeclarations.addAll(currentLink.getDefinition().getProperties().getDeclarations());
+         }
+         model = model.getRefinedModel();
+      } while (model != null);
+
+      return Scopes.scopeFor(propertyDeclarations);
+   }
+   
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a part.
+    */
+   private static IScope getScopeForPartPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      PartDeclaration part = (PartDeclaration) context.eContainer() // PropertyValueAssignment
+                                                      .eContainer() // Properties
+                                                      .eContainer() // DeclarationsDefinition
+                                                      .eContainer(); // PartDeclaration
+      Model model = (Model) part.eContainer() // Parts
+                                .eContainer(); // Model
+
+      do {
+         if (model.getParts() != null) {
+            PartDeclaration currentPart = model.getParts()
+                                               .getDeclarations()
+                                               .stream()
+                                               .filter(d -> d.getName().equals(part.getName()))
+                                               .findFirst()
+                                               .orElse(null);
+            if (currentPart != null
+               && currentPart.getDefinition() != null
+               && currentPart.getDefinition().getProperties() != null) {
+               propertyDeclarations.addAll(currentPart.getDefinition().getProperties().getDeclarations());
+            }
+         }
+         model = model.getRefinedModel();
+      } while (model != null);
+
+      return Scopes.scopeFor(propertyDeclarations);
+   }
+
+   /**
+    * Gets scope for a property value expression that is part of a property declared on a requirement.
+    */
+   private static IScope getScopeForRequirementPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      RequireDeclaration requirement = (RequireDeclaration) context.eContainer() // PropertyValueAssignment
+                                                                   .eContainer() // Properties
+                                                                   .eContainer() // DeclarationsDefinition
+                                                                   .eContainer(); // RequireDeclaration
+      Model model = (Model) requirement.eContainer() // Requires
+                                       .eContainer(); // Model
+
+      do {
+         if (model.getRequires() != null) {
+            RequireDeclaration currentRequirement = model.getRequires()
+                                                         .getDeclarations()
+                                                         .stream()
+                                                         .filter(d -> d.getName().equals(requirement.getName()))
+                                                         .findFirst()
+                                                         .orElse(null);
+            if (currentRequirement != null
+               && currentRequirement.getDefinition() != null
+               && currentRequirement.getDefinition().getProperties() != null) {
+               propertyDeclarations.addAll(currentRequirement.getDefinition().getProperties().getDeclarations());
+            }
+         }
+         model = model.getRefinedModel();
+      } while (model != null);
+
+      return Scopes.scopeFor(propertyDeclarations);
+   }
+
+   /**
+    * Gets the data type of the given property. This method can only be called for properties
+    * whose type is a complex data type, not an enum or primitive.
+    */
+   private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
+      // Note it is possible that the declaration is a proxy. If so, abort.
+      if (declaration.eIsProxy()) {
+         return null;
+      }
+
+      Preconditions.checkState(
+         declaration instanceof ReferencedPropertyFieldDeclaration,
+         "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
+            + "  Otherwise, why would the declaration need scoping help?");
+      ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
+
+      // More proxy checking.
+      if (referencedDeclaration.getDataModel().eIsProxy()) {
+         return null;
+      }
+      Preconditions.checkState(
+         referencedDeclaration.getDataModel() instanceof Data,
+         "expected the declaration to have a data model of data instead of an enumeration!"
+            + "  Otherwise, you can't have a complex expression!");
+      return (Data) referencedDeclaration.getDataModel();
+   }
+
+   /**
+    * Attempts to find the a link in the given model that matches the given link.
+    * 
+    * @param model the model to search
+    * @param linkDeclaration the link to use for reference when searching
+    * @return a link in the model that matches the name or the source and target of
+    *         the given link or {@code null} if there is no such link
+    */
+   private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
+      if (model.getLinks() == null) {
+         return null;
+      }
+
+      if (linkDeclaration.getName() != null) {
+         for (LinkDeclaration link : model.getLinks().getDeclarations()) {
+            if (linkDeclaration.getName().equals(link.getName())) {
+               return link;
+            }
+
+         }
+
+         return null;
+      }
+
+      String sourcePath = getPathOfSource(linkDeclaration);
+      String targetPath = getPathOfTarget(linkDeclaration);
+      // Note sourcePat and targetPath must be non-null here because
+      // the link does not have a name so the target and source must be
+      // set.
+
+      for (LinkDeclaration link : model.getLinks().getDeclarations()) {
+         if (sourcePath.equals(getPathOfSource(link)) && targetPath.equals(getPathOfTarget(link))) {
+            return link;
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Gets the text value of the source of a link.
+    */
+   private static String getPathOfSource(LinkDeclaration link) {
+      List<INode> nodes;
+
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__SOURCE);
+      }
+
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
+   }
+
+   /**
+    * Gets the text value of the target of a link.
+    */
+   private static String getPathOfTarget(LinkDeclaration link) {
+      List<INode> nodes;
+
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__TARGET);
+      }
+
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
    }
 }
