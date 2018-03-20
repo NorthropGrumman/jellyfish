@@ -21,7 +21,7 @@ import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
-class PropertiesParsingTest {
+class ModelPropertiesParsingTest {
 
 	@Inject
 	ParseHelper<Package> parseHelper
