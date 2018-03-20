@@ -37,7 +37,7 @@ import java.util.List;
  * The scope provider for the System Descriptor language.
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
-
+   
    /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
@@ -60,6 +60,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       } else {
          scope = delegateGetScope(context, reference);
       }
+      
       return scope;
    }
 
