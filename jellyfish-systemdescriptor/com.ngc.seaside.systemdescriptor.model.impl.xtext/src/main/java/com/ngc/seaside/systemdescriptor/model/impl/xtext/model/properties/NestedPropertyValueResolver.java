@@ -98,8 +98,13 @@ public class NestedPropertyValueResolver {
 
       while (model != null) {
          Collection<FieldDeclaration> fields = new ArrayList<>();
-         fields.addAll(model.getParts().getDeclarations());
-         fields.addAll(model.getRequires().getDeclarations());
+         if (model.getParts() != null) {
+            fields.addAll(model.getParts().getDeclarations());
+         }
+         if (model.getRequires() != null) {
+            fields.addAll(model.getRequires().getDeclarations());
+         }
+
          FieldDeclaration currentField = fields.stream()
                .filter(f -> f.getName().equals(field.getName()))
                .findFirst()

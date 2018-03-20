@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.scoping;
 
 import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -19,7 +20,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.scoping.IScope;
@@ -36,7 +39,7 @@ import java.util.List;
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
    /**
-    * Places all declared properties of the current model as well as any
+    * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
     * 
     * @return the scope for a property value expression
@@ -45,56 +48,18 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             PropertyValueExpression context,
             EReference reference) {
       IScope scope = null;
-      Collection<PropertyFieldDeclaration> properties = new ArrayList<>();
-      if (context.eContainer().eContainer().eContainer() instanceof Model) {
-         Model model = (Model) context.eContainer() // PropertyValueAssignment
-                                      .eContainer() // Properties
-                                      .eContainer(); // Model
 
-         do {
-            if (model.getProperties() != null) {
-               properties.addAll(model.getProperties().getDeclarations());
-            }
-            model = model.getRefinedModel();
-         } while (model != null);
-         scope = Scopes.scopeFor(properties);
-      } else if (context.eContainer().eContainer().eContainer().eContainer() instanceof LinkDeclaration) {
-         // This indicates the source or target of a link is an expression.
-         // In the example below, "some", is the current context.
-         // link a -> some.thing
-         Model model = (Model) context.eContainer() // propertyValueExpression
-                                      .eContainer() // Properties
-                                      .eContainer() // LinkableExpression
-                                      .eContainer() // RefinedLinkDeclaration
-                                      .eContainer() // Links
-                                      .eContainer(); // Model
-         scope = Scopes.scopeFor(getLinkProperties(model));
-      } else if (context.eContainer().eContainer().eContainer().eContainer() instanceof RequireDeclaration) {
-         // This indicates the source or target of a link is an expression.
-         // In the example below, "some", is the current context.
-         // link a -> some.thing
-         Model model = (Model) context.eContainer() // propertyValueExpression
-                                      .eContainer() // Properties
-                                      .eContainer() //DeclarationsDefinition
-                                      .eContainer() // RefinedRequireDeclaration
-                                      .eContainer() // Requires
-                                      .eContainer(); // Model
-         scope = Scopes.scopeFor(getRequireProperties(model));
-      } else if (context.eContainer().eContainer().eContainer().eContainer() instanceof PartDeclaration) {
-         // This indicates the source or target of a link is an expression.
-         // In the example below, "some", is the current context.
-         // link a -> some.thing
-         Model model = (Model) context.eContainer() // propertyValueExpression
-                                      .eContainer() // Properties
-                                      .eContainer() //DeclarationsDefinition
-                                      .eContainer() // RefinedRequireDeclaration
-                                      .eContainer() // Requires
-                                      .eContainer(); // Model
-         scope = Scopes.scopeFor(getPartProperties(model));
+      if (isExpressionForModelProperty(context)) {
+         scope = getScopeForModelPropertyValueExpression(context);
+      } else if (isExpressionForLinkProperty(context)) {
+         scope = getScopeForLinkPropertyValueExpression(context);
+      } else if (isExpressionForRequirementProperty(context)) {
+         scope = getScopeForRequirementPropertyValueExpression(context);
+      } else if (isExpressionForPartProperty(context)) {
+         scope = getScopeForPartPropertyValueExpression(context);
       } else {
          scope = delegateGetScope(context, reference);
       }
-      
       return scope;
    }
 
@@ -212,7 +177,6 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     * Gets all field declarations that can be referenced that are contained by
     * the given model.
     *
-    * @param model
     * @return all field declarations that can be referenced that are contained
     *         by the given model
     */
@@ -239,87 +203,136 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    }
 
    /**
-    * Goes through the Model hierarchy and retrieves all the links properties
-    * 
-    * @param model thats the starting point in the hierarchy
-    * @return A collection of all the properties
+    * Returns true if the given expression has been applied to a model property.
     */
-   private static Collection<PropertyFieldDeclaration> getLinkProperties(Model model) {
-      Collection<LinkDeclaration> links = new ArrayList<>();
-      Collection<PropertyFieldDeclaration> fields = new ArrayList<>();
+   private static boolean isExpressionForModelProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() instanceof Model;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property of a link.
+    */
+   private static boolean isExpressionForLinkProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof LinkDeclaration;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property if a part field.
+    */
+   private static boolean isExpressionForPartProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof PartDeclaration;
+   }
+
+   /**
+    * Returns true if the given expression has been applied to a property of a requirement field.
+    */
+   private static boolean isExpressionForRequirementProperty(PropertyValueExpression exp) {
+      return exp.eContainer() // PropertyValueAssignment
+                .eContainer() // Properties
+                .eContainer() // DeclarationsDefinition
+                .eContainer() instanceof RequireDeclaration;
+   }
+
+   private static IScope getScopeForModelPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> properties = new ArrayList<>();
+      Model model = (Model) context.eContainer() // PropertyValueAssignment
+                                   .eContainer() // Properties
+                                   .eContainer(); // Model
       do {
-         if (model.getLinks() != null) {
-            links.addAll(model.getLinks().getDeclarations());
+         if (model.getProperties() != null) {
+            properties.addAll(model.getProperties().getDeclarations());
          }
          model = model.getRefinedModel();
       } while (model != null);
-      for (LinkDeclaration linkDec : links) {
-         if (linkDec instanceof LinkDeclaration) {
-            if (linkDec.getDefinition() != null) {
-               if (linkDec.getDefinition().getProperties().getDeclarations() != null) {
-                  fields.addAll(linkDec.getDefinition().getProperties().getDeclarations());
-               }
-            }
-
-         }
-      }
-      return fields;
+      return Scopes.scopeFor(properties);
    }
-   
-   /**
-    * Goes through the Model hierarchy and retrieves all the links properties
-    * 
-    * @param model thats the starting point in the hierarchy
-    * @return A collection of all the properties
-    */
-   private static Collection<PropertyFieldDeclaration> getRequireProperties(Model model) {
-      Collection<RequireDeclaration> reqs = new ArrayList<>();
-      Collection<PropertyFieldDeclaration> fields = new ArrayList<>();
+
+   private static IScope getScopeForLinkPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      LinkDeclaration link = (LinkDeclaration) context.eContainer() // PropertyValueAssignment
+                                                      .eContainer() // Properties
+                                                      .eContainer() // DeclarationsDefinition
+                                                      .eContainer(); // LinkDeclaration
+      Model model = (Model) link.eContainer() // Links
+                                .eContainer(); // Model
+
       do {
-         if (model.getRequires() != null) {
-            reqs.addAll(model.getRequires().getDeclarations());
+         LinkDeclaration currentLink = findLink(model, link);
+         if (currentLink != null
+            && currentLink.getDefinition() != null
+            && currentLink.getDefinition().getProperties() != null) {
+            propertyDeclarations.addAll(currentLink.getDefinition().getProperties().getDeclarations());
          }
          model = model.getRefinedModel();
       } while (model != null);
-      for (RequireDeclaration reqDec : reqs) {
-         if (reqDec instanceof RequireDeclaration) {
-            if (reqDec.getDefinition() != null) {
-               if (reqDec.getDefinition().getProperties().getDeclarations() != null) {
-                  fields.addAll(reqDec.getDefinition().getProperties().getDeclarations());
-               }
-            }
 
-         }
-      }
-      return fields;
+      return Scopes.scopeFor(propertyDeclarations);
    }
-   
-   /**
-    * Goes through the Model hierarchy and retrieves all the links properties
-    * 
-    * @param model thats the starting point in the hierarchy
-    * @return A collection of all the properties
-    */
-   private static Collection<PropertyFieldDeclaration> getPartProperties(Model model) {
-      Collection<PartDeclaration> parts = new ArrayList<>();
-      Collection<PropertyFieldDeclaration> fields = new ArrayList<>();
+
+   private static IScope getScopeForPartPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      PartDeclaration part = (PartDeclaration) context.eContainer() // PropertyValueAssignment
+                                                      .eContainer() // Properties
+                                                      .eContainer() // DeclarationsDefinition
+                                                      .eContainer(); // PartDeclaration
+      Model model = (Model) part.eContainer() // Parts
+                                .eContainer(); // Model
+
       do {
          if (model.getParts() != null) {
-            parts.addAll(model.getParts().getDeclarations());
+            PartDeclaration currentPart = model.getParts()
+                                               .getDeclarations()
+                                               .stream()
+                                               .filter(d -> d.getName().equals(part.getName()))
+                                               .findFirst()
+                                               .orElse(null);
+            if (currentPart != null
+               && currentPart.getDefinition() != null
+               && currentPart.getDefinition().getProperties() != null) {
+               propertyDeclarations.addAll(currentPart.getDefinition().getProperties().getDeclarations());
+            }
          }
          model = model.getRefinedModel();
       } while (model != null);
-      for (PartDeclaration partDec : parts) {
-         if (partDec instanceof PartDeclaration) {
-            if (partDec.getDefinition() != null) {
-               if (partDec.getDefinition().getProperties().getDeclarations() != null) {
-                  fields.addAll(partDec.getDefinition().getProperties().getDeclarations());
-               }
-            }
 
+      return Scopes.scopeFor(propertyDeclarations);
+   }
+
+   private static IScope getScopeForRequirementPropertyValueExpression(PropertyValueExpression context) {
+      Collection<PropertyFieldDeclaration> propertyDeclarations = new ArrayList<>();
+      RequireDeclaration requirement = (RequireDeclaration) context.eContainer() // PropertyValueAssignment
+                                                                   .eContainer() // Properties
+                                                                   .eContainer() // DeclarationsDefinition
+                                                                   .eContainer(); // RequireDeclaration
+      Model model = (Model) requirement.eContainer() // Requires
+                                       .eContainer(); // Model
+
+      do {
+         if (model.getRequires() != null) {
+            RequireDeclaration currentRequirement = model.getRequires()
+                                                         .getDeclarations()
+                                                         .stream()
+                                                         .filter(d -> d.getName().equals(requirement.getName()))
+                                                         .findFirst()
+                                                         .orElse(null);
+            if (currentRequirement != null
+               && currentRequirement.getDefinition() != null
+               && currentRequirement.getDefinition().getProperties() != null) {
+               propertyDeclarations.addAll(currentRequirement.getDefinition().getProperties().getDeclarations());
+            }
          }
-      }
-      return fields;
+         model = model.getRefinedModel();
+      } while (model != null);
+
+      return Scopes.scopeFor(propertyDeclarations);
    }
 
    private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
@@ -334,5 +347,50 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          "expected the declaration to have a data model of data instead of an enumeration!"
             + "  Otherwise, you can't have a complex expression!");
       return (Data) referencedDeclaration.getDataModel();
+   }
+
+   /**
+    * Attempts to find the a link in the given model that matches the given link.
+    * 
+    * @param model the model to search
+    * @param linkDeclaration the link to use for reference when searching
+    * @return a link in the model that matches the name or the source and target of
+    *         the given link or {@code null} if there is no such link
+    */
+   private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
+      if (linkDeclaration.getName() != null) {
+         for (LinkDeclaration link : model.getLinks().getDeclarations()) {
+            if (linkDeclaration.getName().equals(link.getName())) {
+               return link;
+            }
+
+         }
+
+         return null;
+      }
+
+      EObject source;
+      EObject target;
+      if (linkDeclaration instanceof BaseLinkDeclaration) {
+         source = ((BaseLinkDeclaration) linkDeclaration).getSource();
+         target = ((BaseLinkDeclaration) linkDeclaration).getTarget();
+      } else {
+         source = ((RefinedLinkDeclaration) linkDeclaration).getSource();
+         target = ((RefinedLinkDeclaration) linkDeclaration).getSource();
+      }
+
+      for (LinkDeclaration link : model.getLinks().getDeclarations()) {
+         if (link instanceof BaseLinkDeclaration
+            && EcoreUtil.equals(source, ((BaseLinkDeclaration) link).getSource())
+            && EcoreUtil.equals(target, ((BaseLinkDeclaration) link).getTarget())) {
+            return link;
+         } else if (link instanceof RefinedLinkDeclaration
+            && EcoreUtil.equals(source, ((RefinedLinkDeclaration) link).getSource())
+            && EcoreUtil.equals(target, ((RefinedLinkDeclaration) link).getTarget())) {
+            return link;
+         }
+      }
+
+      return null;
    }
 }
