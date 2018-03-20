@@ -38,14 +38,6 @@ import java.util.List;
  */
 public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvider {
 
-   @Override
-   public IScope getScope(EObject context, EReference reference) {
-     // System.out.println("+ Getting scope for " + context);
-      IScope scope = super.getScope(context, reference);
-      System.out.println("- Found " + scope);
-      return scope;
-   }
-   
    /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
