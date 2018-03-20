@@ -353,6 +353,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             + "  Otherwise, why would the declaration need scoping help?");
       ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
 
+      // More proxy checking.
+      if(referencedDeclaration.getDataModel().eIsProxy()) {
+         return null;
+      }
       Preconditions.checkState(
          referencedDeclaration.getDataModel() instanceof Data,
          "expected the declaration to have a data model of data instead of an enumeration!"
