@@ -134,6 +134,10 @@ public class NestedPropertyValueResolver {
    }
 
    private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
+      if (model.getLinks() == null) {
+         return null;
+      }
+
       if (linkDeclaration.getName() != null) {
          for (LinkDeclaration link : model.getLinks().getDeclarations()) {
             if (linkDeclaration.getName().equals(link.getName())) {

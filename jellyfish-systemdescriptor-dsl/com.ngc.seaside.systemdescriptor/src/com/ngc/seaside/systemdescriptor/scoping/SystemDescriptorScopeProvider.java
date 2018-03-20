@@ -242,11 +242,16 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
                 .eContainer() instanceof RequireDeclaration;
    }
 
+   /**
+    * Gets scope for a property value expression that is part of a property declared directly
+    * on a model.
+    */
    private static IScope getScopeForModelPropertyValueExpression(PropertyValueExpression context) {
       Collection<PropertyFieldDeclaration> properties = new ArrayList<>();
       Model model = (Model) context.eContainer() // PropertyValueAssignment
                                    .eContainer() // Properties
                                    .eContainer(); // Model
+      // Get all properties declared on the model and any base refined models.
       do {
          if (model.getProperties() != null) {
             properties.addAll(model.getProperties().getDeclarations());
@@ -337,7 +342,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    }
 
    private static Data getDataModelForProperty(PropertyFieldDeclaration declaration) {
-      // Note it is possible that the declaration is a proxy.  If so, abort.
+      // Note it is possible that the declaration is a proxy. If so, abort.
       if (declaration.eIsProxy()) {
          return null;
       }
@@ -364,6 +369,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     *         the given link or {@code null} if there is no such link
     */
    private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
+      if (model.getLinks() == null) {
+         return null;
+      }
+
       if (linkDeclaration.getName() != null) {
          for (LinkDeclaration link : model.getLinks().getDeclarations()) {
             if (linkDeclaration.getName().equals(link.getName())) {
