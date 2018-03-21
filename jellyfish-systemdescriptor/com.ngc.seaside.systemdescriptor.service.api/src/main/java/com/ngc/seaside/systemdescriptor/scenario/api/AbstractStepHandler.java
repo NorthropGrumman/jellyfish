@@ -15,8 +15,8 @@ import java.util.Map;
  * {@link #register(ScenarioStepVerb, ScenarioStepVerb...) registered} in the constructor.  Instances that extend this
  * class are also {@code ISystemDescriptorValidator}s.  This allows a step handler to validate the arguments included
  * with the step are valid for the given verb.  Implementations should perform any validation in {@link
- * #doValidateStep(IValidationContext)}.  For convenience, {@link #requireStepParameters(IValidationContext, String)} is
- * provided to indicate that a verb requires at least 1 argument.
+ * #doValidateStep(IValidationContext)}.  For convenience, several methods are provided that can reusable validation
+ * logic.
  *
  * <p/>
  *
