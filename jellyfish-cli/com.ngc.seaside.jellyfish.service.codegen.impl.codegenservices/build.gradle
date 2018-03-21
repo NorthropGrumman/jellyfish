@@ -9,5 +9,5 @@ dependencies {
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+    testImplementation project(':jellyfish.cli.command.testutils')
 }

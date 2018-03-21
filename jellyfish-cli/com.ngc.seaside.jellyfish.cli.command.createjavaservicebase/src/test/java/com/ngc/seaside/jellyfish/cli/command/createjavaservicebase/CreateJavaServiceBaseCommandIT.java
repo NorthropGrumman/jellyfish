@@ -16,6 +16,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.test.scenarios.FlowFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -105,7 +106,8 @@ public class CreateJavaServiceBaseCommandIT {
    @Before
    public void setup() throws Throwable {
       tempFolder.newFile("settings.gradle");
-      outputDirectory = tempFolder.getRoot();
+      //outputDirectory = tempFolder.getRoot(); TODO TH: FIX THIS
+      outputDirectory = new File("build/blah");
 
       buildManagementService = new MockedBuildManagementService();
 
@@ -206,14 +208,9 @@ public class CreateJavaServiceBaseCommandIT {
          return dto;
       });
 
-      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);
-      IScenario scenario = model.getScenarios().getByName("calculateTrackPriority").get();
-      IDataReferenceField input = model.getInputs().iterator().next();
-      IDataReferenceField output = model.getOutputs().iterator().next();
-      when(flow.getScenario()).thenReturn(scenario);
-      when(flow.getInputs()).thenReturn(Collections.singleton(input));
-      when(flow.getOutputs()).thenReturn(Collections.singleton(output));
-      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
+      IPublishSubscribeMessagingFlow flow = FlowFactory.newPubSubFlowPath(model.getScenarios()
+                                                                                .getByName("calculateTrackPriority")
+                                                                                .get());
       when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
 
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
