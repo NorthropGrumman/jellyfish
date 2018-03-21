@@ -53,16 +53,8 @@ public class PublishStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireStepParameters(context, "The 'publish' verb requires parameters!");
-      requireOnlyOneParameter(context);
+      requireOnlyOneParameter(context, "The 'publish' verb requires exactly one parameter!");
       requireParameterReferenceAnOutputField(context);
-   }
-
-   private static void requireOnlyOneParameter(IValidationContext<IScenarioStep> context) {
-      IScenarioStep step = context.getObject();
-      if (step.getParameters().size() > 1) {
-         context.declare(Severity.ERROR, "Only one field can be referenced with this verb!", step).getParameters();
-      }
    }
 
    private static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context) {

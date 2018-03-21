@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.scenario.api;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
@@ -88,7 +89,7 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
    }
 
    /**
-    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the step has at least 1 argument.
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the step has at least 1 parameter.
     *
     * @param context      the validation context
     * @param errorMessage the error message to use if the scenario step has no parameters
@@ -98,6 +99,90 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
       IScenarioStep step = context.getObject();
       if (step.getParameters().isEmpty()) {
          context.declare(Severity.ERROR, errorMessage, step).getParameters();
+      }
+   }
+
+   /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the step has exactly 1 parameter.
+    *
+    * @param context      the validation context
+    * @param errorMessage the error message to use if the scenario step does not have 1 parameter
+    */
+   protected void requireOnlyOneParameter(IValidationContext<IScenarioStep> context,
+                                          String errorMessage) {
+      requireStepParameters(context, errorMessage);
+      IScenarioStep step = context.getObject();
+      if (step.getParameters().size() > 1) {
+         context.declare(Severity.ERROR, errorMessage, step).getParameters();
+      }
+   }
+
+   /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the scenario that contains the current
+    * step does not contain a given step that uses the given verb.
+    *
+    * @param context      the validation context
+    * @param verb         the verb to check in past tense
+    * @param errorMessage the error message to use if the scenario contains a given step with the given verb
+    */
+   protected void requireNoGivenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
+                                                        ScenarioStepVerb verb,
+                                                        String errorMessage) {
+      if (verb.getTense() != VerbTense.PAST_TENSE) {
+         throw new IllegalArgumentException("verb " + verb + " should be in past tense!");
+      }
+
+      IScenario scenario = context.getObject().getParent();
+      for (IScenarioStep step : scenario.getGivens()) {
+         if (step.getKeyword().equals(verb.getVerb())) {
+            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
+         }
+      }
+   }
+
+   /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the scenario that contains the current
+    * step does not contain a when step that uses the given verb.
+    *
+    * @param context      the validation context
+    * @param verb         the verb to check in present tense
+    * @param errorMessage the error message to use if the scenario contains a when step with the given verb
+    */
+   protected void requireNoWhenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
+                                                       ScenarioStepVerb verb,
+                                                       String errorMessage) {
+      if (verb.getTense() != VerbTense.PRESENT_TENSE) {
+         throw new IllegalArgumentException("verb " + verb + " should be in present tense!");
+      }
+
+      IScenario scenario = context.getObject().getParent();
+      for (IScenarioStep step : scenario.getWhens()) {
+         if (step.getKeyword().equals(verb.getVerb())) {
+            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
+         }
+      }
+   }
+
+   /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the scenario that contains the current
+    * step does not contain a then step that uses the given verb.
+    *
+    * @param context      the validation context
+    * @param verb         the verb to check in future tense
+    * @param errorMessage the error message to use if the scenario contains a then step with the given verb
+    */
+   protected void requireNoThenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
+                                                       ScenarioStepVerb verb,
+                                                       String errorMessage) {
+      if (verb.getTense() != VerbTense.FUTURE_TENSE) {
+         throw new IllegalArgumentException("verb " + verb + " should be in future tense!");
+      }
+
+      IScenario scenario = context.getObject().getParent();
+      for (IScenarioStep step : scenario.getThens()) {
+         if (step.getKeyword().equals(verb.getVerb())) {
+            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
+         }
       }
    }
 

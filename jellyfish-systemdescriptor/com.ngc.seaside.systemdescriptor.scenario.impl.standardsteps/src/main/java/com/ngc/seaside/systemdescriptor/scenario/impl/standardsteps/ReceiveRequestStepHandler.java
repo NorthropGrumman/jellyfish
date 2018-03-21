@@ -71,48 +71,6 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
             "Scenarios that receive requests cannot asynchronously receive multiple inputs!");
    }
 
-   protected void requireOnlyOneParameter(IValidationContext<IScenarioStep> context,
-                                          String errorMessage) {
-      requireStepParameters(context, errorMessage);
-      IScenarioStep step = context.getObject();
-      if (step.getParameters().size() > 1) {
-         context.declare(Severity.ERROR, errorMessage, step).getParameters();
-      }
-   }
-
-   protected void requireNoGivenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
-                                                        ScenarioStepVerb verb,
-                                                        String errorMessage) {
-      IScenario scenario = context.getObject().getParent();
-      for (IScenarioStep step : scenario.getGivens()) {
-         if (step.getKeyword().equals(verb.getVerb())) {
-            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
-         }
-      }
-   }
-
-   protected void requireNoWhenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
-                                                       ScenarioStepVerb verb,
-                                                       String errorMessage) {
-      IScenario scenario = context.getObject().getParent();
-      for (IScenarioStep step : scenario.getWhens()) {
-         if (step.getKeyword().equals(verb.getVerb())) {
-            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
-         }
-      }
-   }
-
-   protected void requireNoThenStepsWithVerbInScenario(IValidationContext<IScenarioStep> context,
-                                                       ScenarioStepVerb verb,
-                                                       String errorMessage) {
-      IScenario scenario = context.getObject().getParent();
-      for (IScenarioStep step : scenario.getThens()) {
-         if (step.getKeyword().equals(verb.getVerb())) {
-            context.declare(Severity.ERROR, errorMessage, step).getKeyword();
-         }
-      }
-   }
-
    private static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context) {
       IScenarioStep step = context.getObject();
       String fieldName = step.getParameters().stream().findFirst().orElse(null);
