@@ -65,7 +65,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -269,7 +269,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -299,7 +299,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -331,7 +331,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -362,7 +362,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -390,7 +390,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -519,7 +519,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -557,7 +557,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -588,7 +588,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);
@@ -619,7 +619,7 @@ public class CorrelateStepHandlerTest {
       when(context.getObject()).thenReturn(step);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       // Method to test
       handler.doValidateStep(context);

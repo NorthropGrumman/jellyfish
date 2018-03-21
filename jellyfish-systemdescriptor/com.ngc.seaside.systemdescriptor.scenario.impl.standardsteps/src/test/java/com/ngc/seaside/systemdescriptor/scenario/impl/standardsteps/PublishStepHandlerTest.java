@@ -83,7 +83,7 @@ public class PublishStepHandlerTest {
       step.getParameters().clear();
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -94,7 +94,7 @@ public class PublishStepHandlerTest {
       step.getParameters().add(field.getName());
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -106,7 +106,7 @@ public class PublishStepHandlerTest {
       model.addInput(field);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -118,7 +118,7 @@ public class PublishStepHandlerTest {
       step.getParameters().add("foo");
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();

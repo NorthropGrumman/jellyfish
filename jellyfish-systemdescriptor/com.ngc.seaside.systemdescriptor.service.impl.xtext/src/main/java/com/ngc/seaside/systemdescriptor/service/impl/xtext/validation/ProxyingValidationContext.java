@@ -57,15 +57,21 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
 
    @SuppressWarnings("unchecked")
    @Override
-   public T declare(Severity severity, String message, T offendingObject) {
+   public <S> S declare(Severity severity, String message, S offendingObject) {
       Preconditions.checkNotNull(severity, "severity may not be null!");
       Preconditions.checkNotNull(message, "message may not be null!");
       Preconditions.checkNotNull(offendingObject, "offendingObject may not be null!");
+      Preconditions.checkArgument(
+            offendingObject instanceof IUnwrappable
+            || offendingObject instanceof IUnwrappableCollection,
+            "cannot declare errors an object of type %s because that object does not wrap any XText types!",
+            object.getClass().getName());
+
       // Return a dynamic proxy of the wrapped object.  This allows us to "record" the methods the validator calls on
       // the object when declaring an issue.  Note the proxy will actually pass through to the wrapped object so the
       // actual call will complete as normal.  In this way, this is really a method interceptor.
       // Safe because this is a proxy object.
-      return (T) Proxy.newProxyInstance(offendingObject.getClass().getClassLoader(),
+      return (S) Proxy.newProxyInstance(offendingObject.getClass().getClassLoader(),
                                         offendingObject.getClass().getInterfaces(),
                                         (p, m, a) -> interceptMethodCall(offendingObject, p, m, a, severity, message));
    }

@@ -86,7 +86,7 @@ public class RespondStepHandlerTest {
       step.getParameters().clear();
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -97,7 +97,7 @@ public class RespondStepHandlerTest {
       step.getParameters().add(field.getName());
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -109,7 +109,7 @@ public class RespondStepHandlerTest {
       step.getParameters().add(field.getName());
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -121,7 +121,7 @@ public class RespondStepHandlerTest {
       model.addInput(field);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -133,7 +133,7 @@ public class RespondStepHandlerTest {
       step.getParameters().add("foo");
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) step))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getParameters();
@@ -146,7 +146,7 @@ public class RespondStepHandlerTest {
       scenario.addThen(extraStep);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(extraStep))).thenReturn(mockedStep);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq((IScenarioStep) extraStep))).thenReturn(mockedStep);
 
       handler.doValidateStep(context);
       verify(mockedStep).getKeyword();
