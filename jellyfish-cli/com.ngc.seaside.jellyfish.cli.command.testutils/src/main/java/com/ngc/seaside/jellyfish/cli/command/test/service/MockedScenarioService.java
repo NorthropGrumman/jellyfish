@@ -22,15 +22,17 @@ import java.util.Optional;
 
 public class MockedScenarioService implements IScenarioService {
 
-   private ScenarioService delegate = new ScenarioService();
+   private final ScenarioService delegate;
 
    public MockedScenarioService() {
+      delegate = new ScenarioService();
       delegate.setLogService(mock(ILogService.class));
       delegate.setCorrelationStepHandler(new CorrelateStepHandler());
       delegate.setPublishStepHandler(new PublishStepHandler());
       delegate.setReceiveStepHandler(new ReceiveStepHandler());
       delegate.setReceiveRequestStepHandler(new ReceiveRequestStepHandler());
       delegate.setRespondStepHandler(new RespondStepHandler());
+      delegate.activate();
    }
 
    @Override
