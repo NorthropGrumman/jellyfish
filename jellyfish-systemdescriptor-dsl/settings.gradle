@@ -1,13 +1,11 @@
 include 'com.ngc.seaside.systemdescriptor'
 include 'com.ngc.seaside.systemdescriptor.ide'
-include 'com.ngc.seaside.systemdescriptor.tests'
 include 'com.ngc.seaside.systemdescriptor.ui'
 include 'com.ngc.seaside.systemdescriptor.feature'
 include 'com.ngc.seaside.systemdescriptor.updatesite'
 
 project(':com.ngc.seaside.systemdescriptor').name = 'systemdescriptor'
 project(':com.ngc.seaside.systemdescriptor.ide').name = 'systemdescriptor.ide'
-project(':com.ngc.seaside.systemdescriptor.tests').name = 'systemdescriptor.tests'
 project(':com.ngc.seaside.systemdescriptor.ui').name = 'systemdescriptor.ui'
 project(':com.ngc.seaside.systemdescriptor.feature').name = 'systemdescriptor.feature'
 project(':com.ngc.seaside.systemdescriptor.updatesite').name = 'systemdescriptor.updatesite'

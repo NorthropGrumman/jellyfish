@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.ngc.seaside.systemdescriptor.ide
+Bundle-SymbolicName: com.ngc.seaside.systemdescriptor.ide;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: com.ngc.seaside.systemdescriptor.ide.contentassist.antlr,
+ com.ngc.seaside.systemdescriptor.ide.contentassist.antlr.internal
+
