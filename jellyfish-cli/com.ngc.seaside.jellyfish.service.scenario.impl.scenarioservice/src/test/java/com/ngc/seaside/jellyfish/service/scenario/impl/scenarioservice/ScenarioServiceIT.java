@@ -7,6 +7,7 @@ import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -15,9 +16,9 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescript
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,12 +69,12 @@ public class ScenarioServiceIT {
    }
 
    @Test
-   public void testDoesDetermineMessageParadigms() throws Throwable {
+   public void testDoesDeterminePubSubMessageParadigms() {
       IScenario scenario = systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")
-               .get()
-               .getScenarios()
-               .getByName("calculateTrackPriority")
-               .get();
+            .get()
+            .getScenarios()
+            .getByName("calculateTrackPriority")
+            .get();
 
       Collection<MessagingParadigm> paradigms = service.getMessagingParadigms(options, scenario);
       assertTrue("does not contain correct paradigms!",
@@ -84,7 +85,23 @@ public class ScenarioServiceIT {
    }
 
    @Test
-   public void testDoesGetSimplePubSubFlow() throws Throwable {
+   public void testDoesDetermineRequestResponseMessageParadigms() {
+      IScenario scenario = systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService")
+            .get()
+            .getScenarios()
+            .getByName("getPriority")
+            .get();
+
+      Collection<MessagingParadigm> paradigms = service.getMessagingParadigms(options, scenario);
+      assertTrue("does not contain correct paradigms!",
+                 paradigms.contains(MessagingParadigm.REQUEST_RESPONSE));
+      assertEquals("contains extra paradigms!",
+                   1,
+                   paradigms.size());
+   }
+
+   @Test
+   public void testDoesGetSimplePubSubFlow() {
       IModel model = systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService").get();
       IScenario scenario = model.getScenarios().getByName("calculateTrackPriority").get();
 
@@ -115,6 +132,33 @@ public class ScenarioServiceIT {
                    flow.getOutputs().iterator().next());
    }
 
+   @Test
+   public void testDoesGetServerSideRequestResponseFlow() {
+      IModel model = systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService").get();
+      IScenario scenario = model.getScenarios().getByName("getPriority").get();
+
+      Optional<IRequestResponseMessagingFlow> optionalFlow = service.getRequestResponseMessagingFlows(options,
+                                                                                                      scenario);
+      assertTrue("contains an incorrect number of flows!", optionalFlow.isPresent());
+
+      IRequestResponseMessagingFlow flow = optionalFlow.get();
+      assertEquals("flow scenario not correct!",
+                   scenario,
+                   flow.getScenario());
+      assertEquals("flow type not not correct!",
+                   IRequestResponseMessagingFlow.FlowType.SERVER,
+                   flow.getFlowType());
+      assertEquals("paradigm not correct!",
+                   MessagingParadigm.REQUEST_RESPONSE,
+                   flow.getMessagingParadigm());
+      assertEquals("input not correct!",
+                   model.getInputs().getByName("droppedSystemTrack").get(),
+                   flow.getInput());
+      assertEquals("output not correct!",
+                   model.getOutputs().getByName("prioritizedSystemTracks").get(),
+                   flow.getOutput());
+   }
+
    private ISystemDescriptor getSystemDescriptor() {
       Collection<Module> modules = new ArrayList<>();
       modules.add(testModule);
@@ -122,8 +166,8 @@ public class ScenarioServiceIT {
       modules.add(new StepsSystemDescriptorServiceModule());
 
       return Guice.createInjector(modules)
-               .getInstance(ISystemDescriptorService.class)
-               .parseProject(Paths.get("src/test/resources/"))
-               .getSystemDescriptor();
+            .getInstance(ISystemDescriptorService.class)
+            .parseProject(Paths.get("src/test/resources/"))
+            .getSystemDescriptor();
    }
 }

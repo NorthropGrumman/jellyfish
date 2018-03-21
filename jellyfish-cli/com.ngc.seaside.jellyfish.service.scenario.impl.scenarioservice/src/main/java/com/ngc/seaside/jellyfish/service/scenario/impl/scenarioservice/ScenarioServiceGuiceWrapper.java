@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -47,7 +48,7 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Collection<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(
          IJellyFishCommandOptions options, IScenario scenario) {
       return scenarioService.getRequestResponseMessagingFlows(options, scenario);
    }
