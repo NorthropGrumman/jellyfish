@@ -154,7 +154,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
 
    /**
     * This method retrieves the data path from the model using the provided step arguments. The {@link IDataField}
-    * object is wrapped by an {@link InputOutputDataField} which contains more information about the data field
+    * object is wrapped by an {@link IDataPath} which contains more information about the data field
     * pertaining to how it was used in the context of the step.
     *
     * @param context         the context
