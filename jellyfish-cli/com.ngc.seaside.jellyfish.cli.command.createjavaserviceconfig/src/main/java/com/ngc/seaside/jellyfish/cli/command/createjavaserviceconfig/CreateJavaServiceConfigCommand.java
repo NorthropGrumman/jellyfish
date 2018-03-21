@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
 
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
+   static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
@@ -199,6 +200,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL,
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.CLEAN);
    }
