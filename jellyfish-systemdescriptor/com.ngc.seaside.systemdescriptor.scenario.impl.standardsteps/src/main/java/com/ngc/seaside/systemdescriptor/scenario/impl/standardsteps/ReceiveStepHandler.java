@@ -53,13 +53,14 @@ public class ReceiveStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireOnlyOneParameter(context, "The 'receive' verb requires exactly one parameter!");
-      requireParameterReferenceAnInputField(context);
+      requireOnlyOneParameter(context, "The 'receive' verb requires exactly one parameter which is an input field!");
+      requireParameterReferenceAnInputField(context, 0);
    }
 
-   static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context) {
+   static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context,
+                                                     int parameterIndex) {
       IScenarioStep step = context.getObject();
-      String fieldName = step.getParameters().stream().findFirst().orElse(null);
+      String fieldName = step.getParameters().size() <= parameterIndex ? null : step.getParameters().get(parameterIndex);
       IModel model = step.getParent().getParent();
       if (fieldName != null && !model.getInputs().getByName(fieldName).isPresent()) {
          String errMsg = String.format("The model %s contains no input field named '%s'!",

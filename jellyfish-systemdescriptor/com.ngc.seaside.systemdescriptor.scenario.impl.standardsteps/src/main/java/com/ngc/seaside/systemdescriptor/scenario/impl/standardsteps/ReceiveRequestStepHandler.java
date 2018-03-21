@@ -58,8 +58,9 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireOnlyOneParameter(context, "The 'receiveRequest' verb requires exactly one parameter!");
-      ReceiveStepHandler.requireParameterReferenceAnInputField(context);
+      requireOnlyOneParameter(context,
+                              "The 'receiveRequest' verb requires exactly one parameter which is an input field!");
+      ReceiveStepHandler.requireParameterReferenceAnInputField(context, 0);
       requireNoOtherReceiveRequestStepsInScenario(context);
       requireNoWhenStepsWithVerbInScenario(
             context,

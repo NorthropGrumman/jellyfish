@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -56,6 +56,7 @@ public class RespondStepHandlerTest {
 
       step = new ScenarioStep();
       step.setKeyword(RespondStepHandler.FUTURE.getVerb());
+      step.getParameters().add("with");
       step.getParameters().add(field.getName());
       step.setParent(scenario);
       scenario.addThen(step);
@@ -91,6 +92,18 @@ public class RespondStepHandlerTest {
 
    @Test
    public void testDoesValidateWrongNumberOfParameters() {
+      step.getParameters().add(field.getName());
+
+      IScenarioStep mockedStep = mock(IScenarioStep.class);
+      when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
+
+      handler.doValidateStep(context);
+      verify(mockedStep).getParameters();
+   }
+
+   @Test
+   public void testDoesRequireWithParameter() {
+      step.getParameters().clear();
       step.getParameters().add(field.getName());
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);

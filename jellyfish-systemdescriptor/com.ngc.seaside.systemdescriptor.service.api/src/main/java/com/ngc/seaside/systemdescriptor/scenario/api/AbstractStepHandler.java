@@ -118,6 +118,22 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
    }
 
    /**
+    * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the step has exactly <i>N</i>
+    * parameters.
+    *
+    * @param context      the validation context
+    * @param errorMessage the error message to use if the scenario step does not have exactly <i>N</i> parameters
+    */
+   protected void requireExactlyNParameters(IValidationContext<IScenarioStep> context,
+                                            int parameterCount,
+                                            String errorMessage) {
+      IScenarioStep step = context.getObject();
+      if (parameterCount != step.getParameters().size()) {
+         context.declare(Severity.ERROR, errorMessage, step).getParameters();
+      }
+   }
+
+   /**
     * May be invoked during {@link #doValidateStep(IValidationContext)} to verify the scenario that contains the current
     * step does not contain a given step that uses the given verb.
     *

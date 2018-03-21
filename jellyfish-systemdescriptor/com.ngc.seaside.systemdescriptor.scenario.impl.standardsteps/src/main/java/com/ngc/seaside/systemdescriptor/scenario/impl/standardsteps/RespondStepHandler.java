@@ -47,9 +47,11 @@ public class RespondStepHandler extends AbstractStepHandler {
             || keyword.equals(PRESENT.getVerb())
             || keyword.equals(FUTURE.getVerb()),
             "the step cannot be processed by this handler!");
+      Preconditions.checkArgument(step.getParameters().size() > 1,
+                                  "invalid number of parameters in step, requires at least 2!");
 
       IModel model = step.getParent().getParent();
-      String outputName = step.getParameters().get(0);
+      String outputName = step.getParameters().get(1);
       return model.getOutputs()
             .getByName(outputName)
             .orElseThrow(() -> new IllegalStateException("model does not contain an output named " + outputName));
@@ -57,9 +59,20 @@ public class RespondStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireOnlyOneParameter(context, "The 'respond' verb requires exactly one parameter!");
-      PublishStepHandler.requireParameterReferenceAnOutputField(context);
+      requireExactlyNParameters(context,
+                                2,
+                                "The 'respond' verb requires parameters of the form: with <inputField>");
+      requireWithParameter(context);
+      PublishStepHandler.requireParameterReferenceAnOutputField(context, 1);
       requireNoOtherRespondStepsInScenario(context);
+   }
+
+   private static void requireWithParameter(IValidationContext<IScenarioStep> context) {
+      IScenarioStep step = context.getObject();
+      if (step.getParameters().size() == 2 && !"with".equals(step.getParameters().get(0))) {
+         context.declare(Severity.ERROR, "The 'respond' verb requires the first parameter to be 'with'!", step)
+               .getParameters();
+      }
    }
 
    private static void requireNoOtherRespondStepsInScenario(IValidationContext<IScenarioStep> context) {
