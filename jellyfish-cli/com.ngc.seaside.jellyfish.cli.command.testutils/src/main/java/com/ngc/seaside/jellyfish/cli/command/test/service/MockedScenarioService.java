@@ -13,7 +13,9 @@ import com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.ScenarioS
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class MockedScenarioService implements IScenarioService {
       delegate.setCorrelationStepHandler(new CorrelateStepHandler());
       delegate.setPublishStepHandler(new PublishStepHandler());
       delegate.setReceiveStepHandler(new ReceiveStepHandler());
+      delegate.setReceiveRequestStepHandler(new ReceiveRequestStepHandler());
+      delegate.setRespondStepHandler(new RespondStepHandler());
    }
 
    @Override
@@ -41,7 +45,7 @@ public class MockedScenarioService implements IScenarioService {
    }
 
    @Override
-   public Collection<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
             IScenario scenario) {
       return delegate.getRequestResponseMessagingFlows(options, scenario);
    }
