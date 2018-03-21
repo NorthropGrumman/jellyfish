@@ -40,7 +40,7 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
     * @param step the step that contains a receive verb
     * @return the input field of the model that is received
     */
-   public IDataReferenceField getInputs(IScenarioStep step) {
+   public IDataReferenceField getRequest(IScenarioStep step) {
       Preconditions.checkNotNull(step, "step may not be null!");
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
@@ -59,7 +59,7 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
       requireOnlyOneParameter(context, "The 'receiveRequest' verb requires exactly one parameter!");
-      requireParameterReferenceAnInputField(context);
+      ReceiveStepHandler.requireParameterReferenceAnInputField(context);
       requireNoOtherReceiveRequestStepsInScenario(context);
       requireNoWhenStepsWithVerbInScenario(
             context,
@@ -69,18 +69,6 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
             context,
             ReceiveStepHandler.PRESENT,
             "Scenarios that receive requests cannot asynchronously receive multiple inputs!");
-   }
-
-   private static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context) {
-      IScenarioStep step = context.getObject();
-      String fieldName = step.getParameters().stream().findFirst().orElse(null);
-      IModel model = step.getParent().getParent();
-      if (fieldName != null && !model.getInputs().getByName(fieldName).isPresent()) {
-         String errMsg = String.format("The model %s contains no input field named '%s'!",
-                                       model.getFullyQualifiedName(),
-                                       fieldName);
-         context.declare(Severity.ERROR, errMsg, step).getParameters();
-      }
    }
 
    private static void requireNoOtherReceiveRequestStepsInScenario(IValidationContext<IScenarioStep> context) {

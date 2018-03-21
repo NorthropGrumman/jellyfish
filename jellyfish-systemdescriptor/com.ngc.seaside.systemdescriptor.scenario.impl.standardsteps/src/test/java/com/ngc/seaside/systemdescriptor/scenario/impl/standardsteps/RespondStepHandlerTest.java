@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -24,9 +24,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ReceiveRequestStepHandlerTest {
+public class RespondStepHandlerTest {
 
-   private ReceiveRequestStepHandler handler;
+   private RespondStepHandler handler;
 
    private ScenarioStep step;
 
@@ -45,36 +45,36 @@ public class ReceiveRequestStepHandlerTest {
    public void setup() {
       data = new Data("TestData");
 
-      field = new DataReferenceField("input1");
+      field = new DataReferenceField("output1");
       field.setType(data);
 
       model = new Model("TestModel");
-      model.addInput(field);
+      model.addOutput(field);
 
       scenario = new Scenario("test");
       scenario.setParent(model);
 
       step = new ScenarioStep();
-      step.setKeyword(ReceiveRequestStepHandler.PRESENT.getVerb());
+      step.setKeyword(RespondStepHandler.FUTURE.getVerb());
       step.getParameters().add(field.getName());
       step.setParent(scenario);
-      scenario.addWhen(step);
+      scenario.addThen(step);
 
       when(context.getObject()).thenReturn(step);
 
-      handler = new ReceiveRequestStepHandler();
+      handler = new RespondStepHandler();
    }
 
    @Test
    public void testDoesRegisterVerbs() {
       assertEquals("did not register correct past tense!",
-                   ReceiveRequestStepHandler.PAST,
+                   RespondStepHandler.PAST,
                    handler.getVerbs().get(VerbTense.PAST_TENSE));
       assertEquals("did not register correct present tense!",
-                   ReceiveRequestStepHandler.PRESENT,
+                   RespondStepHandler.PRESENT,
                    handler.getVerbs().get(VerbTense.PRESENT_TENSE));
       assertEquals("did not register correct future tense!",
-                   ReceiveRequestStepHandler.FUTURE,
+                   RespondStepHandler.FUTURE,
                    handler.getVerbs().get(VerbTense.FUTURE_TENSE));
    }
 
@@ -101,9 +101,9 @@ public class ReceiveRequestStepHandlerTest {
    }
 
    @Test
-   public void testDoesRequireFieldToBeAnInput() {
-      model.getInputs().clear();
-      model.addOutput(field);
+   public void testDoesRequireFieldToBeAnOutput() {
+      model.getOutputs().clear();
+      model.addInput(field);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
       when(context.declare(eq(Severity.ERROR), anyString(), eq(step))).thenReturn(mockedStep);
@@ -125,10 +125,10 @@ public class ReceiveRequestStepHandlerTest {
    }
 
    @Test
-   public void testDoesAllowOnlyOneReceiveRequestStepPerScenario() {
+   public void testDoesAllowOnlyOneRespondStepPerScenario() {
       ScenarioStep extraStep = new ScenarioStep();
-      extraStep.setKeyword(ReceiveRequestStepHandler.PRESENT.getVerb());
-      scenario.addWhen(extraStep);
+      extraStep.setKeyword(RespondStepHandler.FUTURE.getVerb());
+      scenario.addThen(extraStep);
 
       IScenarioStep mockedStep = mock(IScenarioStep.class);
       when(context.declare(eq(Severity.ERROR), anyString(), eq(extraStep))).thenReturn(mockedStep);
@@ -138,35 +138,9 @@ public class ReceiveRequestStepHandlerTest {
    }
 
    @Test
-   public void testDoesNotAllowCorrelation() {
-      ScenarioStep extraStep = new ScenarioStep();
-      extraStep.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
-      scenario.addWhen(extraStep);
-
-      IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(extraStep))).thenReturn(mockedStep);
-
-      handler.doValidateStep(context);
-      verify(mockedStep).getKeyword();
-   }
-
-   @Test
-   public void testDoesNotAllowReceive() {
-      ScenarioStep extraStep = new ScenarioStep();
-      extraStep.setKeyword(ReceiveStepHandler.PRESENT.getVerb());
-      scenario.addWhen(extraStep);
-
-      IScenarioStep mockedStep = mock(IScenarioStep.class);
-      when(context.declare(eq(Severity.ERROR), anyString(), eq(extraStep))).thenReturn(mockedStep);
-
-      handler.doValidateStep(context);
-      verify(mockedStep).getKeyword();
-   }
-
-   @Test
-   public void testGetGetInputs() {
+   public void testGetGetOutputs() {
       assertEquals("did not return correct field!",
                    field,
-                   handler.getRequest(step));
+                   handler.getResponse(step));
    }
 }

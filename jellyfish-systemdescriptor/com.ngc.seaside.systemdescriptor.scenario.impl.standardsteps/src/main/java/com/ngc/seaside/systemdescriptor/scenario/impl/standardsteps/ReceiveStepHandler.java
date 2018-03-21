@@ -57,7 +57,7 @@ public class ReceiveStepHandler extends AbstractStepHandler {
       requireParameterReferenceAnInputField(context);
    }
 
-   private static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context) {
+   static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context) {
       IScenarioStep step = context.getObject();
       String fieldName = step.getParameters().stream().findFirst().orElse(null);
       IModel model = step.getParent().getParent();

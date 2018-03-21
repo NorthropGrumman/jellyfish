@@ -57,7 +57,7 @@ public class PublishStepHandler extends AbstractStepHandler {
       requireParameterReferenceAnOutputField(context);
    }
 
-   private static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context) {
+   static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context) {
       IScenarioStep step = context.getObject();
       String fieldName = step.getParameters().stream().findFirst().orElse(null);
       IModel model = step.getParent().getParent();
