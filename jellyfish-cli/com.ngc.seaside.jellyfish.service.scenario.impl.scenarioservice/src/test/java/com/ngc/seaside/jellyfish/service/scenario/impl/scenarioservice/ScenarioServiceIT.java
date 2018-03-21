@@ -15,7 +15,9 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
@@ -57,7 +59,7 @@ public class ScenarioServiceIT {
    };
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       systemDescriptor = getSystemDescriptor();
 
       service = new ScenarioService();
@@ -65,6 +67,8 @@ public class ScenarioServiceIT {
       service.setPublishStepHandler(new PublishStepHandler());
       service.setReceiveStepHandler(new ReceiveStepHandler());
       service.setCorrelationStepHandler(new CorrelateStepHandler());
+      service.setReceiveRequestStepHandler(new ReceiveRequestStepHandler());
+      service.setRespondStepHandler(new RespondStepHandler());
       service.activate();
    }
 

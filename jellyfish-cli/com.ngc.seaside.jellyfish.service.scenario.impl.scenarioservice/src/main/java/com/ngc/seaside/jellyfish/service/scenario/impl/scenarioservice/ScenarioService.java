@@ -10,11 +10,14 @@ import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.api.ITimingConstraint;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor.PubSubProcessor;
+import com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor.RequestResponseProcessor;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -37,10 +40,13 @@ import java.util.Set;
 public class ScenarioService implements IScenarioService {
 
    private PubSubProcessor pubSubProcessor;
+   private RequestResponseProcessor reqResProcesssor;
 
    private ReceiveStepHandler receiveStepHandler;
    private PublishStepHandler publishStepHandler;
    private CorrelateStepHandler correlateStepHandler;
+   private ReceiveRequestStepHandler receiveRequestStepHandler;
+   private RespondStepHandler respondStepHandler;
    private ILogService logService;
 
    @Override
@@ -52,6 +58,10 @@ public class ScenarioService implements IScenarioService {
       if (pubSubProcessor.isPublishSubscribe(scenario)) {
          paradigms.add(MessagingParadigm.PUBLISH_SUBSCRIBE);
       }
+      if (reqResProcesssor.isRequestResponse(scenario)) {
+         paradigms.add(MessagingParadigm.REQUEST_RESPONSE);
+      }
+
       return Collections.unmodifiableCollection(paradigms);
    }
 
@@ -60,14 +70,15 @@ public class ScenarioService implements IScenarioService {
                                                                           IScenario scenario) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");
-
       return pubSubProcessor.getFlow(scenario);
    }
 
    @Override
    public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
                                                                                    IScenario scenario) {
-      throw new UnsupportedOperationException("not implemented");
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(scenario, "scenario may not be null!");
+      return reqResProcesssor.getFlow(scenario);
    }
 
    @Override
@@ -78,10 +89,11 @@ public class ScenarioService implements IScenarioService {
 
    @Activate
    public void activate() {
-      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
-         this.pubSubProcessor =
-               new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
-      }
+      pubSubProcessor = new PubSubProcessor(publishStepHandler,
+                                            receiveStepHandler,
+                                            correlateStepHandler);
+      reqResProcesssor = new RequestResponseProcessor(receiveRequestStepHandler,
+                                                      respondStepHandler);
       logService.debug(getClass(), "activated");
    }
 
@@ -102,49 +114,56 @@ public class ScenarioService implements IScenarioService {
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler)")
    public void setReceiveStepHandler(IScenarioStepHandler ref) {
-      this.receiveStepHandler = (ReceiveStepHandler) ref;
-      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
-         this.pubSubProcessor =
-               new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
-      }
+      receiveStepHandler = (ReceiveStepHandler) ref;
    }
 
    public void removeReceiveStepHandler(IScenarioStepHandler ref) {
-      this.receiveStepHandler = null;
-      this.pubSubProcessor = null;
+      setReceiveStepHandler(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler)")
    public void setPublishStepHandler(IScenarioStepHandler ref) {
-      this.publishStepHandler = (PublishStepHandler) ref;
-      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
-         this.pubSubProcessor =
-               new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
-      }
+      publishStepHandler = (PublishStepHandler) ref;
    }
 
    public void removePublishStepHandler(IScenarioStepHandler ref) {
-      this.publishStepHandler = null;
-      this.pubSubProcessor = null;
+      setPublishStepHandler(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
-         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps)")
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler)")
    public void setCorrelationStepHandler(IScenarioStepHandler ref) {
-      this.correlateStepHandler = (CorrelateStepHandler) ref;
-      if (this.publishStepHandler != null && this.receiveStepHandler != null && this.correlateStepHandler != null) {
-         this.pubSubProcessor =
-               new PubSubProcessor(this.publishStepHandler, this.receiveStepHandler, this.correlateStepHandler);
-      }
+      correlateStepHandler = (CorrelateStepHandler) ref;
    }
 
    public void removeCorrelationStepHandler(IScenarioStepHandler ref) {
-      this.publishStepHandler = null;
-      this.pubSubProcessor = null;
+      setCorrelationStepHandler(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler)")
+   public void setReceiveRequestStepHandler(IScenarioStepHandler ref) {
+      receiveRequestStepHandler = (ReceiveRequestStepHandler) ref;
+   }
+
+   public void removeReceiveRequestStepHandler(IScenarioStepHandler ref) {
+      setReceiveRequestStepHandler(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         target = "(component.name=com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler)")
+   public void setRespondStepHandler(IScenarioStepHandler ref) {
+      respondStepHandler = (RespondStepHandler) ref;
+   }
+
+   public void removeRespondRequestStepHandler(IScenarioStepHandler ref) {
+      setRespondStepHandler(null);
    }
 }

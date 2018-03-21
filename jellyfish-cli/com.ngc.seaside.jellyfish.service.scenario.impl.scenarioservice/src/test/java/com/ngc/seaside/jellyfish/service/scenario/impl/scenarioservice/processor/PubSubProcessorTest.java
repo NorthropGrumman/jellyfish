@@ -44,7 +44,7 @@ public class PubSubProcessorTest {
    private CorrelateStepHandler correlateStepHandler;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       Data outputData = new Data("TestData1");
       Data inputData = new Data("TestData2");
 
@@ -72,14 +72,14 @@ public class PubSubProcessorTest {
       publishStep.setParent(scenario);
       scenario.addThen(publishStep);
 
-      processor = new PubSubProcessor(publishStepHandler, receiveStepHandler, correlateStepHandler);
-
       when(receiveStepHandler.getInputs(receiveStep)).thenReturn(input);
       when(publishStepHandler.getOutputs(publishStep)).thenReturn(output);
+
+      processor = new PubSubProcessor(publishStepHandler, receiveStepHandler, correlateStepHandler);
    }
 
    @Test
-   public void testDoesComputeFlowPaths() throws Throwable {
+   public void testDoesComputeFlowPaths() {
       Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
       assertTrue("expected a flow!", optionalFlow.isPresent());
 
@@ -97,7 +97,7 @@ public class PubSubProcessorTest {
    }
 
    @Test
-   public void testDoesComputeFlowSources() throws Throwable {
+   public void testDoesComputeFlowSources() {
       scenario.getWhens().clear();
 
       Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
@@ -117,7 +117,7 @@ public class PubSubProcessorTest {
    }
 
    @Test
-   public void testDoesComputeFlowSinks() throws Throwable {
+   public void testDoesComputeFlowSinks() {
       scenario.getThens().clear();
 
       Optional<IPublishSubscribeMessagingFlow> optionalFlow = processor.getFlow(scenario);
@@ -137,7 +137,7 @@ public class PubSubProcessorTest {
    }
 
    @Test
-   public void testDoesComputeMessagingParadigms() throws Throwable {
+   public void testDoesComputeMessagingParadigms() {
       assertTrue("scenario should be pub/sub!",
                  processor.isPublishSubscribe(scenario));
 
