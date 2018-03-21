@@ -1,3 +1,3 @@
 dependencies {
-    sd "com.ngc.seaside.threateval:threatevaluation.descriptor:$threatEvalVersion"
+    sd "com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:$threatEvalVersion"
 }
