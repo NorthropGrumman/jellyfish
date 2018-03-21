@@ -1,7 +1,9 @@
 package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 
@@ -12,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -35,6 +38,12 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       }
 
       return topic.toUpperCase();
+   }
+
+   @Override
+   public Optional<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
+            IDataReferenceField field) {
+      throw new UnsupportedOperationException("Not implemented");
    }
 
    @Activate
