@@ -8,7 +8,7 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 
-import java.util.Optional;
+import java.util.Collection;
 
 public class TransportConfigurationServiceGuiceWrapper implements ITransportConfigurationService {
 
@@ -27,7 +27,7 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    }
 
    @Override
-   public Optional<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
+   public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       return delegate.getMulticastConfiguration(options, field);
    }

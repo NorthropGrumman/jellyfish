@@ -6,7 +6,7 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 
-import java.util.Optional;
+import java.util.Collection;
 
 public class MockedTransportConfigurationService implements ITransportConfigurationService {
 
@@ -16,7 +16,7 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    }
 
    @Override
-   public Optional<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
+   public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       throw new UnsupportedOperationException("Not implemented");
    }

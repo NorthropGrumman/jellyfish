@@ -1,6 +1,8 @@
 dependencies {
     api project(':jellyfish.service.api')
 
+	implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+
     implementation "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
