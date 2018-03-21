@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.codegen.testutils;
 
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
@@ -14,6 +15,28 @@ import static org.mockito.Mockito.when;
 public class FlowFactory {
 
    private FlowFactory() {
+   }
+
+   public static IRequestResponseMessagingFlow newRequestResponseServerFlow(String scenarioName) {
+      Scenario scenario = new Scenario(scenarioName);
+      Package dataPackage = new Package("com.ngc.testing.data");
+
+      Data rquestData = new Data("TestDataInput");
+      Data responseData = new Data("TestDataOutput");
+      rquestData.setParent(dataPackage);
+      responseData.setParent(dataPackage);
+
+      DataReferenceField requestRefField = new DataReferenceField("requestField");
+      DataReferenceField responseRefField = new DataReferenceField("responseField");
+      requestRefField.setType(rquestData);
+      responseRefField.setType(responseData);
+
+      IRequestResponseMessagingFlow flow = mock(IRequestResponseMessagingFlow.class);
+      when(flow.getFlowType()).thenReturn(IRequestResponseMessagingFlow.FlowType.SERVER);
+      when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getInput()).thenReturn(requestRefField);
+      when(flow.getOutput()).thenReturn(responseRefField);
+      return flow;
    }
 
    public static IPublishSubscribeMessagingFlow newPubSubFlowPath(String scenarioName) {

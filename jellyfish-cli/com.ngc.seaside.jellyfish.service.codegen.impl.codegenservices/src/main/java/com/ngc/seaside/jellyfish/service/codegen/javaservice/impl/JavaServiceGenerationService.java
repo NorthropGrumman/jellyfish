@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.codegen.javaservice.impl;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
@@ -9,6 +10,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -57,32 +59,26 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
       dto.setName("Abstract" + model.getName());
       dto.setPackageName(packageNamingService.getServiceBaseImplementationPackageName(options, model));
       dto.setImports(getImports(dto));
-      dto.getImports().add(packageNamingService.getServiceInterfacePackageName(options, model) + ".I" + model.getName());
+      dto.getImports().add(packageNamingService.getServiceInterfacePackageName(options, model)
+                           + ".I"
+                           + model.getName());
       return dto;
    }
 
    @Override
    public EnumDto getTransportTopicsDescription(IJellyFishCommandOptions options, IModel model) {
-      Set<String> transportTopics = new LinkedHashSet<>();
-      for (IScenario scenario : model.getScenarios()) {
-         Optional<IPublishSubscribeMessagingFlow> optionalFlow = scenarioService.getPubSubMessagingFlow(options, scenario);
-         if (optionalFlow.isPresent()) {
-            IPublishSubscribeMessagingFlow flow = optionalFlow.get();
-            for (IDataReferenceField field : flow.getInputs()) {
-               String topic = transportConfigService.getTransportTopicName(flow, field);
-               transportTopics.add(topic);
-            }
-            for (IDataReferenceField field : flow.getOutputs()) {
-               String topic = transportConfigService.getTransportTopicName(flow, field);
-               transportTopics.add(topic);
-            }
-         }
-      }
       EnumDto dto = new EnumDto();
-      dto.setValues(transportTopics)
-         .setName(model.getName() + "TransportTopics")
-         .setPackageName(packageNamingService.getTransportTopicsPackageName(options, model))
-         .setImports(new LinkedHashSet<>(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic")));
+      dto.setValues(new LinkedHashSet<>());
+      dto.setName(model.getName() + "TransportTopics")
+            .setPackageName(packageNamingService.getTransportTopicsPackageName(options, model))
+            .setImports(new LinkedHashSet<>(
+                  Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic")));
+
+      for (IScenario scenario : model.getScenarios()) {
+         configurePubSubTransportTopics(dto, options, scenario);
+         configureReqResTransportTopics(dto, options, scenario);
+      }
+
       return dto;
    }
 
@@ -130,6 +126,47 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
    public void removeTransportConfigurationService(ITransportConfigurationService ref) {
       setTransportConfigurationService(null);
+   }
+
+   private void configurePubSubTransportTopics(EnumDto dto, IJellyFishCommandOptions options, IScenario scenario) {
+      Optional<IPublishSubscribeMessagingFlow> optionalFlow =
+            scenarioService.getPubSubMessagingFlow(options, scenario);
+
+      if (optionalFlow.isPresent()) {
+         IPublishSubscribeMessagingFlow flow = optionalFlow.get();
+         for (IDataReferenceField field : flow.getInputs()) {
+            String topic = transportConfigService.getTransportTopicName(flow, field);
+            dto.getValues().add(topic);
+         }
+         for (IDataReferenceField field : flow.getOutputs()) {
+            String topic = transportConfigService.getTransportTopicName(flow, field);
+            dto.getValues().add(topic);
+         }
+      }
+   }
+
+   private void configureReqResTransportTopics(EnumDto dto, IJellyFishCommandOptions options, IScenario scenario) {
+      Optional<IRequestResponseMessagingFlow> optionalFlow =
+            scenarioService.getRequestResponseMessagingFlows(options, scenario);
+
+      if (optionalFlow.isPresent()) {
+         IRequestResponseMessagingFlow flow = optionalFlow.get();
+         switch (flow.getFlowType()) {
+            case SERVER:
+               // We only need a topic for the input not the output.
+               dto.getValues().add(transportConfigService.getTransportTopicName(flow, flow.getInput()));
+               break;
+            case CLIENT:
+               // Not implemented yet.
+            default:
+               logService.warn(getClass(),
+                               "Request/responses %s flows not currently supported; found on %s.%s.",
+                               flow.getFlowType(),
+                               scenario.getParent().getFullyQualifiedName(),
+                               scenario.getName());
+               break;
+         }
+      }
    }
 
    private static Set<String> getImports(ClassDto dto) {

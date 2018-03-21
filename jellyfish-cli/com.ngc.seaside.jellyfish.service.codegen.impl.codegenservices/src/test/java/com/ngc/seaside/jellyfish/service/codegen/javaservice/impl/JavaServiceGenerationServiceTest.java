@@ -1,10 +1,5 @@
 package com.ngc.seaside.jellyfish.service.codegen.javaservice.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
@@ -13,6 +8,7 @@ import com.ngc.seaside.jellyfish.service.codegen.testutils.FlowFactory;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
@@ -32,6 +28,11 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class JavaServiceGenerationServiceTest {
@@ -58,25 +59,25 @@ public class JavaServiceGenerationServiceTest {
 
    @Mock
    private Collection<ICorrelationExpression> inputInputCorrelations;
-   
+
    @Mock
    private Collection<ICorrelationExpression> inputOutputCorrelations;
-   
+
    @Mock
    private ICorrelationDescription correlationService;
-   
+
    @Mock
    private ICorrelationDescription test;
-   
+
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(model.getName()).thenReturn("EngagementTrackPriorityService");
       when(model.getScenarios()).thenReturn(new NamedChildCollection<>());
 
       when(packageNamingService.getServiceInterfacePackageName(options, model)).thenReturn(
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.api");
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice.api");
       when(packageNamingService.getServiceBaseImplementationPackageName(options, model)).thenReturn(
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl");
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl");
 
       service = new JavaServiceGenerationService();
       service.setLogService(logService);
@@ -87,49 +88,50 @@ public class JavaServiceGenerationServiceTest {
    }
 
    @Test
-   public void testDoesCreateInterfaceDescriptionForPubSubFlowPathWithCorrelation() throws Throwable {
+   public void testDoesCreateInterfaceDescriptionForPubSubFlowPathWithCorrelation() {
       IPublishSubscribeMessagingFlow flow = FlowFactory.newPubSubFlowPath("calculateTrackPriority");
       when(flow.getCorrelationDescription()).thenReturn(Optional.of(test));
       when(test.getCompletenessExpressions()).thenReturn(inputInputCorrelations);
       when(test.getCorrelationExpressions()).thenReturn(inputOutputCorrelations);
-      
+
       model.getScenarios().add(flow.getScenario());
 
       when(packageNamingService.getEventPackageName(options, flow.getInputs().iterator().next().getType()))
-                                                                                                           .thenReturn(
-                                                                                                              "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.input");
+            .thenReturn("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.input");
       when(packageNamingService.getEventPackageName(options, flow.getOutputs().iterator().next().getType()))
-                                                                                                            .thenReturn(
-                                                                                                               "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output");
+            .thenReturn("com.ngc.seaside.threateval.engagementtrackpriorityservice.event.output");
 
       when(scenarioService.getMessagingParadigms(options, flow.getScenario())).thenReturn(EnumSet.of(
-                                                                                 MessagingParadigm.PUBLISH_SUBSCRIBE));
+            MessagingParadigm.PUBLISH_SUBSCRIBE));
       when(scenarioService.getPubSubMessagingFlow(options, flow.getScenario())).thenReturn(
-                                                                                   Optional.of(flow));
+            Optional.of(flow));
 
       ClassDto dto = service.getServiceInterfaceDescription(options, model);
       assertNotNull("dto is null!", dto);
       assertEquals("interface name not correct!", "I" + model.getName(), dto.getName());
       assertEquals("package name not correct!",
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
-         dto.getPackageName());
-     
+                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.api",
+                   dto.getPackageName());
 
       ClassDto baseDto = service.getBaseServiceDescription(options, model);
       assertNotNull("dto is null!", baseDto);
       assertEquals("base name not correct!", "Abstract" + model.getName(), baseDto.getName());
       assertEquals("package name not correct!",
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
-         baseDto.getPackageName());
+                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl",
+                   baseDto.getPackageName());
    }
 
    @Test
-   public void testTranportTopics() throws Throwable {
-      IPublishSubscribeMessagingFlow flow = FlowFactory.newPubSubFlowPath("calculateTrackPriority");
-      model.getScenarios().add(flow.getScenario());
+   public void testTransportTopics() {
+      IPublishSubscribeMessagingFlow pubSubFlow = FlowFactory.newPubSubFlowPath("calculateTrackPriority");
+      model.getScenarios().add(pubSubFlow.getScenario());
+      when(scenarioService.getPubSubMessagingFlow(options, pubSubFlow.getScenario()))
+            .thenReturn(Optional.of(pubSubFlow));
 
-      when(scenarioService.getPubSubMessagingFlow(options, flow.getScenario())).thenReturn(
-         Optional.of(flow));
+      IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow("getTrackPriority");
+      model.getScenarios().add(reqResFlow.getScenario());
+      when(scenarioService.getRequestResponseMessagingFlows(options, reqResFlow.getScenario()))
+            .thenReturn(Optional.of(reqResFlow));
 
       when(transportConfService.getTransportTopicName(any(), any())).thenAnswer(args -> {
          IDataReferenceField field = args.getArgument(1);
@@ -138,6 +140,8 @@ public class JavaServiceGenerationServiceTest {
 
       EnumDto topicsEnum = service.getTransportTopicsDescription(options, model);
       assertEquals("EngagementTrackPriorityServiceTransportTopics", topicsEnum.getName());
-      assertEquals(new HashSet<>(Arrays.asList("inputField", "outputField")), topicsEnum.getValues());
+      assertEquals("missing transport topics!",
+                   new HashSet<>(Arrays.asList("inputField", "outputField", "requestField")),
+                   topicsEnum.getValues());
    }
 }
