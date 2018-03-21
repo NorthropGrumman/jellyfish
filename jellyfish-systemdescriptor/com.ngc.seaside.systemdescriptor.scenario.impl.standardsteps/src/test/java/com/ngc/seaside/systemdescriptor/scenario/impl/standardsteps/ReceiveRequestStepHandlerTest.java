@@ -12,7 +12,6 @@ import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -173,7 +172,6 @@ public class ReceiveRequestStepHandlerTest {
    }
 
    @Test
-   @Ignore
    public void testDoesRequireWillRespondStep() {
       scenario.getThens().clear();
 

@@ -70,6 +70,7 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
             context,
             ReceiveStepHandler.PRESENT,
             "Scenarios that receive requests cannot asynchronously receive multiple inputs!");
+      requireWillRespondStep(context);
    }
 
    private static void requireNoOtherReceiveRequestStepsInScenario(IValidationContext<IScenarioStep> context) {
@@ -88,4 +89,18 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
          context.declare(Severity.ERROR, errMsg, receiveRequestSteps.get(1)).getKeyword();
       }
    }
+
+   private static void requireWillRespondStep(IValidationContext<IScenarioStep> context) {
+      IScenarioStep step = context.getObject();
+      IScenario scenario = step.getParent();
+
+      boolean hasWillRespondStep = scenario.getThens()
+            .stream()
+            .anyMatch(s -> RespondStepHandler.FUTURE.getVerb().equals(s.getKeyword()));
+      if(!hasWillRespondStep) {
+         String errMsg = "Scenarios that receive requests must respond using the 'willRespond' verb!";
+         context.declare(Severity.ERROR, errMsg, scenario).getThens();
+      }
+   }
+
 }
