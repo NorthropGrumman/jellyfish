@@ -11,6 +11,7 @@ public class DerivedRootProjectExtension {
    public static final String DEFAULT_SYSTEM_DESCRIPTOR_TEST_DIRECTORY_NAME = "features";
    
    private String model;
+   private String deploymentModel;
    private Dependency project;
    private File directory;
    private File testDirectory;
@@ -45,6 +46,15 @@ public class DerivedRootProjectExtension {
       return this;
    }
    
+   public String getDeploymentModel() {
+      return deploymentModel;
+   }
+
+   public DerivedRootProjectExtension setDeploymentModel(String deploymentModel) {
+      this.deploymentModel = deploymentModel;
+      return this;
+   }
+
    public File getDirectory() {
       return directory;
    }

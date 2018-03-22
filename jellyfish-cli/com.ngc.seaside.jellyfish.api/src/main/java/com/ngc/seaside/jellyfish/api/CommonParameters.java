@@ -7,6 +7,7 @@ public enum CommonParameters implements IParameter<String> {
    ARTIFACT_ID("artifactId", "The project's artifact ID."),
    CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
+   DEPLOYMENT_MODEL("deploymentModel", "The fully qualified path to the system descriptor deployment model"),
    GROUP_ARTIFACT_VERSION("gav",
                           "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
