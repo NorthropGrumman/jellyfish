@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto;
+package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto;
 
 import com.google.common.base.Objects;
 

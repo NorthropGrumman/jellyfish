@@ -1,7 +1,7 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
+package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

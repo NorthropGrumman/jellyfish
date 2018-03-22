@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
+package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -6,7 +6,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.dto.ConnectorDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.ConnectorDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;

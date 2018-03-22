@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
+package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
