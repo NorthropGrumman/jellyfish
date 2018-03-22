@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
-import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -39,9 +38,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-public class CreateJavaPubsubConnectorCommand extends AbstractMultiphaseJellyfishCommand {
+public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyfishCommand {
 
-   private static final String NAME = "create-java-pubsub-connector";
+   private static final String NAME = "create-java-protobuf-connector";
    static final String PUBSUB_GENBUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String PUBSUB_BUILD_TEMPLATE_SUFFIX = "build";
 
@@ -60,7 +59,7 @@ public class CreateJavaPubsubConnectorCommand extends AbstractMultiphaseJellyfis
    private IJavaServiceGenerationService generationService;
    private IDataFieldGenerationService dataFieldService;
 
-   public CreateJavaPubsubConnectorCommand() {
+   public CreateJavaProtobufConnectorCommand() {
       super(NAME);
    }
 
@@ -177,7 +176,7 @@ public class CreateJavaPubsubConnectorCommand extends AbstractMultiphaseJellyfis
 
       unpackSuffixedTemplate(PUBSUB_GENBUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
-      logService.info(CreateJavaPubsubConnectorCommand.class,
+      logService.info(CreateJavaProtobufConnectorCommand.class,
                       "%s project successfully created",
                       model.getFullyQualifiedName());
    }

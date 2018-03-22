@@ -6,13 +6,13 @@ import com.google.inject.multibindings.Multibinder;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 
-public class CreateJavaPubsubConnectorCommandGuiceModule extends AbstractModule {
+public class CreateJavaProtobufConnectorCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
       Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(CreateJavaPubsubConnectorCommandGuiceWrapper.class);
+            .to(CreateJavaProtobufConnectorCommandGuiceWrapper.class);
       Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
-            .to(CreateJavaPubsubConnectorCommandGuiceWrapper.class);
+            .to(CreateJavaProtobufConnectorCommandGuiceWrapper.class);
    }
 }

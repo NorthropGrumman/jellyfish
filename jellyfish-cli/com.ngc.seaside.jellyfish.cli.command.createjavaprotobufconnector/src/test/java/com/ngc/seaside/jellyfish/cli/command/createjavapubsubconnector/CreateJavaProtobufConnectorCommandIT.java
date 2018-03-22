@@ -1,7 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaPubsubConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaPubsubConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -45,9 +45,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CreateJavaPubsubConnectorCommandIT {
+public class CreateJavaProtobufConnectorCommandIT {
 
-   private CreateJavaPubsubConnectorCommand cmd = new CreateJavaPubsubConnectorCommand();
+   private CreateJavaProtobufConnectorCommand cmd = new CreateJavaProtobufConnectorCommand();
    private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
@@ -58,11 +58,11 @@ public class CreateJavaPubsubConnectorCommandIT {
       ITemplateService templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
-                  CreateJavaPubsubConnectorCommand.class.getPackage().getName() + "-"
+                  CreateJavaProtobufConnectorCommand.class.getPackage().getName() + "-"
                   + PUBSUB_GENBUILD_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates", "genbuild"))
             .setTemplateDirectory(
-                  CreateJavaPubsubConnectorCommand.class.getPackage().getName() + "-"
+                  CreateJavaProtobufConnectorCommand.class.getPackage().getName() + "-"
                   + PUBSUB_BUILD_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates", "build"));
 

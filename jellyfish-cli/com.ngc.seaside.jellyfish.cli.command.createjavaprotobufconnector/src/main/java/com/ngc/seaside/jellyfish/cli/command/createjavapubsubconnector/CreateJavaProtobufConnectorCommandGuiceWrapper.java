@@ -17,21 +17,21 @@ import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 
 @JellyFishCommandConfiguration(autoTemplateProcessing = false)
-public class CreateJavaPubsubConnectorCommandGuiceWrapper implements IJellyFishCommand {
+public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFishCommand {
 
-   private final CreateJavaPubsubConnectorCommand delegate = new CreateJavaPubsubConnectorCommand();
+   private final CreateJavaProtobufConnectorCommand delegate = new CreateJavaProtobufConnectorCommand();
 
    @Inject
-   public CreateJavaPubsubConnectorCommandGuiceWrapper(ILogService logService,
-                                                       ITemplateService templateService,
-                                                       IScenarioService scenarioService,
-                                                       ITransportConfigurationService transportConfigService,
-                                                       IRequirementsService requirementsService,
-                                                       IPackageNamingService packageService,
-                                                       IProjectNamingService projectService,
-                                                       IJavaServiceGenerationService generationService,
-                                                       IDataFieldGenerationService dataFieldService,
-                                                       IBuildManagementService buildManagementService) {
+   public CreateJavaProtobufConnectorCommandGuiceWrapper(ILogService logService,
+                                                         ITemplateService templateService,
+                                                         IScenarioService scenarioService,
+                                                         ITransportConfigurationService transportConfigService,
+                                                         IRequirementsService requirementsService,
+                                                         IPackageNamingService packageService,
+                                                         IProjectNamingService projectService,
+                                                         IJavaServiceGenerationService generationService,
+                                                         IDataFieldGenerationService dataFieldService,
+                                                         IBuildManagementService buildManagementService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setScenarioService(scenarioService);
