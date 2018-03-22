@@ -167,7 +167,8 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
                           projectNamingService.getEventsProjectName(getOptions(), model).getArtifactId(),
                           projectNamingService.getMessageProjectName(getOptions(), model).getArtifactId())));
 
-      evaluateIO(getOptions(), dto);
+      evaluatePubSubIo(getOptions(), dto);
+      evaluateReqResIo(getOptions(), dto);
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -181,8 +182,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
                       model.getFullyQualifiedName());
    }
 
-   private void evaluateIO(IJellyFishCommandOptions options, ConnectorDto dto) {
-
+   private void evaluatePubSubIo(IJellyFishCommandOptions options, ConnectorDto dto) {
       IModel model = dto.getModel();
 
       Set<INamedChild<IPackage>> inputs = new LinkedHashSet<>();
@@ -197,8 +197,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
 
          final Set<String> scenarioRequirements = requirementsService.getRequirements(options, scenario);
 
-         Optional<IPublishSubscribeMessagingFlow>
-               optionalFlow =
+         Optional<IPublishSubscribeMessagingFlow> optionalFlow =
                scenarioService.getPubSubMessagingFlow(options, scenario);
          if (optionalFlow.isPresent()) {
             IPublishSubscribeMessagingFlow flow = optionalFlow.get();
@@ -256,6 +255,10 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       dto.setInputTopics(inputTopics);
       dto.setOutputTopics(outputTopics);
       dto.setTopicRequirements(topicRequirements);
+   }
+
+   private void evaluateReqResIo(IJellyFishCommandOptions options, ConnectorDto dto) {
+
    }
 
    private static void addNestedData(Set<INamedChild<IPackage>> data) {

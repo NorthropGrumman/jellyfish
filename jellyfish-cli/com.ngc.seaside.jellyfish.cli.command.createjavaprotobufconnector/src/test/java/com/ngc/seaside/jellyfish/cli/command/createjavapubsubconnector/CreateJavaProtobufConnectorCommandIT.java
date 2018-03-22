@@ -54,7 +54,7 @@ public class CreateJavaProtobufConnectorCommandIT {
    private Path outputDirectory;
 
    @Before
-   public void setup() throws IOException {
+   public void setup() {
       ITemplateService templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
@@ -77,7 +77,9 @@ public class CreateJavaProtobufConnectorCommandIT {
       cmd.setBuildManagementService(new MockedBuildManagementService());
       cmd.setTemplateService(templateService);
 
-      outputDirectory = Files.createTempDirectory(null);
+      // TODO TH: fix this
+      //outputDirectory = Files.createTempDirectory(null);
+      outputDirectory = Paths.get("build", "blah");
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDirectory));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
@@ -87,7 +89,10 @@ public class CreateJavaProtobufConnectorCommandIT {
       IData base = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Base");
       IData child = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Child");
       IData data = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data");
+      IData request = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Request");
+      IData response = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Response");
       IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enumeration");
+
       ModelUtils.mockData(data, null,
                           "dataField1", DataTypes.INT,
                           "dataField2", FieldCardinality.MANY, DataTypes.STRING,
@@ -102,9 +107,22 @@ public class CreateJavaProtobufConnectorCommandIT {
                           "childField2", FieldCardinality.MANY, DataTypes.STRING,
                           "childField3", FieldCardinality.MANY, enumeration,
                           "childField4", data);
+      ModelUtils.mockData(request, null,
+                          "requestField1", DataTypes.INT,
+                          "requestField2", FieldCardinality.MANY, DataTypes.STRING);
+      ModelUtils.mockData(response, null,
+                          "responseField1", DataTypes.INT,
+                          "responseField2", FieldCardinality.MANY, DataTypes.STRING);
+
       ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.Model");
       model.addPubSub("scenario1", "input1", data, "output1", child);
+      ModelUtils.addReqRes(model,
+                           "requestResponseScenario",
+                           "request", request,
+                           "response", response);
+
       when(systemDescriptor.findModel("com.ngc.Model")).thenReturn(Optional.of(model));
+
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(), model.getFullyQualifiedName()));
 
    }

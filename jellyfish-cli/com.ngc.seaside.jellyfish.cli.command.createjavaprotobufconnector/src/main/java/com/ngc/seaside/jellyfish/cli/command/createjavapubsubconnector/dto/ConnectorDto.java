@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
@@ -34,6 +35,8 @@ public class ConnectorDto {
    private IPackageNamingService packageService;
    private IDataFieldGenerationService dataFieldService;
    private IJellyFishCommandOptions options;
+   private boolean requiresInjectedService;
+   private ClassDto serviceInterface;
 
    public IModel getModel() {
       return model;
@@ -155,6 +158,24 @@ public class ConnectorDto {
 
    public ConnectorDto setOptions(IJellyFishCommandOptions options) {
       this.options = options;
+      return this;
+   }
+
+   public boolean isRequiresInjectedService() {
+      return requiresInjectedService;
+   }
+
+   public ConnectorDto setRequiresInjectedService(boolean requiresInjectedService) {
+      this.requiresInjectedService = requiresInjectedService;
+      return this;
+   }
+
+   public ClassDto getServiceInterface() {
+      return serviceInterface;
+   }
+
+   public ConnectorDto setServiceInterface(ClassDto serviceInterface) {
+      this.serviceInterface = serviceInterface;
       return this;
    }
 

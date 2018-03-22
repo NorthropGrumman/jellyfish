@@ -208,7 +208,7 @@ public class ModelUtils {
                                      Object... stepParameters) {
       IScenario scenario = model.addScenario(name, givens, whens, thens, stepParameters);
       scenario.getGivens().forEach(s -> when(s.getKeyword()).thenReturn(ReceiveRequestStepHandler.PAST.getVerb()));
-      scenario.getWhens().forEach(s -> when(s.getKeyword()).thenReturn(ReceiveStepHandler.PRESENT.getVerb()));
+      scenario.getWhens().forEach(s -> when(s.getKeyword()).thenReturn(ReceiveRequestStepHandler.PRESENT.getVerb()));
       scenario.getThens().forEach(s -> when(s.getKeyword()).thenReturn(RespondStepHandler.FUTURE.getVerb()));
       return scenario;
    }

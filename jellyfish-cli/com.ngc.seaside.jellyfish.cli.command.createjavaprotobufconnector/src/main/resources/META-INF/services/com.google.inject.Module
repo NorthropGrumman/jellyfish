@@ -1,1 +1,1 @@
-com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaPubsubConnectorCommandGuiceModule
+com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector.CreateJavaProtobufConnectorCommandGuiceModule
