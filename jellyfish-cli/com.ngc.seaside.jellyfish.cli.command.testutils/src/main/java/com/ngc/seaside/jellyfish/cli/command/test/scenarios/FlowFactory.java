@@ -52,6 +52,25 @@ public class FlowFactory {
       IDataReferenceField output = model.getOutputs().iterator().next();
 
       when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getFlowType()).thenReturn(IRequestResponseMessagingFlow.FlowType.SERVER);
+      when(flow.getInput()).thenReturn(input);
+      when(flow.getOutput()).thenReturn(output);
+      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
+
+      return flow;
+   }
+
+   public static IRequestResponseMessagingFlow newRequestResponseServerFlow(IScenario scenario,
+                                                                            String inputFieldName,
+                                                                            String outputFieldName) {
+      IModel model = scenario.getParent();
+
+      IRequestResponseMessagingFlow flow = mock(IRequestResponseMessagingFlow.class);
+      IDataReferenceField input = model.getInputs().getByName(inputFieldName).get();
+      IDataReferenceField output = model.getOutputs().getByName(outputFieldName).get();
+
+      when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getFlowType()).thenReturn(IRequestResponseMessagingFlow.FlowType.SERVER);
       when(flow.getInput()).thenReturn(input);
       when(flow.getOutput()).thenReturn(output);
       when(flow.getCorrelationDescription()).thenReturn(Optional.empty());

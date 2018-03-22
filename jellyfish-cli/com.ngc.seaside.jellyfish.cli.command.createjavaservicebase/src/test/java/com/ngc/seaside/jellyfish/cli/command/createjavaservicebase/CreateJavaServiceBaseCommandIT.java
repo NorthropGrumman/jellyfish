@@ -217,7 +217,9 @@ public class CreateJavaServiceBaseCommandIT {
             .getByName("getTrackPriority")
             .get();
       IPublishSubscribeMessagingFlow pubSubFlow = FlowFactory.newPubSubFlowPath(calculateTrackPriority);
-      IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow(getTrackPriority);
+      IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow(getTrackPriority,
+                                                                                          "trackPriorityRequest",
+                                                                                          "trackPriorityResponse");
       when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority)))
             .thenReturn(Optional.of(pubSubFlow));
       when(scenarioService.getRequestResponseMessagingFlows(any(), eq(calculateTrackPriority)))
@@ -300,10 +302,12 @@ public class CreateJavaServiceBaseCommandIT {
 
       IData trackPriorityRequest =
             ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriorityRequest");
+      IData trackPriorityResponse =
+            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriorityResponse");
       ModelUtils.addReqRes(model,
                            "getTrackPriority",
                            "trackPriorityRequest", trackPriorityRequest,
-                           "trackPriorityResponse", trackPriority);
+                           "trackPriorityResponse", trackPriorityResponse);
 
       return model;
    }

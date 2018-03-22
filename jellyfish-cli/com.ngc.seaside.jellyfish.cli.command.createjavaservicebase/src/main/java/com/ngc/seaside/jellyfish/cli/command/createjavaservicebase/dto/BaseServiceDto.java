@@ -20,6 +20,7 @@ public class BaseServiceDto {
    private IModel model;
    private boolean correlationRequestHandlingEnabled;
    private boolean correlationServiceRequired;
+
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
    private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>();
@@ -27,6 +28,8 @@ public class BaseServiceDto {
    private List<CorrelationDto> correlationMethods = new ArrayList<>();
    private List<TriggerDto> triggerRegistrationMethods = new ArrayList<>();
    private List<ComplexScenarioDto> complexScenarios = new ArrayList<>();
+
+   private List<BasicServerReqResDto> basicServerReqResMethods = new ArrayList<>();
 
    public String getExportedPackagesSnippet() {
       return exportedPackages.stream()
@@ -174,6 +177,15 @@ public class BaseServiceDto {
 
    public BaseServiceDto setCorrelationServiceRequired(boolean correlationServiceRequired) {
       this.correlationServiceRequired = correlationServiceRequired;
+      return this;
+   }
+
+   public List<BasicServerReqResDto> getBasicServerReqResMethods() {
+      return basicServerReqResMethods;
+   }
+
+   public BaseServiceDto setBasicServerReqResMethods(List<BasicServerReqResDto> basicServerReqResMethods) {
+      this.basicServerReqResMethods = basicServerReqResMethods;
       return this;
    }
 }
