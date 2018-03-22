@@ -29,8 +29,6 @@ allprojects {
         velocityVersion = '2.0'
         xtextVersion = '2.12.0'
 
-        // This is a not a version but it is a property that is shared by all projects.
-        // TODO TH: rename this file to properties.gradle or common.gradle.
         m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
         dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
         m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")

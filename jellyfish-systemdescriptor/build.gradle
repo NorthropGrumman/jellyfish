@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        versionsFile = file('../versions.gradle')
+        versionsFile = file('../common.gradle')
     }
     apply from: versionsFile, to: project
 
