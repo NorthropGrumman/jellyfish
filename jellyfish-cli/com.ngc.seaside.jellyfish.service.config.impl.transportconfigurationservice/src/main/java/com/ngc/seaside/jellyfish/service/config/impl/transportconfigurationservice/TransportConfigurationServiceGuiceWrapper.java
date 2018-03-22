@@ -5,6 +5,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -32,6 +33,12 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       return delegate.getMulticastConfiguration(options, field);
+   }
+
+   @Override
+   public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
+            IDataReferenceField field) {
+      return delegate.getRestConfiguration(options, field);
    }
 
 }
