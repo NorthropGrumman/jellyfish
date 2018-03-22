@@ -33,6 +33,7 @@ public class ${dto.model.name}Connector {
    private ILogService logService;
    private IEventService eventService;
    private ITransportService transportService;
+#if(${dto.requiresInjectedService}) private  #end
 
    @SuppressWarnings("unchecked")
    @Activate
