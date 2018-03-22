@@ -3,7 +3,10 @@ import com.ngc.seaside.gradle.util.Versions
 dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
+	testCompile "org.eclipse.xtext:org.eclipse.xtext.junit4:${xtextVersion}"
+	testCompile "org.eclipse.xtext:org.eclipse.xtext.xbase.junit:${xtextVersion}"
 }
+
 configurations {
 	mwe2 {
 		extendsFrom compile
@@ -12,6 +15,7 @@ configurations {
 
 dependencies {
 	mwe2 "org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.8.3"
+	mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:${xtextVersion}"
 	mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
 }
 
@@ -19,15 +23,58 @@ clean.doFirst {
     delete file('model')
 }
 
+def mwe2OutputStream = new OutputStream() {
+	private def lineBuilder = new StringBuilder()
+	private final def pattern = ~/^\d+\s+\[\w+\]\s+(?<level>\w+)\s+.*$/
+	@Override
+	def void write(byte[] b, int off, int len) {
+		def str = new String(b, off, len).trim()
+		def matcher = pattern.matcher(str)
+		if (matcher.matches()) {
+			def level = matcher.group('level')
+			switch (level) {
+			case 'INFO':
+				logger.info(str)
+				break
+			case 'WARN':
+				logger.warn(str)
+				break
+			case 'ERROR':
+				logger.error(str)
+				break
+			}
+		} else {
+			super.write(b, off, len)
+		}
+	}
+	@Override
+	def void write(int b) {
+		if (b == '\n') {
+			logger.info(lineBuilder.toString())
+			lineBuilder = new StringBuilder()
+		} else {
+			lineBuilder.append((char) b)
+		}
+	}
+	@Override
+	def void close() {
+		if (lineBuilder.length() != 0) {
+			logger.info(lineBuilder.toString())
+		}
+		super.close()
+	}
+}
+
 task generateXtextLanguage(type: JavaExec) {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.mwe2
-	inputs.file "src/com/ngc/seaside/systemdescriptor/GenerateSystemDescriptor.mwe2"
-	inputs.file "src/com/ngc/seaside/systemdescriptor/SystemDescriptor.xtext"
-	outputs.dir "src-gen"
-	args += "src/com/ngc/seaside/systemdescriptor/GenerateSystemDescriptor.mwe2"
+	inputs.file "src/main/java/com/ngc/seaside/systemdescriptor/GenerateSystemDescriptor.mwe2"
+	inputs.file "src/main/java/com/ngc/seaside/systemdescriptor/SystemDescriptor.xtext"
+	outputs.dir "src/main/xtext-gen"
+	args += "src/main/java/com/ngc/seaside/systemdescriptor/GenerateSystemDescriptor.mwe2"
 	args += "-p"
 	args += "rootPath=/${projectDir}/.."
+	standardOutput = mwe2OutputStream
 }
 
 generateXtext.dependsOn(generateXtextLanguage)

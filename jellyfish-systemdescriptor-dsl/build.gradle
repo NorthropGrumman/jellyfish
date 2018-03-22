@@ -1,5 +1,4 @@
 import org.gradle.internal.os.OperatingSystem
-
 buildscript {
     ext {
         versionsFile = file('../versions.gradle')
@@ -18,31 +17,6 @@ buildscript {
         classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
     }
-}
-
-ext {
-    eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
-    eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
-
-    eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
-
-    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
-    eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
-    // The cache location of downloaded files.
-    eclipseCache = '../.gradle/eclipse'
-    // The local file to save the ZIP to.
-    eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
-    // This is the location where the Eclipse download will be unzipped to.
-    // Note this name may change if the download URL changes to a different version of Eclipse.
-    eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
-
-    // This is the location of the Eclipse we use when compiling and building the
-    // update site.
-    eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
-
-    // This is the location of the Eclispe exe we use to create the update site
-    // metadata.
-    eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
 }
 
 apply plugin: 'com.ngc.seaside.release.root'
@@ -91,8 +65,10 @@ subprojects {
         }
 		
 		clean.doFirst {
-		    delete file('src-gen')
-		    delete file('xtend-gen')
+		    delete file('src/main/xtend-gen')
+		    delete file('src/main/xtext-gen')
+		    delete file('src/test/xtend-gen')
+		    delete file('src/test/xtext-gen')
 		    delete file('plugin.xml_gen')
 		}
 
@@ -172,6 +148,32 @@ subprojects {
             archives javadocJar
         }
     }
+}
+
+
+ext {
+    eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
+    eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+
+    eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
+
+    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
+    eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
+    // The cache location of downloaded files.
+    eclipseCache = '../.gradle/eclipse'
+    // The local file to save the ZIP to.
+    eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
+    // This is the location where the Eclipse download will be unzipped to.
+    // Note this name may change if the download URL changes to a different version of Eclipse.
+    eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
+
+    // This is the location of the Eclipse we use when compiling and building the
+    // update site.
+    eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+
+    // This is the location of the Eclispe exe we use to create the update site
+    // metadata.
+    eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
 }
 
 task downloadEclipse() {
