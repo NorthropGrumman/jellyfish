@@ -3,15 +3,15 @@ package com.ngc.seaside.systemdescriptor.tests.packages
 import com.google.inject.Inject
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.eclipse.xtext.junit4.util.ResourceHelper
+import org.eclipse.xtext.testing.util.ResourceHelper
 import org.eclipse.emf.common.util.URI
 import com.ngc.seaside.systemdescriptor.validation.SdIssueCodes
 import com.ngc.seaside.systemdescriptor.tests.SystemDescriptorInjectorProvider

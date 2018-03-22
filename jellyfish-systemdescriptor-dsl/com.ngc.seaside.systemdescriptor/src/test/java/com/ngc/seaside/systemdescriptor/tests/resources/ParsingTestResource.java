@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.junit4.util.ResourceHelper;
+import org.eclipse.xtext.testing.util.ResourceHelper;
 
 public class ParsingTestResource {
 

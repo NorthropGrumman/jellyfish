@@ -4,8 +4,8 @@ import java.util.Random;
 import java.util.function.Function;
 
 import org.eclipse.xtext.formatting2.FormatterRequest;
-import org.eclipse.xtext.junit4.formatter.FormatterTestRequest;
-import org.eclipse.xtext.junit4.formatter.FormatterTester;
+import org.eclipse.xtext.testing.formatter.FormatterTestHelper;
+import org.eclipse.xtext.testing.formatter.FormatterTestRequest;
 
 import com.google.inject.Inject;
 
@@ -48,7 +48,7 @@ public class FormattingTestUtils {
    public static final Function<String, String> PASSTHROUGH_MALFORMATTER = Function.identity();
 
    @Inject
-   private FormatterTester formatterTester;
+   private FormatterTestHelper formatterTester;
 
    /**
     * Tests the formatter given correctly-formatted code. This method transform the correctly-formatted code into several mal-formatted code strings, apply the formatter to the mal-formatted code
