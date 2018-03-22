@@ -26,7 +26,6 @@ public class CandyService extends AbstractCandyService {
       throw new UnsupportedOperationException("not implemented");
    }
 
-
    @Activate
    public void activate() {
       super.activate();

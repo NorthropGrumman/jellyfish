@@ -26,7 +26,6 @@ public class EngagementTrackPriorityService extends AbstractEngagementTrackPrior
       throw new UnsupportedOperationException("not implemented");
    }
 
-
    @Activate
    public void activate() {
       super.activate();

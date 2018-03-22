@@ -32,8 +32,6 @@ public class PeanutButterService extends AbstractPeanutButterService {
          throw new UnsupportedOperationException("not implemented");
    }
 
-
-
    @Activate
    public void activate() {
       super.activate();
