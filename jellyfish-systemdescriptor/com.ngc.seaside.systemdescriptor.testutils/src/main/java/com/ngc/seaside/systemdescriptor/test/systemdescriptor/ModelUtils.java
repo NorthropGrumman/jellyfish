@@ -12,14 +12,18 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 
 import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -209,7 +213,12 @@ public class ModelUtils {
       IScenario scenario = model.addScenario(name, givens, whens, thens, stepParameters);
       scenario.getGivens().forEach(s -> when(s.getKeyword()).thenReturn(ReceiveRequestStepHandler.PAST.getVerb()));
       scenario.getWhens().forEach(s -> when(s.getKeyword()).thenReturn(ReceiveRequestStepHandler.PRESENT.getVerb()));
-      scenario.getThens().forEach(s -> when(s.getKeyword()).thenReturn(RespondStepHandler.FUTURE.getVerb()));
+      scenario.getThens().forEach(s -> {
+         List<String> params = new ArrayList<>(s.getParameters());
+         params.add(0, "with");
+         when(s.getKeyword()).thenReturn(RespondStepHandler.FUTURE.getVerb());
+         when(s.getParameters()).thenReturn(params);
+      });
       return scenario;
    }
 
