@@ -44,6 +44,21 @@ public class FlowFactory {
       return flow;
    }
 
+   public static IRequestResponseMessagingFlow newRequestResponseServerFlow(IScenario scenario) {
+      IModel model = scenario.getParent();
+
+      IRequestResponseMessagingFlow flow = mock(IRequestResponseMessagingFlow.class);
+      IDataReferenceField input = model.getInputs().iterator().next();
+      IDataReferenceField output = model.getOutputs().iterator().next();
+
+      when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getInput()).thenReturn(input);
+      when(flow.getOutput()).thenReturn(output);
+      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
+
+      return flow;
+   }
+
    public static IPublishSubscribeMessagingFlow newPubSubFlowPath(String scenarioName) {
       Scenario scenario = new Scenario(scenarioName);
       Package dataPackage = new Package("com.ngc.testing.data");
