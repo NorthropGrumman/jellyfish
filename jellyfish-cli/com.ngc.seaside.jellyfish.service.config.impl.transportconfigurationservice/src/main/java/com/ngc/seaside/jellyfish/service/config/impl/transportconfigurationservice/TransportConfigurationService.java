@@ -14,7 +14,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
-import com.ngc.seaside.systemdescriptor.model.impl.view.AggregatedModelView;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -47,6 +47,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    private static final String[] REPLACEMENTS = { "$1_$2", "$1_$2" };
 
    private ILogService logService;
+   private ISystemDescriptorService sdService;
 
    @Override
    public String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field) {
@@ -62,7 +63,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    @Override
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
-      IModel deploymentModel = new AggregatedModelView(getDeploymentModel(options));
+      IModel deploymentModel = sdService.getAggregatedView(getDeploymentModel(options));
       Collection<IModelLink<?>> links = findLinks(deploymentModel, field);
       Collection<MulticastConfiguration> configurations = new LinkedHashSet<>();
       for (IModelLink<?> link : links) {
@@ -143,4 +144,12 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       setLogService(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeSystemDescriptorService")
+   public void setSystemDescriptorService(ISystemDescriptorService ref) {
+      this.sdService = ref;
+   }
+
+   public void removeSystemDescriptorService(ISystemDescriptorService ref) {
+      setSystemDescriptorService(null);
+   }
 }

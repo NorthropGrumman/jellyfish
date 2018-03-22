@@ -20,10 +20,13 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -31,7 +34,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class TransportConfigurationServiceTest {
 
    private TransportConfigurationService service;
@@ -39,10 +44,14 @@ public class TransportConfigurationServiceTest {
    @Mock
    private IMessagingFlow flow;
 
+   @Mock
+   private ISystemDescriptorService sdService;
+
    @Before
    public void setup() {
       service = new TransportConfigurationService();
       service.setLogService(new PrintStreamLogService());
+      service.setSystemDescriptorService(sdService);
    }
 
    @Test
@@ -73,11 +82,12 @@ public class TransportConfigurationServiceTest {
       int port2 = 8081;
 
       IDataReferenceField field = mock(IDataReferenceField.class);
+      when(sdService.getAggregatedView(deploymentModel)).thenReturn(deploymentModel);
 
       IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
-      when(
-         options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getStringValue()).thenReturn(
-            deploymentModelName);
+      when(options.getParameters()
+                  .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
+                  .getStringValue()).thenReturn(deploymentModelName);
       when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
       IProperty property1 = getMockedMulticastConfiguration(address, port1);
       IModelLink<IDataReferenceField> link1 = getMockedLink(field, true, property1);
@@ -119,6 +129,7 @@ public class TransportConfigurationServiceTest {
       when(link.getRefinedLink()).thenReturn(Optional.empty());
       when(link.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(link.getProperties().iterator()).thenReturn(Arrays.asList(properties).iterator());
+      when(link.getProperties().stream()).thenReturn(Stream.of(properties));
       return link;
    }
 

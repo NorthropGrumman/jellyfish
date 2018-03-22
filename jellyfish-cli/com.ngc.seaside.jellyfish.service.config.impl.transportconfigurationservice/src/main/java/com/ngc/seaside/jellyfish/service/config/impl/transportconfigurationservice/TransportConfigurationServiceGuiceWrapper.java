@@ -7,6 +7,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import java.util.Collection;
 
@@ -15,9 +16,10 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    private final TransportConfigurationService delegate;
 
    @Inject
-   public TransportConfigurationServiceGuiceWrapper(ILogService logService) {
+   public TransportConfigurationServiceGuiceWrapper(ILogService logService, ISystemDescriptorService sdService) {
       this.delegate = new TransportConfigurationService();
       this.delegate.setLogService(logService);
+      this.delegate.setSystemDescriptorService(sdService);
       this.delegate.activate();
    }
 
