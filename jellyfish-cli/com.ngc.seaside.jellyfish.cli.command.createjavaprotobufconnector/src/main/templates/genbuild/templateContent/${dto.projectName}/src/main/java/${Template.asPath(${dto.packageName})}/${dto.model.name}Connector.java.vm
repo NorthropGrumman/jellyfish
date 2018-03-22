@@ -48,6 +48,13 @@ public class ${dto.model.name}Connector {
          ${dto.transportTopicsClass}.${topic});
 
 #end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($request = $requestEntry.value)
+      transportService.addReceiver(this::handle${request.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($output = $outputEntry.value)
       eventService.addSubscriber(this::send${output.name},
@@ -64,6 +71,13 @@ public class ${dto.model.name}Connector {
       #set ($topic = $inputEntry.key)
       #set ($input = $inputEntry.value)
       transportService.removeReceiver(this::receive${input.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($request = $requestEntry.value)
+      transportService.removeReceiver(this::handle${request.name},
          ${dto.transportTopicsClass}.${topic});
 
 #end

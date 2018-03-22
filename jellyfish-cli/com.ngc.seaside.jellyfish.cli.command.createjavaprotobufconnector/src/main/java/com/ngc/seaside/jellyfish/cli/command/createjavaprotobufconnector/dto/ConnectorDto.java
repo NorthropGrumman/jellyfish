@@ -33,6 +33,7 @@ public class ConnectorDto {
    private Set<String> projectDependencies = new LinkedHashSet<>();
    private Map<String, IData> inputTopics = new TreeMap<>();
    private Map<String, IData> outputTopics = new TreeMap<>();
+   private Map<String, IData> requestTopics = new TreeMap<>();
    private Set<INamedChild<IPackage>> allInputs = new LinkedHashSet<>();
    private Set<INamedChild<IPackage>> allOutputs = new LinkedHashSet<>();
    private Map<String, Set<String>> topicRequirements = new TreeMap<>();
@@ -126,6 +127,15 @@ public class ConnectorDto {
 
    public ConnectorDto setOutputTopics(Map<String, IData> outputTopics) {
       this.outputTopics = outputTopics;
+      return this;
+   }
+
+   public Map<String, IData> getRequestTopics() {
+      return requestTopics;
+   }
+
+   public ConnectorDto setRequestTopics(Map<String, IData> requestTopics) {
+      this.requestTopics = requestTopics;
       return this;
    }
 

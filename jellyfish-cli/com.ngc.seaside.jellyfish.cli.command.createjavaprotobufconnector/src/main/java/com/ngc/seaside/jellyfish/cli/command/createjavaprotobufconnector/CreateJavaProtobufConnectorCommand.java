@@ -221,7 +221,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
                dto.getAllOutputs().add(type);
 
                final String topic = transportConfigService.getTransportTopicName(flow, output);
-               IData previous = dto.getInputTopics().put(topic, type);
+               IData previous = dto.getOutputTopics().put(topic, type);
                if (previous != null && !previous.equals(type)) {
                   throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
                                                                 topic,
@@ -260,7 +260,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             dto.getAllInputs().add(type);
 
             String topic = transportConfigService.getTransportTopicName(flow, flow.getInput());
-            IData previous = dto.getInputTopics().put(topic, type);
+            IData previous = dto.getRequestTopics().put(topic, type);
             if (previous != null && !previous.equals(type)) {
                throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
                                                              topic,
@@ -277,20 +277,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             type = flow.getOutput().getType();
             dto.getAllOutputs().add(type);
 
-            topic = transportConfigService.getTransportTopicName(flow, flow.getOutput());
-            previous = dto.getInputTopics().put(topic, type);
-            if (previous != null && !previous.equals(type)) {
-               throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
-                                                             topic,
-                                                             previous.getClass(),
-                                                             type.getClass()));
-            }
-
-            requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
-            requirements.addAll(requirementsService.getRequirements(options, flow.getOutput()));
-            requirements.addAll(requirementsService.getRequirements(options, type));
-            requirements.addAll(scenarioRequirements);
-            requirements.addAll(modelRequirements);
+            // We don't configure anything for responses since we never *receive* a response type message.
          }
       }
 
