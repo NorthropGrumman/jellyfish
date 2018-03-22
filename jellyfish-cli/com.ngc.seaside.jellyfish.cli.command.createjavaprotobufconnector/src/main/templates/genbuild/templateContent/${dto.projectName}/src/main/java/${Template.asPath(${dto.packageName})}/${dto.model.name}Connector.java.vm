@@ -1,5 +1,7 @@
 package ${dto.packageName};
 
+#if(${dto.requiresInjectedService})import ${dto.serviceInterface.getFullyQualifiedName()};
+#end
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import com.ngc.blocs.requestmodel.api.IRequest;
@@ -33,7 +35,8 @@ public class ${dto.model.name}Connector {
    private ILogService logService;
    private IEventService eventService;
    private ITransportService transportService;
-#if(${dto.requiresInjectedService}) private  #end
+#if(${dto.requiresInjectedService})   private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
+#end
 
    @SuppressWarnings("unchecked")
    @Activate
@@ -73,6 +76,17 @@ public class ${dto.model.name}Connector {
       logService.debug(getClass(), "Deactivated.");
    }
 
+#if(${dto.requiresInjectedService})
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "remove${dto.model.name}")
+   public void set${dto.model.name}(${dto.serviceInterface.name} ref) {
+      ${dto.getServiceFieldName()} = ref
+   }
+
+   public void remove${dto.model.name}(${dto.serviceInterface.name} ref) {
+      set${dto.model.name}(null);
+   }
+
+#end
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
    public void setEventService(IEventService ref) {
       this.eventService = ref;

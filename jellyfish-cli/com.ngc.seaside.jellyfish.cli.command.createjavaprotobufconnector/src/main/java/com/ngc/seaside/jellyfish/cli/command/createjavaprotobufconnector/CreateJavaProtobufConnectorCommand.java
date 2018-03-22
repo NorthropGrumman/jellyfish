@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
@@ -30,11 +31,9 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 
@@ -162,6 +161,9 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
 
       EnumDto transportTopics = generationService.getTransportTopicsDescription(getOptions(), model);
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
+
+      dto.setServiceInterface(generationService.getServiceInterfaceDescription(getOptions(), model));
+
       dto.setProjectDependencies(new LinkedHashSet<>(
             Arrays.asList(projectNamingService.getBaseServiceProjectName(getOptions(), model).getArtifactId(),
                           projectNamingService.getEventsProjectName(getOptions(), model).getArtifactId(),
@@ -185,16 +187,8 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
    private void evaluatePubSubIo(IJellyFishCommandOptions options, ConnectorDto dto) {
       IModel model = dto.getModel();
 
-      Set<INamedChild<IPackage>> inputs = new LinkedHashSet<>();
-      Set<INamedChild<IPackage>> outputs = new LinkedHashSet<>();
-
-      Map<String, IData> inputTopics = new TreeMap<>();
-      Map<String, IData> outputTopics = new TreeMap<>();
-      Map<String, Set<String>> topicRequirements = new TreeMap<>();
-
       final Set<String> modelRequirements = requirementsService.getRequirements(options, model);
       for (IScenario scenario : model.getScenarios()) {
-
          final Set<String> scenarioRequirements = requirementsService.getRequirements(options, scenario);
 
          Optional<IPublishSubscribeMessagingFlow> optionalFlow =
@@ -204,10 +198,10 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
 
             for (IDataReferenceField input : flow.getInputs()) {
                final IData type = input.getType();
-               inputs.add(type);
+               dto.getAllInputs().add(type);
 
                final String topic = transportConfigService.getTransportTopicName(flow, input);
-               IData previous = inputTopics.put(topic, type);
+               IData previous = dto.getInputTopics().put(topic, type);
                if (previous != null && !previous.equals(type)) {
                   throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
                                                                 topic,
@@ -215,20 +209,19 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
                                                                 type.getClass()));
                }
 
-               final Set<String> requirements = topicRequirements.computeIfAbsent(topic, t -> new TreeSet<>());
+               final Set<String> requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
                requirements.addAll(requirementsService.getRequirements(options, input));
                requirements.addAll(requirementsService.getRequirements(options, type));
                requirements.addAll(scenarioRequirements);
                requirements.addAll(modelRequirements);
-
             }
 
             for (IDataReferenceField output : flow.getOutputs()) {
                final IData type = output.getType();
-               outputs.add(type);
+               dto.getAllOutputs().add(type);
 
                final String topic = transportConfigService.getTransportTopicName(flow, output);
-               IData previous = outputTopics.put(topic, type);
+               IData previous = dto.getInputTopics().put(topic, type);
                if (previous != null && !previous.equals(type)) {
                   throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
                                                                 topic,
@@ -236,29 +229,73 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
                                                                 type.getClass()));
                }
 
-               final Set<String> requirements = topicRequirements.computeIfAbsent(topic, t -> new TreeSet<>());
+               final Set<String> requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
                requirements.addAll(requirementsService.getRequirements(options, output));
                requirements.addAll(requirementsService.getRequirements(options, type));
                requirements.addAll(scenarioRequirements);
                requirements.addAll(modelRequirements);
             }
-
          }
-
       }
 
-      addNestedData(inputs);
-      addNestedData(outputs);
-
-      dto.setAllInputs(inputs);
-      dto.setAllOutputs(outputs);
-      dto.setInputTopics(inputTopics);
-      dto.setOutputTopics(outputTopics);
-      dto.setTopicRequirements(topicRequirements);
+      addNestedData(dto.getAllInputs());
+      addNestedData(dto.getAllOutputs());
    }
 
    private void evaluateReqResIo(IJellyFishCommandOptions options, ConnectorDto dto) {
+      IModel model = dto.getModel();
 
+      final Set<String> modelRequirements = requirementsService.getRequirements(options, model);
+      for (IScenario scenario : model.getScenarios()) {
+         final Set<String> scenarioRequirements = requirementsService.getRequirements(options, scenario);
+
+         Optional<IRequestResponseMessagingFlow> optionalFlow =
+               scenarioService.getRequestResponseMessagingFlows(options, scenario);
+         if (optionalFlow.isPresent()) {
+            dto.setRequiresInjectedService(true);
+
+            IRequestResponseMessagingFlow flow = optionalFlow.get();
+
+            IData type = flow.getInput().getType();
+            dto.getAllInputs().add(type);
+
+            String topic = transportConfigService.getTransportTopicName(flow, flow.getInput());
+            IData previous = dto.getInputTopics().put(topic, type);
+            if (previous != null && !previous.equals(type)) {
+               throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
+                                                             topic,
+                                                             previous.getClass(),
+                                                             type.getClass()));
+            }
+
+            Set<String> requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
+            requirements.addAll(requirementsService.getRequirements(options, flow.getInput()));
+            requirements.addAll(requirementsService.getRequirements(options, type));
+            requirements.addAll(scenarioRequirements);
+            requirements.addAll(modelRequirements);
+
+            type = flow.getOutput().getType();
+            dto.getAllOutputs().add(type);
+
+            topic = transportConfigService.getTransportTopicName(flow, flow.getOutput());
+            previous = dto.getInputTopics().put(topic, type);
+            if (previous != null && !previous.equals(type)) {
+               throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
+                                                             topic,
+                                                             previous.getClass(),
+                                                             type.getClass()));
+            }
+
+            requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
+            requirements.addAll(requirementsService.getRequirements(options, flow.getOutput()));
+            requirements.addAll(requirementsService.getRequirements(options, type));
+            requirements.addAll(scenarioRequirements);
+            requirements.addAll(modelRequirements);
+         }
+      }
+
+      addNestedData(dto.getAllInputs());
+      addNestedData(dto.getAllOutputs());
    }
 
    private static void addNestedData(Set<INamedChild<IPackage>> data) {

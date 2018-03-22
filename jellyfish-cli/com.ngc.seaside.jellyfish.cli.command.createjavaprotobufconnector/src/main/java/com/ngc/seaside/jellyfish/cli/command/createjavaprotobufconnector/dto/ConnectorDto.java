@@ -14,9 +14,13 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 public class ConnectorDto {
@@ -26,12 +30,12 @@ public class ConnectorDto {
    private Function<IData, Collection<IDataField>> fields;
    private String transportTopicsClass;
    private String projectName;
-   private Set<String> projectDependencies;
-   private Map<String, IData> inputTopics;
-   private Map<String, IData> outputTopics;
-   private Set<INamedChild<IPackage>> allInputs;
-   private Set<INamedChild<IPackage>> allOutputs;
-   private Map<String, Set<String>> topicRequirements;
+   private Set<String> projectDependencies = new LinkedHashSet<>();
+   private Map<String, IData> inputTopics = new TreeMap<>();
+   private Map<String, IData> outputTopics = new TreeMap<>();
+   private Set<INamedChild<IPackage>> allInputs = new LinkedHashSet<>();
+   private Set<INamedChild<IPackage>> allOutputs = new LinkedHashSet<>();
+   private Map<String, Set<String>> topicRequirements = new TreeMap<>();
    private IPackageNamingService packageService;
    private IDataFieldGenerationService dataFieldService;
    private IJellyFishCommandOptions options;
@@ -133,7 +137,7 @@ public class ConnectorDto {
       this.topicRequirements = topicRequirements;
       return this;
    }
-   
+
    public IPackageNamingService getPackageService() {
       return packageService;
    }
@@ -197,11 +201,11 @@ public class ConnectorDto {
 
    /**
     * Returns a method to convert from type1 to type2.
-    * 
-    * @param child INamedChild on which the conversion is based
+    *
+    * @param child     INamedChild on which the conversion is based
     * @param javaType1 type to convert from
     * @param javaType2 type to convert to
-    * @param argument argument to convert
+    * @param argument  argument to convert
     * @return a method to convert from type1 to type2
     */
    private static String converterName(INamedChild<?> child, String javaType1, String javaType2, String argument) {
@@ -220,22 +224,22 @@ public class ConnectorDto {
    public String eventToMessageConvert(INamedChild<?> field, String argument) {
       if (field instanceof IData || field instanceof IEnumeration) {
          return converterName(field,
-            eventPackage((INamedChild<IPackage>) field) + '.' + field.getName(),
-            messagePackage((INamedChild<IPackage>) field) + '.' + field.getName(),
-            argument);
+                              eventPackage((INamedChild<IPackage>) field) + '.' + field.getName(),
+                              messagePackage((INamedChild<IPackage>) field) + '.' + field.getName(),
+                              argument);
       } else if (field instanceof IDataField) {
          switch (((IDataField) field).getType()) {
-         case DATA:
-            return eventToMessageConvert(((IDataField) field).getReferencedDataType(), argument);
-         case ENUM:
-            return eventToMessageConvert(((IDataField) field).getReferencedEnumeration(), argument);
-         default:
-            break;
+            case DATA:
+               return eventToMessageConvert(((IDataField) field).getReferencedDataType(), argument);
+            case ENUM:
+               return eventToMessageConvert(((IDataField) field).getReferencedEnumeration(), argument);
+            default:
+               break;
          }
          String javaType = dataFieldService.getEventsField(options, (IDataField) field).getJavaType();
          String javaProtoType = dataFieldService.getMessagesField(options, (IDataField) field)
-                                                .getJavaField()
-                                                .getJavaType();
+               .getJavaField()
+               .getJavaType();
          return converterName(field, javaType, javaProtoType, argument);
       }
       throw new IllegalStateException("Unknown parameter type: " + field);
@@ -245,22 +249,22 @@ public class ConnectorDto {
    public String messageToEventConvert(INamedChild<?> field, String argument) {
       if (field instanceof IData || field instanceof IEnumeration) {
          return converterName(field,
-            messagePackage((INamedChild<IPackage>) field) + '.' + field.getName(),
-            eventPackage((INamedChild<IPackage>) field) + '.' + field.getName(),
-            argument);
+                              messagePackage((INamedChild<IPackage>) field) + '.' + field.getName(),
+                              eventPackage((INamedChild<IPackage>) field) + '.' + field.getName(),
+                              argument);
       } else if (field instanceof IDataField) {
          switch (((IDataField) field).getType()) {
-         case DATA:
-            return messageToEventConvert(((IDataField) field).getReferencedDataType(), argument);
-         case ENUM:
-            return messageToEventConvert(((IDataField) field).getReferencedEnumeration(), argument);
-         default:
-            break;
+            case DATA:
+               return messageToEventConvert(((IDataField) field).getReferencedDataType(), argument);
+            case ENUM:
+               return messageToEventConvert(((IDataField) field).getReferencedEnumeration(), argument);
+            default:
+               break;
          }
          String javaType = dataFieldService.getEventsField(options, (IDataField) field).getJavaType();
          String javaProtoType = dataFieldService.getMessagesField(options, (IDataField) field)
-                                                .getJavaField()
-                                                .getJavaType();
+               .getJavaField()
+               .getJavaType();
          return converterName(field, javaProtoType, javaType, argument);
       }
       throw new IllegalStateException("Unknown parameter type: " + field);
@@ -296,5 +300,9 @@ public class ConnectorDto {
 
    public String messageRepeatedCount(IDataField field) {
       return dataFieldService.getMessagesField(options, field).getJavaField().getRepeatedJavaCountName();
+   }
+
+   public String getServiceFieldName() {
+      return StringUtils.uncapitalize(model.getName());
    }
 }
