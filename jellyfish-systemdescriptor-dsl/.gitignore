@@ -46,6 +46,6 @@ src-gen
 .vs 
 
 # xtend and xtext
-xtend-gen/
-src-gen/
+*/src/*/xtend-gen/
+*/src/*/xtext-gen/
 plugin.xml_gen
