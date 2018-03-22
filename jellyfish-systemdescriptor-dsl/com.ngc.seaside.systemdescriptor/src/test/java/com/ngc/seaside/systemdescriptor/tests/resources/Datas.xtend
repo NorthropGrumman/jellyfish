@@ -3,7 +3,7 @@ package com.ngc.seaside.systemdescriptor.tests.resources
 import static com.ngc.seaside.systemdescriptor.tests.resources.ParsingTestResource.resource;
 import org.eclipse.emf.ecore.resource.Resource
 import java.util.Arrays
-import org.eclipse.xtext.junit4.util.ResourceHelper
+import org.eclipse.xtext.testing.util.ResourceHelper
 import java.util.ArrayList
 import java.util.Collection
 

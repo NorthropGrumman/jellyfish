@@ -12,9 +12,9 @@ import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator
 import java.util.ArrayList
 import java.util.Collection
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -114,7 +114,7 @@ class SystemDescriptorValidatorTest {
 	
 	@After
 	def public void teardown() {
-		if(additionalValidator != null) {
+		if(additionalValidator !== null) {
 			validator.removeValidatorExtension(additionalValidator)
 		}
 	}
