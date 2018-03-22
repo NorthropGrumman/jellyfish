@@ -218,6 +218,7 @@ class Datas {
 		return ParsingTestResource.preparedForParse(resourceHelper, all)
 	}
 
+	@SuppressWarnings("unchecked")
 	def private static Collection<ParsingTestResource> asCollectionOfResources(Collection<?> collection) {
 		if (!collection.isEmpty()) {
 			for (Object o : collection) {
