@@ -15,6 +15,7 @@ import com.ngc.seaside.request.api.ServiceRequest;
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
+import com.ngc.seaside.service.transport.api.InvalidPayloadException;
 import com.ngc.seaside.service.transport.api.ITransportReceiver;
 
 import org.osgi.service.component.annotations.Activate;
@@ -50,7 +51,7 @@ public class ${dto.model.name}Connector {
 #end
 #foreach($requestEntry in $dto.requestTopics.entrySet())
 #set ($topic = $requestEntry.key)
-#set ($request = $requestEntry.value)
+#set ($request = $requestEntry.value.request)
       transportService.addReceiver(this::handle${request.name},
          ${dto.transportTopicsClass}.${topic});
 
@@ -76,7 +77,7 @@ public class ${dto.model.name}Connector {
 #end
 #foreach($requestEntry in $dto.requestTopics.entrySet())
 #set ($topic = $requestEntry.key)
-#set ($request = $requestEntry.value)
+#set ($request = $requestEntry.value.request)
       transportService.removeReceiver(this::handle${request.name},
          ${dto.transportTopicsClass}.${topic});
 
@@ -140,13 +141,46 @@ public class ${dto.model.name}Connector {
          try {
             from = ${messagePackage}.${input.name}.parseFrom(transportObject.getPayload());
          } catch (InvalidProtocolBufferException e) {
-            throw new IllegalStateException(e);
+            throw new InvalidPayloadException(e);
          }
          eventService.publish(${dto.model.name}DataConversion.convert(from), ${eventPackage}.${input.name}.TOPIC);
       } finally {
          postReceiveMessage(${dto.transportTopicsClass}.${topic});
       }
       return ITransportReceiver.EMPTY_RESPONSE;
+   }
+#end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($scenario = $requestEntry.value.scenario)
+#set ($request = $requestEntry.value.request)
+#set ($response = $requestEntry.value.response)
+#set ($eventRequestPackage = $dto.eventPackage($request))
+#set ($messageRequestPackage = $dto.messagePackage($request))
+#set ($eventResponsePackage = $dto.eventPackage($response))
+#set ($messageResponsePackage = $dto.messagePackage($response))
+
+   private Future<Collection<ITransportObject>> handle${request.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
+      preReceiveMessage(${dto.transportTopicsClass}.${topic});
+      try {
+         ${messageRequestPackage}.${request.name} request;
+         try {
+            request = ${messageRequestPackage}.${request.name}.parseFrom(transportObject.getPayload());
+         } catch (InvalidProtocolBufferException e) {
+            throw new InvalidPayloadException(e);
+         }
+
+         ${eventResponsePackage}.${response.name} response;
+         try {
+            response = ${dto.getServiceFieldName()}.${scenario.name}(${dto.model.name}DataConversion.convert(request));
+         } catch (ServiceFaultException fault) {
+            faultManagementService.handleFault(fault);
+            throw fault;
+         }
+         return ITransportReceiver.singleImmediateResponse(ITransportObject.withPayload(${dto.model.name}DataConversion.convert(response).toByteArray()));
+      } finally {
+         postReceiveMessage(${dto.transportTopicsClass}.${topic});
+      }
    }
 #end
 #foreach($outputEntry in $dto.outputTopics.entrySet())

@@ -54,7 +54,7 @@ public class CreateJavaProtobufConnectorCommandIT {
    private Path outputDirectory;
 
    @Before
-   public void setup() {
+   public void setup() throws IOException {
       ITemplateService templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
@@ -77,9 +77,7 @@ public class CreateJavaProtobufConnectorCommandIT {
       cmd.setBuildManagementService(new MockedBuildManagementService());
       cmd.setTemplateService(templateService);
 
-      // TODO TH: fix this
-      //outputDirectory = Files.createTempDirectory(null);
-      outputDirectory = Paths.get("build", "blah");
+      outputDirectory = Files.createTempDirectory(null);
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDirectory));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);

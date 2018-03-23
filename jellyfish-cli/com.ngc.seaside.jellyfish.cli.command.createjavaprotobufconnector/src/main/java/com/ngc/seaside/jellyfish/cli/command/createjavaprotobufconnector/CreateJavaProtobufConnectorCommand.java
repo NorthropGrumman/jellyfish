@@ -7,6 +7,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.ConnectorDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.ReqResTopic;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
@@ -255,29 +256,23 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             dto.setRequiresInjectedService(true);
 
             IRequestResponseMessagingFlow flow = optionalFlow.get();
+            String requestTopic = transportConfigService.getTransportTopicName(flow, flow.getInput());
 
-            IData type = flow.getInput().getType();
-            dto.getAllInputs().add(type);
-
-            String topic = transportConfigService.getTransportTopicName(flow, flow.getInput());
-            IData previous = dto.getRequestTopics().put(topic, type);
-            if (previous != null && !previous.equals(type)) {
-               throw new IllegalStateException(String.format("Conflicting data types for topic <%s>: %s and %s",
-                                                             topic,
-                                                             previous.getClass(),
-                                                             type.getClass()));
-            }
-
-            Set<String> requirements = dto.getTopicRequirements().computeIfAbsent(topic, t -> new TreeSet<>());
+            Set<String> requirements = dto.getTopicRequirements().computeIfAbsent(requestTopic, t -> new TreeSet<>());
             requirements.addAll(requirementsService.getRequirements(options, flow.getInput()));
-            requirements.addAll(requirementsService.getRequirements(options, type));
+            requirements.addAll(requirementsService.getRequirements(options, flow.getInput().getType()));
             requirements.addAll(scenarioRequirements);
             requirements.addAll(modelRequirements);
+            // We don't configure requirements for responses since we never *receive* a response type message.
 
-            type = flow.getOutput().getType();
-            dto.getAllOutputs().add(type);
+            dto.getAllInputs().add(flow.getInput().getType());
+            dto.getAllOutputs().add(flow.getOutput().getType());
 
-            // We don't configure anything for responses since we never *receive* a response type message.
+            dto.getRequestTopics().put(requestTopic,
+                                       new ReqResTopic()
+                                             .setRequest(flow.getInput().getType())
+                                             .setResponse(flow.getOutput().getType())
+                                             .setScenario(scenario));
          }
       }
 
