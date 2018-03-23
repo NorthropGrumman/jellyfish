@@ -8,7 +8,9 @@ import static org.mockito.Mockito.when;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -57,11 +59,11 @@ public class TransportConfigurationServiceTest {
    @Test
    public void test() {
       String[][] tests = {
-               {"TEST1_DATA_OBJECT123", "Test1DataObject123"},
-               {"TEST_DATA_OBJ1ECT", "testDataObj1ect"},
-               {"TEST_XML_OBJECT", "TestXMLObject"},
-               {"XML_OBJECT_XML", "XMLObjectXML"},
-               {"TEST_DATA_OBJECT", "Test_data_Object"},
+               { "TEST1_DATA_OBJECT123", "Test1DataObject123" },
+               { "TEST_DATA_OBJ1ECT", "testDataObj1ect" },
+               { "TEST_XML_OBJECT", "TestXMLObject" },
+               { "XML_OBJECT_XML", "XMLObjectXML" },
+               { "TEST_DATA_OBJECT", "Test_data_Object" },
       };
       for (String[] test : tests) {
          final String expected = test[0];
@@ -111,6 +113,54 @@ public class TransportConfigurationServiceTest {
       assertEquals(port2, configuration2.getPort());
    }
 
+   @Test
+   public void testRestConfiguration() {
+      String deploymentModelName = "com.ngc.DeploymentModel";
+      IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
+      String address = "localhost";
+      int port1 = 8080;
+      int port2 = 8081;
+      String path1 = "/path1";
+      String path2 = "/path2";
+      String contentType = "application/x-protobuf";
+      HttpMethod method = HttpMethod.POST;
+
+      IDataReferenceField field = mock(IDataReferenceField.class);
+      when(sdService.getAggregatedView(deploymentModel)).thenReturn(deploymentModel);
+
+      IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
+      when(options.getParameters()
+                  .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
+                  .getStringValue()).thenReturn(deploymentModelName);
+      when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
+      IProperty property1 = getMockedRestConfiguration(address, port1, path1, contentType, method);
+      IModelLink<IDataReferenceField> link1 = getMockedLink(field, true, property1);
+
+      IProperty property2 = getMockedRestConfiguration(address, port2, path2, contentType, method);
+      IModelLink<IDataReferenceField> link2 = getMockedLink(field, true, property2);
+
+      IProperty property3 = getMockedRestConfiguration(address, port2, path2, contentType, method);
+      IModelLink<IDataReferenceField> link3 = getMockedLink(field, true, property3);
+
+      when(deploymentModel.getLinks()).thenReturn(Arrays.asList(link1, link2, link3));
+
+      Collection<RestConfiguration> configurations = service.getRestConfiguration(options, field);
+      assertEquals(2, configurations.size());
+      Iterator<RestConfiguration> iterator = configurations.iterator();
+      RestConfiguration configuration1 = iterator.next();
+      assertEquals(address, configuration1.getAddress());
+      assertEquals(port1, configuration1.getPort());
+      assertEquals(path1, configuration1.getPath());
+      assertEquals(contentType, configuration1.getContentType());
+      assertEquals(method, configuration1.getHttpMethod());
+      RestConfiguration configuration2 = iterator.next();
+      assertEquals(address, configuration2.getAddress());
+      assertEquals(port2, configuration2.getPort());
+      assertEquals(path2, configuration2.getPath());
+      assertEquals(contentType, configuration2.getContentType());
+      assertEquals(method, configuration2.getHttpMethod());
+   }
+
    private static IModelLink<IDataReferenceField> getMockedLink(IDataReferenceField field, boolean fieldIsSource,
             IProperty... properties) {
       IModelLink<IDataReferenceField> link = mock(DataReferenceFieldLink.class, RETURNS_DEEP_STUBS);
@@ -145,8 +195,9 @@ public class TransportConfigurationServiceTest {
       IDataField addressField = mock(IDataField.class);
       IDataField portField = mock(IDataField.class);
       when(property.getData().isSet()).thenReturn(true);
-      when(property.getData().getFieldByName(TransportConfigurationService.SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
-         Optional.of(field));
+      when(property.getData()
+                   .getFieldByName(TransportConfigurationService.MULTICAST_SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
+                      Optional.of(field));
       when(property.getData().getData(field)).thenReturn(socketValue);
       when(socketValue.getFieldByName(TransportConfigurationService.ADDRESS_FIELD_NAME)).thenReturn(
          Optional.of(addressField));
@@ -154,6 +205,43 @@ public class TransportConfigurationServiceTest {
          Optional.of(portField));
       when(socketValue.getPrimitive(addressField).getString()).thenReturn(address);
       when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
+      return property;
+   }
+
+   private IProperty getMockedRestConfiguration(String address, int port, String path, String contentType,
+            HttpMethod method) {
+      IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
+      when(property.getName()).thenReturn(UUID.randomUUID().toString());
+      when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
+      when(property.getType()).thenReturn(DataTypes.DATA);
+      when(property.getReferencedDataType().getFullyQualifiedName()).thenReturn(
+         TransportConfigurationService.REST_CONFIGURATION_QUALIFIED_NAME);
+      IPropertyDataValue socketValue = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
+      IDataField socketField = mock(IDataField.class);
+      IDataField addressField = mock(IDataField.class);
+      IDataField portField = mock(IDataField.class);
+      IDataField pathField = mock(IDataField.class);
+      IDataField contentTypeField = mock(IDataField.class);
+      IDataField httpMethodField = mock(IDataField.class);
+      when(property.getData().isSet()).thenReturn(true);
+      when(property.getData().getFieldByName(TransportConfigurationService.REST_SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
+         Optional.of(socketField));
+      when(property.getData().getFieldByName(TransportConfigurationService.REST_PATH_FIELD_NAME)).thenReturn(
+         Optional.of(pathField));
+      when(property.getData().getFieldByName(TransportConfigurationService.REST_CONTENT_TYPE_FIELD_NAME)).thenReturn(
+         Optional.of(contentTypeField));
+      when(property.getData().getFieldByName(TransportConfigurationService.REST_HTTP_METHOD_FIELD_NAME)).thenReturn(
+         Optional.of(httpMethodField));
+      when(property.getData().getData(socketField)).thenReturn(socketValue);
+      when(socketValue.getFieldByName(TransportConfigurationService.ADDRESS_FIELD_NAME)).thenReturn(
+         Optional.of(addressField));
+      when(socketValue.getFieldByName(TransportConfigurationService.PORT_FIELD_NAME)).thenReturn(
+         Optional.of(portField));
+      when(socketValue.getPrimitive(addressField).getString()).thenReturn(address);
+      when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
+      when(property.getData().getEnumeration(httpMethodField).getValue()).thenReturn(method.toString());
+      when(property.getData().getPrimitive(pathField).getString()).thenReturn(path);
+      when(property.getData().getPrimitive(contentTypeField).getString()).thenReturn(contentType);
       return property;
    }
 

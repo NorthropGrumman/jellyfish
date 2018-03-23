@@ -4,9 +4,10 @@
 package com.ngc.seaside.systemdescriptor.tests
 
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +17,7 @@ import org.junit.runner.RunWith
 class SystemDescriptorParsingTest{
 
 	@Inject
-	ParseHelper<com.ngc.seaside.systemdescriptor.systemDescriptor.Package> parseHelper
+	ParseHelper<Package> parseHelper
 
 	@Test 
 	def void loadModel() {

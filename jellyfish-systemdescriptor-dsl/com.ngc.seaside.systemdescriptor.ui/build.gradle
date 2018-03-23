@@ -1,17 +1,26 @@
 import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
 
+// This prevents errors due to how the org.xtext.xtend
+// autoguesses the version of Xtend to use.  It guess
+// wrong and fails the build.  See the code at
+// https://github.com/xtext/xtext-gradle-plugin/blob/master/xtext-gradle-plugin/src/main/java/org/xtext/gradle/XtendLanguageBasePlugin.xtend
+// and https://github.com/xtext/xtext-gradle-plugin/blob/master/xtext-gradle-plugin/src/main/java/org/xtext/gradle/tasks/XtextExtension.xtend
+// Note this really controls the version of Xtend, not
+// just Xtext.
+xtext.version = "${xtextVersion}"
+
 sourceSets {
-	main {
-		java.srcDirs = ['src/main/java', 'src/main/xtext-gen']
-		resources.srcDirs = ['src/main/resources', 'src/main/xtext-gen']
-		xtendOutputDir = 'src/main/xtend-gen'
-	}
-	test {
-		java.srcDirs = ['src/test/java', 'src/test/xtext-gen']
-		resources.srcDirs = ['src/test/resources', 'src/test/xtext-gen']
-		xtendOutputDir = 'src/test/xtend-gen'
-	}
+   main {
+      java.srcDirs = ['src/main/java', 'src/main/xtext-gen']
+      resources.srcDirs = ['src/main/resources', 'src/main/xtext-gen']
+      xtendOutputDir = 'src/main/xtend-gen'
+   }
+   test {
+      java.srcDirs = ['src/test/java', 'src/test/xtext-gen']
+      resources.srcDirs = ['src/test/resources', 'src/test/xtext-gen']
+      xtendOutputDir = 'src/test/xtend-gen'
+   }
 }
 
 repositories {
@@ -25,38 +34,39 @@ dependencies {
    compile project(':systemdescriptor')
    compile project(':systemdescriptor.ide')
 
-   compile name: 'org.eclipse.core.resources_3.11.1.v20161107-2032'
-   compile name: 'org.eclipse.equinox.common_3.8.0.v20160509-1230'
-   compile name: 'org.eclipse.jface_3.12.1.v20160923-1528'
-   compile name: 'org.eclipse.swt_3.105.2.v20161122-0613'
-   compile name: 'org.eclipse.ui.workbench_3.108.2.v20161025-2029'
-   compile name: 'org.eclipse.jdt.core_3.12.2.v20161117-1814'
-   compile name: 'org.eclipse.ui.ide_3.12.2.v20161115-1450'
-   compile name: 'org.eclipse.core.jobs_3.8.0.v20160509-0411'
-   compile name: 'org.eclipse.core.runtime_3.12.0.v20160606-1342'
-   compile name: 'org.eclipse.osgi_3.11.2.v20161107-1947'
-   compile name: 'org.eclipse.xtext.ui_2.10.0.v201605250459'
-   compile name: 'org.eclipse.core.commands_3.8.0.v20160316-1921'
-   compile name: 'org.eclipse.compare_3.7.0.v20161024-1724'
-   compile name: 'org.eclipse.xtext.builder_2.10.0.v201605250459'
-   compile name: 'org.eclipse.emf.edit.ui_2.12.0.v20160526-0356'
-   compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.10.0.v201605250459'
-   compile name: 'org.eclipse.xtext.ui.shared_2.10.0.v201605250459'
-   compile name: 'org.eclipse.emf.edit_2.12.0.v20160526-0356'
-   compile name: 'org.eclipse.equinox.registry_3.6.100.v20160223-2218'
-   compile name: 'org.eclipse.ui.workbench.texteditor_3.10.1.v20160818-1626'
-   compile name: 'org.eclipse.jface.text_3.11.2.v20161113-1700'
-   compile name: 'org.eclipse.text_3.6.0.v20160503-1849'
-   compile name: 'org.eclipse.ui.editors_3.10.1.v20161106-1856'
+   compile name: 'org.eclipse.core.resources_3.12.0.v20170417-1558'
+   compile name: 'org.eclipse.equinox.common_3.9.0.v20170207-1454'
+   compile name: 'org.eclipse.jface_3.13.2.v20171022-1656'
+   compile name: 'org.eclipse.swt_3.106.2.v20171129-0543'
+   compile name: 'org.eclipse.ui.workbench_3.110.1.v20170704-1208'
+   compile name: 'org.eclipse.jdt.core_3.13.100.v20171123-1049'
+   compile name: 'org.eclipse.ui.ide_3.13.1.v20170822-1526'
+   compile name: 'org.eclipse.core.jobs_3.9.2.v20171030-1027'
+   compile name: 'org.eclipse.core.runtime_3.13.0.v20170207-1030'
+   compile name: 'org.eclipse.osgi_3.12.50.v20170928-1321'
+   compile name: 'org.eclipse.core.commands_3.9.0.v20170530-1048'
+   compile name: 'org.eclipse.compare_3.7.101.v20170724-1603'
+   compile name: 'org.eclipse.emf.edit.ui_2.13.0.v20170609-0928'
+   compile name: 'org.eclipse.emf.edit_2.12.0.v20170609-0928'
+   compile name: 'org.eclipse.equinox.registry_3.7.0.v20170222-1344'
+   compile name: 'org.eclipse.ui.workbench.texteditor_3.10.100.v20170426-2021'
+   compile name: 'org.eclipse.jface.text_3.12.1.v20171114-1359'
+   compile name: 'org.eclipse.text_3.6.100.v20170203-0814'
+   compile name: 'org.eclipse.ui.editors_3.11.0.v20170202-1823'
+
+   compile name: 'org.eclipse.xtext.ui_2.12.0.v20170519-0809'
+   compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.12.0.v20170519-0809'
+   compile (name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809') { transitive = false }
+   compile name: 'org.eclipse.xtext.builder_2.12.0.v20170519-0809'
 
    if (OperatingSystem.current().isLinux()) {
-      compile name: 'org.eclipse.swt.gtk.linux.x86_64_3.105.2.v20161122-0613'
+      compile name: 'org.eclipse.swt.gtk.linux.x86_64_3.106.2.v20171129-0543'
    } else {
-      compile name: 'org.eclipse.swt.win32.win32.x86_64_3.105.2.v20161122-0613'
+      compile name: 'org.eclipse.swt.win32.win32.x86_64_3.106.2.v20171129-0543'
    }
-   
-   testCompile "org.eclipse.xtext:org.eclipse.xtext.junit4:${xtextVersion}"
-   testCompile "org.eclipse.xtext:org.eclipse.xtext.xbase.junit:${xtextVersion}"
+
+   testCompile "junit:junit:${junitVersion}"
+   testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
 
 }
 
