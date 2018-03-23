@@ -3,7 +3,7 @@ import com.ngc.seaside.jellyfish.examples.tasks.*
 
 buildscript {
     ext {
-        versionsFile = file('../common.gradle')
+        versionsFile = file('../versions.gradle')
         buildScriptUpdater = new BuildScriptUpdater()
     }
     apply from: versionsFile, to: project
