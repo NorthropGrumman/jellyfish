@@ -199,6 +199,11 @@ class ModelPropertyValuesParsingTest {
                 properties {
                 	releaseDate.timeZone = TimeZone.CST
                 	releaseDate.dataTime.date.day = 1
+                	releaseDate.dataTime.date.month = 1
+                	releaseDate.dataTime.date.year = 1
+                	releaseDate.dataTime.time.hour = 1
+                	releaseDate.dataTime.time.minute = 1
+                	releaseDate.dataTime.time.second = 1
                 }
             }
         '''
