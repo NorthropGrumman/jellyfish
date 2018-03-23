@@ -32,12 +32,12 @@ model BaseModel {
 				many string baseUnsetManyStringField
 				many Enum1 baseUnsetManyEnumField
 				many Data1 baseUnsetManyDataField
-				
+
 				baseUnsetIntField = 11
-            baseUnsetBooleanField = false
-            baseUnsetFloatField = 1.5
-            baseUnsetStringField = "basedUnit"
-            baseUnsetEnumField = Enum1.FIELD1
+				baseUnsetBooleanField = false
+				baseUnsetFloatField = 1.5
+				baseUnsetStringField = "basedUnit"
+				baseUnsetEnumField = Enum1.FIELD1
 			}
 		}
 
@@ -57,12 +57,12 @@ model BaseModel {
 				many string baseUnsetManyStringField
 				many Enum1 baseUnsetManyEnumField
 				many Data1 baseUnsetManyDataField
-				
+
 				baseUnsetIntField = 11
-            baseUnsetBooleanField = false
-            baseUnsetFloatField = 1.5
-            baseUnsetStringField = "basedUnit"
-            baseUnsetEnumField = Enum1.FIELD1
+				baseUnsetBooleanField = false
+				baseUnsetFloatField = 1.5
+				baseUnsetStringField = "basedUnit"
+				baseUnsetEnumField = Enum1.FIELD1
 			}
 		}
 	}
