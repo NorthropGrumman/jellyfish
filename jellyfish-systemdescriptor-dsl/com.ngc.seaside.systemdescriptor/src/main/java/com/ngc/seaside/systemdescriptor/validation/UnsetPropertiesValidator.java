@@ -93,8 +93,6 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
 
       List<String> declarationStrings = getDeclarationsAsStrings(declarations);
       List<String> assignmentStrings = getAssignmentDeclarationsAsStrings(assignments);
-      System.out.println(declarationStrings);
-      System.out.println(assignmentStrings);
       comparedPropertyDeclarationsWithAssignments(declarationStrings,
          assignmentStrings,
          model,
