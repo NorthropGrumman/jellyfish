@@ -83,27 +83,27 @@ public class Model implements IModel {
 
    @Override
    public INamedChildCollection<IModel, IDataReferenceField> getInputs() {
-      return NamedChildCollection.immutable(inputs);
+      return inputs;
    }
 
    @Override
    public INamedChildCollection<IModel, IDataReferenceField> getOutputs() {
-      return NamedChildCollection.immutable(outputs);
+      return outputs;
    }
 
    @Override
    public INamedChildCollection<IModel, IModelReferenceField> getRequiredModels() {
-      return NamedChildCollection.immutable(requiredModels);
+      return requiredModels;
    }
 
    @Override
    public INamedChildCollection<IModel, IModelReferenceField> getParts() {
-      return NamedChildCollection.immutable(parts);
+      return parts;
    }
 
    @Override
    public INamedChildCollection<IModel, IScenario> getScenarios() {
-      return NamedChildCollection.immutable(scenarios);
+      return scenarios;
    }
 
    @Override

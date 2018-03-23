@@ -34,7 +34,6 @@ public class PubSubProcessor {
    }
 
    public Optional<IPublishSubscribeMessagingFlow> getFlow(IScenario scenario) {
-      
       boolean receive = false;
       boolean publish = false;
       

@@ -26,7 +26,6 @@ public class ClassificationTrackPriorityService extends AbstractClassificationTr
       throw new UnsupportedOperationException("not implemented");
    }
 
-
    @Activate
    public void activate() {
       super.activate();

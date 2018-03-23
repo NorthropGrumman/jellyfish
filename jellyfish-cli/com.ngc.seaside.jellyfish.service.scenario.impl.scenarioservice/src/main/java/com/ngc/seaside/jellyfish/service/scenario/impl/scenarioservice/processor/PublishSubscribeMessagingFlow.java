@@ -23,8 +23,7 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
    
    private ICorrelationDescription correlationDescription;
 
-   public PublishSubscribeMessagingFlow(
-         FlowType flowType) {
+   public PublishSubscribeMessagingFlow(FlowType flowType) {
       this.flowType = flowType;
    }
 

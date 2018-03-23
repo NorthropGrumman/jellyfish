@@ -29,6 +29,7 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
+
 #end
 #foreach ($method in $baseServiceDto.basicSinkMethods)
    @Override
@@ -64,13 +65,19 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 #end
 #end
 
-      //TODO: implement this
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
 #end
+#foreach ($method in $baseServiceDto.basicServerReqResMethods)
+   @Override
+   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException{
+      // TODO: implement this
+      throw new UnsupportedOperationException("not implemented");
+   }
 
-
+#end
    @Activate
    public void activate() {
       super.activate();

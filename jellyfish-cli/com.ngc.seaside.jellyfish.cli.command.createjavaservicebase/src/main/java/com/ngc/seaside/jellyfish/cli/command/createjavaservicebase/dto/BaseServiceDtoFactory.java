@@ -20,6 +20,7 @@ import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
@@ -101,6 +102,31 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       dto.setModel(model);
       dto.setTopicsEnum(topicsDto);
 
+      computePubSubFlows(options, model, dto);
+      computeReqResFlows(options, model, dto);
+      computeFinalCorrelationSettings(dto);
+
+      return dto;
+   }
+
+   /**
+    * Returns true if the model uses two types with the same name, but different packages (e.g., com.Data and
+    * org.Data).
+    */
+   private boolean hasDuplicateTypeNames(IJellyFishCommandOptions options, IModel model) {
+      Set<String> names = new HashSet<>();
+      Set<String> qualifiedNames = new HashSet<>();
+      for (IDataReferenceField field : model.getInputs()) {
+         TypeDto<?> dto = dataService.getEventClass(options, field.getType());
+         if (qualifiedNames.add(dto.getFullyQualifiedName()) && !names.add(dto.getTypeName())) {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   private void computePubSubFlows(IJellyFishCommandOptions options, IModel model, BaseServiceDto dto) {
       Set<IDataReferenceField> inputs = new LinkedHashSet<>();
       Set<IDataReferenceField> outputs = new LinkedHashSet<>();
       for (IScenario scenario : model.getScenarios()) {
@@ -151,27 +177,45 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       setReceiveMethods(dto, options, inputs);
       setPublishMethods(dto, options, outputs);
-
-      computeFinalCorrelationSettings(dto);
-
-      return dto;
    }
 
-   /**
-    * Returns true if the model uses two types with the same name, but different packages (e.g., com.Data and
-    * org.Data).
-    */
-   private boolean hasDuplicateTypeNames(IJellyFishCommandOptions options, IModel model) {
-      Set<String> names = new HashSet<>();
-      Set<String> qualifiedNames = new HashSet<>();
-      for (IDataReferenceField field : model.getInputs()) {
-         TypeDto<?> dto = dataService.getEventClass(options, field.getType());
-         if (qualifiedNames.add(dto.getFullyQualifiedName()) && !names.add(dto.getTypeName())) {
-            return true;
+   private void computeReqResFlows(IJellyFishCommandOptions options, IModel model, BaseServiceDto dto) {
+      for (IScenario scenario : model.getScenarios()) {
+         Optional<IRequestResponseMessagingFlow> flowOptional = scenarioService.getRequestResponseMessagingFlows(
+               options,
+               scenario);
+         if (flowOptional.isPresent()) {
+            IRequestResponseMessagingFlow flow = flowOptional.get();
+            switch (flow.getFlowType()) {
+               case SERVER:
+                  dto.getBasicServerReqResMethods().add(getBasicReqResMethod(scenario, flow, dto, options));
+                  break;
+               case CLIENT:
+                  // Not implemented yet.
+               default:
+                  logService.warn(BaseServiceDtoFactory.class,
+                                  "Client request/response flow not currently supported; found in %s.%s",
+                                  model.getFullyQualifiedName(),
+                                  scenario.getName());
+                  break;
+            }
          }
       }
+   }
 
-      return false;
+   private BasicServerReqResDto getBasicReqResMethod(IScenario scenario,
+                                                     IRequestResponseMessagingFlow flow,
+                                                     BaseServiceDto dto,
+                                                     IJellyFishCommandOptions options) {
+      BasicServerReqResDto reqRes = new BasicServerReqResDto();
+      reqRes.setScenarioName(scenario.getName());
+      reqRes.setServiceMethod(scenario.getName());
+      reqRes.setName(scenario.getName());
+
+      reqRes.setInput(getInputDto(flow.getInput(), dto, options));
+      reqRes.setOutput(getPublishDto(flow.getOutput(), dto, options));
+
+      return reqRes;
    }
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options,

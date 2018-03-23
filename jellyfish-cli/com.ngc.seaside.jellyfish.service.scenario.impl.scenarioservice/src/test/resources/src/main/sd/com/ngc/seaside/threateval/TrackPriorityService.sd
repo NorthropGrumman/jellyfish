@@ -23,7 +23,7 @@ model TrackPriorityService {
 	
 	scenario calculateConsolidatedTrackPriority {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation" } // TODO: need to find a way to stamp a version
+			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation" }
 		}
 		when receiving trackPriority
 		then willPublish prioritizedSystemTracks
@@ -34,5 +34,10 @@ model TrackPriorityService {
 		when receiving droppedSystemTrack
 		then willPublish prioritizedSystemTracks
 		 and willBeCompleted within 500 milliseconds
+	}
+
+	scenario getPriority {
+	   when receivingRequest droppedSystemTrack
+	   then willRespond with prioritizedSystemTracks
 	}
 }

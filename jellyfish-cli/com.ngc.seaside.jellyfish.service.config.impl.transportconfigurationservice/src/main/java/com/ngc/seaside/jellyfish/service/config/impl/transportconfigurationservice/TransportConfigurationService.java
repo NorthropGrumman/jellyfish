@@ -5,10 +5,13 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -38,7 +42,12 @@ import java.util.stream.Collectors;
 public class TransportConfigurationService implements ITransportConfigurationService {
 
    static final String MULTICAST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.multicast.MulticastConfiguration";
-   static final String SOCKET_ADDRESS_FIELD_NAME = "socketAddress";
+   static final String REST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.rest.RestConfiguration";
+   static final String MULTICAST_SOCKET_ADDRESS_FIELD_NAME = "socketAddress";
+   static final String REST_SOCKET_ADDRESS_FIELD_NAME = "socketAddress";
+   static final String REST_PATH_FIELD_NAME = "path";
+   static final String REST_CONTENT_TYPE_FIELD_NAME = "contentType";
+   static final String REST_HTTP_METHOD_FIELD_NAME = "httpMethod";
    static final String ADDRESS_FIELD_NAME = "address";
    static final String PORT_FIELD_NAME = "port";
 
@@ -63,11 +72,37 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    @Override
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
+      return getConfigurations(options,
+         field,
+         MULTICAST_CONFIGURATION_QUALIFIED_NAME,
+         TransportConfigurationService::getMulticastConfiguration);
+   }
+
+   @Override
+   public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
+            IDataReferenceField field) {
+      return getConfigurations(options,
+         field,
+         REST_CONFIGURATION_QUALIFIED_NAME,
+         TransportConfigurationService::getRestConfiguration);
+   }
+
+   /**
+    * Returns the collection of configurations for the given field.
+    * 
+    * @param options jellyfish options
+    * @param field field
+    * @param configQualifiedName fully qualified name of configuration sd data type
+    * @param function function to convert {@link IPropertyDataValue} to the configuration type
+    * @return the collection of configurations for the given field
+    */
+   private <T> Collection<T> getConfigurations(IJellyFishCommandOptions options,
+            IDataReferenceField field, String configQualifiedName, Function<IPropertyDataValue, T> function) {
       IModel deploymentModel = sdService.getAggregatedView(getDeploymentModel(options));
       Collection<IModelLink<?>> links = findLinks(deploymentModel, field);
-      Collection<MulticastConfiguration> configurations = new LinkedHashSet<>();
+      Collection<T> configurations = new LinkedHashSet<>();
       for (IModelLink<?> link : links) {
-         configurations.addAll(getConfigurations(link));
+         configurations.addAll(getConfigurations(link, configQualifiedName, function));
       }
       return configurations;
    }
@@ -94,35 +129,56 @@ public class TransportConfigurationService implements ITransportConfigurationSer
                   .collect(Collectors.toList());
    }
 
-   private static Collection<MulticastConfiguration> getConfigurations(IModelLink<?> link) {
-      Collection<IPropertyDataValue> multicastPropertyValues = link.getProperties()
-            .stream()
-            .filter(property -> DataTypes.DATA == property.getType())
-            .filter(property -> MULTICAST_CONFIGURATION_QUALIFIED_NAME.equals(property.getReferencedDataType().getFullyQualifiedName()))
-            .filter(property -> FieldCardinality.SINGLE == property.getCardinality())
-            .map(IProperty::getData)
-            .collect(Collectors.toList());
-      Collection<MulticastConfiguration> configurations = new ArrayList<>(multicastPropertyValues.size());
-      for (IPropertyDataValue value : multicastPropertyValues) {
+   private static <T> Collection<T> getConfigurations(IModelLink<?> link, String qualifiedName,
+            Function<IPropertyDataValue, T> function) {
+      Collection<IPropertyDataValue> propertyValues = link.getProperties()
+                                                          .stream()
+                                                          .filter(property -> DataTypes.DATA == property.getType())
+                                                          .filter(property -> qualifiedName.equals(
+                                                             property.getReferencedDataType().getFullyQualifiedName()))
+                                                          .filter(
+                                                             property -> FieldCardinality.SINGLE == property.getCardinality())
+                                                          .map(IProperty::getData)
+                                                          .collect(Collectors.toList());
+      Collection<T> configurations = new ArrayList<>(propertyValues.size());
+      for (IPropertyDataValue value : propertyValues) {
          if (!value.isSet()) {
-            throw new IllegalStateException("Multicast configuration is not completely set for link " + link);
+            throw new IllegalStateException("Configuration is not completely set for link " + link);
          }
-         configurations.add(getConfiguration(value));
+         configurations.add(function.apply(value));
       }
       return configurations;
    }
 
-   private static MulticastConfiguration getConfiguration(IPropertyDataValue value) {
+   private static MulticastConfiguration getMulticastConfiguration(IPropertyDataValue value) {
       MulticastConfiguration configuration = new MulticastConfiguration();
-      IPropertyDataValue socket = value.getData(value.getFieldByName(SOCKET_ADDRESS_FIELD_NAME).orElseThrow(
-         () -> new IllegalStateException("Missing " + SOCKET_ADDRESS_FIELD_NAME + " field")));
-      String address = socket.getPrimitive(socket.getFieldByName(ADDRESS_FIELD_NAME).orElseThrow(
-         () -> new IllegalStateException("Missing " + ADDRESS_FIELD_NAME + " field"))).getString();
-      BigInteger port = socket.getPrimitive(socket.getFieldByName(PORT_FIELD_NAME).orElseThrow(
-         () -> new IllegalStateException("Missing " + PORT_FIELD_NAME + " field"))).getInteger();
+      IPropertyDataValue socket = value.getData(getField(value, MULTICAST_SOCKET_ADDRESS_FIELD_NAME));
+      String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
+      BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
       configuration.setAddress(address);
       configuration.setPort(port.intValueExact());
       return configuration;
+   }
+
+   private static RestConfiguration getRestConfiguration(IPropertyDataValue value) {
+      RestConfiguration configuration = new RestConfiguration();
+      IPropertyDataValue socket = value.getData(getField(value, REST_SOCKET_ADDRESS_FIELD_NAME));
+      String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
+      BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
+      String path = value.getPrimitive(getField(value, REST_PATH_FIELD_NAME)).getString();
+      String contentType = value.getPrimitive(getField(value, REST_CONTENT_TYPE_FIELD_NAME)).getString();
+      String httpMethod = value.getEnumeration(getField(value, REST_HTTP_METHOD_FIELD_NAME)).getValue();
+      configuration.setAddress(address);
+      configuration.setPort(port.intValueExact());
+      configuration.setPath(path);
+      configuration.setContentType(contentType);
+      configuration.setHttpMethod(HttpMethod.valueOf(httpMethod));
+      return configuration;
+   }
+
+   private static IDataField getField(IPropertyDataValue value, String fieldName) {
+      return value.getFieldByName(fieldName)
+                  .orElseThrow(() -> new IllegalStateException("Missing " + fieldName + " field"));
    }
 
    @Activate
@@ -152,4 +208,5 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    public void removeSystemDescriptorService(ISystemDescriptorService ref) {
       setSystemDescriptorService(null);
    }
+
 }

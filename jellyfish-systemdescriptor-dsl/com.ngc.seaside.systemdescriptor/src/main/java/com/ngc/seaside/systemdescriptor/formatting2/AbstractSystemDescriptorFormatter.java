@@ -22,7 +22,7 @@ public class AbstractSystemDescriptorFormatter extends AbstractFormatter2 {
     @Override
     public void initalize(FormatterRequest request) {
         // Increase visibility of this method.
-        super.initalize(request);
+        super.initialize(request);
     }
 
     @Override

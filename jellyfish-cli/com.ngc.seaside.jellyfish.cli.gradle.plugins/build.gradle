@@ -24,7 +24,7 @@ dependencies {
     commandTemplate project(path: ':jellyfish.cli.command.createprotocolbuffermessages', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createjellyfishgradleproject', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaevents', configuration: 'commandTemplate')
-    commandTemplate project(path: ':jellyfish.cli.command.createjavapubsubconnector', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaprotobufconnector', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.report.requirementsallocation', configuration: 'commandTemplate')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaservice', configuration: 'commandTemplate')

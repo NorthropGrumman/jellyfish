@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -11,7 +12,9 @@ import com.ngc.seaside.jellyfish.service.scenario.api.MessagingParadigm;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -24,12 +27,16 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    public ScenarioServiceGuiceWrapper(ILogService logService,
                                       ReceiveStepHandler receiveStepHandler,
                                       PublishStepHandler publishStepHandler,
-                                      CorrelateStepHandler correlationStepHandler) {
+                                      CorrelateStepHandler correlationStepHandler,
+                                      ReceiveRequestStepHandler receiveRequestStepHandler,
+                                      RespondStepHandler respondStepHandler) {
       scenarioService = new ScenarioService();
       scenarioService.setLogService(logService);
       scenarioService.setPublishStepHandler(publishStepHandler);
       scenarioService.setReceiveStepHandler(receiveStepHandler);
       scenarioService.setCorrelationStepHandler(correlationStepHandler);
+      scenarioService.setReceiveRequestStepHandler(receiveRequestStepHandler);
+      scenarioService.setRespondStepHandler(respondStepHandler);
       scenarioService.activate();
    }
 
@@ -47,7 +54,7 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Collection<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(
          IJellyFishCommandOptions options, IScenario scenario) {
       return scenarioService.getRequestResponseMessagingFlows(options, scenario);
    }

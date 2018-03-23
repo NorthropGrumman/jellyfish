@@ -44,8 +44,8 @@ dependencies {
     implementation project(':jellyfish.cli.command.createjavaevents')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaevents', configuration: 'commandTemplate')
 
-    implementation project(':jellyfish.cli.command.createjavapubsubconnector')
-    commandTemplate project(path: ':jellyfish.cli.command.createjavapubsubconnector', configuration: 'commandTemplate')
+    implementation project(':jellyfish.cli.command.createjavaprotobufconnector')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaprotobufconnector', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.report.requirementsverification')
     commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification', configuration: 'commandTemplate')

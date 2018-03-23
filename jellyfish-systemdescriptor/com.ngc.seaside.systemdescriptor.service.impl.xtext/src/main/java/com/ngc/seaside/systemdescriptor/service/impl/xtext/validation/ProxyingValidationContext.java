@@ -57,17 +57,23 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
 
    @SuppressWarnings("unchecked")
    @Override
-   public T declare(Severity severity, String message, T object) {
+   public <S> S declare(Severity severity, String message, S offendingObject) {
       Preconditions.checkNotNull(severity, "severity may not be null!");
       Preconditions.checkNotNull(message, "message may not be null!");
-      Preconditions.checkNotNull(object, "object may not be null!");
+      Preconditions.checkNotNull(offendingObject, "offendingObject may not be null!");
+      Preconditions.checkArgument(
+            offendingObject instanceof IUnwrappable
+            || offendingObject instanceof IUnwrappableCollection,
+            "cannot declare errors an object of type %s because that object does not wrap any XText types!",
+            object.getClass().getName());
+
       // Return a dynamic proxy of the wrapped object.  This allows us to "record" the methods the validator calls on
       // the object when declaring an issue.  Note the proxy will actually pass through to the wrapped object so the
       // actual call will complete as normal.  In this way, this is really a method interceptor.
       // Safe because this is a proxy object.
-      return (T) Proxy.newProxyInstance(object.getClass().getClassLoader(),
-                                        object.getClass().getInterfaces(),
-                                        (p, m, a) -> interceptMethodCall(p, m, a, severity, message));
+      return (S) Proxy.newProxyInstance(offendingObject.getClass().getClassLoader(),
+                                        offendingObject.getClass().getInterfaces(),
+                                        (p, m, a) -> interceptMethodCall(offendingObject, p, m, a, severity, message));
    }
 
    /**
@@ -75,31 +81,33 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
     * structural feature the validation issue should be attached to.  Once that is complete, the call continues to the
     * target object.
     *
-    * @param proxy    the proxy object
-    * @param method   the method called
-    * @param args     the arguments to the method
-    * @param severity the severity level of the issue
-    * @param message  the message associated with issue
+    * @param originalObject the original un-proxied object
+    * @param proxy          the proxy object
+    * @param method         the method called
+    * @param args           the arguments to the method
+    * @param severity       the severity level of the issue
+    * @param message        the message associated with issue
     * @return the result of the invocation on the target object
     */
-   private Object interceptMethodCall(Object proxy,
+   private Object interceptMethodCall(Object originalObject,
+                                      Object proxy,
                                       Method method,
                                       Object[] args,
                                       Severity severity,
                                       String message) throws Throwable {
       // Get the XText objects that are being wrapped.  In most cases, only one object is being wrapped.  However, in
       // the case of IPackage, multiple XText packages are being wrapped at the same time.
-      for (EObject xtext : getEObjects(object)) {
+      for (EObject xtext : getEObjects(originalObject)) {
          switch (severity) {
             case ERROR:
                // Get the structural feature and use the validation help to actually declare the issue.
-               validationHelper.error(message, xtext, ValidationBridgeUtil.getFeature(object, xtext, method));
+               validationHelper.error(message, xtext, ValidationBridgeUtil.getFeature(originalObject, xtext, method));
                break;
             case WARNING:
-               validationHelper.warning(message, xtext, ValidationBridgeUtil.getFeature(object, xtext, method));
+               validationHelper.warning(message, xtext, ValidationBridgeUtil.getFeature(originalObject, xtext, method));
                break;
             case SUGGESTION:
-               validationHelper.info(message, xtext, ValidationBridgeUtil.getFeature(object, xtext, method));
+               validationHelper.info(message, xtext, ValidationBridgeUtil.getFeature(originalObject, xtext, method));
                break;
             default:
                throw new UnconvertableTypeException(severity);
@@ -107,7 +115,7 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
       }
 
       // Just pass through the invocation.
-      return method.invoke(object, args);
+      return method.invoke(originalObject, args);
    }
 
    private static Collection<? extends EObject> getEObjects(Object o) {

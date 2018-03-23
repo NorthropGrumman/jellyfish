@@ -1,0 +1,37 @@
+package com
+
+import com.Data1
+import com.Data2
+import com.Data3
+import com.Data4
+import com.Data5
+import com.Data6
+
+model Model {
+	input {
+		Data1 request1
+		Data2 request2
+		Data5 x
+	}
+	
+	output {
+		Data3 response1
+		Data4 response2
+		Data6 y
+	}
+
+	scenario getRequest1 {
+		when receivingRequest request1
+		then willRespond with response1
+	}
+
+	scenario getRequest2 {
+      when receivingRequest request2
+   	then willRespond with response2
+   }
+
+	scenario compute {
+      when receiving x
+      then willPublish y
+   }
+}

@@ -36,6 +36,9 @@ public interface ${dto.interface.name} {
 #end
 #end
 
+#end
+#foreach ($method in $dto.basicServerReqResMethods)
+   ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
 }

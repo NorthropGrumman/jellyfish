@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.IServiceDtoFa
 import com.ngc.seaside.jellyfish.cli.command.createjavaservice.dto.ServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.test.scenarios.FlowFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -26,13 +27,13 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -44,10 +45,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -60,10 +62,12 @@ public class CreateJavaServiceCommandIT {
    private MockedTemplateService templateService;
 
    private IServiceDtoFactory serviceTemplateDaoFactory;
-   
+
    private IBaseServiceDtoFactory baseServiceTemplateDaoFactory;
 
    private DefaultParameterCollection parameters;
+
+   private File directory;
 
    @Rule
    public final TemporaryFolder outputDirectory = new TemporaryFolder();
@@ -85,7 +89,7 @@ public class CreateJavaServiceCommandIT {
 
    @Mock
    private ClassDto interfaceDto;
-   
+
    @Mock
    private IScenarioService scenarioService;
 
@@ -96,11 +100,13 @@ public class CreateJavaServiceCommandIT {
    private IDataFieldGenerationService dataFieldGenerationService;
 
    private IBuildManagementService buildManagementService;
-   
+
    @Before
    public void setup() throws Throwable {
+      directory = outputDirectory.getRoot();
+      Files.createFile(directory.toPath().resolve("settings.gradle"));
+
       buildManagementService = new MockedBuildManagementService();
-      outputDirectory.newFile("settings.gradle");
 
       templateService = new MockedTemplateService()
                .useRealPropertyService()
@@ -117,7 +123,7 @@ public class CreateJavaServiceCommandIT {
                                                                 dataService,
                                                                 dataFieldGenerationService,
                                                                 logService);
-      
+
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       IModel testModel = newModelForTesting();
 
@@ -183,7 +189,7 @@ public class CreateJavaServiceCommandIT {
          return interfaceDto;
       });
       ClassDto abstractClassDto = new ClassDto();
-      
+
       abstractClassDto.setName("Abstract" + testModel.getName())
             .setPackageName(packageService.getServiceBaseImplementationPackageName(jellyFishCommandOptions, testModel))
             .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
@@ -199,16 +205,25 @@ public class CreateJavaServiceCommandIT {
          typeDto.setTypeName(child.getName());
          return typeDto;
       });
-      
-      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);  
-      IScenario scenario = testModel.getScenarios().getByName("calculateTrackPriority").get();
-      IDataReferenceField input = testModel.getInputs().iterator().next();
-      IDataReferenceField output = testModel.getOutputs().iterator().next();
-      when(flow.getScenario()).thenReturn(scenario);
-      when(flow.getInputs()).thenReturn(Collections.singleton(input));
-      when(flow.getOutputs()).thenReturn(Collections.singleton(output));
-      when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
-      when(scenarioService.getPubSubMessagingFlow(any(), any())).thenReturn(Optional.of(flow));
+
+      IScenario calculateTrackPriority = testModel.getScenarios()
+            .getByName("calculateTrackPriority")
+            .get();
+      IScenario getTrackPriority = testModel.getScenarios()
+            .getByName("getTrackPriority")
+            .get();
+      IPublishSubscribeMessagingFlow pubSubFlow = FlowFactory.newPubSubFlowPath(calculateTrackPriority);
+      IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow(getTrackPriority,
+                                                                                          "trackPriorityRequest",
+                                                                                          "trackPriorityResponse");
+      when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority)))
+            .thenReturn(Optional.of(pubSubFlow));
+      when(scenarioService.getRequestResponseMessagingFlows(any(), eq(calculateTrackPriority)))
+            .thenReturn(Optional.empty());
+      when(scenarioService.getRequestResponseMessagingFlows(any(), eq(getTrackPriority)))
+            .thenReturn(Optional.of(reqResFlow));
+      when(scenarioService.getPubSubMessagingFlow(any(), eq(getTrackPriority)))
+            .thenReturn(Optional.empty());
    }
 
    @Test
@@ -216,40 +231,53 @@ public class CreateJavaServiceCommandIT {
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.MODEL_PROPERTY,
          "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath()));
+         directory.getAbsolutePath()));
 
       command.run(jellyFishCommandOptions);
 
-      Path gradleBuildPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path gradleBuildPath = directory.toPath().resolve(Paths.get(
          "com.ngc.seaside.threateval.engagementtrackpriorityservice",
-         "build.gradle");
-      
+         "build.gradle"));
+
       assertFileContains(gradleBuildPath, "\\bproject\\(['\"]:engagementtrackpriorityservice.events['\"]\\)");
       assertFileContains(gradleBuildPath, "\\bproject\\(['\"]:engagementtrackpriorityservice.base['\"]\\)");
 
-      Path servicePath = Paths.get(outputDirectory.getRoot().getAbsolutePath(),
+      Path servicePath = directory.toPath().resolve(Paths.get(
          "com.ngc.seaside.threateval.engagementtrackpriorityservice",
-         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityService.java");
-      
+         "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityService.java"));
+
       assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
       assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
-      
+
       assertFileContains(servicePath, "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(");
-      
-      Path testPath = Paths.get(outputDirectory.getRoot().getAbsolutePath(), "com.ngc.seaside.threateval.engagementtrackpriorityservice",
-         "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java");
+
+      Path testPath = directory.toPath().resolve(Paths.get("com.ngc.seaside.threateval.engagementtrackpriorityservice",
+         "src/test/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/EngagementTrackPriorityServiceTest.java"));
 
       assertFileContains(testPath, "\\bpackage\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.impl\\s*;");
       assertFileContains(testPath, "\\bclass\\s+EngagementTrackPriorityServiceTest\\b");
-      
+
    }
 
    public static IModel newModelForTesting() {
-      ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.seaside.threateval.EngagementTrackPriorityService");
-      IData trackEngagementStatus = ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackEngagementStatus");
-      IData trackPriority = ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriority");
+      ModelUtils.PubSubModel model =
+            new ModelUtils.PubSubModel("com.ngc.seaside.threateval.EngagementTrackPriorityService");
+      IData trackEngagementStatus =
+            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackEngagementStatus");
+      IData trackPriority =
+            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriority");
+      model.addPubSub("calculateTrackPriority",
+                      "trackEngagementStatus", trackEngagementStatus,
+                      "trackPriority", trackPriority);
 
-      model.addPubSub("calculateTrackPriority", "trackEngagementStatus", trackEngagementStatus, "trackPriority", trackPriority);
+      IData trackPriorityRequest =
+            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriorityRequest");
+      IData trackPriorityResponse =
+            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriorityResponse");
+      ModelUtils.addReqRes(model,
+                           "getTrackPriority",
+                           "trackPriorityRequest", trackPriorityRequest,
+                           "trackPriorityResponse", trackPriorityResponse);
 
       return model;
    }

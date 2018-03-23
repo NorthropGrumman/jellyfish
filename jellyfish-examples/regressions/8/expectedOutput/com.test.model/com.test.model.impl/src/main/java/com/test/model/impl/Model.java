@@ -18,8 +18,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @Component(service = {IModel.class, IServiceModule.class}, immediate = true)
 public class Model extends AbstractModel {
 
-
-
    @Activate
    public void activate() {
       super.activate();

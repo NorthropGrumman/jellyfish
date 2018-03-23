@@ -26,12 +26,12 @@ public class TrackPriorityService extends AbstractTrackPriorityService {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
+
    @Override
    public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
-
 
    @Activate
    public void activate() {

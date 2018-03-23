@@ -27,12 +27,12 @@ public class Model extends AbstractModel {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
+
    @Override
    public Data3 scenario2(GPSTime input2) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
-
 
    @Activate
    public void activate() {
