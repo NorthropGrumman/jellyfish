@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.model.domain.Data1" generated="true" abstract="false">
+        <property name="field1" type="int" multiple="false" abstract="false"/>
+        <property name="field3" type="com.model.domain.NestedInputData" multiple="false" abstract="false"/>
+        <property name="field5" type="int" multiple="false" abstract="false"/>
+        <property name="field6" type="int" multiple="false" abstract="false"/>
+        <property name="field7" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.Data2" generated="true" abstract="false">
+        <property name="field1" type="int" multiple="false" abstract="false"/>
+        <property name="field3" type="com.model.domain.NestedInputData" multiple="false" abstract="false"/>
+        <property name="field5" type="int" multiple="false" abstract="false"/>
+        <property name="field6" type="int" multiple="false" abstract="false"/>
+        <property name="field7" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.Data5" generated="true" abstract="false">
+        <property name="field2" type="int" multiple="false" abstract="false"/>
+        <property name="field5" type="com.model.domain.NestedOutputData" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.Data3" generated="true" abstract="false">
+        <property name="field2" type="int" multiple="false" abstract="false"/>
+        <property name="field5" type="com.model.domain.NestedOutputData" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.Data4" generated="true" abstract="false">
+        <property name="field2" type="int" multiple="false" abstract="false"/>
+        <property name="field5" type="com.model.domain.NestedOutputData" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.Data6" generated="true" abstract="false">
+        <property name="field2" type="int" multiple="false" abstract="false"/>
+        <property name="field5" type="com.model.domain.NestedOutputData" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.NestedInputData" generated="true" abstract="false">
+        <property name="field4" type="String" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.model.domain.NestedOutputData" generated="true" abstract="false">
+        <property name="field6" type="String" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>
