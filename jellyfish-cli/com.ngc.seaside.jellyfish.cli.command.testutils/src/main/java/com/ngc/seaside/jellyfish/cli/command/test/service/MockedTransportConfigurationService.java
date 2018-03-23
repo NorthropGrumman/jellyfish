@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.test.service;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 
@@ -17,6 +18,12 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
 
    @Override
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
+            IDataReferenceField field) {
+      throw new UnsupportedOperationException("Not implemented");
+   }
+
+   @Override
+   public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       throw new UnsupportedOperationException("Not implemented");
    }
