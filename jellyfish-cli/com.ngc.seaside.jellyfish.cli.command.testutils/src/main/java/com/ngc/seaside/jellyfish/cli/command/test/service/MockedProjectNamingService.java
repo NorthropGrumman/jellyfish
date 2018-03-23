@@ -135,4 +135,9 @@ public class MockedProjectNamingService implements IProjectNamingService {
       return getProjectName(model, "config");
    }
 
+   @Override
+   public IProjectInformation getGeneratedConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      return getProjectName(model, "config");
+   }
+
 }

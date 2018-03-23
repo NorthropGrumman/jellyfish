@@ -16,6 +16,7 @@ public interface ITransportProviderConfigDto<T> {
 
    /**
     * Returns the {@link TransportProviderDto} for the given configuration dto.
+    * 
     * @param dto configuration dto returned by {@link #getConfigurationDto}
     * @return the {@link TransportProviderDto} for the given configuration dto
     */
@@ -46,12 +47,14 @@ public interface ITransportProviderConfigDto<T> {
     * @return the name of the template suffix used to generate the configuration class
     */
    String getTemplateSuffix();
-   
+
    /**
-    * Returns the dependencies for this transport provider in the form {@code "groupId:artifactId"}.
+    * Returns the dependencies for the transport provider's topic in the form {@code "groupId:artifactId"}.
+    * 
+    * @param distribution if {@code true}, also returns the dependencies for the transport provider
     * @return the dependencies for this transport provider
     */
-   Set<String> getDependencies();
+   Set<String> getDependencies(boolean distribution);
 
    /**
     * Returns a map of extra parameters needed to generate the template. The parameter {@code dto} will already be

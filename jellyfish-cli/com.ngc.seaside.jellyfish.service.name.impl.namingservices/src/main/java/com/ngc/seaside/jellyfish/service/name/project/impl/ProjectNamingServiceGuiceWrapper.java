@@ -67,4 +67,9 @@ public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
    public IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model) {
       return projectNamingService.getConfigProjectName(options, model);
    }
+
+   @Override
+   public IProjectInformation getGeneratedConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      return projectNamingService.getGeneratedConfigProjectName(options, model);
+   }
 }

@@ -167,6 +167,24 @@ public class ProjectNamingService implements IProjectNamingService {
    }
 
    @Override
+   public IProjectInformation getGeneratedConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ConfigVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, CONFIG_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+   }
+
+   @Override
    public IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");

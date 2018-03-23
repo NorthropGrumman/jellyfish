@@ -4,13 +4,16 @@ import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class TransportConfigurationServiceGuiceWrapper implements ITransportConfigurationService {
 
@@ -39,6 +42,12 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       return delegate.getRestConfiguration(options, field);
+   }
+
+   @Override
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options,
+            IModel deploymentModel) {
+      return delegate.getConfigurationTypes(options, deploymentModel);
    }
 
 }

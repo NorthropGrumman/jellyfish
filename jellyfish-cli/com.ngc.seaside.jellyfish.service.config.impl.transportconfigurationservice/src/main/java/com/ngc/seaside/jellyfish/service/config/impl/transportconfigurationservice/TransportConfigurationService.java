@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -67,6 +69,28 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       }
 
       return topic.toUpperCase();
+   }
+
+   @Override
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options,
+            IModel deploymentModel) {
+      Set<TransportConfigurationType> types = new LinkedHashSet<>();
+      IModel aggregatedDeploymentModel = sdService.getAggregatedView(getDeploymentModel(options));
+      for (IModelLink<?> link : aggregatedDeploymentModel.getLinks()) {
+         for (IProperty property : link.getProperties()) {
+            if (property.getType() == DataTypes.DATA) {
+               switch (property.getReferencedDataType().getFullyQualifiedName()) {
+               case MULTICAST_CONFIGURATION_QUALIFIED_NAME:
+                  types.add(TransportConfigurationType.MULTICAST);
+                  break;
+               case REST_CONFIGURATION_QUALIFIED_NAME:
+                  types.add(TransportConfigurationType.REST);
+                  break;
+               }
+            }
+         }
+      }
+      return types;
    }
 
    @Override

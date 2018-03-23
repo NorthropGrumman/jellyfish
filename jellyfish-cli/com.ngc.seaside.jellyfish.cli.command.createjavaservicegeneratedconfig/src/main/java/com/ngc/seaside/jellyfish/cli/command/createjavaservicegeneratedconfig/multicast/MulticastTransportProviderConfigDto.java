@@ -10,7 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +21,8 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    static final String MULTICAST_PROVIDER_VARIABLE_NAME = "multicastProvider";
    static final String MULTICAST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.multicast";
    static final String MULTICAST_TOPIC_CLASS_NAME = "MulticastTopic";
+   static final String MULTICAST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.multicast";
+   static final String MULTICAST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast";
    public static final String MULTICAST_TEMPLATE_SUFFIX = "multicast";
    
    
@@ -83,8 +85,13 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    }
 
    @Override
-   public Set<String> getDependencies() {
-      return Collections.singleton("com.ngc.seaside:service.transport.impl.topic.multicast");
+   public Set<String> getDependencies(boolean distribution) {
+      Set<String> dependencies = new LinkedHashSet<>();
+      dependencies.add(MULTICAST_TOPIC_DEPENDENCY);
+      if (distribution) {
+         dependencies.add(MULTICAST_PROVIDER_DEPENDENCY);
+      }
+      return dependencies;
    }
 
 }

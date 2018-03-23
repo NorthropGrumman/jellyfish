@@ -74,7 +74,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
 
-      IProjectInformation projectInfo = projectNamingService.getConfigProjectName(getOptions(), model);
+      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(getOptions(), model);
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, getOptions());
       dto.setProjectDirectoryName(projectInfo.getDirectoryName());
 
@@ -92,7 +92,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
       Path outputDir = getOutputDirectory();
 
-      IProjectInformation projectInfo = projectNamingService.getConfigProjectName(options, model);
+      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
       String packagez = packageNamingService.getConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
@@ -219,7 +219,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             String templateSuffix = transportProvider.getTemplateSuffix();
             unpackSuffixedTemplate(templateSuffix, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies());
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(false));
             clean = false;
          }
       }

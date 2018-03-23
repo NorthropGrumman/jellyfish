@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
 
@@ -39,6 +40,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME = "create-java-protobuf-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
+   static final String CREATE_JAVA_SERVICE_GENERATED_CONFIG_COMMAND_NAME = "create-java-service-generated-config";
    static final String CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME = "create-protocolbuffer-messages";
    private static final String[] SUBCOMMANDS = {CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
                                                 CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME,
@@ -47,6 +49,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
                                                 CREATE_JAVA_SERVICE_BASE_COMMAND_NAME,
                                                 CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
                                                 CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME,
+                                                CREATE_JAVA_SERVICE_GENERATED_CONFIG_COMMAND_NAME,
                                                 CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME};
 
    private static final String NAME = "create-java-service-project";
@@ -102,6 +105,9 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
             }
          }
       }
+
+      // This is explicitly optional since the config command will run if it's not provided
+      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
 
       IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
       return new DefaultUsage("Create a new Java service project for a particular model.", parameters);
@@ -179,8 +185,14 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    }
 
    private void createJavaServiceConfigProject(CommandInvocationContext ctx) {
+      final String command;
+      if (ctx.generatedConfigProjectUsed) {
+         command = CREATE_JAVA_SERVICE_GENERATED_CONFIG_COMMAND_NAME;
+      } else {
+         command = CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME;
+      }
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
-      doRunCommand(CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME, delegateOptions);
+      doRunCommand(command, delegateOptions);
    }
 
    private void createJavaServiceBaseProject(CommandInvocationContext ctx) {
@@ -224,6 +236,19 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
       ctx.model = getOptions().getSystemDescriptor()
             .findModel(ctx.modelName)
             .orElseThrow(() -> new CommandException(String.format("model %s not found!", ctx.modelName)));
+
+      // Get the fully qualified deployment model name.
+      ctx.deploymentModelName = Optional.ofNullable(getOptions().getParameters().getParameter(DEPLOYMENT_MODEL_PROPERTY))
+                                        .map(IParameter::getStringValue);
+
+      // Find the actual deployment model.
+      ctx.deploymentModel = ctx.deploymentModelName.map(name -> getOptions().getSystemDescriptor()
+               .findModel(name)
+               .orElseThrow(() -> new CommandException(String.format("deployment model %s not found!", 
+                                                                     ctx.deploymentModelName))));
+
+      // Whether or not the configuration should use the generated config command
+      ctx.generatedConfigProjectUsed = ctx.deploymentModel.isPresent();
 
       // Get the directory that will contain the project directory.
       ctx.rootOutputDirectory = Paths.get(
@@ -282,8 +307,11 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
       String projectName;
       String groupId;
       String modelName;
+      Optional<String> deploymentModelName;
+      boolean generatedConfigProjectUsed;
 
       IModel model;
+      Optional<IModel> deploymentModel;
 
       boolean createDomain;
    }
