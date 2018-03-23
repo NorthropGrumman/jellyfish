@@ -26,7 +26,6 @@ public class DataBagsService extends AbstractDataBagsService {
       throw new UnsupportedOperationException("not implemented");
    }
 
-
    @Activate
    public void activate() {
       super.activate();

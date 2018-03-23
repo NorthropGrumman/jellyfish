@@ -50,8 +50,6 @@ public class ServiceDtoFactory implements IServiceDtoFactory {
             .setProjectDependencies(projectDependencies)
             .setInterface(baseDto.getInterface().getName())
             .setBaseClass(baseDto.getAbstractClass().getName());
-      dto.getService().getImports().add(baseDto.getInterface().getFullyQualifiedName());
-      dto.getService().getImports().add(baseDto.getAbstractClass().getFullyQualifiedName());
 
       return dto;
    }

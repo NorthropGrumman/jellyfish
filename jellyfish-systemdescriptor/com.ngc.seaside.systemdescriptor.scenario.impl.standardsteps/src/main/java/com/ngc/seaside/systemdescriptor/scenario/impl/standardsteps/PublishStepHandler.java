@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 /**
  * Implements the "publish" step verb.  This verb is used to indicate some output is asynchronously published using some
@@ -52,6 +53,20 @@ public class PublishStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireStepParameters(context, "The 'publish' verb requires parameters!");
+      requireOnlyOneParameter(context, "The 'publish' verb requires exactly one parameter which is an output field!");
+      requireParameterReferenceAnOutputField(context, 0);
+   }
+
+   static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context,
+                                                      int parameterIndex) {
+      IScenarioStep step = context.getObject();
+      String fieldName = step.getParameters().size() <= parameterIndex ? null : step.getParameters().get(parameterIndex);
+      IModel model = step.getParent().getParent();
+      if (fieldName != null && !model.getOutputs().getByName(fieldName).isPresent()) {
+         String errMsg = String.format("The model %s contains no output field named '%s'!",
+                                       model.getFullyQualifiedName(),
+                                       fieldName);
+         context.declare(Severity.ERROR, errMsg, step).getParameters();
+      }
    }
 }

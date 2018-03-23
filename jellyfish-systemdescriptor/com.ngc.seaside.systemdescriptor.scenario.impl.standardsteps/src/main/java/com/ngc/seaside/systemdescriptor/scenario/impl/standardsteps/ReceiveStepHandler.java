@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
+import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 /**
  * Implements the "receive" step verb.  This verb is used to indicate some input is asynchronously received using some
@@ -24,15 +25,15 @@ public class ReceiveStepHandler extends AbstractStepHandler {
    }
 
    /**
-    * Gets the {@code IDataReferenceField} of the input of the model the scenario is associated with that this step.
-    * This can be used to determine which input field is published.
+    * Gets the {@code IDataReferenceField} of the input of the model the scenario that is associated with that this
+    * step. This can be used to determine which input field is received.
     *
     * <p/>
     *
     * Only invoke this method with validated scenario steps.
     *
-    * @param step the step that contains a publish verb.
-    * @return the input field of the model that is published
+    * @param step the step that contains a receive verb
+    * @return the input field of the model that is received
     */
    public IDataReferenceField getInputs(IScenarioStep step) {
       Preconditions.checkNotNull(step, "step may not be null!");
@@ -52,6 +53,20 @@ public class ReceiveStepHandler extends AbstractStepHandler {
 
    @Override
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
-      requireStepParameters(context, "The 'receive' verb requires parameters!");
+      requireOnlyOneParameter(context, "The 'receive' verb requires exactly one parameter which is an input field!");
+      requireParameterReferenceAnInputField(context, 0);
+   }
+
+   static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context,
+                                                     int parameterIndex) {
+      IScenarioStep step = context.getObject();
+      String fieldName = step.getParameters().size() <= parameterIndex ? null : step.getParameters().get(parameterIndex);
+      IModel model = step.getParent().getParent();
+      if (fieldName != null && !model.getInputs().getByName(fieldName).isPresent()) {
+         String errMsg = String.format("The model %s contains no input field named '%s'!",
+                                       model.getFullyQualifiedName(),
+                                       fieldName);
+         context.declare(Severity.ERROR, errMsg, step).getParameters();
+      }
    }
 }

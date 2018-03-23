@@ -92,8 +92,9 @@ public interface IValidationContext<T> {
     *
     * @param severity the severity of the issue
     * @param message  the message to associate with the issue
-    * @param object   the context object
-    * @return the context object
+    * @param object   the object that contains the invalid value
+    * @param <S>      the type of the object that contains the invalid value
+    * @return the object that contains the invalid value
     */
-   T declare(Severity severity, String message, T object);
+   <S> S declare(Severity severity, String message, S object);
 }

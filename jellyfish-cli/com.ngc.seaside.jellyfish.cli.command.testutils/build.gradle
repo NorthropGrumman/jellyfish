@@ -1,14 +1,14 @@
 dependencies {
    api project(':jellyfish.service.api')
+   api "com.ngc.blocs:service.api:$blocsVersion"
 
    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
    implementation project(':jellyfish.service.impl.templateservice')
    implementation project(':jellyfish.service.impl.propertyservice')
-
    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-   api "com.ngc.blocs:service.api:$blocsVersion"
    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
+   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
    implementation "org.mockito:mockito-core:$mockitoVersion"
    implementation "junit:junit:$junitVersion"
 

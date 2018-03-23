@@ -27,8 +27,8 @@ project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.g
 include 'com.ngc.seaside.jellyfish.cli.command.testutils'
 project(':com.ngc.seaside.jellyfish.cli.command.testutils').name = 'jellyfish.cli.command.testutils'
 
-include 'com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavapubsubconnector').name = 'jellyfish.cli.command.createjavapubsubconnector'
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector').name = 'jellyfish.cli.command.createjavaprotobufconnector'
 
 include 'com.ngc.seaside.jellyfish.cli.command.createdomain'
 project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish.cli.command.createdomain'

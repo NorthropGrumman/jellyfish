@@ -31,6 +31,7 @@ public class Model extends AbstractModel {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
+
    @Override
    public void basicSink(Data1 input1) throws ServiceFaultException {
       // TODO: implement this
@@ -51,7 +52,7 @@ public class Model extends AbstractModel {
       BlockingQueue<Data1> input1Queue,
       Consumer<Data4> output1Consumer,
       Consumer<Data5> output2Consumer) {
-      //TODO: implement this
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
@@ -61,14 +62,14 @@ public class Model extends AbstractModel {
       BlockingQueue<Data2> input2Queue,
       Consumer<Data4> output1Consumer,
       Consumer<Data5> output2Consumer) {
-      //TODO: implement this
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
    public void basicSource(
       Consumer<Data4> output1Consumer) {
-      //TODO: implement this
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
@@ -76,11 +77,9 @@ public class Model extends AbstractModel {
    public void multiSource(
       Consumer<Data4> output1Consumer,
       Consumer<Data5> output2Consumer) {
-      //TODO: implement this
+      // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
-
-
 
    @Activate
    public void activate() {

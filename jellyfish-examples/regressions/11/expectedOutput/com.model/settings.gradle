@@ -1,0 +1,29 @@
+rootProject.name = 'com.model'
+
+include 'com.model.config'
+project(':com.model.config').name = 'model.config'
+
+include 'com.model.distribution'
+project(':com.model.distribution').name = 'model.distribution'
+
+include 'com.model.domain'
+project(':com.model.domain').name = 'model.domain'
+
+include 'com.model.impl'
+project(':com.model.impl').name = 'model.impl'
+
+include 'com.model.tests'
+project(':com.model.tests').name = 'model.tests'
+
+include 'generated-projects/com.model.base'
+project(':generated-projects/com.model.base').name = 'model.base'
+
+include 'generated-projects/com.model.connector'
+project(':generated-projects/com.model.connector').name = 'model.connector'
+
+include 'generated-projects/com.model.events'
+project(':generated-projects/com.model.events').name = 'model.events'
+
+include 'generated-projects/com.model.messages'
+project(':generated-projects/com.model.messages').name = 'model.messages'
+

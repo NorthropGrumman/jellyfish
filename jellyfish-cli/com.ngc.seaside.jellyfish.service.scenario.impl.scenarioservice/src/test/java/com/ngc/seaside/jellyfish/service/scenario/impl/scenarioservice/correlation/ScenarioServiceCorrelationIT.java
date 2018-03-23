@@ -49,22 +49,12 @@ public class ScenarioServiceCorrelationIT {
    @Mock
    private IJellyFishCommandOptions options;
 
-   @Mock
-   private PublishStepHandler publisherHandler;
-
-   @Mock
-   private ReceiveStepHandler receiveHandler;
-
-   @Mock
-   private CorrelateStepHandler correlationHandler;
-
    @Before
    public void setup() {
    }
 
    @Test
    public void testCorrelationExpressions() {
-
       IEnumeration enum1 = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enum1");
       IData nestedData1 = ModelUtils.getMockNamedChild(IData.class, "com.ngc.NestedData1");
       ModelUtils.mockData(nestedData1, null, "nestedField1", DataTypes.INT, "nestedField2", DataTypes.BOOLEAN);
@@ -150,7 +140,6 @@ public class ScenarioServiceCorrelationIT {
 
    @Test
    public void testCompletenessExpressions() {
-
       IEnumeration enum1 = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enum1");
       IData nestedData1 = ModelUtils.getMockNamedChild(IData.class, "com.ngc.NestedData1");
       ModelUtils.mockData(nestedData1, null, "nestedField1", DataTypes.INT, "nestedField2", DataTypes.BOOLEAN);
@@ -247,7 +236,6 @@ public class ScenarioServiceCorrelationIT {
 
    @Test
    public void testMultipleExpressions() {
-
       IEnumeration enum1 = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enum1");
 
       IData data1 = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data1");
