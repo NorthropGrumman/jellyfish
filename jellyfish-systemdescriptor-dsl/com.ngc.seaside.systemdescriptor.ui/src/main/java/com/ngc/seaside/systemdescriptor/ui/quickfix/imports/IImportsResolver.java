@@ -4,6 +4,7 @@ import com.google.inject.ImplementedBy;
 import com.google.inject.Inject;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Import;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -126,6 +127,9 @@ class DefaultImportsResolver implements IImportsResolver {
                   namesToImport.add(choice.get());
                }
             } else {
+               if (!SystemDescriptorPackage.Literals.ELEMENT.isInstance(referencedElement)) {
+                  continue;
+               }
                // Resource has been resolve
                // Add resources to imports set
                for (IEObjectDescription description : descriptions.getExportedObjectsByObject(referencedElement)) {
@@ -135,12 +139,13 @@ class DefaultImportsResolver implements IImportsResolver {
          }
       }
       
-      return namesToImport.stream().map(name -> new ImportImpl() {
+      List<Import> imports = namesToImport.stream().map(name -> new ImportImpl() {
          @Override
          public String getImportedNamespace() {
             return qualifiedNameConverter.toString(name);
          }
       }).collect(Collectors.toList());
+      return imports;
    }
 
    /**
