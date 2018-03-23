@@ -37,7 +37,7 @@ import com.google.inject.name.Named;
  */
 public class ParseHelper<T extends EObject> {
     
-    public final static String EXTENSION = "org.eclipse.xtext.junit4.util.ParseHelper.extension";
+    public final static String EXTENSION = "org.eclipse.xtext.testing.util.ParseHelper.extension";
 	
 	@Inject
 	private Provider<XtextResourceSet> resourceSetProvider;

@@ -12,11 +12,11 @@ import com.ngc.seaside.systemdescriptor.tests.resources.Models
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.diagnostics.Diagnostic
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.util.ResourceHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.util.ResourceHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

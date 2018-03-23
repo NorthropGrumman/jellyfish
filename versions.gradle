@@ -6,7 +6,7 @@ allprojects {
         blocsPluginVersion = '0.5'
         seasidePluginsVersion = '2.3.0'
         sonarqubePluginVersion = '2.5'
-        xtextPluginVersion = '1.0.2'
+        xtextPluginVersion = '1.0.15'
 
         aetherVersion = '1.1.0'
         blocsVersion = '2.1'
@@ -27,10 +27,8 @@ allprojects {
         osgiVersion =  '6.0.0'
         protobufVersion = '3.2.0'
         velocityVersion = '2.0'
-        xtextVersion = '2.10.0'
+        xtextVersion = '2.12.0'
 
-        // This is a not a version but it is a property that is shared by all projects.
-        // TODO TH: rename this file to properties.gradle or common.gradle.
         m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
         dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
         m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")

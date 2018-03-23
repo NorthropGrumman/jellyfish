@@ -7,4 +7,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: com.ngc.seaside.systemdescriptor.ide.contentassist.antlr,
  com.ngc.seaside.systemdescriptor.ide.contentassist.antlr.internal
+Require-Bundle: org.antlr.runtime
 
