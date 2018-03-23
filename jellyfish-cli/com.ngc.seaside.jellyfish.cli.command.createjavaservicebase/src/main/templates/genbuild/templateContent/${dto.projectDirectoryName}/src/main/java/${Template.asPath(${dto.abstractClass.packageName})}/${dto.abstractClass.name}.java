@@ -205,14 +205,18 @@ public abstract class ${dto.abstractClass.name}
 #foreach($scenario in $dto.complexScenarios)
       ${scenario.startMethod}();
 #end
+#if (!$dto.receiveMethods.isEmpty())
       eventService.addSubscriber(this);
+#end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
    }
 
 ################################# Deactivate ##################################
    protected void deactivate() {
+#if (!$dto.receiveMethods.isEmpty())
       eventService.removeSubscriber(this);
+#end
 #if (!$dto.correlationMethods.isEmpty())
       triggers.keySet().forEach(ICorrelationTrigger::unregister);
       triggers.clear();
