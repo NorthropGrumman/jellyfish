@@ -1,21 +1,23 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto.ConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto.TransportProviderDependenciesUtil;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.osgi.service.component.annotations.Activate;
@@ -28,12 +30,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Component(service = IJellyFishCommand.class)
-public class CreateJavaDistributionCommand implements IJellyFishCommand {
+public class CreateJavaDistributionCommand extends AbstractJellyfishCommand implements IJellyFishCommand {
 
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
@@ -45,188 +46,119 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    private static final String NAME = "create-java-distribution";
-   private static final IUsage USAGE = createUsage();
-   private ILogService logService;
-   private ITemplateService templateService;
-   private IProjectNamingService projectNamingService;
-   private IPackageNamingService packageNamingService;
-   private IBuildManagementService buildManagementService;
 
+   private ITransportConfigurationService transportConfigService;
 
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   private static IUsage createUsage() {
-      return new DefaultUsage("Generates the gradle distribution project for a Java application",
-            CommonParameters.GROUP_ID, 
-            CommonParameters.ARTIFACT_ID, 
-            CommonParameters.OUTPUT_DIRECTORY.required(), 
-            CommonParameters.MODEL.required(), 
-            CommonParameters.CLEAN
-      );
+   public CreateJavaDistributionCommand() {
+      super(NAME);
    }
 
    @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   protected void doRun() {
+      IJellyFishCommandOptions options = getOptions();
       DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameters(commandOptions.getParameters().getAllParameters());
+      parameters.addParameters(options.getParameters().getAllParameters());
 
-      ISystemDescriptor systemDescriptor = commandOptions.getSystemDescriptor();
-      String modelId = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-
-      final IModel model = systemDescriptor.findModel(modelId)
-                                           .orElseThrow(() -> new CommandException("Unknown model:" + modelId));
+      final IModel model = getModel();
 
       parameters.addParameter(new DefaultParameter<>(MODEL_OBJECT_PROPERTY, model));
 
-      IProjectInformation info = projectNamingService.getDistributionProjectName(commandOptions, model);
+      IProjectInformation info = projectNamingService.getDistributionProjectName(options, model);
 
-      final Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      final Path outputDirectory = getOutputDirectory();
 
       doCreateDirectories(outputDirectory);
 
       // Resolve clean property
-      final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
+      final boolean clean = getBooleanParameter(CLEAN_PROPERTY);
 
-      String pkg = packageNamingService.getDistributionPackageName(commandOptions, model);
+      String pkg = packageNamingService.getDistributionPackageName(options, model);
       parameters.addParameter(new DefaultParameter<>(PACKAGE_PROPERTY, pkg));
 
-      ConfigDto dto = new ConfigDto(buildManagementService, commandOptions);
-      
+      ConfigDto dto = new ConfigDto(buildManagementService, options);
+
       dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(pkg);
       dto.setModel(model);
-      
-      Set<String> projectDependencies = new LinkedHashSet<String>();
-      projectDependencies.add(projectNamingService.getEventsProjectName(commandOptions, model).getArtifactId());
-      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true)) {
-         projectDependencies.add(projectNamingService.getDomainProjectName(commandOptions, model).getArtifactId());
-      }
-      projectDependencies.add(projectNamingService.getConnectorProjectName(commandOptions, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getConfigProjectName(commandOptions, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getMessageProjectName(commandOptions, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getServiceProjectName(commandOptions, model).getArtifactId());
-      dto.setProjectDependencies(projectDependencies);
-      
-      
-      
-      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      dto.setTransportProviderDependencies(
+         TransportProviderDependenciesUtil.getTransportProviderDependencies(options, transportConfigService));
 
-      templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(),
-                             parameters,
-                             outputDirectory,
-                             clean);
-      buildManagementService.registerProject(commandOptions, info);
-      
+      Set<String> projectDependencies = new LinkedHashSet<String>();
+      projectDependencies.add(projectNamingService.getEventsProjectName(options, model).getArtifactId());
+      if (CommonParameters.evaluateBooleanParameter(options.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true)) {
+         projectDependencies.add(projectNamingService.getDomainProjectName(options, model).getArtifactId());
+      }
+      projectDependencies.add(projectNamingService.getConnectorProjectName(options, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getConfigProjectName(options, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getMessageProjectName(options, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getServiceProjectName(options, model).getArtifactId());
+      dto.setProjectDependencies(projectDependencies);
+
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      unpackDefaultTemplate(parameters, outputDirectory, clean);
+      registerProject(info);
+
       logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
                       model.getName());
    }
 
    @Activate
    public void activate() {
+      super.activate();
       logService.trace(getClass(), "Activated");
    }
 
    @Deactivate
    public void deactivate() {
+      super.deactivate();
       logService.trace(getClass(), "Deactivated");
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeLogService")
    public void setLogService(ILogService ref) {
-      this.logService = ref;
+      super.setLogService(ref);
    }
 
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
-   /**
-    * Sets template service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
-      this.templateService = ref;
+      super.setTemplateService(ref);
    }
 
-   /**
-    * Remove template service.
-    */
-   public void removeTemplateService(ITemplateService ref) {
-      setTemplateService(null);
-   }
-
-   /**
-    * Sets project naming service.
-    *
-    * @param ref the ref
-    */
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.STATIC,
             unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
-      this.projectNamingService = ref;
-      
+      super.setProjectNamingService(ref);
    }
-   
-   /**
-    * Remove project naming service.
-    */
-   public void removeProjectNamingService(IProjectNamingService ref) {
-      setProjectNamingService(null);
-   }
-   
-   /**
-    * Sets package naming service.
-    *
-    * @param ref the ref
-    */
+
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.STATIC,
             unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
-      this.packageNamingService = ref;
-      
-   }
-   
-   /**
-    * Remove package naming service.
-    */
-   public void removePackageNamingService(IPackageNamingService ref) {
-      setPackageNamingService(null);
+      super.setPackageNamingService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC)
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeBuildManagementService")
    public void setBuildManagementService(IBuildManagementService ref) {
-      this.buildManagementService = ref;
+      super.setBuildManagementService(ref);
    }
 
-   public void removeBuildManagementService(IBuildManagementService ref) {
-      setBuildManagementService(null);
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeTransportConfigurationService")
+   public void setTransportConfigurationService(ITransportConfigurationService ref) {
+      this.transportConfigService = ref;
+   }
+
+   public void removeTransportConfigurationService(ITransportConfigurationService ref) {
+      setTransportConfigurationService(null);
    }
 
    protected void doCreateDirectories(Path outputDirectory) {
@@ -236,6 +168,17 @@ public class CreateJavaDistributionCommand implements IJellyFishCommand {
          logService.error(CreateJavaDistributionCommand.class, e);
          throw new CommandException(e);
       }
+   }
+
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage("Generates the gradle distribution project for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.MODEL.required(),
+            CommonParameters.CLEAN
+      );
    }
 }
 
