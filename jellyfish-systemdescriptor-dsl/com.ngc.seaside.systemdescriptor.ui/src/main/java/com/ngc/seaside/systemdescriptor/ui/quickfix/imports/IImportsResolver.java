@@ -127,13 +127,12 @@ class DefaultImportsResolver implements IImportsResolver {
                   namesToImport.add(choice.get());
                }
             } else {
-               if (!SystemDescriptorPackage.Literals.ELEMENT.isInstance(referencedElement)) {
-                  continue;
-               }
                // Resource has been resolve
                // Add resources to imports set
                for (IEObjectDescription description : descriptions.getExportedObjectsByObject(referencedElement)) {
-                  namesToImport.add(description.getQualifiedName());
+                  if (SystemDescriptorPackage.Literals.ELEMENT.isInstance(description.getEObjectOrProxy())) {
+                     namesToImport.add(description.getQualifiedName());
+                  }
                }
             }
          }
