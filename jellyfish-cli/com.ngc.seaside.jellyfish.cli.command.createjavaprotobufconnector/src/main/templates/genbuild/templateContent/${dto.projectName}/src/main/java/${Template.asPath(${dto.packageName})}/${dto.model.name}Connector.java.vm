@@ -12,6 +12,9 @@ import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.time.api.Time;
 import com.ngc.seaside.request.api.ServiceRequest;
+#if(${dto.requiresInjectedService})import com.ngc.seaside.service.fault.api.IFaultManagementService;
+import com.ngc.seaside.service.fault.api.ServiceFaultException;
+#end
 import com.ngc.seaside.service.transport.api.ITransportObject;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
@@ -36,7 +39,8 @@ public class ${dto.model.name}Connector {
    private ILogService logService;
    private IEventService eventService;
    private ITransportService transportService;
-#if(${dto.requiresInjectedService})   private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
+#if(${dto.requiresInjectedService})   private IFaultManagementService faultManagementService;
+   private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
 #end
 
    @SuppressWarnings("unchecked")
@@ -94,13 +98,21 @@ public class ${dto.model.name}Connector {
 #if(${dto.requiresInjectedService})
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "remove${dto.model.name}")
    public void set${dto.model.name}(${dto.serviceInterface.name} ref) {
-      ${dto.getServiceFieldName()} = ref
+      ${dto.getServiceFieldName()} = ref;
    }
 
    public void remove${dto.model.name}(${dto.serviceInterface.name} ref) {
       set${dto.model.name}(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFaultManagementService")
+   public void setFaultManagementService(IFaultManagementService ref) {
+      this.faultManagementService = ref;
+   }
+
+   public void removeFaultManagementService(IFaultManagementService ref) {
+      setFaultManagementService(null);
+   }
 #end
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
    public void setEventService(IEventService ref) {

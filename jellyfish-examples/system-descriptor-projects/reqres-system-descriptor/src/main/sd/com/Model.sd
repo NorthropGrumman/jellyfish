@@ -33,6 +33,6 @@ model Model {
 
 	scenario compute {
 	  when receiving x
-	  then willPublish y
+     then willPublish y
 	}
 }
