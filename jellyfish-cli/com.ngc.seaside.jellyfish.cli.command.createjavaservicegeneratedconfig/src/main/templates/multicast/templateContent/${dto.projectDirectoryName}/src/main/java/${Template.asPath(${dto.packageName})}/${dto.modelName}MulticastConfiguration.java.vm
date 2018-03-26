@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 
 public class ${dto.modelName}MulticastConfiguration {
 
-   private MulticastConfiguration() {
+   private ${dto.modelName}MulticastConfiguration() {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<MulticastTopic> multicastProvider) {

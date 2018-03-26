@@ -50,7 +50,7 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
 
       MulticastDto multicastDto = new MulticastDto().setBaseDto(dto)
                                                     .setTopicsImport(topicsClassName);
-      String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.')) + '.';
+      String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();

@@ -101,7 +101,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                .setPackageName(packagez)
                .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
                .getArtifactId())
-               .setProjectDirectoryName(projectDir.getFileName().toString());
+               .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
          new MulticastTransportProviderConfigDto(transportConfigService));
@@ -118,8 +118,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("StringUtils", StringUtils.class));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
-
-      buildManagementService.registerProject(options, projectInfo);
+      registerProject(projectInfo);
    }
 
    @Activate
