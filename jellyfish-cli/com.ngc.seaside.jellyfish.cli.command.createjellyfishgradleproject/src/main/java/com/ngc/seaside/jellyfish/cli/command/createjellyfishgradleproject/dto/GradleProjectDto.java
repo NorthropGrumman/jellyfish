@@ -15,6 +15,7 @@ public class GradleProjectDto {
    private String version;
    private String systemDescriptorGav;
    private String modelName;
+   private String deploymentModelName;
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
    private Collection<IProjectInformation> projects = new ArrayList<>();
@@ -61,6 +62,15 @@ public class GradleProjectDto {
 
    public GradleProjectDto setModelName(String modelName) {
       this.modelName = modelName;
+      return this;
+   }
+
+   public String getDeploymentModelName() {
+      return deploymentModelName;
+   }
+
+   public GradleProjectDto setDeploymentModelName(String deploymentModelName) {
+      this.deploymentModelName = deploymentModelName;
       return this;
    }
 

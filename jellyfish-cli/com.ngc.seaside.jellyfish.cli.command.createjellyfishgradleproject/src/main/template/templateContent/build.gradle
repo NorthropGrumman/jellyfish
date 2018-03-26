@@ -23,6 +23,9 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 systemDescriptor {
    project = '${dto.systemDescriptorGav}'
    model = '${dto.modelName}'
+#if ($dto.deploymentModelName)
+   deploymentModel = '${dto.deploymentModelName}'
+#end
 }
 
 subprojects {
