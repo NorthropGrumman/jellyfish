@@ -1,8 +1,0 @@
-package com.ngc.seaside.classifier.datatype
-
-enum ClassificationEnum {
-	FISH_HEAD,
-	BACKBONE,
-	FIN,
-	TAIL
-}
