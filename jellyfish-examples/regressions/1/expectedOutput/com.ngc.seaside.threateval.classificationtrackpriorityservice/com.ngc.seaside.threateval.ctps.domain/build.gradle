@@ -9,6 +9,7 @@ jar {
    manifest {
       attributes('Export-Package': 
          'com.ngc.seaside.threateval.ctps.domain.classifier.datatype.*,' + 
+         'com.ngc.seaside.threateval.ctps.domain.common.datatype.*,' + 
          'com.ngc.seaside.threateval.ctps.domain.datatype.*')
    }
 }

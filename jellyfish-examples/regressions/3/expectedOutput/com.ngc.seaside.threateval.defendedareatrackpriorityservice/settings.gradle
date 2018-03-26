@@ -1,8 +1,5 @@
 rootProject.name = 'com.ngc.seaside.threateval.defendedareatrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.datps.config'
-project(':com.ngc.seaside.threateval.datps.config').name = 'datps.config'
-
 include 'com.ngc.seaside.threateval.datps.distribution'
 project(':com.ngc.seaside.threateval.datps.distribution').name = 'datps.distribution'
 
@@ -17,6 +14,9 @@ project(':com.ngc.seaside.threateval.datps.tests').name = 'datps.tests'
 
 include 'generated-projects/com.ngc.seaside.threateval.datps.base'
 project(':generated-projects/com.ngc.seaside.threateval.datps.base').name = 'datps.base'
+
+include 'generated-projects/com.ngc.seaside.threateval.datps.config'
+project(':generated-projects/com.ngc.seaside.threateval.datps.config').name = 'datps.config'
 
 include 'generated-projects/com.ngc.seaside.threateval.datps.connector'
 project(':generated-projects/com.ngc.seaside.threateval.datps.connector').name = 'datps.connector'

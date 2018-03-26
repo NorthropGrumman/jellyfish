@@ -23,6 +23,7 @@ dependencies {
    bundles project(":datps.impl")
 
    bundles "com.ngc.seaside:service.api:$starfishVersion"
+   bundles "com.ngc.seaside:service.correlation.impl.correlationservice:$starfishVersion"
    bundles "com.ngc.seaside:fault.impl.faultloggingservice:$starfishVersion"
    bundles "com.ngc.seaside:monitoring.impl.loggingmonitoringservice:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.api:$starfishVersion"
