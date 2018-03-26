@@ -15,6 +15,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
@@ -153,7 +154,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
                   .collect(Collectors.toList());
    }
 
-   private static <T> Collection<T> getConfigurations(IModelLink<?> link, String qualifiedName,
+   private static <T> Collection<T> getConfigurations(IModelLink<? extends IReferenceField> link, String qualifiedName,
             Function<IPropertyDataValue, T> function) {
       Collection<IPropertyDataValue> propertyValues = link.getProperties()
                                                           .stream()
@@ -167,7 +168,8 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       Collection<T> configurations = new ArrayList<>(propertyValues.size());
       for (IPropertyDataValue value : propertyValues) {
          if (!value.isSet()) {
-            throw new IllegalStateException("Configuration is not completely set for link " + link);
+            throw new IllegalStateException(String.format("Configuration is not completely set for link %s%s -> %s",
+               link.getName().orElse("") + " ", link.getSource().getName(), link.getTarget().getName()));
          }
          configurations.add(function.apply(value));
       }

@@ -156,7 +156,7 @@ public class NestedPropertyValueResolver {
          target = ((BaseLinkDeclaration) linkDeclaration).getTarget();
       } else {
          source = ((RefinedLinkDeclaration) linkDeclaration).getSource();
-         target = ((RefinedLinkDeclaration) linkDeclaration).getSource();
+         target = ((RefinedLinkDeclaration) linkDeclaration).getTarget();
       }
 
       for (LinkDeclaration link : model.getLinks().getDeclarations()) {
