@@ -1,8 +1,5 @@
 rootProject.name = 'com.ngc.seaside.threateval.engagementtrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.etps.config'
-project(':com.ngc.seaside.threateval.etps.config').name = 'etps.config'
-
 include 'com.ngc.seaside.threateval.etps.distribution'
 project(':com.ngc.seaside.threateval.etps.distribution').name = 'etps.distribution'
 
@@ -17,6 +14,9 @@ project(':com.ngc.seaside.threateval.etps.tests').name = 'etps.tests'
 
 include 'generated-projects/com.ngc.seaside.threateval.etps.base'
 project(':generated-projects/com.ngc.seaside.threateval.etps.base').name = 'etps.base'
+
+include 'generated-projects/com.ngc.seaside.threateval.etps.config'
+project(':generated-projects/com.ngc.seaside.threateval.etps.config').name = 'etps.config'
 
 include 'generated-projects/com.ngc.seaside.threateval.etps.connector'
 project(':generated-projects/com.ngc.seaside.threateval.etps.connector').name = 'etps.connector'

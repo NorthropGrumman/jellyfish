@@ -11,16 +11,18 @@ public class MulticastConfiguration {
       return address;
    }
 
-   public void setAddress(String address) {
+   public MulticastConfiguration setAddress(String address) {
       this.address = address;
+      return this;
    }
 
    public int getPort() {
       return port;
    }
 
-   public void setPort(int port) {
+   public MulticastConfiguration setPort(int port) {
       this.port = port;
+      return this;
    }
 
    @Override

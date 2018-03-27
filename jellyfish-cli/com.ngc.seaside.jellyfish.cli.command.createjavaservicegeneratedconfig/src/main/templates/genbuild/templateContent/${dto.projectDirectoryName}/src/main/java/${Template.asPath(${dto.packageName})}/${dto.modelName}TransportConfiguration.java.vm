@@ -1,0 +1,75 @@
+package ${dto.packageName};
+
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.service.transport.api.ITransportProvider;
+import com.ngc.seaside.service.transport.api.ITransportService;
+import com.ngc.seaside.service.transport.api.TransportConfiguration;
+#foreach ($transportProvider in $dto.transportProviders)
+import ${transportProvider.topicPackage}.${transportProvider.topicType};
+#end
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+@Component(immediate = true)
+public class ${dto.modelName}TransportConfiguration {
+
+   private ILogService logService;
+
+   private ITransportService transportService;
+
+#foreach ($transportProvider in $dto.transportProviders)
+   private ITransportProvider<${transportProvider.topicType}> ${transportProvider.providerName};
+
+#end
+   @Activate
+   public void activate() {
+      TransportConfiguration config = new TransportConfiguration();
+#foreach ($transportProvider in $dto.transportProviders)
+      ${transportProvider.configurationType}.configure(config, ${transportProvider.providerName});
+#end
+      transportService.registerConfiguration(config);
+      logService.debug(getClass(), "activated");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      logService.debug(getClass(), "deactivated");
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTransportService(ITransportService ref) {
+      this.transportService = ref;
+   }
+
+   public void removeTransportService(ITransportService ref) {
+      setTransportService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+#foreach ($transportProvider in $dto.transportProviders)
+#set ($methodName = ${StringUtils.capitalize($transportProvider.providerName)})
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         target = "(component.name=${transportProvider.componentName})")
+   public void set${methodName}(ITransportProvider<${transportProvider.topicType}> ref) {
+      this.${transportProvider.providerName} = ref;
+   }
+
+   public void remove${methodName}(ITransportProvider<${transportProvider.topicType}> ref) {
+      set${methodName}(null);
+   }
+#end
+}

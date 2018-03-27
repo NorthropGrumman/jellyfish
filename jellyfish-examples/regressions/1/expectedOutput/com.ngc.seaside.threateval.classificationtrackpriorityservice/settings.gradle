@@ -1,8 +1,5 @@
 rootProject.name = 'com.ngc.seaside.threateval.classificationtrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.ctps.config'
-project(':com.ngc.seaside.threateval.ctps.config').name = 'ctps.config'
-
 include 'com.ngc.seaside.threateval.ctps.distribution'
 project(':com.ngc.seaside.threateval.ctps.distribution').name = 'ctps.distribution'
 
@@ -17,6 +14,9 @@ project(':com.ngc.seaside.threateval.ctps.tests').name = 'ctps.tests'
 
 include 'generated-projects/com.ngc.seaside.threateval.ctps.base'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.base').name = 'ctps.base'
+
+include 'generated-projects/com.ngc.seaside.threateval.ctps.config'
+project(':generated-projects/com.ngc.seaside.threateval.ctps.config').name = 'ctps.config'
 
 include 'generated-projects/com.ngc.seaside.threateval.ctps.connector'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.connector').name = 'ctps.connector'

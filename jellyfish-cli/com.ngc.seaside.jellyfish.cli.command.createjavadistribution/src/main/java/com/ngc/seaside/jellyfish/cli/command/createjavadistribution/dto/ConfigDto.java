@@ -16,6 +16,7 @@ public class ConfigDto {
    private String packageName;
    private String projectName;
    private Set<String> projectDependencies;
+   private Set<String> transportProviderDependencies;
 
    public ConfigDto(IBuildManagementService buildManagementService,
                     IJellyFishCommandOptions options) {
@@ -56,6 +57,14 @@ public class ConfigDto {
 
    public void setProjectDependencies(Set<String> projectDependencies) {
       this.projectDependencies = projectDependencies;
+   }
+
+   public Set<String> getTransportProviderDependencies() {
+      return transportProviderDependencies;
+   }
+
+   public void setTransportProviderDependencies(Set<String> transportProviderDependencies) {
+      this.transportProviderDependencies = transportProviderDependencies;
    }
 
    public String getFormattedDependency(String groupAndArtifactId) {

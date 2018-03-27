@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.GradleProjectDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
@@ -46,6 +47,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String SYSTEM_DESCRIPTOR_GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
+   public static final String DEPLOYMENT_MODEL_NAME_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
 
    public static final String PROJECT_NAME_PROPERTY = "projectName";
    public static final String VERSION_PROPERTY = "version";
@@ -104,6 +106,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setVersion(collection.getParameter(VERSION_PROPERTY).getStringValue())
             .setSystemDescriptorGav(collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue())
             .setModelName(collection.getParameter(MODEL_NAME_PROPERTY).getStringValue())
+            .setDeploymentModelName(getDeploymentModel(commandOptions))
             .setBuildScriptDependencies(getBuildScriptDependencies(commandOptions))
             .setVersionProperties(getVersionProperties(commandOptions))
             .setProjects(getProjects(commandOptions));
@@ -198,6 +201,15 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       return buildManagementService.getRegisteredProjects();
    }
 
+   private String getDeploymentModel(IJellyFishCommandOptions options) {
+      IParameter<?> deploymentParameter = options.getParameters().getParameter(DEPLOYMENT_MODEL_NAME_PROPERTY);
+      if (deploymentParameter == null) {
+         return null;
+      } else {
+         return deploymentParameter.getStringValue();
+      }
+   }
+
    /**
     * Create the usage for this command.
     *
@@ -222,6 +234,7 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
                   .setRequired(true),
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL,
             CommonParameters.CLEAN);
    }
 

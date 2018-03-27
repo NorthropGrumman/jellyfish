@@ -51,6 +51,7 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                 new JellyFishProjectGenerator(logger)
                       .setCommand(command)
                       .setArguments([(CommonParameters.MODEL.name)                  : "${parent.systemDescriptor.model}",
+                                     (CommonParameters.DEPLOYMENT_MODEL.name)       : "${parent.systemDescriptor.deploymentModel}",
                                      (CommonParameters.GROUP_ARTIFACT_VERSION.name) : "${sdProject.group}:${sdProject.name}:${sdProject.version}",
                                      (CommonParameters.OUTPUT_DIRECTORY.name)       : "${project.rootDir.absolutePath}",
                                      (CommonParameters.UPDATE_GRADLE_SETTING.name)  : 'false',

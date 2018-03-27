@@ -65,6 +65,9 @@ dependencies {
     implementation project(':jellyfish.cli.command.createjavaserviceconfig')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')
 
+    implementation project(':jellyfish.cli.command.createjavaservicegeneratedconfig')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicegeneratedconfig', configuration: 'commandTemplate')
+
     implementation project(':jellyfish.cli.command.createjavacucumbertests')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
 

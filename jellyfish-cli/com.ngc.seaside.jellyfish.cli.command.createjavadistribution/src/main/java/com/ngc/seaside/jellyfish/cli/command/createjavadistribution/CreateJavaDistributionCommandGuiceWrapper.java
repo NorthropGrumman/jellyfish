@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -21,12 +22,14 @@ public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishComm
                                                     ITemplateService templateService,
                                                     IProjectNamingService projectNamingService,
                                                     IPackageNamingService packageNamingService,
-                                                    IBuildManagementService buildManagementService) {
+                                                    IBuildManagementService buildManagementService,
+                                                    ITransportConfigurationService transportConfigurationService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setTransportConfigurationService(transportConfigurationService);
       delegate.activate();
    }
 

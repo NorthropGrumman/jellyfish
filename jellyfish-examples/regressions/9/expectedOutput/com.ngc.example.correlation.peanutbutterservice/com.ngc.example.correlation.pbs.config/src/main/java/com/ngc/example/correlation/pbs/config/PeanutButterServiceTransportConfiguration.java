@@ -28,6 +28,7 @@ public class PeanutButterServiceTransportConfiguration {
    public void activate() {
       // TODO: implement configuration
       logService.debug(getClass(), "activated");
+      throw new UnsupportedOperationException("Not implemented!");
    }
 
    @Deactivate

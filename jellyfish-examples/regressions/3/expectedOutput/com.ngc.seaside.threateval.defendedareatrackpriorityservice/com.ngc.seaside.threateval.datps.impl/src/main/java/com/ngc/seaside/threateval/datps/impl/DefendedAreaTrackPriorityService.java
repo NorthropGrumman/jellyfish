@@ -2,14 +2,17 @@ package com.ngc.seaside.threateval.datps.impl;
 
 import com.ngc.seaside.threateval.datps.api.IDefendedAreaTrackPriorityService;
 import com.ngc.seaside.threateval.datps.base.impl.AbstractDefendedAreaTrackPriorityService;
+import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
 import com.ngc.seaside.threateval.datps.event.common.datatype.SystemTrack;
 import com.ngc.seaside.threateval.datps.event.datatype.TrackPriority;
+import com.ngc.seaside.threateval.datps.event.defendedarea.datatype.ImpactAssessment;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
+import com.ngc.seaside.service.correlation.api.ICorrelationService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -21,9 +24,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class DefendedAreaTrackPriorityService extends AbstractDefendedAreaTrackPriorityService {
 
    @Override
-   public TrackPriority calculateTrackPriority(SystemTrack systemTrack) throws ServiceFaultException {
-      // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");
+   public TrackPriority calculateTrackPriority(
+      SystemTrack systemTrack,
+      ImpactAssessment impactAssessment,
+      ILocalCorrelationEvent<String> correlationEvent) throws ServiceFaultException {
+         // TODO: implement this
+         throw new UnsupportedOperationException("not implemented");
    }
 
    @Activate
@@ -78,6 +84,17 @@ public class DefendedAreaTrackPriorityService extends AbstractDefendedAreaTrackP
    @Override
    public void removeThreadService(IThreadService ref) {
       super.removeThreadService(ref);
+   }
+
+   @Override
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeCorrelationService")
+   public void setCorrelationService(ICorrelationService ref) {
+      this.correlationService = ref;
+   }
+
+   @Override
+   public void removeCorrelationService(ICorrelationService ref) {
+      setCorrelationService(null);
    }
 
 }

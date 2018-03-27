@@ -5,6 +5,8 @@ import com.ngc.seaside.threateval.tps.base.impl.AbstractTrackPriorityService;
 import com.ngc.seaside.threateval.tps.event.common.datatype.DroppedSystemTrack;
 import com.ngc.seaside.threateval.tps.event.datatype.PrioritizedSystemTrackIdentifiers;
 import com.ngc.seaside.threateval.tps.event.datatype.TrackPriority;
+import com.ngc.seaside.threateval.tps.event.datatype.TrackPriorityRequest;
+import com.ngc.seaside.threateval.tps.event.datatype.TrackPriorityResponse;
 import com.ngc.blocs.service.api.IServiceModule;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -29,6 +31,12 @@ public class TrackPriorityService extends AbstractTrackPriorityService {
 
    @Override
    public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) throws ServiceFaultException {
+      // TODO: implement this
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public TrackPriorityResponse getTrackPriorities(TrackPriorityRequest trackPriorityRequest) throws ServiceFaultException{
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }

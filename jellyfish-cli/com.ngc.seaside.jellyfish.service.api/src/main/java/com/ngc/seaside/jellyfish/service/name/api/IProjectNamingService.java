@@ -34,7 +34,7 @@ public interface IProjectNamingService {
     * @return the project information for a events project
     */
    IProjectInformation getEventsProjectName(IJellyFishCommandOptions options, IModel model);
-   
+
    /**
     * Gets the project information for a connector project given a model.
     *
@@ -52,7 +52,7 @@ public interface IProjectNamingService {
     * @return the project information for a service project
     */
    IProjectInformation getServiceProjectName(IJellyFishCommandOptions options, IModel model);
-   
+
    /**
     * Gets the project information for a base service project given a model.
     *
@@ -61,7 +61,7 @@ public interface IProjectNamingService {
     * @return the project information for a base service project
     */
    IProjectInformation getBaseServiceProjectName(IJellyFishCommandOptions options, IModel model);
-   
+
    /**
     * Gets the project information for a messages project given a model.
     *
@@ -70,7 +70,7 @@ public interface IProjectNamingService {
     * @return the project information for a messages project
     */
    IProjectInformation getMessageProjectName(IJellyFishCommandOptions options, IModel model);
-   
+
    /**
     * Gets the project information for a distribution project given a model.
     *
@@ -79,7 +79,7 @@ public interface IProjectNamingService {
     * @return the project information for a distribution project
     */
    IProjectInformation getDistributionProjectName(IJellyFishCommandOptions options, IModel model);
-   
+
    /**
     * Gets the project information for a cucumber tests project given a model.
     *
@@ -97,4 +97,13 @@ public interface IProjectNamingService {
     * @return the project information for a cucumber tests project
     */
    IProjectInformation getConfigProjectName(IJellyFishCommandOptions options, IModel model);
+
+   /**
+    * Gets the project information for a generated config project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a cucumber tests project
+    */
+   IProjectInformation getGeneratedConfigProjectName(IJellyFishCommandOptions options, IModel model);
 }
