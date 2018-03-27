@@ -2,32 +2,32 @@
 apply plugin: 'com.ngc.seaside.command'
 
 dependencies {
-
 #if (${withApi} == "true")
-    compile project(':jellyfish.api')
-    compile project(':jellyfish.service.api')
-    compile project(':jellyfish.utilities')
+   implementation project(':jellyfish.api')
+   implementation project(':jellyfish.service.api')
+   implementation project(':jellyfish.utilities')
 #else
-    compile "com.ngc.seaside:jellyfish.api:${D}jellyfishCommandApiVersion"
-    compile "com.ngc.seaside:jellyfish.utilities:${D}jellyfishCommandApiVersion"
-    compile "com.ngc.seaside:jellyfish.service.api:${D}jellyfishCommandApiVersion"
+   implementation "com.ngc.seaside:jellyfish.api:${D}jellyfishVersion"
+   implementation "com.ngc.seaside:jellyfish.utilities:${D}jellyfishVersion"
+   implementation "com.ngc.seaside:jellyfish.service.api:${D}jellyfishVersion"
 #end
 
-    compile "com.google.inject:guice:${D}guiceVersion"
-    compile "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"
+   implementation "com.google.inject:guice:${D}guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"
+   implementation "com.ngc.blocs:component.impl.common.componentutilities:${D}blocsVersion"
+   implementation "com.ngc.blocs:service.api:${D}blocsVersion"
+   implementation "org.osgi:osgi.core:${D}osgiVersion"
+   implementation "org.osgi:osgi.enterprise:${D}osgiVersion"
+   implementation "commons-io:commons-io:${D}commonsIOVersion"
+   implementation "commons-lang:commons-lang:${D}commonsLangVersion"
 
-    compile "com.ngc.blocs:component.impl.common.componentutilities:${D}blocsVersion"
-    compile "com.ngc.blocs:service.api:${D}blocsVersion"
-    
-    compile "org.osgi:osgi.core:${D}osgiVersion"
-    compile "org.osgi:osgi.enterprise:${D}osgiVersion"
-    compile "commons-io:commons-io:${D}commonsIOVersion"
-    
-    compile "commons-lang:commons-lang:${D}commonsLangVersion"
-
-    
-    testCompile "junit:junit:${D}junitVersion"
-    testCompile "org.mockito:mockito-core:${D}mockitoVersion"
-    testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"
-    
+#if (${withApi} == "true")
+   testImplementation project(':jellyfish.cli.command.testutils')
+#else
+   testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:${D}jellyfishVersion"
+#end
+   testImplementation "junit:junit:${D}junitVersion"
+   testImplementation "org.mockito:mockito-core:${D}mockitoVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"
+   testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:${D}version"
 }
