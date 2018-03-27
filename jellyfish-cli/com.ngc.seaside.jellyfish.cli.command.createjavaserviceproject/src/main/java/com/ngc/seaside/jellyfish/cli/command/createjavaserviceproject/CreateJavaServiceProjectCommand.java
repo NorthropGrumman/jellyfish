@@ -238,14 +238,19 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
             .orElseThrow(() -> new CommandException(String.format("model %s not found!", ctx.modelName)));
 
       // Get the fully qualified deployment model name.
-      ctx.deploymentModelName = Optional.ofNullable(getOptions().getParameters().getParameter(DEPLOYMENT_MODEL_PROPERTY))
-                                        .map(IParameter::getStringValue);
+      ctx.deploymentModelName =
+            Optional.ofNullable(getOptions().getParameters().getParameter(DEPLOYMENT_MODEL_PROPERTY))
+                  .map(IParameter::getStringValue);
 
       // Find the actual deployment model.
-      ctx.deploymentModel = ctx.deploymentModelName.map(name -> getOptions().getSystemDescriptor()
-               .findModel(name)
-               .orElseThrow(() -> new CommandException(String.format("deployment model %s not found!", 
-                                                                     ctx.deploymentModelName))));
+      // This code works around a JDK bug https://bugs.openjdk.java.net/browse/JDK-8054569 that is impacting some JDKs.
+      if (ctx.deploymentModelName.isPresent()) {
+         ctx.deploymentModel = getOptions().getSystemDescriptor().findModel(ctx.deploymentModelName.get());
+         ctx.deploymentModel.orElseThrow(
+               () -> new CommandException(String.format("deployment model %s not found!", ctx.deploymentModelName)));
+      } else {
+         ctx.deploymentModel = Optional.empty();
+      }
 
       // Whether or not the configuration should use the generated config command
       ctx.generatedConfigProjectUsed = ctx.deploymentModel.isPresent();
