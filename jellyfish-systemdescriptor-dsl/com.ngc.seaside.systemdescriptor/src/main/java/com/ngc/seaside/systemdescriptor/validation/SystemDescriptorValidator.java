@@ -30,7 +30,8 @@ import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 		RefinedLinkValidator.class,
 		RequiresValidator.class,
 		PropertiesValidator.class,
-		PropertyValueValidator.class})
+		PropertyValueValidator.class,
+		UnsetPropertiesValidator.class})
 public class SystemDescriptorValidator extends AbstractSystemDescriptorValidator
 		implements IValidatorExtension.ValidationHelper {
 
