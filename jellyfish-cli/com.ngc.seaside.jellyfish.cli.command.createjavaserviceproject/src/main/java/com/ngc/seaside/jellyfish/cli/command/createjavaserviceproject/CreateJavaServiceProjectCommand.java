@@ -243,14 +243,12 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
                   .map(IParameter::getStringValue);
 
       // Find the actual deployment model.
-      // This code works around a JDK bug https://bugs.openjdk.java.net/browse/JDK-8054569 that is impacting some JDKs.
-      if (ctx.deploymentModelName.isPresent()) {
-         ctx.deploymentModel = getOptions().getSystemDescriptor().findModel(ctx.deploymentModelName.get());
-         ctx.deploymentModel.orElseThrow(
-               () -> new CommandException(String.format("deployment model %s not found!", ctx.deploymentModelName)));
-      } else {
-         ctx.deploymentModel = Optional.empty();
-      }
+      // Note the explicit <CommandException> is to work around a JDK bug:
+      // https://bugs.openjdk.java.net/browse/JDK-8054569 that is impacting some JDKs.
+      ctx.deploymentModel = ctx.deploymentModelName.map(name -> getOptions().getSystemDescriptor()
+            .findModel(name)
+            .<CommandException> orElseThrow(() -> new CommandException(String.format("deployment model %s not found!",
+                                                                  ctx.deploymentModelName))));
 
       // Whether or not the configuration should use the generated config command
       ctx.generatedConfigProjectUsed = ctx.deploymentModel.isPresent();
@@ -260,9 +258,9 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
             getOptions().getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue())
             .toFile();
 
-      ctx.createDomain =
-            CommonParameters
-                  .evaluateBooleanParameter(getOptions().getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true);
+      ctx.createDomain = CommonParameters.evaluateBooleanParameter(getOptions().getParameters(),
+                                                                   CREATE_SERVICE_DOMAIN_PROPERTY,
+                                                                   true);
 
       // Get the group ID.
       if (getOptions().getParameters().containsParameter(GROUP_ID_PROPERTY)) {
