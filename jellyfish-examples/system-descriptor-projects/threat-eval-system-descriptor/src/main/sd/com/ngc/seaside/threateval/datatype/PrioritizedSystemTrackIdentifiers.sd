@@ -1,0 +1,8 @@
+package com.ngc.seaside.threateval.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+data PrioritizedSystemTrackIdentifiers extends BaseData {
+	many SystemTrackIdentifier identifiers
+}

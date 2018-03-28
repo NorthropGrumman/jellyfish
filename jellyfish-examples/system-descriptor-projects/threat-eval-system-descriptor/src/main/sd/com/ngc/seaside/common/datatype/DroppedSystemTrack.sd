@@ -1,0 +1,8 @@
+package com.ngc.seaside.common.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+data DroppedSystemTrack extends BaseData {
+	SystemTrackIdentifier identifier
+}

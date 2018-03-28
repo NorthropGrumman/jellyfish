@@ -1,0 +1,108 @@
+package com.ngc.seaside.threateval.deployment
+
+import com.ngc.seaside.threateval.ThreatEvaluation
+import com.ngc.seaside.deployment.multicast.MulticastConfiguration
+import com.ngc.seaside.deployment.rest.RestConfiguration
+import com.ngc.seaside.deployment.rest.HttpMethod
+
+model SimpleThreatEvalDeployment refines ThreatEvaluation {
+	metadata {
+		"description" : "This deployment model allows the ThreatEvaluation system to be deployed on a single machine or VM.  All addresses reference either localhost or virtual multicast addresses."
+	}
+
+	links {
+		refine link systemTrack -> defendedAreaTrackPriorityService.systemTrack {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61004
+			}
+		}
+
+		refine link impactAssessment -> defendedAreaTrackPriorityService.impactAssessment {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61010
+			}
+		}
+
+		refine link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61003
+			}
+		}
+
+		refine link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61005
+			}
+		}
+
+		refine link trackPriorityService.prioritizedSystemTracks -> prioritizedSystemTracks {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61006
+			}
+		}
+
+		refine link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61001
+			}
+		}
+
+		refine link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61001
+			}
+		}
+
+		refine link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61001
+			}
+		}
+
+		refine link droppedSystemTrack -> trackPriorityService.droppedSystemTrack {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.socketAddress.address = "224.5.6.7"
+				multicastConfiguration.socketAddress.port = 61002
+			}
+		}
+
+		refine link trackPriorityRequest -> trackPriorityService.trackPriorityRequest {
+			properties {
+				RestConfiguration restConfiguration
+
+				restConfiguration.socketAddress.address = "localhost"
+				restConfiguration.socketAddress.port = 52412
+				restConfiguration.httpMethod = HttpMethod.POST
+				restConfiguration.contentType = "application/x-protobuf"
+				restConfiguration.path = "/trackPriorityRequest"
+			}
+		}
+	}
+
+}
