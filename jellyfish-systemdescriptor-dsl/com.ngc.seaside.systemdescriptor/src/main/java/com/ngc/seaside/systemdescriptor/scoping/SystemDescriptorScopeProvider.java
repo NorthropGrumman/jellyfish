@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
@@ -84,26 +85,20 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
 
          // Get the field with that name. Then filter for fields that have a
-         // complex data type (ie, not a primitive).
-         ReferencedDataModelFieldDeclaration dataField = data.getFields()
-                                                             .stream()
-                                                             .filter(f -> f.getName().equals(fieldName))
-                                                             .filter(
-                                                                f -> f instanceof ReferencedDataModelFieldDeclaration)
-                                                             .map(f -> (ReferencedDataModelFieldDeclaration) f)
-                                                             .findFirst()
-                                                             .orElse(null);
+         // complex data type (ie, not a primitive).         
+         DataFieldDeclaration dataField = SdUtils.findDataFieldDeclaration(data, fieldName);
 
          // Note that the data model can be an enumeration at this point
          // (if the user created an invalid path, the validators will
          // catch it after scoping is finished).
-         data = dataField != null && dataField.getDataModel() instanceof Data
-                  ? (Data) dataField.getDataModel()
+         data = dataField instanceof ReferencedDataModelFieldDeclaration
+                  && ((ReferencedDataModelFieldDeclaration)dataField).getDataModel() instanceof Data
+                  ? (Data) ((ReferencedDataModelFieldDeclaration) dataField).getDataModel()
                   : null;
       }
 
       return data != null
-               ? Scopes.scopeFor(data.getFields())
+               ? Scopes.scopeFor(SdUtils.getAllDataFields(data))
                : delegateGetScope(segment, reference);
    }
 

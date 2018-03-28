@@ -1,6 +1,8 @@
 package com.ngc.seaside.systemdescriptor.utils;
 
 import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -11,9 +13,14 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Contains various utilities for interacting directly with System Descriptor objects.
+ */
 public class SdUtils {
 
    private SdUtils() {}
@@ -73,59 +80,101 @@ public class SdUtils {
    }
 
    /**
+    * Traverse the extension hierarchy of a data type, invoking the given consumer on each data.
     * 
-    * Looks for the part declaration thats being refined in the Model hierarchy
+    * @param model the data whose hierarchy is being traversed
+    * @param consumer the consumer to invoke for each data
+    */
+   public static void traverseDataExtensionHierarchy(Data data, Consumer<Data> consumer) {
+      do {
+         consumer.accept(data);
+         data = data.getExtendedDataType();
+      } while (data != null);
+   }
+
+   /**
+    * Gets all the part declarations declared in the given model and all refined models.
     * 
-    * @param model used as a starting point for the Model hierarchy
+    * @param model the model to get the parts for
+    * @return all the part declarations declared in the given model and all refined models
+    */
+   public static Collection<PartDeclaration> getAllPartDeclarations(Model model) {
+      Collection<PartDeclaration> parts = new ArrayList<>();
+      traverseModelRefinementHierarchy(model, m -> {
+         if (m.getParts() != null) {
+            parts.addAll(m.getParts().getDeclarations());
+         }
+      });
+      return parts;
+   }
+
+   /**
+    * Gets the part declaration from the given model with the given name.
+    * 
+    * @param model the model to search for the field
     * @param fieldName the name of the field
     * @return the part declaration or {@code null} if no declaration with the given name exists
     */
    public static PartDeclaration findPartDeclarationName(Model model, String fieldName) {
-      PartDeclaration found = null;
-      Model parentModel = model.getRefinedModel();
-
-      while (parentModel != null) {
-         // Part Declaration
-         if (parentModel.getParts() != null &&
-            parentModel.getParts().getDeclarations() != null) {
-            for (PartDeclaration fieldDec : parentModel.getParts().getDeclarations()) {
-               if (fieldDec.getName().equals(fieldName)) {
-                  found = fieldDec;
-                  break;
-               }
-            }
-         }
-         parentModel = parentModel.getRefinedModel();
-      }
-
-      return found;
+      return getAllPartDeclarations(model).stream()
+                                          .filter(p -> p.getName().equals(fieldName))
+                                          .findFirst()
+                                          .orElse(null);
    }
 
    /**
+    * Gets all the requirement declarations declared in the given model and all refined models.
     * 
-    * Looks for the require declaration thats being refined in the Model hierarchy
+    * @param model the model to get the parts for
+    * @return all the requirement declarations declared in the given model and all refined models
+    */
+   public static Collection<RequireDeclaration> getAllRequireDeclarations(Model model) {
+      Collection<RequireDeclaration> requires = new ArrayList<>();
+      traverseModelRefinementHierarchy(model, m -> {
+         if (m.getRequires() != null) {
+            requires.addAll(m.getRequires().getDeclarations());
+         }
+      });
+      return requires;
+   }
+
+   /**
+    * Gets the requirement declaration from the given model with the given name.
     * 
-    * @param model used as a starting point for the Model hierarchy
+    * @param model model the model to search for the field
     * @param fieldName the name of the field
     * @return the requirement declaration or {@code null} if no declaration with the given name exists
     */
    public static RequireDeclaration findRequireDeclarationName(Model model, String fieldName) {
-      RequireDeclaration found = null;
-      Model parentModel = model.getRefinedModel();
+      return getAllRequireDeclarations(model).stream()
+                                             .filter(p -> p.getName().equals(fieldName))
+                                             .findFirst()
+                                             .orElse(null);
+   }
 
-      while (parentModel != null) {
-         if (parentModel.getRequires() != null &&
-            parentModel.getRequires().getDeclarations() != null) {
-            for (RequireDeclaration fieldDec : parentModel.getRequires().getDeclarations()) {
-               if (fieldDec.getName().equals(fieldName)) {
-                  found = fieldDec;
-                  break;
-               }
-            }
-         }
-         parentModel = parentModel.getRefinedModel();
-      }
+   /**
+    * Gets the data field with the given name.
+    * 
+    * @param data the data type to get the field for
+    * @param fieldName the name of the field
+    * @return the field or {@code null} if the field could not be found
+    */
+   public static DataFieldDeclaration findDataFieldDeclaration(Data data, String fieldName) {
+      return getAllDataFields(data).stream()
+                                   .filter(f -> f.getName().equals(fieldName))
+                                   .findFirst()
+                                   .orElse(null);
+   }
 
-      return found;
+   /**
+    * Gets all the data fields declared in the given data type and all extended data types.
+    * 
+    * @param data the data type to get the fields for
+    * @return all the data fields declared in the given data type and all extended data types
+    */
+   public static Collection<DataFieldDeclaration> getAllDataFields(Data data) {
+      Collection<DataFieldDeclaration> fields = new ArrayList<>();
+      traverseDataExtensionHierarchy(data, d -> fields.addAll(d.getFields()));
+      return fields;
    }
 }

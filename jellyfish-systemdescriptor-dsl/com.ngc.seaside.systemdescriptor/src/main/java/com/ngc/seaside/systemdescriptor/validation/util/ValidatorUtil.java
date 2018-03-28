@@ -47,7 +47,7 @@ public class ValidatorUtil {
       Model fieldDeclarationModel = SdUtils.getContainingModel(fieldDeclaration);
       if (fieldDeclarationModel != null) {
          if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
-            if (SdUtils.findPartDeclarationName(fieldDeclarationModel, fieldDeclaration.getName()) == null) {
+            if (SdUtils.findPartDeclarationName(fieldDeclarationModel.getRefinedModel(), fieldDeclaration.getName()) == null) {
                msg = String.format(
                   "Cannot refine the part '%s' as no part with that name has been declared in the"
                      + " refinement hierarcy of '%s.%s'.",
@@ -56,7 +56,7 @@ public class ValidatorUtil {
                   ((Package) fieldDeclarationModel.eContainer()).getName());
             }
          } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION)) {
-            if (SdUtils.findRequireDeclarationName(fieldDeclarationModel, fieldDeclaration.getName()) == null) {
+            if (SdUtils.findRequireDeclarationName(fieldDeclarationModel.getRefinedModel(), fieldDeclaration.getName()) == null) {
                msg = String.format(
                   "Cannot refine the requirement '%s' as no requirement with that name has been declared in the"
                      + " refinement hierarcy of '%s.%s'.",
