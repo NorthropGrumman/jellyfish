@@ -7,36 +7,12 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
-
-import org.eclipse.emf.ecore.EObject;
+import com.ngc.seaside.systemdescriptor.utils.SdUtils;
 
 /**
  * Utility methods to help with validation
  */
 public class ValidatorUtil {
-   
-   /**
-    * 
-    * Retrieves the model that this object belongs to 
-    * 
-    * @param currentObject that you want the model for 
-    * @return The model for this object 
-    */
-   public static Model getModel(EObject currentObject) {
-      //EObject currentObject = proFieldDec;
-      boolean modelFound = false;
-      Model model = null;
-      do {
-         if (currentObject.eContainer().eClass().equals(SystemDescriptorPackage.Literals.MODEL)) {
-            model = (Model) currentObject.eContainer();
-            modelFound = true;
-         } else {
-            currentObject = currentObject.eContainer();
-         }
-      } while (!modelFound && currentObject != null);
-
-      return model;
-   }
    
    /**
     * Validates that the Model thats not refining another Model can't then do a refine on
@@ -47,7 +23,7 @@ public class ValidatorUtil {
    public static String checkForNonRefinedModelUsingRefinedfields(FieldDeclaration fieldDeclaration) {
       // Bring us up to the part model
       String msg = "";
-      Model fieldDeclarationModel = getModel(fieldDeclaration);
+      Model fieldDeclarationModel = SdUtils.getContainingModel(fieldDeclaration);
       if (fieldDeclarationModel != null) {
          if (fieldDeclarationModel.getRefinedModel() == null) {
             msg = String.format(
@@ -68,10 +44,10 @@ public class ValidatorUtil {
     */
    public static String checkForRefinementOfAFieldThatsNotInModelBeingRefined(FieldDeclaration fieldDeclaration) {
       String msg = "";
-      Model fieldDeclarationModel = ValidatorUtil.getModel(fieldDeclaration);
+      Model fieldDeclarationModel = SdUtils.getContainingModel(fieldDeclaration);
       if (fieldDeclarationModel != null) {
          if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
-            if (!ValidatorUtil.findPartDeclarationName(fieldDeclarationModel, fieldDeclaration.getName())) {
+            if (SdUtils.findPartDeclarationName(fieldDeclarationModel, fieldDeclaration.getName()) == null) {
                msg = String.format(
                   "Cannot refine the part '%s' as no part with that name has been declared in the"
                      + " refinement hierarcy of '%s.%s'.",
@@ -80,7 +56,7 @@ public class ValidatorUtil {
                   ((Package) fieldDeclarationModel.eContainer()).getName());
             }
          } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.REFINED_REQUIRE_DECLARATION)) {
-            if (!ValidatorUtil.findRequireDeclarationName(fieldDeclarationModel, fieldDeclaration.getName())) {
+            if (SdUtils.findRequireDeclarationName(fieldDeclarationModel, fieldDeclaration.getName()) == null) {
                msg = String.format(
                   "Cannot refine the requirement '%s' as no requirement with that name has been declared in the"
                      + " refinement hierarcy of '%s.%s'.",
@@ -92,65 +68,5 @@ public class ValidatorUtil {
 
       }
       return msg;
-   }
-
-
-   /**
-    * 
-    * Looks for the part declaration thats being refined in the Model hierarchy
-    * 
-    * @param model used as a starting point for the Model hierarchy
-    * @param fieldDeclaration the Name of the variable we are looking for
-    * @return boolean as to whether we have found the variable in the Model
-    *         hierarchy
-    */
-   private static boolean findPartDeclarationName(Model model, String fieldDeclaration) {
-      boolean found = false;
-      Model parentModel = model.getRefinedModel();
-
-      while (parentModel != null) {
-         // Part Declaration
-         if (parentModel.getParts() != null &&
-            parentModel.getParts().getDeclarations() != null) {
-            for (FieldDeclaration fieldDec : parentModel.getParts().getDeclarations()) {
-               if (fieldDec.getName().equals(fieldDeclaration)) {
-                  found = true;
-                  break;
-               }
-            }
-         }
-         parentModel = parentModel.getRefinedModel();
-      }
-
-      return found;
-   }
-
-   /**
-    * 
-    * Looks for the require declaration thats being refined in the Model hierarchy
-    * 
-    * @param model used as a starting point for the Model hierarchy
-    * @param fieldDeclaration the Name of the variable we are looking for
-    * @return boolean as to whether we have found the variable in the Model
-    *         hierarchy
-    */
-   private static boolean findRequireDeclarationName(Model model, String fieldDeclaration) {
-      boolean found = false;
-      Model parentModel = model.getRefinedModel();
-
-      while (parentModel != null) {
-         if (parentModel.getRequires() != null &&
-            parentModel.getRequires().getDeclarations() != null) {
-            for (FieldDeclaration fieldDec : parentModel.getRequires().getDeclarations()) {
-               if (fieldDec.getName().equals(fieldDeclaration)) {
-                  found = true;
-                  break;
-               }
-            }
-         }
-         parentModel = parentModel.getRefinedModel();
-      }
-
-      return found;
    }
 }
