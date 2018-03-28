@@ -1,0 +1,41 @@
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.threateval.datatype.TrackPriority
+import com.ngc.seaside.common.datatype.SystemTrack
+import com.ngc.seaside.defendedarea.DefendedAreaService
+import com.ngc.seaside.defendedarea.datatype.ImpactAssessment
+
+model DefendedAreaTrackPriorityService {
+	metadata {
+		"description": "Determines probability of a SystemTrack object hitting a defended area or asset.",
+		"stereotypes": ["service"],
+		"satisfies": ["TE001.3", "TE001.4"],
+		"codegen": {
+			"alias": "datps"
+		}
+	}
+	
+	input {
+		SystemTrack systemTrack
+		ImpactAssessment impactAssessment
+	}
+	
+	output {
+		TrackPriority trackPriority
+	}	
+	
+	requires {
+		DefendedAreaService defendedAreaService
+	}
+	
+	scenario calculateTrackPriority {
+		//link to white-paper or trade study in metadata. 
+		when receiving systemTrack
+		 and receiving impactAssessment
+		 and correlating systemTrack.header.correlationEventId to impactAssessment.header.correlationEventId
+		then willCorrelate systemTrack.header.correlationEventId to trackPriority.header.correlationEventId 
+		 and willPublish trackPriority
+		 and willBeCompleted within 500 milliseconds
+	}
+	
+}

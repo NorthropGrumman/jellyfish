@@ -1,0 +1,10 @@
+package com.ngc.seaside.classifier
+
+model TrackClassifierService {
+	metadata {
+		"description": "Classifies a SystemTrack object as an ObjectType",
+		"stereotypes": ["service"]
+	}
+	
+	scenario classifyTrackedObject { }
+}

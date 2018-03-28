@@ -1,0 +1,10 @@
+package com.ngc.seaside.defendedarea.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+data ImpactAssessment extends BaseData {
+	SystemTrackIdentifier systemTrackIdentifier
+	float impactProbability
+	float impactedAreaValue
+}

@@ -1,0 +1,9 @@
+package com.ngc.seaside.common.datatype
+
+data Metadata {
+	string correlationEventId {
+	   metadata {
+	      "optional": true
+	   }
+   }
+}

@@ -1,0 +1,35 @@
+package com.ngc.seaside.deployment.rest
+
+import com.ngc.seaside.deployment.rest.HttpMethod
+import com.ngc.seaside.deployment.common.SocketAddress
+
+data RestConfiguration {
+	metadata {
+		"description": "Defines the configuration for a link that should use REST for transport.",
+		"target": "link"
+	}
+	
+	SocketAddress socketAddress {
+		metadata {
+			"description": "The address of the server that hosts the REST endpoint or resource"
+		}
+	}
+	
+	string path {
+		metadata {
+			"description": "The relation path of the REST endpoint or resource, which does not include the socket address or hostname of the server."
+		}
+	}
+	
+	string contentType {
+		metadata {
+			"description": "The MIME type of the content that travel along the link.  The content type is the same for requests as responses."
+		}
+	}
+	
+	HttpMethod httpMethod {
+		metadata {
+			"description": "The HTTP method that will be used by clients making requests."
+		}
+	}
+}

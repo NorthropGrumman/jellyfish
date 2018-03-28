@@ -1,0 +1,31 @@
+package com.ngc.seaside.tracking
+
+import com.ngc.seaside.common.datatype.SystemTrack
+import com.ngc.seaside.common.datatype.DroppedSystemTrack
+
+model SystemTrackService {
+  metadata {
+    "description" : "Publishes updates for system tracks",
+    "stereotypes" : ["service"],
+	"codegen": {
+			"alias": "tps"
+	}
+  }
+  
+  output {
+  	SystemTrack systemTrack
+  	DroppedSystemTrack droppedSystemTrack
+  }
+  
+//  scenario updateSystemTrack {
+//  	when noop
+//  	then willPublish systemTrack
+//  	 and willBeginCorrelationEvent identified by systemTrack.header.correlationEventId
+//  }
+//  
+//  scenario dropSystemTrack {
+//  	when noop
+//  	then willPublish droppedSystemTrack
+//  	 and willBeginCorrelationEvent identified by systemTrack.header.correlationEventId
+//  }
+}

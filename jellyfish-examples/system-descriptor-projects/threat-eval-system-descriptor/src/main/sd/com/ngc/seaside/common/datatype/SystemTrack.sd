@@ -1,0 +1,12 @@
+package com.ngc.seaside.common.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+import com.ngc.seaside.common.datatype.StateVector
+import com.ngc.seaside.common.datatype.Covariance
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+data SystemTrack extends BaseData {
+	SystemTrackIdentifier identifier
+	StateVector state
+	Covariance cov
+}
