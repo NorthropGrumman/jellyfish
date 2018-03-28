@@ -42,6 +42,10 @@ class PartParsingTest {
 			resourceHelper,
 			Models.ALARM,
 			Models.CLOCK,
+			Datas.ZONED_TIME,
+			Datas.TIME_ZONE,
+			Datas.DATE_TIME,
+			Datas.DATE,
 			Datas.TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
@@ -94,11 +98,19 @@ class PartParsingTest {
 			package clocks.models
 			
 			import clocks.models.part.Clock
+			import clocks.datatypes.TimeZone
 			
 			model BigClock refines Clock{
 				
 				parts {
 					refine emptyModel
+				}
+				
+				properties {
+					releaseDate.dataTime.date.year = 1
+					releaseDate.dataTime.date.month = 1
+					releaseDate.dataTime.date.day = 1
+					releaseDate.timeZone = TimeZone.CST
 				}
 			}
 		'''
