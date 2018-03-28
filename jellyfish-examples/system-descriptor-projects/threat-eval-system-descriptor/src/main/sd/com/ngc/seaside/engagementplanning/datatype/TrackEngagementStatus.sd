@@ -1,0 +1,9 @@
+package com.ngc.seaside.engagementplanning.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+
+data TrackEngagementStatus extends BaseData {
+	int trackId
+	int plannedEngagementCount
+	float probabilityOfKill
+}

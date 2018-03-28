@@ -1,0 +1,16 @@
+package com.ngc.seaside.deployment.multicast
+
+import com.ngc.seaside.deployment.common.SocketAddress
+
+data MulticastConfiguration {
+	metadata {
+		"description": "Defines the configuration for a link that should use UDP multicast for transport.",
+		"target": "link"
+	}
+	
+	SocketAddress socketAddress {
+		metadata {
+			"description": "Defines the multicast address or group that should be used to implement the link."
+		}
+	}
+}

@@ -1,0 +1,14 @@
+package com.ngc.seaside.defendedarea
+
+import com.ngc.seaside.defendedarea.DefendedAreaService
+
+model DefendedAreaSystem {
+  metadata {
+    "description": "Manages defended areas and assets",
+	"stereotypes": ["virtual", "system"]
+  }
+  
+  parts {
+  	/*public*/ DefendedAreaService defendedAreaService
+  }
+}

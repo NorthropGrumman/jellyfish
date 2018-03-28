@@ -1,0 +1,1 @@
+package com.ngc.seaside.threateval.datatypeimport com.ngc.seaside.threateval.datatype.AggregatedTrackPrioritydata TrackPriorityResponse {	many AggregatedTrackPriority priorities}

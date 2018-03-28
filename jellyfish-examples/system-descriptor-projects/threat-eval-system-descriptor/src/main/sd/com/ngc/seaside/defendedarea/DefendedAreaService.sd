@@ -1,0 +1,25 @@
+package com.ngc.seaside.defendedarea
+
+import com.ngc.seaside.common.datatype.SystemTrack
+import com.ngc.seaside.defendedarea.datatype.ImpactAssessment
+
+model DefendedAreaService {
+	metadata {
+		"description": "Provides functionality to evaluate and report defended area information",
+		"stereotypes": ["service"]
+	}
+	
+	input {
+		SystemTrack systemTrack
+	}
+	
+	output {
+		ImpactAssessment impactAssessment
+	}
+	
+	scenario calculateImpactProbability {
+		when receiving systemTrack
+		then willCorrelate systemTrack.header.correlationEventId to impactAssessment.header.correlationEventId 
+		 and willPublish impactAssessment
+	}
+}

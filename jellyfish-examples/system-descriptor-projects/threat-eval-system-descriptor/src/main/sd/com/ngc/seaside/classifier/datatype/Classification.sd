@@ -1,0 +1,9 @@
+package com.ngc.seaside.classifier.datatype
+
+import com.ngc.seaside.common.datatype.BaseData
+import com.ngc.seaside.classifier.datatype.ClassificationEnum
+
+data Classification extends BaseData {
+	int trackId
+	ClassificationEnum objectType
+}
