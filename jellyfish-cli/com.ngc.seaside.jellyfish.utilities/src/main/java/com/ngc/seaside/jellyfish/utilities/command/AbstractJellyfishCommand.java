@@ -24,6 +24,23 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A base class for Jellyfish commands.  This class provides various convenience operations.  Notable ones include
+ * <pre>
+ * <ol>
+ *    <li>{@link #getOptions()}</li>
+ *    <li>{@link #getOutputDirectory()}</li>
+ *    <li>{@link #getModel()}</li>
+ *    <li>{@link #registerProject(IProjectInformation)}</li>
+ *    <li>{@link #unpackDefaultTemplate(IParameterCollection, Path, boolean)}</li>
+ *    <li>{@link #unpackSuffixedTemplate(String, IParameterCollection, Path, boolean)} </li>
+ * </ol>
+ * </pre>
+ *
+ * <p/>
+ * Commands that deal with multiple {@link JellyfishCommandPhase phases} may extend {@link
+ * AbstractMultiphaseJellyfishCommand}.
+ */
 public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
    public static final String BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE = "build";
@@ -44,6 +61,11 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
    protected IPackageNamingService packageNamingService;
 
+   /**
+    * Creates a new command with the given name.
+    *
+    * @param name the name of the command
+    */
    protected AbstractJellyfishCommand(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -73,9 +95,15 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       }
    }
 
+   /**
+    * Activates this command.  Extending classes may override this method.
+    */
    public void activate() {
    }
 
+   /**
+    * Deactivates this command.  Extending classes may override this method.
+    */
    public void deactivate() {
    }
 
@@ -119,15 +147,29 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       setPackageNamingService(null);
    }
 
+   /**
+    * Invoked to run this command.
+    */
    protected abstract void doRun();
 
+   /**
+    * Invoked to create the usage description of this command.
+    *
+    * @return the usage description of this command
+    */
    protected abstract IUsage createUsage();
 
+   /**
+    * Gets the options the command was invoked with.
+    */
    protected IJellyFishCommandOptions getOptions() {
       Preconditions.checkState(options != null, "request made to get options outside of run(..) invocation!");
       return options;
    }
 
+   /**
+    * Gets the model referenced by the command options.
+    */
    protected IModel getModel() {
       ISystemDescriptor sd = getOptions().getSystemDescriptor();
       IParameterCollection parameters = getOptions().getParameters();
@@ -135,6 +177,9 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       return sd.findModel(modelName).orElseThrow(() -> new CommandException("Model not found: " + modelName));
    }
 
+   /**
+    * Gets the output directory referenced by the command options.
+    */
    protected Path getOutputDirectory() {
       return Paths.get(getOptions()
                              .getParameters()
@@ -142,16 +187,39 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                              .getStringValue());
    }
 
+   /**
+    * Gets the value of the given boolean value.
+    */
    protected boolean getBooleanParameter(String parameterName) {
       return CommonParameters.evaluateBooleanParameter(getOptions().getParameters(), parameterName);
    }
 
+   /**
+    * Register a generated projects described by {@code project} with the {@code IBuildManagementService}.
+    *
+    * @param project the description of the generated project
+    */
    protected void registerProject(IProjectInformation project) {
       Preconditions.checkNotNull(project, "project may not be null!");
       Preconditions.checkState(buildManagementService != null, "build mgmt service not set!");
       buildManagementService.registerProject(options, project);
    }
 
+   /**
+    * Uses the {@code ITemplateService} to unpack and expand a template for this command.  This operation will
+    * automatically place a parameter named {@link #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE} in the parameter
+    * collection.  The value of this parameter is a {@link BuildManagementHelper} object which can be used by a template
+    * to interact with the {@link IBuildManagementService}.
+    *
+    * <p/>
+    * Use this operation when the command only has a single template.  Use {@link #unpackSuffixedTemplate(String,
+    * IParameterCollection, Path, boolean)} if this command has multiple templates.
+    *
+    * @param parameters      the parameters to unpack the template with
+    * @param outputDirectory the directory that will contain the unpacked and expanded template
+    * @param clean           if true, any existing files in {@code outputDirectory} will be removed
+    * @return the template output
+    */
    protected ITemplateOutput unpackDefaultTemplate(IParameterCollection parameters,
                                                    Path outputDirectory,
                                                    boolean clean) {
@@ -164,6 +232,22 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       return templateService.unpack(getClass().getPackage().getName(), parameters, outputDirectory, clean);
    }
 
+   /**
+    * Uses the {@code ITemplateService} to unpack and expand a template for this command that has the given syntax. This
+    * operation will automatically place a parameter named {@link #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE} in the
+    * parameter collection.  The value of this parameter is a {@link BuildManagementHelper} object which can be used by
+    * a template to interact with the {@link IBuildManagementService}.
+    *
+    * <p/>
+    * This operation is used when a command has multiple templates under a {@code src/main/templates} directory.
+    *
+    * @param templateSuffix  the suffix of the template to unpack.  This does not include the command name; it is
+    *                        usually name of a directory immediately under the {@code templates} directory.
+    * @param parameters      the parameters to unpack the template with
+    * @param outputDirectory the directory that will contain the unpacked and expanded template
+    * @param clean           if true, any existing files in {@code outputDirectory} will be removed
+    * @return the template output
+    */
    protected ITemplateOutput unpackSuffixedTemplate(String templateSuffix,
                                                     IParameterCollection parameters,
                                                     Path outputDirectory,
@@ -180,6 +264,10 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                                     clean);
    }
 
+   /**
+    * A type that is added as a parameter when unpacking a template.  The parameter will have the name {@link
+    * #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE}.
+    */
    public class BuildManagementHelper {
 
       private BuildManagementHelper() {
