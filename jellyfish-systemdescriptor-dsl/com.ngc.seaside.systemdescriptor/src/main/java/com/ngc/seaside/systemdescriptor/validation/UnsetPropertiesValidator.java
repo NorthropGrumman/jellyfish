@@ -1,13 +1,17 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Cardinality;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataModel;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Enumeration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
@@ -19,6 +23,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFiel
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
 import org.eclipse.xtext.validation.Check;
@@ -34,6 +39,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -107,9 +113,9 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
          return;
       }
       checkElementPropertiesSet(model,
-         m -> m.getParts().getDeclarations(),
+         m -> Optional.ofNullable(m.getParts()).map(Parts::getDeclarations).orElse(null),
          PartDeclaration::getName,
-         part -> part.getDefinition().getProperties(),
+         part -> Optional.ofNullable(part.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
          (expected, name) -> String.format(
             "Refined models must set all properties; missing property value %s for part %s",
             expected,
@@ -122,9 +128,9 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
          return;
       }
       checkElementPropertiesSet(model,
-         m -> m.getRequires().getDeclarations(),
+         m -> Optional.ofNullable(m.getRequires()).map(Requires::getDeclarations).orElse(null),
          RequireDeclaration::getName,
-         require -> require.getDefinition().getProperties(),
+         req -> Optional.ofNullable(req.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
          (expected, name) -> String.format(
             "Refined models must set all properties; missing property value %s for required model %s",
             expected,
@@ -137,9 +143,9 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
          return;
       }
       checkElementPropertiesSet(model,
-         m -> m.getLinks().getDeclarations(),
+         m -> Optional.ofNullable(m.getLinks()).map(Links::getDeclarations).orElse(null),
          LINK_NAME_FUNCTION,
-         link -> link.getDefinition().getProperties(),
+         link -> Optional.ofNullable(link.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
          (expected, name) -> String.format(
             "Refined models must set all properties; missing property value %s for link %s",
             expected,
@@ -202,10 +208,15 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
 
       Model current = model;
       while (current != null) {
-         for (T element : getCollection.apply(current)) {
-            String name = getName.apply(element);
-            Collection<U> properties = getProperties.apply(element);
-            map.computeIfAbsent(name, __ -> new ArrayList<>()).addAll(properties);
+         Collection<T> collection = getCollection.apply(current);
+         if (collection != null) {
+            for (T element : collection) {
+               String name = getName.apply(element);
+               Collection<U> properties = getProperties.apply(element);
+               if (properties != null) {
+                  map.computeIfAbsent(name, __ -> new ArrayList<>()).addAll(properties);
+               }
+            }
          }
          current = current.getRefinedModel();
       }
@@ -225,7 +236,13 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
 
       Model current = model;
       while (current != null) {
-         allProperties.addAll(getProperties.apply(current.getProperties()));
+         Properties properties = current.getProperties();
+         if (properties != null) {
+            Collection<U> collection = getProperties.apply(properties);
+            if (collection != null) {
+               allProperties.addAll(collection);
+            }
+         }
          current = current.getRefinedModel();
       }
 
@@ -242,6 +259,10 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
    private static List<String> getDeclarationsAsStrings(Collection<PropertyFieldDeclaration> declarations) {
       Set<String> declarationStrings = new HashSet<>();
       for (PropertyFieldDeclaration declaration : declarations) {
+         if (declaration.getCardinality() == Cardinality.MANY) {
+            // TODO: remove when cardinality is implemented
+            continue;
+         }
          if (declaration instanceof PrimitivePropertyFieldDeclaration) {
             declarationStrings.add(declaration.getName());
          } else if (declaration instanceof ReferencedPropertyFieldDeclaration) {
@@ -256,6 +277,10 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
                   Data data = entry.getValue();
 
                   for (DataFieldDeclaration field : data.getFields()) {
+                     if (field.getCardinality() == Cardinality.MANY) {
+                        // TODO: remove when cardinality is implemented
+                        continue;
+                     }
                      if (field instanceof PrimitiveDataFieldDeclaration) {
                         declarationStrings.add(suffix + '.' + field.getName());
                      } else if (field instanceof ReferencedDataModelFieldDeclaration) {
