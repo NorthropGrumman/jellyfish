@@ -3,7 +3,9 @@ package com.ngc.seaside.systemdescriptor.utils;
 import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 
@@ -93,6 +95,66 @@ public class SdUtils {
    }
 
    /**
+    * Gets all the input declarations declared in the given model and all refined models.
+    * 
+    * @param model the model to get the inputs for
+    * @return all the input declarations declared in the given model and all refined models
+    */
+   public static Collection<InputDeclaration> getInputDeclarations(Model model) {
+      Collection<InputDeclaration> inputs = new ArrayList<>();
+      traverseModelRefinementHierarchy(model, m -> {
+         if (m.getInput() != null) {
+            inputs.addAll(m.getInput().getDeclarations());
+         }
+      });
+      return inputs;
+   }
+
+   /**
+    * Gets the input declaration from the given model with the given name.
+    * 
+    * @param model the model to search for the field
+    * @param fieldName the name of the field
+    * @return the input declaration or {@code null} if no declaration with the given name exists
+    */
+   public static InputDeclaration findInputDeclaration(Model model, String fieldName) {
+      return getInputDeclarations(model).stream()
+                                        .filter(p -> p.getName().equals(fieldName))
+                                        .findFirst()
+                                        .orElse(null);
+   }
+
+   /**
+    * Gets all the output declarations declared in the given model and all refined models.
+    * 
+    * @param model the model to get the outputs for
+    * @return all the output declarations declared in the given model and all refined models
+    */
+   public static Collection<OutputDeclaration> getOutputDeclarations(Model model) {
+      Collection<OutputDeclaration> outputs = new ArrayList<>();
+      traverseModelRefinementHierarchy(model, m -> {
+         if (m.getOutput() != null) {
+            outputs.addAll(m.getOutput().getDeclarations());
+         }
+      });
+      return outputs;
+   }
+
+   /**
+    * Gets the output declaration from the given model with the given name.
+    * 
+    * @param model the model to search for the field
+    * @param fieldName the name of the field
+    * @return the output declaration or {@code null} if no declaration with the given name exists
+    */
+   public static OutputDeclaration findOutputDeclaration(Model model, String fieldName) {
+      return getOutputDeclarations(model).stream()
+                                         .filter(p -> p.getName().equals(fieldName))
+                                         .findFirst()
+                                         .orElse(null);
+   }
+
+   /**
     * Gets all the part declarations declared in the given model and all refined models.
     * 
     * @param model the model to get the parts for
@@ -115,7 +177,7 @@ public class SdUtils {
     * @param fieldName the name of the field
     * @return the part declaration or {@code null} if no declaration with the given name exists
     */
-   public static PartDeclaration findPartDeclarationName(Model model, String fieldName) {
+   public static PartDeclaration findPartDeclaration(Model model, String fieldName) {
       return getAllPartDeclarations(model).stream()
                                           .filter(p -> p.getName().equals(fieldName))
                                           .findFirst()
@@ -145,7 +207,7 @@ public class SdUtils {
     * @param fieldName the name of the field
     * @return the requirement declaration or {@code null} if no declaration with the given name exists
     */
-   public static RequireDeclaration findRequireDeclarationName(Model model, String fieldName) {
+   public static RequireDeclaration findRequireDeclaration(Model model, String fieldName) {
       return getAllRequireDeclarations(model).stream()
                                              .filter(p -> p.getName().equals(fieldName))
                                              .findFirst()
