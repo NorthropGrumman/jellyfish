@@ -43,6 +43,10 @@ class RequiresParsingTest {
 			Models.ALARM,
 			Models.CLOCK,
 			Models.SPEAKER,
+			Datas.ZONED_TIME,
+			Datas.TIME_ZONE,
+			Datas.DATE_TIME,
+			Datas.DATE,
 			Datas.TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
@@ -93,11 +97,19 @@ class RequiresParsingTest {
 			package clocks.models
 			
 			import clocks.models.part.Clock
+			import clocks.datatypes.TimeZone
 			
 			model BigClock refines Clock{
 				
 				requires {
 					refine requiresEmptyModel
+				}
+				
+				properties {
+					releaseDate.dataTime.date.year = 1
+					releaseDate.dataTime.date.month = 1
+					releaseDate.dataTime.date.day = 1
+					releaseDate.timeZone = TimeZone.CST
 				}
 			}
 		'''

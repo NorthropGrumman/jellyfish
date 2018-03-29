@@ -14,6 +14,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.utils.SdUtils;
 import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
 /**
  * 
@@ -52,13 +53,13 @@ public class RequiresValidator extends AbstractUnregisteredSystemDescriptorValid
 	      EList<PropertyFieldDeclaration> fieldDecs = properties.getDeclarations();
 
 	      if (!fieldDecs.isEmpty()) {
-	         Model parentModel = ValidatorUtil.getModel(fieldDecs.get(0)).getRefinedModel();
+	         Model parentModel = SdUtils.getContainingModel(fieldDecs.get(0)).getRefinedModel();
 	         Map<String, PropertyFieldDeclaration> hierarchyLinkProps = getRequiresProperties(parentModel);
 
 	         for (PropertyFieldDeclaration propFieldDec : fieldDecs) {
 	            if (hierarchyLinkProps.containsKey(propFieldDec.getName())) {
 	               PropertyFieldDeclaration parentFieldDec = hierarchyLinkProps.get(propFieldDec.getName());
-	               Model parentFieldDecModel = ValidatorUtil.getModel(parentFieldDec);
+	               Model parentFieldDecModel = SdUtils.getContainingModel(parentFieldDec);
 	               String msg = String.format(
 	                  "Cannot redefine property '%s' because '%s' model has that property already defined.",
 	                  propFieldDec.eClass().getName(),
