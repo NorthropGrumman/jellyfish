@@ -28,6 +28,19 @@ class Datas {
 			}
 		'''
 	)
+	
+	public static final ParsingTestResource ALL_DAY_APPOINTMENT = resource(
+		'''
+			package clocks.datatypes
+			
+			import clocks.datatypes.Date
+			
+			data AllDayAppointment extends Date {
+				string name
+			}
+		''',
+		DATE
+	)
 
 	public static final ParsingTestResource TIME = resource(
 		'''

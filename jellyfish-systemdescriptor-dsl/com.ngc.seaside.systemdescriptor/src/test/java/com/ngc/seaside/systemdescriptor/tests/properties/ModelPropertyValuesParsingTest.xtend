@@ -43,6 +43,7 @@ class ModelPropertyValuesParsingTest {
 		requiredResources = Models.allOf(
 			resourceHelper,
 			Datas.DATE,
+			Datas.ALL_DAY_APPOINTMENT,
 			Datas.TIME,
 			Datas.TIME_ZONE,
 			Datas.TIME_CONVENTION,
@@ -259,6 +260,45 @@ class ModelPropertyValuesParsingTest {
 
 		var property = properties.assignments.get(1)
 		assertPropertyValue(property, "intField", SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 2)
+	}
+	
+	@Test
+	def void testDoesHandleInheritedFieldsFromComplexDataProperties() {
+		val source = '''
+			package clocks.models
+			
+			import clocks.datatypes.AllDayAppointment
+			
+			model BigClock {
+				properties {
+					AllDayAppointment appointment
+					
+					appointment.day = 3
+					appointment.month = 1
+					appointment.year = 2018
+					appointment.name = "foo"
+				}
+			}
+		'''
+
+		val result = parseHelper.parse(source, requiredResources.resourceSet)
+		assertNotNull(result)
+		validationTester.assertNoIssues(result)
+		
+		val model = result.element as Model
+		val properties = model.properties
+		assertNotNull(
+			"did not parse properties",
+			properties
+		)
+		
+		var property = properties.assignments.get(0)
+		assertComplexPropertyValue(
+			property, 
+			"appointment.day", 
+			SystemDescriptorPackage.Literals.INT_VALUE__VALUE, 
+			3
+		)
 	}
 
 	@Test
