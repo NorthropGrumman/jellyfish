@@ -2,6 +2,10 @@ package com.ngc.seaside.jellyfish.service.config.api.dto;
 
 import java.util.Objects;
 
+/**
+ * Defines the details for a {@link com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType#REST}
+ * transport configuration.
+ */
 public class RestConfiguration {
 
    private String address;
@@ -62,10 +66,10 @@ public class RestConfiguration {
       }
       RestConfiguration that = (RestConfiguration) o;
       return Objects.equals(this.address, that.address) &&
-         this.port == that.port &&
-         Objects.equals(this.path, that.path) &&
-         Objects.equals(this.contentType, that.contentType) &&
-         this.httpMethod == that.httpMethod;
+             this.port == that.port &&
+             Objects.equals(this.path, that.path) &&
+             Objects.equals(this.contentType, that.contentType) &&
+             this.httpMethod == that.httpMethod;
    }
 
    @Override
@@ -76,7 +80,7 @@ public class RestConfiguration {
    @Override
    public String toString() {
       return "RestConfiguration[address=" + address + ", port=" + port + ", path=" + path + ", contentType="
-         + contentType + ", httpMethod=" + httpMethod + "]";
+             + contentType + ", httpMethod=" + httpMethod + "]";
    }
 
 }

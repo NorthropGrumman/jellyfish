@@ -2,6 +2,10 @@ package com.ngc.seaside.jellyfish.service.config.api.dto;
 
 import java.util.Objects;
 
+/**
+ * Defines the details for a {@link com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType#MULTICAST}
+ * transport configuration.
+ */
 public class MulticastConfiguration {
 
    private String address;
