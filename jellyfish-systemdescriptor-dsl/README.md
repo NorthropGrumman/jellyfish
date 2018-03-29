@@ -10,7 +10,7 @@ See http://10.207.42.42:8080/display/SEAS/JellyFish+DSL+Keywords for a descripti
 # Quick Setup Guide for using the JellyFish System Descriptor Grammar
 Follow this guide to avoid having to build the plugins yourself.  Use this if you just want to create new System Descriptor projects without updating the grammer.
 
-Download Eclipse with DSL support from http://10.207.42.43/resources/jellyfish/eclipse-dsl-neon-2-win32-x86_64.zip.  Download the SystemDescriptor update site from http://10.207.42.43/resources/jellyfish/com.ngc.seaside.systemdescriptor.updatesite.zip.  Unzip the update site to any location you want.
+Download Eclipse with DSL support from http://10.207.42.43/resources/jellyfish/eclipse-dsl-neon-2-win32-x86_64.zip. (TODO: Change to Oxygen)  Download the SystemDescriptor update site from http://10.207.42.43/resources/jellyfish/com.ngc.seaside.systemdescriptor.updatesite.zip. (TODO: Change to Oxygen) Unzip the update site to any location you want.
 
 Start Eclipse ande **ensure your proxy settings are correct**.  To install the System Descriptor support:
 1. Select **Help**->**Install New Software**.
@@ -38,7 +38,7 @@ The project can be built both inside Eclipse or outside of Eclipse with Gradle. 
 ## Building outside of Eclipse
 The DSL uses gradle to build.  Run the command ``gradle clean build`` from the root directory of the repo to build with gradle directly outside of Eclipse.
 
-## Building the project in Eclipse Neon
+## Building the project in Eclipse Neon (TODO: Change to Oxygen)
 1. Open Eclipse
 1. Switch the workspace
    1. File -> Switch Workspace -> Other...
