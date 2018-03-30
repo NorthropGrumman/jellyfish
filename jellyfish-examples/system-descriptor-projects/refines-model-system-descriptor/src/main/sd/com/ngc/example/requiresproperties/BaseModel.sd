@@ -16,12 +16,6 @@ model BaseModel {
 						com.ngc.example.Enum2 baseUnsetQualifiedEnumField
 						Data1 baseUnsetDataField
 						com.ngc.example.Data2 baseUnsetQualifiedDataField
-						many int baseUnsetManyIntField
-						many boolean baseUnsetManyBooleanField
-						many float baseUnsetManyFloatField
-						many string baseUnsetManyStringField
-						many Enum1 baseUnsetManyEnumField
-						many Data1 baseUnsetManyDataField
 
 						baseUnsetIntField = 99
 						baseUnsetBooleanField = false
