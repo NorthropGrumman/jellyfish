@@ -403,7 +403,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationTrigger");
       dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
       dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
-      dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
+      dto.getAbstractClass().getImports().add("com.ngc.seaside.service.request.api.IServiceRequest");
       dto.getAbstractClass().getImports().add(Consumer.class.getName());
       dto.getInterface().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
       dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent");
