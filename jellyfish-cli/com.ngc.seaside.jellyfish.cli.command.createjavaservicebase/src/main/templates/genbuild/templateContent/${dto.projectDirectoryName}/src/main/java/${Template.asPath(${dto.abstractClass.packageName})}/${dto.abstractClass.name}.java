@@ -303,8 +303,8 @@ public abstract class ${dto.abstractClass.name}
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
       IRequest request = Requests.getCurrentRequest();
-      if (request instanceof ServiceRequest) {
-         ((ServiceRequest) request).setLocalCorrelationEvent(event);
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(event);
       }
    }
 #end
@@ -313,8 +313,8 @@ public abstract class ${dto.abstractClass.name}
    @SuppressWarnings("unchecked")
    private void updateRequestWithCorrelation(Object correlationEventId) {
       IRequest request = Requests.getCurrentRequest();
-      if (request instanceof ServiceRequest) {
-         ((ServiceRequest) request).setLocalCorrelationEvent(
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(
             correlationService.newLocalCorrelationEvent(correlationEventId));
       }
    }
@@ -324,8 +324,8 @@ public abstract class ${dto.abstractClass.name}
    @SuppressWarnings("rawtypes")
    private void clearCorrelationFromRequest() {
       IRequest request = Requests.getCurrentRequest();
-      if (request instanceof ServiceRequest) {
-         ((ServiceRequest) request).clearLocalCorrelationEvent();
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(null);
       }
    }
 #end

@@ -640,7 +640,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       if (dto.isCorrelationRequestHandlingEnabled()) {
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
-         dto.getAbstractClass().getImports().add("com.ngc.seaside.request.api.ServiceRequest");
+         dto.getAbstractClass().getImports().add("com.ngc.seaside.service.request.api.IServiceRequest");
       }
       if (dto.isCorrelationServiceRequired()) {
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");

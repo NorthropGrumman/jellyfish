@@ -43,14 +43,15 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.4.0")
+            .version("2.5.0-SNAPSHOT")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
                       artifact("service.transport.api"),
                       artifact("service.correlation.impl.correlationservice"),
-                      artifact("fault.impl.faultloggingservice"),
-                      artifact("monitoring.impl.loggingmonitoringservice"),
+                      artifact("service.fault.impl.faultloggingservice"),
+                      artifact("service.monitoring.impl.loggingmonitoringservice"),
+                      artifact("service.request.impl.microservicerequestservice"),
                       artifact("service.transport.impl.defaulttransportservice"),
                       artifact("service.transport.impl.defaulttransportservice.module"),
                       artifact("service.transport.impl.testutils"),
