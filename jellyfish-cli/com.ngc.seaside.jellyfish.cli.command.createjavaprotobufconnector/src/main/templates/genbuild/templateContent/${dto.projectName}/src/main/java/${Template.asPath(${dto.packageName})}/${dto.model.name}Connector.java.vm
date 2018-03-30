@@ -4,14 +4,10 @@ package ${dto.packageName};
 #end
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import com.ngc.blocs.requestmodel.api.IRequest;
 import com.ngc.blocs.requestmodel.api.RequestThreadLocal;
-import com.ngc.blocs.requestmodel.api.Requests;
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.time.api.Time;
-import com.ngc.seaside.request.api.ServiceRequest;
 #if(${dto.requiresInjectedService})import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.seaside.service.fault.api.ServiceFaultException;
 #end
@@ -20,6 +16,8 @@ import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.ITransportTopic;
 import com.ngc.seaside.service.transport.api.InvalidPayloadException;
 import com.ngc.seaside.service.transport.api.ITransportReceiver;
+import com.ngc.seaside.service.request.api.IRequestService;
+import com.ngc.seaside.service.request.api.IServiceRequest;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -38,6 +36,7 @@ public class ${dto.model.name}Connector {
 
    private ILogService logService;
    private IEventService eventService;
+   private IRequestService requestService;
    private ITransportService transportService;
 #if(${dto.requiresInjectedService})   private IFaultManagementService faultManagementService;
    private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
@@ -121,6 +120,15 @@ public class ${dto.model.name}Connector {
 
    public void removeEventService(IEventService ref) {
       setEventService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequestService")
+   public void setRequestService(IRequestService ref) {
+      this.requestService = ref;
+   }
+
+   public void removeRequestService(IRequestService ref) {
+      setRequestService(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTransportService")
@@ -215,10 +223,10 @@ public class ${dto.model.name}Connector {
 #end
 
    private void preReceiveMessage(ITransportTopic transportTopic) {
-      ServiceRequest<ITransportTopic> request = new ServiceRequest<>(getRequirementsForTransportTopic(transportTopic),
-                                                                     transportTopic);
-      RequestThreadLocal.setCurrentRequest(request);
-      logService.debug(getClass(), "Request begins.");
+      @SuppressWarnings("unchecked")
+      IServiceRequest<ITransportTopic> request = (IServiceRequest<ITransportTopic>) requestService.beginRequest();
+      request.setRequirements(getRequirementsForTransportTopic(transportTopic));
+      request.setContext(transportTopic);
       logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
    }
 
@@ -232,14 +240,7 @@ public class ${dto.model.name}Connector {
 
    private void postSendMessage(ITransportTopic transportTopic) {
       logService.debug(getClass(), "Sent message on transport application topic %s.", transportTopic);
-      IRequest request = Requests.getCurrentRequest();
-      if(request != null) {
-         Time now = Time.getCurrentTime();
-         logService.debug(getClass(), "Request ends in %d ms.", now.subtract(request.getCreationTime()).getLongMsec());
-      } else {
-         logService.debug(getClass(), "Request ends.");
-      }
-      RequestThreadLocal.clear();
+      requestService.endRequest();
    }
 
    private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
