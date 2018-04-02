@@ -7,12 +7,12 @@ import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic;
 import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopics;
 import ${dto.topicsImport};
 
-public class ${dto.modelName}SparkConfiguration {
+public class ${dto.modelName}RestConfiguration {
 
-   private ${dto.modelName}SparkConfiguration() {
+   private ${dto.modelName}RestConfiguration() {
    }
 
-   public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {
+   public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> restProvider) {
        SparkTopics factory = SparkTopics.boundToLocalhost(${topic.port});
 
 #foreach ($topic in $dto.topics)
@@ -28,7 +28,7 @@ public class ${dto.modelName}SparkConfiguration {
 #set ($name = $entry.key)
 #set ($topics = $entry.value)
        config.whenReceiving()
-             .withTransportProvider(sparkProvider)
+             .withTransportProvider(restProvider)
 #foreach ($topic in $topics)
              .onPhysicalTopic(${topic.variableName})
 #end
