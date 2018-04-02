@@ -17,7 +17,7 @@ public class NetworkInterface {
    public void setName(String name) {
       this.name = name;
    }
-   
+
    @Override
    public boolean equals(Object o) {
       if (!(o instanceof NetworkInterface)) {
@@ -29,7 +29,7 @@ public class NetworkInterface {
 
    @Override
    public int hashCode() {
-      return Objects.hash(adnamedress);
+      return Objects.hash(name);
    }
 
    @Override
