@@ -14,8 +14,9 @@ public class NetworkInterface {
       return name;
    }
 
-   public void setName(String name) {
+   public NetworkInterface setName(String name) {
       this.name = name;
+      return this;
    }
 
    @Override
