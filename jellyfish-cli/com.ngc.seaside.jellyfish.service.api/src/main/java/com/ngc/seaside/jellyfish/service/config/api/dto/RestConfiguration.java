@@ -8,17 +8,17 @@ import java.util.Objects;
  */
 public class RestConfiguration {
 
-   private String address;
+   private NetworkAddress address;
    private int port;
    private String path;
    private String contentType;
    private HttpMethod httpMethod;
 
-   public String getAddress() {
+   public NetworkAddress getAddress() {
       return address;
    }
 
-   public RestConfiguration setAddress(String address) {
+   public RestConfiguration setAddress(NetworkAddress address) {
       this.address = address;
       return this;
    }

@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
@@ -194,7 +195,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       String path = value.getPrimitive(getField(value, REST_PATH_FIELD_NAME)).getString();
       String contentType = value.getPrimitive(getField(value, REST_CONTENT_TYPE_FIELD_NAME)).getString();
       String httpMethod = value.getEnumeration(getField(value, REST_HTTP_METHOD_FIELD_NAME)).getValue();
-      configuration.setAddress(address);
+      configuration.setAddress((new NetworkAddress()).setAddress(address));
       configuration.setPort(port.intValueExact());
       configuration.setPath(path);
       configuration.setContentType(contentType);

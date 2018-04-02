@@ -148,13 +148,13 @@ public class TransportConfigurationServiceTest {
       assertEquals(2, configurations.size());
       Iterator<RestConfiguration> iterator = configurations.iterator();
       RestConfiguration configuration1 = iterator.next();
-      assertEquals(address, configuration1.getAddress());
+      assertEquals(address, configuration1.getAddress().getAddress());
       assertEquals(port1, configuration1.getPort());
       assertEquals(path1, configuration1.getPath());
       assertEquals(contentType, configuration1.getContentType());
       assertEquals(method, configuration1.getHttpMethod());
       RestConfiguration configuration2 = iterator.next();
-      assertEquals(address, configuration2.getAddress());
+      assertEquals(address, configuration2.getAddress().getAddress());
       assertEquals(port2, configuration2.getPort());
       assertEquals(path2, configuration2.getPath());
       assertEquals(contentType, configuration2.getContentType());
