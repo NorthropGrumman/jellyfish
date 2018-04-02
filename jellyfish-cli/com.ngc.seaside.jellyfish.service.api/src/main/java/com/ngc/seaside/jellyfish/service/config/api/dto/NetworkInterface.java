@@ -8,33 +8,33 @@ import java.util.Objects;
  */
 public class NetworkInterface {
 
-   private String address;
+   private String name;
 
-   public String getAddress() {
-      return address;
+   public String getName() {
+      return name;
    }
 
-   public void setAddress(String address) {
-      this.address = address;
+   public void setName(String name) {
+      this.name = name;
    }
-
+   
    @Override
    public boolean equals(Object o) {
       if (!(o instanceof NetworkInterface)) {
          return false;
       }
       NetworkInterface that = (NetworkInterface) o;
-      return Objects.equals(this.address, that.address);
+      return Objects.equals(this.name, that.name);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(address);
+      return Objects.hash(adnamedress);
    }
 
    @Override
    public String toString() {
-      return "RestConfiguration[address=" + address + "]";
+      return "RestConfiguration[name=" + name + "]";
    }
 
 }
