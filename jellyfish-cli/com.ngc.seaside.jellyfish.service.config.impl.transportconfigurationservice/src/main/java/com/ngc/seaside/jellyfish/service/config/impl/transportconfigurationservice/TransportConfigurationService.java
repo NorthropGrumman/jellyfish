@@ -195,7 +195,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       String path = value.getPrimitive(getField(value, REST_PATH_FIELD_NAME)).getString();
       String contentType = value.getPrimitive(getField(value, REST_CONTENT_TYPE_FIELD_NAME)).getString();
       String httpMethod = value.getEnumeration(getField(value, REST_HTTP_METHOD_FIELD_NAME)).getValue();
-      configuration.setAddress((new NetworkAddress()).setAddress(address));
+      configuration.setNetworkAddress((new NetworkAddress()).setAddress(address));
       configuration.setPort(port.intValueExact());
       configuration.setPath(path);
       configuration.setContentType(contentType);
