@@ -16,7 +16,7 @@ public class ${dto.modelName}RestConfiguration {
        SparkTopics factory = SparkTopics.boundToLocalhost(${topic.port});
 
 #foreach ($topic in $dto.topics)
-       SparkTopic ${topic.variableName} = factory.when(${topic.method})
+       SparkTopic ${topic.variableName} = factory.when(${topic.httpMethod})
              .onPath("${topic.path}")
              .accept(${topic.contentType})
              .respondWithType(${topic.contentType})
