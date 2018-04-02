@@ -32,5 +32,4 @@ public class NetworkAddress {
    public String toString() {
       return "NetworkAddress[address=" + address + "]";
    }
-
 }

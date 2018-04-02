@@ -118,6 +118,8 @@ public class TransportConfigurationServiceTest {
       String deploymentModelName = "com.ngc.DeploymentModel";
       IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
       String address = "localhost";
+      String interfaceName1 = "*";
+      String interfaceName2 = "eth0";
       int port1 = 8080;
       int port2 = 8081;
       String path1 = "/path1";
@@ -133,13 +135,13 @@ public class TransportConfigurationServiceTest {
                   .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
                   .getStringValue()).thenReturn(deploymentModelName);
       when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
-      IProperty property1 = getMockedRestConfiguration(address, port1, path1, contentType, method);
+      IProperty property1 = getMockedRestConfiguration(address, interfaceName1, port1, path1, contentType, method);
       IModelLink<IDataReferenceField> link1 = getMockedLink(field, true, property1);
 
-      IProperty property2 = getMockedRestConfiguration(address, port2, path2, contentType, method);
+      IProperty property2 = getMockedRestConfiguration(address, interfaceName2, port2, path2, contentType, method);
       IModelLink<IDataReferenceField> link2 = getMockedLink(field, true, property2);
 
-      IProperty property3 = getMockedRestConfiguration(address, port2, path2, contentType, method);
+      IProperty property3 = getMockedRestConfiguration(address, interfaceName2, port2, path2, contentType, method);
       IModelLink<IDataReferenceField> link3 = getMockedLink(field, true, property3);
 
       when(deploymentModel.getLinks()).thenReturn(Arrays.asList(link1, link2, link3));
@@ -149,12 +151,14 @@ public class TransportConfigurationServiceTest {
       Iterator<RestConfiguration> iterator = configurations.iterator();
       RestConfiguration configuration1 = iterator.next();
       assertEquals(address, configuration1.getNetworkAddress().getAddress());
+      assertEquals(interfaceName1, configuration1.getNetworkInterface().getName());
       assertEquals(port1, configuration1.getPort());
       assertEquals(path1, configuration1.getPath());
       assertEquals(contentType, configuration1.getContentType());
       assertEquals(method, configuration1.getHttpMethod());
       RestConfiguration configuration2 = iterator.next();
       assertEquals(address, configuration2.getNetworkAddress().getAddress());
+      assertEquals(interfaceName2, configuration2.getNetworkInterface().getName());
       assertEquals(port2, configuration2.getPort());
       assertEquals(path2, configuration2.getPath());
       assertEquals(contentType, configuration2.getContentType());
@@ -208,8 +212,9 @@ public class TransportConfigurationServiceTest {
       return property;
    }
 
-   private IProperty getMockedRestConfiguration(String address, int port, String path, String contentType,
-            HttpMethod method) {
+   private IProperty getMockedRestConfiguration(String address, String interfaceName, int port, String path,
+                                                String contentType,
+                                                HttpMethod method) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
       when(property.getName()).thenReturn(UUID.randomUUID().toString());
       when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
@@ -219,6 +224,7 @@ public class TransportConfigurationServiceTest {
       IPropertyDataValue socketValue = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
       IDataField socketField = mock(IDataField.class);
       IDataField addressField = mock(IDataField.class);
+      IDataField networkInterfaceField = mock(IDataField.class);
       IDataField portField = mock(IDataField.class);
       IDataField pathField = mock(IDataField.class);
       IDataField contentTypeField = mock(IDataField.class);
@@ -234,10 +240,13 @@ public class TransportConfigurationServiceTest {
          Optional.of(httpMethodField));
       when(property.getData().getData(socketField)).thenReturn(socketValue);
       when(socketValue.getFieldByName(TransportConfigurationService.ADDRESS_FIELD_NAME)).thenReturn(
-         Optional.of(addressField));
+            Optional.of(addressField));
+      when(socketValue.getFieldByName(TransportConfigurationService.NETWORK_INTERFACE_FIELD_NAME)).thenReturn(
+            Optional.of(networkInterfaceField));
       when(socketValue.getFieldByName(TransportConfigurationService.PORT_FIELD_NAME)).thenReturn(
          Optional.of(portField));
       when(socketValue.getPrimitive(addressField).getString()).thenReturn(address);
+      when(socketValue.getPrimitive(networkInterfaceField).getString()).thenReturn(interfaceName);
       when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
       when(property.getData().getEnumeration(httpMethodField).getValue()).thenReturn(method.toString());
       when(property.getData().getPrimitive(pathField).getString()).thenReturn(path);

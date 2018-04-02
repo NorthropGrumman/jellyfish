@@ -9,6 +9,7 @@ import java.util.Objects;
 public class RestConfiguration {
 
    private NetworkAddress networkAddress;
+   private NetworkInterface networkInterface;
    private int port;
    private String path;
    private String contentType;
@@ -20,6 +21,15 @@ public class RestConfiguration {
 
    public RestConfiguration setNetworkAddress(NetworkAddress networkAddress) {
       this.networkAddress = networkAddress;
+      return this;
+   }
+
+   public NetworkInterface getNetworkInterface() {
+      return networkInterface;
+   }
+
+   public RestConfiguration setNetworkInterface(NetworkInterface networkInterface) {
+      this.networkInterface = networkInterface;
       return this;
    }
 
@@ -79,8 +89,12 @@ public class RestConfiguration {
 
    @Override
    public String toString() {
-      return "RestConfiguration[networkAddress=" + networkAddress + ", port=" + port + ", path=" + path + ", contentType="
-             + contentType + ", httpMethod=" + httpMethod + "]";
+      return "RestConfiguration[networkAddress=" + networkAddress
+             + ", networkInterface=" + networkInterface
+             + ", port=" + port
+             + ", path=" + path
+             + ", contentType=" + contentType
+             + ", httpMethod=" + httpMethod + "]";
    }
 
 }
