@@ -2,10 +2,6 @@ package com.ngc.seaside.jellyfish.service.config.api.dto;
 
 import java.util.Objects;
 
-/**
- * Defines the details for a {@link com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType#REST}
- * transport configuration.
- */
 public class NetworkInterface {
 
    private String name;
@@ -20,8 +16,9 @@ public class NetworkInterface {
       return name;
    }
 
-   public void setName(String name) {
+   public NetworkInterface setName(String name) {
       this.name = name;
+      return this;
    }
 
    @Override
@@ -40,7 +37,7 @@ public class NetworkInterface {
 
    @Override
    public String toString() {
-      return "RestConfiguration[name=" + name + "]";
+      return "NetworkInterface[name=" + name + "]";
    }
 
 }

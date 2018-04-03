@@ -8,8 +8,9 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
-import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
+import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -56,6 +57,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
    static final String TARGET_ADDRESS_FIELD_NAME = "targetAddress";
    static final String SOURCE_ADDRESS_FIELD_NAME = "sourceAddress";
+   static final String NETWORK_INTERFACE_FIELD_NAME = "networkInterface";
    static final String PORT_FIELD_NAME = "port";
 
    private static final Pattern[] PATTERNS = { Pattern.compile("([a-z\\d])([A-Z]+)"),
@@ -202,11 +204,13 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       RestConfiguration configuration = new RestConfiguration();
       IPropertyDataValue socket = value.getData(getField(value, REST_SOCKET_ADDRESS_FIELD_NAME));
       String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
+      String interfaceName = socket.getPrimitive(getField(socket, NETWORK_INTERFACE_FIELD_NAME)).getString();
       BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
       String path = value.getPrimitive(getField(value, REST_PATH_FIELD_NAME)).getString();
       String contentType = value.getPrimitive(getField(value, REST_CONTENT_TYPE_FIELD_NAME)).getString();
       String httpMethod = value.getEnumeration(getField(value, REST_HTTP_METHOD_FIELD_NAME)).getValue();
-      configuration.setAddress(address);
+      configuration.setNetworkAddress((new NetworkAddress()).setAddress(address));
+      configuration.setNetworkInterface((new NetworkInterface()).setName(interfaceName));
       configuration.setPort(port.intValueExact());
       configuration.setPath(path);
       configuration.setContentType(contentType);
