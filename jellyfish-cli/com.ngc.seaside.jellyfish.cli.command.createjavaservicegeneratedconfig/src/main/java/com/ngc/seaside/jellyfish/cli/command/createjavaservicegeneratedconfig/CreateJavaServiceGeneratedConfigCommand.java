@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component(service = IJellyFishCommand.class)
@@ -235,7 +236,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    private void addToTopicsMap(Map<String, IDataReferenceField> map, IMessagingFlow flow, IDataReferenceField field) {
       String topicName = transportConfigService.getTransportTopicName(flow, field);
       IDataReferenceField previous = map.put(topicName, field);
-      if (previous != null && previous != field) {
+      if (previous != null && !Objects.equals(previous, field)) {
          throw new IllegalStateException(
                String.format("Two data reference fields assigned to the same topic %s: %s and %s",
                              topicName,
