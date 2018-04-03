@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.Future;
 
-@Component
+@Component(service = ${dto.model.name}Connector.class, immediate = true)
 public class ${dto.model.name}Connector {
 
    private ILogService logService;
