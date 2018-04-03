@@ -117,8 +117,10 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
                   + MULTICAST_TEMPLATE_SUFFIX,
          Paths.get("src", "main", "templates", MULTICAST_TEMPLATE_SUFFIX));
       
-      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7", 61000);
-      transportConfigService.addMulticastConfiguration("trackPriority", "224.5.6.7", 61001);
+      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
+                                                       61000, "127.0.0.1", "127.0.0.1");
+      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
+                                                       61001, "127.0.0.1", "127.0.0.1");
       
       run(
          CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY, "com.ngc.seaside.threateval.EngagementTrackPriorityService",

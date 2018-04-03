@@ -9,6 +9,7 @@ import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -52,6 +53,9 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    static final String REST_CONTENT_TYPE_FIELD_NAME = "contentType";
    static final String REST_HTTP_METHOD_FIELD_NAME = "httpMethod";
    static final String ADDRESS_FIELD_NAME = "address";
+   static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
+   static final String TARGET_ADDRESS_FIELD_NAME = "targetAddress";
+   static final String SOURCE_ADDRESS_FIELD_NAME = "sourceAddress";
    static final String PORT_FIELD_NAME = "port";
 
    private static final Pattern[] PATTERNS = { Pattern.compile("([a-z\\d])([A-Z]+)"),
@@ -178,10 +182,18 @@ public class TransportConfigurationService implements ITransportConfigurationSer
 
    private static MulticastConfiguration getMulticastConfiguration(IPropertyDataValue value) {
       MulticastConfiguration configuration = new MulticastConfiguration();
+      NetworkInterface targetInterface = new NetworkInterface();
+      NetworkInterface sourceInterface = new NetworkInterface();
       IPropertyDataValue socket = value.getData(getField(value, MULTICAST_SOCKET_ADDRESS_FIELD_NAME));
-      String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
+      String groupAddress = socket.getPrimitive(getField(socket, GROUP_ADDRESS_FIELD_NAME)).getString();
       BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
-      configuration.setAddress(address);
+      String targetAddress = socket.getPrimitive(getField(socket, TARGET_ADDRESS_FIELD_NAME)).getString();
+      String sourceAddress = socket.getPrimitive(getField(socket, SOURCE_ADDRESS_FIELD_NAME)).getString();
+      configuration.setGroupAddress(groupAddress);
+      targetInterface.setName(targetAddress);
+      sourceInterface.setName(sourceAddress);
+      configuration.setTargetInterface(targetInterface);
+      configuration.setSourceInterface(sourceInterface);
       configuration.setPort(port.intValueExact());
       return configuration;
    }

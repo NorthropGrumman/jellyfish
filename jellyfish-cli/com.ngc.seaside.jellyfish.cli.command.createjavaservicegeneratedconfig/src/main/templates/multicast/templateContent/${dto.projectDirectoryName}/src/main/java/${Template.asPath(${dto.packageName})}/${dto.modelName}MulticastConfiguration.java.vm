@@ -16,7 +16,8 @@ public class ${dto.modelName}MulticastConfiguration {
    public static void configure(TransportConfiguration config, ITransportProvider<MulticastTopic> multicastProvider) {
       try {
 #foreach ($topic in $dto.topics)
-         MulticastTopic ${topic.variableName} = new MulticastTopic("${topic.address}", ${topic.port}, "${topic.localAddress}");
+         MulticastTopic ${topic.variableName} = new MulticastTopic("${topic.groupAddress}", ${topic.port},
+         "${topic.targetAddress}");
 
 #end
 #foreach ($entry in $dto.sendTopics.entrySet())

@@ -24,8 +24,8 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    static final String MULTICAST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.multicast";
    static final String MULTICAST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast";
    public static final String MULTICAST_TEMPLATE_SUFFIX = "multicast";
-   
-   
+
+
    private ITransportConfigurationService transportConfigService;
 
    public MulticastTransportProviderConfigDto(ITransportConfigurationService transportConfigService) {
@@ -61,7 +61,9 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
             field);
          int count = 1;
          for (MulticastConfiguration configuration : configurations) {
-            MulticastTopicDto topicDto = new MulticastTopicDto().setAddress(configuration.getAddress())
+            MulticastTopicDto topicDto = new MulticastTopicDto().setGroupAddress(configuration.getGroupAddress())
+                                                                .setSourceAddress(configuration.getSourceInterface().getName())
+                                                                .setTargetAddress(configuration.getTargetInterface().getName())
                                                                 .setPort(configuration.getPort())
                                                                 .setName(topicsPrefix + topicName)
                                                                 .setVariableName(field.getName()

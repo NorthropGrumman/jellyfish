@@ -4,6 +4,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -21,8 +22,14 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
 
    private Map<String, Collection<MulticastConfiguration>> multicastConfigurations = new LinkedHashMap<>();
 
-   public MulticastConfiguration addMulticastConfiguration(String fieldName, String address, int port) {
-      MulticastConfiguration configuration = new MulticastConfiguration().setAddress(address)
+   public MulticastConfiguration addMulticastConfiguration(String fieldName, String groupAddress, int port,
+                                                           String sourceName,String targetName) {
+      NetworkInterface targetInterface = new NetworkInterface(targetName);
+      NetworkInterface sourceInterface = new NetworkInterface(sourceName);
+
+      MulticastConfiguration configuration = new MulticastConfiguration().setGroupAddress(groupAddress)
+                                                                         .setSourceInterface(sourceInterface)
+                                                                         .setTargetInterface(targetInterface)
                                                                          .setPort(port);
       multicastConfigurations.computeIfAbsent(fieldName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;

@@ -10,6 +10,12 @@ public class NetworkInterface {
 
    private String name;
 
+   public NetworkInterface(String name){
+      this.name = name;
+   }
+
+   public NetworkInterface(){}
+
    public String getName() {
       return name;
    }

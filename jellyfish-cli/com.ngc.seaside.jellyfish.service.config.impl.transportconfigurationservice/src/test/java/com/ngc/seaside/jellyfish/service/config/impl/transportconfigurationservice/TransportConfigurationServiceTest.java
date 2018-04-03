@@ -79,7 +79,9 @@ public class TransportConfigurationServiceTest {
    public void testMulticastConfiguration() {
       String deploymentModelName = "com.ngc.DeploymentModel";
       IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
-      String address = "localhost";
+      String groupAddress = "224.5.6.7";
+      String sourceAndTargetInterfaceName = "127.0.0.1";
+
       int port1 = 8080;
       int port2 = 8081;
 
@@ -91,13 +93,16 @@ public class TransportConfigurationServiceTest {
                   .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
                   .getStringValue()).thenReturn(deploymentModelName);
       when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
-      IProperty property1 = getMockedMulticastConfiguration(address, port1);
+      IProperty property1 = getMockedMulticastConfiguration(groupAddress, port1, sourceAndTargetInterfaceName,
+                                                            sourceAndTargetInterfaceName);
       IModelLink<IDataReferenceField> link1 = getMockedLink(field, true, property1);
 
-      IProperty property2 = getMockedMulticastConfiguration(address, port2);
+      IProperty property2 = getMockedMulticastConfiguration(groupAddress, port2, sourceAndTargetInterfaceName,
+                                                            sourceAndTargetInterfaceName);
       IModelLink<IDataReferenceField> link2 = getMockedLink(field, true, property2);
 
-      IProperty property3 = getMockedMulticastConfiguration(address, port2);
+      IProperty property3 = getMockedMulticastConfiguration(groupAddress, port2, sourceAndTargetInterfaceName,
+                                                            sourceAndTargetInterfaceName);
       IModelLink<IDataReferenceField> link3 = getMockedLink(field, true, property3);
 
       when(deploymentModel.getLinks()).thenReturn(Arrays.asList(link1, link2, link3));
@@ -106,11 +111,15 @@ public class TransportConfigurationServiceTest {
       assertEquals(2, configurations.size());
       Iterator<MulticastConfiguration> iterator = configurations.iterator();
       MulticastConfiguration configuration1 = iterator.next();
-      assertEquals(address, configuration1.getAddress());
+      assertEquals(groupAddress, configuration1.getGroupAddress());
       assertEquals(port1, configuration1.getPort());
+      assertEquals(sourceAndTargetInterfaceName, configuration1.getSourceInterface().getName());
+      assertEquals(sourceAndTargetInterfaceName, configuration1.getTargetInterface().getName());
       MulticastConfiguration configuration2 = iterator.next();
-      assertEquals(address, configuration2.getAddress());
+      assertEquals(groupAddress, configuration2.getGroupAddress());
       assertEquals(port2, configuration2.getPort());
+      assertEquals(sourceAndTargetInterfaceName, configuration2.getSourceInterface().getName());
+      assertEquals(sourceAndTargetInterfaceName, configuration2.getTargetInterface().getName());
    }
 
    @Test
@@ -183,7 +192,8 @@ public class TransportConfigurationServiceTest {
       return link;
    }
 
-   private static IProperty getMockedMulticastConfiguration(String address, int port) {
+   private static IProperty getMockedMulticastConfiguration(String groupAddress, int port, String
+         sourceInterfaceName, String targetInterfaceName) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
       when(property.getName()).thenReturn(UUID.randomUUID().toString());
       when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
@@ -192,19 +202,27 @@ public class TransportConfigurationServiceTest {
          TransportConfigurationService.MULTICAST_CONFIGURATION_QUALIFIED_NAME);
       IPropertyDataValue socketValue = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
       IDataField field = mock(IDataField.class);
-      IDataField addressField = mock(IDataField.class);
+      IDataField groupAddressField = mock(IDataField.class);
       IDataField portField = mock(IDataField.class);
+      IDataField sourceField = mock(IDataField.class);
+      IDataField targetField = mock(IDataField.class);
       when(property.getData().isSet()).thenReturn(true);
       when(property.getData()
                    .getFieldByName(TransportConfigurationService.MULTICAST_SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
                       Optional.of(field));
       when(property.getData().getData(field)).thenReturn(socketValue);
-      when(socketValue.getFieldByName(TransportConfigurationService.ADDRESS_FIELD_NAME)).thenReturn(
-         Optional.of(addressField));
+      when(socketValue.getFieldByName(TransportConfigurationService.GROUP_ADDRESS_FIELD_NAME)).thenReturn(
+         Optional.of(groupAddressField));
       when(socketValue.getFieldByName(TransportConfigurationService.PORT_FIELD_NAME)).thenReturn(
          Optional.of(portField));
-      when(socketValue.getPrimitive(addressField).getString()).thenReturn(address);
+      when(socketValue.getFieldByName(TransportConfigurationService.SOURCE_ADDRESS_FIELD_NAME)).thenReturn(
+            Optional.of(sourceField));
+      when(socketValue.getFieldByName(TransportConfigurationService.TARGET_ADDRESS_FIELD_NAME)).thenReturn(
+            Optional.of(targetField));
+      when(socketValue.getPrimitive(groupAddressField).getString()).thenReturn(groupAddress);
       when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
+      when(socketValue.getPrimitive(sourceField).getString()).thenReturn(sourceInterfaceName);
+      when(socketValue.getPrimitive(targetField).getString()).thenReturn(targetInterfaceName);
       return property;
    }
 
