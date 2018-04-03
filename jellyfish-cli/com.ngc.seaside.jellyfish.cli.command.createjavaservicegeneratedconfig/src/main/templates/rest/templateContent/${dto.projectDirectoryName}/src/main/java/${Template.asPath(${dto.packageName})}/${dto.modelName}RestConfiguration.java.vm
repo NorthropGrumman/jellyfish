@@ -13,9 +13,9 @@ public class ${dto.modelName}RestConfiguration {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> restProvider) {
+#foreach ($topic in $dto.topics)
        SparkTopics factory = SparkTopics.boundToLocalhost(${topic.port});
 
-#foreach ($topic in $dto.topics)
        SparkTopic ${topic.variableName} = factory.when(${topic.httpMethod})
              .onPath("${topic.path}")
              .accept(${topic.contentType})
