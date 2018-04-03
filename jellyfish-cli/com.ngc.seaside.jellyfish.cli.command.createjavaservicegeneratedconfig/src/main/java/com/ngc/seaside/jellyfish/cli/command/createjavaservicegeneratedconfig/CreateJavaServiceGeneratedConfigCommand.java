@@ -47,7 +47,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component(service = IJellyFishCommand.class)
-public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJellyfishCommand implements IJellyFishCommand {
+public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJellyfishCommand
+      implements IJellyFishCommand {
 
    static final String CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String CONFIG_BUILD_TEMPLATE_SUFFIX = "build";
@@ -84,7 +85,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       registerProject(projectInfo);
    }
-   
+
    @Override
    protected void runDeferredPhase() {
       IJellyFishCommandOptions options = getOptions();
@@ -97,22 +98,22 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-               .setModelName(model.getName())
-               .setPackageName(packagez)
-               .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-               .getArtifactId())
-               .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
+            .setModelName(model.getName())
+            .setPackageName(packagez)
+            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
+                                                            .getArtifactId())
+            .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-         new MulticastTransportProviderConfigDto(transportConfigService));
-      
+            new MulticastTransportProviderConfigDto(transportConfigService));
+
       clean = generateAndAddTransportProviders(
-         dto,
-         options,
-         outputDir,
-         clean,
-         model,
-         transportProviders);
+            dto,
+            options,
+            outputDir,
+            clean,
+            model,
+            transportProviders);
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -183,13 +184,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       setScenarioService(null);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({"unchecked", "rawtypes"})
    private boolean generateAndAddTransportProviders(GeneratedServiceConfigDto dto,
-            IJellyFishCommandOptions options,
-            Path outputDirectory,
-            boolean clean,
-            IModel model,
-            Collection<ITransportProviderConfigDto<?>> transportProviders) {
+                                                    IJellyFishCommandOptions options,
+                                                    Path outputDirectory,
+                                                    boolean clean,
+                                                    IModel model,
+                                                    Collection<ITransportProviderConfigDto<?>> transportProviders) {
       EnumDto transportTopicsClass = generateService.getTransportTopicsDescription(options, model);
 
       Map<String, IDataReferenceField> topics = new LinkedHashMap<>();
@@ -228,7 +229,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    /**
     * Gets the topic name for the given flow and field and adds the topic with the field to the given map.
-    * 
+    *
     * @throws IllegalStateException if the map already contains the given topic with a different field
     */
    private void addToTopicsMap(Map<String, IDataReferenceField> map, IMessagingFlow flow, IDataReferenceField field) {
@@ -236,19 +237,19 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       IDataReferenceField previous = map.put(topicName, field);
       if (previous != null && previous != field) {
          throw new IllegalStateException(
-            String.format("Two data reference fields assigned to the same topic %s: %s and %s",
-               topicName,
-               field.getName(),
-               previous.getName()));
+               String.format("Two data reference fields assigned to the same topic %s: %s and %s",
+                             topicName,
+                             field.getName(),
+                             previous.getName()));
       }
    }
 
    /**
     * Creates and returns the path to the domain project directory.
     *
-    * @param outputDir output directory
+    * @param outputDir   output directory
     * @param projDirName project directory name
-    * @param clean whether or not to delete the contents of the directory
+    * @param clean       whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
@@ -269,13 +270,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-         "Generates the generated service configuration for a Java application",
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.MODEL.required(),
-         CommonParameters.DEPLOYMENT_MODEL.required(),
-         CommonParameters.OUTPUT_DIRECTORY.required(),
-         CommonParameters.CLEAN);
+            "Generates the generated service configuration for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.CLEAN);
    }
 
 }
