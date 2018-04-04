@@ -61,7 +61,9 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
                transportConfigurationService.getRestConfiguration(options, field);
          int count = 1;
          for (RestConfiguration configuration : configurations) {
-            RestTopicDto topicDto = new RestTopicDto().setPort(configuration.getPort())
+            RestTopicDto topicDto = new RestTopicDto().setNetworkAddress(configuration.getNetworkAddress())
+                                                      .setNetworkInterface(configuration.getNetworkInterface())
+                                                      .setPort(configuration.getPort())
                                                       .setHttpMethod(configuration.getHttpMethod())
                                                       .setPath(configuration.getPath())
                                                       .setContentType(configuration.getContentType())

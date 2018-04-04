@@ -1,14 +1,36 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest;
 
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
+import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 
 public class RestTopicDto {
+   private NetworkAddress networkAddress;
+   private NetworkInterface networkInterface;
    private int port;
    private HttpMethod httpMethod;
    private String path;
    private String contentType;
    private String variableName;
    private String name;
+
+   public NetworkAddress getNetworkAddress() {
+      return networkAddress;
+   }
+
+   public RestTopicDto setNetworkAddress(NetworkAddress networkAddress) {
+      this.networkAddress = networkAddress;
+      return this;
+   }
+
+   public NetworkInterface getNetworkInterface() {
+      return networkInterface;
+   }
+
+   public RestTopicDto setNetworkInterface(NetworkInterface networkInterface) {
+      this.networkInterface = networkInterface;
+      return this;
+   }
 
    public int getPort() {
       return port;
