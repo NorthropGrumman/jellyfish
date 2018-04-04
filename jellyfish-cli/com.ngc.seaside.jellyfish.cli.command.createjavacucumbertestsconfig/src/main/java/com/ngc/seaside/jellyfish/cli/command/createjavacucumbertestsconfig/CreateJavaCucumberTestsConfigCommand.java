@@ -75,12 +75,14 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractJellyfishComma
 
    @Override
    protected IUsage createUsage() {
-      // TODO Auto-generated method stub
-      return new DefaultUsage("Description of create-java-cucumber-tests-config command",
-         new DefaultParameter<>(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false),
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.MODEL.required());
+      return new DefaultUsage(
+            "Generates the generated service configuration for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.CLEAN);
    }
 
 }
