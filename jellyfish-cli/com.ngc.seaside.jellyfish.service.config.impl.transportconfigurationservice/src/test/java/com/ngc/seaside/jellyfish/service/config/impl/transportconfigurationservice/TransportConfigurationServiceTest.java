@@ -11,6 +11,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ConnectionType;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqTcpTransportConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -174,8 +177,61 @@ public class TransportConfigurationServiceTest {
       assertEquals(method, configuration2.getHttpMethod());
    }
 
+   @Test
+   public void testZeroMqConfiguration() {
+      String deploymentModelName = "com.ngc.DeploymentModel";
+      IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
+      String bindInterface = "127.0.0.1";
+      String connectAddress = "1.2.3.4";
+
+      int port1 = 8080;
+      int port2 = 8081;
+
+      IDataReferenceField field = mock(IDataReferenceField.class);
+      when(sdService.getAggregatedView(deploymentModel)).thenReturn(deploymentModel);
+
+      IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
+      when(options.getParameters()
+                  .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
+                  .getStringValue()).thenReturn(deploymentModelName);
+      when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
+      IProperty property1 = getMockedZeroMqTcpConfiguration(ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+         bindInterface,
+         connectAddress,
+         port1);
+      IModelLink<IDataReferenceField> link1 = getMockedLink(field, true, property1);
+
+      IProperty property2 = getMockedZeroMqTcpConfiguration(ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+         bindInterface,
+         connectAddress,
+         port2);
+      IModelLink<IDataReferenceField> link2 = getMockedLink(field, true, property2);
+
+      IProperty property3 = getMockedZeroMqTcpConfiguration(ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+         bindInterface,
+         connectAddress,
+         port2);
+      IModelLink<IDataReferenceField> link3 = getMockedLink(field, true, property3);
+
+      when(deploymentModel.getLinks()).thenReturn(Arrays.asList(link1, link2, link3));
+
+      Collection<ZeroMqConfiguration> configurations = service.getZeroMqConfiguration(options, field);
+      assertEquals(2, configurations.size());
+      Iterator<ZeroMqConfiguration> iterator = configurations.iterator();
+      ZeroMqConfiguration configuration1 = iterator.next();
+      assertEquals(ZeroMqTcpTransportConfiguration.class, configuration1.getClass());
+      assertEquals(bindInterface, ((ZeroMqTcpTransportConfiguration) configuration1).getBindConfiguration().getName());
+      assertEquals(connectAddress, ((ZeroMqTcpTransportConfiguration) configuration1).getConnectConfiguration().getAddress());
+      assertEquals(port1, ((ZeroMqTcpTransportConfiguration) configuration1).getPort());
+      ZeroMqConfiguration configuration2 = iterator.next();
+      assertEquals(ZeroMqTcpTransportConfiguration.class, configuration2.getClass());
+      assertEquals(bindInterface, ((ZeroMqTcpTransportConfiguration) configuration2).getBindConfiguration().getName());
+      assertEquals(connectAddress, ((ZeroMqTcpTransportConfiguration) configuration2).getConnectConfiguration().getAddress());
+      assertEquals(port2, ((ZeroMqTcpTransportConfiguration) configuration2).getPort());
+   }
+
    private static IModelLink<IDataReferenceField> getMockedLink(IDataReferenceField field, boolean fieldIsSource,
-            IProperty... properties) {
+                                                                IProperty... properties) {
       IModelLink<IDataReferenceField> link = mock(DataReferenceFieldLink.class, RETURNS_DEEP_STUBS);
 
       IDataReferenceField source;
@@ -192,84 +248,139 @@ public class TransportConfigurationServiceTest {
       when(link.getRefinedLink()).thenReturn(Optional.empty());
       when(link.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
       when(link.getProperties().iterator()).thenReturn(Arrays.asList(properties).iterator());
-      when(link.getProperties().stream()).thenReturn(Stream.of(properties));
+      when(link.getProperties().stream()).thenAnswer(args -> Stream.of(properties));
       return link;
    }
 
-   private static IProperty getMockedMulticastConfiguration(String groupAddress, int port, String
-         sourceInterfaceName, String targetInterfaceName) {
+   private static IProperty getMockedMulticastConfiguration(String groupAddress, int port, String sourceInterfaceName,
+                                                            String targetInterfaceName) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
       when(property.getName()).thenReturn(UUID.randomUUID().toString());
       when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
       when(property.getType()).thenReturn(DataTypes.DATA);
       when(property.getReferencedDataType().getFullyQualifiedName()).thenReturn(
-         TransportConfigurationService.MULTICAST_CONFIGURATION_QUALIFIED_NAME);
-      IPropertyDataValue socketValue = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
-      IDataField field = mock(IDataField.class);
+         MulticastConfigurationUtils.MULTICAST_CONFIGURATION_QUALIFIED_NAME);
       IDataField groupAddressField = mock(IDataField.class);
       IDataField portField = mock(IDataField.class);
       IDataField sourceField = mock(IDataField.class);
       IDataField targetField = mock(IDataField.class);
       when(property.getData().isSet()).thenReturn(true);
-      when(property.getData()
-                   .getFieldByName(TransportConfigurationService.MULTICAST_SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
-                      Optional.of(field));
-      when(property.getData().getData(field)).thenReturn(socketValue);
-      when(socketValue.getFieldByName(TransportConfigurationService.GROUP_ADDRESS_FIELD_NAME)).thenReturn(
+      when(property.getData().getFieldByName(MulticastConfigurationUtils.GROUP_ADDRESS_FIELD_NAME)).thenReturn(
          Optional.of(groupAddressField));
-      when(socketValue.getFieldByName(TransportConfigurationService.PORT_FIELD_NAME)).thenReturn(
+      when(property.getData().getFieldByName(MulticastConfigurationUtils.PORT_FIELD_NAME)).thenReturn(
          Optional.of(portField));
-      when(socketValue.getFieldByName(TransportConfigurationService.SOURCE_ADDRESS_FIELD_NAME)).thenReturn(
-            Optional.of(sourceField));
-      when(socketValue.getFieldByName(TransportConfigurationService.TARGET_ADDRESS_FIELD_NAME)).thenReturn(
-            Optional.of(targetField));
-      when(socketValue.getPrimitive(groupAddressField).getString()).thenReturn(groupAddress);
-      when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
-      when(socketValue.getPrimitive(sourceField).getString()).thenReturn(sourceInterfaceName);
-      when(socketValue.getPrimitive(targetField).getString()).thenReturn(targetInterfaceName);
+      when(property.getData().getFieldByName(MulticastConfigurationUtils.SOURCE_INTERFACE_FIELD_NAME)).thenReturn(
+         Optional.of(sourceField));
+      when(property.getData().getFieldByName(MulticastConfigurationUtils.TARGET_INTERFACE_FIELD_NAME)).thenReturn(
+         Optional.of(targetField));
+      when(property.getData().getPrimitive(groupAddressField).getString()).thenReturn(groupAddress);
+      when(property.getData().getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
+      IPropertyDataValue sourceInterface = getMockedNetworkInterface(sourceInterfaceName);
+      IPropertyDataValue targetInterface = getMockedNetworkInterface(targetInterfaceName);
+      when(property.getData().getData(sourceField)).thenReturn(sourceInterface);
+      when(property.getData().getData(targetField)).thenReturn(targetInterface);
       return property;
    }
 
-   private IProperty getMockedRestConfiguration(String address, String interfaceName, int port, String path,
-                                                String contentType,
-                                                HttpMethod method) {
+   private static IProperty getMockedRestConfiguration(String address, String interfaceName, int port, String path,
+                                                       String contentType, HttpMethod method) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
       when(property.getName()).thenReturn(UUID.randomUUID().toString());
       when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
       when(property.getType()).thenReturn(DataTypes.DATA);
       when(property.getReferencedDataType().getFullyQualifiedName()).thenReturn(
-         TransportConfigurationService.REST_CONFIGURATION_QUALIFIED_NAME);
-      IPropertyDataValue socketValue = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
-      IDataField socketField = mock(IDataField.class);
+         RestConfigurationUtils.REST_CONFIGURATION_QUALIFIED_NAME);
       IDataField addressField = mock(IDataField.class);
-      IDataField networkInterfaceField = mock(IDataField.class);
+      IDataField interfaceField = mock(IDataField.class);
       IDataField portField = mock(IDataField.class);
       IDataField pathField = mock(IDataField.class);
       IDataField contentTypeField = mock(IDataField.class);
       IDataField httpMethodField = mock(IDataField.class);
       when(property.getData().isSet()).thenReturn(true);
-      when(property.getData().getFieldByName(TransportConfigurationService.REST_SOCKET_ADDRESS_FIELD_NAME)).thenReturn(
-         Optional.of(socketField));
-      when(property.getData().getFieldByName(TransportConfigurationService.REST_PATH_FIELD_NAME)).thenReturn(
-         Optional.of(pathField));
-      when(property.getData().getFieldByName(TransportConfigurationService.REST_CONTENT_TYPE_FIELD_NAME)).thenReturn(
-         Optional.of(contentTypeField));
-      when(property.getData().getFieldByName(TransportConfigurationService.REST_HTTP_METHOD_FIELD_NAME)).thenReturn(
-         Optional.of(httpMethodField));
-      when(property.getData().getData(socketField)).thenReturn(socketValue);
-      when(socketValue.getFieldByName(TransportConfigurationService.ADDRESS_FIELD_NAME)).thenReturn(
-            Optional.of(addressField));
-      when(socketValue.getFieldByName(TransportConfigurationService.NETWORK_INTERFACE_FIELD_NAME)).thenReturn(
-            Optional.of(networkInterfaceField));
-      when(socketValue.getFieldByName(TransportConfigurationService.PORT_FIELD_NAME)).thenReturn(
+      when(property.getData().getFieldByName(RestConfigurationUtils.SERVER_ADDRESS_FIELD_NAME)).thenReturn(
+         Optional.of(addressField));
+      when(property.getData().getFieldByName(RestConfigurationUtils.SERVER_INTERFACE_FIELD_NAME)).thenReturn(
+         Optional.of(interfaceField));
+      when(property.getData().getFieldByName(RestConfigurationUtils.PORT_FIELD_NAME)).thenReturn(
          Optional.of(portField));
-      when(socketValue.getPrimitive(addressField).getString()).thenReturn(address);
-      when(socketValue.getPrimitive(networkInterfaceField).getString()).thenReturn(interfaceName);
-      when(socketValue.getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
-      when(property.getData().getEnumeration(httpMethodField).getValue()).thenReturn(method.toString());
+      when(property.getData().getFieldByName(RestConfigurationUtils.PATH_FIELD_NAME)).thenReturn(
+         Optional.of(pathField));
+      when(property.getData().getFieldByName(RestConfigurationUtils.CONTENT_TYPE_FIELD_NAME)).thenReturn(
+         Optional.of(contentTypeField));
+      when(property.getData().getFieldByName(RestConfigurationUtils.HTTP_METHOD_FIELD_NAME)).thenReturn(
+         Optional.of(httpMethodField));
+      IPropertyDataValue addressValue = getMockedNetworkAddress(address);
+      IPropertyDataValue interfaceValue = getMockedNetworkInterface(interfaceName);
+      when(property.getData().getData(addressField)).thenReturn(addressValue);
+      when(property.getData().getData(interfaceField)).thenReturn(interfaceValue);
+      when(property.getData().getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
       when(property.getData().getPrimitive(pathField).getString()).thenReturn(path);
       when(property.getData().getPrimitive(contentTypeField).getString()).thenReturn(contentType);
+      when(property.getData().getEnumeration(httpMethodField).getValue()).thenReturn(method.toString());
       return property;
+   }
+
+   private static IProperty getMockedZeroMqTcpConfiguration(ConnectionType type, String bind, String connection,
+                                                            int port) {
+      IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
+      when(property.getName()).thenReturn(UUID.randomUUID().toString());
+      when(property.getCardinality()).thenReturn(FieldCardinality.SINGLE);
+      when(property.getType()).thenReturn(DataTypes.DATA);
+      when(property.getReferencedDataType().getFullyQualifiedName()).thenReturn(
+         ZeroMqConfigurationUtils.ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME);
+      IDataField connectionTypeField = mock(IDataField.class);
+      IDataField bindField = mock(IDataField.class);
+      IDataField bindInterfaceField = mock(IDataField.class);
+      IDataField connectionField = mock(IDataField.class);
+      IDataField connectAddressField = mock(IDataField.class);
+      IDataField portField = mock(IDataField.class);
+      when(property.getData().isSet()).thenReturn(true);
+      when(property.getData().getFieldByName(ZeroMqConfigurationUtils.CONNECTION_TYPE_FIELD_NAME)).thenReturn(
+         Optional.of(connectionTypeField));
+      when(property.getData().getFieldByName(ZeroMqConfigurationUtils.BIND_CONFIGURATION_FIELD_NAME)).thenReturn(
+         Optional.of(bindField));
+      when(property.getData().getFieldByName(ZeroMqConfigurationUtils.CONNECT_CONFIGURATION_FIELD_NAME)).thenReturn(
+         Optional.of(connectionField));
+      when(property.getData().getFieldByName(RestConfigurationUtils.PORT_FIELD_NAME)).thenReturn(
+         Optional.of(portField));
+      when(property.getData().getData(bindField).getFieldByName(
+         ZeroMqConfigurationUtils.BIND_CONFIGURATION_INTERFACE_FIELD_NAME)).thenReturn(Optional.of(bindInterfaceField));
+      when(property.getData().getData(connectionField).getFieldByName(
+         ZeroMqConfigurationUtils.CONNECT_CONFIGURATION_REMOTE_ADDRESS_FIELD_NAME)).thenReturn(
+            Optional.of(connectAddressField));
+      IPropertyDataValue bindInterface = getMockedNetworkInterface(bind);
+      IPropertyDataValue connectAddress = getMockedNetworkAddress(connection);
+      when(property.getData().getEnumeration(connectionTypeField).getValue()).thenReturn(type.name());
+      when(property.getData().getData(bindField).getData(bindInterfaceField)).thenReturn(bindInterface);
+      when(property.getData().getData(connectionField).getData(connectAddressField)).thenReturn(connectAddress);
+      when(property.getData().getPrimitive(portField).getInteger()).thenReturn(BigInteger.valueOf(port));
+      return property;
+   }
+
+   private static IPropertyDataValue getMockedNetworkInterface(String name) {
+      IPropertyDataValue value = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
+      when(value.isSet()).thenReturn(true);
+      when(value.isData()).thenReturn(true);
+      when(value.getReferencedDataType().getFullyQualifiedName()).thenReturn(
+         CommonConfigurationUtils.NETWORK_INTERFACE_QUALIFIED_NAME);
+      IDataField nameField = mock(IDataField.class);
+      when(value.getFieldByName(CommonConfigurationUtils.NETWORK_INTERFACE_NAME_FIELD_NAME)).thenReturn(
+         Optional.of(nameField));
+      when(value.getPrimitive(nameField).getString()).thenReturn(name);
+      return value;
+   }
+
+   private static IPropertyDataValue getMockedNetworkAddress(String name) {
+      IPropertyDataValue value = mock(IPropertyDataValue.class, RETURNS_DEEP_STUBS);
+      when(value.isSet()).thenReturn(true);
+      when(value.isData()).thenReturn(true);
+      when(value.getReferencedDataType().getFullyQualifiedName()).thenReturn(
+         CommonConfigurationUtils.NETWORK_ADDRESS_QUALIFIED_NAME);
+      IDataField nameField = mock(IDataField.class);
+      when(value.getFieldByName(CommonConfigurationUtils.NETWORK_ADDRESS_ADDRESS_FIELD_NAME)).thenReturn(
+         Optional.of(nameField));
+      when(value.getPrimitive(nameField).getString()).thenReturn(name);
+      return value;
    }
 
    private interface DataReferenceFieldLink extends IModelLink<IDataReferenceField> {
