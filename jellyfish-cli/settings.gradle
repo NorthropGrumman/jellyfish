@@ -113,3 +113,6 @@ project(':com.ngc.seaside.jellyfish.utilities').name = 'jellyfish.utilities'
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig').name = 'jellyfish.cli.command.createjavaservicegeneratedconfig'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig').name = 'jellyfish.cli.command.createjavacucumbertestsconfig'
