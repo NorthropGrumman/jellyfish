@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.service.config.api.dto.zeromq;
 
+import com.google.common.base.Objects;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 
 /**
@@ -59,5 +60,37 @@ public class ZeroMqEpgmTransportConfiguration extends ZeroMqConfiguration {
    public ZeroMqEpgmTransportConfiguration setTargetInterface(NetworkInterface targetInterface) {
       this.targetInterface = targetInterface;
       return this;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (!(o instanceof ZeroMqEpgmTransportConfiguration)) {
+         return false;
+      }
+      ZeroMqEpgmTransportConfiguration that = (ZeroMqEpgmTransportConfiguration) o;
+      return Objects.equal(this.getConnectionType(), that.getConnectionType())
+         && Objects.equal(this.getGroupAddress(), that.getGroupAddress())
+         && Objects.equal(this.getPort(), that.getPort())
+         && Objects.equal(this.getSourceInterface(), that.getSourceInterface())
+         && Objects.equal(this.getTargetInterface(), that.getTargetInterface());
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(this.getConnectionType(),
+         this.getGroupAddress(),
+         this.getPort(),
+         this.getSourceInterface(),
+         this.getTargetInterface());
+   }
+
+   @Override
+   public String toString() {
+      return "ZeroMqEpgmTransportConfiguration[connectionType=" + this.getConnectionType() +
+         ",groupAddress=" + this.getGroupAddress() +
+         ",port=" + this.getPort() +
+         ",sourceInterface=" + this.getSourceInterface().getName() +
+         ",targetInterface=" + this.getTargetInterface().getName() +
+         "]";
    }
 }
