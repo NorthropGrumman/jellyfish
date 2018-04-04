@@ -15,11 +15,11 @@ import java.util.Arrays;
 
 public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.zeromq.ZeroMqTcpTransportConfiguration";
-   static final String ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.zeromq.ZeroMqIcpTransportConfiguration";
-   static final String ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.zeromq.ZeroMqPgmTransportConfiguration";
-   static final String ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.zeromq.ZeroMqEpgmTransportConfiguration";
-   static final String ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.zeromq.ZeroMqInprocTransportConfiguration";
+   static final String ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration";
+   static final String ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqIcpTransportConfiguration";
+   static final String ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqPgmTransportConfiguration";
+   static final String ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqEpgmTransportConfiguration";
+   static final String ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqInprocTransportConfiguration";
 
    static final String CONNECTION_TYPE_FIELD_NAME = "connectionType";
    static final String BIND_CONFIGURATION_FIELD_NAME = "bindConfiguration";

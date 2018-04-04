@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class RestConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String REST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.rest.RestConfiguration";
+   static final String REST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.rest.RestConfiguration";
    static final String SERVER_ADDRESS_FIELD_NAME = "serverAddress";
    static final String SERVER_INTERFACE_FIELD_NAME = "serverInterface";
    static final String PATH_FIELD_NAME = "path";

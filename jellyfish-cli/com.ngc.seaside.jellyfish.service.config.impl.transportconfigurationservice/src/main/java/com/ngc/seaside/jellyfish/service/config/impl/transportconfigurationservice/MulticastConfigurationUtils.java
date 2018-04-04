@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class MulticastConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String MULTICAST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.multicast.MulticastConfiguration";
+   static final String MULTICAST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration";
    static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
    static final String PORT_FIELD_NAME = "port";
    static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
