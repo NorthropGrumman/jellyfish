@@ -58,6 +58,9 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.topic.multicast"),
                       artifact("service.transport.impl.provider.multicast"),
                       artifact("service.transport.impl.provider.multicast.module"),
+                      artifact("service.transport.impl.topic.spark"),
+                      artifact("service.transport.impl.provider.spark"),
+                      artifact("service.transport.impl.provider.spark.module"),
                       artifact("service.transport.impl.topic.zeromq"),
                       artifact("service.transport.impl.provider.zeromq"),
                       artifact("service.transport.impl.provider.zeromq.module"));
