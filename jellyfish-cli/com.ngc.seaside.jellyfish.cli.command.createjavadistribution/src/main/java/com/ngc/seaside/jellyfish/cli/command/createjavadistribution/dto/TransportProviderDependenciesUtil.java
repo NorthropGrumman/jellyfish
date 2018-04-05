@@ -4,6 +4,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -33,6 +34,10 @@ public class TransportProviderDependenciesUtil {
       if (types.contains(TransportConfigurationType.MULTICAST)) {
          MulticastTransportProviderConfigDto multicastDto = new MulticastTransportProviderConfigDto(null);
          dependencies.addAll(multicastDto.getDependencies(true));
+      }
+      if (types.contains(TransportConfigurationType.ZERO_MQ)) {
+         ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null);
+         dependencies.addAll(zeroMqDto.getDependencies(true));
       }
       
       return dependencies;
