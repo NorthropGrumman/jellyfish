@@ -147,21 +147,21 @@ public class Property implements IProperty {
       return (PropertyPrimitiveValue) values.get(0);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public IPropertyValues<IPropertyDataValue> getDatas() {
       checkTypeAndCardinality("data", FieldCardinality.MANY, DataTypes.DATA);
       return IPropertyValues.of((Collection) values);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public IPropertyValues<IPropertyEnumerationValue> getEnumerations() {
       checkTypeAndCardinality("enumeration", FieldCardinality.MANY, DataTypes.ENUM);
       return IPropertyValues.of((Collection) values);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public IPropertyValues<IPropertyPrimitiveValue> getPrimitives() {
       checkTypeAndCardinality("primitive", FieldCardinality.MANY, PRIMITIVES);
