@@ -85,4 +85,18 @@ public class RestTopicDto {
       this.name = name;
       return this;
    }
+
+   @Override
+   public String toString() {
+      return "RestTopicDto["
+             + "\n\tnetworkAddress=" + networkAddress.getAddress()
+             + "\n\tnetworkInterface=" + networkInterface.getName()
+             + "\n\tport=" + port
+             + "\n\thttpMethod=" + httpMethod
+             + "\n\tpath=" + path
+             + "\n\tcontentType=" + contentType
+             + "\n\tvariableName=" + variableName
+             + "\n\tname=" + name
+             + "\n]";
+   }
 }
