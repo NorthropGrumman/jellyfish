@@ -103,5 +103,4 @@ model ThreatEvaluation {
 		link trackPriorityRequest -> trackPriorityService.trackPriorityRequest
 		link trackPriorityService.trackPriorityResponse -> trackPriorityResponse
 	}
-
 }

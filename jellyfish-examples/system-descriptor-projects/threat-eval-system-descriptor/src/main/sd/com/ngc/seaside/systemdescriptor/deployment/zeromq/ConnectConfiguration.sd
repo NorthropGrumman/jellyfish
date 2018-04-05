@@ -1,0 +1,15 @@
+package com.ngc.seaside.systemdescriptor.deployment.zeromq
+
+import com.ngc.seaside.systemdescriptor.deployment.NetworkAddress
+
+data ConnectConfiguration {
+	metadata {
+		"description" : "Part of the configuration for ZeroMQ's TCP transport.  Defines how the client like component is configured."
+	}
+
+	NetworkAddress remoteAddress {
+		metadata {
+			"description": "The network address of the remote server like component to connect to."
+		}
+	}
+}

@@ -1,4 +1,4 @@
-package com.ngc.seaside.deployment.rest
+package com.ngc.seaside.systemdescriptor.deployment.rest
 
 enum HttpMethod {
 	metadata {

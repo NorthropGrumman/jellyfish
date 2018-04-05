@@ -1,0 +1,34 @@
+package com.ngc.seaside.systemdescriptor.deployment.zeromq
+
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqConfigurationBase
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.BindConfiguration
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ConnectConfiguration
+
+data ZeroMqTcpTransportConfiguration extends ZeroMqConfigurationBase {
+	metadata {
+		"description" : "Defines the configuration for a link that should use ZeroMQ's TCP transport mechanism.  This is the most common ZeroMQ transport mechanism.",
+		"target": "link"
+	}
+	
+	BindConfiguration bindConfiguration {
+		metadata {
+			"description": "Defines the configuration for the component that acts as the server for the link.  This may be the target or the source depending on the connection type of the link."
+		}
+	}
+	
+	ConnectConfiguration connectConfiguration  {
+		metadata {
+			"description": "Defines the configuration for the component that acts as the client for the link.  This may be the target or the source depending on the connection type of the link."
+		}
+	}
+	
+	int port {
+		metadata {
+			"description": "The port number.",
+			"validation": {
+				"min": 0,
+				"max": 65535
+			}
+		}
+	}
+}

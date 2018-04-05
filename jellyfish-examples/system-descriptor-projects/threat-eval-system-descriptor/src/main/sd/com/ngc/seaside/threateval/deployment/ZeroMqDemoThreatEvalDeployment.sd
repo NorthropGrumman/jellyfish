@@ -1,0 +1,129 @@
+package com.ngc.seaside.threateval.deployment
+
+import com.ngc.seaside.threateval.ThreatEvaluation
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration
+import com.ngc.seaside.systemdescriptor.deployment.rest.RestConfiguration
+import com.ngc.seaside.systemdescriptor.deployment.rest.HttpMethod
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ConnectionType
+
+model ZeroMqDemoThreatEvalDeployment refines ThreatEvaluation {
+	metadata {
+			"description" : "This deployment model allows the ThreatEvaluation system to be deployed on a single machine or VM using ZeroMQ.",
+			"stereotypes": ["system", "deployment"]
+	}
+	
+	links {
+		refine link systemTrack -> defendedAreaTrackPriorityService.systemTrack {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61104
+			}
+		}
+
+		refine link impactAssessment -> defendedAreaTrackPriorityService.impactAssessment {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61110
+			}
+		}
+
+		refine link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61103
+			}
+		}
+
+		refine link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61105
+			}
+		}
+
+		refine link trackPriorityService.prioritizedSystemTracks -> prioritizedSystemTracks {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61106
+			}
+		}
+
+		refine link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61101
+			}
+		}
+
+		refine link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61101
+			}
+		}
+
+		refine link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61101
+			}
+		}
+
+		refine link droppedSystemTrack -> trackPriorityService.droppedSystemTrack {
+			properties {
+				ZeroMqTcpTransportConfiguration zeroMqConfiguration
+
+				zeroMqConfiguration.connectionType = ConnectionType.SOURCE_CONNECTS_TARGET_BINDS
+				zeroMqConfiguration.bindConfiguration.interface.name = "*"
+				zeroMqConfiguration.connectConfiguration.remoteAddress.address = "localhost"
+				zeroMqConfiguration.port = 61102
+			}
+		}
+
+		refine link trackPriorityRequest -> trackPriorityService.trackPriorityRequest {
+			properties {
+				RestConfiguration restConfiguration
+
+				restConfiguration.serverAddress.address = "localhost"
+				restConfiguration.serverInterface.name = "*"
+				restConfiguration.port = 52412
+				restConfiguration.httpMethod = HttpMethod.POST
+				restConfiguration.contentType = "application/x-protobuf"
+				restConfiguration.path = "/trackPriorityRequest"
+			}
+		}
+	}
+
+}

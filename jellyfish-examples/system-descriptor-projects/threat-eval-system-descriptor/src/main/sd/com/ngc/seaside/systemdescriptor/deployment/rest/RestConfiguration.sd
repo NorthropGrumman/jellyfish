@@ -1,0 +1,52 @@
+package com.ngc.seaside.systemdescriptor.deployment.rest
+
+import com.ngc.seaside.systemdescriptor.deployment.rest.HttpMethod
+import com.ngc.seaside.systemdescriptor.deployment.NetworkAddress
+import com.ngc.seaside.systemdescriptor.deployment.NetworkInterface
+
+data RestConfiguration {
+	metadata {
+		"description": "Defines the configuration for a link that should use REST for transport.",
+		"target": "link"
+	}
+	
+	NetworkAddress serverAddress {
+		metadata {
+			"description": "The address or hostname of the server that hosts the REST endpoint or resource.  This value is typically required by clients to make requests."
+		}
+	}
+	
+	NetworkInterface serverInterface {
+		metadata {
+			"description": "The local interface on the server the server should bind to.  This value is only used when configuring the server side component.  The client is not concerned with this value."
+		}
+	}
+	
+	int port {
+		metadata {
+			"description": "The port number of the endpoint.",
+			"validation": {
+				"min": 0,
+				"max": 65535
+			}
+		}
+	}
+	
+	string path {
+		metadata {
+			"description": "The relation path of the REST endpoint or resource, which does not include the IP address or hostname of the server."
+		}
+	}
+	
+	string contentType {
+		metadata {
+			"description": "The MIME type of the content that is used in link.  The content type is the same for requests as responses."
+		}
+	}
+	
+	HttpMethod httpMethod {
+		metadata {
+			"description": "The HTTP method that will be used by clients making requests."
+		}
+	}
+}
