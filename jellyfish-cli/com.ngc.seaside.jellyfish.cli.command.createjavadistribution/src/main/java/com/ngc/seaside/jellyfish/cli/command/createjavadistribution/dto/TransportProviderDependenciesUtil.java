@@ -42,7 +42,7 @@ public class TransportProviderDependenciesUtil {
          dependencies.addAll(restMqDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.ZERO_MQ)) {
-         ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null);
+         ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null, false);
          dependencies.addAll(zeroMqDto.getDependencies(true));
       }
 

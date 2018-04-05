@@ -1,0 +1,50 @@
+package ${dto.packageName};
+
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportProvider"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.TransportConfiguration"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ConnectionType"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopic"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopics"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.transport.TCP"))
+#foreach ($import in $dto.imports)
+import $import;
+#end
+
+public class ${dto.classname} {
+
+   private ${dto.classname}() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<ZeroMQTopic> zeroMqProvider) {
+#foreach ($topic in $dto.topics)
+      ZeroMQTopic ${topic.variableName} = ZeroMQTopics.createTopic()
+            .setConnectionType(ConnectionType.${topic.connectionType})
+            .setSocket(new ${topic.socketType}())
+            .setTransportType(new TCP("${topic.networkInterface}", ${topic.port}));
+
+#end
+#foreach ($entry in $dto.sendTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+      config.whenSending()
+            .toApplicationTopic(${name})
+            .useTransportProvider(zeroMqProvider)
+#foreach ($topic in $topics)
+            .onEagerPhysicalTopic(${topic.variableName})#if (! $foreach.hasNext);
+#end
+#end               
+
+#end
+#foreach ($entry in $dto.receiveTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+      config.whenReceiving()
+            .withTransportProvider(zeroMqProvider)
+#foreach ($topic in $topics)
+            .onPhysicalTopic(${topic.variableName})
+#end
+            .useApplicationTopic(t -> ${name});
+
+#end
+   }
+}
