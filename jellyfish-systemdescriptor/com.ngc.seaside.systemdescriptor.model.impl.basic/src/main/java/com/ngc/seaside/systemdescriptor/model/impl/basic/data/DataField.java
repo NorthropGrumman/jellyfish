@@ -26,6 +26,9 @@ public class DataField implements IDataField {
    protected DataTypes type;
    protected FieldCardinality cardinality;
 
+   /**
+    * Creates a new data field with the given name.
+    */
    public DataField(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");

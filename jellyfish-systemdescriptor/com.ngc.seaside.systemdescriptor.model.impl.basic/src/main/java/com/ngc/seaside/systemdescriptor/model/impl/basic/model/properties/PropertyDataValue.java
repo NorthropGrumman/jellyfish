@@ -1,17 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
@@ -23,6 +13,15 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrim
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValues;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class PropertyDataValue extends PropertyValue implements IPropertyDataValue {
 
    private final IData data;
@@ -31,7 +30,7 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
    /**
     * Constructs a PropertyDataValue.
     *
-    * @param data IData type representing this value
+    * @param data        IData type representing this value
     * @param fieldValues values of the type's fields, collections can be null for unset properties
     * @throws IllegalArgumentException if the fields values don't match the data's fields
     */
@@ -107,11 +106,13 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       }
       if (field.getCardinality() != expectedCardinality) {
          throw new IllegalStateException("Cannot get value" + (expectedCardinality == FieldCardinality.MANY ? "s" : "")
-            + " for field " + field.getName() + ": the cardinality of the field is " + field.getCardinality());
+                                         + " for field " + field.getName() + ": the cardinality of the field is "
+                                         + field.getCardinality());
       }
       if (!Arrays.asList(expectedDataTypes).contains(field.getType())) {
          throw new IllegalStateException("Cannot get value" + (expectedCardinality == FieldCardinality.MANY ? "s" : "")
-            + " for field " + field.getName() + ": the data type of the field is " + field.getType());
+                                         + " for field " + field.getName() + ": the data type of the field is " + field
+                                               .getType());
       }
    }
 
@@ -122,7 +123,7 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       boolean allSet = true;
       if (dataFields.size() != fieldValuesMap.size()) {
          throw new IllegalArgumentException(
-            "there need to be exactly 1 field value corresponding to each field in " + data.getFullyQualifiedName());
+               "there need to be exactly 1 field value corresponding to each field in " + data.getFullyQualifiedName());
       }
       for (Map.Entry<String, Collection<IPropertyValue>> entry : fieldValuesMap.entrySet()) {
          String fieldName = entry.getKey();
@@ -141,7 +142,7 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
                Preconditions.checkNotNull(fieldValue, "field values may not contain a null value!");
                if (field.getType() != fieldValue.getType()) {
                   throw new IllegalArgumentException("field " + fieldName + " has a type of " + field.getType()
-                     + ", but the property value was of type " + fieldValue.getType());
+                                                     + ", but the property value was of type " + fieldValue.getType());
                }
                allSet &= fieldValue.isSet();
             }
@@ -164,8 +165,8 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
          return false;
       }
       PropertyDataValue that = (PropertyDataValue) obj;
-      return Objects.equals(fieldValues, that.fieldValues) &&
-               data == that.data;
+      return Objects.equals(fieldValues, that.fieldValues)
+             && data == that.data;
    }
 
    @Override

@@ -27,6 +27,9 @@ public class Package implements IPackage {
    private final INamedChildCollection<IPackage, IModel> models;
    private final INamedChildCollection<IPackage, IEnumeration> enumerations;
 
+   /**
+    * Creates a new package.
+    */
    public Package(String name,
                   INamedChildCollection<IPackage, IData> data,
                   INamedChildCollection<IPackage, IModel> models,
@@ -37,6 +40,9 @@ public class Package implements IPackage {
       this.enumerations = enumerations;
    }
 
+   /**
+    * Creates a new package.
+    */
    public Package(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -71,30 +77,42 @@ public class Package implements IPackage {
       return enumerations;
    }
 
+   /**
+    * Adds a model.
+    */
    public Package addModel(IModel model) {
-      if(model instanceof Model) {
+      if (model instanceof Model) {
          ((Model) model).setParent(this);
       }
       models.add(model);
       return this;
    }
 
+   /**
+    * Adds a data.
+    */
    public Package addData(IData data) {
-      if(data instanceof Data) {
+      if (data instanceof Data) {
          ((Data) data).setParent(this);
       }
       this.data.add(data);
       return this;
    }
 
+   /**
+    * Adds an enumeration.
+    */
    public Package addEnumeration(IEnumeration enumeration) {
-      if(enumeration instanceof Enumeration) {
+      if (enumeration instanceof Enumeration) {
          ((Enumeration) enumeration).setParent(this);
       }
       this.enumerations.add(enumeration);
       return this;
    }
 
+   /**
+    * Sets the parent descriptor.
+    */
    public Package setParent(ISystemDescriptor parent) {
       this.parent = parent;
       return this;
@@ -109,11 +127,11 @@ public class Package implements IPackage {
          return false;
       }
       Package p = (Package) o;
-      return Objects.equals(name, p.name) &&
-             parent == p.parent &&
-             Objects.equals(data, p.data) &&
-             Objects.equals(models, p.models) &&
-             Objects.equals(enumerations, p.enumerations);
+      return Objects.equals(name, p.name)
+             && parent == p.parent
+             && Objects.equals(data, p.data)
+             && Objects.equals(models, p.models)
+             && Objects.equals(enumerations, p.enumerations);
    }
 
    @Override
@@ -123,12 +141,12 @@ public class Package implements IPackage {
 
    @Override
    public String toString() {
-      return "Package[" +
-             "name='" + name + '\'' +
-             ", data=" + data +
-             ", models=" + models +
-             ", enumerations=" + enumerations +
-             ']';
+      return "Package["
+             + "name='" + name + '\''
+             + ", data=" + data
+             + ", models=" + models
+             + ", enumerations=" + enumerations
+             + ']';
    }
 
 }

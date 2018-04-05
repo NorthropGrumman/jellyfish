@@ -24,6 +24,9 @@ public class Scenario implements IScenario {
    private List<IScenarioStep> whens;
    private List<IScenarioStep> thens;
 
+   /**
+    * Creates a new scenario.
+    */
    public Scenario(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -144,12 +147,12 @@ public class Scenario implements IScenario {
       }
 
       Scenario s = (Scenario) o;
-      return Objects.equals(name, s.name) &&
-             parent == s.parent &&
-             Objects.equals(metadata, s.metadata) &&
-             Objects.equals(givens, s.givens) &&
-             Objects.equals(whens, s.whens) &&
-             Objects.equals(thens, s.thens);
+      return Objects.equals(name, s.name)
+             && parent == s.parent
+             && Objects.equals(metadata, s.metadata)
+             && Objects.equals(givens, s.givens)
+             && Objects.equals(whens, s.whens)
+             && Objects.equals(thens, s.thens);
    }
 
    @Override
@@ -159,13 +162,13 @@ public class Scenario implements IScenario {
 
    @Override
    public String toString() {
-      return "Scenario[" +
-             "name='" + name + '\'' +
-             ", parent=" + (parent == null ? "null" : parent.getName()) +
-             ", metadata=" + metadata +
-             ", givens=" + givens +
-             ", whens=" + whens +
-             ", thens=" + thens +
-             ']';
+      return "Scenario["
+             + "name='" + name + '\''
+             + ", parent=" + (parent == null ? "null" : parent.getName())
+             + ", metadata=" + metadata
+             + ", givens=" + givens
+             + ", whens=" + whens
+             + ", thens=" + thens
+             + ']';
    }
 }

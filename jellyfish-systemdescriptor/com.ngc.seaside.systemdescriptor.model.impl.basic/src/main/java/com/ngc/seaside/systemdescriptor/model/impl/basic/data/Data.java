@@ -32,6 +32,9 @@ public class Data implements IData {
       this.fields = fields;
    }
 
+   /**
+    * Creates a new data object with the given name.
+    */
    public Data(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");

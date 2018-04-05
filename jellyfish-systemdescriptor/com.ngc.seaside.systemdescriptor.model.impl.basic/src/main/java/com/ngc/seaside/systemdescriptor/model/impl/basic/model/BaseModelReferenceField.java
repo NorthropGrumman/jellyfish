@@ -23,6 +23,9 @@ public class BaseModelReferenceField implements IModelReferenceField {
    protected IModel parent;
    protected IProperties properties;
 
+   /**
+    * Creates a new field.
+    */
    public BaseModelReferenceField(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -66,7 +69,7 @@ public class BaseModelReferenceField implements IModelReferenceField {
       parent = model;
 
    }
-   
+
    @Override
    public IProperties getProperties() {
       return properties;
@@ -87,11 +90,11 @@ public class BaseModelReferenceField implements IModelReferenceField {
          return false;
       }
       BaseModelReferenceField that = (BaseModelReferenceField) o;
-      return Objects.equals(name, that.name) &&
-             Objects.equals(metadata, that.metadata) &&
-             Objects.equals(type, that.type) &&
-             parent == that.parent &&
-             Objects.equals(properties, that.properties);
+      return Objects.equals(name, that.name)
+             && Objects.equals(metadata, that.metadata)
+             && Objects.equals(type, that.type)
+             && parent == that.parent
+             && Objects.equals(properties, that.properties);
    }
 
    @Override
@@ -101,13 +104,13 @@ public class BaseModelReferenceField implements IModelReferenceField {
 
    @Override
    public String toString() {
-      return "BaseModelReferenceField[" +
-             "name='" + name + '\'' +
-             ", metadata=" + metadata +
-             ", type=" + type +
-             ", parent=" + (parent == null ? "null" : parent.getName()) +
-             ", properties=" + properties +
-             ']';
+      return "BaseModelReferenceField["
+             + "name='" + name + '\''
+             + ", metadata=" + metadata
+             + ", type=" + type
+             + ", parent=" + (parent == null ? "null" : parent.getName())
+             + ", properties=" + properties
+             + ']';
    }
 
    @Override

@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyEnumerationValue;
@@ -15,9 +16,10 @@ public abstract class PropertyValue implements IPropertyValue {
    /**
     * Constructs a PropertyValue
     *
-    * @param type type of property
+    * @param type  type of property
     * @param isSet whether or not the property has been set
-    * @throws IllegalArgumentException if the class does not implement the appropriate interface corresponding to the property's type
+    * @throws IllegalArgumentException if the class does not implement the appropriate interface corresponding to the
+    * property's type
     */
    public PropertyValue(DataTypes type, boolean isSet) {
       Preconditions.checkNotNull(type, "type may not be null!");
@@ -26,11 +28,11 @@ public abstract class PropertyValue implements IPropertyValue {
       }
       if (type == DataTypes.ENUM && !(this instanceof IPropertyEnumerationValue)) {
          throw new IllegalArgumentException(
-            "type is DataTypes.ENUM, but class does not implement IPropertyEnumerationValue");
+               "type is DataTypes.ENUM, but class does not implement IPropertyEnumerationValue");
       }
       if ((type != DataTypes.DATA && type != DataTypes.ENUM) && !(this instanceof IPropertyPrimitiveValue)) {
          throw new IllegalArgumentException(
-            "type is a primitive, but class does not implement IPropertyPrimitiveValue");
+               "type is a primitive, but class does not implement IPropertyPrimitiveValue");
       }
       this.type = type;
       this.isSet = isSet;
