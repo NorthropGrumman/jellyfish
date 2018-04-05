@@ -47,9 +47,9 @@ public class MockedScenarioService implements IScenarioService {
    }
 
    @Override
-   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(IJellyFishCommandOptions options,
             IScenario scenario) {
-      return delegate.getRequestResponseMessagingFlows(options, scenario);
+      return delegate.getRequestResponseMessagingFlow(options, scenario);
    }
 
    @Override

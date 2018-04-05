@@ -54,9 +54,9 @@ public class ScenarioServiceGuiceWrapper implements IScenarioService {
    }
 
    @Override
-   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(
          IJellyFishCommandOptions options, IScenario scenario) {
-      return scenarioService.getRequestResponseMessagingFlows(options, scenario);
+      return scenarioService.getRequestResponseMessagingFlow(options, scenario);
    }
 
    @Override

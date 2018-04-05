@@ -74,7 +74,7 @@ public class ScenarioService implements IScenarioService {
    }
 
    @Override
-   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
+   public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(IJellyFishCommandOptions options,
                                                                                    IScenario scenario) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");

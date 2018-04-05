@@ -36,15 +36,15 @@ public interface IScenarioService {
 
    /**
     * Gets the request/response messaging flow that the given scenario declares or {@link Optional#empty()} if the
-    * scenario does not detail with request or response. Each flow is either a {@link
+    * scenario does not detail with request or response. The flow is either a {@link
     * IRequestResponseMessagingFlow.FlowType#CLIENT client flow} or a {@link IRequestResponseMessagingFlow.FlowType#SERVER
     * server flow}.
     *
     * @param options  the options the current command is being executed with
-    * @param scenario the scenario to get the messaging flows for
-    * @return a collection of request/response messaging flows that the given scenario declares
+    * @param scenario the scenario to get the messaging flow for
+    * @return the request/response messaging flow that the given scenario declares
     */
-   Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlows(IJellyFishCommandOptions options,
+   Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(IJellyFishCommandOptions options,
                                                                             IScenario scenario);
 
    /**

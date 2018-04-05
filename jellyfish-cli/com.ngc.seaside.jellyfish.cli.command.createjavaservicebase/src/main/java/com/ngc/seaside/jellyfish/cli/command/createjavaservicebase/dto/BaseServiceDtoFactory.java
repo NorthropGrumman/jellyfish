@@ -181,7 +181,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    private void computeReqResFlows(IJellyFishCommandOptions options, IModel model, BaseServiceDto dto) {
       for (IScenario scenario : model.getScenarios()) {
-         Optional<IRequestResponseMessagingFlow> flowOptional = scenarioService.getRequestResponseMessagingFlows(
+         Optional<IRequestResponseMessagingFlow> flowOptional = scenarioService.getRequestResponseMessagingFlow(
                options,
                scenario);
          if (flowOptional.isPresent()) {
