@@ -1,12 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -21,6 +14,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
@@ -46,13 +40,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
+
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.RestTransportProviderConfigDto.REST_TEMPLATE_SUFFIX;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceGeneratedConfigCommandIT {
 
-   private CreateJavaServiceGeneratedConfigCommand command;
-
    @Rule
    public final TemporaryFolder outputDirectory = new TemporaryFolder();
+
+   private CreateJavaServiceGeneratedConfigCommand command;
 
    @Mock
    private IJellyFishCommandOptions jellyFishCommandOptions;
@@ -73,85 +76,10 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    private MockedTransportConfigurationService transportConfigService = new MockedTransportConfigurationService();
 
    private IJavaServiceGenerationService generateService = new MockedJavaServiceGenerationService(packageService);
-   
+
    private IScenarioService scenarioService = new MockedScenarioService();
 
-   @Before
-   public void setup() throws Throwable {
-      outputDirectory.newFile("settings.gradle");
-
-      templateService = new MockedTemplateService()
-            .useRealPropertyService()
-            .setTemplateDirectory(
-                  CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-                           + CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX,
-                  Paths.get("src", "main", "templates", CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX))
-            .setTemplateDirectory(
-                  CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-                           + CONFIG_BUILD_TEMPLATE_SUFFIX,
-                  Paths.get("src", "main", "templates", CONFIG_BUILD_TEMPLATE_SUFFIX));
-      
-      ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
-      when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService"))
-            .thenReturn(Optional.of(newModelForTesting()));
-
-      parameters = new DefaultParameterCollection();
-      when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
-      when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(systemDescriptor);
-
-      command = new CreateJavaServiceGeneratedConfigCommand();
-      command.setLogService(logService);
-      command.setProjectNamingService(projectService);
-      command.setPackageNamingService(packageService);
-      command.setTemplateService(templateService);
-      command.setBuildManagementService(buildManagementService);
-      command.setJavaServiceGenerationService(generateService);
-      command.setTransportConfigurationService(transportConfigService);
-      command.setScenarioService(scenarioService);
-   }
-
-   @Test
-   public void multicastFunctionalTest() throws Throwable {
-      templateService.setTemplateDirectory(
-         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-                  + MULTICAST_TEMPLATE_SUFFIX,
-         Paths.get("src", "main", "templates", MULTICAST_TEMPLATE_SUFFIX));
-      
-      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
-                                                       61000, "127.0.0.1", "127.0.0.1");
-      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
-                                                       61001, "127.0.0.1", "127.0.0.1");
-      
-      run(
-         CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY, "com.ngc.seaside.threateval.EngagementTrackPriorityService",
-         CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-         CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
-      
-      Path projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
-      Path srcDir = projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "engagementtrackpriorityservice", "config"));
-
-      Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
-      Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastConfiguration.java");
-      
-      assertTrue(Files.isRegularFile(buildFile));
-      assertTrue(Files.isRegularFile(configurationFile));
-      assertTrue(Files.isRegularFile(multicastFile));
-   }
-   
-   private void run(Object... args) {
-      
-      for (int i = 0; i < args.length; i += 2) {
-         String parameterName = args[i].toString();
-         Object parameterValue = args[i + 1];
-         parameters.addParameter(new DefaultParameter<>(parameterName, parameterValue));
-      }
-      
-      command.run(jellyFishCommandOptions);
-   }
-
-   public static Model newModelForTesting() {
+   public static Model newMulticastModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
 
@@ -179,6 +107,147 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       p.addModel(model);
 
       return model;
+   }
+
+   public static Model newRestModelForTesting() {
+      Data trackPriorityRequest = new Data("TrackPriorityRequest");
+      Data trackPriorityResponse = new Data("TrackPriorityResponse");
+
+      Scenario getTrackPriorities = new Scenario("getTrackPriorities");
+
+      ScenarioStep step = new ScenarioStep();
+      step.setKeyword("receivingRequest");
+      step.getParameters().add("trackPriorityRequest");
+      step.setParent(getTrackPriorities);
+      getTrackPriorities.setWhens(Collections.singletonList(step));
+
+      step = new ScenarioStep();
+      step.setKeyword("willRespond");
+      step.getParameters().add("with");
+      step.getParameters().add("trackPriorityResponse");
+      step.setParent(getTrackPriorities);
+      getTrackPriorities.setThens(Collections.singletonList(step));
+
+      Model model = new Model("TrackPriorityService");
+      model.addInput(new DataReferenceField("trackPriorityRequest").setType(trackPriorityRequest));
+      model.addOutput(new DataReferenceField("trackPriorityResponse").setType(trackPriorityResponse));
+      model.addScenario(getTrackPriorities);
+      getTrackPriorities.setParent(model);
+
+      Package p = new Package("com.ngc.seaside.threateval");
+      p.addModel(model);
+
+      return model;
+   }
+
+   @Before
+   public void setup() throws Throwable {
+      outputDirectory.newFile("settings.gradle");
+
+      templateService = new MockedTemplateService()
+            .useRealPropertyService()
+            .setTemplateDirectory(
+                  CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
+                  + CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX))
+            .setTemplateDirectory(
+                  CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
+                  + CONFIG_BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", CONFIG_BUILD_TEMPLATE_SUFFIX));
+
+      ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+      when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService"))
+            .thenReturn(Optional.of(newMulticastModelForTesting()));
+      when(systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService"))
+            .thenReturn(Optional.of(newRestModelForTesting()));
+
+      parameters = new DefaultParameterCollection();
+      when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
+      when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(systemDescriptor);
+
+      command = new CreateJavaServiceGeneratedConfigCommand();
+      command.setLogService(logService);
+      command.setProjectNamingService(projectService);
+      command.setPackageNamingService(packageService);
+      command.setTemplateService(templateService);
+      command.setBuildManagementService(buildManagementService);
+      command.setJavaServiceGenerationService(generateService);
+      command.setTransportConfigurationService(transportConfigService);
+      command.setScenarioService(scenarioService);
+   }
+
+   @Test
+   public void multicast() throws Throwable {
+      templateService.setTemplateDirectory(
+         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
+                  + MULTICAST_TEMPLATE_SUFFIX,
+         Paths.get("src", "main", "templates", MULTICAST_TEMPLATE_SUFFIX));
+
+      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
+                                                       61000, "127.0.0.1", "127.0.0.1");
+      transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
+                                                       61001, "127.0.0.1", "127.0.0.1");
+
+      run(
+         CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY, "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+         CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+         CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory.getRoot().getAbsolutePath(),
+         CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+
+      Path projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
+      Path srcDir = projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "engagementtrackpriorityservice", "config"));
+
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
+      Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastConfiguration.java");
+
+      assertTrue(Files.isRegularFile(buildFile));
+      assertTrue(Files.isRegularFile(configurationFile));
+      assertTrue(Files.isRegularFile(multicastFile));
+   }
+
+   @Test
+   public void rest() throws Throwable {
+      templateService.setTemplateDirectory(
+            CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
+            + REST_TEMPLATE_SUFFIX,
+            Paths.get("src", "main", "templates", REST_TEMPLATE_SUFFIX));
+
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+                                                  "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
+
+      run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
+          "com.ngc.seaside.threateval.TrackPriorityService",
+          CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+          CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+          outputDirectory.getRoot().getAbsolutePath(),
+          CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+
+      Path projectDir =
+            outputDirectory.getRoot()
+                           .toPath()
+                           .resolve("com.ngc.seaside.threateval.trackpriorityservice.config");
+      Path srcDir =
+            projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
+                                         "trackpriorityservice", "config"));
+
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
+      Path restFile = srcDir.resolve("TrackPriorityServiceRestConfiguration.java");
+
+      assertTrue(Files.isRegularFile(buildFile));
+      assertTrue(Files.isRegularFile(configurationFile));
+      assertTrue(Files.isRegularFile(restFile));
+   }
+
+   private void run(Object... args) {
+      for (int i = 0; i < args.length; i += 2) {
+         String parameterName = args[i].toString();
+         Object parameterValue = args[i + 1];
+         parameters.addParameter(new DefaultParameter<>(parameterName, parameterValue));
+      }
+
+      command.run(jellyFishCommandOptions);
    }
 
 }
