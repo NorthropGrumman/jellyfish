@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
  * <p/>
  *
  * Dependencies and versions are configured by {@link DefaultDependenciesConfiguration}.  That configuration can
- * reference any property declared in {@link #BUILD_PROPERTIES_FILE} as this file will be loaded from the classpath
- * on activation.  This file typically has properties that are set during the build of Jellyfish.
+ * reference any property declared in {@link #BUILD_PROPERTIES_FILE} as this file will be loaded from the classpath on
+ * activation.  This file typically has properties that are set during the build of Jellyfish.
  */
 public class BuildManagementService implements IBuildManagementService {
 
@@ -52,8 +52,8 @@ public class BuildManagementService implements IBuildManagementService {
    private final Set<DependenciesConfiguration.Artifact>
          registeredArtifacts =
          Collections.synchronizedSet(new TreeSet<>(
-               Comparator.comparing((Function<DependenciesConfiguration.Artifact, String>) 
-                  (d -> d.getGroupId() + d.getArtifactId()))));
+               Comparator.comparing((Function<DependenciesConfiguration.Artifact, String>)
+                                          (d -> d.getGroupId() + d.getArtifactId()))));
 
    /**
     * The registered projects.
@@ -74,8 +74,8 @@ public class BuildManagementService implements IBuildManagementService {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scope, "scope may not be null!");
       return registeredArtifacts.stream()
-            .filter(d -> d.getScope() == scope)
-            .collect(Collectors.toList());
+                                .filter(d -> d.getScope() == scope)
+                                .collect(Collectors.toList());
    }
 
    @Override
@@ -103,13 +103,18 @@ public class BuildManagementService implements IBuildManagementService {
       Preconditions.checkArgument(!artifactId.trim().isEmpty(), "artifactId may not be empty!");
 
       return config.getGroups()
-            .stream()
-            .flatMap(g -> g.getArtifacts().stream())
-            .filter(a -> a.getGroupId().equalsIgnoreCase(groupId) && a.getArtifactId().equalsIgnoreCase(artifactId))
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("no information for %s:%s configured!",
-                                                                          groupId,
-                                                                          artifactId)));
+                   .stream()
+                   .flatMap(g -> g.getArtifacts().stream())
+                   .filter(a -> a.getGroupId().equalsIgnoreCase(groupId) && a.getArtifactId()
+                                                                             .equalsIgnoreCase(artifactId))
+                   .findAny()
+                   .orElseThrow(() -> new IllegalArgumentException(
+                         String.format(
+                               "no information for %s:%s configured!"
+                               + "Add configuration to the DefaultDependenciesConfiguration class.",
+                               groupId,
+                               artifactId)));
+
    }
 
    @Override
