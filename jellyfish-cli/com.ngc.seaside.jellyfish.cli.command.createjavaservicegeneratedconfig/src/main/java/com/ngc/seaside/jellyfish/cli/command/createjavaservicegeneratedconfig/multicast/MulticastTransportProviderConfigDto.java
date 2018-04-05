@@ -16,6 +16,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public class MulticastTransportProviderConfigDto implements ITransportProviderConfigDto<MulticastDto> {
+   public static final String MULTICAST_TEMPLATE_SUFFIX = "multicast";
+
    static final String MULTICAST_TRANSPORT_PROVIDER_COMPONENT_NAME = "com.ngc.seaside.service.transport.impl.provider.multicast.MulticastTransportProvider";
    static final String MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastConfiguration";
    static final String MULTICAST_PROVIDER_VARIABLE_NAME = "multicastProvider";
@@ -23,7 +25,6 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    static final String MULTICAST_TOPIC_CLASS_NAME = "MulticastTopic";
    static final String MULTICAST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.multicast";
    static final String MULTICAST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast";
-   public static final String MULTICAST_TEMPLATE_SUFFIX = "multicast";
 
 
    private ITransportConfigurationService transportConfigService;
