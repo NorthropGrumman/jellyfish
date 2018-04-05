@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast;
 
-import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
-
 public class MulticastTopicDto {
 
    private String variableName;
@@ -11,6 +9,7 @@ public class MulticastTopicDto {
    private String targetAddress;
    private String name;
    private String bindName;
+   private String testBindName;
    private boolean isSend;
 
    public String getVariableName() {
@@ -76,8 +75,9 @@ public class MulticastTopicDto {
       return this;
    }
 
+   //TODO MEL This is kind of hackish
    public String getBindName() {
-      String bindName = sourceAddress;
+      bindName = sourceAddress;
       if (isSend){
          bindName = targetAddress;
       }
@@ -86,6 +86,20 @@ public class MulticastTopicDto {
 
    public MulticastTopicDto setBindName(String bindName) {
       this.bindName = bindName;
+      return this;
+   }
+
+   //TODO MEL This is kind of hackish
+   public String getTestBindName() {
+      String testBindName = targetAddress;
+      if (isSend){
+         testBindName = sourceAddress;
+      }
+      return testBindName;
+   }
+
+   public MulticastTopicDto setTestBindName(String testBindName) {
+      this.testBindName = testBindName;
       return this;
    }
 }

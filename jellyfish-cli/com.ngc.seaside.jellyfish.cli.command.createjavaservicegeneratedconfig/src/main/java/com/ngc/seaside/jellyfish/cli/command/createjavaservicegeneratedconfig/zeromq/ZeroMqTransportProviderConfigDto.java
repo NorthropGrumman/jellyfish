@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfigDto<ZeroMqDto> {
-   static final String ZEROMQ_TRANSPORT_PROVIDER_COMPONENT_NAME = "ccom.ngc.seaside.service.transport.impl.provider.zeromq.ZeroMQTransportProvider";
+   static final String ZEROMQ_TRANSPORT_PROVIDER_COMPONENT_NAME = "com.ngc.seaside.service.transport.impl.provider.zeromq.ZeroMQTransportProvider";
    static final String ZEROMQ_CONFIGURATION_CLASS_NAME_SUFFIX = "ZeroMqConfiguration";
    static final String ZEROMQ_PROVIDER_VARIABLE_NAME = "zeroMqProvider";
    static final String ZEROMQ_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.zeromq";
@@ -156,7 +156,7 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
          ZeroMqTopicDto topicDto = new ZeroMqTopicDto();
          topicDto.setName(topicName);
          String socketTypeName = socketType.substring(socketType.lastIndexOf('.') + 1);
-         topicDto.setVariableName(variableName + (socketTypes.size() > 1 ? socketTypeName : ""));
+         topicDto.setVariableName(variableName + (socketTypes.size() > 1 ? socketTypeName : "") + "Topic");
          topicDto.setSocketType(socketTypeName);
          imports.accept(socketType);
          switch (configuration.getConnectionType()) {
