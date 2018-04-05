@@ -110,7 +110,12 @@ public class AggregatedPropertiesView {
 
    private static IPropertyDataValue getAggregatedPropertyValue(IPropertyDataValue value) {
       Map<String, Collection<? extends IPropertyValue>> aggregatedFields = new LinkedHashMap<>();
-      IData data = new AggregatedDataView(value.getReferencedDataType());
+      IData data;
+      try {
+         data = new AggregatedDataView(value.getReferencedDataType());
+      } catch(IllegalStateException e) {
+         return value;
+      }
       for (IDataField field : data.getFields()) {
          Collection<? extends IPropertyValue> fieldValues;
          switch (field.getCardinality()) {
