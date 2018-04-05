@@ -1,0 +1,75 @@
+
+apply plugin: 'com.ngc.seaside.application'
+
+dependencies {
+    compile project(":tps.messages")
+    compile project(":tps.base")
+
+    compile "com.ngc.seaside:service.api:$starfishVersion"
+    compile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+    compile "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
+
+    compile "com.ngc.seaside:service.transport.api:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.testutils:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.topic.multicast:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast:$starfishVersion"
+
+    compile "com.ngc.seaside:guice.modules:$jellyfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$starfishVersion"
+    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$starfishVersion"
+
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "info.cukes:cucumber-java:$cucumberVersion"
+    compile "info.cukes:cucumber-guice:$cucumberVersion"
+}
+
+ext {
+    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    consolidatedResourcesDirectory = file("${buildDir}/runtime/resources")
+    mainClass = 'com.ngc.seaside.threateval.tps.tests.main.TrackPriorityServiceTestMain'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+}
+
+task('copyFeatures', type: Copy, description: "Copies the system descriptor test resources and the model's feature files") {
+    parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
+	    from zipTree(it.file)
+	}
+	exclude {
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${parent.systemDescriptor.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	}
+	into systemDescriptorFeatureDirectory
+    build.dependsOn it
+	assemble.dependsOn it
+	sourceSets.main.resources.srcDir systemDescriptorFeatureDirectory
+}
+
+task('consolidateResources', type: Copy,
+     dependsOn: copyFeatures,
+     description: "Copies the project's resource directories to a common folder") {
+    from sourceSets.main.resources.srcDirs
+    into consolidatedResourcesDirectory
+    build.finalizedBy it
+}
+
+seasideApplication {
+    mainClassName = mainClass
+    includeDistributionDirs = ['src/main/resources/', systemDescriptorFeatureDirectory]
+    appHomeVarName = 'appHome'
+    appSystemProperties = [NG_FW_HOME: 'APP_HOME_VAR']
+    distributionName = "${project.name}-${project.version}"
+    installationDir = "build/distributions/${project.name}-${project.version}"
+
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
+    }
+}

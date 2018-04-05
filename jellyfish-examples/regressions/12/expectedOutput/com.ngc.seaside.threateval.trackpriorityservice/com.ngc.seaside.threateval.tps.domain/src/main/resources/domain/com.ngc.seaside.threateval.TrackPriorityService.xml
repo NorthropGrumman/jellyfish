@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:domain xmlns:ns2="http://blocs.ngc.com/domain/impl/common/generated">
+    <config>
+        <useVerboseImports>false</useVerboseImports>
+    </config>
+    <object class="com.ngc.seaside.threateval.tps.domain.datatype.TrackPriority" extends="com.ngc.seaside.threateval.tps.domain.common.datatype.BaseData" generated="true" abstract="false">
+        <property name="trackId" type="int" multiple="false" abstract="false"/>
+        <property name="sourceId" type="String" multiple="false" abstract="false"/>
+        <property name="priority" type="float" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.DroppedSystemTrack" extends="com.ngc.seaside.threateval.tps.domain.common.datatype.BaseData" generated="true" abstract="false">
+        <property name="identifier" type="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.datatype.TrackPriorityRequest" generated="true" abstract="false">
+        <property name="identifiers" type="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" multiple="true" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.datatype.PrioritizedSystemTrackIdentifiers" extends="com.ngc.seaside.threateval.tps.domain.common.datatype.BaseData" generated="true" abstract="false">
+        <property name="identifiers" type="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" multiple="true" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.datatype.TrackPriorityResponse" generated="true" abstract="false">
+        <property name="priorities" type="com.ngc.seaside.threateval.tps.domain.datatype.AggregatedTrackPriority" multiple="true" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" generated="true" abstract="false">
+        <property name="identifier" type="int" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.datatype.AggregatedTrackPriority" generated="true" abstract="false">
+        <property name="identifier" type="com.ngc.seaside.threateval.tps.domain.common.datatype.SystemTrackIdentifier" multiple="false" abstract="false"/>
+        <property name="priority" type="float" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.Metadata" generated="true" abstract="false">
+        <property name="correlationEventId" type="String" multiple="false" abstract="false"/>
+    </object>
+    <object class="com.ngc.seaside.threateval.tps.domain.common.datatype.BaseData" generated="true" abstract="true">
+        <property name="header" type="com.ngc.seaside.threateval.tps.domain.common.datatype.Metadata" multiple="false" abstract="false"/>
+    </object>
+</ns2:domain>
