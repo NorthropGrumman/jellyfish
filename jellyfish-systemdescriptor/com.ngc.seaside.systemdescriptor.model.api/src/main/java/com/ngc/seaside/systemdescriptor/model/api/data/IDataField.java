@@ -8,7 +8,6 @@ import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
  * A field that is declared in an {@link IData} object.  A field has a {@link #getType() type}.  If the type is {@link
  * DataTypes#DATA}, the field's type references an {@link IData} object.  If the type is {@link DataTypes#ENUM}, the
  * field's type references an {@link IEnumeration} object. Otherwise, the type of the field is a primitive type.
- *
  * Operations that change the state of this object may throw {@code UnsupportedOperationException}s if the object is
  * immutable.
  */

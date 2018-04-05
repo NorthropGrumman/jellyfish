@@ -15,7 +15,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
  * A visitor that traverses all objects within a {@link ISystemDescriptor}.  A visitor may return a particular result
  * from the traversal with {@link IVisitorContext#setResult(Object)}.  A visitor may also abort a traversal with {@link
  * IVisitorContext#stop()}.
- *
  * Note that {@link com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata medadata} and individual {@link
  * com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink model links} are not directly visited.
  *
@@ -25,7 +24,8 @@ public interface IVisitor {
 
    /**
     * Invoked to visit an enumeration type.
-    * @param ctx the visitor context
+    *
+    * @param ctx         the visitor context
     * @param enumeration the enumeration
     */
    default void visitEnumeration(IVisitorContext ctx, IEnumeration enumeration) {

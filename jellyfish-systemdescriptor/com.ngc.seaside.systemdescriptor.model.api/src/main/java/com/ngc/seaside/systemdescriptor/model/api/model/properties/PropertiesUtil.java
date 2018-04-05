@@ -88,7 +88,7 @@ class PropertiesUtil {
     *
     * @param <T> the type of value in the collection
     */
-   static abstract class SimplePropertyValues<T>
+   abstract static class SimplePropertyValues<T>
          extends AbstractList<T>
          implements IPropertyValues<T> {
 
@@ -97,7 +97,7 @@ class PropertiesUtil {
    /**
     * Implementation of {@code IProperties} that is not mutable.
     */
-   static abstract class SimplePropertiesImpl
+   abstract static class SimplePropertiesImpl
          extends AbstractList<IProperty>
          implements IProperties {
 
@@ -150,10 +150,10 @@ class PropertiesUtil {
             // Resolve all the nested fields except for the last field.  Require all the intermediate property values
             // to have a cardinality of single and be a data type.
             for (int i = 0;
-                 i < fieldNames.length - 1
-                 && cardinality == FieldCardinality.SINGLE
-                 && type == DataTypes.DATA;
-                 i++) {
+                  i < fieldNames.length - 1
+                  && cardinality == FieldCardinality.SINGLE
+                  && type == DataTypes.DATA;
+                  i++) {
                IDataField field = data.getFieldByName(fieldNames[i]).orElse(null);
                // Was the field with the given name actually found.
                if (field != null) {

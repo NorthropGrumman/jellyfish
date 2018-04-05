@@ -11,7 +11,7 @@ public interface IPropertyValue {
 
    /**
     * Gets the type of the value.
-    * 
+    *
     * @return the type of the value
     */
    DataTypes getType();
