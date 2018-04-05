@@ -17,7 +17,7 @@ public class ${dto.modelName}MulticastConfiguration {
       try {
 #foreach ($topic in $dto.topics)
          MulticastTopic ${topic.variableName} = new MulticastTopic("${topic.groupAddress}", ${topic.port},
-         "${topic.bindName}");
+         "${topic.TestBindName}");
 
 #end
 #foreach ($entry in $dto.sendTopics.entrySet())
