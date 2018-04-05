@@ -42,20 +42,20 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
       return configuration;
    }
 
-   public RestConfiguration addRestConfiguration(String fieldName, String serverAddress, String serverInterface,
-                                                 int port, String path, String contentType, HttpMethod method) {
-      RestConfiguration configuration = new RestConfiguration()
-               .setNetworkAddress(new NetworkAddress().setAddress(serverAddress))
-               .setNetworkInterface(new NetworkInterface(serverInterface))
-               .setPort(port)
-               .setPath(path)
-               .setContentType(contentType)
-               .setHttpMethod(method);
+   public RestConfiguration addRestConfiguration(String fieldName, String address, String interfaceName, int port,
+                                                 String path, String contentType, HttpMethod httpMethod) {
+      RestConfiguration configuration =
+            new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
+                                   .setNetworkInterface(new NetworkInterface().setName(interfaceName))
+                                   .setPort(port)
+                                   .setPath(path)
+                                   .setContentType(contentType)
+                                   .setHttpMethod(httpMethod);
       restConfigurations.computeIfAbsent(fieldName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;
    }
 
-   public ZeroMqTcpTransportConfiguration addZeroMqTcpConfiguration(String fieldName, ConnectionType connectType, 
+   public ZeroMqTcpTransportConfiguration addZeroMqTcpConfiguration(String fieldName, ConnectionType connectType,
                                                                     String bind, String connect, int port) {
       ZeroMqTcpTransportConfiguration configuration = (ZeroMqTcpTransportConfiguration) new ZeroMqTcpTransportConfiguration()
                .setBindConfiguration(new NetworkInterface(bind))
@@ -73,13 +73,13 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
 
    @Override
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                                       IDataReferenceField field) {
       return multicastConfigurations.getOrDefault(field.getName(), Collections.emptySet());
    }
 
    @Override
    public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                             IDataReferenceField field) {
       return restConfigurations.getOrDefault(field.getName(), Collections.emptySet());
    }
 
@@ -91,10 +91,12 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
 
    @Override
    public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options,
-            IModel deploymentModel) {
+                                                                IModel deploymentModel) {
       Set<TransportConfigurationType> types = new HashSet<>();
       if (!multicastConfigurations.isEmpty()) {
          types.add(TransportConfigurationType.MULTICAST);
+      } else if (!restConfigurations.isEmpty()) {
+         types.add(TransportConfigurationType.REST);
       }
       return types;
    }

@@ -16,16 +16,16 @@ import java.util.Optional;
 import java.util.Set;
 
 public class RestTransportProviderConfigDto implements ITransportProviderConfigDto<RestDto> {
-   private static final String
-         REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
+   public static final String REST_TEMPLATE_SUFFIX = "rest";
+
+   private static final String REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
          "com.ngc.seaside.service.transport.impl.provider.rest.RestTransportProvider";
    private static final String REST_CONFIGURATION_CLASS_NAME_SUFFIX = "RestConfiguration";
    private final static String REST_PROVIDER_VARIABLE_NAME = "restProvider";
-   private static final String REST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.provider.spark";
+   private static final String REST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.spark";
    private static final String REST_TOPIC_CLASS_NAME = "SparkTopic";
-   private static final String REST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
+   private static final String REST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
    private static final String REST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
-   private static final String REST_TEMPLATE_SUFFIX = "rest";
 
    private ITransportConfigurationService transportConfigurationService;
 

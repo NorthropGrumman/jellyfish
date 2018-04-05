@@ -18,9 +18,9 @@ public class ${dto.modelName}ZeroMqConfiguration {
    public static void configure(TransportConfiguration config, ITransportProvider<ZeroMQTopic> zeroMqProvider) {
 #foreach ($topic in $dto.topics)
       ZeroMQTopic ${topic.variableName} = ZeroMQTopics.createTopic()
-                                                      .setConnectionType(ConnectionType.${topic.connectionType})
-                                                      .setSocket(new ${topic.socketType}())
-                                                      .setTransportType(new TCP("${topic.networkInterface}", ${topic.port}));
+            .setConnectionType(ConnectionType.${topic.connectionType})
+            .setSocket(new ${topic.socketType}())
+            .setTransportType(new TCP("${topic.networkInterface}", ${topic.port}));
 
 #end
 #foreach ($entry in $dto.sendTopics.entrySet())
@@ -30,7 +30,8 @@ public class ${dto.modelName}ZeroMqConfiguration {
             .toApplicationTopic(${name})
             .useTransportProvider(zeroMqProvider)
 #foreach ($topic in $topics)
-            .onPhysicalTopic(t -> ${topic.variableName})#if (! $foreach.hasNext);#end
+            .onEagerPhysicalTopic(${topic.variableName})#if (! $foreach.hasNext);
+#end
 #end               
 
 #end

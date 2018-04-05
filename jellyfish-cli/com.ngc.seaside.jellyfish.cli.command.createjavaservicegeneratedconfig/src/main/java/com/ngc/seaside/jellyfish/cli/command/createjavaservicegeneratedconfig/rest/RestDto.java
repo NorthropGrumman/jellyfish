@@ -38,13 +38,13 @@ public class RestDto {
 
    public Map<String, List<RestTopicDto>> getSendTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() != HttpMethod.GET)
+                   .filter(topic -> topic.getHttpMethod() == HttpMethod.GET)
                    .collect(Collectors.groupingBy(RestTopicDto::getName));
    }
 
    public Map<String, List<RestTopicDto>> getReceiveTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() == HttpMethod.GET)
+                   .filter(topic -> topic.getHttpMethod() != HttpMethod.GET)
                    .collect(Collectors.groupingBy(RestTopicDto::getName));
    }
 
