@@ -16,10 +16,10 @@ public class ${dto.modelName}RestConfiguration {
 #foreach ($topic in $dto.topics)
        SparkTopics factory = SparkTopics.boundToLocalhost(${topic.port});
 
-       SparkTopic ${topic.variableName} = factory.when(${topic.httpMethod})
+       SparkTopic ${topic.variableName} = factory.when(HttpVerb.${topic.httpMethod})
              .onPath("${topic.path}")
-             .accept(${topic.contentType})
-             .respondWithType(${topic.contentType})
+             .accept("${topic.contentType}")
+             .respondWithType("${topic.contentType}")
              .reportRootCauseExceptionsOnly()
              .build();
 
