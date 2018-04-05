@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
  */
 public class RespondStepHandler extends AbstractStepHandler {
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("haveResponded");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("responding");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willRespond");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("haveResponded");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("responding");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willRespond");
 
    public RespondStepHandler() {
       register(PAST, PRESENT, FUTURE);
@@ -31,9 +31,7 @@ public class RespondStepHandler extends AbstractStepHandler {
    /**
     * Gets the {@code IDataReferenceField} of the output of the model the scenario is associated with that this step.
     * This can be used to determine which output field is used for the response.
-    *
     * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains a publish verb
@@ -44,8 +42,8 @@ public class RespondStepHandler extends AbstractStepHandler {
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
             keyword.equals(PAST.getVerb())
-            || keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
+                  || keyword.equals(PRESENT.getVerb())
+                  || keyword.equals(FUTURE.getVerb()),
             "the step cannot be processed by this handler!");
       Preconditions.checkArgument(step.getParameters().size() > 1,
                                   "invalid number of parameters in step, requires at least 2!");

@@ -1,17 +1,5 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
-import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -19,6 +7,8 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils.PubSubModel;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
@@ -29,6 +19,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CorrelateStepHandlerTest {
@@ -49,11 +49,11 @@ public class CorrelateStepHandlerTest {
    public void testDoesRegisterVerbs() throws Throwable {
 
       assertEquals("did not register correct present tense!",
-         CorrelateStepHandler.PRESENT,
-         handler.getVerbs().get(VerbTense.PRESENT_TENSE));
+                   CorrelateStepHandler.PRESENT,
+                   handler.getVerbs().get(VerbTense.PRESENT_TENSE));
       assertEquals("did not register correct future tense!",
-         CorrelateStepHandler.FUTURE,
-         handler.getVerbs().get(VerbTense.FUTURE_TENSE));
+                   CorrelateStepHandler.FUTURE,
+                   handler.getVerbs().get(VerbTense.FUTURE_TENSE));
    }
 
    @Test
@@ -73,7 +73,7 @@ public class CorrelateStepHandlerTest {
       // Result
       verify(mockedStep).getKeyword();
    }
-   
+
    @Test
    public void testInvalidLeftArg() throws Throwable {
       // Setup
@@ -86,8 +86,10 @@ public class CorrelateStepHandlerTest {
       try {
          handler.doValidateStep(context);
          fail("Expected illegal argument exception.");
-      } catch (IllegalArgumentException e) {}
-      
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
+
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
@@ -98,8 +100,10 @@ public class CorrelateStepHandlerTest {
       try {
          handler.doValidateStep(context);
          fail("Expected illegal argument exception.");
-      } catch (IllegalArgumentException e) {}
-      
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
+
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
@@ -110,9 +114,11 @@ public class CorrelateStepHandlerTest {
       try {
          handler.doValidateStep(context);
          fail("Expected illegal argument exception.");
-      } catch (IllegalArgumentException e) {}
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
    }
-   
+
    @Test
    public void testInvalidRightArg() throws Throwable {
       // Setup
@@ -125,8 +131,10 @@ public class CorrelateStepHandlerTest {
       try {
          handler.doValidateStep(context);
          fail("Expected illegal argument exception.");
-      } catch (IllegalArgumentException e) {}
-      
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
+
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
@@ -137,7 +145,9 @@ public class CorrelateStepHandlerTest {
       try {
          handler.doValidateStep(context);
          fail("Expected illegal argument exception.");
-      } catch (IllegalArgumentException e) {}
+      } catch (IllegalArgumentException e) {
+         // Expected.
+      }
    }
 
    @Test
@@ -169,7 +179,7 @@ public class CorrelateStepHandlerTest {
       // Results
       verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
    }
-   
+
    @Test
    public void testGetters() throws Throwable {
 
@@ -196,7 +206,7 @@ public class CorrelateStepHandlerTest {
       //Methods to test
       IDataField leftResult = handler.getLeftData(step);
       IDataField rightResult = handler.getRightData(step);
-      
+
       //Results
       assertEquals("Incorrect Data field returned", "intField0", leftResult.getName());
       assertEquals("Incorrect Data field returned", DataTypes.INT, leftResult.getType());
@@ -402,24 +412,23 @@ public class CorrelateStepHandlerTest {
 
    @Test
    public void testValidPresentInputToInputSuper() throws Throwable {
-   
+
       // Setup
       step = new ScenarioStep();
       step.setKeyword(CorrelateStepHandler.PRESENT.getVerb());
       step.getParameters().addAll(Arrays.asList("input0.superSuperField0", "to", "input1.intField2"));
-   
+
       IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
       IData inputDataType1 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType1");
       IData superDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.SuperDataType0");
       IData superSuperDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.SuperSuperDataType0");
-      
-      
-      ModelUtils.mockData(superSuperDataType0, null, "superSuperField0", DataTypes.INT); 
+
+      ModelUtils.mockData(superSuperDataType0, null, "superSuperField0", DataTypes.INT);
       ModelUtils.mockData(superDataType0, superSuperDataType0, "superField0", DataTypes.INT);
-   
+
       ModelUtils.mockData(inputDataType0, superDataType0, "intField0", DataTypes.INT, "intField1", DataTypes.INT);
       ModelUtils.mockData(inputDataType1, null, "intField2", DataTypes.INT);
-   
+
       PubSubModel model = new PubSubModel("com.ModelName");
       model.addInput("input0", inputDataType0);
       model.addInput("input1", inputDataType1);
@@ -428,10 +437,10 @@ public class CorrelateStepHandlerTest {
       model.addScenario(scenarioParent);
       step.setParent(scenarioParent);
       when(context.getObject()).thenReturn(step);
-   
+
       // Method to test
       handler.doValidateStep(context);
-   
+
       // Results
       verify(context, never()).declare(eq(Severity.ERROR), anyString(), eq(step));
    }

@@ -7,9 +7,9 @@ import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 
 public class BeginCorrleationEventStepHandler extends AbstractStepHandler {
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("hasBeganCorrelationEvent");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("beginningCorrelationEvent");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willBeginCorrelationEvent");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("hasBeganCorrelationEvent");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("beginningCorrelationEvent");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willBeginCorrelationEvent");
 
    public BeginCorrleationEventStepHandler() {
       register(PAST, PRESENT, FUTURE);

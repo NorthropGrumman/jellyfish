@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -16,22 +17,20 @@ import java.util.regex.Pattern;
 /**
  * Implements the "correlate" verb which is used to indicate multiple pieces of data must be correlated together. It
  * contains a number of arguments and its form is:
- *
  * <pre>
  *    {@code
  *     (correlating|willCorrelate) <inputField|outputField>.<dataField> to <inputField|outputField>.<dataField>
  *    }
  * </pre>
- *
  * NOTE: The "PAST" tense is not currently supported.
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.presentTense("hasCorrelated");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.presentTense("hasCorrelated");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
-   private final static Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
+   private static final Pattern PATTERN = Pattern.compile("(?:[a-z][a-z0-9_]*)(\\.(?:[a-z][a-z0-9_]*))+",
                                                           Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
    /**
@@ -107,7 +106,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       if (parameters.size() != 3) {
          context.declare(
                Severity.ERROR,
-               "Expected parameters of the form: <inputField|outputField>(.<dataField>)+ to <inputField|outputField>(.<dataField>)+",
+               "Expected parameters of the form: <inputField|outputField>(.<dataField>)+ to"
+                     + " <inputField|outputField>(.<dataField>)+",
                step).getKeyword();
       } else {
          leftDataString = getCorrelationArg(null, step, 0);
@@ -173,13 +173,13 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       IDataPath path;
       try {
          path = IDataPath.of(model, dataFieldString);
-      } catch(RuntimeException e) {
+      } catch (RuntimeException e) {
          declareOrThrowError(context,
                              step,
                              e.getMessage());
          return null;
       }
-      
+
       return path;
    }
 
@@ -208,9 +208,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    private static void requireStepUsesHandlerVerb(IScenarioStep step) {
       Preconditions.checkNotNull(step, "step may not be null!");
       String keyword = step.getKeyword();
-      Preconditions.checkArgument(keyword.equals(PRESENT.getVerb())
-         || keyword.equals(FUTURE.getVerb()),
-         "the step cannot be processed by this handler!");
+      Preconditions.checkArgument(keyword.equals(PRESENT.getVerb()) || keyword.equals(FUTURE.getVerb()),
+                                  "the step cannot be processed by this handler!");
    }
 
    /**
@@ -227,13 +226,13 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          declareOrThrowError(context,
                              step,
                              "Argument types don't match. Left argument is of type: "
-                             + leftPath.getEnd().getType() + ". Right data is of type: " + rightPath
+                                   + leftPath.getEnd().getType() + ". Right data is of type: " + rightPath
                                    .getEnd().getType());
       }
    }
 
    /**
-    * Verify that the <inputField|outputField> arguments on each side of the "to" are not the same.
+    * Verify that the {@code <inputField|outputField>} arguments on each side of the "to" are not the same.
     *
     * @param context   the context
     * @param step      the current step
@@ -257,7 +256,6 @@ public class CorrelateStepHandler extends AbstractStepHandler {
    /**
     * This method verifies that the correct combination of input and output fields are used depending on the verb
     * tense.
-    *
     * If the verb is PRESENT, only model inputs may be used. If the verb is FUTURE, exactly one model input and one
     * model output must be referenced.
     *
@@ -280,7 +278,8 @@ public class CorrelateStepHandler extends AbstractStepHandler {
          if (leftPath.isOutput() == rightPath.isOutput()) {
             declareOrThrowError(context,
                                 step,
-                                "In future tense of correlation verb, one argument must be an input type and the other must be of output type.");
+                                "In future tense of correlation verb, one argument must be an input type and the"
+                                      + " other must be of output type.");
          }
       } else {
          declareOrThrowError(context,
