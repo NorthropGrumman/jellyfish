@@ -19,7 +19,6 @@ import java.util.Collection;
 
 /**
  * Adapts a {@link Scenario} instance to {@link IScenario}.
- *
  * This class is not threadsafe.
  */
 public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements IScenario {
@@ -31,6 +30,9 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
    private Collection<IScenarioStep> whens;
    private Collection<IScenarioStep> thens;
 
+   /**
+    * Creates a new wrapped scenario.
+    */
    public WrappedScenario(IWrapperResolver resolver, Scenario wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
@@ -138,6 +140,9 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
       return resolver.getWrapperFor((Model) wrapped.eContainer());
    }
 
+   /**
+    * Coverts the given object to an XText object.
+    */
    public static Scenario toXtextScenario(IScenario scenario) {
       Scenario s = SystemDescriptorFactory.eINSTANCE.createScenario();
       s.setName(scenario.getName());

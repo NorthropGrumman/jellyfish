@@ -22,6 +22,9 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
       extends AbstractWrappedXtext<T>
       implements IProperty {
 
+   /**
+    * Creates a new wrapped property.
+    */
    public AbstractWrappedProperty(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
    }
@@ -82,6 +85,9 @@ public abstract class AbstractWrappedProperty<T extends PropertyFieldDeclaration
       throw new IllegalStateException("property is not a primitive type");
    }
 
+   /**
+    * Converts the given property to an XText object.
+    */
    public static PropertyFieldDeclaration toXTextPropertyFieldDeclaration(IWrapperResolver resolver,
                                                                           IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");

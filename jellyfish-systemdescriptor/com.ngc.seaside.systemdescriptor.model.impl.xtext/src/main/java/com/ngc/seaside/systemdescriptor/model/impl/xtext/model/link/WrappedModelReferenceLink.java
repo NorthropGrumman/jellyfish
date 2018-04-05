@@ -20,7 +20,6 @@ import java.util.Optional;
 
 /**
  * Adapts a {@link LinkDeclaration} to an {@link IModelLink} that links together model elements.
- *
  * This class is not threadsafe.
  */
 public class WrappedModelReferenceLink extends WrappedReferenceLink<IModelReferenceField> {
@@ -43,10 +42,10 @@ public class WrappedModelReferenceLink extends WrappedReferenceLink<IModelRefere
             target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
             break;
          case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
-            refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
+            refinedLink = doGetRefinedLink((RefinedLinkDeclaration) wrapped);
             break;
          case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
-            refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
+            refinedLink = doGetRefinedLink((RefinedLinkNameDeclaration) wrapped);
             break;
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
@@ -121,8 +120,8 @@ public class WrappedModelReferenceLink extends WrappedReferenceLink<IModelRefere
    private IModelReferenceField getFieldOf(FieldDeclaration declaration) {
       // Only models can have field declarations.
       IModel parent = resolver.getWrapperFor((Model) declaration.eContainer().eContainer());
-      // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the declaration
-      // is either for a part or requirement.
+      // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the
+      // declaration is either for a part or requirement.
       Optional<IModelReferenceField> field = parent.getParts() == null
                                              ? Optional.empty()
                                              : parent.getParts().getByName(declaration.getName());

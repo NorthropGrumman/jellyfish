@@ -25,6 +25,9 @@ public class NestedPropertyValueResolver {
    protected final Collection<Properties> propertiesToSearch = new ArrayList<>();
    protected final ReferencedPropertyFieldDeclaration declaration;
 
+   /**
+    * Creates a new resolver.
+    */
    public NestedPropertyValueResolver(ReferencedPropertyFieldDeclaration declaration,
                                       Properties properties) {
       this.declaration = declaration;
@@ -39,6 +42,9 @@ public class NestedPropertyValueResolver {
       }
    }
 
+   /**
+    * Attempts to resolve a value by traversing the given path segments.
+    */
    public Optional<PropertyValueAssignment> resoleValue(Collection<String> fieldNames) {
       String flatPath = fieldNames.stream().collect(Collectors.joining("."));
       return propertiesToSearch.stream()
@@ -77,8 +83,8 @@ public class NestedPropertyValueResolver {
          LinkDeclaration currentLink = findLink(model, link);
 
          if (currentLink != null
-             && currentLink.getDefinition() != null
-             && currentLink.getDefinition().getProperties() != null) {
+               && currentLink.getDefinition() != null
+               && currentLink.getDefinition().getProperties() != null) {
             propertiesToSearch.add(currentLink.getDefinition().getProperties());
          }
          model = model.getRefinedModel();
@@ -111,8 +117,8 @@ public class NestedPropertyValueResolver {
                .orElse(null);
 
          if (currentField != null
-             && currentField.getDefinition() != null
-             && currentField.getDefinition().getProperties() != null) {
+               && currentField.getDefinition() != null
+               && currentField.getDefinition().getProperties() != null) {
             propertiesToSearch.add(currentField.getDefinition().getProperties());
          }
          model = model.getRefinedModel();
@@ -125,12 +131,12 @@ public class NestedPropertyValueResolver {
 
    private static boolean arePropertiesOfLink(Properties properties) {
       return properties.eContainer() instanceof DeclarationDefinition
-             && properties.eContainer().eContainer() instanceof LinkDeclaration;
+            && properties.eContainer().eContainer() instanceof LinkDeclaration;
    }
 
    private static boolean arePropertiesOfField(Properties properties) {
       return properties.eContainer() instanceof DeclarationDefinition
-             && properties.eContainer().eContainer() instanceof FieldDeclaration;
+            && properties.eContainer().eContainer() instanceof FieldDeclaration;
    }
 
    private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
@@ -161,12 +167,12 @@ public class NestedPropertyValueResolver {
 
       for (LinkDeclaration link : model.getLinks().getDeclarations()) {
          if (link instanceof BaseLinkDeclaration
-             && EcoreUtil.equals(source, ((BaseLinkDeclaration) link).getSource())
-             && EcoreUtil.equals(target, ((BaseLinkDeclaration) link).getTarget())) {
+               && EcoreUtil.equals(source, ((BaseLinkDeclaration) link).getSource())
+               && EcoreUtil.equals(target, ((BaseLinkDeclaration) link).getTarget())) {
             return link;
          } else if (link instanceof RefinedLinkDeclaration
-                    && EcoreUtil.equals(source, ((RefinedLinkDeclaration) link).getSource())
-                    && EcoreUtil.equals(target, ((RefinedLinkDeclaration) link).getTarget())) {
+               && EcoreUtil.equals(source, ((RefinedLinkDeclaration) link).getSource())
+               && EcoreUtil.equals(target, ((RefinedLinkDeclaration) link).getTarget())) {
             return link;
          }
       }

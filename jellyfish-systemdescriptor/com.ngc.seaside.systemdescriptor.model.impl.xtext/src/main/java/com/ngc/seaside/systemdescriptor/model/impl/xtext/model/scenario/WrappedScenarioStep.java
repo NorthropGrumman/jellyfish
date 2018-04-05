@@ -18,7 +18,6 @@ import java.util.List;
 
 /**
  * Adapts a {@link Step} instance to {@link IScenarioStep}.
- *
  * This class is not threadsafe.
  */
 public class WrappedScenarioStep<T extends Step> extends AbstractWrappedXtext<T> implements IScenarioStep {

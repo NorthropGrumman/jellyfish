@@ -21,7 +21,6 @@ import java.util.Optional;
 
 /**
  * An implementation of {@code ISystemDescriptor} that wraps one or more {@link Package}s as parsed by XText.
- *
  * This class is not threadsafe.
  */
 public class WrappedSystemDescriptor implements ISystemDescriptor {
@@ -30,6 +29,9 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
    private final IWrapperResolver resolver;
    private final EObject rootXtextObject;
 
+   /**
+    * Creates a new wrapped system descriptor.
+    */
    public WrappedSystemDescriptor(Package parsedPackage) {
       this.rootXtextObject = Preconditions.checkNotNull(parsedPackage, "parsedPackage may not be null!");
       // Create a new resolver.
@@ -49,7 +51,7 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
       Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
       int namePosition = fullyQualifiedName.lastIndexOf('.');
       Preconditions.checkArgument(namePosition > 0
-                                  && namePosition < fullyQualifiedName.length() - 1,
+                                        && namePosition < fullyQualifiedName.length() - 1,
                                   "expected a fully qualified name of the form <packageName>.<modelName> but got '%s'!",
                                   fullyQualifiedName);
       String packageName = fullyQualifiedName.substring(0, namePosition);
@@ -78,7 +80,7 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
       Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
       int namePosition = fullyQualifiedName.lastIndexOf('.');
       Preconditions.checkArgument(namePosition > 0
-                                  && namePosition < fullyQualifiedName.length() - 1,
+                                        && namePosition < fullyQualifiedName.length() - 1,
                                   "expected a fully qualified name of the form <packageName>.<dataName> but got '%s'!",
                                   fullyQualifiedName);
       String packageName = fullyQualifiedName.substring(0, namePosition);
@@ -107,7 +109,7 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
       Preconditions.checkArgument(!fullyQualifiedName.trim().isEmpty(), "fullyQualifiedName may not be empty!");
       int namePosition = fullyQualifiedName.lastIndexOf('.');
       Preconditions.checkArgument(namePosition > 0
-                                  && namePosition < fullyQualifiedName.length() - 1,
+                                        && namePosition < fullyQualifiedName.length() - 1,
                                   "expected a fully qualified name of the form <packageName>.<enumName> but got '%s'!",
                                   fullyQualifiedName);
       String packageName = fullyQualifiedName.substring(0, namePosition);
@@ -155,8 +157,8 @@ public class WrappedSystemDescriptor implements ISystemDescriptor {
             for (EObject o : r.getContents()) {
                if (o instanceof Package) {
                   Package p = (Package) o;
-                  // Have we already wrapped a package with the same name?  If so, don't create a new wrapper, but reuse the
-                  // old one.
+                  // Have we already wrapped a package with the same name?  If so, don't create a new wrapper, but
+                  // reuse the old one.
                   Optional<IPackage> wrapper = packages.getByName(p.getName());
                   if (wrapper.isPresent()) {
                      // This cast is safe because, as this point, only WrappedPackages are contained in the collection.

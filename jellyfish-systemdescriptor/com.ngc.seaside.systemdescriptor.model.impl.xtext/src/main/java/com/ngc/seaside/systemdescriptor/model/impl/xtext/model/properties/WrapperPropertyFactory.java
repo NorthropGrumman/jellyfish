@@ -23,10 +23,16 @@ public class WrapperPropertyFactory {
 
    private final IWrapperResolver resolver;
 
+   /**
+    * Creates a new factory.
+    */
    public WrapperPropertyFactory(IWrapperResolver resolver) {
       this.resolver = resolver;
    }
 
+   /**
+    * Creates a new property from the given assignment.
+    */
    public AbstractWrappedProperty<?> newProperty(PropertyValueAssignment assignment) {
       switch (assignment.getExpression().getDeclaration().eClass().getClassifierID()) {
          case SystemDescriptorPackage.PRIMITIVE_PROPERTY_FIELD_DECLARATION:
@@ -47,6 +53,9 @@ public class WrapperPropertyFactory {
       }
    }
 
+   /**
+    * Creates a new property from the given declaration.
+    */
    public AbstractWrappedProperty<?> newProperty(PropertyFieldDeclaration declaration) {
       switch (declaration.eClass().getClassifierID()) {
          case SystemDescriptorPackage.PRIMITIVE_PROPERTY_FIELD_DECLARATION:
@@ -67,6 +76,9 @@ public class WrapperPropertyFactory {
       }
    }
 
+   /**
+    * Creates a new primitive property from an assignment.
+    */
    public WrappedPrimitiveProperty newPrimitiveProperty(PropertyValueAssignment assignment) {
       Preconditions.checkNotNull(assignment, "assignment may not be null!");
       checkExpressionDeclarationIs(assignment, PrimitivePropertyFieldDeclaration.class);
@@ -77,10 +89,16 @@ public class WrapperPropertyFactory {
             valuesOf(new WrappedPrimitivePropertyValue(resolver, assignment.getValue())));
    }
 
+   /**
+    * Creates a new primitive property from a declaration.
+    */
    public WrappedPrimitiveProperty newPrimitiveProperty(PrimitivePropertyFieldDeclaration declaration) {
       return new WrappedPrimitiveProperty(resolver, declaration, IPropertyValues.emptyPropertyValues());
    }
 
+   /**
+    * Creates a new enum property from an assignment.
+    */
    public WrappedEnumerationProperty newEnumProperty(PropertyValueAssignment assignment) {
       Preconditions.checkNotNull(assignment, "assignment may not be null!");
       checkExpressionDeclarationIs(assignment, ReferencedPropertyFieldDeclaration.class);
@@ -91,10 +109,16 @@ public class WrapperPropertyFactory {
             valuesOf(new WrappedEnumerationPropertyValue(resolver, (EnumPropertyValue) assignment.getValue())));
    }
 
+   /**
+    * Creates a new enum property from a declaration.
+    */
    public WrappedEnumerationProperty newEnumProperty(ReferencedPropertyFieldDeclaration declaration) {
       return new WrappedEnumerationProperty(resolver, declaration, IPropertyValues.emptyPropertyValues());
    }
 
+   /**
+    * Creates a new data property from an assignment.
+    */
    public WrappedDataProperty newDataProperty(PropertyValueAssignment assignment) {
       Preconditions.checkNotNull(assignment, "assignment may not be null!");
       checkExpressionDeclarationIs(assignment, ReferencedPropertyFieldDeclaration.class);
@@ -106,6 +130,9 @@ public class WrapperPropertyFactory {
             valuesOf(new WrappedDataPropertyValue(resolver, declaration, (Properties) assignment.eContainer())));
    }
 
+   /**
+    * Creates a new data property from a declaration.
+    */
    public WrappedDataProperty newDataProperty(ReferencedPropertyFieldDeclaration declaration) {
       return new WrappedDataProperty(resolver, declaration, IPropertyValues.emptyPropertyValues());
    }

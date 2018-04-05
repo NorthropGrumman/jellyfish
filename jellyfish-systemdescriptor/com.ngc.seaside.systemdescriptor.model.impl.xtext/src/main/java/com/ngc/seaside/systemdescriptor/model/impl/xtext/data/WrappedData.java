@@ -24,7 +24,6 @@ import java.util.Optional;
 
 /**
  * Adapts a {@link Data} instance to {@link IData}.
- *
  * This class is not threadsafe.
  */
 public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
@@ -32,6 +31,9 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
    private final WrappingNamedChildCollection<DataFieldDeclaration, IData, IDataField> fields;
    private IMetadata metadata;
 
+   /**
+    * Creates a new wrapped data.
+    */
    public WrappedData(IWrapperResolver resolver, Data wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
@@ -92,6 +94,9 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
       return resolver.getWrapperFor((Package) wrapped.eContainer());
    }
 
+   /**
+    * Converts the given data object to an XText object.
+    */
    public static Data toXTextData(IWrapperResolver wrapperResolver, IData data) {
       Preconditions.checkNotNull(data, "data may not be null!");
       Preconditions.checkNotNull(wrapperResolver, "wrapperResolver may not be null!");
@@ -100,8 +105,8 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
       d.setName(data.getName());
       d.setMetadata(WrappedMetadata.toXtext(data.getMetadata()));
       d.setExtendedDataType(superType == null ? null : doFindXtextData(wrapperResolver,
-                                                                 superType.getName(),
-                                                                 superType.getParent().getName()));
+                                                                       superType.getName(),
+                                                                       superType.getParent().getName()));
       data.getFields()
             .stream()
             .map(f -> toXtextDataFieldDeclaration(wrapperResolver, f))
@@ -133,8 +138,8 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
    private static Data doFindXtextData(IWrapperResolver resolver, String name, String packageName) {
       return resolver.findXTextData(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
             "Could not find XText type for data type '%s' in package '%s'!"
-            + "  Make sure the IData object is added to"
-            + " a package within the ISystemDescriptor before adding a reference to it!",
+                  + "  Make sure the IData object is added to"
+                  + " a package within the ISystemDescriptor before adding a reference to it!",
             name,
             packageName)));
    }

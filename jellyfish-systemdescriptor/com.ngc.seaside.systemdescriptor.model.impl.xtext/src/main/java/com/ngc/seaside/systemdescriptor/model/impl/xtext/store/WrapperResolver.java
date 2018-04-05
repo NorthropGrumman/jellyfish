@@ -1,14 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.store;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -22,6 +15,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Simple implementation of {@code IWrapperResolver}.  It largley delegates to the containing {@code ISystemDescriptor}
@@ -63,7 +64,7 @@ public class WrapperResolver implements IWrapperResolver {
       Preconditions.checkNotNull(systemDescriptorPackage, "systemDescriptorPackage may not be null!");
       return systemDescriptor.getPackages().getByName(systemDescriptorPackage.getName())
             .orElseThrow(() -> new IllegalStateException("could not find IPackage wrapper for "
-                                                         + systemDescriptorPackage));
+                                                               + systemDescriptorPackage));
    }
 
    @Override
@@ -86,7 +87,7 @@ public class WrapperResolver implements IWrapperResolver {
       for (Package p : findXTextPackages(packageName)) {
          Element element = p.getElement();
          if (element.eClass().getClassifierID() == SystemDescriptorPackage.ENUMERATION
-             && element.getName().equals(name)) {
+               && element.getName().equals(name)) {
             return Optional.of((Enumeration) element);
          }
       }
@@ -104,7 +105,7 @@ public class WrapperResolver implements IWrapperResolver {
       for (Package p : findXTextPackages(packageName)) {
          Element element = p.getElement();
          if (element.eClass().getClassifierID() == SystemDescriptorPackage.DATA
-             && element.getName().equals(name)) {
+               && element.getName().equals(name)) {
             return Optional.of((Data) element);
          }
       }
@@ -122,7 +123,7 @@ public class WrapperResolver implements IWrapperResolver {
       for (Package p : findXTextPackages(packageName)) {
          Element element = p.getElement();
          if (element.eClass().getClassifierID() == SystemDescriptorPackage.MODEL
-             && element.getName().equals(name)) {
+               && element.getName().equals(name)) {
             return Optional.of((Model) element);
          }
       }

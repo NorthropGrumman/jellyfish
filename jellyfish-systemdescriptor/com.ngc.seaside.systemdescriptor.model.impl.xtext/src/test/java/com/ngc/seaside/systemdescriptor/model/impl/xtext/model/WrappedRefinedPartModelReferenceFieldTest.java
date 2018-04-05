@@ -1,17 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -19,6 +7,18 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTes
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXtextTest {
@@ -100,7 +100,9 @@ public class WrappedRefinedPartModelReferenceFieldTest extends AbstractWrappedXt
    public void testDoesConvertToXtextObject() throws Throwable {
       wrapped = new WrappedBasePartModelReferenceField(resolver(), basePartDeclaration);
       refinedWrapped = new WrappedRefinedPartModelReferenceField(resolver(), refinedPartDeclaration);
-      RefinedPartDeclaration xtext = WrappedRefinedPartModelReferenceField.toXTextPartDeclaration(resolver(), refinedWrapped);
+      RefinedPartDeclaration
+            xtext =
+            WrappedRefinedPartModelReferenceField.toXTextPartDeclaration(resolver(), refinedWrapped);
       assertEquals("name not correct!",
                    refinedPartDeclaration.getName(),
                    xtext.getName());
