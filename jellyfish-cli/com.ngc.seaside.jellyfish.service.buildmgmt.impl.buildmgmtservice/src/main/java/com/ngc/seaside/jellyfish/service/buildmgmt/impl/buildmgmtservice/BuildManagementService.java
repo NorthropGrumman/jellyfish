@@ -110,8 +110,8 @@ public class BuildManagementService implements IBuildManagementService {
                    .findAny()
                    .orElseThrow(() -> new IllegalArgumentException(
                          String.format(
-                               "no information for %s:%s configured!"
-                               + "Add configuration to the DefaultDependenciesConfiguration class.",
+                               "no information for %s:%s configured; "
+                               + "add configuration to the DefaultDependenciesConfiguration class in buildmgmtservice.",
                                groupId,
                                artifactId)));
 
