@@ -184,32 +184,32 @@ public class Property implements IProperty {
       }
       Property that = (Property) obj;
       return Objects.equals(name, that.name)
-             && Objects.equals(type, that.type)
-             && parent == that.parent
-             && Objects.equals(cardinality, that.cardinality)
-             && Objects.equals(values, that.values);
+            && Objects.equals(type, that.type)
+            && parent == that.parent
+            && Objects.equals(cardinality, that.cardinality)
+            && Objects.equals(values, that.values);
    }
 
    @Override
    public String toString() {
       return "Property[name=" + name
-             + ", parent=" + parent
-             + ", type=" + type
-             + ", cardinality=" + cardinality
-             + ", values=" + values
-             + "]";
+            + ", parent=" + parent
+            + ", type=" + type
+            + ", cardinality=" + cardinality
+            + ", values=" + values
+            + "]";
    }
 
    private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {
       if (cardinality != null && this.cardinality != cardinality) {
          throw new IllegalStateException(
                "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected cardinality to be FieldCardinality." + cardinality);
+                     + ": expected cardinality to be FieldCardinality." + cardinality);
       }
       if (!Arrays.asList(types).contains(this.type)) {
          throw new IllegalStateException(
                "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
+                     + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
       }
    }
 }
