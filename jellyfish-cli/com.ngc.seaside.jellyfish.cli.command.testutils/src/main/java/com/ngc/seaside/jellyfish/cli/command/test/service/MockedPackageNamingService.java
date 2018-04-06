@@ -68,6 +68,11 @@ public class MockedPackageNamingService implements IPackageNamingService {
    }
 
    @Override
+   public String getCucumberTestsConfigPackageName(IJellyFishCommandOptions options, IModel model) {
+      return getPackageName(model, "testsconfig");
+   }
+
+   @Override
    public String getConfigPackageName(IJellyFishCommandOptions options, IModel model) {
       return getPackageName(model, "config");
    }

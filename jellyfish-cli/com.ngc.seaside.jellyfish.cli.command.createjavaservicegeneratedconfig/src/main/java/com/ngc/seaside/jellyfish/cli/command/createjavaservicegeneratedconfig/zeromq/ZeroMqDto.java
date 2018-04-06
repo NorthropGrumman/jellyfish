@@ -62,6 +62,10 @@ public class ZeroMqDto {
       return this.baseDto.getPackageName();
    }
 
+   public String getModelName() {
+      return this.baseDto.getModelName();
+   }
+
    public String getClassname() {
       return this.classname;
    }
