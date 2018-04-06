@@ -1,17 +1,17 @@
 dependencies {
-    api project(":systemdescriptor.service.api")
+   api project(":systemdescriptor.service.api")
 
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "org.eclipse.aether:aether-connector-basic:$aetherVersion"
-    implementation "org.apache.maven:maven-resolver-provider:$mavenVersion"
-    implementation "org.apache.maven:maven-settings-builder:$mavenVersion"
-    implementation "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
-    implementation "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
-    implementation "com.google.inject:guice:$guiceVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+   implementation "com.ngc.blocs:service.api:$blocsVersion"
+   implementation "org.eclipse.aether:aether-connector-basic:$aetherVersion"
+   implementation "org.apache.maven:maven-resolver-provider:$mavenVersion"
+   implementation "org.apache.maven:maven-settings-builder:$mavenVersion"
+   implementation "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
+   implementation "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+   implementation "com.google.inject:guice:$guiceVersion"
+   implementation "org.osgi:osgi.core:$osgiVersion"
+   implementation "org.osgi:osgi.enterprise:$osgiVersion"
 
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }

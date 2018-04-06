@@ -5,9 +5,7 @@ package com.ngc.seaside.systemdescriptor.validation.api;
  * com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService#addValidator(ISystemDescriptorValidator) system
  * descriptor service}.  Note that some application configurations will automatically register validators, so there is
  * no need to call {@code addValidator} to directly.
- *
  * <p/>
- *
  * Validators must check the type of the object being validated to know how to cast it.  To make this easier, most
  * validators should extend {@link AbstractSystemDescriptorValidator}.
  *

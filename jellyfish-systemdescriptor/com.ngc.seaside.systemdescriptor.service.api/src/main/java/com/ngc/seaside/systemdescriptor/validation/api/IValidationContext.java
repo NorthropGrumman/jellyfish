@@ -8,21 +8,16 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  * that is being validated and allows for errors, warnings, and suggestions to be declared.  The object being validated
  * is an instance of one of the interfaces in the {@code com.ngc.seaside.systemdescriptor.model.api} package or
  * subpackages.
- *
  * <p/>
- *
  * Errors can be declared using {@link #declare(Severity, String, Object) declare}.
- *
  * <pre>
  *    {@code
  *    ctx.declare(Severity.ERROR, "Name cannot contain spaces.", ctx.getObject()).getName()
  *    }
  * </pre>
- *
  * This indicates that the name value of the context object is not valid.  Note any getter method may be called on the
  * context object returned by {@code declare} to indicate the value returned by that method is invalid.  There are some
  * limitations:
- *
  * <pre>
  * <ol>
  *   <li>
@@ -35,9 +30,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  *   </li>
  * </ol>
  * </pre>
- *
  * For example, consider the following validator:
- *
  * <pre>
  *    {@code
  *    public class MyValidator extends AbstractSystemDescriptorValidator {
@@ -52,10 +45,8 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  *    }
  *    }
  * </pre>
- *
  * This will not compile because the object being validated is the {@code IModel}, not the {@code IScenario}.  The
  * current way validate the scenario is to below:
- *
  * <pre>
  *    {@code
  *    public class MyValidator extends AbstractSystemDescriptorValidator {
@@ -71,7 +62,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
  *    }
  *    }
  * </pre>
- *
  * Note you may examine parent objects of the objects being validated, but you may not always be able to examine the
  * children of the object because those items may not be parsed yet.
  *

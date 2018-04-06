@@ -4,6 +4,7 @@ package com.ngc.seaside.systemdescriptor.service.repository.api;
  * Any exception in the IRepositoryService implementation.
  */
 public class RepositoryServiceException extends RuntimeException {
+
    /**
     * Default constructor with default exit code.
     */

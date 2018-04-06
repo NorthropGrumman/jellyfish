@@ -1,8 +1,5 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 
 import org.eclipse.aether.repository.RemoteRepository;
@@ -11,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RemoteRepositoryServiceTest {
 

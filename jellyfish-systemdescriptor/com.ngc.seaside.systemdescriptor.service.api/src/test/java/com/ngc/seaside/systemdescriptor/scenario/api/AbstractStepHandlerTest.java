@@ -33,7 +33,7 @@ public class AbstractStepHandlerTest {
    private IScenarioStep step;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(validationContext.getObject()).thenReturn(step);
       when(validationContext.declare(any(), anyString(), any())).thenReturn(step);
 
@@ -41,7 +41,7 @@ public class AbstractStepHandlerTest {
    }
 
    @Test
-   public void testDoesRegisterVerbs() throws Throwable {
+   public void testDoesRegisterVerbs() {
       assertEquals("did not store past tense!",
                    handler.PAST.getVerb(),
                    handler.getVerbs().get(VerbTense.PAST_TENSE).getVerb());
@@ -54,7 +54,7 @@ public class AbstractStepHandlerTest {
    }
 
    @Test
-   public void testDoesRequireStepParameters() throws Throwable {
+   public void testDoesRequireStepParameters() {
       handler.requireStepParameters(validationContext, "my error");
 
       when(step.getParameters()).thenReturn(Collections.singletonList("blah"));
@@ -64,7 +64,7 @@ public class AbstractStepHandlerTest {
    }
 
    @Test
-   public void testOnlyValidateStepIfStepUsesCorrectVerb() throws Throwable {
+   public void testOnlyValidateStepIfStepUsesCorrectVerb() {
       when(step.getKeyword())
             .thenReturn(handler.PAST.getVerb())
             .thenReturn(handler.PRESENT.getVerb())
@@ -91,11 +91,11 @@ public class AbstractStepHandlerTest {
                   handler.wasValidationInvoked);
    }
 
-   private class TestableStepHandler extends AbstractStepHandler {
+   private static class TestableStepHandler extends AbstractStepHandler {
 
-      private final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("tested");
-      private final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("testing");
-      private final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("will test");
+      private static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("tested");
+      private static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("testing");
+      private static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("will test");
 
       private boolean wasValidationInvoked = false;
 
