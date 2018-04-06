@@ -17,6 +17,9 @@ public class AggregatedLinkView<T extends IReferenceField> implements IModelLink
    private IMetadata aggregatedMetadata;
    private IProperties aggregatedProperties;
 
+   /**
+    * Creates a new aggregated view that wraps the given link.
+    */
    public AggregatedLinkView(IModelLink<T> wrapped) {
       this.wrapped = wrapped;
       this.aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);

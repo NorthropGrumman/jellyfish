@@ -6,10 +6,10 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 
@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Maintains singleton access to the {@code Injector} that manages the XText related resources and the system descriptor
@@ -33,7 +36,7 @@ public class InjectorTestFactory {
    /**
     * Gets the shared {@code Injector} that should be used by <b>all</b> tests.
     */
-   public synchronized static Injector getSharedInstance() {
+   public static synchronized Injector getSharedInstance() {
       if (injector == null) {
          TerminalsStandaloneSetup.doSetup();
 

@@ -1,22 +1,5 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.validation;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
-import org.eclipse.emf.ecore.EObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.extension.IValidatorExtension;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -32,23 +15,39 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.GivenStep;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
+
+import org.eclipse.emf.ecore.EObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ValidationDelegateTest {
@@ -289,7 +288,7 @@ public class ValidationDelegateTest {
             .get();
       verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
    }
-   
+
    @Test
    public void testDoesValidateRefinedModelRequirement() throws Throwable {
       RefinedRequireDeclaration source = factory().createRefinedRequireDeclaration();

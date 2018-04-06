@@ -34,6 +34,9 @@ public class AggregatedModelView implements IModel {
    private IMetadata aggregatedMetadata;
    private IProperties aggregatedProperties;
 
+   /**
+    * Creates a new view that wraps the given model.
+    */
    public AggregatedModelView(IModel wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedInputs = getAggregatedFields(IModel::getInputs, Function.identity());

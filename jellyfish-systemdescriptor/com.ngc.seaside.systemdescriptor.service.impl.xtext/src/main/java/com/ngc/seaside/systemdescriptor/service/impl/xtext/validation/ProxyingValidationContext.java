@@ -63,7 +63,7 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
       Preconditions.checkNotNull(offendingObject, "offendingObject may not be null!");
       Preconditions.checkArgument(
             offendingObject instanceof IUnwrappable
-            || offendingObject instanceof IUnwrappableCollection,
+                  || offendingObject instanceof IUnwrappableCollection,
             "cannot declare errors an object of type %s because that object does not wrap any XText types!",
             object.getClass().getName());
 

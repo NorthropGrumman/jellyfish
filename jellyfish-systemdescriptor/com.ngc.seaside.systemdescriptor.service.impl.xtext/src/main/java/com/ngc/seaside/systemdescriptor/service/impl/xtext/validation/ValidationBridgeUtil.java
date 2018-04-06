@@ -72,16 +72,18 @@ public class ValidationBridgeUtil {
       switch (method.getName()) {
          case "getName":
             return SystemDescriptorPackage.Literals.PACKAGE__NAME;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IData object, EObject xtext, Method method) {
       switch (method.getName()) {
          case "getName":
             return SystemDescriptorPackage.Literals.ELEMENT__NAME;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IDataField object, EObject xtext, Method method) {
@@ -92,7 +94,7 @@ public class ValidationBridgeUtil {
             if (!SystemDescriptors.isPrimitiveDataFieldDeclaration(object)) {
                throw new IllegalValidationDeclarationException(
                      "IDataField references data, can only declare a validation error on the 'type' if the field"
-                     + " references a primitive type!");
+                           + " references a primitive type!");
             }
             return SystemDescriptorPackage.Literals.PRIMITIVE_DATA_FIELD_DECLARATION__TYPE;
          case "getReferencedDataType":
@@ -100,19 +102,21 @@ public class ValidationBridgeUtil {
             if (SystemDescriptors.isPrimitiveDataFieldDeclaration(object)) {
                throw new IllegalValidationDeclarationException(
                      "IDataField references a primitive, can only declare a validation error on the if the field"
-                     + " references a data type or enumeration!");
+                           + " references a data type or enumeration!");
             }
             return SystemDescriptorPackage.Literals.REFERENCED_DATA_MODEL_FIELD_DECLARATION__DATA_MODEL;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IModel object, EObject xtext, Method method) {
       switch (method.getName()) {
          case "getName":
             return SystemDescriptorPackage.Literals.ELEMENT__NAME;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IModelLink<?> object, EObject xtext, Method method) {
@@ -121,8 +125,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE;
          case "getTarget":
             return SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IDataReferenceField object, EObject xtext, Method method) {
@@ -145,8 +150,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.SCENARIO__WHEN;
          case "getThens":
             return SystemDescriptorPackage.Literals.SCENARIO__THEN;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeature(IScenarioStep object, EObject xtext, Method method) {
@@ -155,8 +161,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.STEP__KEYWORD;
          case "getParameters":
             return SystemDescriptorPackage.Literals.STEP__PARAMETERS;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeatureOfInput(IDataReferenceField object, EObject xtext, Method method) {
@@ -167,8 +174,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.INPUT_DECLARATION__TYPE;
          case "getCardinality":
             return SystemDescriptorPackage.Literals.INPUT_DECLARATION__CARDINALITY;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeatureOfOutput(IDataReferenceField object, EObject xtext, Method method) {
@@ -179,8 +187,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__TYPE;
          case "getCardinality":
             return SystemDescriptorPackage.Literals.OUTPUT_DECLARATION__CARDINALITY;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeatureOfPart(IModelReferenceField object, EObject xtext, Method method) {
@@ -189,8 +198,9 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
             return SystemDescriptorPackage.Literals.BASE_PART_DECLARATION__TYPE;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
    }
 
    private static EStructuralFeature doGetFeatureOfRequiredModel(IModelReferenceField object, EObject xtext,
@@ -200,8 +210,10 @@ public class ValidationBridgeUtil {
             return SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME;
          case "getType":
             return SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION__TYPE;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
-      throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
+
    }
 
    private static String illegalDeclaration(Object object, EObject xtext, Method method) {
