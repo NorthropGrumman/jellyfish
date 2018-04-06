@@ -1,5 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.RestTransportProviderConfigDto.REST_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE_SUFFIX;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -15,6 +24,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTransportConfigu
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ConnectionType;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
@@ -41,14 +51,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
-
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.RestTransportProviderConfigDto.REST_TEMPLATE_SUFFIX;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsConfigCommandTest {
@@ -80,7 +82,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
    private IScenarioService scenarioService = new MockedScenarioService();
 
-   public static Model newMulticastModelForTesting() {
+   public static Model newPubSubModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
 
@@ -99,8 +101,8 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       calculateTrackPriority.setThens(Collections.singletonList(step));
 
       Model model = new Model("EngagementTrackPriorityService");
-      model.addInput(new DataReferenceField("trackEngagementStatus").setType(trackEngagementStatus));
-      model.addOutput(new DataReferenceField("trackPriority").setType(trackPriority));
+      model.addInput(new DataReferenceField("trackEngagementStatus").setParent(model).setType(trackEngagementStatus));
+      model.addOutput(new DataReferenceField("trackPriority").setParent(model).setType(trackPriority));
       model.addScenario(calculateTrackPriority);
       calculateTrackPriority.setParent(model);
 
@@ -130,8 +132,8 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       getTrackPriorities.setThens(Collections.singletonList(step));
 
       Model model = new Model("TrackPriorityService");
-      model.addInput(new DataReferenceField("trackPriorityRequest").setType(trackPriorityRequest));
-      model.addOutput(new DataReferenceField("trackPriorityResponse").setType(trackPriorityResponse));
+      model.addInput(new DataReferenceField("trackPriorityRequest").setParent(model).setType(trackPriorityRequest));
+      model.addOutput(new DataReferenceField("trackPriorityResponse").setParent(model).setType(trackPriorityResponse));
       model.addScenario(getTrackPriorities);
       getTrackPriorities.setParent(model);
 
@@ -158,9 +160,9 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService"))
-            .thenReturn(Optional.of(newMulticastModelForTesting()));
-      //      when(systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService"))
-      //            .thenReturn(Optional.of(newRestModelForTesting()));
+            .thenReturn(Optional.of(newPubSubModelForTesting()));
+      when(systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService"))
+            .thenReturn(Optional.of(newRestModelForTesting()));
 
       parameters = new DefaultParameterCollection();
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
@@ -202,7 +204,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -243,6 +245,78 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
       assertTrue(Files.isRegularFile(restFile));
+   }
+
+   @Test
+   public void zeromq() throws Throwable {
+      templateService.setTemplateDirectory(
+         CreateJavaCucumberTestsConfigCommandTest.class.getPackage().getName() + "-"
+            + ZEROMQ_TEMPLATE_SUFFIX,
+         Paths.get("src", "main", "templates", ZEROMQ_TEMPLATE_SUFFIX));
+
+      transportConfigService.addZeroMqTcpConfiguration("trackEngagementStatus",
+         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+         "*",
+         "localhost",
+         1000);
+
+      transportConfigService.addZeroMqTcpConfiguration("trackPriorityRequest",
+         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+         "*",
+         "localhost",
+         1001);
+
+      run(
+         CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
+         "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+         CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+         "",
+         CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDirectory.getRoot().getAbsolutePath(),
+         CommonParameters.PHASE.getName(),
+         JellyfishCommandPhase.DEFERRED);
+
+      Path projectDir = outputDirectory.getRoot().toPath().resolve(
+         "com.ngc.seaside.threateval.engagementtrackpriorityservice.testsconfig");
+      Path srcDir = projectDir.resolve(Paths.get("src",
+         "main",
+         "java",
+         "com",
+         "ngc",
+         "seaside",
+         "threateval",
+         "engagementtrackpriorityservice",
+         "testsconfig"));
+
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
+      Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
+      Files.walk(projectDir).forEach(System.out::println);
+      assertTrue(Files.isRegularFile(buildFile));
+      assertTrue(Files.isRegularFile(configurationFile));
+      assertTrue(Files.isRegularFile(multicastFile));
+
+      run(
+         CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
+         "com.ngc.seaside.threateval.TrackPriorityService",
+         CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+         "",
+         CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+         outputDirectory.getRoot().getAbsolutePath(),
+         CommonParameters.PHASE.getName(),
+         JellyfishCommandPhase.DEFERRED);
+
+      projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
+      srcDir = projectDir.resolve(
+         Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "trackpriorityservice", "testsconfig"));
+
+      buildFile = projectDir.resolve("build.generated.gradle");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      multicastFile = srcDir.resolve("TrackPriorityServiceZeroMqTestConfiguration.java");
+
+      assertTrue(Files.isRegularFile(buildFile));
+      assertTrue(Files.isRegularFile(configurationFile));
+      assertTrue(Files.isRegularFile(multicastFile));
    }
 
    private void run(Object... args) {
