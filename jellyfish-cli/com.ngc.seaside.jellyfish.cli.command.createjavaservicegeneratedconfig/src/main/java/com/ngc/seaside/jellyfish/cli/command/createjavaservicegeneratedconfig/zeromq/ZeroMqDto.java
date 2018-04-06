@@ -13,6 +13,7 @@ public class ZeroMqDto {
    private GeneratedServiceConfigDto baseDto;
    private Set<String> imports = new LinkedHashSet<>();
    private List<ZeroMqTopicDto> topics = new ArrayList<>();
+   private String classname;
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
@@ -61,8 +62,13 @@ public class ZeroMqDto {
       return this.baseDto.getPackageName();
    }
 
-   public String getModelName() {
-      return this.baseDto.getModelName();
+   public String getClassname() {
+      return this.classname;
+   }
+
+   public ZeroMqDto setClassname(String classname) {
+      this.classname = classname;
+      return this;
    }
 
 }

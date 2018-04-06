@@ -12,6 +12,7 @@ import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
@@ -106,7 +107,8 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-            new MulticastTransportProviderConfigDto(transportConfigService));
+            new MulticastTransportProviderConfigDto(transportConfigService),
+            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, true));
 
       clean = generateAndAddTransportProviders(
             dto,

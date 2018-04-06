@@ -109,7 +109,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService),
             new RestTransportProviderConfigDto(transportConfigService),
-            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService));
+            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false));
 
       clean = generateAndAddTransportProviders(
             dto,

@@ -10,9 +10,9 @@ package ${dto.packageName};
 import $import;
 #end
 
-public class ${dto.modelName}ZeroMqConfiguration {
+public class ${dto.classname} {
 
-   private ${dto.modelName}ZeroMqConfiguration() {
+   private ${dto.classname}() {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<ZeroMQTopic> zeroMqProvider) {
