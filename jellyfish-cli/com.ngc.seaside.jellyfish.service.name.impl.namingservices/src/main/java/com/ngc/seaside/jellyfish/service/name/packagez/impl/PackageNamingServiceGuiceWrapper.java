@@ -76,6 +76,11 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
    }
 
    @Override
+   public String getCucumberTestsConfigPackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getCucumberTestsPackageName(options, model);
+   }
+
+   @Override
    public String getConfigPackageName(IJellyFishCommandOptions options, IModel model) {
       return packageNamingService.getConfigPackageName(options, model);
    }

@@ -95,7 +95,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getCucumberTestsConfigProjectName(options, model);
-      String packagez = packageNamingService.getConfigPackageName(options, model);
+      String packagez = packageNamingService.getCucumberTestsConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
@@ -271,7 +271,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the generated service configuration for a Java application",
+            "Generates the generated service configuration for a Cucumber tests",
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
