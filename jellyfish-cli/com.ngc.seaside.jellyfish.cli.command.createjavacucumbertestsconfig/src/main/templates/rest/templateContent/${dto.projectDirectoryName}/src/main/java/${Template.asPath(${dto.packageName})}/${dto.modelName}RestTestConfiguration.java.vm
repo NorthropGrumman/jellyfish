@@ -1,0 +1,35 @@
+package ${dto.packageName};
+
+import com.ngc.seaside.service.transport.api.ITransportProvider;
+import com.ngc.seaside.service.transport.api.TransportConfiguration;
+import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic;
+import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientVerb;
+import ${dto.topicsImport};
+
+public class ${dto.modelName}RestTestConfiguration {
+
+   private ${dto.modelName}RestTestConfiguration() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<HttpClientTopic> restProvider) {
+#foreach ($topic in $dto.topics)
+      HttpClientTopic ${topic.variableName} = new HttpClientTopic(
+            "http://${topic.networkAddress.address}:${topic.port}${topic.path}",
+            HttpClientVerb.${topic.httpMethod},
+            HttpClientTopic.DEFAULT_TIMEOUT,
+            HttpClientTopic.ContentTypes.PROTOCOL_BUFFERS);
+
+#end
+#foreach ($entry in $dto.sendTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+      config.whenSending()
+            .toApplicationTopic(${topic.name})
+            .useTransportProvider(httpClientProvider)
+#foreach ($topic in $topics)
+            .onPhysicalTopic(t -> ${topic.variableName})
+#end
+
+#end
+   }
+}
