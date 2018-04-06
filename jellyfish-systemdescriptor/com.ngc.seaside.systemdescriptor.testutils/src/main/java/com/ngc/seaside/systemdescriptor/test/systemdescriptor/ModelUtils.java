@@ -87,7 +87,7 @@ public class ModelUtils {
       /**
        * Creates a mocked req/res {@link IScenario} with the given name. The step parameters supplied should be ordered
        * by given statements first, followed by when statement, followed by then statements. The step parameters can
-       * either be {@link IDataReferenceField} or a pair of strings followed by {@link IData}. <p> The given and when
+       * either be {@link IDataReferenceField} or a pair of strings followed by {@link IData}.  The given and when
        * steps will be treated as {@link ReceiveRequestStepHandler receive request} steps, and then steps will be
        * treated as {@link RespondStepHandler respond} steps. This method adds the scenario to this model's scenarios
        * and data types to this model's inputs and outputs.
@@ -369,24 +369,7 @@ public class ModelUtils {
       for (T child : children) {
          map.put(child.getName(), child);
       }
-      class NamedChildCollectionInstance extends AbstractCollection<T> implements INamedChildCollection<P, T> {
-
-         @Override
-         public Optional<T> getByName(String name) {
-            return Optional.of(map.get(name));
-         }
-
-         @Override
-         public Iterator<T> iterator() {
-            return map.values().iterator();
-         }
-
-         @Override
-         public int size() {
-            return map.size();
-         }
-      }
-      return new NamedChildCollectionInstance();
+      return new MapBasedNamedChildCollection<>(map);
    }
 
    /**
@@ -552,4 +535,29 @@ public class ModelUtils {
 
    }
 
+   private static class MapBasedNamedChildCollection<P, T extends INamedChild<P>>
+         extends AbstractCollection<T>
+         implements INamedChildCollection<P, T> {
+
+      private final Map<String, T> map;
+
+      private MapBasedNamedChildCollection(Map<String, T> map) {
+         this.map = map;
+      }
+
+      @Override
+      public Optional<T> getByName(String name) {
+         return Optional.of(map.get(name));
+      }
+
+      @Override
+      public Iterator<T> iterator() {
+         return map.values().iterator();
+      }
+
+      @Override
+      public int size() {
+         return map.size();
+      }
+   }
 }
