@@ -34,7 +34,7 @@ public class TransportProviderDependenciesUtil {
       Set<String> dependencies = new LinkedHashSet<>();
 
       if (types.contains(TransportConfigurationType.MULTICAST)) {
-         MulticastTransportProviderConfigDto multicastDto = new MulticastTransportProviderConfigDto(null);
+         MulticastTransportProviderConfigDto multicastDto = new MulticastTransportProviderConfigDto(null, false);
          dependencies.addAll(multicastDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.REST)) {

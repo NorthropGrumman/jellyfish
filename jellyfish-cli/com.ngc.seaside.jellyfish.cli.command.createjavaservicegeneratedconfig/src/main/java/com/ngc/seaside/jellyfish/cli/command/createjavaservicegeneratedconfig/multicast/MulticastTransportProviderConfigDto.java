@@ -20,6 +20,7 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
 
    static final String MULTICAST_TRANSPORT_PROVIDER_COMPONENT_NAME = "com.ngc.seaside.service.transport.impl.provider.multicast.MulticastTransportProvider";
    static final String MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastConfiguration";
+   static final String MULTICAST_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastTestsConfiguration";
    static final String MULTICAST_PROVIDER_VARIABLE_NAME = "multicastProvider";
    static final String MULTICAST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.multicast";
    static final String MULTICAST_TOPIC_CLASS_NAME = "MulticastTopic";
@@ -29,15 +30,18 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
 
    private ITransportConfigurationService transportConfigService;
 
-   public MulticastTransportProviderConfigDto(ITransportConfigurationService transportConfigService) {
+   private final boolean test;
+
+   public MulticastTransportProviderConfigDto(ITransportConfigurationService transportConfigService, boolean test) {
       this.transportConfigService = transportConfigService;
+      this.test = test;
    }
 
    @Override
    public TransportProviderDto getTransportProviderDto(MulticastDto dto) {
       return new TransportProviderDto().setComponentName(MULTICAST_TRANSPORT_PROVIDER_COMPONENT_NAME)
                                        .setConfigurationType(
-                                          dto.getModelName() + MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX)
+                                          dto.getBaseDto().getModelName() + getClassnameSuffix())
                                        .setProviderName(MULTICAST_PROVIDER_VARIABLE_NAME)
                                        .setTopicPackage(MULTICAST_TOPIC_PACKAGE_NAME)
                                        .setTopicType(MULTICAST_TOPIC_CLASS_NAME);
@@ -95,6 +99,10 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
          dependencies.add(MULTICAST_PROVIDER_DEPENDENCY);
       }
       return dependencies;
+   }
+
+   private String getClassnameSuffix() {
+      return test ? MULTICAST_TEST_CONFIGURATION_CLASS_NAME_SUFFIX : MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX;
    }
 
 }

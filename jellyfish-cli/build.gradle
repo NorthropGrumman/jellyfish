@@ -33,5 +33,4 @@ subprojects {
         dependencyInfoReportFile = dependenciesReportFile
         deploymentScriptFile = m2DeploymentScriptFile
     }
-//org.gradle.jvmargs=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9099
 }

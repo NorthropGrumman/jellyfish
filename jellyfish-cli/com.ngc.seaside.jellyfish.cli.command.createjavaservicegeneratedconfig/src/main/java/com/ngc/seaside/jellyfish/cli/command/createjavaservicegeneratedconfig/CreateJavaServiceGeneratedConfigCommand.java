@@ -107,7 +107,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-            new MulticastTransportProviderConfigDto(transportConfigService),
+            new MulticastTransportProviderConfigDto(transportConfigService, false),
             new SparkTransportProviderConfigDto(transportConfigService),
             new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false));
 
