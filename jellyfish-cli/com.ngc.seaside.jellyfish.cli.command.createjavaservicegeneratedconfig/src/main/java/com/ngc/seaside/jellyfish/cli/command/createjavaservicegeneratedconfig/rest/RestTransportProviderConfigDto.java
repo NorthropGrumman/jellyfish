@@ -61,15 +61,15 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
                transportConfigurationService.getRestConfiguration(options, field);
          int count = 1;
          for (RestConfiguration configuration : configurations) {
-            RestTopicDto topicDto = new RestTopicDto().setNetworkAddress(configuration.getNetworkAddress())
-                                                      .setNetworkInterface(configuration.getNetworkInterface())
-                                                      .setPort(configuration.getPort())
-                                                      .setHttpMethod(configuration.getHttpMethod())
-                                                      .setPath(configuration.getPath())
-                                                      .setContentType(configuration.getContentType())
-                                                      .setVariableName(
+            SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
+                                                        .setNetworkInterface(configuration.getNetworkInterface())
+                                                        .setPort(configuration.getPort())
+                                                        .setHttpMethod(configuration.getHttpMethod())
+                                                        .setPath(configuration.getPath())
+                                                        .setContentType(configuration.getContentType())
+                                                        .setVariableName(
                                                             field.getName() + (configurations.size() > 1 ? count : ""))
-                                                      .setName(topicsPrefix + topicName);
+                                                        .setName(topicsPrefix + topicName);
 
             sparkDto.addTopic(topicDto);
             count++;

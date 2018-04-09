@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class SparkDto {
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
-   private List<RestTopicDto> topics = new ArrayList<>();
+   private List<SparkTopicDto> topics = new ArrayList<>();
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
@@ -32,23 +32,23 @@ public class SparkDto {
       return this;
    }
 
-   public List<RestTopicDto> getTopics() {
+   public List<SparkTopicDto> getTopics() {
       return topics;
    }
 
-   public Map<String, List<RestTopicDto>> getSendTopics() {
+   public Map<String, List<SparkTopicDto>> getSendTopics() {
       return topics.stream()
                    .filter(topic -> topic.getHttpMethod() == HttpMethod.GET)
-                   .collect(Collectors.groupingBy(RestTopicDto::getName));
+                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
-   public Map<String, List<RestTopicDto>> getReceiveTopics() {
+   public Map<String, List<SparkTopicDto>> getReceiveTopics() {
       return topics.stream()
                    .filter(topic -> topic.getHttpMethod() != HttpMethod.GET)
-                   .collect(Collectors.groupingBy(RestTopicDto::getName));
+                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
-   public SparkDto addTopic(RestTopicDto topic) {
+   public SparkDto addTopic(SparkTopicDto topic) {
       this.topics.add(topic);
       return this;
    }
