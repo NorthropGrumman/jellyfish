@@ -258,14 +258,15 @@ public class SdUtils {
             BasePartDeclaration[] holder = new BasePartDeclaration[1];
             Model containingModel = getContainingModel(declaration);
             traverseModelRefinementHierarchy(containingModel, m -> {
-               if (m.getParts() != null){
-                  m.getParts().getDeclarations()
-                     .stream()
-                     .filter(p -> p.getName().equals(declaration.getName()))
-                     .filter(p -> p instanceof BasePartDeclaration)
-                     .map(p -> { return (BasePartDeclaration) p; })
-                     .findFirst()
-                     .map(p -> holder[0] = p);   
+               if (m.getParts() != null) {
+                  m.getParts()
+                   .getDeclarations()
+                   .stream()
+                   .filter(p -> p.getName().equals(declaration.getName()))
+                   .filter(p -> p instanceof BasePartDeclaration)
+                   .map(p -> BasePartDeclaration.class.cast(p))
+                   .findFirst()
+                      .map(p -> holder[0] = p);
                }
             });
             return holder[0].getType();
@@ -290,14 +291,15 @@ public class SdUtils {
             BaseRequireDeclaration[] holder = new BaseRequireDeclaration[1];
             Model containingModel = getContainingModel(declaration);
             traverseModelRefinementHierarchy(containingModel, m -> {
-               if (m.getRequires() != null){
-                  m.getRequires().getDeclarations()
-                     .stream()
-                     .filter(p -> p.getName().equals(declaration.getName()))
-                     .filter(p -> p instanceof BaseRequireDeclaration)
-                     .map(p -> { return (BaseRequireDeclaration) p; })
-                     .findFirst()
-                     .map(p -> holder[0] = p);   
+               if (m.getRequires() != null) {
+                  m.getRequires()
+                   .getDeclarations()
+                   .stream()
+                   .filter(p -> p.getName().equals(declaration.getName()))
+                   .filter(p -> p instanceof BaseRequireDeclaration)
+                   .map(p -> BaseRequireDeclaration.class.cast(p))
+                   .findFirst()
+                      .map(p -> holder[0] = p);
                }
             });
             return holder[0].getType();

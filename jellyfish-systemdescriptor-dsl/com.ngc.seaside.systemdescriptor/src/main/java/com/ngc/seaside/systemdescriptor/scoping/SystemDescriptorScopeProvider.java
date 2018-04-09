@@ -312,7 +312,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       
       // Get properties declared on the model of the part itself.
       Model type = SdUtils.getTypeOfPartDeclaration(part);
-      if(type.getProperties() != null) {
+      if (type.getProperties() != null) {
          propertyDeclarations.addAll(type.getProperties().getDeclarations());
       }
 
@@ -345,7 +345,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       
       // Get properties declared on the model of the requirement itself.
       Model type = SdUtils.getTypeOfRequireDeclaration(requirement);
-      if(type.getProperties() != null) {
+      if (type.getProperties() != null) {
          propertyDeclarations.addAll(type.getProperties().getDeclarations());
       }
 
