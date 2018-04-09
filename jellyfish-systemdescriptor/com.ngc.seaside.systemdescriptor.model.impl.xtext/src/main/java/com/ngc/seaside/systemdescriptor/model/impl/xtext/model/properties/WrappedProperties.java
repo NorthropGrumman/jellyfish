@@ -20,6 +20,9 @@ public class WrappedProperties extends DeferredNamedChildCollection<IProperties,
    private final WrapperPropertyFactory factory;
    private final Properties properties;
 
+   /**
+    * Creates new wrapped properties.
+    */
    public WrappedProperties(IWrapperResolver resolver, Properties properties) {
       this.properties = Preconditions.checkNotNull(properties, "properties may not be null!");
       factory = new WrapperPropertyFactory(resolver);
@@ -41,6 +44,9 @@ public class WrappedProperties extends DeferredNamedChildCollection<IProperties,
       }
    }
 
+   /**
+    * Converts the given object to an XText object.
+    */
    public static Properties toXtext(IWrapperResolver resolver, IProperties properties) {
       Properties xtextProperties = SystemDescriptorFactory.eINSTANCE.createProperties();
 

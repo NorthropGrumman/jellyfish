@@ -7,7 +7,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
@@ -115,6 +114,9 @@ public class WrappedModelReferenceLinkTest extends AbstractWrappedXtextTest {
                         .isPresent());
    }
 
+   /**
+    * Creates a link test setup.
+    */
    public static LinkTestUtil.LinkTestSetup getModelLinkDeclaration() throws Throwable {
       WrappedModelReferenceLinkTest test = new WrappedModelReferenceLinkTest();
       MockitoAnnotations.initMocks(test);

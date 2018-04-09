@@ -30,14 +30,14 @@ public class ParsingDelegateIT {
    private ParsingDelegate delegate;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       TerminalsStandaloneSetup.doSetup();
       new SystemDescriptorStandaloneSetup().register(InjectorTestFactory.getSharedInstance());
       delegate = InjectorTestFactory.getSharedInstance().getInstance(ParsingDelegate.class);
    }
 
    @Test
-   public void testDoesParseSingleFile() throws Throwable {
+   public void testDoesParseSingleFile() {
       Path time = pathTo("valid-project", "clocks", "datatypes", "Time.sd");
       IParsingResult result = delegate.parseFiles(Collections.singletonList(time));
       assertTrue("parsing should be successful!", result.isSuccessful());
@@ -45,7 +45,7 @@ public class ParsingDelegateIT {
    }
 
    @Test
-   public void testDoesParseMultipleFiles() throws Throwable {
+   public void testDoesParseMultipleFiles() {
       Collection<Path> paths = Arrays.asList(
             pathTo("valid-project", "clocks", "datatypes", "Time.sd"),
             pathTo("valid-project", "clocks", "datatypes", "TimeZone.sd"),
@@ -62,14 +62,14 @@ public class ParsingDelegateIT {
    }
 
    @Test
-   public void testDoesParseProjectDirectory() throws Throwable {
+   public void testDoesParseProjectDirectory() {
       IParsingResult result = delegate.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("parsing should be successful!", result.isSuccessful());
       assertNotNull("system descriptor not set!", result.getSystemDescriptor());
    }
 
    @Test
-   public void testDoesHandleDataInheritance() throws Throwable {
+   public void testDoesHandleDataInheritance() {
       IParsingResult result = delegate.parseProject(Paths.get("build", "resources", "test", "valid-project"));
       assertTrue("parsing should be successful!", result.isSuccessful());
       assertNotNull("system descriptor not set!", result.getSystemDescriptor());
@@ -82,7 +82,7 @@ public class ParsingDelegateIT {
    }
 
    @Test
-   public void testDoesReturnParsingErrors() throws Throwable {
+   public void testDoesReturnParsingErrors() {
       Path time = pathTo("invalid-project", "clocks", "datatypes", "Time.sd");
 
       IParsingResult result = delegate.parseFiles(Collections.singletonList(time));
@@ -95,6 +95,9 @@ public class ParsingDelegateIT {
       assertEquals("file not correct!", time.toAbsolutePath(), issue.getOffendingFile());
    }
 
+   /**
+    * Creates a path to the given location.
+    */
    public static Path pathTo(String project, String... packagesAndFile) {
       Collection<String> parts = new ArrayList<>();
       parts.add("resources");

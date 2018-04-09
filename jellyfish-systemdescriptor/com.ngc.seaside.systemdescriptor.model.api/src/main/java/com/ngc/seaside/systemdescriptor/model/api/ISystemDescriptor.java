@@ -12,7 +12,6 @@ import java.util.Optional;
 /**
  * The top level system descriptor object.  This object contains all known packages.  The description below shows the
  * tree like structure of this data structure:
- *
  * <pre>
  * <ul>
  *   <li>{@link ISystemDescriptor System Descriptor}</li>
@@ -36,13 +35,10 @@ import java.util.Optional;
  *   </ul>
  * </ul>
  * </pre>
- *
  * Operations that change the state of this object may throw {@code UnsupportedOperationException}s if the object is
  * immutable. Mutable instances of this interface may or may not be threadsafe.  In general, immutable instances of this
  * interface (and any objects referenced from this instance) are threadsafe.
- *
  * <p/>
- *
  * {@link SystemDescriptors} contains various utilities dealing with system descriptor instances.
  */
 public interface ISystemDescriptor {

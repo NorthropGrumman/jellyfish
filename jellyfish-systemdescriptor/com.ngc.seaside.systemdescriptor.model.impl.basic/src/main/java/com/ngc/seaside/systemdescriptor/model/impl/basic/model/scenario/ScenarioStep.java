@@ -23,6 +23,9 @@ public class ScenarioStep implements IScenarioStep {
       this.parameters = parameters;
    }
 
+   /**
+    * Creates a new step.
+    */
    public ScenarioStep() {
       this.parameters = new ArrayList<>();
    }
@@ -62,9 +65,9 @@ public class ScenarioStep implements IScenarioStep {
          return false;
       }
       ScenarioStep that = (ScenarioStep) o;
-      return Objects.equals(parameters, that.parameters) &&
-             Objects.equals(keyword, that.keyword) &&
-             parent == that.parent;
+      return Objects.equals(parameters, that.parameters)
+             && Objects.equals(keyword, that.keyword)
+             && parent == that.parent;
    }
 
    @Override
@@ -76,11 +79,11 @@ public class ScenarioStep implements IScenarioStep {
 
    @Override
    public String toString() {
-      return "ScenarioStep[" +
-             "parameters=" + parameters +
-             ", keyword='" + keyword + '\'' +
-             ", parent=" + (parent == null ? "null" : parent.getName()) +
-             ']';
+      return "ScenarioStep["
+             + "parameters=" + parameters
+             + ", keyword='" + keyword + '\''
+             + ", parent=" + (parent == null ? "null" : parent.getName())
+             + ']';
    }
 
 }

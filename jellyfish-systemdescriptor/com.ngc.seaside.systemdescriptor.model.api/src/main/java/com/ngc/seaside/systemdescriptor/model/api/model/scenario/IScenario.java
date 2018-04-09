@@ -61,7 +61,7 @@ public interface IScenario extends INamedChild<IModel> {
 
    /**
     * Gets the steps of this scenario whose keyword matches any of the given keywords.
-    * 
+    *
     * @param keywords scenario step keywords to match
     * @return the steps of this scenario matching any of the given keywords
     */
@@ -72,8 +72,8 @@ public interface IScenario extends INamedChild<IModel> {
       }
       keywordsSet.add(keyword);
       return Stream.concat(Stream.concat(getGivens().stream(), getWhens().stream()), getThens().stream())
-                   .filter(step -> keywordsSet.contains(step.getKeyword()))
-                   .collect(Collectors.toList());
+            .filter(step -> keywordsSet.contains(step.getKeyword()))
+            .collect(Collectors.toList());
    }
-   
+
 }

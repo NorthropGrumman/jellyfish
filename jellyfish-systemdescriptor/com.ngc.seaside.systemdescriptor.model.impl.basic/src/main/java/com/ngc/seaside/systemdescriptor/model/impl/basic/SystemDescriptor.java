@@ -127,8 +127,8 @@ public class SystemDescriptor implements ISystemDescriptor {
 
    @Override
    public String toString() {
-      return "SystemDescriptor[" +
-             "packages=" + packages +
-             ']';
+      return "SystemDescriptor["
+             + "packages=" + packages
+             + ']';
    }
 }

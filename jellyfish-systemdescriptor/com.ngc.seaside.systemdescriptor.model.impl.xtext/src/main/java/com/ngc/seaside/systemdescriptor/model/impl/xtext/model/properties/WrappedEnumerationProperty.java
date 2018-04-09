@@ -17,6 +17,9 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
 
    private final IPropertyValues<IPropertyEnumerationValue> values;
 
+   /**
+    * Creates a new wrapped enumeration property.
+    */
    public WrappedEnumerationProperty(IWrapperResolver resolver,
                                      ReferencedPropertyFieldDeclaration wrapped,
                                      IPropertyValues<IPropertyEnumerationValue> values) {
@@ -47,6 +50,9 @@ public class WrappedEnumerationProperty extends AbstractWrappedProperty<Referenc
       return DataTypes.ENUM;
    }
 
+   /**
+    * Converts the given object to an XText object.
+    */
    public static ReferencedPropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
                                                                                               IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");

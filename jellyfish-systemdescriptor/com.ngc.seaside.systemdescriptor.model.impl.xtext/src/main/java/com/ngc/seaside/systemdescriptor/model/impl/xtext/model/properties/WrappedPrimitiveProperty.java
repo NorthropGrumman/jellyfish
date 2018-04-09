@@ -16,6 +16,9 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
 
    private final IPropertyValues<IPropertyPrimitiveValue> values;
 
+   /**
+    * Creates a new property.
+    */
    public WrappedPrimitiveProperty(IWrapperResolver resolver,
                                    PrimitivePropertyFieldDeclaration wrapped,
                                    IPropertyValues<IPropertyPrimitiveValue> values) {
@@ -38,6 +41,9 @@ public class WrappedPrimitiveProperty extends AbstractWrappedProperty<PrimitiveP
       return DataTypes.valueOf(wrapped.getType().name());
    }
 
+   /**
+    * Converts the given property into an XText object.
+    */
    public static PrimitivePropertyFieldDeclaration toXtextPrimitivePropertyFieldDeclaration(IWrapperResolver resolver,
                                                                                             IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");

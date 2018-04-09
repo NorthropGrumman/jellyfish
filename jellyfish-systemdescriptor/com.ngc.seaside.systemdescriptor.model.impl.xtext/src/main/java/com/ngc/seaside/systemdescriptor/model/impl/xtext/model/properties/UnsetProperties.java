@@ -20,7 +20,7 @@ public class UnsetProperties {
    private UnsetProperties() {
    }
 
-   public final static IPropertyPrimitiveValue UNSET_PRIMITIVE_VALUE = new IPropertyPrimitiveValue() {
+   public static final IPropertyPrimitiveValue UNSET_PRIMITIVE_VALUE = new IPropertyPrimitiveValue() {
       @Override
       public BigInteger getInteger() {
          throw new IllegalStateException("this value is not set!");
@@ -52,7 +52,7 @@ public class UnsetProperties {
       }
    };
 
-   public final static IPropertyEnumerationValue UNSET_ENUMERATION_VALUE = new IPropertyEnumerationValue() {
+   public static final IPropertyEnumerationValue UNSET_ENUMERATION_VALUE = new IPropertyEnumerationValue() {
       @Override
       public IEnumeration getReferencedEnumeration() {
          throw new IllegalStateException("this value is not set!");
@@ -74,7 +74,7 @@ public class UnsetProperties {
       }
    };
 
-   public final static IPropertyDataValue UNSET_DATA_VALUE = new IPropertyDataValue() {
+   public static final IPropertyDataValue UNSET_DATA_VALUE = new IPropertyDataValue() {
       @Override
       public IData getReferencedDataType() {
          throw new IllegalStateException("this value is not set!");

@@ -159,6 +159,9 @@ public class AggregatedModelViewTest {
                  view.getLinkByName("linkC").isPresent());
    }
 
+   /**
+    * Creates a collection of fields of the given type with the given name.
+    */
    public static <T extends INamedChild<IModel>> INamedChildCollection<IModel, T> fields(Class<? extends T> fieldType,
                                                                                          String... names) {
       NamedChildCollection<IModel, T> collection = new NamedChildCollection<>();
@@ -176,6 +179,9 @@ public class AggregatedModelViewTest {
       return collection;
    }
 
+   /**
+    * Creates a collection of mocked links with the given names.
+    */
    public static Collection<IModelLink<?>> links(String... names) {
       Collection<IModelLink<?>> collection = new ArrayList<>();
       if (names != null) {

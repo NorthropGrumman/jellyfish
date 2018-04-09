@@ -5,7 +5,6 @@ import java.util.Objects;
 /**
  * Stores a form of a verb and its tense.  This class can be used as shown below to present the 3 tenses of the verb
  * "publish":
- *
  * <pre>
  *    {@code
  *      ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("havePublished");
@@ -46,8 +45,8 @@ public class ScenarioStepVerb {
          return false;
       }
       ScenarioStepVerb that = (ScenarioStepVerb) o;
-      return tense == that.tense &&
-             Objects.equals(verb, that.verb);
+      return tense == that.tense
+            && Objects.equals(verb, that.verb);
    }
 
    @Override

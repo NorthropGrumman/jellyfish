@@ -35,13 +35,13 @@ public class ModelPredicatesTest {
    private IMetadata metadata2;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(model1.getMetadata()).thenReturn(metadata1);
       when(model2.getMetadata()).thenReturn(metadata2);
    }
 
    @Test
-   public void testDoesFilterByAnyStereotype() throws Throwable {
+   public void testDoesFilterByAnyStereotype() {
       JsonValue value1 = Json.createValue("system");
       JsonValue value2 = Json.createValue("service");
 
@@ -62,7 +62,7 @@ public class ModelPredicatesTest {
    }
 
    @Test
-   public void testDoesFilterByAnyStereotypeWithArrays() throws Throwable {
+   public void testDoesFilterByAnyStereotypeWithArrays() {
       JsonValue value1 = Json.createArrayBuilder()
             .add("system")
             .add("blah")
@@ -86,7 +86,7 @@ public class ModelPredicatesTest {
    }
 
    @Test
-   public void testDoesFilterByAllStereotypes() throws Throwable {
+   public void testDoesFilterByAllStereotypes() {
       JsonValue value1 = Json.createArrayBuilder()
             .add("system")
             .add("foo")

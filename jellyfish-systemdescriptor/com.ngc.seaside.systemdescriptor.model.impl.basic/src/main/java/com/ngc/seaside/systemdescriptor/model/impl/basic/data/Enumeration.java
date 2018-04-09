@@ -16,11 +16,17 @@ public class Enumeration implements IEnumeration {
    protected final List<String> values;
    protected IMetadata metadata;
 
+   /**
+    * Creates a new enumeration with the given name.
+    */
    public Enumeration(String name) {
       this.name = name;
       this.values = new ArrayList<>();
    }
 
+   /**
+    * Creates a new enumeration with the given name and values.
+    */
    public Enumeration(String name, Collection<String> values) {
       this.name = name;
       this.values = new ArrayList<>(values);
@@ -87,11 +93,11 @@ public class Enumeration implements IEnumeration {
 
    @Override
    public String toString() {
-      return "Enumeration[" +
-             "parent=" + (parent == null ? "null" : parent.getName()) +
-             ", name='" + name + '\'' +
-             ", values=" + values +
-             ", metadata=" + metadata +
-             ']';
+      return "Enumeration["
+             + "parent=" + (parent == null ? "null" : parent.getName())
+             + ", name='" + name + '\''
+             + ", values=" + values
+             + ", metadata=" + metadata
+             + ']';
    }
 }

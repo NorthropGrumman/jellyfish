@@ -32,7 +32,7 @@ public class PropertiesTest {
 
    @Test
    public void testValidSingleCase() {
-      /**
+      /*
        * properties {
        *     A property
        *     property.field1.field2 = 10
@@ -93,7 +93,7 @@ public class PropertiesTest {
    @SuppressWarnings({"unchecked"})
    @Test
    public void testValidManyCaseDirectlyFromProperty() {
-      /**
+      /*
        * properties {
        *     A property
        *     property = [10, 20]
@@ -131,7 +131,7 @@ public class PropertiesTest {
    @SuppressWarnings({"unchecked"})
    @Test
    public void testValidManyCase() {
-      /**
+      /*
        * properties {
        *     A property
        *     property.field1.field2 = [10, 20]
@@ -208,7 +208,7 @@ public class PropertiesTest {
 
    @Test
    public void testUndefinedProperty() {
-      /**
+      /*
        * properties {
        * }
        *
@@ -222,7 +222,7 @@ public class PropertiesTest {
 
    @Test
    public void testUndefinedField() {
-      /**
+      /*
        * properties {
        *     A property
        * }
@@ -252,7 +252,7 @@ public class PropertiesTest {
 
    @Test
    public void testInvalidTypeAndCardinality() {
-      /**
+      /*
        * properties {
        *     A property
        *     property.field1.field2 = 10
@@ -317,7 +317,7 @@ public class PropertiesTest {
 
    @Test
    public void testInvalidIntermediateManyField() {
-      /**
+      /*
        * properties {
        *     A property
        * }

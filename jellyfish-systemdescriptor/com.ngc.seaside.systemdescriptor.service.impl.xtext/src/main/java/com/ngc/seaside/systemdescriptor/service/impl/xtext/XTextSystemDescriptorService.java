@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutionException;
  * of this service should always be obtained via injection with Guice.  This class is configured in one of to ways:
  * either for use <i>within</i> Eclipse or for standalone use <i>outside</i> of Eclipse.  If using this service inside
  * eclipse include the {@link XTextSystemDescriptorServiceModule} with the Guice configuration like so:
- *
  * <pre>
  *    {@code
  *      Collection<Module> modules = new ArrayList<>();
@@ -42,10 +41,8 @@ import java.util.concurrent.ExecutionException;
  *      ISystemDescriptorService service = injector.getInstance(ISystemDescriptorService.class);
  *    }
  * </pre>
- *
  * Alternately, use {@link XTextSystemDescriptorServiceModule#forStandaloneUsage()} to use the service outside of
  * Eclipse:
- *
  * <pre>
  *    {@code
  *      Collection<Module> modules = new ArrayList<>();
@@ -54,14 +51,11 @@ import java.util.concurrent.ExecutionException;
  *      ISystemDescriptorService service = injector.getInstance(ISystemDescriptorService.class);
  *    }
  * </pre>
- *
  * Most of the time the service should be injected into an application component instead of being resolved directly:
- *
  * <pre>
  *    {@code
  *      public class MyApplication {
  *        private final ISystemDescriptorService service;
- *
  *        {@literal @}Inject
  *        public MyApplication(ISystemDescriptorService service) {
  *          this.service = service;
@@ -69,12 +63,9 @@ import java.util.concurrent.ExecutionException;
  *      }
  *    }
  * </pre>
- *
  * <b>An implementation of the {@code ILogService} interface must be bound by an application's module</b> in order for
  * service to be created correctly.
- *
  * <p/>
- *
  * This implementation delegates most concerns to other objects.
  */
 public class XTextSystemDescriptorService implements ISystemDescriptorService {

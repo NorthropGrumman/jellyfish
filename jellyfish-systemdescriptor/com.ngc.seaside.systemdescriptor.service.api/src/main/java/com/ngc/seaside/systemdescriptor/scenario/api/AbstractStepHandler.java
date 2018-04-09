@@ -17,21 +17,16 @@ import java.util.Map;
  * with the step are valid for the given verb.  Implementations should perform any validation in {@link
  * #doValidateStep(IValidationContext)}.  For convenience, several methods are provided that can reusable validation
  * logic.
- *
  * <p/>
- *
  * The simplest extension of this class might look something like this:
- *
  * <pre>
  *    {@code public class SurfingStepHandler extends AbstractStepHandler {
  *      private final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("surfed");
  *      private final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("surfing");
  *      private final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("will surf");
- *
  *      public SurfingStepHandler() {
  *        register(PAST, PRESENT, FUTURE);
  *      }
- *
  *      {@literal @}Override
  *      protected void doValidateStep(IValidationContext<IScenarioStep> context) {
  *        requireStepParameters(context, "The 'surf' verb requires parameters!");

@@ -164,9 +164,9 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
 
    @Override
    public String toString() {
-      return "NamedChildCollection[" +
-             "children=" + children +
-             ']';
+      return "NamedChildCollection["
+             + "children=" + children
+             + ']';
    }
 
    public NamedChildCollection<P, T> setOnChildAdded(Consumer<T> onChildAdded) {
@@ -225,6 +225,9 @@ public class NamedChildCollection<P, T extends INamedChild<P>> implements INamed
       }
    }
 
+   /**
+    * Creates an immutable copy of the given collection.
+    */
    public static <P, T extends INamedChild<P>> INamedChildCollection<P, T> immutable(
          INamedChildCollection<P, T> collection) {
       Map<String, T> children = new LinkedHashMap<>(collection.size());

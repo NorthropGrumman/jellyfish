@@ -12,19 +12,22 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 /**
  * Base class for types that adapts requirements or part field declarations to {@link IModelReferenceField}s.
- *
  * This class is not threadsafe.
  *
  * @param <T> the type of XText field this class is wrapping
  * @param <I> the type of the class implementing this class
  */
-public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclaration, I extends AbstractWrappedModelReferenceField<T, I>>
+public abstract class AbstractWrappedModelReferenceField
+      <T extends FieldDeclaration, I extends AbstractWrappedModelReferenceField<T, I>>
       extends AbstractWrappedXtext<T>
       implements IModelReferenceField {
 
    private IMetadata metadata;
    private IProperties properties;
 
+   /**
+    * Creates a new field.
+    */
    public AbstractWrappedModelReferenceField(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
@@ -91,8 +94,8 @@ public abstract class AbstractWrappedModelReferenceField<T extends FieldDeclarat
    static Model doFindXtextModel(IWrapperResolver resolver, String name, String packageName) {
       return resolver.findXTextModel(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
             "Could not find XText type for model type '%s' in package '%s'!"
-            + "  Make sure the IModel object is added to"
-            + " a package within the ISystemDescriptor before adding a reference to it!",
+                  + "  Make sure the IModel object is added to"
+                  + " a package within the ISystemDescriptor before adding a reference to it!",
             name,
             packageName)));
    }

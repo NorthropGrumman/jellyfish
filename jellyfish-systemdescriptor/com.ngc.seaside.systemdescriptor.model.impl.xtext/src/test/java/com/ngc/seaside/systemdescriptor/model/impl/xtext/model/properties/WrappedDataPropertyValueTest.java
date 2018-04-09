@@ -246,6 +246,9 @@ public class WrappedDataPropertyValueTest extends AbstractWrappedXtextTest {
       properties.getAssignments().add(assignment);
    }
 
+   /**
+    * Mocks a field with the given name.
+    */
    public static IDataField fieldWithName(String name, DataTypes type) {
       IDataField field = mock(IDataField.class);
       when(field.getName()).thenReturn(name);

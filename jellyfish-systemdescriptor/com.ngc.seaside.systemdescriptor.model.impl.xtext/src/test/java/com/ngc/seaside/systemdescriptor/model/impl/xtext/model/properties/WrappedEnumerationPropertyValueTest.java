@@ -14,7 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class WrappedEnumerationPropertyValueTest extends AbstractWrappedXtextTest {
-   private final static String PROPERTY_ENUM_VALUE = "ENUM_VALUE";
+
+   private static final String PROPERTY_ENUM_VALUE = "ENUM_VALUE";
 
    private WrappedEnumerationPropertyValue setWrappedEnumValue;
    private WrappedEnumerationPropertyValue unsetWrappedEnumValue;
@@ -42,7 +43,8 @@ public class WrappedEnumerationPropertyValueTest extends AbstractWrappedXtextTes
 
    @Test
    public void testDoesReturnCorrectEnumeration() {
-      assertEquals("referenced enumeration is incorrect!", "Enumeration", setWrappedEnumValue.getReferencedEnumeration().getName());
+      assertEquals("referenced enumeration is incorrect!", "Enumeration",
+                   setWrappedEnumValue.getReferencedEnumeration().getName());
       assertTrue("enumeration property value is not set but should be!", setWrappedEnumValue.isSet());
    }
 

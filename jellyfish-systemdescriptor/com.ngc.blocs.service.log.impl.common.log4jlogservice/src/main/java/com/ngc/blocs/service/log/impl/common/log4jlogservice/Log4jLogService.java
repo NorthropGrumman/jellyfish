@@ -10,9 +10,7 @@ import org.apache.log4j.Logger;
  * BLoCS implementation this service does not attempt to actually configure log4j.  Log4j is configured by the Eclipse
  * platform itself.
  *
- * <p/>
- *
- * This service is intended to be used in a Guice module and is not an OSGi DS managed component.
+ * <p> This service is intended to be used in a Guice module and is not an OSGi DS managed component.
  */
 public class Log4jLogService implements ILogService {
 

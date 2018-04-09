@@ -14,6 +14,9 @@ public class AggregatedModelFieldView implements IModelReferenceField {
    private IMetadata aggregatedMetadata;
    private IProperties aggregatedProperties;
 
+   /**
+    * Creates a new aggregated view that wraps the given field.
+    */
    public AggregatedModelFieldView(IModelReferenceField wrapped) {
       this.wrapped = wrapped;
       aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);

@@ -16,9 +16,9 @@ import com.ngc.seaside.systemdescriptor.validation.api.Severity;
  */
 public class PublishStepHandler extends AbstractStepHandler {
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("havePublished");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("publishing");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willPublish");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("havePublished");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("publishing");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willPublish");
 
    public PublishStepHandler() {
       register(PAST, PRESENT, FUTURE);
@@ -27,9 +27,7 @@ public class PublishStepHandler extends AbstractStepHandler {
    /**
     * Gets the {@code IDataReferenceField} of the output of the model the scenario is associated with that this step.
     * This can be used to determine which output field is published.
-    *
     * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains a publish verb
@@ -40,8 +38,8 @@ public class PublishStepHandler extends AbstractStepHandler {
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
             keyword.equals(PAST.getVerb())
-            || keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
+                  || keyword.equals(PRESENT.getVerb())
+                  || keyword.equals(FUTURE.getVerb()),
             "the step cannot be processed by this handler!");
 
       IModel model = step.getParent().getParent();
@@ -60,7 +58,9 @@ public class PublishStepHandler extends AbstractStepHandler {
    static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context,
                                                       int parameterIndex) {
       IScenarioStep step = context.getObject();
-      String fieldName = step.getParameters().size() <= parameterIndex ? null : step.getParameters().get(parameterIndex);
+      String
+            fieldName =
+            step.getParameters().size() <= parameterIndex ? null : step.getParameters().get(parameterIndex);
       IModel model = step.getParent().getParent();
       if (fieldName != null && !model.getOutputs().getByName(fieldName).isPresent()) {
          String errMsg = String.format("The model %s contains no output field named '%s'!",

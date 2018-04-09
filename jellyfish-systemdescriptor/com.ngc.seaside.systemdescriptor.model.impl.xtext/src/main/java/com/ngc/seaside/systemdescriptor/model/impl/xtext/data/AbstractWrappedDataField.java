@@ -15,7 +15,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 
 /**
  * Base class for types that adapts data field declarations to {@link IDataField}s.
- *
  * This class is not threadsafe.
  *
  * @param <T> the type of XText field this class is wrapping

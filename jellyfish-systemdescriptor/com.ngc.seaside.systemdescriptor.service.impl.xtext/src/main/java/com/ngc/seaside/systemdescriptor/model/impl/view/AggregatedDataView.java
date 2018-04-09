@@ -20,6 +20,9 @@ public class AggregatedDataView implements IData {
    private final INamedChildCollection<IData, IDataField> aggregatedFields;
    private IMetadata aggregatedMetadata;
 
+   /**
+    * Creates a new aggregated view that wraps the given data object.
+    */
    public AggregatedDataView(IData wrapped) {
       this.wrapped = Preconditions.checkNotNull(wrapped, "wrapped may not be null!");
       this.aggregatedFields = getAggregatedFields();
@@ -32,8 +35,8 @@ public class AggregatedDataView implements IData {
    }
 
    @Override
-   public IData setMetadata(IMetadata iMetadata) {
-      wrapped.setMetadata(iMetadata);
+   public IData setMetadata(IMetadata metadata) {
+      wrapped.setMetadata(metadata);
       aggregatedMetadata = AggregatedMetadataView.getAggregatedMetadata(wrapped);
       return this;
    }

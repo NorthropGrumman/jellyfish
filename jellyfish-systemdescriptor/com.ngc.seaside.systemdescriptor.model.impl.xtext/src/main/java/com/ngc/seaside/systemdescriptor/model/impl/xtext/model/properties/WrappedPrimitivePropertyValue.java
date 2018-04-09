@@ -19,6 +19,7 @@ import java.math.BigInteger;
 
 public class WrappedPrimitivePropertyValue extends AbstractWrappedXtext<PropertyValue>
       implements IPropertyPrimitiveValue {
+
    public WrappedPrimitivePropertyValue(IWrapperResolver resolver, PropertyValue wrapped) {
       super(resolver, wrapped);
    }

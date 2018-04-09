@@ -3,8 +3,8 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -86,12 +86,14 @@ public class WrappedBaseRequireModelReferenceFieldTest extends AbstractWrappedXt
    @Test
    public void testDoesConvertToXtextObject() throws Throwable {
       wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
-      BaseRequireDeclaration xtext = WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
+      BaseRequireDeclaration
+            xtext =
+            WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver(), wrapped);
       assertEquals("name not correct!",
-    		  	   baseRequireDeclaration.getName(),
+                   baseRequireDeclaration.getName(),
                    xtext.getName());
       assertEquals("type not correct!",
-    		  	   baseRequireDeclaration.getType(),
+                   baseRequireDeclaration.getType(),
                    xtext.getType());
    }
 }

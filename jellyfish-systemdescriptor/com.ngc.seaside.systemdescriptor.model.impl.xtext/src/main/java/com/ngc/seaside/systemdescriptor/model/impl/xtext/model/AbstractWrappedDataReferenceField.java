@@ -12,18 +12,21 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 
 /**
  * Base class for types that adapts input or output field declarations to {@link IDataReferenceField}s.
- *
  * This class is not threadsafe.
  *
  * @param <T> the type of XText field this class is wrapping
  * @param <I> the type of the class implementing this class
  */
-public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclaration, I extends AbstractWrappedDataReferenceField<T, I>>
+public abstract class AbstractWrappedDataReferenceField
+      <T extends FieldDeclaration, I extends AbstractWrappedDataReferenceField<T, I>>
       extends AbstractWrappedXtext<T>
       implements IDataReferenceField {
 
    private IMetadata metadata;
 
+   /**
+    * Creates a new field.
+    */
    public AbstractWrappedDataReferenceField(IWrapperResolver resolver, T wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedDeclarationDefinition.metadataFromXtext(wrapped.getDefinition());
@@ -78,8 +81,8 @@ public abstract class AbstractWrappedDataReferenceField<T extends FieldDeclarati
       // Declared package protected for ease of testing.
       return resolver.findXTextData(name, packageName).orElseThrow(() -> new IllegalStateException(String.format(
             "Could not find XText type for data type '%s' in package '%s'!"
-            + "  Make sure the IData object is added to"
-            + " a package within the ISystemDescriptor before adding a reference to it!",
+                  + "  Make sure the IData object is added to"
+                  + " a package within the ISystemDescriptor before adding a reference to it!",
             name,
             packageName)));
    }

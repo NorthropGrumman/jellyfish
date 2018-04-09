@@ -14,7 +14,6 @@ import java.util.function.Function;
 /**
  * A type of collection that contains properties. This type of collection contains extra operations to help resolve the
  * values of properties. For example, given the following model
- *
  * <pre> {@code
  * package my.servers
  * model RedHatServer refines Server {
@@ -27,15 +26,12 @@ import java.util.function.Function;
  * }
  * }
  * </pre>
- *
  * it is possible to resolve the "vendor" property as follows:
- *
  * <pre> {@code
  *    IModel model = systemDescriptor.findModel("my.servers.RedHatServer").get();
  *    String vendor = model.getProperties().resolveAsString("serverConfig", "vendor").get();
  * }
  * </pre>
- *
  * Properties and their values are not meant to be mutated.
  */
 public interface IProperties extends INamedChildCollection<IProperties, IProperty> {
@@ -63,7 +59,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the value of the property with the given name. Returns {@link Optional#empty()} if the values
     * cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -74,7 +69,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *    </li>
     * </ul>
     * </pre>
-    *
     * If present, the returned value will have cardinality of {@link FieldCardinality#SINGLE}.
     *
     * @param propertyName the name of the property
@@ -101,7 +95,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the data value of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -111,7 +104,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *    {@link FieldCardinality#MANY}</li>
     * </ul>
     * </pre>
-    *
     * If present, the returned value will have cardinality of {@link FieldCardinality#SINGLE}.
     *
     * @param propertyName the name of the property
@@ -127,7 +119,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the enumeration value of the property with the given name. Returns {@link Optional#empty()} if
     * the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -138,7 +129,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *    {@link FieldCardinality#MANY}</li>
     * </ul>
     * </pre>
-    *
     * If present, the returned value will have cardinality of {@link FieldCardinality#SINGLE}.
     *
     * @param propertyName the name of the property
@@ -154,7 +144,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the primitive value of the property with the given name. Returns {@link Optional#empty()} if
     * the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -165,7 +154,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     *    {@link FieldCardinality#MANY}</li>
     * </ul>
     * </pre>
-    *
     * If present, the returned value will have cardinality of {@link FieldCardinality#SINGLE}.
     *
     * @param propertyName the name of the property
@@ -181,7 +169,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the integer value of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -206,7 +193,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the decimal value of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -231,7 +217,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the boolean value of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -256,7 +241,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the string value of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -280,7 +264,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the values of the property with the given name. Returns {@link IPropertyValues#isSet() unset
     * values} if the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -307,7 +290,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the data values of the property with the given name. Returns {@link IPropertyValues#isSet()
     * unset values} if the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -335,7 +317,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * Attempts to resolve the enumeration values of the property with the given name. Returns {@link
     * IPropertyValues#isSet() unset values} if the values cannot be resolved, including but not limited to the following
     * cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -363,7 +344,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * Attempts to resolve the primitive values of the property with the given name. Returns {@link
     * IPropertyValues#isSet() unset values} if the values cannot be resolved, including but not limited to the following
     * cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -391,7 +371,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the integer values of the property with the given name. Returns {@link IPropertyValues#isSet()
     * unset values} if the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -418,7 +397,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the decimal values of the property with the given name. Returns {@link IPropertyValues#isSet()
     * unset values} if the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -445,7 +423,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the boolean values of the property with the given name. Returns {@link IPropertyValues#isSet()
     * unset values} if the values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>
@@ -472,7 +449,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
    /**
     * Attempts to resolve the string values of the property with the given name. Returns {@link Optional#empty()} if the
     * values cannot be resolved, including but not limited to the following cases:
-    *
     * <pre>
     * <ul>
     *    <li>The property or any of the nested fields are not defined</li>

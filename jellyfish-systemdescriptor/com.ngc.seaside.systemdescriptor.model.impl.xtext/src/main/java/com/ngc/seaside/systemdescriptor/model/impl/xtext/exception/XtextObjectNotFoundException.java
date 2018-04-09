@@ -11,17 +11,34 @@ import org.eclipse.emf.ecore.EClass;
  */
 public class XtextObjectNotFoundException extends RuntimeException {
 
+   /**
+    * Creates a new exception.
+    */
    public XtextObjectNotFoundException(EClass eclass, String fullyQualifiedName) {
       super(String.format("could not find XText %s type with name %s.",
                           eclass.getName().toLowerCase(),
                           fullyQualifiedName));
    }
 
+   /**
+    * Creates a new exception for the given model.
+    */
    public static XtextObjectNotFoundException forModel(IModel model) {
       return new XtextObjectNotFoundException(SystemDescriptorPackage.Literals.MODEL, model.getFullyQualifiedName());
    }
 
+   /**
+    * Creates a new exception for the given data object.
+    */
    public static XtextObjectNotFoundException forData(IData data) {
       return new XtextObjectNotFoundException(SystemDescriptorPackage.Literals.DATA, data.getFullyQualifiedName());
+   }
+
+   /**
+    * Creates a new exception for the given enum object.
+    */
+   public static XtextObjectNotFoundException forEnum(IData enumeration) {
+      return new XtextObjectNotFoundException(SystemDescriptorPackage.Literals.ENUMERATION,
+                                              enumeration.getFullyQualifiedName());
    }
 }

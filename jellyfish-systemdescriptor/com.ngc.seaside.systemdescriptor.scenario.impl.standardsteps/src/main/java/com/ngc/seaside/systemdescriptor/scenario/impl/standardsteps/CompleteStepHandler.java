@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implements the "complete" verb which is used to declare timing constraints.  It contains a number of arguments and
  * its form is:
- *
  * <pre>
  *    {@code
  *     <verb> (within|atLeast) <double> <TimeUnit>
@@ -38,9 +37,9 @@ public class CompleteStepHandler extends AbstractStepHandler {
       }
    }
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("hasCompleted");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("completing");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willBeCompleted");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("hasCompleted");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("completing");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willBeCompleted");
 
    public CompleteStepHandler() {
       register(PAST, PRESENT, FUTURE);
@@ -48,9 +47,6 @@ public class CompleteStepHandler extends AbstractStepHandler {
 
    /**
     * Gets the operand referenced in the step.
-    *
-    * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains the complete verb
@@ -66,9 +62,6 @@ public class CompleteStepHandler extends AbstractStepHandler {
 
    /**
     * Gets the duration referenced in the step.
-    *
-    * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains the complete verb
@@ -84,9 +77,6 @@ public class CompleteStepHandler extends AbstractStepHandler {
 
    /**
     * Gets the time unit referenced in the step.
-    *
-    * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains the complete verb
@@ -193,8 +183,8 @@ public class CompleteStepHandler extends AbstractStepHandler {
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
             keyword.equals(PAST.getVerb())
-            || keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
+                  || keyword.equals(PRESENT.getVerb())
+                  || keyword.equals(FUTURE.getVerb()),
             "the step cannot be processed by this handler!");
    }
 }

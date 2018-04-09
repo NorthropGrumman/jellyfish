@@ -49,7 +49,7 @@ public class WrappedDeclarationDefinition {
     */
    public static DeclarationDefinition toXtext(IWrapperResolver resolver, IMetadata metadata, IProperties properties) {
       if ((metadata == null || metadata.getJson() == null || metadata.getJson().isEmpty())
-         && (properties == null || properties.isEmpty())) {
+            && (properties == null || properties.isEmpty())) {
          return null;
       }
       DeclarationDefinition xtext = SystemDescriptorFactory.eINSTANCE.createDeclarationDefinition();

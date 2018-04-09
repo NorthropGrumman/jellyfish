@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
@@ -55,21 +56,24 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This implementation uses maven's .m2 local repository in combination with nexusConsolidated (found in gradle.properties) for the remote repository.
+ * This implementation uses maven's .m2 local repository in combination with nexusConsolidated
+ * (found in gradle.properties) for the remote repository.
  */
 @Component(service = IRepositoryService.class)
 public class RepositoryService implements IRepositoryService {
-   // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
-   private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
-      "(?<groupId>[^:\\s@]+)"
-         + ":(?<artifactId>[^:\\s@]+)"
-         + "(?::(?<extension>[^:\\s@]+)"
-         + "(?::(?<classifier>[^:\\s@]+))?)?"
-         + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
-   private static final String MAVEN_ENV = "M2_HOME";
-   private static final String MAVEN_PROPERTY_NAME = "maven.home";
+
    static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
    static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
+
+   // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
+   private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
+         "(?<groupId>[^:\\s@]+)"
+               + ":(?<artifactId>[^:\\s@]+)"
+               + "(?::(?<extension>[^:\\s@]+)"
+               + "(?::(?<classifier>[^:\\s@]+))?)?"
+               + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
+   private static final String MAVEN_ENV = "M2_HOME";
+   private static final String MAVEN_PROPERTY_NAME = "maven.home";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
    private static final String USER_HOME_PROPERTY_NAME = "user.home";
@@ -84,7 +88,7 @@ public class RepositoryService implements IRepositoryService {
    public Path getArtifact(String identifier) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
       Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
-         "invalid identifier: " + identifier);
+                                  "invalid identifier: " + identifier);
       ArtifactRequest request = new ArtifactRequest();
       request.setArtifact(new DefaultArtifact(identifier));
       request.setRepositories(remoteRepositories);
@@ -109,7 +113,7 @@ public class RepositoryService implements IRepositoryService {
    public Set<Path> getArtifactDependencies(String identifier, boolean transitive) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
       Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
-         "invalid identifier: " + identifier);
+                                  "invalid identifier: " + identifier);
       Artifact baseArtifact = new DefaultArtifact(identifier);
       CollectRequest request = new CollectRequest();
       request.setRoot(new Dependency(baseArtifact, null));
@@ -129,39 +133,40 @@ public class RepositoryService implements IRepositoryService {
       }
       if (transitive) {
          return result.getArtifactResults()
-                      .stream()
-                      .filter(artifactResult -> artifactResult.getArtifact() != null)
-                      .filter(artifactResult -> {
-                         Artifact artifact = artifactResult.getArtifact();
-                         return !(Objects.equals(artifact.getGroupId(), baseArtifact.getGroupId()) &&
-                            Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId()) &&
-                            Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier()) &&
-                            Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
-                      })
-                      .peek(artifactResult -> {
-                         if (artifactResult.isMissing() || !artifactResult.isResolved()) {
-                            artifactResult.getExceptions()
-                                          .forEach(exception -> logService.error(
-                                             RepositoryService.class, exception));
-                            throw new RepositoryServiceException(
-                               "Unable to retrieve transitive dependency " + artifactResult + " for " + identifier);
-                         }
-                      })
-                      .map(ArtifactResult::getArtifact)
-                      .map(Artifact::getFile)
-                      .filter(file -> file != null)
-                      .map(File::toPath)
-                      .collect(Collectors.toCollection(LinkedHashSet::new));
+               .stream()
+               .filter(artifactResult -> artifactResult.getArtifact() != null)
+               .filter(artifactResult -> {
+                  Artifact artifact = artifactResult.getArtifact();
+                  return !(Objects.equals(artifact.getGroupId(), baseArtifact.getGroupId())
+                                 && Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId())
+                                 && Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier())
+                                 && Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
+
+               })
+               .peek(artifactResult -> {
+                  if (artifactResult.isMissing() || !artifactResult.isResolved()) {
+                     artifactResult.getExceptions()
+                           .forEach(exception -> logService.error(
+                                 RepositoryService.class, exception));
+                     throw new RepositoryServiceException(
+                           "Unable to retrieve transitive dependency " + artifactResult + " for " + identifier);
+                  }
+               })
+               .map(ArtifactResult::getArtifact)
+               .map(Artifact::getFile)
+               .filter(file -> file != null)
+               .map(File::toPath)
+               .collect(Collectors.toCollection(LinkedHashSet::new));
       } else {
          return result.getRoot()
-                      .getChildren()
-                      .stream()
-                      .map(DependencyNode::getArtifact)
-                      .filter(artifact -> artifact != null)
-                      .map(Artifact::getFile)
-                      .filter(file -> file != null)
-                      .map(File::toPath)
-                      .collect(Collectors.toCollection(LinkedHashSet::new));
+               .getChildren()
+               .stream()
+               .map(DependencyNode::getArtifact)
+               .filter(artifact -> artifact != null)
+               .map(Artifact::getFile)
+               .filter(file -> file != null)
+               .map(File::toPath)
+               .collect(Collectors.toCollection(LinkedHashSet::new));
       }
    }
 
@@ -223,10 +228,10 @@ public class RepositoryService implements IRepositoryService {
    }
 
    /**
-    * Returns a remote repository to Nexus. This repository is found using the variable {@value #NEXUS_CONSOLIDATED} with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These
+    * Returns a remote repository to Nexus. This repository is found using the variable {@value #NEXUS_CONSOLIDATED}
+    * with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These
     * variables are
     * determined using the rules in the following order:
-    *
     * <ol>
     * <li>From {@link System#getProperty(String)}</li>
     * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the current working directory</li>
@@ -254,7 +259,7 @@ public class RepositoryService implements IRepositoryService {
             properties.load(Files.newBufferedReader(gradlePropertiesFile));
          } catch (IOException e) {
             logService.warn(RepositoryService.class,
-               "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
+                            "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
          }
       }
       Path cwdPropertiesFile = Paths.get(GRADLE_PROPERTIES_FILENAME);
@@ -267,31 +272,33 @@ public class RepositoryService implements IRepositoryService {
       }
 
       String nexusConsolidated = System.getProperty(NEXUS_CONSOLIDATED,
-         properties.getProperty(NEXUS_CONSOLIDATED, System.getenv(NEXUS_CONSOLIDATED)));
+                                                    properties.getProperty(NEXUS_CONSOLIDATED,
+                                                                           System.getenv(NEXUS_CONSOLIDATED)));
       String nexusUsername = System.getProperty(NEXUS_USERNAME,
-         properties.getProperty(NEXUS_USERNAME, System.getenv(NEXUS_USERNAME)));
+                                                properties.getProperty(NEXUS_USERNAME, System.getenv(NEXUS_USERNAME)));
       String nexusPassword = System.getProperty(NEXUS_PASSWORD,
-         properties.getProperty(NEXUS_PASSWORD, System.getenv(NEXUS_PASSWORD)));
+                                                properties.getProperty(NEXUS_PASSWORD, System.getenv(NEXUS_PASSWORD)));
 
       if (nexusConsolidated == null) {
          logService.warn(RepositoryService.class,
-            "Unable to find " + NEXUS_CONSOLIDATED
-               + " from system properties, " + GRADLE_PROPERTIES_FILENAME + ", or system environment variables");
+                         "Unable to find " + NEXUS_CONSOLIDATED
+                               + " from system properties, " + GRADLE_PROPERTIES_FILENAME
+                               + ", or system environment variables");
          return Optional.empty();
       }
 
       RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated);
       if (nexusUsername != null && nexusPassword != null) {
          builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername)
-                                                              .addPassword(nexusPassword)
-                                                              .build());
+                                         .addPassword(nexusPassword)
+                                         .build());
       }
       return Optional.of(builder.build());
    }
 
    /**
-    * Returns the path to the maven local directory. This directory is determined using the rules in the following order:
-    *
+    * Returns the path to the maven local directory. This directory is determined using the rules in the following
+    * order:
     * <ol>
     * <li>From maven user settings.xml found in {@value #USER_HOME_PROPERTY_NAME}/.m2</li>
     * <li>From maven global settings.xml found in {@value #MAVEN_PROPERTY_NAME}/conf</li>
@@ -321,10 +328,10 @@ public class RepositoryService implements IRepositoryService {
       Settings settings;
       try {
          settings = new DefaultSettingsBuilder().setSettingsReader(new DefaultSettingsReader())
-                                                .setSettingsWriter(new DefaultSettingsWriter())
-                                                .setSettingsValidator(new DefaultSettingsValidator())
-                                                .build(settingsRequest)
-                                                .getEffectiveSettings();
+               .setSettingsWriter(new DefaultSettingsWriter())
+               .setSettingsValidator(new DefaultSettingsValidator())
+               .build(settingsRequest)
+               .getEffectiveSettings();
       } catch (SettingsBuildingException e) {
          return Optional.empty();
       }

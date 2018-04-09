@@ -17,6 +17,9 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
 
    private final IPropertyValues<IPropertyDataValue> values;
 
+   /**
+    * Creates a new wrapped data property.
+    */
    public WrappedDataProperty(IWrapperResolver resolver,
                               ReferencedPropertyFieldDeclaration wrapped,
                               IPropertyValues<IPropertyDataValue> values) {
@@ -47,6 +50,9 @@ public class WrappedDataProperty extends AbstractWrappedProperty<ReferencedPrope
       return DataTypes.DATA;
    }
 
+   /**
+    * Converts the given property into an XText object.
+    */
    public static ReferencedPropertyFieldDeclaration toXtextReferencedPropertyFieldDeclaration(IWrapperResolver resolver,
                                                                                               IProperty property) {
       Preconditions.checkNotNull(resolver, "resolver must not be null!");

@@ -62,6 +62,9 @@ public class AggregatedDataViewTest {
                  view.getFields().getByName("c").isPresent());
    }
 
+   /**
+    * Creates a collection of data fields with the given names.
+    */
    public static INamedChildCollection<IData, IDataField> fields(String... names) {
       NamedChildCollection<IData, IDataField> collection = new NamedChildCollection<>();
       if (names != null) {

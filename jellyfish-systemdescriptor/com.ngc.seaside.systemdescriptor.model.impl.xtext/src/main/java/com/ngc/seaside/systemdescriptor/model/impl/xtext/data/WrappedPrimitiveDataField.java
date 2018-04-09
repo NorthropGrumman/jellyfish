@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -14,7 +15,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 
 /**
  * Adapts a {@link PrimitiveDataFieldDeclaration} instance to an {@link IDataField}.
- *
  * This class is not threadsafe.
  */
 public class WrappedPrimitiveDataField extends AbstractWrappedDataField<PrimitiveDataFieldDeclaration>
@@ -26,6 +26,9 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
    // getInterfaces() only returns the interfaces declared by the class directly and not the interfaces of the sub-
    // class.
 
+   /**
+    * Creates a new data field.
+    */
    public WrappedPrimitiveDataField(IWrapperResolver resolver, PrimitiveDataFieldDeclaration wrapped) {
       super(resolver, wrapped);
    }
@@ -40,7 +43,7 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkArgument(type != DataTypes.DATA,
                                   "the type of this field must be a primitive, it cannot be changed to reference other"
-                                  + " data types!");
+                                        + " data types!");
       wrapped.setType(PrimitiveDataType.valueOf(type.name()));
       return this;
    }
@@ -53,7 +56,7 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
    @Override
    public IDataField setReferencedDataType(IData dataType) {
       throw new IllegalStateException("the type of this field must be a primitive, it cannot be changed to reference"
-                                      + " other data types!");
+                                            + " other data types!");
    }
 
    @Override
@@ -64,7 +67,7 @@ public class WrappedPrimitiveDataField extends AbstractWrappedDataField<Primitiv
    @Override
    public IDataField setReferencedEnumeration(IEnumeration enumeration) {
       throw new IllegalStateException("the type of this field must be a primitive, it cannot be changed to reference"
-                                      + " enumerations!");
+                                            + " enumerations!");
    }
 
    /**

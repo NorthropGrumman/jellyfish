@@ -255,7 +255,7 @@ public class XTextSystemDescriptorServiceIT {
    }
 
    @Ignore("This test cannot run with the build because XText holds state statically; however it is still useful to run"
-           + " by itself to make sure the standalone configuration works.")
+         + " by itself to make sure the standalone configuration works.")
    @Test
    public void testDoesCreateStandaloneServiceWithGuice() {
       Collection<Module> modules = new ArrayList<>();

@@ -13,7 +13,6 @@ import java.util.function.Function;
 
 /**
  * A type of auto wrapping collection that also implements {@code INamedChildCollection}.
- *
  * This class is not threadsafe.
  *
  * @param <X> the type of {@code EObject} that is contained in the wrapped list

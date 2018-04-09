@@ -3,11 +3,12 @@ package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 import org.eclipse.xtext.resource.XtextResource;
@@ -30,12 +31,21 @@ public class ParsingDelegate {
    private final ILogService logService;
    private final ParsingUtils utils;
 
+   /**
+    * Creates a new parsing delegate.
+    */
    @Inject
    public ParsingDelegate(ILogService logService, IRepositoryService repositoryService) {
       this.logService = Preconditions.checkNotNull(logService, "logService may not be null!");
       this.utils = new ParsingUtils(repositoryService);
    }
 
+   /**
+    * Parses a system descriptor project located at the given directory.
+    *
+    * @param projectDirectory the directory that contains the system descriptor project
+    * @return the results of parsing the project
+    */
    public IParsingResult parseProject(Path projectDirectory) {
       Preconditions.checkNotNull(projectDirectory, "projectDirectory may not be null!");
       Preconditions.checkArgument(Files.isDirectory(projectDirectory), "%s is not a directory!", projectDirectory);
@@ -47,7 +57,13 @@ public class ParsingDelegate {
          throw new ParsingException(e.getMessage(), e);
       }
    }
-   
+
+   /**
+    * Parses a system descriptor project identified by the given group ID, artifact ID, and version.
+    *
+    * @param gav the group ID, artifact ID, and version in the format {@code groupId:artifactId:version}
+    * @return the results of parsing the project
+    */
    public IParsingResult parseProject(String gav) {
       Preconditions.checkNotNull(gav, "gav may not be null!");
       Preconditions.checkArgument(gav.matches("[^:\\s]+:[^:\\s]+:[^:\\s]+"), "invalid gav: " + gav);
@@ -59,6 +75,12 @@ public class ParsingDelegate {
       }
    }
 
+   /**
+    * Parses the given system descriptor files.
+    *
+    * @param paths the files to parse
+    * @return the results of parsing the files
+    */
    public IParsingResult parseFiles(Collection<Path> paths) {
       Preconditions.checkNotNull(paths, "paths may not be null!");
       Preconditions.checkArgument(!paths.isEmpty(), "paths is empty!");
@@ -79,15 +101,15 @@ public class ParsingDelegate {
 
       if (result.isSuccessful()) {
          logService.debug(getClass(),
-            "Successfully parsed %s files in %d ms.",
-            paths.size(),
-            timer.elapsed(TimeUnit.MILLISECONDS));
+                          "Successfully parsed %s files in %d ms.",
+                          paths.size(),
+                          timer.elapsed(TimeUnit.MILLISECONDS));
       } else {
          logService.debug(getClass(),
-            "Parsed %s files in %d ms but %d issues detected.",
-            paths.size(),
-            timer.elapsed(TimeUnit.MILLISECONDS),
-            result.getIssues().size());
+                          "Parsed %s files in %d ms but %d issues detected.",
+                          paths.size(),
+                          timer.elapsed(TimeUnit.MILLISECONDS),
+                          result.getIssues().size());
       }
 
       return result;

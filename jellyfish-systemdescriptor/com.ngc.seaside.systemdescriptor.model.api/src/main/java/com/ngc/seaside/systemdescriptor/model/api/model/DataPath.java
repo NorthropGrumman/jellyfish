@@ -203,9 +203,9 @@ class DataPath implements IDataPath {
          return false;
       }
       DataPath path = (DataPath) o;
-      return Objects.equals(isOutput, path.isOutput) &&
-             Objects.equals(start, path.start) &&
-             Objects.equals(fields, path.fields);
+      return Objects.equals(isOutput, path.isOutput)
+             && Objects.equals(start, path.start)
+             && Objects.equals(fields, path.fields);
    }
 
    @Override
