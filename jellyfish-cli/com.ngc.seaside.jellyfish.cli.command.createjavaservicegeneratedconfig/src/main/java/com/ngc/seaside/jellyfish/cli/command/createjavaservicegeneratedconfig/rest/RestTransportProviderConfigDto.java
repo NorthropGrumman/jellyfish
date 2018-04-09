@@ -21,7 +21,7 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
    private static final String REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
          "com.ngc.seaside.service.transport.impl.provider.rest.RestTransportProvider";
    private static final String REST_CONFIGURATION_CLASS_NAME_SUFFIX = "RestConfiguration";
-   private final static String REST_PROVIDER_VARIABLE_NAME = "restProvider";
+   private final static String REST_PROVIDER_VARIABLE_NAME = "sparkProvider";
    private static final String REST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.spark";
    private static final String REST_TOPIC_CLASS_NAME = "SparkTopic";
    private static final String REST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
