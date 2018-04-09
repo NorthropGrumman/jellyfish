@@ -1,14 +1,5 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.xtext.validation.Check;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
@@ -18,36 +9,42 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 import com.ngc.seaside.systemdescriptor.utils.SdUtils;
 import com.ngc.seaside.systemdescriptor.validation.util.ValidatorUtil;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.xtext.validation.Check;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
- * @author ceacide
- *
- *  Validates the refine Part Declaration portion of Parts  
+ * Validates the refine Part Declaration portion of Parts
  */
 public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
-	/**
-	 * Entry into this validator for xtext 
-	 * 
-	 * @param part thats being validated
-	 */
-	@Check
-	public void checkLinkDeclaration(PartDeclaration part) {
+   /**
+    * Entry into this validator for xtext
+    *
+    * @param part thats being validated
+    */
+   @Check
+   public void checkLinkDeclaration(PartDeclaration part) {
 
-		if (part.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
-			//Don't change order unless you have thought about what 
-			// should be checked first
-			setFieldDeclarationError(ValidatorUtil.checkForNonRefinedModelUsingRefinedfields(part),
-					part);
-			setFieldDeclarationError(ValidatorUtil.checkForRefinementOfAFieldThatsNotInModelBeingRefined(part),
-					part);
-		}
+      if (part.eClass().equals(SystemDescriptorPackage.Literals.REFINED_PART_DECLARATION)) {
+         //Don't change order unless you have thought about what
+         // should be checked first
+         setFieldDeclarationError(ValidatorUtil.checkForNonRefinedModelUsingRefinedfields(part),
+                                  part);
+         setFieldDeclarationError(ValidatorUtil.checkForRefinementOfAFieldThatsNotInModelBeingRefined(part),
+                                  part);
+      }
 
-	}
-	
-	/**
+   }
+
+   /**
     * Checks that the properties are not being redefined on Parts.
-    * 
+    *
     * @param properties that are being checked
     */
    @Check
@@ -63,9 +60,9 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
                PropertyFieldDeclaration parentFieldDec = hierarchyLinkProps.get(propFieldDec.getName());
                Model parentFieldDecModel = SdUtils.getContainingModel(parentFieldDec);
                String msg = String.format(
-                  "Cannot redefine property '%s' because '%s' model has that property already defined.",
-                  propFieldDec.eClass().getName(),
-                  parentFieldDecModel.getName());
+                     "Cannot redefine property '%s' because '%s' model has that property already defined.",
+                     propFieldDec.eClass().getName(),
+                     parentFieldDecModel.getName());
                error(msg, properties, null);
                break;
             }
@@ -75,7 +72,7 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
 
    /**
     * Goes through the Model hierarchy and retrieves all the Parts properties
-    * 
+    *
     * @param model thats the starting point in the hierarchy
     * @return A collection of all the properties
     */
@@ -88,7 +85,7 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
          }
          model = model.getRefinedModel();
       } while (model != null);
-      
+
       for (PartDeclaration partDec : parts) {
          if (partDec instanceof PartDeclaration) {
             if (partDec.getDefinition() != null) {
@@ -104,11 +101,11 @@ public class PartsValidator extends AbstractUnregisteredSystemDescriptorValidato
       return fields;
    }
 
-	private void setFieldDeclarationError(String error, FieldDeclaration requirement){
-		if (!error.isEmpty()) {
-			error(error, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
-		}
-	}
-	
+   private void setFieldDeclarationError(String error, FieldDeclaration requirement) {
+      if (!error.isEmpty()) {
+         error(error, requirement, SystemDescriptorPackage.Literals.FIELD_DECLARATION__NAME);
+      }
+   }
+
 }
 

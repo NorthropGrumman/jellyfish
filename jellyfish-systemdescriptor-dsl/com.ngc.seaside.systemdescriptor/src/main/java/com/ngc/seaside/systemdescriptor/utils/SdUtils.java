@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.utils;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
@@ -25,27 +26,28 @@ import java.util.function.Consumer;
  */
 public class SdUtils {
 
-   private SdUtils() {}
+   private SdUtils() {
+   }
 
    /**
     * Gets the raw System Descriptor source for given attribute of the given object.
-    * 
+    *
     * @return the raw System Descriptor source for given attribute of the given object
     */
    public static String getRawSource(EObject semanticObject, EStructuralFeature structuralFeature) {
       List<INode> nodes = NodeModelUtils.findNodesForFeature(semanticObject, structuralFeature);
       Preconditions.checkArgument(!nodes.isEmpty(),
-         "could not find source for %s of object of type %s whose value is %s!",
-         structuralFeature,
-         semanticObject.getClass().getName(),
-         semanticObject);
+                                  "could not find source for %s of object of type %s whose value is %s!",
+                                  structuralFeature,
+                                  semanticObject.getClass().getName(),
+                                  semanticObject);
       return NodeModelUtils.getTokenText(nodes.get(0));
    }
 
    /**
     * Retrieves a container of the given type.
-    * 
-    * @param obj the object that is contained an instance of {@code clazz}
+    *
+    * @param obj   the object that is contained an instance of {@code clazz}
     * @param clazz the type of container to find
     * @return the container of the given type the given object belongs to
     * @throws IllegalArgumentException if the given object no container of the given type
@@ -57,9 +59,8 @@ public class SdUtils {
    }
 
    /**
-    * 
     * Retrieves the model that this object belongs to.
-    * 
+    *
     * @param obj the object that is contained by a model
     * @return the model for this object
     * @throws IllegalArgumentException if the given object has not model container
@@ -70,8 +71,8 @@ public class SdUtils {
 
    /**
     * Traverse the refinement hierarchy of a model, invoking the given consumer on each model.
-    * 
-    * @param model the model whose hierarchy is being traversed
+    *
+    * @param model    the model whose hierarchy is being traversed
     * @param consumer the consumer to invoke for each model
     */
    public static void traverseModelRefinementHierarchy(Model model, Consumer<Model> consumer) {
@@ -83,8 +84,8 @@ public class SdUtils {
 
    /**
     * Traverse the extension hierarchy of a data type, invoking the given consumer on each data.
-    * 
-    * @param model the data whose hierarchy is being traversed
+    *
+    * @param data     the data whose hierarchy is being traversed
     * @param consumer the consumer to invoke for each data
     */
    public static void traverseDataExtensionHierarchy(Data data, Consumer<Data> consumer) {
@@ -96,7 +97,7 @@ public class SdUtils {
 
    /**
     * Gets all the input declarations declared in the given model and all refined models.
-    * 
+    *
     * @param model the model to get the inputs for
     * @return all the input declarations declared in the given model and all refined models
     */
@@ -112,21 +113,21 @@ public class SdUtils {
 
    /**
     * Gets the input declaration from the given model with the given name.
-    * 
-    * @param model the model to search for the field
+    *
+    * @param model     the model to search for the field
     * @param fieldName the name of the field
     * @return the input declaration or {@code null} if no declaration with the given name exists
     */
    public static InputDeclaration findInputDeclaration(Model model, String fieldName) {
       return getInputDeclarations(model).stream()
-                                        .filter(p -> p.getName().equals(fieldName))
-                                        .findFirst()
-                                        .orElse(null);
+            .filter(p -> p.getName().equals(fieldName))
+            .findFirst()
+            .orElse(null);
    }
 
    /**
     * Gets all the output declarations declared in the given model and all refined models.
-    * 
+    *
     * @param model the model to get the outputs for
     * @return all the output declarations declared in the given model and all refined models
     */
@@ -142,21 +143,21 @@ public class SdUtils {
 
    /**
     * Gets the output declaration from the given model with the given name.
-    * 
-    * @param model the model to search for the field
+    *
+    * @param model     the model to search for the field
     * @param fieldName the name of the field
     * @return the output declaration or {@code null} if no declaration with the given name exists
     */
    public static OutputDeclaration findOutputDeclaration(Model model, String fieldName) {
       return getOutputDeclarations(model).stream()
-                                         .filter(p -> p.getName().equals(fieldName))
-                                         .findFirst()
-                                         .orElse(null);
+            .filter(p -> p.getName().equals(fieldName))
+            .findFirst()
+            .orElse(null);
    }
 
    /**
     * Gets all the part declarations declared in the given model and all refined models.
-    * 
+    *
     * @param model the model to get the parts for
     * @return all the part declarations declared in the given model and all refined models
     */
@@ -172,21 +173,21 @@ public class SdUtils {
 
    /**
     * Gets the part declaration from the given model with the given name.
-    * 
-    * @param model the model to search for the field
+    *
+    * @param model     the model to search for the field
     * @param fieldName the name of the field
     * @return the part declaration or {@code null} if no declaration with the given name exists
     */
    public static PartDeclaration findPartDeclaration(Model model, String fieldName) {
       return getAllPartDeclarations(model).stream()
-                                          .filter(p -> p.getName().equals(fieldName))
-                                          .findFirst()
-                                          .orElse(null);
+            .filter(p -> p.getName().equals(fieldName))
+            .findFirst()
+            .orElse(null);
    }
 
    /**
     * Gets all the requirement declarations declared in the given model and all refined models.
-    * 
+    *
     * @param model the model to get the parts for
     * @return all the requirement declarations declared in the given model and all refined models
     */
@@ -202,35 +203,35 @@ public class SdUtils {
 
    /**
     * Gets the requirement declaration from the given model with the given name.
-    * 
-    * @param model model the model to search for the field
+    *
+    * @param model     model the model to search for the field
     * @param fieldName the name of the field
     * @return the requirement declaration or {@code null} if no declaration with the given name exists
     */
    public static RequireDeclaration findRequireDeclaration(Model model, String fieldName) {
       return getAllRequireDeclarations(model).stream()
-                                             .filter(p -> p.getName().equals(fieldName))
-                                             .findFirst()
-                                             .orElse(null);
+            .filter(p -> p.getName().equals(fieldName))
+            .findFirst()
+            .orElse(null);
    }
 
    /**
     * Gets the data field with the given name.
-    * 
-    * @param data the data type to get the field for
+    *
+    * @param data      the data type to get the field for
     * @param fieldName the name of the field
     * @return the field or {@code null} if the field could not be found
     */
    public static DataFieldDeclaration findDataFieldDeclaration(Data data, String fieldName) {
       return getAllDataFields(data).stream()
-                                   .filter(f -> f.getName().equals(fieldName))
-                                   .findFirst()
-                                   .orElse(null);
+            .filter(f -> f.getName().equals(fieldName))
+            .findFirst()
+            .orElse(null);
    }
 
    /**
     * Gets all the data fields declared in the given data type and all extended data types.
-    * 
+    *
     * @param data the data type to get the fields for
     * @return all the data fields declared in the given data type and all extended data types
     */

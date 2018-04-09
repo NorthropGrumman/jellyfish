@@ -7,4 +7,5 @@ package com.ngc.seaside.systemdescriptor.validation;
  * is encountered.
  */
 public class AbortValidationDueToLinkingFailureException extends RuntimeException {
+
 }

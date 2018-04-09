@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.validation;
 
 import com.google.common.base.Objects;
+
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
@@ -22,6 +23,9 @@ import java.util.Set;
 
 public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorValidator {
 
+   /**
+    * Validates that a properties contain unique names and keywords are not used for names.
+    */
    @Check
    public void checkNames(Properties properties) {
       Set<String> propertyNames = new HashSet<>();
@@ -29,23 +33,22 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
          String name = property.getName();
          if (name.indexOf('^') >= 0) {
             String msg = String.format(
-               "Cannot use '^' to escape the field named %s.",
-               name);
+                  "Cannot use '^' to escape the field named %s.",
+                  name);
             error(msg, property, SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION__NAME);
          }
          if (!propertyNames.add(name)) {
             String msg = String.format(
-               "There is already another property declared with the name %s.",
-               name);
+                  "There is already another property declared with the name %s.",
+                  name);
             error(msg, property, SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION__NAME);
          }
       }
    }
 
    /**
-    * Checks that the properties are valid for the given parent. Properties are only allowed for models, parts, requirements and links.
-    * 
-    * @param properties
+    * Checks that the properties are valid for the given parent. Properties are only allowed for models, parts
+    * requirements and links.
     */
    @Check
    public void checkParent(Properties properties) {
@@ -53,9 +56,9 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
          return;
       }
       Collection<EClass> validPropertiesContainers = Arrays.asList(
-         SystemDescriptorPackage.Literals.PART_DECLARATION,
-         SystemDescriptorPackage.Literals.REQUIRE_DECLARATION,
-         SystemDescriptorPackage.Literals.LINK_DECLARATION);
+            SystemDescriptorPackage.Literals.PART_DECLARATION,
+            SystemDescriptorPackage.Literals.REQUIRE_DECLARATION,
+            SystemDescriptorPackage.Literals.LINK_DECLARATION);
 
       EObject parent = properties;
       EClass cls = null;
@@ -76,8 +79,6 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
 
    /**
     * Checks that the properties are not being redefined on links.
-    * 
-    * @param properties
     */
    @Check
    public void checkRedefiningLinkProperties(Properties properties) {
@@ -92,9 +93,9 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
                PropertyFieldDeclaration parentFieldDec = hierarchyLinkProps.get(propFieldDec.getName());
                Model parentFieldDecModel = getModelForProps(parentFieldDec);
                String msg = String.format(
-                  "Cannot redefine property '%s' because '%s' model has that property already defined.",
-                  propFieldDec.eClass().getName(),
-                  parentFieldDecModel.getName());
+                     "Cannot redefine property '%s' because '%s' model has that property already defined.",
+                     propFieldDec.eClass().getName(),
+                     parentFieldDecModel.getName());
                error(msg, properties, null);
                break;
             }
@@ -103,9 +104,8 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
    }
 
    /**
-    * 
     * Grabs the container that contains the field declaration for this requirement
-    * 
+    *
     * @param proFieldDec that we want its Model container for
     * @return Model that contains the refined part
     */
@@ -127,7 +127,7 @@ public class PropertiesValidator extends AbstractUnregisteredSystemDescriptorVal
 
    /**
     * Goes through the Model hierarchy and retrieves all the links properties
-    * 
+    *
     * @param model thats the starting point in the hierarchy
     * @return A collection of all the properties
     */
