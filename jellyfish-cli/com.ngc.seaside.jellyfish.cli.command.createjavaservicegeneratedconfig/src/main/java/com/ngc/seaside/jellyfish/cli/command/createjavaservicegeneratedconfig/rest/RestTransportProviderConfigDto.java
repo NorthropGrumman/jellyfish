@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class RestTransportProviderConfigDto implements ITransportProviderConfigDto<RestDto> {
+public class RestTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
    public static final String REST_TEMPLATE_SUFFIX = "rest";
 
    private static final String REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
@@ -34,7 +34,7 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
    }
 
    @Override
-   public TransportProviderDto getTransportProviderDto(RestDto dto) {
+   public TransportProviderDto getTransportProviderDto(SparkDto dto) {
       return new TransportProviderDto()
             .setComponentName(REST_TRANSPORT_PROVIDER_COMPONENT_NAME)
             .setConfigurationType(dto.getModelName() + REST_CONFIGURATION_CLASS_NAME_SUFFIX)
@@ -44,11 +44,11 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
    }
 
    @Override
-   public Optional<RestDto> getConfigurationDto(GeneratedServiceConfigDto serviceConfigDto,
-                                                IJellyFishCommandOptions options, IModel model, String topicsClassName,
-                                                Map<String, IDataReferenceField> topics) {
-      RestDto restDto = new RestDto().setBaseDto(serviceConfigDto)
-                                     .setTopicsImport(topicsClassName);
+   public Optional<SparkDto> getConfigurationDto(GeneratedServiceConfigDto serviceConfigDto,
+                                                 IJellyFishCommandOptions options, IModel model, String topicsClassName,
+                                                 Map<String, IDataReferenceField> topics) {
+      SparkDto sparkDto = new SparkDto().setBaseDto(serviceConfigDto)
+                                        .setTopicsImport(topicsClassName);
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
@@ -71,16 +71,16 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
                                                             field.getName() + (configurations.size() > 1 ? count : ""))
                                                       .setName(topicsPrefix + topicName);
 
-            restDto.addTopic(topicDto);
+            sparkDto.addTopic(topicDto);
             count++;
          }
       }
 
-      if (restDto.getTopics().isEmpty()) {
+      if (sparkDto.getTopics().isEmpty()) {
          return Optional.empty();
       }
 
-      return Optional.of(restDto);
+      return Optional.of(sparkDto);
    }
 
    @Override
