@@ -107,7 +107,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-            new MulticastTransportProviderConfigDto(transportConfigService),
+            new MulticastTransportProviderConfigDto(transportConfigService, true),
             new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, true));
 
       clean = generateAndAddTransportProviders(
