@@ -1,9 +1,7 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,8 +28,10 @@ import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.eclipse.xtext.ui.label.AbstractLabelProvider;
 import org.eclipse.xtext.util.ITextRegion;
 
-import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * A dialog for selecting imports.
@@ -43,9 +43,9 @@ public class DialogSelector implements IReferenceSelector {
 
    /**
     * Display a dialog for the user to select between the given choices and returns the choice.
-    * 
-    * @param choices collection of choices
-    * @param usage region in the document that is under consideration, can be null
+    *
+    * @param choices  collection of choices
+    * @param usage    region in the document that is under consideration, can be null
     * @param resource resource
     * @return the choice or {@link Optional#empty()} if no choice was made
     */
@@ -59,7 +59,7 @@ public class DialogSelector implements IReferenceSelector {
       Shell shell = Display.getDefault().getActiveShell();
       ChoiceDialog dialog = new ChoiceDialog(shell, new LabelProvider(labelProvider), new ContentProvider());
       dialog.setInput(choices);
-      dialog.setInitialSelections(new Object[] { choices.iterator().next() });
+      dialog.setInitialSelections(new Object[]{choices.iterator().next()});
       int result = dialog.open();
       if (previousSelection != null) {
          editor.getSelectionProvider().setSelection(previousSelection);
@@ -79,7 +79,7 @@ public class DialogSelector implements IReferenceSelector {
 
    private static ISelection showSelectionInEditor(XtextEditor editor, ITextRegion usage, XtextResource resource) {
       boolean isRevealUsages = editor.getDocument()
-                                     .readOnly(state -> Objects.equals(state.getURI(), resource.getURI()));
+            .readOnly(state -> Objects.equals(state.getURI(), resource.getURI()));
       ISelection originalSelection = null;
       if (isRevealUsages && usage != null) {
          originalSelection = editor.getSelectionProvider().getSelection();
@@ -89,11 +89,14 @@ public class DialogSelector implements IReferenceSelector {
    }
 
    private static class ContentProvider implements IStructuredContentProvider {
-      @Override
-      public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
       @Override
-      public void dispose() {}
+      public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+      }
+
+      @Override
+      public void dispose() {
+      }
 
       @Override
       public Object[] getElements(Object inputElement) {

@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix;
 
 import com.google.inject.Inject;
+
 import com.ngc.seaside.systemdescriptor.ui.quickfix.imports.ImportQuickfixProvider;
 import com.ngc.seaside.systemdescriptor.ui.quickfix.pkg.PackageQuickfixProvider;
 
@@ -16,23 +17,25 @@ import java.util.Set;
 
 /**
  * Custom quickfixes.
- *
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
 public class SystemDescriptorQuickfixProvider implements IssueResolutionProvider {
 
    @Inject
    private ImportQuickfixProvider importProvider;
-   
+
    @Inject
    private PackageQuickfixProvider packageProvider;
-   
+
+   /**
+    * Gets the issues resolutions providers for imports.
+    */
    public Set<IssueResolutionProvider> getProviders() {
       Set<IssueResolutionProvider> providers = new LinkedHashSet<>(Arrays.asList(importProvider, packageProvider));
       providers.remove(null);
       return providers;
    }
-   
+
    @Override
    public List<IssueResolution> getResolutions(Issue issue) {
       List<IssueResolution> list = new ArrayList<>();

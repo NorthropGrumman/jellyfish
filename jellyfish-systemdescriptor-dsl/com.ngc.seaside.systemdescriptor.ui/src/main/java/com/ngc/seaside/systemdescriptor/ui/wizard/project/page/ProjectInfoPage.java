@@ -19,16 +19,19 @@ import java.util.function.Supplier;
  * This class enables the user to enter the default values for the gradle project.
  */
 public class ProjectInfoPage extends WizardPage {
+
    private static final String DEFAULT_GROUP = "com.ngc";
    private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
    private static final String DEFAULT_CLI_VERSION = "1.9.0";
 
-   private final List<Function<String, String>> VALIDATORS = Arrays.asList(
-      name -> name != null && name.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null : "Invalid project name",
-      group -> group != null && group.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null : "Invalid group ID",
-      version -> version != null && version.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null : "Invalid version",
-      cliVersion -> cliVersion != null && cliVersion.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null : "Invalid version");
-   private final Supplier<String> DEFAULT_PROJECT_NAME;
+   private static final List<Function<String, String>> VALIDATORS = Arrays.asList(
+         name -> name != null && name.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null
+                                                                                         : "Invalid project name",
+         group -> group != null && group.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null : "Invalid group ID",
+         version -> version != null && version.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null : "Invalid version",
+         cliVersion -> cliVersion != null && cliVersion.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null
+                                                                                              : "Invalid version");
+   private final Supplier<String> defaultProjectName;
    private Text projectNameField;
    private Text groupField;
    private Text versionField;
@@ -36,28 +39,34 @@ public class ProjectInfoPage extends WizardPage {
    private Composite container;
    private boolean hasBeenVisible = false;
 
+   /**
+    * Creates a new project info page.
+    */
    public ProjectInfoPage(Supplier<String> defaultProjectName) {
       super("Project Info Page");
       setTitle("Project Info Page");
       setDescription("Enter gradle project information");
-      this.DEFAULT_PROJECT_NAME = defaultProjectName;
+      this.defaultProjectName = defaultProjectName;
    }
 
    @Override
    public void setVisible(boolean visible) {
       if (!hasBeenVisible && visible) {
          hasBeenVisible = true;
-         projectNameField.setText(DEFAULT_PROJECT_NAME.get());
+         projectNameField.setText(defaultProjectName.get());
          setPageComplete(finished());
       }
       super.setVisible(visible);
    }
 
+   /**
+    * I don't know what this does.  Or why its public.
+    */
    public boolean finished() {
       return VALIDATORS.get(0).apply(projectNameField.getText()) == null
-         && VALIDATORS.get(1).apply(groupField.getText()) == null
-         && VALIDATORS.get(2).apply(versionField.getText()) == null
-         && VALIDATORS.get(3).apply(cliField.getText()) == null;
+            && VALIDATORS.get(1).apply(groupField.getText()) == null
+            && VALIDATORS.get(2).apply(versionField.getText()) == null
+            && VALIDATORS.get(3).apply(cliField.getText()) == null;
    }
 
    @Override
@@ -67,21 +76,21 @@ public class ProjectInfoPage extends WizardPage {
       final int TEXT_STYLE = SWT.DRAW_TAB | SWT.BORDER | SWT.FILL;
 
       createField(() -> projectNameField = new Text(container, TEXT_STYLE),
-         "Project Name",
-         DEFAULT_PROJECT_NAME.get(),
-         VALIDATORS.get(0));
+                  "Project Name",
+                  defaultProjectName.get(),
+                  VALIDATORS.get(0));
       createField(() -> groupField = new Text(container, TEXT_STYLE),
-         "Group ID",
-         DEFAULT_GROUP,
-         VALIDATORS.get(1));
+                  "Group ID",
+                  DEFAULT_GROUP,
+                  VALIDATORS.get(1));
       createField(() -> versionField = new Text(container, TEXT_STYLE),
-         "Version",
-         DEFAULT_VERSION,
-         VALIDATORS.get(2));
+                  "Version",
+                  DEFAULT_VERSION,
+                  VALIDATORS.get(2));
       createField(() -> cliField = new Text(container, TEXT_STYLE),
-         "Jellyfish Gradle Plugins Version",
-         DEFAULT_CLI_VERSION,
-         VALIDATORS.get(3));
+                  "Jellyfish Gradle Plugins Version",
+                  DEFAULT_CLI_VERSION,
+                  VALIDATORS.get(3));
 
       setControl(container);
       setPageComplete(finished());
@@ -121,7 +130,7 @@ public class ProjectInfoPage extends WizardPage {
    }
 
    private void createField(Supplier<Text> textSupplier, String name, String defaultValue,
-            Function<String, String> validator) {
+                            Function<String, String> validator) {
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       Label label = new Label(container, SWT.NONE);
       label.setText(name + ":");
