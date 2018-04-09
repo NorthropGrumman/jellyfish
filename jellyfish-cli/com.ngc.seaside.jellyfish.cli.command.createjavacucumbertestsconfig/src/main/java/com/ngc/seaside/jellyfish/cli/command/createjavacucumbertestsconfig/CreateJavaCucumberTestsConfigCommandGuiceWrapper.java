@@ -1,13 +1,17 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
 public class CreateJavaCucumberTestsConfigCommandGuiceWrapper implements IJellyFishCommand {
@@ -16,15 +20,22 @@ public class CreateJavaCucumberTestsConfigCommandGuiceWrapper implements IJellyF
 
    @Inject
    public CreateJavaCucumberTestsConfigCommandGuiceWrapper(ILogService logService,
-                                   IBuildManagementService buildManagementService,
-                                   ITemplateService templateService,
-                                   IPackageNamingService packageNamingService,
-                                   IProjectNamingService projectNamingService) {
+                                                           ITemplateService templateService,
+                                                           IProjectNamingService projectNamingService,
+                                                           IPackageNamingService packageNamingService,
+                                                           IBuildManagementService buildManagementService,
+                                                           ITransportConfigurationService transportConfigService,
+                                                           IScenarioService scenarioService,
+                                                           IJavaServiceGenerationService generateService) {
       delegate.setLogService(logService);
-      delegate.setBuildManagementService(buildManagementService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
+      delegate.setBuildManagementService(buildManagementService);
+      delegate.setTransportConfigurationService(transportConfigService);
+      delegate.setScenarioService(scenarioService);
+      delegate.setJavaServiceGenerationService(generateService);
+      delegate.activate();
    }
 
    @Override

@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(immediate = true)
-public class ${dto.modelName}TransportConfiguration {
+public class ${dto.modelName}TransportTestConfiguration {
 
    private ILogService logService;
 
