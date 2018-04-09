@@ -6,12 +6,12 @@ import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic;
 import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientVerb;
 import ${dto.topicsImport};
 
-public class ${dto.modelName}RestTestConfiguration {
+public class ${dto.modelName}SparkTestConfiguration {
 
-   private ${dto.modelName}RestTestConfiguration() {
+   private ${dto.modelName}SparkTestConfiguration() {
    }
 
-   public static void configure(TransportConfiguration config, ITransportProvider<HttpClientTopic> restProvider) {
+   public static void configure(TransportConfiguration config, ITransportProvider<HttpClientTopic> httpClientProvider) {
 #foreach ($topic in $dto.topics)
       HttpClientTopic ${topic.variableName} = new HttpClientTopic(
             "http://${topic.networkAddress.address}:${topic.port}${topic.path}",
