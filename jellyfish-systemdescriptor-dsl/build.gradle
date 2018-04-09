@@ -50,6 +50,7 @@ subprojects {
         apply plugin: 'eclipse'
         apply plugin: 'idea'
         apply plugin: 'org.xtext.xtend'
+        apply plugin: 'com.ngc.seaside.checkstyle'
         apply from: "${rootDir}/gradle/source-layout.gradle"
         apply from: "${rootDir}/gradle/maven-deployment.gradle"
     }
