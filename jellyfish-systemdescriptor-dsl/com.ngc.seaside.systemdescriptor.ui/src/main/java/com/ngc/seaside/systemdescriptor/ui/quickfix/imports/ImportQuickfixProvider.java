@@ -1,6 +1,9 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
-import java.util.Set;
+import com.google.inject.Inject;
+
+import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
+import com.ngc.seaside.systemdescriptor.ui.quickfix.IDocumentWriter;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.BadLocationException;
@@ -16,9 +19,7 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.validation.IssueCodes;
 
-import com.google.inject.Inject;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.impl.ImportImpl;
-import com.ngc.seaside.systemdescriptor.ui.quickfix.IDocumentWriter;
+import java.util.Set;
 
 public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 
@@ -33,7 +34,7 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
 
    @Inject
    private IQualifiedNameConverter qualifiedNameConverter;
-   
+
    @Inject
    private IDocumentWriter writer;
 
@@ -98,20 +99,20 @@ public class ImportQuickfixProvider extends DefaultQuickfixProvider {
          String qualifiedName = name.toString();
          String qualifiedPackage = qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
          acceptor.accept(issue,
-            "Import " + reference + " (" + qualifiedPackage + ")",
-            "",
-            getAddImportImage(),
-            context -> importsOrganizer.addImports(context.getXtextDocument(), new ImportImpl() {
-               @Override
-               public String getImportedNamespace() {
-                  return qualifiedNameConverter.toString(name);
-               }
+                         "Import " + reference + " (" + qualifiedPackage + ")",
+                         "",
+                         getAddImportImage(),
+                         context -> importsOrganizer.addImports(context.getXtextDocument(), new ImportImpl() {
+                            @Override
+                            public String getImportedNamespace() {
+                               return qualifiedNameConverter.toString(name);
+                            }
 
-               @Override
-               public String toString() {
-                  return getImportedNamespace();
-               }
-            }));
+                            @Override
+                            public String toString() {
+                               return getImportedNamespace();
+                            }
+                         }));
       }
    }
 

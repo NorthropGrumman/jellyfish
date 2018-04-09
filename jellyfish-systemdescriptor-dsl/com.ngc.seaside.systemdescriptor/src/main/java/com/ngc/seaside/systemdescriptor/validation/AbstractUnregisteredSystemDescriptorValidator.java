@@ -10,6 +10,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar;
 public class AbstractUnregisteredSystemDescriptorValidator extends AbstractSystemDescriptorValidator {
 
    @Override
-   public void register(EValidatorRegistrar registrar) {}
+   public void register(EValidatorRegistrar registrar) {
+   }
 
 }

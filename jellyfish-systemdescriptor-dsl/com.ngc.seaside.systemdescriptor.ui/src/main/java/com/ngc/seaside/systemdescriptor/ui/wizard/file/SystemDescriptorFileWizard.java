@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.ui.wizard.file;
 
-import java.io.InputStream;
-import java.util.Map;
+import com.ngc.seaside.systemdescriptor.ui.wizard.file.page.FilePage;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -19,73 +18,76 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-import com.ngc.seaside.systemdescriptor.ui.wizard.file.page.FilePage;
+import java.io.InputStream;
+import java.util.Map;
 
 public class SystemDescriptorFileWizard extends Wizard implements INewWizard {
-	private FilePage filePage;
-	private IPath defaultSourceFolder;
-	private String defaultPackage;
 
-	public SystemDescriptorFileWizard() {
-		super();
-		setNeedsProgressMonitor(true);
-	}
+   private FilePage filePage;
+   private IPath defaultSourceFolder;
+   private String defaultPackage;
 
-	@Override
-	public void addPages() {
-		this.filePage = new FilePage(defaultSourceFolder, defaultPackage);
-		addPage(this.filePage);
-	}
+   public SystemDescriptorFileWizard() {
+      super();
+      setNeedsProgressMonitor(true);
+   }
 
-	@Override
-	public boolean performFinish() {
-		IFile file = this.filePage.getAbsolutePath();
+   @Override
+   public void addPages() {
+      this.filePage = new FilePage(defaultSourceFolder, defaultPackage);
+      addPage(this.filePage);
+   }
 
-		String filename = this.filePage.getFileName();
-		String packageName = this.filePage.getPackageName();
-		if (filename.toLowerCase().endsWith(".sd")) {
-			filename = filename.substring(filename.length() - 3);
-		}
-		String elementType = this.filePage.getElementType();
+   @Override
+   public boolean performFinish() {
+      IFile file = this.filePage.getAbsolutePath();
 
-		InputStream stream = SystemDescriptorFileSupport.createSDStream(packageName, filename, elementType);
-		try {
-			boolean success = SystemDescriptorFileSupport.createFile(getShell(), file, stream);
-			if (success) {
-				getShell().getDisplay().asyncExec(() -> {
-					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					try {
-						IDE.openEditor(page, file, true);
-					} catch (PartInitException localPartInitException) {
-					}
-				});
-				try {
-					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					for (IViewReference ref : page.getViewReferences()) {
-						IViewPart view = ref.getView(false);
-						if (view instanceof ISetSelectionTarget) {
-							getShell().getDisplay().asyncExec(() -> {
-								((ISetSelectionTarget) view).selectReveal(new StructuredSelection(file));
-							});
-							
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace(System.err);
-				}
-			}
-			return success;
-		} catch (CoreException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+      String filename = this.filePage.getFileName();
+      String packageName = this.filePage.getPackageName();
+      if (filename.toLowerCase().endsWith(".sd")) {
+         filename = filename.substring(filename.length() - 3);
+      }
+      String elementType = this.filePage.getElementType();
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		Map.Entry<IPath, String> result = SystemDescriptorFileSupport.getDefaultSourceAndPackage(workbench, selection);
-		this.defaultSourceFolder = result.getKey();
-		this.defaultPackage = result.getValue();
-	}
+      InputStream stream = SystemDescriptorFileSupport.createSDStream(packageName, filename, elementType);
+      try {
+         boolean success = SystemDescriptorFileSupport.createFile(getShell(), file, stream);
+         if (success) {
+            getShell().getDisplay().asyncExec(() -> {
+               IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+               try {
+                  IDE.openEditor(page, file, true);
+               } catch (PartInitException localPartInitException) {
+                  // TODO TH: Better exception handling.
+               }
+            });
+            try {
+               IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+               for (IViewReference ref : page.getViewReferences()) {
+                  IViewPart view = ref.getView(false);
+                  if (view instanceof ISetSelectionTarget) {
+                     getShell().getDisplay().asyncExec(() -> {
+                        ((ISetSelectionTarget) view).selectReveal(new StructuredSelection(file));
+                     });
+                  }
+               }
+            } catch (Exception e) {
+               // TODO TH: FIX THIS.  We don't do this kind of stuff.
+               e.printStackTrace(System.err);
+            }
+         }
+         return success;
+      } catch (CoreException e) {
+         e.printStackTrace();
+         return false;
+      }
+   }
+
+   @Override
+   public void init(IWorkbench workbench, IStructuredSelection selection) {
+      Map.Entry<IPath, String> result = SystemDescriptorFileSupport.getDefaultSourceAndPackage(workbench, selection);
+      this.defaultSourceFolder = result.getKey();
+      this.defaultPackage = result.getValue();
+   }
 
 }

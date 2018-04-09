@@ -12,44 +12,46 @@ import org.eclipse.xtext.formatting2.IFormattableDocument;
  * this class.
  */
 public class AbstractSystemDescriptorFormatter extends AbstractFormatter2 {
-    private SystemDescriptorFormatter rootFormatter;
 
-    @Override
-    public void format(Object obj, IFormattableDocument document) {
-        doFormat(obj, document);
-    }
+   private SystemDescriptorFormatter rootFormatter;
 
-    @Override
-    public void initalize(FormatterRequest request) {
-        // Increase visibility of this method.
-        super.initialize(request);
-    }
+   @Override
+   public void format(Object obj, IFormattableDocument document) {
+      doFormat(obj, document);
+   }
 
-    @Override
-    public void reset() {
-        // Increase visibility of this method.
-        super.reset();
-    }
+   @Override
+   public void initalize(FormatterRequest request) {
+      // Increase visibility of this method.
+      super.initialize(request);
+   }
 
-    public void setRootFormatter(SystemDescriptorFormatter rootFormatter) {
-        // This is called by SystemDescriptorFormatter at registration time.
-        this.rootFormatter = rootFormatter;
-    }
+   @Override
+   public void reset() {
+      // Increase visibility of this method.
+      super.reset();
+   }
 
-    @Override
-    protected void _format(Object obj, IFormattableDocument document) {
-        doFormat(obj, document);
-    }
+   public void setRootFormatter(SystemDescriptorFormatter rootFormatter) {
+      // This is called by SystemDescriptorFormatter at registration time.
+      this.rootFormatter = rootFormatter;
+   }
 
-    @Override
-    protected void _format(EObject obj, IFormattableDocument document) {
-        doFormat(obj, document);
-    }
+   @Override
+   protected void _format(Object obj, IFormattableDocument document) {
+      doFormat(obj, document);
+   }
 
-    private void doFormat(Object obj, IFormattableDocument document) {
-        Preconditions.checkState(
-                rootFormatter != null,
-                "rootFormatter not set!  Ensure this formatter has been registered with SystemDescriptorFormatter correctly!");
-        rootFormatter.format(obj, document);
-    }
+   @Override
+   protected void _format(EObject obj, IFormattableDocument document) {
+      doFormat(obj, document);
+   }
+
+   private void doFormat(Object obj, IFormattableDocument document) {
+      Preconditions.checkState(
+            rootFormatter != null,
+            "rootFormatter not set!  Ensure this formatter has been registered with SystemDescriptorFormatter"
+                  + " correctly!");
+      rootFormatter.format(obj, document);
+   }
 }

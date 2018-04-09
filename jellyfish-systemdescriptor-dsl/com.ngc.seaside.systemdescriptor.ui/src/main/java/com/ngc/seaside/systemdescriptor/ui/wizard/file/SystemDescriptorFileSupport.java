@@ -1,15 +1,5 @@
 package com.ngc.seaside.systemdescriptor.ui.wizard.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -30,18 +20,27 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 
-class SystemDescriptorFileSupport
-{
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+class SystemDescriptorFileSupport {
 
    /**
-    * Tries to find the default source folder and package based on the currently selected file in eclipse and the active file in the editor.
+    * Tries to find the default source folder and package based on the currently selected file in eclipse and the =
+    * active file in the editor.
     *
     * @param workbench eclipse workbench
     * @param selection selected file in the package explorer
     * @return the default source folder and package
     */
-   static Map.Entry<IPath, String> getDefaultSourceAndPackage(IWorkbench workbench, IStructuredSelection selection)
-   {
+   static Map.Entry<IPath, String> getDefaultSourceAndPackage(IWorkbench workbench, IStructuredSelection selection) {
       try {
          Object selected = selection.getFirstElement();
 
@@ -57,7 +56,8 @@ class SystemDescriptorFileSupport
             selected = ((IJavaElement) selected).getResource();
          }
          if (selected instanceof IResource) {
-            return getDefaultSourceAndPackage(((IResource) selected).getProject().getLocation(), ((IResource) selected).getFullPath());
+            return getDefaultSourceAndPackage(((IResource) selected).getProject().getLocation(),
+                                              ((IResource) selected).getFullPath());
          }
          if (selected instanceof ICompilationUnit) {
             ICompilationUnit unit = (ICompilationUnit) selected;
@@ -67,20 +67,25 @@ class SystemDescriptorFileSupport
                if (pkg.length > 0) {
                   return new AbstractMap.SimpleEntry<>(pkg[0].getParent().getPath(), pkg[0].getElementName());
                }
-            }
-            catch (JavaModelException e) {
+            } catch (JavaModelException e) {
+               // Do nothing.
             }
          }
 
          // If all else fails look at the project of the active page in eclipse
 
-         IFile file = ((IFileEditorInput) workbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput()).getFile();
-         Map.Entry<IPath, String> result = getDefaultSourceAndPackage(file.getProject().getLocation(), file.getFullPath());
+         IFile
+               file =
+               ((IFileEditorInput) workbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor()
+                     .getEditorInput()).getFile();
+         Map.Entry<IPath, String>
+               result =
+               getDefaultSourceAndPackage(file.getProject().getLocation(), file.getFullPath());
          return new AbstractMap.SimpleEntry<>(result.getKey(), "");
-      }
-      catch (NullPointerException e) {
-      }
-      catch (Exception e) {
+      } catch (NullPointerException e) {
+         // TODO TH: FIX THIS
+      } catch (Exception e) {
+         // TODO TH: FIX THIS
          e.printStackTrace(System.err);
       }
       return new AbstractMap.SimpleEntry<>(new Path(""), "");
@@ -92,16 +97,14 @@ class SystemDescriptorFileSupport
     * @param path selected path
     * @return the default source folder and package
     */
-   private static Map.Entry<IPath, String> getDefaultSourceAndPackage(IPath projectPath, IPath path)
-   {
+   private static Map.Entry<IPath, String> getDefaultSourceAndPackage(IPath projectPath, IPath path) {
       IPath defaultSourceFolder = projectPath.append("src").append("main").append("sd");
       if (projectPath.segmentCount() > 0) {
          projectPath = projectPath.removeLastSegments(1);
       }
       if (defaultSourceFolder.toFile().isDirectory()) {
          defaultSourceFolder = defaultSourceFolder.makeRelativeTo(projectPath);
-      }
-      else {
+      } else {
          defaultSourceFolder = new Path("");
       }
       while (projectPath.append(path).toFile().isFile() && path.segmentCount() > 0) {
@@ -122,7 +125,9 @@ class SystemDescriptorFileSupport
                   return new AbstractMap.SimpleEntry<>(sourceFolder, "");
                }
             }
-            IPath sourceFolder = new Path(String.join(File.separator, pathList.subList(0, i + 1))).append("main").append("sd");
+            IPath
+                  sourceFolder =
+                  new Path(String.join(File.separator, pathList.subList(0, i + 1))).append("main").append("sd");
             if (projectPath.append(sourceFolder).toFile().isDirectory()) {
                return new AbstractMap.SimpleEntry<>(sourceFolder, "");
             }
@@ -133,62 +138,60 @@ class SystemDescriptorFileSupport
       return new AbstractMap.SimpleEntry<>(defaultSourceFolder, "");
    }
 
-   static boolean createFile(Shell shell, IFile file, InputStream stream) throws CoreException
-   {
+   static boolean createFile(Shell shell, IFile file, InputStream stream) throws CoreException {
       NullProgressMonitor monitor = new NullProgressMonitor();
       try (InputStream str = stream) {
          SystemDescriptorFileSupport.createRecursively(file, monitor);
          file.setContents(str, 3, monitor);
          return true;
-      }
-      catch (IOException localIOException) {
+      } catch (IOException localIOException) {
          return false;
       }
    }
 
-   static void createRecursively(IResource resource, IProgressMonitor monitor) throws CoreException
-   {
+   static void createRecursively(IResource resource, IProgressMonitor monitor) throws CoreException {
       if (resource == null || resource.exists()) {
          return;
       }
       createRecursively(resource.getParent(), monitor);
       switch (resource.getType()) {
-      case IResource.FILE:
-         ((IFile) resource).create(new ByteArrayInputStream(new byte[0]), true, monitor);
-         break;
-      case IResource.FOLDER:
-         ((IFolder) resource).create(0, true, monitor);
-         break;
-      case IResource.PROJECT:
-         ((IProject) resource).create(monitor);
-         ((IProject) resource).open(monitor);
-         break;
-      default:
-         return;
+         case IResource.FILE:
+            ((IFile) resource).create(new ByteArrayInputStream(new byte[0]), true, monitor);
+            break;
+         case IResource.FOLDER:
+            ((IFolder) resource).create(0, true, monitor);
+            break;
+         case IResource.PROJECT:
+            ((IProject) resource).create(monitor);
+            ((IProject) resource).open(monitor);
+            break;
+         default:
+            // Do nothing.
       }
    }
 
-   static InputStream createSDStream(String packageName, String name, String elementType)
-   {
+   static InputStream createSDStream(String packageName, String name, String elementType) {
       StringBuilder file = new StringBuilder();
       if (packageName != null && !packageName.isEmpty()) {
          file.append("package ").append(packageName).append("\n\n");
       }
 
       switch (elementType.toLowerCase()) {
-      case "model":
-         file.append("model ").append(name)
-                  .append(" {\n  metadata {\n    \"name\" : \"My Model\",\n    \"description\" : \"My Model description\",\n    \"stereotypes\" : [\"model\", \"example\"]\n  }\n}\n");
-         break;
-      case "data":
-         file.append("data ").append(name).append(" {\n\n}\n");
-         break;
-      case "enum":
-         file.append("enum ").append(name).append(" {\n\n}\n");
-         break;
-      default:
-         throw new IllegalStateException("Unknown element type: " + elementType);
-   }
+         case "model":
+            file.append("model ").append(name)
+                  .append(
+                        " {\n  metadata {\n    \"name\" : \"My Model\",\n    \"description\" :"
+                              + " \"My Model description\",\n    \"stereotypes\" : [\"model\", \"example\"]\n  }\n}\n");
+            break;
+         case "data":
+            file.append("data ").append(name).append(" {\n\n}\n");
+            break;
+         case "enum":
+            file.append("enum ").append(name).append(" {\n\n}\n");
+            break;
+         default:
+            throw new IllegalStateException("Unknown element type: " + elementType);
+      }
       return new ByteArrayInputStream(file.toString().getBytes(StandardCharsets.UTF_8));
    }
 

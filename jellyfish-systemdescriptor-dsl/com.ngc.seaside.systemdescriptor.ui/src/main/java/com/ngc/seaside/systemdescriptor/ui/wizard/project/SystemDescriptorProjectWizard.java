@@ -20,6 +20,7 @@ import java.net.URI;
  * System Descriptor project.
  */
 public class SystemDescriptorProjectWizard extends Wizard implements INewWizard {
+
    private static final String PAGE_NAME = "System Descriptor Project Wizard";
    private static final String WIZARD_NAME = "Create a System Descriptor Project";
    private static final String WIZARD_DESC = "Create a System Descriptor Project.";
@@ -39,7 +40,8 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
    }
 
    @Override
-   public void init(IWorkbench workbench, IStructuredSelection selection) {}
+   public void init(IWorkbench workbench, IStructuredSelection selection) {
+   }
 
    @Override
    public String getWindowTitle() {
@@ -51,7 +53,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       projPage = new WizardNewProjectCreationPage(PAGE_NAME);
       projPage.setTitle(WIZARD_NAME);
       projPage.setDescription(WIZARD_DESC);
-      
+
       gradleProjPage = new ProjectInfoPage(() -> projPage.getProjectName());
       pkgPage = new PackageInfoPage();
 
@@ -68,7 +70,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       if (!projPage.useDefaults()) {
          location = projPage.getLocationURI();
       }
-      
+
       String projectName = gradleProjPage.getProjectName();
       String group = gradleProjPage.getGroupId();
       String version = gradleProjPage.getVersion();
@@ -85,10 +87,11 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       }
 
       try {
-         SystemDescriptorProjectSupport.createProject(name, location, projectName, group, version, cliVersion, defaultPkg, defaultFile);
+         SystemDescriptorProjectSupport
+               .createProject(name, location, projectName, group, version, cliVersion, defaultPkg, defaultFile);
       } catch (CoreException e) {
          statusManager.handle(
-            new Status(IStatus.ERROR, getClass().getName(), "Unable to create project", e));
+               new Status(IStatus.ERROR, getClass().getName(), "Unable to create project", e));
          throw new RuntimeException(e);
       }
 

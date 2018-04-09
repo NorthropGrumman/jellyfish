@@ -15,18 +15,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This class enables the user to Enter the default project and default file name 
+ * This class enables the user to Enter the default project and default file name
  * for the System Descriptor project.
  */
 public class PackageInfoPage extends WizardPage {
-	private static final String DEFAULT_PACKAGE = "com.ngc.mysdproject";
-	private static final String DEFAULT_FILE = "MyModel";
 
-	private Text pkgTextField;
-	private Text filenameTextField;
-	private Button createDefaultPkgCheck;
-	private Button createDefaultFileCheck;
-	private Composite container;
+   private static final String DEFAULT_PACKAGE = "com.ngc.mysdproject";
+   private static final String DEFAULT_FILE = "MyModel";
+
+   private Text pkgTextField;
+   private Text filenameTextField;
+   private Button createDefaultPkgCheck;
+   private Button createDefaultFileCheck;
+   private Composite container;
+
    private KeyAdapter keyListener = new KeyAdapter() {
       @Override
       public void keyReleased(KeyEvent e) {
@@ -42,34 +44,34 @@ public class PackageInfoPage extends WizardPage {
    };
 
 
-	/**
-	 * Constructor for the page that asks the user for default package and model file information.
-	 */
-	public PackageInfoPage() {
-		super("Package Info Page");
-		setTitle("Package Info Page");
-		setDescription("Enter package information");
+   /**
+    * Constructor for the page that asks the user for default package and model file information.
+    */
+   public PackageInfoPage() {
+      super("Package Info Page");
+      setTitle("Package Info Page");
+      setDescription("Enter package information");
 
-		setControl(pkgTextField);
-	}
+      setControl(pkgTextField);
+   }
 
-	@Override
-	public void createControl(Composite parent) {
-		container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(2, false));
+   @Override
+   public void createControl(Composite parent) {
+      container = new Composite(parent, SWT.NONE);
+      container.setLayout(new GridLayout(2, false));
 
-		buildPackageInfo();
-		buildFileInfo();
-		
-		// required to avoid an error in the system
-		setControl(container);
+      buildPackageInfo();
+      buildFileInfo();
 
-		updateControls();
-	}
-	
+      // required to avoid an error in the system
+      setControl(container);
+
+      updateControls();
+   }
+
    /**
     * Get the user's selected preference to determine if the package should be created.
-    * 
+    *
     * @return true if the default package should be created.
     */
    public boolean getCreatePkg() {
@@ -78,15 +80,17 @@ public class PackageInfoPage extends WizardPage {
 
    /**
     * Get the value of the package. The value will be the fully qualified package using dot notation.
-    * @see #getCreatePkg()
+    *
     * @return the string representation of the package.
+    * @see #getCreatePkg()
     */
    public String getPkg() {
       return pkgTextField.getText();
    }
-   
+
    /**
     * Create the user's selected preference to determine if the default .sd file should be created.
+    *
     * @return true if the default file should be created.
     */
    public boolean getCreateFile() {
@@ -95,109 +99,108 @@ public class PackageInfoPage extends WizardPage {
 
    /**
     * Get the name of the default .sd file.
-    * @see #getCreateFile()
+    *
     * @return the file (without the .sd extension)
+    * @see #getCreateFile()
     */
    public String getFileName() {
       return filenameTextField.getText();
    }
 
-	/**
-	 * Builds and populates the default package info GUI components into the page.
-	 */
-	private void buildPackageInfo() {
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+   /**
+    * Builds and populates the default package info GUI components into the page.
+    */
+   private void buildPackageInfo() {
+      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
-		createDefaultPkgCheck = new Button(container, SWT.CHECK);
-		createDefaultPkgCheck.setText("Create default package");
-		createDefaultPkgCheck.setSelection(true);
-		createDefaultPkgCheck.addSelectionListener(selectionListener);
+      createDefaultPkgCheck = new Button(container, SWT.CHECK);
+      createDefaultPkgCheck.setText("Create default package");
+      createDefaultPkgCheck.setSelection(true);
+      createDefaultPkgCheck.addSelectionListener(selectionListener);
 
-		takeUpCellInGrid(container);
+      takeUpCellInGrid(container);
 
-		Label labelPkg = new Label(container, SWT.NONE);
-		labelPkg.setText("Package name:");
+      Label labelPkg = new Label(container, SWT.NONE);
+      labelPkg.setText("Package name:");
 
-		pkgTextField = new Text(container, SWT.BORDER | SWT.SINGLE);
-		pkgTextField.setText(DEFAULT_PACKAGE);
-		pkgTextField.setEnabled(true);
-		pkgTextField.addKeyListener(keyListener);
-		pkgTextField.setLayoutData(gd);
+      pkgTextField = new Text(container, SWT.BORDER | SWT.SINGLE);
+      pkgTextField.setText(DEFAULT_PACKAGE);
+      pkgTextField.setEnabled(true);
+      pkgTextField.addKeyListener(keyListener);
+      pkgTextField.setLayoutData(gd);
 
-		takeUpCellInGrid(container);
-		takeUpCellInGrid(container);
-	}
+      takeUpCellInGrid(container);
+      takeUpCellInGrid(container);
+   }
 
-	/**
-	 * Builds and populates the default model file info GUI components into the page.
-	 */
-	private void buildFileInfo() {
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+   /**
+    * Builds and populates the default model file info GUI components into the page.
+    */
+   private void buildFileInfo() {
+      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
-		createDefaultFileCheck = new Button(container, SWT.CHECK);
-		createDefaultFileCheck.setText("Create default file in package");
-		createDefaultFileCheck.setSelection(true);
-		createDefaultFileCheck.addSelectionListener(selectionListener);
+      createDefaultFileCheck = new Button(container, SWT.CHECK);
+      createDefaultFileCheck.setText("Create default file in package");
+      createDefaultFileCheck.setSelection(true);
+      createDefaultFileCheck.addSelectionListener(selectionListener);
 
-		takeUpCellInGrid(container);
+      takeUpCellInGrid(container);
 
-		Label labelPkg = new Label(container, SWT.NONE);
-		labelPkg.setText("File name:");
+      Label labelPkg = new Label(container, SWT.NONE);
+      labelPkg.setText("File name:");
 
-		filenameTextField = new Text(container, SWT.BORDER | SWT.SINGLE);
-		filenameTextField.setText(DEFAULT_FILE);
-		filenameTextField.setEnabled(true);
-		filenameTextField.addKeyListener(keyListener);
-		filenameTextField.setLayoutData(gd);
+      filenameTextField = new Text(container, SWT.BORDER | SWT.SINGLE);
+      filenameTextField.setText(DEFAULT_FILE);
+      filenameTextField.setEnabled(true);
+      filenameTextField.addKeyListener(keyListener);
+      filenameTextField.setLayoutData(gd);
 
-		takeUpCellInGrid(container);
-		takeUpCellInGrid(container);
-	}
-	
-	/**
-	 * Adds an empty Label to the next cell in the container which uses a Grid layout.
-	 * This is just to take up a cell.
-	 * 
-	 * @param container
-	 * 		The container to add the empty label to.
-	 */
-	private void takeUpCellInGrid(Composite container)
-	{
-		new Label(container, SWT.NONE);
-	}
+      takeUpCellInGrid(container);
+      takeUpCellInGrid(container);
+   }
 
-	/**
-	 * Updates the GUI controls' status based on inputs.
-	 */
-	private void updateControls() {
-		final boolean createDefaultPkg = createDefaultPkgCheck.getSelection();
-		final boolean createDefaultFile = createDefaultFileCheck.getSelection();
-		final String pkgText = pkgTextField.getText();
-		final String fileText = filenameTextField.getText();
+   /**
+    * Adds an empty Label to the next cell in the container which uses a Grid layout.
+    * This is just to take up a cell.
+    *
+    * @param container The container to add the empty label to.
+    */
+   private void takeUpCellInGrid(Composite container) {
+      new Label(container, SWT.NONE);
+   }
 
-		pkgTextField.setEnabled(createDefaultPkg);
-		createDefaultFileCheck.setEnabled(createDefaultPkg);
+   /**
+    * Updates the GUI controls' status based on inputs.
+    */
+   private void updateControls() {
+      final boolean createDefaultPkg = createDefaultPkgCheck.getSelection();
+      final boolean createDefaultFile = createDefaultFileCheck.getSelection();
+      final String pkgText = pkgTextField.getText();
+      final String fileText = filenameTextField.getText();
 
-		filenameTextField.setEnabled(createDefaultFile && createDefaultPkg);
+      pkgTextField.setEnabled(createDefaultPkg);
+      createDefaultFileCheck.setEnabled(createDefaultPkg);
 
-		final boolean complete;
-		if (createDefaultPkg) {
-			if (pkgText.isEmpty()) {
-				complete = false;
-			} else if (createDefaultFile) {
-				if (fileText.isEmpty()) {
-					complete = false;
-				} else {
-					complete = true;
-				}
-			} else {
-				complete = true;
-			}
-		} else {
-			complete = true;
-		}
+      filenameTextField.setEnabled(createDefaultFile && createDefaultPkg);
 
-		setPageComplete(complete);
-	}
-	
+      final boolean complete;
+      if (createDefaultPkg) {
+         if (pkgText.isEmpty()) {
+            complete = false;
+         } else if (createDefaultFile) {
+            if (fileText.isEmpty()) {
+               complete = false;
+            } else {
+               complete = true;
+            }
+         } else {
+            complete = true;
+         }
+      } else {
+         complete = true;
+      }
+
+      setPageComplete(complete);
+   }
+
 }

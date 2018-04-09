@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.scoping;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
@@ -41,12 +42,12 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    /**
     * Places all declared properties of the current element as well as any
     * refined models in scope for property value expressions.
-    * 
+    *
     * @return the scope for a property value expression
     */
    public IScope scope_PropertyValueExpression_declaration(
-            PropertyValueExpression context,
-            EReference reference) {
+         PropertyValueExpression context,
+         EReference reference) {
       IScope scope = null;
 
       if (isExpressionForModelProperty(context)) {
@@ -67,12 +68,12 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    /**
     * Places all data fields of a data type in scope for property path segment
     * where a value of a complex type is being set.
-    * 
+    *
     * @return the scope of the segment
     */
    public IScope scope_PropertyValueExpressionPathSegment_fieldDeclaration(
-            PropertyValueExpressionPathSegment segment,
-            EReference reference) {
+         PropertyValueExpressionPathSegment segment,
+         EReference reference) {
       PropertyValueExpression exp = (PropertyValueExpression) segment.eContainer();
       Data data = getDataModelForProperty(exp.getDeclaration());
 
@@ -81,8 +82,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // linking has not yet completed and proxy objects are set in the
          // data model.
          String fieldName = SdUtils.getRawSource(
-            exp.getPathSegments().get(i), 
-            SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
+               exp.getPathSegments().get(i),
+               SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
 
          // Get the field with that name. Then filter for fields that have a
          // complex data type (ie, not a primitive).         
@@ -92,16 +93,22 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // (if the user created an invalid path, the validators will
          // catch it after scoping is finished).
          data = dataField instanceof ReferencedDataModelFieldDeclaration
-                  && ((ReferencedDataModelFieldDeclaration)dataField).getDataModel() instanceof Data
-                  ? (Data) ((ReferencedDataModelFieldDeclaration) dataField).getDataModel()
-                  : null;
+                      && ((ReferencedDataModelFieldDeclaration) dataField).getDataModel() instanceof Data
+                ? (Data) ((ReferencedDataModelFieldDeclaration) dataField).getDataModel()
+                : null;
       }
 
       return data != null
-               ? Scopes.scopeFor(SdUtils.getAllDataFields(data))
-               : delegateGetScope(segment, reference);
+             ? Scopes.scopeFor(SdUtils.getAllDataFields(data))
+             : delegateGetScope(segment, reference);
    }
 
+   /**
+    * Places fields in scope for the given field reference.  This is used to determine which fields of which model
+    * should be placed in scope.
+    *
+    * @return the fields in the scope
+    */
    public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
       IScope scope;
       if (context.eContainer() instanceof RefinedLinkDeclaration) {
@@ -110,17 +117,17 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // is the current context.
          // link a -> some.thing
          Model model = (Model) context.eContainer() // RefinedLinkDeclaration
-                                      .eContainer() // Links
-                                      .eContainer(); // Model
+               .eContainer() // Links
+               .eContainer(); // Model
          scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
       } else if (context.eContainer() instanceof LinkableExpression) {
          // This indicates the source or target of a link is an expression.
          // In the example below, "some", is the current context.
          // link a -> some.thing
          Model model = (Model) context.eContainer() // LinkableExpression
-                                      .eContainer() // RefinedLinkDeclaration
-                                      .eContainer() // Links
-                                      .eContainer(); // Model
+               .eContainer() // RefinedLinkDeclaration
+               .eContainer() // Links
+               .eContainer(); // Model
          scope = Scopes.scopeFor(getLinkableFieldsFrom(model));
       } else {
          scope = delegateGetScope(context, reference);
@@ -131,7 +138,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
    /**
     * Provides scope for a link expression of the form
     * {@code link someInput to somePart.someMoreInput}.
-    * 
+    *
     * @return scope for a link expression
     */
    public IScope scope_LinkableExpression_tail(LinkableExpression context, EReference reference) {
@@ -172,7 +179,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     * the given model.
     *
     * @return all field declarations that can be referenced that are contained
-    *         by the given model
+    * by the given model
     */
    private static Collection<FieldDeclaration> getLinkableFieldsFrom(Model model) {
       Collection<FieldDeclaration> fields = new ArrayList<>();
@@ -201,8 +208,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    private static boolean isExpressionForModelProperty(PropertyValueExpression exp) {
       return exp.eContainer() // PropertyValueAssignment
-                .eContainer() // Properties
-                .eContainer() instanceof Model;
+            .eContainer() // Properties
+            .eContainer() instanceof Model;
    }
 
    /**
@@ -210,9 +217,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    private static boolean isExpressionForLinkProperty(PropertyValueExpression exp) {
       return exp.eContainer() // PropertyValueAssignment
-                .eContainer() // Properties
-                .eContainer() // DeclarationsDefinition
-                .eContainer() instanceof LinkDeclaration;
+            .eContainer() // Properties
+            .eContainer() // DeclarationsDefinition
+            .eContainer() instanceof LinkDeclaration;
    }
 
    /**
@@ -220,9 +227,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    private static boolean isExpressionForPartProperty(PropertyValueExpression exp) {
       return exp.eContainer() // PropertyValueAssignment
-                .eContainer() // Properties
-                .eContainer() // DeclarationsDefinition
-                .eContainer() instanceof PartDeclaration;
+            .eContainer() // Properties
+            .eContainer() // DeclarationsDefinition
+            .eContainer() instanceof PartDeclaration;
    }
 
    /**
@@ -230,9 +237,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    private static boolean isExpressionForRequirementProperty(PropertyValueExpression exp) {
       return exp.eContainer() // PropertyValueAssignment
-                .eContainer() // Properties
-                .eContainer() // DeclarationsDefinition
-                .eContainer() instanceof RequireDeclaration;
+            .eContainer() // Properties
+            .eContainer() // DeclarationsDefinition
+            .eContainer() instanceof RequireDeclaration;
    }
 
    /**
@@ -270,8 +277,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // has properties declared in the source. This seems to be an XText issue
          // since the definition object should definitely not be null.
          if (currentLink != null
-            && currentLink.getDefinition() != null
-            && currentLink.getDefinition().getProperties() != null) {
+               && currentLink.getDefinition() != null
+               && currentLink.getDefinition().getProperties() != null) {
             propertyDeclarations.addAll(currentLink.getDefinition().getProperties().getDeclarations());
          }
       });
@@ -290,14 +297,14 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       SdUtils.traverseModelRefinementHierarchy(model, m -> {
          if (m.getParts() != null) {
             PartDeclaration currentPart = m.getParts()
-                                           .getDeclarations()
-                                           .stream()
-                                           .filter(d -> d.getName().equals(part.getName()))
-                                           .findFirst()
-                                           .orElse(null);
+                  .getDeclarations()
+                  .stream()
+                  .filter(d -> d.getName().equals(part.getName()))
+                  .findFirst()
+                  .orElse(null);
             if (currentPart != null
-               && currentPart.getDefinition() != null
-               && currentPart.getDefinition().getProperties() != null) {
+                  && currentPart.getDefinition() != null
+                  && currentPart.getDefinition().getProperties() != null) {
                propertyDeclarations.addAll(currentPart.getDefinition().getProperties().getDeclarations());
             }
          }
@@ -317,14 +324,14 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       SdUtils.traverseModelRefinementHierarchy(model, m -> {
          if (m.getRequires() != null) {
             RequireDeclaration currentRequirement = m.getRequires()
-                                                     .getDeclarations()
-                                                     .stream()
-                                                     .filter(d -> d.getName().equals(requirement.getName()))
-                                                     .findFirst()
-                                                     .orElse(null);
+                  .getDeclarations()
+                  .stream()
+                  .filter(d -> d.getName().equals(requirement.getName()))
+                  .findFirst()
+                  .orElse(null);
             if (currentRequirement != null
-               && currentRequirement.getDefinition() != null
-               && currentRequirement.getDefinition().getProperties() != null) {
+                  && currentRequirement.getDefinition() != null
+                  && currentRequirement.getDefinition().getProperties() != null) {
                propertyDeclarations.addAll(currentRequirement.getDefinition().getProperties().getDeclarations());
             }
          }
@@ -344,9 +351,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       }
 
       Preconditions.checkState(
-         declaration instanceof ReferencedPropertyFieldDeclaration,
-         "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
-            + "  Otherwise, why would the declaration need scoping help?");
+            declaration instanceof ReferencedPropertyFieldDeclaration,
+            "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
+                  + "  Otherwise, why would the declaration need scoping help?");
       ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
 
       // More proxy checking.
@@ -354,19 +361,19 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          return null;
       }
       Preconditions.checkState(
-         referencedDeclaration.getDataModel() instanceof Data,
-         "expected the declaration to have a data model of data instead of an enumeration!"
-            + "  Otherwise, you can't have a complex expression!");
+            referencedDeclaration.getDataModel() instanceof Data,
+            "expected the declaration to have a data model of data instead of an enumeration!"
+                  + "  Otherwise, you can't have a complex expression!");
       return (Data) referencedDeclaration.getDataModel();
    }
 
    /**
     * Attempts to find the a link in the given model that matches the given link.
-    * 
-    * @param model the model to search
+    *
+    * @param model           the model to search
     * @param linkDeclaration the link to use for reference when searching
     * @return a link in the model that matches the name or the source and target of
-    *         the given link or {@code null} if there is no such link
+    * the given link or {@code null} if there is no such link
     */
    private static LinkDeclaration findLink(Model model, LinkDeclaration linkDeclaration) {
       if (model.getLinks() == null) {
@@ -407,10 +414,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
       if (link instanceof BaseLinkDeclaration) {
          nodes = NodeModelUtils.findNodesForFeature(link,
-            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+                                                    SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
       } else {
          nodes = NodeModelUtils.findNodesForFeature(link,
-            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__SOURCE);
+                                                    SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__SOURCE);
       }
 
       return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
@@ -424,10 +431,10 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
 
       if (link instanceof BaseLinkDeclaration) {
          nodes = NodeModelUtils.findNodesForFeature(link,
-            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+                                                    SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
       } else {
          nodes = NodeModelUtils.findNodesForFeature(link,
-            SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__TARGET);
+                                                    SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__TARGET);
       }
 
       return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
