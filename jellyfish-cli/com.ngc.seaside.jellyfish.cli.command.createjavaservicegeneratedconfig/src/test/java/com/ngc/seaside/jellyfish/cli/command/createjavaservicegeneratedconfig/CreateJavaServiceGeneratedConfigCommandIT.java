@@ -235,7 +235,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
-      Path restFile = srcDir.resolve("TrackPriorityServiceRestConfiguration.java");
+      Path restFile = srcDir.resolve("TrackPriorityServiceSparkConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
