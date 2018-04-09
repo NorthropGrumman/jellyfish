@@ -213,7 +213,6 @@ public class CreateJavaCucumberTestsConfigCommandTest {
    }
 
    @Test
-   @Ignore
    public void rest() throws Throwable {
       templateService.setTemplateDirectory(
             CreateJavaCucumberTestsConfigCommand.class.getPackage().getName() + "-"
@@ -239,8 +238,8 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                          "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
-      Path restFile = srcDir.resolve("TrackPriorityServiceRestConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      Path restFile = srcDir.resolve("TrackPriorityServiceRestTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
@@ -291,7 +290,6 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
-      Files.walk(projectDir).forEach(System.out::println);
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
       assertTrue(Files.isRegularFile(multicastFile));

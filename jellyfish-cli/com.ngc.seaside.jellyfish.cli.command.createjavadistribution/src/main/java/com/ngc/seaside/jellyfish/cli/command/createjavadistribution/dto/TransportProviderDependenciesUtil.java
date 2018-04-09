@@ -38,8 +38,8 @@ public class TransportProviderDependenciesUtil {
          dependencies.addAll(multicastDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.REST)) {
-         RestTransportProviderConfigDto restMqDto = new RestTransportProviderConfigDto(null);
-         dependencies.addAll(restMqDto.getDependencies(true));
+         RestTransportProviderConfigDto restDto = new RestTransportProviderConfigDto(null);
+         dependencies.addAll(restDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.ZERO_MQ)) {
          ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null, false);
