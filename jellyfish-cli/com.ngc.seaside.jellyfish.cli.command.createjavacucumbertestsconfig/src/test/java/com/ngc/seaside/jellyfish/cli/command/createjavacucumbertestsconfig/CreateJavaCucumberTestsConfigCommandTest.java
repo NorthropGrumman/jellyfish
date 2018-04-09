@@ -29,7 +29,6 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -192,7 +191,8 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                        61001, "127.0.0.1", "127.0.0.1");
 
       run(
-            CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY, "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+            CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.EngagementTrackPriorityService",
             CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
             CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory.getRoot().getAbsolutePath(),
             CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
@@ -231,8 +231,8 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
       Path projectDir =
             outputDirectory.getRoot()
-                  .toPath()
-                  .resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
+                           .toPath()
+                           .resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
       Path srcDir =
             projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
                                          "trackpriorityservice", "testsconfig"));
@@ -249,43 +249,43 @@ public class CreateJavaCucumberTestsConfigCommandTest {
    @Test
    public void zeromq() throws Throwable {
       templateService.setTemplateDirectory(
-         CreateJavaCucumberTestsConfigCommandTest.class.getPackage().getName() + "-"
+            CreateJavaCucumberTestsConfigCommandTest.class.getPackage().getName() + "-"
             + ZEROMQ_TEMPLATE_SUFFIX,
-         Paths.get("src", "main", "templates", ZEROMQ_TEMPLATE_SUFFIX));
+            Paths.get("src", "main", "templates", ZEROMQ_TEMPLATE_SUFFIX));
 
       transportConfigService.addZeroMqTcpConfiguration("trackEngagementStatus",
-         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
-         "*",
-         "localhost",
-         1000);
+                                                       ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+                                                       "*",
+                                                       "localhost",
+                                                       1000);
 
       transportConfigService.addZeroMqTcpConfiguration("trackPriorityRequest",
-         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
-         "*",
-         "localhost",
-         1001);
+                                                       ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+                                                       "*",
+                                                       "localhost",
+                                                       1001);
 
       run(
-         CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.EngagementTrackPriorityService",
-         CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
-         "",
-         CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(),
-         JellyfishCommandPhase.DEFERRED);
+            CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+            CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+            "",
+            CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(),
+            JellyfishCommandPhase.DEFERRED);
 
       Path projectDir = outputDirectory.getRoot().toPath().resolve(
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.testsconfig");
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice.testsconfig");
       Path srcDir = projectDir.resolve(Paths.get("src",
-         "main",
-         "java",
-         "com",
-         "ngc",
-         "seaside",
-         "threateval",
-         "engagementtrackpriorityservice",
-         "testsconfig"));
+                                                 "main",
+                                                 "java",
+                                                 "com",
+                                                 "ngc",
+                                                 "seaside",
+                                                 "threateval",
+                                                 "engagementtrackpriorityservice",
+                                                 "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
@@ -295,18 +295,20 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       assertTrue(Files.isRegularFile(multicastFile));
 
       run(
-         CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.TrackPriorityService",
-         CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
-         "",
-         CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(),
-         JellyfishCommandPhase.DEFERRED);
+            CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+            "",
+            CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(),
+            JellyfishCommandPhase.DEFERRED);
 
-      projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
+      projectDir =
+            outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
       srcDir = projectDir.resolve(
-         Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "trackpriorityservice", "testsconfig"));
+            Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "trackpriorityservice",
+                      "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
       configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
