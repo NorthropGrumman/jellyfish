@@ -24,7 +24,7 @@ public class ${dto.modelName}SparkTestConfiguration {
 #set ($name = $entry.key)
 #set ($topics = $entry.value)
       config.whenSending()
-            .toApplicationTopic(${topic.name})
+            .toApplicationTopic(${name})
             .useTransportProvider(httpClientProvider)
 #foreach ($topic in $topics)
             .onPhysicalTopic(t -> ${topic.variableName})

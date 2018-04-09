@@ -70,7 +70,7 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
                                                               field.getName() + (configurations.size() > 1 ? count
                                                                                                            : ""))
                                                         .setName(topicsPrefix + topicName)
-                                                        .setRequest(isRequest);
+                                                        .setRequest(!isRequest);
 
             sparkDto.addTopic(topicDto);
             count++;
