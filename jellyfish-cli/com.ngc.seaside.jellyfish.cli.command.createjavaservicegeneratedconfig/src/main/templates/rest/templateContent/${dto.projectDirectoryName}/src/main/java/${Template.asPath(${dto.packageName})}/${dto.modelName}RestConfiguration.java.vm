@@ -12,9 +12,9 @@ public class ${dto.modelName}RestConfiguration {
    private ${dto.modelName}RestConfiguration() {
    }
 
-   public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> restProvider) {
+   public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {
 #foreach ($topic in $dto.topics)
-       SparkTopics factory = SparkTopics.boundToLocalhost(${topic.port});
+       SparkTopics factory = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port});
 
        SparkTopic ${topic.variableName} = factory.when(HttpVerb.${topic.httpMethod})
              .onPath("${topic.path}")
@@ -28,7 +28,7 @@ public class ${dto.modelName}RestConfiguration {
 #set ($name = $entry.key)
 #set ($topics = $entry.value)
        config.whenReceiving()
-             .withTransportProvider(restProvider)
+             .withTransportProvider(sparkProvider)
 #foreach ($topic in $topics)
              .onPhysicalTopic(${topic.variableName})
 #end
