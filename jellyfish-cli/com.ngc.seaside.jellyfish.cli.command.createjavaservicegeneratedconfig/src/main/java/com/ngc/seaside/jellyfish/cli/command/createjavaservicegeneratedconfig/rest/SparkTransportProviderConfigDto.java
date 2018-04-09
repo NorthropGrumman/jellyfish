@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class RestTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
+public class SparkTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
    public static final String REST_TEMPLATE_SUFFIX = "rest";
 
    private static final String REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
@@ -29,7 +29,7 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
 
    private ITransportConfigurationService transportConfigurationService;
 
-   public RestTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService) {
+   public SparkTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService) {
       this.transportConfigurationService = transportConfigurationService;
    }
 
