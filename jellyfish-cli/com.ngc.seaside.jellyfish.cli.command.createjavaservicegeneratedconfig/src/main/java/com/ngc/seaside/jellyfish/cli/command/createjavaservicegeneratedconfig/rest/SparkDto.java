@@ -38,13 +38,13 @@ public class SparkDto {
 
    public Map<String, List<SparkTopicDto>> getSendTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() == HttpMethod.GET)
+                   .filter(SparkTopicDto::isResponse)
                    .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
    public Map<String, List<SparkTopicDto>> getReceiveTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() != HttpMethod.GET)
+                   .filter(SparkTopicDto::isRequest)
                    .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
