@@ -27,3 +27,6 @@ project(':generated-projects/com.ngc.seaside.threateval.ctps.events').name = 'ct
 include 'generated-projects/com.ngc.seaside.threateval.ctps.messages'
 project(':generated-projects/com.ngc.seaside.threateval.ctps.messages').name = 'ctps.messages'
 
+include 'generated-projects/com.ngc.seaside.threateval.ctps.testsconfig'
+project(':generated-projects/com.ngc.seaside.threateval.ctps.testsconfig').name = 'ctps.testsconfig'
+

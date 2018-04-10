@@ -90,18 +90,17 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-      StringBuilder templateName = new StringBuilder(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-");
-      if (parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) == null) {
-         templateName.append(BUILD_TEMPLATE_SUFFIX);
+      templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + BUILD_TEMPLATE_SUFFIX,
+         parameters,
+         outputDirectory,
+         clean);
+      if (parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null) {
+         templateService.unpack(
+            CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + CONFIG_TEMPLATE_SUFFIX,
+            parameters,
+            outputDirectory,
+            false);
       }
-      else {
-         templateName.append(CONFIG_TEMPLATE_SUFFIX);
-      }
-         templateService.unpack( templateName.toString(),
-                                parameters,
-                                outputDirectory,
-                                clean);
-
       logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
       buildManagementService.registerProject(commandOptions, info);
    }
