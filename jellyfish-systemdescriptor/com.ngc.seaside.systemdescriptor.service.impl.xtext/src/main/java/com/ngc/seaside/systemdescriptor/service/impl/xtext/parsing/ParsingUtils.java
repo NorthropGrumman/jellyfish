@@ -8,11 +8,9 @@ import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryServic
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.XtextResource;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -151,8 +149,7 @@ class ParsingUtils {
          ZipEntry entry;
          while ((entry = zis.getNextEntry()) != null) {
             if (entry.getName().endsWith(".sd")) {
-               URI uri = URI.createURI(entry.getName());
-               XtextResource resource = ctx.resourceOf(uri);
+               XtextResource resource = ctx.resourceOf(jar, entry);
                if (resource != null) {
                   resources.add(resource);
                }
