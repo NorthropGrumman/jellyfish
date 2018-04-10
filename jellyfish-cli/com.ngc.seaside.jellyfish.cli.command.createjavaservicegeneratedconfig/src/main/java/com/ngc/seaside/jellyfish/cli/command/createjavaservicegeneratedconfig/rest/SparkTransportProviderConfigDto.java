@@ -54,7 +54,6 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
-         boolean isResponse = model.getOutputs().contains(field);
 
          Collection<RestConfiguration> configurations =
                transportConfigurationService.getRestConfiguration(options, field);
@@ -69,8 +68,7 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
                                                         .setVariableName(
                                                               field.getName() + (configurations.size() > 1 ? count
                                                                                                            : ""))
-                                                        .setName(topicsPrefix + topicName)
-                                                        .setResponse(isResponse);
+                                                        .setName(topicsPrefix + topicName);
 
             sparkDto.addTopic(topicDto);
             count++;

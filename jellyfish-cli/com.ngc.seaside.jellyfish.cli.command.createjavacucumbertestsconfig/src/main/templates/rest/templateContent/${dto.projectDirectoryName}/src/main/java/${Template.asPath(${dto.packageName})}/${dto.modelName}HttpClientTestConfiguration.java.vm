@@ -20,13 +20,11 @@ public class ${dto.modelName}HttpClientTestConfiguration {
             HttpClientTopic.ContentTypes.PROTOCOL_BUFFERS);
 
 #end
-#foreach ($entry in $dto.receiveTopics.entrySet())
-#set ($name = $entry.key)
-#set ($topics = $entry.value)
+#foreach ($entry in $dto.topics)
       config.whenSending()
-            .toApplicationTopic(${name})
+            .toApplicationTopic(${entry.name})
             .useTransportProvider(httpClientProvider)
-#foreach ($topic in $topics)
+#foreach ($topic in $dto.topics)
             .onPhysicalTopic(t -> ${topic.variableName})
 #end
 

@@ -35,18 +35,6 @@ public class SparkDto {
       return topics;
    }
 
-   public Map<String, List<SparkTopicDto>> getSendTopics() {
-      return topics.stream()
-                   .filter(SparkTopicDto::isResponse)
-                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
-   }
-
-   public Map<String, List<SparkTopicDto>> getReceiveTopics() {
-      return topics.stream()
-                   .filter(SparkTopicDto::isRequest)
-                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
-   }
-
    public SparkDto addTopic(SparkTopicDto topic) {
       this.topics.add(topic);
       return this;

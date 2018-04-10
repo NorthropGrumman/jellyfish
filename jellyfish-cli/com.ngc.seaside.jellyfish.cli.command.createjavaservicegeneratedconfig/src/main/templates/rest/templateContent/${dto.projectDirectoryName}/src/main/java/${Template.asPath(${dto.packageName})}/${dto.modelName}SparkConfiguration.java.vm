@@ -24,16 +24,14 @@ public class ${dto.modelName}SparkConfiguration {
              .build();
 
 #end
-#foreach ($entry in $dto.receiveTopics.entrySet())
-#set ($name = $entry.key)
-#set ($topics = $entry.value)
+#foreach ($entry in $dto.topics)
        config.whenReceiving()
              .withTransportProvider(sparkProvider)
-#foreach ($topic in $topics)
+#foreach ($topic in $dto.topics)
              .onPhysicalTopic(${topic.variableName})
 #end
              .enableResponses(true)
-             .useApplicationTopic(t -> ${name});
+             .useApplicationTopic(t -> ${entry.name});
 
 #end
    }
