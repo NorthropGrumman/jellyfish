@@ -6,9 +6,9 @@ import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic;
 import com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientVerb;
 import ${dto.topicsImport};
 
-public class ${dto.modelName}SparkTestConfiguration {
+public class ${dto.modelName}HttpClientTestConfiguration {
 
-   private ${dto.modelName}SparkTestConfiguration() {
+   private ${dto.modelName}HttpClientTestConfiguration() {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<HttpClientTopic> httpClientProvider) {

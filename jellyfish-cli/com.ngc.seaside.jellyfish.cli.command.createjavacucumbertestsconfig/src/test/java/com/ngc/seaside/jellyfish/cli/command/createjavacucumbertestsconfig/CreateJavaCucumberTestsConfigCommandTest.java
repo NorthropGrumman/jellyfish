@@ -239,7 +239,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
-      Path restFile = srcDir.resolve("TrackPriorityServiceSparkTestConfiguration.java");
+      Path restFile = srcDir.resolve("TrackPriorityServiceHttpClientTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
