@@ -4,7 +4,7 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 
-public class RestTopicDto {
+public class SparkTopicDto {
    private NetworkAddress networkAddress;
    private NetworkInterface networkInterface;
    private int port;
@@ -13,12 +13,13 @@ public class RestTopicDto {
    private String contentType;
    private String variableName;
    private String name;
+   private boolean isRequest;
 
    public NetworkAddress getNetworkAddress() {
       return networkAddress;
    }
 
-   public RestTopicDto setNetworkAddress(NetworkAddress networkAddress) {
+   public SparkTopicDto setNetworkAddress(NetworkAddress networkAddress) {
       this.networkAddress = networkAddress;
       return this;
    }
@@ -27,7 +28,7 @@ public class RestTopicDto {
       return networkInterface;
    }
 
-   public RestTopicDto setNetworkInterface(NetworkInterface networkInterface) {
+   public SparkTopicDto setNetworkInterface(NetworkInterface networkInterface) {
       this.networkInterface = networkInterface;
       return this;
    }
@@ -36,7 +37,7 @@ public class RestTopicDto {
       return port;
    }
 
-   public RestTopicDto setPort(int port) {
+   public SparkTopicDto setPort(int port) {
       this.port = port;
       return this;
    }
@@ -45,7 +46,7 @@ public class RestTopicDto {
       return httpMethod;
    }
 
-   public RestTopicDto setHttpMethod(HttpMethod httpMethod) {
+   public SparkTopicDto setHttpMethod(HttpMethod httpMethod) {
       this.httpMethod = httpMethod;
       return this;
    }
@@ -54,7 +55,7 @@ public class RestTopicDto {
       return path;
    }
 
-   public RestTopicDto setPath(String path) {
+   public SparkTopicDto setPath(String path) {
       this.path = path;
       return this;
    }
@@ -63,7 +64,7 @@ public class RestTopicDto {
       return contentType;
    }
 
-   public RestTopicDto setContentType(String contentType) {
+   public SparkTopicDto setContentType(String contentType) {
       this.contentType = contentType;
       return this;
    }
@@ -72,7 +73,7 @@ public class RestTopicDto {
       return variableName;
    }
 
-   public RestTopicDto setVariableName(String variableName) {
+   public SparkTopicDto setVariableName(String variableName) {
       this.variableName = variableName;
       return this;
    }
@@ -81,14 +82,27 @@ public class RestTopicDto {
       return name;
    }
 
-   public RestTopicDto setName(String name) {
+   public SparkTopicDto setName(String name) {
       this.name = name;
+      return this;
+   }
+
+   public boolean isRequest() {
+      return isRequest;
+   }
+
+   public boolean isResponse() {
+      return !isRequest;
+   }
+
+   public SparkTopicDto setRequest(boolean request) {
+      isRequest = request;
       return this;
    }
 
    @Override
    public String toString() {
-      return "RestTopicDto["
+      return "SparkTopicDto["
              + "\n\tnetworkAddress=" + networkAddress.getAddress()
              + "\n\tnetworkInterface=" + networkInterface.getName()
              + "\n\tport=" + port
@@ -97,6 +111,7 @@ public class RestTopicDto {
              + "\n\tcontentType=" + contentType
              + "\n\tvariableName=" + variableName
              + "\n\tname=" + name
+             + "\n\tisRequest=" + isRequest
              + "\n]";
    }
 }

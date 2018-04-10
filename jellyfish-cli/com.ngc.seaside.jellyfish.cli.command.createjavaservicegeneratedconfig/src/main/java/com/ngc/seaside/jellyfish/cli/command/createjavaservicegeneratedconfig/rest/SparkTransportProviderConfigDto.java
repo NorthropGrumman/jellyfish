@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class RestTransportProviderConfigDto implements ITransportProviderConfigDto<RestDto> {
+public class SparkTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
    public static final String REST_TEMPLATE_SUFFIX = "rest";
 
    private static final String REST_TRANSPORT_PROVIDER_COMPONENT_NAME =
          "com.ngc.seaside.service.transport.impl.provider.rest.RestTransportProvider";
    private static final String REST_CONFIGURATION_CLASS_NAME_SUFFIX = "RestConfiguration";
-   private final static String REST_PROVIDER_VARIABLE_NAME = "restProvider";
+   private final static String REST_PROVIDER_VARIABLE_NAME = "sparkProvider";
    private static final String REST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.spark";
    private static final String REST_TOPIC_CLASS_NAME = "SparkTopic";
    private static final String REST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
@@ -29,12 +29,12 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
 
    private ITransportConfigurationService transportConfigurationService;
 
-   public RestTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService) {
+   public SparkTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService) {
       this.transportConfigurationService = transportConfigurationService;
    }
 
    @Override
-   public TransportProviderDto getTransportProviderDto(RestDto dto) {
+   public TransportProviderDto getTransportProviderDto(SparkDto dto) {
       return new TransportProviderDto()
             .setComponentName(REST_TRANSPORT_PROVIDER_COMPONENT_NAME)
             .setConfigurationType(dto.getModelName() + REST_CONFIGURATION_CLASS_NAME_SUFFIX)
@@ -44,43 +44,44 @@ public class RestTransportProviderConfigDto implements ITransportProviderConfigD
    }
 
    @Override
-   public Optional<RestDto> getConfigurationDto(GeneratedServiceConfigDto serviceConfigDto,
-                                                IJellyFishCommandOptions options, IModel model, String topicsClassName,
-                                                Map<String, IDataReferenceField> topics) {
-      RestDto restDto = new RestDto().setBaseDto(serviceConfigDto)
-                                     .setTopicsImport(topicsClassName);
+   public Optional<SparkDto> getConfigurationDto(GeneratedServiceConfigDto serviceConfigDto,
+                                                 IJellyFishCommandOptions options, IModel model, String topicsClassName,
+                                                 Map<String, IDataReferenceField> topics) {
+      SparkDto sparkDto = new SparkDto().setBaseDto(serviceConfigDto)
+                                        .setTopicsImport(topicsClassName);
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
-         boolean isOutput = model.getOutputs().contains(field);
+         boolean isRequest = model.getInputs().contains(field);
 
-         Collection<RestConfiguration>
-               configurations =
+         Collection<RestConfiguration> configurations =
                transportConfigurationService.getRestConfiguration(options, field);
          int count = 1;
          for (RestConfiguration configuration : configurations) {
-            RestTopicDto topicDto = new RestTopicDto().setNetworkAddress(configuration.getNetworkAddress())
-                                                      .setNetworkInterface(configuration.getNetworkInterface())
-                                                      .setPort(configuration.getPort())
-                                                      .setHttpMethod(configuration.getHttpMethod())
-                                                      .setPath(configuration.getPath())
-                                                      .setContentType(configuration.getContentType())
-                                                      .setVariableName(
-                                                            field.getName() + (configurations.size() > 1 ? count : ""))
-                                                      .setName(topicsPrefix + topicName);
+            SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
+                                                        .setNetworkInterface(configuration.getNetworkInterface())
+                                                        .setPort(configuration.getPort())
+                                                        .setHttpMethod(configuration.getHttpMethod())
+                                                        .setPath(configuration.getPath())
+                                                        .setContentType(configuration.getContentType())
+                                                        .setVariableName(
+                                                              field.getName() + (configurations.size() > 1 ? count
+                                                                                                           : ""))
+                                                        .setName(topicsPrefix + topicName)
+                                                        .setRequest(isRequest);
 
-            restDto.addTopic(topicDto);
+            sparkDto.addTopic(topicDto);
             count++;
          }
       }
 
-      if (restDto.getTopics().isEmpty()) {
+      if (sparkDto.getTopics().isEmpty()) {
          return Optional.empty();
       }
 
-      return Optional.of(restDto);
+      return Optional.of(sparkDto);
    }
 
    @Override

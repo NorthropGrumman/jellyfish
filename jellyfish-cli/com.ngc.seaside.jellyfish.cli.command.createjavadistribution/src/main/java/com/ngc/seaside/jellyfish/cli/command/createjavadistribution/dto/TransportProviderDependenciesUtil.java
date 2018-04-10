@@ -4,7 +4,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.RestTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
@@ -38,8 +38,8 @@ public class TransportProviderDependenciesUtil {
          dependencies.addAll(multicastDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.REST)) {
-         RestTransportProviderConfigDto restDto = new RestTransportProviderConfigDto(null);
-         dependencies.addAll(restDto.getDependencies(true));
+         SparkTransportProviderConfigDto sparkDto = new SparkTransportProviderConfigDto(null);
+         dependencies.addAll(sparkDto.getDependencies(true));
       }
       if (types.contains(TransportConfigurationType.ZERO_MQ)) {
          ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null, false);

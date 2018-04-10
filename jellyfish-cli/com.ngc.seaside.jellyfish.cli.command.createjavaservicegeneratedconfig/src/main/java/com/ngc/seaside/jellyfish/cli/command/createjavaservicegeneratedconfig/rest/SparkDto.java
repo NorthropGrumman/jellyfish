@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RestDto {
+public class SparkDto {
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
-   private List<RestTopicDto> topics = new ArrayList<>();
+   private List<SparkTopicDto> topics = new ArrayList<>();
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
    }
 
-   public RestDto setBaseDto(
+   public SparkDto setBaseDto(
          GeneratedServiceConfigDto baseDto) {
       this.baseDto = baseDto;
       return this;
@@ -27,28 +27,28 @@ public class RestDto {
       return topicsImport;
    }
 
-   public RestDto setTopicsImport(String topicsImport) {
+   public SparkDto setTopicsImport(String topicsImport) {
       this.topicsImport = topicsImport;
       return this;
    }
 
-   public List<RestTopicDto> getTopics() {
+   public List<SparkTopicDto> getTopics() {
       return topics;
    }
 
-   public Map<String, List<RestTopicDto>> getSendTopics() {
+   public Map<String, List<SparkTopicDto>> getSendTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() == HttpMethod.GET)
-                   .collect(Collectors.groupingBy(RestTopicDto::getName));
+                   .filter(SparkTopicDto::isResponse)
+                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
-   public Map<String, List<RestTopicDto>> getReceiveTopics() {
+   public Map<String, List<SparkTopicDto>> getReceiveTopics() {
       return topics.stream()
-                   .filter(topic -> topic.getHttpMethod() != HttpMethod.GET)
-                   .collect(Collectors.groupingBy(RestTopicDto::getName));
+                   .filter(SparkTopicDto::isRequest)
+                   .collect(Collectors.groupingBy(SparkTopicDto::getName));
    }
 
-   public RestDto addTopic(RestTopicDto topic) {
+   public SparkDto addTopic(SparkTopicDto topic) {
       this.topics.add(topic);
       return this;
    }
