@@ -21,8 +21,6 @@ import java.util.Collection;
  */
 public class ParsingContext implements AutoCloseable {
 
-   private final Collection<InputStream> streams = new ArrayList<>();
-
    /**
     * The XText resource set we use to create resources that will be parsed.
     */
@@ -38,27 +36,19 @@ public class ParsingContext implements AutoCloseable {
 
    @Override
    public void close() {
-      streams.forEach(Closeables::closeQuietly);
+      // Do nothing.
    }
 
    /**
-    * Creates a new resource using the given URI and copies the contents of the stream to this resource.
+    * Creates a new resource using the given URI.
     *
     * @param uri    the URI if the new resource to create
-    * @param stream the stream that contains the contents of the resource
     * @return the new resource
-    * @throws IOException if an errors occurs during copying
     */
-   public XtextResource resourceOf(URI uri, InputStream stream) throws IOException {
-      XtextResource r = (XtextResource) resourceSet.createResource(uri);
-      ByteArrayOutputStream out = new ByteArrayOutputStream(stream.available());
-      IOUtils.copy(stream, out);
-      stream = new ByteArrayInputStream(out.toByteArray());
-      if (r != null) {
-         r.load(stream, resourceSet.getLoadOptions());
-      }
-
-      return r;
+   public XtextResource resourceOf(URI uri) {
+      // Do not load the resource here.  If we do that, validation will automatically start.  This can cause problems
+      // if all the resources have not yet been added to the set.
+      return (XtextResource) resourceSet.createResource(uri);
    }
 
    /**
@@ -66,18 +56,11 @@ public class ParsingContext implements AutoCloseable {
     *
     * @param file the file to load
     * @return the new resource that contains the contents of {@code file}
-    * @throws IOException if the contents of the file cannot be loaded
     */
-   public XtextResource resourceOf(Path file) throws IOException {
-      XtextResource r = (XtextResource) resourceSet.createResource(
+   public XtextResource resourceOf(Path file) {
+      // Do not load the resource here.  If we do that, validation will automatically start.  This can cause problems
+      // if all the resources have not yet been added to the set.
+      return (XtextResource) resourceSet.createResource(
             URI.createFileURI(file.toAbsolutePath().toFile().toString()));
-      r.load(streamOf(file), resourceSet.getLoadOptions());
-      return r;
-   }
-
-   private InputStream streamOf(Path file) throws IOException {
-      InputStream is = Files.newInputStream(file);
-      streams.add(is);
-      return is;
    }
 }

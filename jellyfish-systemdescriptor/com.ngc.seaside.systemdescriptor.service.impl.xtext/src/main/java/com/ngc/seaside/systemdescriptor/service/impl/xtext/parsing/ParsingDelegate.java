@@ -93,9 +93,6 @@ public class ParsingDelegate {
          Collection<XtextResource> resources = getResources(paths, ctx);
          // Now aggregate the validation results.
          result = getResult(ctx, resources);
-      } catch (IOException e) {
-         logService.error(getClass(), "Error while parsing content in %s!", paths);
-         throw new ParsingException(e.getMessage(), e);
       }
       timer.stop();
 
@@ -115,7 +112,7 @@ public class ParsingDelegate {
       return result;
    }
 
-   private Collection<XtextResource> getResources(Collection<Path> paths, ParsingContext ctx) throws IOException {
+   private Collection<XtextResource> getResources(Collection<Path> paths, ParsingContext ctx) {
       Collection<XtextResource> resources = new ArrayList<>();
       for (Path path : paths) {
          resources.add(ctx.resourceOf(path));
@@ -126,8 +123,15 @@ public class ParsingDelegate {
    private XTextParsingResult getResult(ParsingContext context, Collection<XtextResource> resources) {
       XTextParsingResult result = new XTextParsingResult();
 
-      // We can't do the validation until all the resources are added to the
-      // set (in order to ensure imports are resolved).
+      // This loop is important.  Up until this point, we have not actually loaded any resources.  We have waited until
+      // all the resources are registered with the resource set.  This ensures that cross references will be resolved
+      // correctly.  Calling getResource(uri, true) will force the loading of that resource.
+      for(XtextResource resource : resources) {
+         // Force resolution of all proxy objects.
+         resource.getResourceSet().getResource(resource.getURI(), true);
+      }
+
+      // Now get the results of validation.
       Iterator<XtextResource> i = resources.iterator();
       XtextResource resource = i.next();
       // Get the validator.

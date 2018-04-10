@@ -129,13 +129,7 @@ class ParsingUtils {
       Files.walk(resourcesDirectory)
             .filter(Files::isRegularFile)
             .filter(file -> file.toString().endsWith(".sd"))
-            .map(file -> {
-               try {
-                  return ctx.resourceOf(file);
-               } catch (IOException e) {
-                  throw new UncheckedIOException(e);
-               }
-            })
+            .map(ctx::resourceOf)
             .forEach(resources::add);
 
       if (pom != null) {
@@ -158,7 +152,7 @@ class ParsingUtils {
          while ((entry = zis.getNextEntry()) != null) {
             if (entry.getName().endsWith(".sd")) {
                URI uri = URI.createURI(entry.getName());
-               XtextResource resource = ctx.resourceOf(uri, zis);
+               XtextResource resource = ctx.resourceOf(uri);
                if (resource != null) {
                   resources.add(resource);
                }
