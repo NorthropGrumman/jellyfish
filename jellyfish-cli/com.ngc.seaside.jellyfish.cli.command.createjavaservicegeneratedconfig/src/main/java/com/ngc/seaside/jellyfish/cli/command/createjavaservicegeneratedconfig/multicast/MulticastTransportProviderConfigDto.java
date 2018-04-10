@@ -61,7 +61,7 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
          boolean isOutput = model.getOutputs().contains(field);
-
+         boolean shouldSend = isOutput ^ test;
          Collection<MulticastConfiguration> configurations = transportConfigService.getMulticastConfiguration(options,
             field);
          int count = 1;
@@ -73,7 +73,7 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
                                                                 .setName(topicsPrefix + topicName)
                                                                 .setVariableName(field.getName()
                                                                    + (configurations.size() > 1 ? count : ""))
-                                                                .setSend(isOutput);
+                                                                .setSend(shouldSend);
             multicastDto.addTopic(topicDto);
             count++;
          }
