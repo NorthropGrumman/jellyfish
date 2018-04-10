@@ -20,7 +20,7 @@ public class ${dto.modelName}HttpClientTestConfiguration {
             HttpClientTopic.ContentTypes.PROTOCOL_BUFFERS);
 
 #end
-#foreach ($entry in $dto.sendTopics.entrySet())
+#foreach ($entry in $dto.receiveTopics.entrySet())
 #set ($name = $entry.key)
 #set ($topics = $entry.value)
       config.whenSending()
