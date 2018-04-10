@@ -204,7 +204,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastTestsConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -219,7 +219,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
             + REST_TEMPLATE_SUFFIX,
             Paths.get("src", "main", "templates", REST_TEMPLATE_SUFFIX));
 
-      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
@@ -238,7 +238,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                          "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
       Path restFile = srcDir.resolve("TrackPriorityServiceHttpClientTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -288,7 +288,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
@@ -311,7 +311,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                       "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
-      configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
       multicastFile = srcDir.resolve("TrackPriorityServiceZeroMqTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));

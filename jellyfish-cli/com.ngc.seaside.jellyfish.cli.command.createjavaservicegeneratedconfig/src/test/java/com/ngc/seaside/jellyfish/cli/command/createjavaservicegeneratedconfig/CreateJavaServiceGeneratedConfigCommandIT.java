@@ -215,7 +215,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
             + REST_TEMPLATE_SUFFIX,
             Paths.get("src", "main", "templates", REST_TEMPLATE_SUFFIX));
 
-      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,

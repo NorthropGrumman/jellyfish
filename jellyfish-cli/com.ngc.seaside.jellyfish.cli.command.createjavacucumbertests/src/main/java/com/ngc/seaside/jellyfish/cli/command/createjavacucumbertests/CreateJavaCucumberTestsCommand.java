@@ -90,7 +90,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null && 
+      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null &&
                parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue() != null;
 
       if (isConfigGenerated) {
