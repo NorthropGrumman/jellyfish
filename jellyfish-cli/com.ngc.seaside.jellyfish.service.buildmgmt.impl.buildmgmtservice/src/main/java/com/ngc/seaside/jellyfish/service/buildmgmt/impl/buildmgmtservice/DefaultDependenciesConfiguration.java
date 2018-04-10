@@ -61,6 +61,9 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.topic.spark"),
                       artifact("service.transport.impl.provider.spark"),
                       artifact("service.transport.impl.provider.spark.module"),
+                      artifact("service.transport.impl.topic.httpclient"),
+                      artifact("service.transport.impl.provider.httpclient"),
+                      artifact("service.transport.impl.provider.httpclient.module"),
                       artifact("service.transport.impl.topic.zeromq"),
                       artifact("service.transport.impl.provider.zeromq"),
                       artifact("service.transport.impl.provider.zeromq.module"));
