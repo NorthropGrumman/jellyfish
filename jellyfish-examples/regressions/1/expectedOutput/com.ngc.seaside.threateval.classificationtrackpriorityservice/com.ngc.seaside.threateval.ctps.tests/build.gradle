@@ -4,6 +4,7 @@ apply plugin: 'com.ngc.seaside.application'
 dependencies {
     compile project(":ctps.messages")
     compile project(":ctps.base")
+    compile project(":ctps.testsconfig")
 
     compile "com.ngc.seaside:service.api:$starfishVersion"
     compile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"

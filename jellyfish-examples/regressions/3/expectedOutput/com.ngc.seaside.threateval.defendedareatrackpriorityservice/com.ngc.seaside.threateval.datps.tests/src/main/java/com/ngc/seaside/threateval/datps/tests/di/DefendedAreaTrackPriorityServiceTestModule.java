@@ -2,7 +2,7 @@ package com.ngc.seaside.threateval.datps.tests.di;
 
 import com.google.inject.AbstractModule;
 
-import com.ngc.seaside.threateval.datps.tests.config.DefendedAreaTrackPriorityServiceTestConfiguration;
+import com.ngc.seaside.threateval.datps.testsconfig.DefendedAreaTrackPriorityServiceTestConfiguration;
 
 /**
  * This module configures Guice bindings for the DefendedAreaTrackPriorityService steps.
