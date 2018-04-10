@@ -106,10 +106,6 @@ public class CreateJavaServiceProjectCommandTest {
                                   capture.capture());
       verifyParametersForCreateCucumberTestsCommand(capture.getValue(), "my-project");
 
-      verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME),
-                                  capture.capture());
-      verifyParametersForCreateCucumberTestsConfigCommand(capture.getValue(), "my-project");
-
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_DISTRIBUTION_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreateDistributionCommand(capture.getValue(), "my-project");
@@ -175,13 +171,6 @@ public class CreateJavaServiceProjectCommandTest {
    }
 
    private void verifyParametersForCreateCucumberTestsCommand(IJellyFishCommandOptions options,
-                                                              String projectName) {
-      requireParameter(options,
-                       CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
-                       Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
-   }
-
-   private void verifyParametersForCreateCucumberTestsConfigCommand(IJellyFishCommandOptions options,
                                                               String projectName) {
       requireParameter(options,
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
