@@ -41,7 +41,10 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String DeploymentModel = CommonParameters.DEPLOYMENT_MODEL.getName();
    public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
+   public static final String BUILD_TEMPLATE_SUFFIX = "build";
+   public static final String CONFIG_TEMPLATE_SUFFIX = "config";
 
    public static final String MODEL_OBJECT_PROPERTY = "modelObject";
 
@@ -87,10 +90,18 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
-      templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName(),
-                             parameters,
-                             outputDirectory,
-                             clean);
+      StringBuilder templateName = new StringBuilder(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-");
+      if (parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) == null) {
+         templateName.append(BUILD_TEMPLATE_SUFFIX);
+      }
+      else {
+         templateName.append(CONFIG_TEMPLATE_SUFFIX);
+      }
+         templateService.unpack( templateName.toString(),
+                                parameters,
+                                outputDirectory,
+                                clean);
+
       logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
       buildManagementService.registerProject(commandOptions, info);
    }

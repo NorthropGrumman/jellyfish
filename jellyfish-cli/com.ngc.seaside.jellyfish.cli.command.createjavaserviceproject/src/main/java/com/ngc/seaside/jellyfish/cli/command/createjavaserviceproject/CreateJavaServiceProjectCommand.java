@@ -172,12 +172,13 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    }
 
    private void createCucumberTestsProject(CommandInvocationContext ctx) {
-      final String command;
+      String command;
       if (ctx.generatedConfigProjectUsed) {
          command = CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME;
-      } else {
-         command = CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME;
+         IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
+         doRunCommand(command, delegateOptions);
       }
+      command = CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME;
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
       doRunCommand(command, delegateOptions);
    }
