@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest;
 
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
-import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 
 import java.util.ArrayList;
 import java.util.List;

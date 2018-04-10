@@ -13,7 +13,7 @@ public class SparkTopicDto {
    private String contentType;
    private String variableName;
    private String name;
-   private boolean isRequest;
+   private boolean isResponse;
 
    public NetworkAddress getNetworkAddress() {
       return networkAddress;
@@ -87,17 +87,17 @@ public class SparkTopicDto {
       return this;
    }
 
-   public boolean isRequest() {
-      return isRequest;
-   }
-
    public boolean isResponse() {
-      return !isRequest;
+      return isResponse;
    }
 
-   public SparkTopicDto setRequest(boolean request) {
-      isRequest = request;
+   public SparkTopicDto setResponse(boolean isResponse) {
+      this.isResponse = isResponse;
       return this;
+   }
+
+   public boolean isRequest() {
+      return !isResponse;
    }
 
    @Override
@@ -111,7 +111,7 @@ public class SparkTopicDto {
              + "\n\tcontentType=" + contentType
              + "\n\tvariableName=" + variableName
              + "\n\tname=" + name
-             + "\n\tisRequest=" + isRequest
+             + "\n\tisResponse=" + isResponse
              + "\n]";
    }
 }
