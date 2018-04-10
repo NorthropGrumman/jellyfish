@@ -94,7 +94,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          parameters,
          outputDirectory,
          clean);
-      if (parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null) {
+      if (parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) == null || 
+               parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue() == null) {
          templateService.unpack(
             CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + CONFIG_TEMPLATE_SUFFIX,
             parameters,
