@@ -223,7 +223,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             String templateSuffix = transportProvider.getTemplateSuffix();
             unpackSuffixedTemplate(templateSuffix, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(false));
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(true));
             clean = false;
          }
       }
