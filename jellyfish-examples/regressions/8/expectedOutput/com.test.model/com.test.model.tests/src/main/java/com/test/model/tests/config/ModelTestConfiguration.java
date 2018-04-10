@@ -1,13 +1,13 @@
-package com.ngc.seaside.threateval.etps.tests.config;
+package com.test.model.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.ngc.seaside.threateval.etps.transport.topic.EngagementTrackPriorityServiceTransportTopics;
+import com.test.model.transport.topic.ModelTransportTopics;
 
-public class EngagementTrackPriorityServiceTestConfiguration{
+public class ModelTestConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class EngagementTrackPriorityServiceTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public EngagementTrackPriorityServiceTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ModelTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

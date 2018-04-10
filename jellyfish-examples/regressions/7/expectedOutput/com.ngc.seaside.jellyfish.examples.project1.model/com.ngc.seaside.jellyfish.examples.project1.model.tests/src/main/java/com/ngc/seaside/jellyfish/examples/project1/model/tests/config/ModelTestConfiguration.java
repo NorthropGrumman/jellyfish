@@ -1,13 +1,13 @@
-package com.ngc.seaside.threateval.datps.tests.config;
+package com.ngc.seaside.jellyfish.examples.project1.model.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.ngc.seaside.threateval.datps.transport.topic.DefendedAreaTrackPriorityServiceTransportTopics;
+import com.ngc.seaside.jellyfish.examples.project1.model.transport.topic.ModelTransportTopics;
 
-public class DefendedAreaTrackPriorityServiceTestConfiguration{
+public class ModelTestConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class DefendedAreaTrackPriorityServiceTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public DefendedAreaTrackPriorityServiceTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ModelTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

@@ -1,13 +1,13 @@
-package com.ngc.seaside.threateval.ctps.tests.config;
+package com.model.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.ngc.seaside.threateval.ctps.transport.topic.ClassificationTrackPriorityServiceTransportTopics;
+import com.model.transport.topic.ModelTransportTopics;
 
-public class ClassificationTrackPriorityServiceTestConfiguration{
+public class ModelTestConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class ClassificationTrackPriorityServiceTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public ClassificationTrackPriorityServiceTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ModelTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;
