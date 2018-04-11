@@ -195,7 +195,7 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
             topicDto.setNetworkInterface(configuration.getConnectConfiguration().getAddress());
          }
          topicDto.setPort(configuration.getPort());
-         topicDto.setSend(isOutput);
+         topicDto.setSend(shouldPublishOrRepsond);
          topicDtos.add(topicDto);
       }
 
