@@ -103,7 +103,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             .setModelName(model.getName())
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-                                                            .getArtifactId())
+                                              .getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
@@ -166,26 +166,14 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       this.transportConfigService = ref;
    }
 
-   public void removeTransportConfigurationService(ITransportConfigurationService ref) {
-      setTransportConfigurationService(null);
-   }
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
       this.generateService = ref;
    }
 
-   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      setJavaServiceGenerationService(null);
-   }
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setScenarioService(IScenarioService ref) {
       this.scenarioService = ref;
-   }
-
-   public void removeScenarioService(IScenarioService ref) {
-      setScenarioService(null);
    }
 
    @SuppressWarnings({"unchecked", "rawtypes"})
