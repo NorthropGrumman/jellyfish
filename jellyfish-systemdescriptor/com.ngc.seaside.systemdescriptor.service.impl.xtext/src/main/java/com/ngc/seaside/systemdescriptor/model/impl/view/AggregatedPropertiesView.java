@@ -86,24 +86,25 @@ public class AggregatedPropertiesView {
 
       final Collection<IPropertyValue> aggregatedValues;
       switch (property.getCardinality()) {
-      case MANY:
-         aggregatedValues = new ArrayList<>();
-         for (IPropertyValue value : property.getValues()) {
-            aggregatedValues.add(getAggregatedPropertyValue((IPropertyDataValue) value));
-         }
-         break;
-      case SINGLE:
-         aggregatedValues = Collections.singleton(getAggregatedPropertyValue((IPropertyDataValue) property.getValue()));
-         break;
-      default:
-         throw new IllegalStateException("Unknown cardinality: " + property.getCardinality());
+         case MANY:
+            aggregatedValues = new ArrayList<>();
+            for (IPropertyValue value : property.getValues()) {
+               aggregatedValues.add(getAggregatedPropertyValue((IPropertyDataValue) value));
+            }
+            break;
+         case SINGLE:
+            aggregatedValues = Collections.singleton(
+               getAggregatedPropertyValue((IPropertyDataValue) property.getValue()));
+            break;
+         default:
+            throw new IllegalStateException("Unknown cardinality: " + property.getCardinality());
       }
       Property aggregated = new Property(
-         property.getName(),
-         property.getType(),
-         property.getCardinality(),
-         aggregatedValues,
-         new AggregatedDataView(property.getReferencedDataType()));
+            property.getName(),
+            property.getType(),
+            property.getCardinality(),
+            aggregatedValues,
+            new AggregatedDataView(property.getReferencedDataType()));
 
       return aggregated;
    }
@@ -113,31 +114,31 @@ public class AggregatedPropertiesView {
       IData data;
       try {
          data = new AggregatedDataView(value.getReferencedDataType());
-      } catch(IllegalStateException e) {
+      } catch (IllegalStateException e) {
          return value;
       }
       for (IDataField field : data.getFields()) {
          Collection<? extends IPropertyValue> fieldValues;
          switch (field.getCardinality()) {
-         case MANY:
-            fieldValues = value.getValues(field);
-            break;
-         case SINGLE:
-            fieldValues = Collections.singleton(value.getValue(field));
-            break;
-         default:
-            throw new IllegalStateException("Unknown cardinality: " + field.getCardinality());
+            case MANY:
+               fieldValues = value.getValues(field);
+               break;
+            case SINGLE:
+               fieldValues = Collections.singleton(value.getValue(field));
+               break;
+            default:
+               throw new IllegalStateException("Unknown cardinality: " + field.getCardinality());
          }
          switch (field.getType()) {
-         case DATA:
-            Collection<IPropertyDataValue> dataValues = new ArrayList<>(fieldValues.size());
-            for (IPropertyValue fieldValue : fieldValues) {
-               dataValues.add(getAggregatedPropertyValue((IPropertyDataValue) fieldValue));
-            }
-            fieldValues = dataValues;
-            break;
-         default:
-            break;
+            case DATA:
+               Collection<IPropertyDataValue> dataValues = new ArrayList<>(fieldValues.size());
+               for (IPropertyValue fieldValue : fieldValues) {
+                  dataValues.add(getAggregatedPropertyValue((IPropertyDataValue) fieldValue));
+               }
+               fieldValues = dataValues;
+               break;
+            default:
+               break;
          }
          aggregatedFields.put(field.getName(), fieldValues);
       }
