@@ -34,7 +34,7 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    static final String ZEROMQ_MODULE = "com.ngc.seaside.service.transport.impl.provider.zeromq.module.ZeroMQTransportProviderModule";
    static final String ZEROMQ_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.zeromq";
    static final String ZEROMQ_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq";
-   static final String ZEROMQ_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq";
+   static final String ZEROMQ_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq.module";
    public static final String ZEROMQ_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-zeromq";
 
    static final String CONNECTION_TYPE_BIND = "BIND";

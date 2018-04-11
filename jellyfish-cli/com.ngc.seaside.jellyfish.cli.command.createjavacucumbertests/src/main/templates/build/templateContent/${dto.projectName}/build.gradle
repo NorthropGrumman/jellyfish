@@ -4,27 +4,27 @@ apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
 #foreach ($dependency in $dto.dependencies)
-    compile project(":${dependency}")
+    implementation project(":${dependency}")
 #end
 
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
-    compile "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
-    compile "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
+    implementation "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
+    implementation "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
 
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.testutils')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.topic.multicast')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.provider.multicast')}"
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+#if (! $dto.isConfigGenerated())
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
+#end
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.testutils')}"
 
-    compile "${dto.getFormattedDependency('com.ngc.seaside:guice.modules')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice.module')}"
-    compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.provider.multicast.module')}"
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:guice.modules')}"
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice.module')}"
+    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.provider.multicast.module')}"
 
-    compile "${dto.getFormattedDependency('com.google.inject:guice')}"
-    compile "${dto.getFormattedDependency('com.google.guava:guava')}"
-    compile "${dto.getFormattedDependency('info.cukes:cucumber-java')}"
-    compile "${dto.getFormattedDependency('info.cukes:cucumber-guice')}"
+    implementation "${dto.getFormattedDependency('com.google.inject:guice')}"
+    implementation "${dto.getFormattedDependency('com.google.guava:guava')}"
+    implementation "${dto.getFormattedDependency('info.cukes:cucumber-java')}"
+    implementation "${dto.getFormattedDependency('info.cukes:cucumber-guice')}"
 }
 
 ext {

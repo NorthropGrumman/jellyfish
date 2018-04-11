@@ -41,7 +41,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
-   public static final String DeploymentModel = CommonParameters.DEPLOYMENT_MODEL.getName();
+   public static final String DEPLOYMENT_MODEL = CommonParameters.DEPLOYMENT_MODEL.getName();
    public static final String REFRESH_FEATURE_FILES_PROPERTY = "refreshFeatureFiles";
    public static final String BUILD_TEMPLATE_SUFFIX = "build";
    public static final String CONFIG_TEMPLATE_SUFFIX = "config";
@@ -76,22 +76,25 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String projectName = info.getDirectoryName();
       final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
 
+      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null &&
+               parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue() != null;
+
       CucumberDto dto = new CucumberDto(buildManagementService, commandOptions)
             .setProjectName(projectName)
             .setPackageName(packageName)
             .setClassName(model.getName())
             .setTransportTopicsClass(
                   generationService.getTransportTopicsDescription(commandOptions, model).getFullyQualifiedName())
+            .setConfigGenerated(isConfigGenerated)
             .setDependencies(new LinkedHashSet<>(Arrays.asList(
                   projectNamingService.getMessageProjectName(commandOptions, model)
                         .getArtifactId(),
                   projectNamingService.getBaseServiceProjectName(commandOptions, model)
                         .getArtifactId())));
-
+      String configModule = packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model) + "."
+         + model.getName() + "TestConfigurationModule";
+      dto.setConfigModule(configModule);
       parameters.addParameter(new DefaultParameter<>("dto", dto));
-
-      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null &&
-               parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue() != null;
 
       if (isConfigGenerated) {
          String pkg = packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model);
