@@ -3,7 +3,6 @@ dependencies {
    implementation project(':${dto.baseProjectArtifactName}')
 
    implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
-   implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.testutils')}"
 #foreach ($dependency in $dto.transportProviderDependencies)
    implementation "${dto.getFormattedDependency($dependency)}"
 #end

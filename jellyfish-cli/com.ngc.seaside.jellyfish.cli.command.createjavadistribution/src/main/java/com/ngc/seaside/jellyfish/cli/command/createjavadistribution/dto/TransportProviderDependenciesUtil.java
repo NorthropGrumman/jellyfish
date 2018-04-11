@@ -3,8 +3,9 @@ package com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.SparkTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
@@ -35,15 +36,17 @@ public class TransportProviderDependenciesUtil {
 
       if (types.contains(TransportConfigurationType.MULTICAST)) {
          MulticastTransportProviderConfigDto multicastDto = new MulticastTransportProviderConfigDto(null, false);
-         dependencies.addAll(multicastDto.getDependencies(true));
+         dependencies.addAll(multicastDto.getDependencies(false, true, false));
       }
       if (types.contains(TransportConfigurationType.REST)) {
-         SparkTransportProviderConfigDto sparkDto = new SparkTransportProviderConfigDto(null);
-         dependencies.addAll(sparkDto.getDependencies(true));
+         SparkTransportProviderConfigDto sparkDto = new SparkTransportProviderConfigDto(null, false);
+         dependencies.addAll(sparkDto.getDependencies(false, true, false));
+         HttpClientTransportProviderConfigDto httpClientDto = new HttpClientTransportProviderConfigDto(null, false);
+         dependencies.addAll(httpClientDto.getDependencies(false, true, false));
       }
       if (types.contains(TransportConfigurationType.ZERO_MQ)) {
          ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null, false);
-         dependencies.addAll(zeroMqDto.getDependencies(true));
+         dependencies.addAll(zeroMqDto.getDependencies(false, true, false));
       }
 
       return dependencies;

@@ -1,16 +1,15 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark;
 
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class SparkDto {
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
    private List<SparkTopicDto> topics = new ArrayList<>();
+   private String classname;
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
@@ -50,5 +49,14 @@ public class SparkDto {
 
    public String getModelName() {
       return this.baseDto.getModelName();
+   }
+
+   public String getClassname() {
+      return this.classname;
+   }
+
+   public SparkDto setClassname(String classname) {
+      this.classname = classname;
+      return this;
    }
 }

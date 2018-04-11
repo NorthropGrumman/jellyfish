@@ -1,23 +1,22 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient;
 
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-public class MulticastDto {
+public class HttpClientDto {
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
-   private List<MulticastTopicDto> topics = new ArrayList<>();
+   private List<HttpClientTopicDto> topics = new ArrayList<>();
    private String classname;
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
    }
 
-   public MulticastDto setBaseDto(GeneratedServiceConfigDto baseDto) {
+   public HttpClientDto setBaseDto(
+         GeneratedServiceConfigDto baseDto) {
       this.baseDto = baseDto;
       return this;
    }
@@ -26,28 +25,16 @@ public class MulticastDto {
       return topicsImport;
    }
 
-   public MulticastDto setTopicsImport(String topicsImport) {
+   public HttpClientDto setTopicsImport(String topicsImport) {
       this.topicsImport = topicsImport;
       return this;
    }
 
-   public List<MulticastTopicDto> getTopics() {
+   public List<HttpClientTopicDto> getTopics() {
       return topics;
    }
 
-   public Map<String, List<MulticastTopicDto>> getSendTopics() {
-      return topics.stream()
-                   .filter(MulticastTopicDto::isSend)
-                   .collect(Collectors.groupingBy(MulticastTopicDto::getName));
-   }
-
-   public Map<String, List<MulticastTopicDto>> getReceiveTopics() {
-      return topics.stream()
-                   .filter(topic -> !topic.isSend())
-                   .collect(Collectors.groupingBy(MulticastTopicDto::getName));
-   }
-
-   public MulticastDto addTopic(MulticastTopicDto topic) {
+   public HttpClientDto addTopic(HttpClientTopicDto topic) {
       this.topics.add(topic);
       return this;
    }
@@ -68,9 +55,8 @@ public class MulticastDto {
       return this.classname;
    }
 
-   public MulticastDto setClassname(String classname) {
+   public HttpClientDto setClassname(String classname) {
       this.classname = classname;
       return this;
    }
-
 }

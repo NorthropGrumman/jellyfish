@@ -1,10 +1,10 @@
-package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest;
+package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient;
 
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 
-public class SparkTopicDto {
+public class HttpClientTopicDto {
    private NetworkAddress networkAddress;
    private NetworkInterface networkInterface;
    private int port;
@@ -18,7 +18,7 @@ public class SparkTopicDto {
       return networkAddress;
    }
 
-   public SparkTopicDto setNetworkAddress(NetworkAddress networkAddress) {
+   public HttpClientTopicDto setNetworkAddress(NetworkAddress networkAddress) {
       this.networkAddress = networkAddress;
       return this;
    }
@@ -27,7 +27,7 @@ public class SparkTopicDto {
       return networkInterface;
    }
 
-   public SparkTopicDto setNetworkInterface(NetworkInterface networkInterface) {
+   public HttpClientTopicDto setNetworkInterface(NetworkInterface networkInterface) {
       this.networkInterface = networkInterface;
       return this;
    }
@@ -36,7 +36,7 @@ public class SparkTopicDto {
       return port;
    }
 
-   public SparkTopicDto setPort(int port) {
+   public HttpClientTopicDto setPort(int port) {
       this.port = port;
       return this;
    }
@@ -45,7 +45,7 @@ public class SparkTopicDto {
       return httpMethod;
    }
 
-   public SparkTopicDto setHttpMethod(HttpMethod httpMethod) {
+   public HttpClientTopicDto setHttpMethod(HttpMethod httpMethod) {
       this.httpMethod = httpMethod;
       return this;
    }
@@ -54,7 +54,7 @@ public class SparkTopicDto {
       return path;
    }
 
-   public SparkTopicDto setPath(String path) {
+   public HttpClientTopicDto setPath(String path) {
       this.path = path;
       return this;
    }
@@ -63,7 +63,7 @@ public class SparkTopicDto {
       return contentType;
    }
 
-   public SparkTopicDto setContentType(String contentType) {
+   public HttpClientTopicDto setContentType(String contentType) {
       this.contentType = contentType;
       return this;
    }
@@ -72,7 +72,7 @@ public class SparkTopicDto {
       return variableName;
    }
 
-   public SparkTopicDto setVariableName(String variableName) {
+   public HttpClientTopicDto setVariableName(String variableName) {
       this.variableName = variableName;
       return this;
    }
@@ -81,7 +81,7 @@ public class SparkTopicDto {
       return name;
    }
 
-   public SparkTopicDto setName(String name) {
+   public HttpClientTopicDto setName(String name) {
       this.name = name;
       return this;
    }

@@ -1,10 +1,20 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto.HTTP_CLIENT_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
@@ -41,15 +51,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
-
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.SparkTransportProviderConfigDto.REST_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE_SUFFIX;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsConfigCommandTest {
@@ -145,7 +146,6 @@ public class CreateJavaCucumberTestsConfigCommandTest {
    @Before
    public void setup() throws Throwable {
       outputDirectory.newFile("settings.gradle");
-
       templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
@@ -180,10 +180,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
    @Test
    public void multicast() throws Throwable {
-      templateService.setTemplateDirectory(
-            CreateJavaCucumberTestsConfigCommand.class.getPackage().getName() + "-"
-            + MULTICAST_TEMPLATE_SUFFIX,
-            Paths.get("src", "main", "templates", MULTICAST_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(MULTICAST_TEMPLATE);
 
       transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
                                                        61000, "127.0.0.1", "127.0.0.1");
@@ -204,7 +201,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastTestsConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -214,10 +211,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
    @Test
    public void rest() throws Throwable {
-      templateService.setTemplateDirectory(
-            CreateJavaCucumberTestsConfigCommand.class.getPackage().getName() + "-"
-            + REST_TEMPLATE_SUFFIX,
-            Paths.get("src", "main", "templates", REST_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(HTTP_CLIENT_TEMPLATE);
 
       transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
@@ -238,7 +232,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                          "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
       Path restFile = srcDir.resolve("TrackPriorityServiceHttpClientTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -248,10 +242,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
    @Test
    public void zeromq() throws Throwable {
-      templateService.setTemplateDirectory(
-            CreateJavaCucumberTestsConfigCommandTest.class.getPackage().getName() + "-"
-            + ZEROMQ_TEMPLATE_SUFFIX,
-            Paths.get("src", "main", "templates", ZEROMQ_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(ZEROMQ_TEMPLATE);
 
       transportConfigService.addZeroMqTcpConfiguration("trackEngagementStatus",
                                                        ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
@@ -288,7 +279,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
@@ -311,7 +302,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                       "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
-      configurationFile = srcDir.resolve("TrackPriorityServiceTransportTestConfiguration.java");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
       multicastFile = srcDir.resolve("TrackPriorityServiceZeroMqTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -327,5 +318,16 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       }
 
       command.run(jellyFishCommandOptions);
+   }
+   
+   private void addGeneratedConfigTemplatePath(String template) {
+      String templateSuffix = template.substring(template.lastIndexOf('-') + 1);
+      templateService.setTemplateDirectory(template,
+         Paths.get("").toAbsolutePath().getParent().resolve(
+            Paths.get(CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName(),
+               "src",
+               "main",
+               "templates",
+               templateSuffix)));
    }
 }
