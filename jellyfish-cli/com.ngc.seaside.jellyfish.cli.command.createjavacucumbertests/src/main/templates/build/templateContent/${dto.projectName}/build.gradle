@@ -4,7 +4,7 @@ apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
 #foreach ($dependency in $dto.dependencies)
-    implementation project(":${dependency}")
+    implementation project(':${dependency}')
 #end
 
     implementation "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"

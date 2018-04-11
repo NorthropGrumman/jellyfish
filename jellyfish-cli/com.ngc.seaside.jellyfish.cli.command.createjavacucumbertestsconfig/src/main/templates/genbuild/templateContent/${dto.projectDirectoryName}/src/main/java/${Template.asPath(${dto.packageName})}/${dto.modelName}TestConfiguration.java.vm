@@ -2,7 +2,6 @@ package ${dto.packageName};
 
 import com.google.inject.Inject;
 
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.transport.api.ITransportProvider;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.TransportConfiguration;
