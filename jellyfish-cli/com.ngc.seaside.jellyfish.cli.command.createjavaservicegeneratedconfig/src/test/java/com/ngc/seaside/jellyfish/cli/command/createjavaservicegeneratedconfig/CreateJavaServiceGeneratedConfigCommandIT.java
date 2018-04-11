@@ -2,9 +2,9 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig;
 
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.SparkTransportProviderConfigDto.REST_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto.SPARK_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -180,10 +180,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
    @Test
    public void multicast() throws Throwable {
-      templateService.setTemplateDirectory(
-         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-                  + MULTICAST_TEMPLATE_SUFFIX,
-         Paths.get("src", "main", "templates", MULTICAST_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(MULTICAST_TEMPLATE);
 
       transportConfigService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
                                                        61000, "127.0.0.1", "127.0.0.1");
@@ -210,12 +207,9 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
    @Test
    public void rest() throws Throwable {
-      templateService.setTemplateDirectory(
-            CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-            + REST_TEMPLATE_SUFFIX,
-            Paths.get("src", "main", "templates", REST_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(SPARK_TEMPLATE);
 
-      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
@@ -244,10 +238,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
    @Test
    public void zeromq() throws Throwable {
-      templateService.setTemplateDirectory(
-         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-            + ZEROMQ_TEMPLATE_SUFFIX,
-         Paths.get("src", "main", "templates", ZEROMQ_TEMPLATE_SUFFIX));
+      addGeneratedConfigTemplatePath(ZEROMQ_TEMPLATE);
 
       transportConfigService.addZeroMqTcpConfiguration("trackEngagementStatus",
          ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
@@ -324,4 +315,12 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       command.run(jellyFishCommandOptions);
    }
 
+   private void addGeneratedConfigTemplatePath(String template) {
+      String templateSuffix = template.substring(template.lastIndexOf('-') + 1);
+      templateService.setTemplateDirectory(template,
+         Paths.get("src",
+            "main",
+            "templates",
+            templateSuffix));
+   }
 }

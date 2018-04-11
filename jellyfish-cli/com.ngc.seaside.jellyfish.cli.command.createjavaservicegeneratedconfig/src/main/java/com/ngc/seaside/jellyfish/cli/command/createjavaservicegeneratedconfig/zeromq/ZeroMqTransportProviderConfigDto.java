@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.TransportProviderDto;
@@ -29,11 +30,12 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    static final String ZEROMQ_CONFIGURATION_CLASS_NAME_SUFFIX = "ZeroMqConfiguration";
    static final String ZEROMQ_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "ZeroMqTestConfiguration";
    static final String ZEROMQ_PROVIDER_VARIABLE_NAME = "zeroMqProvider";
-   static final String ZEROMQ_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.zeromq";
-   static final String ZEROMQ_TOPIC_CLASS_NAME = "ZeroMQTopic";
+   static final String ZEROMQ_TOPIC = "com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopic";
+   static final String ZEROMQ_MODULE = "com.ngc.seaside.service.transport.impl.provider.zeromq.module.ZeroMQTransportProviderModule";
    static final String ZEROMQ_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.zeromq";
    static final String ZEROMQ_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq";
-   public static final String ZEROMQ_TEMPLATE_SUFFIX = "zeromq";
+   static final String ZEROMQ_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq";
+   public static final String ZEROMQ_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-zeromq";
 
    static final String CONNECTION_TYPE_BIND = "BIND";
    static final String CONNECTION_TYPE_CONNECT = "CONNECT";
@@ -60,8 +62,8 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
                                        .setConfigurationType(
                                           dto.getBaseDto().getModelName() + getClassnameSuffix())
                                        .setProviderName(ZEROMQ_PROVIDER_VARIABLE_NAME)
-                                       .setTopicPackage(ZEROMQ_TOPIC_PACKAGE_NAME)
-                                       .setTopicType(ZEROMQ_TOPIC_CLASS_NAME);
+                                       .setTopic(ZEROMQ_TOPIC)
+                                       .setModule(ZEROMQ_MODULE);
    }
 
    @Override
@@ -113,7 +115,7 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
 
       return Optional.of(zeroMqDto);
    }
-   
+
    private String getClassnameSuffix() {
       return test ? ZEROMQ_TEST_CONFIGURATION_CLASS_NAME_SUFFIX : ZEROMQ_CONFIGURATION_CLASS_NAME_SUFFIX;
    }
@@ -201,16 +203,21 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    }
 
    @Override
-   public String getTemplateSuffix() {
-      return ZEROMQ_TEMPLATE_SUFFIX;
+   public String getTemplate() {
+      return ZEROMQ_TEMPLATE;
    }
 
    @Override
-   public Set<String> getDependencies(boolean distribution) {
+   public Set<String> getDependencies(boolean topic, boolean provider, boolean module) {
       Set<String> dependencies = new LinkedHashSet<>();
-      dependencies.add(ZEROMQ_TOPIC_DEPENDENCY);
-      if (distribution) {
+      if (topic || provider) {
+         dependencies.add(ZEROMQ_TOPIC_DEPENDENCY);
+      }
+      if (provider) {
          dependencies.add(ZEROMQ_PROVIDER_DEPENDENCY);
+      }
+      if (module) {
+         dependencies.add(ZEROMQ_MODULE_DEPENDENCY);
       }
       return dependencies;
    }

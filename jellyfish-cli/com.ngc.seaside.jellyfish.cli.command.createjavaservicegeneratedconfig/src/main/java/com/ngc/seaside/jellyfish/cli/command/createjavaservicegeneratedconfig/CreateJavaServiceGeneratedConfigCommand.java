@@ -11,8 +11,9 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.rest.SparkTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
@@ -108,7 +109,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
-            new SparkTransportProviderConfigDto(transportConfigService),
+            new SparkTransportProviderConfigDto(transportConfigService, false),
+            new HttpClientTransportProviderConfigDto(transportConfigService, false),
             new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false));
 
       clean = generateAndAddTransportProviders(
@@ -220,10 +222,10 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
          if (object.isPresent()) {
             DefaultParameterCollection parameters = new DefaultParameterCollection();
             parameters.addParameter(new DefaultParameter<>("dto", object.get()));
-            String templateSuffix = transportProvider.getTemplateSuffix();
-            unpackSuffixedTemplate(templateSuffix, parameters, outputDirectory, clean);
+            String templateName = transportProvider.getTemplate();
+            templateService.unpack(templateName, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(false));
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(true, false, false));
             clean = false;
          }
       }

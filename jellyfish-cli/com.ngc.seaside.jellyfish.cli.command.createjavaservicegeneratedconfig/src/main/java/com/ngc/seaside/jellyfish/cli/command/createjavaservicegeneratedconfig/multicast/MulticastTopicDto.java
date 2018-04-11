@@ -5,11 +5,8 @@ public class MulticastTopicDto {
    private String variableName;
    private String groupAddress;
    private int port;
-   private String sourceAddress;
-   private String targetAddress;
    private String name;
-   private String bindName;
-   private String testBindName;
+   private String bindAddress;
    private boolean isSend;
 
    public String getVariableName() {
@@ -27,24 +24,6 @@ public class MulticastTopicDto {
 
    public MulticastTopicDto setGroupAddress(String groupAddress) {
       this.groupAddress = groupAddress;
-      return this;
-   }
-
-   public String getSourceAddress() {
-      return sourceAddress;
-   }
-
-   public MulticastTopicDto setSourceAddress(String sourceAddress) {
-      this.sourceAddress = sourceAddress;
-      return this;
-   }
-
-   public String getTargetAddress() {
-      return targetAddress;
-   }
-
-   public MulticastTopicDto setTargetAddress(String targetAddress) {
-      this.targetAddress = targetAddress;
       return this;
    }
 
@@ -75,31 +54,13 @@ public class MulticastTopicDto {
       return this;
    }
 
-   //TODO MEL This is kind of hackish
-   public String getBindName() {
-      bindName = sourceAddress;
-      if (isSend){
-         bindName = targetAddress;
-      }
-      return bindName;
+   public String getBindAddress() {
+      return bindAddress;
    }
 
-   public MulticastTopicDto setBindName(String bindName) {
-      this.bindName = bindName;
+   public MulticastTopicDto setBindAddress(String bindAddress) {
+      this.bindAddress = bindAddress;
       return this;
    }
 
-   //TODO MEL This is kind of hackish
-   public String getTestBindName() {
-      String testBindName = targetAddress;
-      if (isSend){
-         testBindName = sourceAddress;
-      }
-      return testBindName;
-   }
-
-   public MulticastTopicDto setTestBindName(String testBindName) {
-      this.testBindName = testBindName;
-      return this;
-   }
 }

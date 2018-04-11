@@ -13,6 +13,7 @@ public class CucumberDto {
 
    private String projectName;
    private String packageName;
+   private String configPackageName;
    private String className;
    private String transportTopicsClass;
    private Set<String> dependencies;
@@ -38,6 +39,15 @@ public class CucumberDto {
 
    public CucumberDto setPackageName(String packageName) {
       this.packageName = packageName;
+      return this;
+   }
+
+   public String getConfigPackageName() {
+      return configPackageName;
+   }
+
+   public CucumberDto setConfigPackageName(String configPackageName) {
+      this.configPackageName = configPackageName;
       return this;
    }
 

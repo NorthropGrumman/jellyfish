@@ -2,7 +2,7 @@ package ${dto.packageName}.di;
 
 import com.google.inject.AbstractModule;
 
-import ${dto.packageName}.config.${dto.className}TestConfiguration;
+import ${dto.configPackageName}.${dto.className}TestConfiguration;
 
 /**
  * This module configures Guice bindings for the ${dto.className} steps.

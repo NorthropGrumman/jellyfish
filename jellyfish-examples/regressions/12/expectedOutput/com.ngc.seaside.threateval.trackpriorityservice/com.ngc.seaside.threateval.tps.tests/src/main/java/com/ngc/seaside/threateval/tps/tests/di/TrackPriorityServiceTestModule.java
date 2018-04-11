@@ -2,7 +2,7 @@ package com.ngc.seaside.threateval.tps.tests.di;
 
 import com.google.inject.AbstractModule;
 
-import com.ngc.seaside.threateval.tps.tests.config.TrackPriorityServiceTestConfiguration;
+import com.ngc.seaside.threateval.tps.testsconfig.TrackPriorityServiceTestConfiguration;
 
 /**
  * This module configures Guice bindings for the TrackPriorityService steps.

@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.TransportProviderDto;
@@ -16,16 +17,17 @@ import java.util.Optional;
 import java.util.Set;
 
 public class MulticastTransportProviderConfigDto implements ITransportProviderConfigDto<MulticastDto> {
-   public static final String MULTICAST_TEMPLATE_SUFFIX = "multicast";
+   public static final String MULTICAST_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-multicast";
 
    static final String MULTICAST_TRANSPORT_PROVIDER_COMPONENT_NAME = "com.ngc.seaside.service.transport.impl.provider.multicast.MulticastTransportProvider";
    static final String MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastConfiguration";
    static final String MULTICAST_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastTestsConfiguration";
    static final String MULTICAST_PROVIDER_VARIABLE_NAME = "multicastProvider";
-   static final String MULTICAST_TOPIC_PACKAGE_NAME = "com.ngc.seaside.service.transport.impl.topic.multicast";
-   static final String MULTICAST_TOPIC_CLASS_NAME = "MulticastTopic";
+   static final String MULTICAST_TOPIC = "com.ngc.seaside:service.transport.impl.topic.multicast.MulticastTopic";
+   static final String MULTICAST_PROVIDER_MODULE = "com.ngc.seaside.service.transport.impl.provider.multicast.module.MulticastTransportProviderModule";
    static final String MULTICAST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.multicast";
    static final String MULTICAST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast";
+   static final String MULTICAST_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast.module";
 
 
    private ITransportConfigurationService transportConfigService;
@@ -43,8 +45,8 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
                                        .setConfigurationType(
                                           dto.getBaseDto().getModelName() + getClassnameSuffix())
                                        .setProviderName(MULTICAST_PROVIDER_VARIABLE_NAME)
-                                       .setTopicPackage(MULTICAST_TOPIC_PACKAGE_NAME)
-                                       .setTopicType(MULTICAST_TOPIC_CLASS_NAME);
+                                       .setTopic(MULTICAST_TOPIC)
+                                       .setModule(MULTICAST_PROVIDER_MODULE);
    }
 
    @Override
@@ -54,26 +56,32 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
             Map<String, IDataReferenceField> topics) {
 
       MulticastDto multicastDto = new MulticastDto().setBaseDto(dto)
-                                                    .setTopicsImport(topicsClassName);
+                                                    .setTopicsImport(topicsClassName)
+                                                    .setClassname(dto.getModelName() + getClassnameSuffix());
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
          boolean isOutput = model.getOutputs().contains(field);
-
+         boolean shouldSend = isOutput ^ test;
          Collection<MulticastConfiguration> configurations = transportConfigService.getMulticastConfiguration(options,
             field);
          int count = 1;
          for (MulticastConfiguration configuration : configurations) {
+            String bindAddress;
+            if (shouldSend) {
+               bindAddress = configuration.getSourceInterface().getName();
+            } else {
+               bindAddress = configuration.getTargetInterface().getName();
+            }
             MulticastTopicDto topicDto = new MulticastTopicDto().setGroupAddress(configuration.getGroupAddress())
-                                                                .setSourceAddress(configuration.getSourceInterface().getName())
-                                                                .setTargetAddress(configuration.getTargetInterface().getName())
+                                                                .setBindAddress(bindAddress)
                                                                 .setPort(configuration.getPort())
                                                                 .setName(topicsPrefix + topicName)
                                                                 .setVariableName(field.getName()
                                                                    + (configurations.size() > 1 ? count : ""))
-                                                                .setSend(isOutput);
+                                                                .setSend(shouldSend);
             multicastDto.addTopic(topicDto);
             count++;
          }
@@ -87,16 +95,21 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    }
 
    @Override
-   public String getTemplateSuffix() {
-      return MULTICAST_TEMPLATE_SUFFIX;
+   public String getTemplate() {
+      return MULTICAST_TEMPLATE;
    }
 
    @Override
-   public Set<String> getDependencies(boolean distribution) {
+   public Set<String> getDependencies(boolean topic, boolean provider, boolean module) {
       Set<String> dependencies = new LinkedHashSet<>();
-      dependencies.add(MULTICAST_TOPIC_DEPENDENCY);
-      if (distribution) {
+      if (topic || provider) {
+         dependencies.add(MULTICAST_TOPIC_DEPENDENCY);
+      }
+      if (provider) {
          dependencies.add(MULTICAST_PROVIDER_DEPENDENCY);
+      }
+      if (module) {
+         dependencies.add(MULTICAST_MODULE_DEPENDENCY);
       }
       return dependencies;
    }
