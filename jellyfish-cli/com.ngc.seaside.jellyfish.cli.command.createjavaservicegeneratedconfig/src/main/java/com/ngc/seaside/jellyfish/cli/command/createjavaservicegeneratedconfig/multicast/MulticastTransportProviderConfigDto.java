@@ -23,7 +23,7 @@ public class MulticastTransportProviderConfigDto implements ITransportProviderCo
    static final String MULTICAST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastConfiguration";
    static final String MULTICAST_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "MulticastTestsConfiguration";
    static final String MULTICAST_PROVIDER_VARIABLE_NAME = "multicastProvider";
-   static final String MULTICAST_TOPIC = "com.ngc.seaside:service.transport.impl.topic.multicast.MulticastTopic";
+   static final String MULTICAST_TOPIC = "com.ngc.seaside.service.transport.impl.topic.multicast.MulticastTopic";
    static final String MULTICAST_PROVIDER_MODULE = "com.ngc.seaside.service.transport.impl.provider.multicast.module.MulticastTransportProviderModule";
    static final String MULTICAST_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.multicast";
    static final String MULTICAST_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.multicast";
