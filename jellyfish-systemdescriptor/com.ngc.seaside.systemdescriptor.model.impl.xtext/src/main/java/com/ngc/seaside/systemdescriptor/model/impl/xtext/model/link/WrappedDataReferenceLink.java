@@ -1,7 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link;
 
-import java.util.Optional;
-
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
@@ -18,9 +16,10 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
+import java.util.Optional;
+
 /**
  * Adapts a {@link LinkDeclaration} to an {@link IModelLink} that links together data elements.
- *
  * This class is not threadsafe.
  */
 public class WrappedDataReferenceLink extends WrappedReferenceLink<IDataReferenceField> {
@@ -43,10 +42,10 @@ public class WrappedDataReferenceLink extends WrappedReferenceLink<IDataReferenc
             target = getReferenceTo(((BaseLinkDeclaration) wrapped).getTarget());
             break;
          case SystemDescriptorPackage.REFINED_LINK_DECLARATION:
-            refinedLink = getRefinedLink((RefinedLinkDeclaration) wrapped);
+            refinedLink = doGetRefinedLink((RefinedLinkDeclaration) wrapped);
             break;
          case SystemDescriptorPackage.REFINED_LINK_NAME_DECLARATION:
-            refinedLink = getRefinedLink((RefinedLinkNameDeclaration) wrapped);
+            refinedLink = doGetRefinedLink((RefinedLinkNameDeclaration) wrapped);
             break;
          default:
             throw new UnrecognizedXtextTypeException(wrapped);
@@ -121,8 +120,8 @@ public class WrappedDataReferenceLink extends WrappedReferenceLink<IDataReferenc
    private IDataReferenceField getFieldOf(FieldDeclaration declaration) {
       // Only models can have field declarations.
       IModel parent = resolver.getWrapperFor((Model) declaration.eContainer().eContainer());
-      // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the declaration
-      // is either for input or output.
+      // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the
+      // declaration is either for input or output.
       Optional<IDataReferenceField> field = parent.getInputs() == null
                                             ? Optional.empty()
                                             : parent.getInputs().getByName(declaration.getName());

@@ -77,7 +77,7 @@ public class WrappedDeclarationDefinitionTest extends AbstractWrappedXtextTest {
 
       to = WrappedDeclarationDefinition.toXtext(resolver(), null, null);
       assertNull("null metadata should result in a null definition!",
-                    to);
+                 to);
    }
 
    private static Member newMember(String key, Value value) {

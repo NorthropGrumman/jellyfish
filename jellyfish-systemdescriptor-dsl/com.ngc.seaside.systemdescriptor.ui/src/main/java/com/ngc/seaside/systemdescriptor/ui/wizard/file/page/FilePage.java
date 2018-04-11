@@ -22,8 +22,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import java.io.File;
 import java.util.regex.Pattern;
 
-public class FilePage extends WizardPage
-{
+public class FilePage extends WizardPage {
 
    private static final String PAGE_TITLE = "System Descriptor File";
    private static final String PAGE_DESC = "Create a new System Descriptor file";
@@ -37,8 +36,10 @@ public class FilePage extends WizardPage
    private String defaultSourceFolder;
    private String defaultPackage;
 
-   public FilePage(IPath defaultSourceFolder, String defaultPackage)
-   {
+   /**
+    * Creates a new page.
+    */
+   public FilePage(IPath defaultSourceFolder, String defaultPackage) {
       super(PAGE_TITLE);
       setTitle(PAGE_TITLE);
       setDescription(PAGE_DESC);
@@ -50,8 +51,7 @@ public class FilePage extends WizardPage
    }
 
    @Override
-   public void createControl(Composite parent)
-   {
+   public void createControl(Composite parent) {
 
       Composite container = new Composite(parent, 0);
       container.setLayout(new GridLayout(1, false));
@@ -62,8 +62,63 @@ public class FilePage extends WizardPage
       setControl(container);
    }
 
-   private void createContainer(Composite parent)
-   {
+   /**
+    * Gets the source folder.
+    */
+   public String getSourceFolder() {
+      return this.sourceFolderText.getText().trim();
+   }
+
+   /**
+    * Gets the package name.
+    */
+   public String getPackageName() {
+      return this.packageNameText.getText().trim();
+   }
+
+   /**
+    * Gets the file name.
+    */
+   public String getFileName() {
+      return this.fileText.getText().trim();
+   }
+
+   /**
+    * Gets the element type.
+    */
+   public String getElementType() {
+      if (modelButton.getSelection()) {
+         return "model";
+      }
+      if (dataButton.getSelection()) {
+         return "data";
+      }
+      if (enumButton.getSelection()) {
+         return "enum";
+      }
+      return null;
+   }
+
+   /**
+    * Gets the absolute path to the file.
+    */
+   public IFile getAbsolutePath() {
+      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+      String filename = getFileName();
+      if (!filename.toLowerCase().endsWith(".sd")) {
+         filename += ".sd";
+      }
+      String packageName = getPackageName();
+      String fullPath = filename;
+      if (packageName != null && !packageName.isEmpty()) {
+         fullPath = packageName.replace('.', File.separatorChar) + File.separatorChar + filename;
+      }
+
+      Path absolutePath = new Path(getSourceFolder() + File.separatorChar + fullPath);
+      return root.getFile(absolutePath);
+   }
+
+   private void createContainer(Composite parent) {
       final int LABEL_STYLE = SWT.NONE;
       final int TEXT_STYLE = SWT.DRAW_TAB | SWT.BORDER;
       final int GRID_STYLE = SWT.HORIZONTAL | SWT.VERTICAL;
@@ -82,12 +137,12 @@ public class FilePage extends WizardPage
       this.sourceFolderText.setLayoutData(new GridData(GRID_STYLE));
       Button sourceBrowse = new Button(container, BUTTON_STYLE);
       sourceBrowse.setText("Browse...");
-      sourceBrowse.addSelectionListener(new SelectionAdapter()
-      {
-         public void widgetSelected(SelectionEvent e)
-         {
-            ContainerSelectionDialog dialog = new ContainerSelectionDialog(container.getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-               "Select System Descriptor source folder (ex: src/main/sd/)");
+      sourceBrowse.addSelectionListener(new SelectionAdapter() {
+         public void widgetSelected(SelectionEvent e) {
+            ContainerSelectionDialog
+                  dialog =
+                  new ContainerSelectionDialog(container.getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
+                                               "Select System Descriptor source folder (ex: src/main/sd/)");
             dialog.showClosedProjects(false);
             if (dialog.open() == 0) {
                Object[] res = dialog.getResult();
@@ -129,18 +184,16 @@ public class FilePage extends WizardPage
       dataButton = new Button(radioGroup, SWT.RADIO);
       dataButton.setText("Data");
 
-	  enumButton = new Button(radioGroup, SWT.RADIO);
+      enumButton = new Button(radioGroup, SWT.RADIO);
       enumButton.setText("Enum");
 
       // Focus
       final Text focus;
       if (defaultSourceFolder.isEmpty()) {
          focus = this.sourceFolderText;
-      }
-      else if (defaultPackage.isEmpty()) {
+      } else if (defaultPackage.isEmpty()) {
          focus = this.packageNameText;
-      }
-      else {
+      } else {
          focus = this.fileText;
       }
       container.getShell().getDisplay().asyncExec(() -> {
@@ -149,8 +202,7 @@ public class FilePage extends WizardPage
 
    }
 
-   private void validate()
-   {
+   private void validate() {
       // Source Folder Validation
       IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(getSourceFolder());
 
@@ -195,8 +247,7 @@ public class FilePage extends WizardPage
 
       if (filename.toLowerCase().endsWith(".sd")) {
          filename = filename.substring(filename.length() - 3);
-      }
-      else if (filename.lastIndexOf('.') != -1) {
+      } else if (filename.lastIndexOf('.') != -1) {
          updateStatus("File extension must be \"sd\"");
          return;
       }
@@ -221,56 +272,8 @@ public class FilePage extends WizardPage
       updateStatus(null);
    }
 
-   private void updateStatus(String message)
-   {
+   private void updateStatus(String message) {
       setErrorMessage(message);
       setPageComplete(message == null);
    }
-
-   public String getSourceFolder()
-   {
-      return this.sourceFolderText.getText().trim();
-   }
-
-   public String getPackageName()
-   {
-      return this.packageNameText.getText().trim();
-   }
-
-   public String getFileName()
-   {
-      return this.fileText.getText().trim();
-   }
-
-   public String getElementType()
-   {
-      if (modelButton.getSelection()) {
-         return "model";
-      }
-      if (dataButton.getSelection()) {
-         return "data";
-      }
-      if (enumButton.getSelection()) {
-         return "enum";
-      }
-      return null;
-   }
-
-   public IFile getAbsolutePath()
-   {
-      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-      String filename = getFileName();
-      if (!filename.toLowerCase().endsWith(".sd")) {
-         filename += ".sd";
-      }
-      String packageName = getPackageName();
-      String fullPath = filename;
-      if (packageName != null && !packageName.isEmpty()) {
-         fullPath = packageName.replace('.', File.separatorChar) + File.separatorChar + filename;
-      }
-
-      Path absolutePath = new Path(getSourceFolder() + File.separatorChar + fullPath);
-      return root.getFile(absolutePath);
-   }
-
 }

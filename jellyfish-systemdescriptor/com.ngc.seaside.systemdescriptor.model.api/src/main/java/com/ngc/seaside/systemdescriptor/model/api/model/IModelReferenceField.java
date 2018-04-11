@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.model.api.model;
 
-import java.util.Optional;
-
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
+
+import java.util.Optional;
 
 /**
  * Represents a field declared in an {@link IModel} that references another model.  Operations that change the state of

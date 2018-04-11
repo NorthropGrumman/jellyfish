@@ -14,7 +14,6 @@ import java.util.function.Function;
 /**
  * A collection view on top of an {@code EList} that can automatically adapt instances within the wrapped list to
  * instances of type T and vice versa.
- *
  * This class is not threadsafe.
  *
  * @param <X> the type of object that the wrapped list contains
@@ -83,8 +82,8 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
       // Thread safety note: this isn't thread safe if the list is being modified.
       Object[] array = new Object[size()];
       int i = 0;
-      for (X aWrapped : wrapped) {
-         array[i++] = wrapperFunction.apply(aWrapped);
+      for (X obj : wrapped) {
+         array[i++] = wrapperFunction.apply(obj);
       }
       return array;
    }
@@ -99,8 +98,8 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
       }
 
       int i = 0;
-      for (X aWrapped : wrapped) {
-         a[i++] = (T1) wrapperFunction.apply(aWrapped);
+      for (X obj : wrapped) {
+         a[i++] = (T1) wrapperFunction.apply(obj);
       }
       while (i < a.length - 1) {
          a[i++] = null;

@@ -89,6 +89,9 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
       return String.format("%s -> %s", source, target);
    };
 
+   /**
+    * Validates the properties of a model are set.
+    */
    @Check
    public void checkModelPropertiesSet(Model model) {
       if (model.getRefinedModel() == null) {
@@ -99,81 +102,101 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
 
       List<String> declarationStrings = getDeclarationsAsStrings(declarations);
       List<String> assignmentStrings = getAssignmentDeclarationsAsStrings(assignments);
-      comparedPropertyDeclarationsWithAssignments(declarationStrings,
-         assignmentStrings,
-         model,
-         expected -> String.format(
-            "Refined models must set all properties; missing property value %s in model properties",
-            expected));
+      comparedPropertyDeclarationsWithAssignments(
+            declarationStrings,
+            assignmentStrings,
+            model,
+            expected -> String.format(
+                  "Refined models must set all properties; missing property value %s in model properties",
+                  expected));
    }
 
+   /**
+    * Validates the properties of parts are set.
+    */
    @Check
    public void checkPartPropertiesSet(Model model) {
       if (model.getRefinedModel() == null) {
          return;
       }
       checkElementPropertiesSet(model,
-         m -> Optional.ofNullable(m.getParts()).map(Parts::getDeclarations).orElse(null),
-         PartDeclaration::getName,
-         part -> Optional.ofNullable(part.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
-         (expected, name) -> String.format(
-            "Refined models must set all properties; missing property value %s for part %s",
-            expected,
-            name));
+                                m -> Optional.ofNullable(m.getParts()).map(Parts::getDeclarations).orElse(null),
+                                PartDeclaration::getName,
+                                part -> Optional.ofNullable(part.getDefinition())
+                                      .map(DeclarationDefinition::getProperties).orElse(null),
+                                (expected, name) -> String.format(
+                                      "Refined models must set all properties; missing property value %s for part %s",
+                                      expected,
+                                      name));
    }
 
+   /**
+    * Validates the properties of requirements are set.
+    */
    @Check
    public void checkRequirePropertiesSet(Model model) {
       if (model.getRefinedModel() == null) {
          return;
       }
-      checkElementPropertiesSet(model,
-         m -> Optional.ofNullable(m.getRequires()).map(Requires::getDeclarations).orElse(null),
-         RequireDeclaration::getName,
-         req -> Optional.ofNullable(req.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
-         (expected, name) -> String.format(
-            "Refined models must set all properties; missing property value %s for required model %s",
-            expected,
-            name));
+      checkElementPropertiesSet(
+            model,
+            m -> Optional.ofNullable(m.getRequires()).map(Requires::getDeclarations).orElse(null),
+            RequireDeclaration::getName,
+            req -> Optional.ofNullable(req.getDefinition())
+                  .map(DeclarationDefinition::getProperties).orElse(null),
+            (expected, name) -> String.format(
+                  "Refined models must set all properties; missing property value %s for required model %s",
+                  expected,
+                  name));
    }
 
+   /**
+    * Validates the properties of links are set.
+    */
    @Check
    public void checkLinkPropertiesSet(Model model) {
       if (model.getRefinedModel() == null) {
          return;
       }
       checkElementPropertiesSet(model,
-         m -> Optional.ofNullable(m.getLinks()).map(Links::getDeclarations).orElse(null),
-         LINK_NAME_FUNCTION,
-         link -> Optional.ofNullable(link.getDefinition()).map(DeclarationDefinition::getProperties).orElse(null),
-         (expected, name) -> String.format(
-            "Refined models must set all properties; missing property value %s for link %s",
-            expected,
-            name));
+                                m -> Optional.ofNullable(m.getLinks()).map(Links::getDeclarations).orElse(null),
+                                LINK_NAME_FUNCTION,
+                                link -> Optional.ofNullable(link.getDefinition())
+                                      .map(DeclarationDefinition::getProperties).orElse(null),
+                                (expected, name) -> String.format(
+                                      "Refined models must set all properties; missing property value %s for link %s",
+                                      expected,
+                                      name));
    }
 
    /**
     * Checks that all of the properties for each element within the model are set.
-    * 
-    * @param model model
-    * @param getCollection function for getting the collection of elements from the model (such as parts or requires elements)
-    * @param getName function for getting the name of the element within the model (such as part name or require name)
-    * @param getProperties function for getting the properties from the element within the model
+    *
+    * @param model           model
+    * @param getCollection   function for getting the collection of elements from the model (such as parts or requires
+    *                        elements)
+    * @param getName         function for getting the name of the element within the model (such as part name or require
+    *                        name)
+    * @param getProperties   function for getting the properties from the element within the model
     * @param getErrorMessage function for getting the error message, given the missing declaration and the element name
-    * @param <T> the type of element within the model (such as {@link PartDeclaration} or {@link RequireDeclaration})
-    * @param errorMessageFunction
+    * @param <T>             the type of element within the model (such as {@link PartDeclaration} or
+    *                        {@link RequireDeclaration})
     */
    private <T> void checkElementPropertiesSet(Model model, Function<Model, Collection<T>> getCollection,
-            Function<T, String> getName, Function<T, Properties> getProperties,
-            BiFunction<String, String, String> getErrorMessage) {
+                                              Function<T, String> getName, Function<T, Properties> getProperties,
+                                              BiFunction<String, String, String> getErrorMessage) {
       Map<String, Collection<PropertyFieldDeclaration>> declarationsMap = getAllProperties(model,
-         getCollection,
-         getName,
-         element -> getProperties.apply(element).getDeclarations());
+                                                                                           getCollection,
+                                                                                           getName,
+                                                                                           element -> getProperties
+                                                                                                 .apply(element)
+                                                                                                 .getDeclarations());
       Map<String, Collection<PropertyValueAssignment>> assignmentsMap = getAllProperties(model,
-         getCollection,
-         getName,
-         element -> getProperties.apply(element).getAssignments());
+                                                                                         getCollection,
+                                                                                         getName,
+                                                                                         element -> getProperties
+                                                                                               .apply(element)
+                                                                                               .getAssignments());
 
       for (Map.Entry<String, Collection<PropertyFieldDeclaration>> entry : declarationsMap.entrySet()) {
          String name = entry.getKey();
@@ -182,28 +205,32 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
          List<String> declarationsAsStrings = getDeclarationsAsStrings(declarations);
          List<String> assignmentsAsStrings = getAssignmentDeclarationsAsStrings(assignments);
          comparedPropertyDeclarationsWithAssignments(declarationsAsStrings,
-            assignmentsAsStrings,
-            model,
-            expected -> getErrorMessage.apply(expected, name));
+                                                     assignmentsAsStrings,
+                                                     model,
+                                                     expected -> getErrorMessage.apply(expected, name));
       }
    }
 
    /**
     * Returns all of the properties for elements within the model, grouped by name.
-    * 
-    * @param model model
-    * @param getCollection function for getting the collection of elements from the model (such as parts or requires elements)
-    * @param getName function for getting the name of the element within the model (such as part name or require name)
+    *
+    * @param model         model
+    * @param getCollection function for getting the collection of elements from the model (such as parts or requires
+    *                      elements)
+    * @param getName       function for getting the name of the element within the model (such as part name or require
+    *                      name)
     * @param getProperties function for getting the collection of properties from the element within the model
-    * @param <T> the type of element within the model (such as {@link PartDeclaration} or {@link RequireDeclaration})
-    * @param <U> the type of property (such as {@link PropertyFieldDeclaration} or {@link #PropertyValueAssignment})
+    * @param <T>           the type of element within the model (such as {@link PartDeclaration} or
+    *                      {@link RequireDeclaration})
+    * @param <U>           the type of property (such as {@link PropertyFieldDeclaration} or
+    *                      {@link PropertyValueAssignment})
     * @return all of the properties for elements within the model, grouped by name
     */
    private static <T, U> Map<String, Collection<U>> getAllProperties(
-            Model model,
-            Function<Model, Collection<T>> getCollection,
-            Function<T, String> getName,
-            Function<T, Collection<U>> getProperties) {
+         Model model,
+         Function<Model, Collection<T>> getCollection,
+         Function<T, String> getName,
+         Function<T, Collection<U>> getProperties) {
       Map<String, Collection<U>> map = new LinkedHashMap<>();
 
       Model current = model;
@@ -225,10 +252,11 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
 
    /**
     * Returns all of the model properties.
-    * 
-    * @param model model
+    *
+    * @param model         model
     * @param getProperties function for getting the collection of properties from the model
-    * @param <U> the type of property (such as {@link PropertyFieldDeclaration} or {@link #PropertyValueAssignment})
+    * @param <U>           the type of property (such as {@link PropertyFieldDeclaration} or
+    * {@link PropertyValueAssignment})
     * @return all of the model properties
     */
    private static <U> Collection<U> getAllProperties(Model model, Function<Properties, Collection<U>> getProperties) {
@@ -250,9 +278,10 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
    }
 
    /**
-    * Converts the given collection of property declarations to a sorted unique list of strings. The set will include all
-    * declaration names and (for data property declarations) their nested field names, represented as qualified names.
-    * 
+    * Converts the given collection of property declarations to a sorted unique list of strings. The set will include
+    * all declaration names and (for data property declarations) their nested field names, represented as qualified
+    * names.
+    *
     * @param declarations collection of property declaration
     * @return a sorted unique list of all assignments needed, in string form
     */
@@ -284,13 +313,16 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
                      if (field instanceof PrimitiveDataFieldDeclaration) {
                         declarationStrings.add(suffix + '.' + field.getName());
                      } else if (field instanceof ReferencedDataModelFieldDeclaration) {
-                        ReferencedDataModelFieldDeclaration referencedField = (ReferencedDataModelFieldDeclaration) field;
+                        ReferencedDataModelFieldDeclaration
+                              referencedField =
+                              (ReferencedDataModelFieldDeclaration) field;
                         DataModel fieldModel = referencedField.getDataModel();
                         if (fieldModel instanceof Enumeration) {
                            declarationStrings.add(suffix + '.' + field.getName());
                         } else if (fieldModel instanceof Data) {
                            datas.add(
-                              new AbstractMap.SimpleImmutableEntry<>(suffix + '.' + field.getName(), (Data) referencedField.getDataModel()));
+                                 new AbstractMap.SimpleImmutableEntry<>(suffix + '.' + field.getName(),
+                                                                        (Data) referencedField.getDataModel()));
                         } else {
                            throw new IllegalStateException("Unknown data model type: " + fieldModel.eClass());
                         }
@@ -315,14 +347,14 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
    }
 
    /**
-    * Converts the given collection of property assignments to a sorted unique list of strings. The set will follow the same
-    * syntax as {@link #getDeclarationsAsStrings(Collection)} but only consist of the given assignments.
-    * 
+    * Converts the given collection of property assignments to a sorted unique list of strings. The set will follow the
+    * same syntax as {@link #getDeclarationsAsStrings(Collection)} but only consist of the given assignments.
+    *
     * @param assignments collection of property assignments
     * @return a sorted unique list of all assignment declarations, in string form
     */
    private static List<String> getAssignmentDeclarationsAsStrings(
-            Collection<PropertyValueAssignment> assignments) {
+         Collection<PropertyValueAssignment> assignments) {
       Set<String> assignmentStrings = new HashSet<>();
       for (PropertyValueAssignment assignment : assignments) {
          PropertyValueExpression expression = assignment.getExpression();
@@ -342,13 +374,14 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
    /**
     * Compares the given declarations to the given assignments (in the format returned by
     * {@link #getDeclarationsAsStrings(Collection)}). Reports at most one error if a discrepancy is found.
-    * 
-    * @param model model (used for error reporting)
+    *
+    * @param model        model (used for error reporting)
     * @param declarations property declarations
-    * @param assignments property assignment declarations
+    * @param assignments  property assignment declarations
     */
    private void comparedPropertyDeclarationsWithAssignments(List<String> declarations,
-            List<String> assignments, Model model, Function<String, String> errorMessage) {
+                                                            List<String> assignments, Model model,
+                                                            Function<String, String> errorMessage) {
       Iterator<String> expectedStrings = declarations.iterator();
       Iterator<String> actualStrings = assignments.iterator();
 
@@ -357,8 +390,8 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
          String actual = actualStrings.next();
          if (!expected.equals(actual)) {
             error(errorMessage.apply(expected),
-               model,
-               SystemDescriptorPackage.Literals.ELEMENT__NAME);
+                  model,
+                  SystemDescriptorPackage.Literals.ELEMENT__NAME);
             return;
          }
       }
@@ -366,8 +399,8 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
       if (expectedStrings.hasNext()) {
          String expected = expectedStrings.next();
          error("Refined models must set all properties; missing value for " + expected,
-            model,
-            SystemDescriptorPackage.Literals.ELEMENT__NAME);
+               model,
+               SystemDescriptorPackage.Literals.ELEMENT__NAME);
       }
    }
 

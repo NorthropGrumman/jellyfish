@@ -1,11 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -17,6 +13,11 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Properties;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implements the IModel interface.  Maintains all the data associated with the IModel.
@@ -35,6 +36,9 @@ public class Model implements IModel {
    private final Collection<IModelLink<?>> links;
    private IProperties properties;
 
+   /**
+    * Creates a new model.
+    */
    public Model(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -116,8 +120,8 @@ public class Model implements IModel {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
       return links.stream()
-         .filter(link -> name.equals(link.getName().orElse(null)))
-         .findFirst();
+            .filter(link -> name.equals(link.getName().orElse(null)))
+            .findFirst();
    }
 
    @Override
@@ -162,7 +166,7 @@ public class Model implements IModel {
       links.add(link);
       return this;
    }
-   
+
    @Override
    public IProperties getProperties() {
       return properties;
@@ -183,17 +187,17 @@ public class Model implements IModel {
          return false;
       }
       Model model = (Model) o;
-      return Objects.equals(name, model.name) &&
-             parent == model.parent &&
-             refinedModel == model.refinedModel &&
-             Objects.equals(metadata, model.metadata) &&
-             Objects.equals(inputs, model.inputs) &&
-             Objects.equals(outputs, model.outputs) &&
-             Objects.equals(requiredModels, model.requiredModels) &&
-             Objects.equals(parts, model.parts) &&
-             Objects.equals(scenarios, model.scenarios) &&
-             Objects.equals(links, model.links) &&
-             Objects.equals(properties, model.properties);
+      return Objects.equals(name, model.name)
+             && parent == model.parent
+             && refinedModel == model.refinedModel
+             && Objects.equals(metadata, model.metadata)
+             && Objects.equals(inputs, model.inputs)
+             && Objects.equals(outputs, model.outputs)
+             && Objects.equals(requiredModels, model.requiredModels)
+             && Objects.equals(parts, model.parts)
+             && Objects.equals(scenarios, model.scenarios)
+             && Objects.equals(links, model.links)
+             && Objects.equals(properties, model.properties);
    }
 
    @Override
@@ -204,18 +208,18 @@ public class Model implements IModel {
 
    @Override
    public String toString() {
-      return "Model[" +
-             "name='" + name + '\'' +
-             ", parent=" + (parent == null ? "null" : parent.getName()) +
-             ", refinedModel=" + (refinedModel == null ? "null" : refinedModel.getName()) +
-             ", metadata=" + metadata +
-             ", inputs=" + inputs +
-             ", outputs=" + outputs +
-             ", requiredModels=" + requiredModels +
-             ", parts=" + parts +
-             ", scenarios=" + scenarios +
-             ", links=" + links +
-             ", properties=" + properties +
-             ']';
+      return "Model["
+             + "name='" + name + '\''
+             + ", parent=" + (parent == null ? "null" : parent.getName())
+             + ", refinedModel=" + (refinedModel == null ? "null" : refinedModel.getName())
+             + ", metadata=" + metadata
+             + ", inputs=" + inputs
+             + ", outputs=" + outputs
+             + ", requiredModels=" + requiredModels
+             + ", parts=" + parts
+             + ", scenarios=" + scenarios
+             + ", links=" + links
+             + ", properties=" + properties
+             + ']';
    }
 }

@@ -25,6 +25,9 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    private IModelLink<T> refinedLink;
    private IMetadata metadata;
 
+   /**
+    * Creates a new link.
+    */
    public ModelLink(IModel p) {
       parent = p;
       this.properties = new Properties();
@@ -110,13 +113,13 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
          return false;
       }
       ModelLink<?> modelLink = (ModelLink<?>) o;
-      return source == modelLink.source &&
-             target == modelLink.target &&
-             parent == modelLink.parent &&
-             Objects.equals(name, modelLink.name) &&
-             Objects.equals(properties, modelLink.properties) &&
-             refinedLink == modelLink.refinedLink &&
-             Objects.equals(metadata, modelLink.metadata);
+      return source == modelLink.source
+             && target == modelLink.target
+             && parent == modelLink.parent
+             && Objects.equals(name, modelLink.name)
+             && Objects.equals(properties, modelLink.properties)
+             && refinedLink == modelLink.refinedLink
+             && Objects.equals(metadata, modelLink.metadata);
    }
 
    @Override
@@ -132,13 +135,13 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
 
    @Override
    public String toString() {
-      return "ModelLink{" +
-             "source=" + source +
-             ", target=" + target +
-             ", parent=" + parent +
-             ", name='" + name + '\'' +
-             ", properties=" + properties +
-             ", refinedLink=" + refinedLink +
-             '}';
+      return "ModelLink{"
+             + "source=" + source
+             + ", target=" + target
+             + ", parent=" + parent
+             + ", name='" + name + '\''
+             + ", properties=" + properties
+             + ", refinedLink=" + refinedLink
+             + '}';
    }
 }

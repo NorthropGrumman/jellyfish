@@ -58,19 +58,6 @@ public abstract class ModelUtilBase implements IModel {
    }
 
    /**
-    * Adds the given field to this model's outputs.
-    *
-    * @param field data reference field
-    */
-   public void addOutput(IDataReferenceField field) {
-      outputs.add(field);
-   }
-
-   public void addScenario(IScenario scenario) {
-      scenarios.add(scenario);
-   }
-
-   /**
     * Creates a mocked {@link IDataReferenceField} with the given name, given data, and {@link FieldCardinality#SINGLE}
     * and adds it to this model's inputs.
     *
@@ -86,6 +73,15 @@ public abstract class ModelUtilBase implements IModel {
       when(field.getType()).thenReturn(data);
       inputs.add(field);
       return field;
+   }
+
+   /**
+    * Adds the given field to this model's outputs.
+    *
+    * @param field data reference field
+    */
+   public void addOutput(IDataReferenceField field) {
+      outputs.add(field);
    }
 
    /**
@@ -106,41 +102,16 @@ public abstract class ModelUtilBase implements IModel {
       return field;
    }
 
-   /**
-    * Adds a correlation to the given scenario.
-    *
-    * @param scenario name of scenario
-    * @param from     first correlation statement
-    * @param to       second correlation statement
-    */
-   public void correlate(String scenario, String from, String to) {
-      IScenario sc = this.getScenarios().getByName(scenario).orElseThrow(
-            () -> new AssertionError("Scenario " + scenario + " has not been defined"));
-      String[] first = from.split("\\.");
-      String[] second = to.split("\\.");
-      assertTrue("Invalid correlation: " + from, first.length > 1);
-      assertTrue("Invalid correlation: " + to, second.length > 1);
-      IScenarioStep correlationStep = mock(IScenarioStep.class);
-      when(correlationStep.getParameters()).thenReturn(Arrays.asList(from, "to", to));
-      when(correlationStep.getParent()).thenReturn(sc);
-      if (inputs.getByName(first[0]).isPresent() && inputs.getByName(second[0]).isPresent()) {
-         when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.PRESENT.getVerb());
-         sc.getWhens().add(correlationStep);
-      } else {
-         when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.FUTURE.getVerb());
-         sc.getThens().add(correlationStep);
-      }
+   public void addScenario(IScenario scenario) {
+      scenarios.add(scenario);
    }
 
    /**
     * Creates a mocked generic{@link IScenario} with the given name and adds it to this model.  The steps of the
-    * scenario will have no configured verbs or keywords.
-    *
-    * <p> The step parameters supplied should be ordered by given statements first, followed by when statement, followed
-    * by then statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String}
-    * followed by {@link IData}.
-    *
-    * <p> This method adds the scenario to this model's scenarios and data types to this model's inputs and outputs.
+    * scenario will have no configured verbs or keywords.  The step parameters supplied should be ordered by given
+    * statements first, followed by when statement, followed by then statements. The step parameters can either be
+    * {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}.  This method adds the scenario
+    * to this model's scenarios and data types to this model's inputs and outputs.
     *
     * @param givens         number of given steps
     * @param whens          number of when steps
@@ -197,6 +168,32 @@ public abstract class ModelUtilBase implements IModel {
       outputs.addAll(references.subList(givens + whens, givens + whens + thens));
 
       return scenario;
+   }
+
+   /**
+    * Adds a correlation to the given scenario.
+    *
+    * @param scenario name of scenario
+    * @param from     first correlation statement
+    * @param to       second correlation statement
+    */
+   public void correlate(String scenario, String from, String to) {
+      IScenario sc = this.getScenarios().getByName(scenario).orElseThrow(
+            () -> new AssertionError("Scenario " + scenario + " has not been defined"));
+      String[] first = from.split("\\.");
+      String[] second = to.split("\\.");
+      assertTrue("Invalid correlation: " + from, first.length > 1);
+      assertTrue("Invalid correlation: " + to, second.length > 1);
+      IScenarioStep correlationStep = mock(IScenarioStep.class);
+      when(correlationStep.getParameters()).thenReturn(Arrays.asList(from, "to", to));
+      when(correlationStep.getParent()).thenReturn(sc);
+      if (inputs.getByName(first[0]).isPresent() && inputs.getByName(second[0]).isPresent()) {
+         when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.PRESENT.getVerb());
+         sc.getWhens().add(correlationStep);
+      } else {
+         when(correlationStep.getKeyword()).thenReturn(CorrelateStepHandler.FUTURE.getVerb());
+         sc.getThens().add(correlationStep);
+      }
    }
 
    @Override

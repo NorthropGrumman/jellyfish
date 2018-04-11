@@ -16,8 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -60,7 +59,6 @@ public class PublishStepHandlerTest {
       step.getParameters().add(field.getName());
       step.setParent(scenario);
       when(context.getObject()).thenReturn(step);
-
 
       handler = new PublishStepHandler();
    }

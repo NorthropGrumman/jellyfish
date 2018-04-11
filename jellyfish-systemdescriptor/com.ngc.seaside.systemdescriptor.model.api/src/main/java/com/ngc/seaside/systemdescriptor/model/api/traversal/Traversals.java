@@ -122,26 +122,28 @@ public class Traversals {
 
    private static void doVisitModel(IVisitor visitor, VisitorContext ctx, IModel model) {
       visitor.visitModel(ctx, model);
-      for (Iterator<IDataReferenceField> fields = model.getInputs().iterator(); fields.hasNext() && !ctx.stopped; ) {
+      for (Iterator<IDataReferenceField> fields = model.getInputs().iterator();
+            fields.hasNext() && !ctx.stopped; ) {
          visitor.visitDataReferenceFieldAsInput(ctx, fields.next());
       }
-      for (Iterator<IDataReferenceField> fields = model.getOutputs().iterator(); fields.hasNext() && !ctx.stopped; ) {
+      for (Iterator<IDataReferenceField> fields = model.getOutputs().iterator();
+            fields.hasNext() && !ctx.stopped; ) {
          visitor.visitDataReferenceFieldAsOutput(ctx, fields.next());
       }
       for (Iterator<IModelReferenceField> fields = model.getRequiredModels().iterator();
-           fields.hasNext() && !ctx.stopped; ) {
+            fields.hasNext() && !ctx.stopped; ) {
          visitor.visitModelReferenceFieldAsRequirement(ctx, fields.next());
       }
       for (Iterator<IModelReferenceField> fields = model.getParts().iterator();
-           fields.hasNext() && !ctx.stopped; ) {
+            fields.hasNext() && !ctx.stopped; ) {
          visitor.visitModelReferenceFieldAsPart(ctx, fields.next());
       }
       for (Iterator<IScenario> scenarios = model.getScenarios().iterator();
-           scenarios.hasNext() && !ctx.stopped; ) {
+            scenarios.hasNext() && !ctx.stopped; ) {
          visitor.visitScenario(ctx, scenarios.next());
       }
       for (Iterator<IModelLink<?>> links = model.getLinks().iterator();
-           links.hasNext() && !ctx.stopped; ) {
+            links.hasNext() && !ctx.stopped; ) {
          visitor.visitLink(ctx, links.next());
       }
    }

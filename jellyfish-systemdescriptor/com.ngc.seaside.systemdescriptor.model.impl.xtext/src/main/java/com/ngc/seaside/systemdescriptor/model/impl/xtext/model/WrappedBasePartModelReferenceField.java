@@ -1,8 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
@@ -11,12 +10,14 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
+import java.util.Optional;
+
 /**
  * Adapts an {@link PartDeclaration} to an {@link IModelReferenceField}.
- *
  * This class is not threadsafe.
  */
-public class WrappedBasePartModelReferenceField extends AbstractWrappedModelReferenceField<BasePartDeclaration, WrappedBasePartModelReferenceField> {
+public class WrappedBasePartModelReferenceField
+      extends AbstractWrappedModelReferenceField<BasePartDeclaration, WrappedBasePartModelReferenceField> {
 
    public WrappedBasePartModelReferenceField(IWrapperResolver resolver, BasePartDeclaration wrapped) {
       super(resolver, wrapped);

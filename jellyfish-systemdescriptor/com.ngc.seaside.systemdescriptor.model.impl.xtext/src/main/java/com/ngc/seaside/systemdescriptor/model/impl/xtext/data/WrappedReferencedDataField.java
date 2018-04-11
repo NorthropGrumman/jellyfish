@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.data;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
@@ -16,7 +17,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
 /**
  * Adapts a {@link ReferencedDataModelFieldDeclaration} that references other data types instance to an {@link
  * IDataField}.
- *
  * This class is not threadsafe.
  */
 public class WrappedReferencedDataField extends AbstractWrappedDataField<ReferencedDataModelFieldDeclaration>
@@ -28,6 +28,9 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
    // getInterfaces() only returns the interfaces declared by the class directly and not the interfaces of the sub-
    // class.
 
+   /**
+    * Creates a new field.
+    */
    public WrappedReferencedDataField(IWrapperResolver resolver, ReferencedDataModelFieldDeclaration wrapped) {
       super(resolver, wrapped);
       Preconditions.checkArgument(wrapped.getDataModel().eClass().getClassifierID() == SystemDescriptorPackage.DATA,
@@ -44,7 +47,7 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
       Preconditions.checkNotNull(type, "type may not be null!");
       Preconditions.checkArgument(type == DataTypes.DATA,
                                   "the type of this field must be another data type, it cannot be changed to reference"
-                                  + " primitives or enums!");
+                                        + " primitives or enums!");
       // We don't actually have to do anything here.
       return this;
    }
@@ -70,7 +73,7 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
    @Override
    public IDataField setReferencedEnumeration(IEnumeration enumeration) {
       throw new IllegalStateException("the type of this field must be another data type, it cannot be changed to"
-                                      + " reference enumerations!");
+                                            + " reference enumerations!");
    }
 
    /**
@@ -85,7 +88,7 @@ public class WrappedReferencedDataField extends AbstractWrappedDataField<Referen
       Preconditions.checkArgument(
             dataRef.getType() == DataTypes.DATA,
             "cannot create a ReferencedDataModelFieldDeclaration for an IDataField that references a primitive type"
-            + " or enum!");
+                  + " or enum!");
       ReferencedDataModelFieldDeclaration x =
             SystemDescriptorFactory.eINSTANCE.createReferencedDataModelFieldDeclaration();
       x.setName(dataRef.getName());

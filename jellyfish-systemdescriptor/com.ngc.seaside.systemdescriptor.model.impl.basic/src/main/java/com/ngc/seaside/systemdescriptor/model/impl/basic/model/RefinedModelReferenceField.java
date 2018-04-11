@@ -22,6 +22,9 @@ public class RefinedModelReferenceField implements IModelReferenceField {
    protected IModel parent;
    protected IProperties properties;
 
+   /**
+    * Creates a new field.
+    */
    public RefinedModelReferenceField(String name, IModelReferenceField refinedField) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -86,10 +89,10 @@ public class RefinedModelReferenceField implements IModelReferenceField {
          return false;
       }
       RefinedModelReferenceField that = (RefinedModelReferenceField) o;
-      return Objects.equals(name, that.name) &&
-             Objects.equals(metadata, that.metadata) &&
-             Objects.equals(refinedField, that.refinedField) &&
-             parent == that.parent;
+      return Objects.equals(name, that.name)
+             && Objects.equals(metadata, that.metadata)
+             && Objects.equals(refinedField, that.refinedField)
+             && parent == that.parent;
    }
 
    @Override
@@ -99,11 +102,11 @@ public class RefinedModelReferenceField implements IModelReferenceField {
 
    @Override
    public String toString() {
-      return "RefinedModelReferenceField[" +
-             "name='" + name + '\'' +
-             ", metadata=" + metadata +
-             ", parent=" + (parent == null ? "null" : parent.getName()) +
-             ']';
+      return "RefinedModelReferenceField["
+             + "name='" + name + '\''
+             + ", metadata=" + metadata
+             + ", parent=" + (parent == null ? "null" : parent.getName())
+             + ']';
    }
 
    @Override

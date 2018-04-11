@@ -45,7 +45,7 @@ public class TraversalsTest {
    private ISystemDescriptor descriptor;
 
    @Mock
-   private IPackage p;
+   private IPackage packaze;
 
    @Mock
    private IData data;
@@ -82,10 +82,10 @@ public class TraversalsTest {
 
    @Before
    public void setup() throws Throwable {
-      when(descriptor.getPackages()).thenReturn(asCollection(p));
-      when(p.getData()).thenReturn(asCollection(data));
-      when(p.getModels()).thenReturn(asCollection(model1, model2));
-      when(p.getEnumerations()).thenReturn(asCollection(enumeration));
+      when(descriptor.getPackages()).thenReturn(asCollection(packaze));
+      when(packaze.getData()).thenReturn(asCollection(data));
+      when(packaze.getModels()).thenReturn(asCollection(model1, model2));
+      when(packaze.getEnumerations()).thenReturn(asCollection(enumeration));
       when(data.getFields()).thenReturn(asCollection(dataField));
 
       when(model1.getInputs()).thenReturn(asCollection(input));
@@ -109,7 +109,7 @@ public class TraversalsTest {
                   Traversals.traverse(descriptor, visitor).isPresent());
 
       verify(visitor).visitSystemDescriptor(any(), eq(descriptor));
-      verify(visitor).visitPackage(any(), eq(p));
+      verify(visitor).visitPackage(any(), eq(packaze));
       verify(visitor).visitData(any(), eq(data));
       verify(visitor).visitDataField(any(), eq(dataField));
       verify(visitor).visitModel(any(), eq(model1));
@@ -145,7 +145,7 @@ public class TraversalsTest {
 
       Traversals.traverse(descriptor, visitor);
 
-      verify(visitor, never()).visitPackage(any(), eq(p));
+      verify(visitor, never()).visitPackage(any(), eq(packaze));
    }
 
    @Test

@@ -44,7 +44,6 @@ import java.util.Optional;
 
 /**
  * Adapts an XText {@link Model} to an {@link IModel}.
- *
  * This class is not threadsafe.
  */
 public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel {
@@ -58,6 +57,9 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
    private WrappingNamedChildCollection<Scenario, IModel, IScenario> scenarios;
    private Collection<IModelLink<?>> links;
 
+   /**
+    * Creates a new wrapped model.
+    */
    public WrappedModel(IWrapperResolver resolver, Model wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
@@ -270,18 +272,6 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       }
    }
 
-   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(
-         IWrapperResolver resolver,
-         PartDeclaration part) {
-      if (part instanceof BasePartDeclaration) {
-         return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);
-      } else if (part instanceof RefinedPartDeclaration) {
-         return new WrappedRefinedPartModelReferenceField(resolver, (RefinedPartDeclaration) part);
-      } else {
-         throw new IllegalStateException("Unknown PartDeclaration subclass: " + part.getClass());
-      }
-   }
-
    private void initRequires() {
       if (wrapped.getRequires() == null) {
          requires = new SelfInitializingWrappingNamedChildCollection<>(
@@ -298,6 +288,18 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
                d -> getWrappedModelReferenceField(resolver, d),
                d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
                FieldDeclaration::getName);
+      }
+   }
+
+   private AbstractWrappedModelReferenceField<? extends PartDeclaration, ?> getWrappedModelReferenceField(
+         IWrapperResolver resolver,
+         PartDeclaration part) {
+      if (part instanceof BasePartDeclaration) {
+         return new WrappedBasePartModelReferenceField(resolver, (BasePartDeclaration) part);
+      } else if (part instanceof RefinedPartDeclaration) {
+         return new WrappedRefinedPartModelReferenceField(resolver, (RefinedPartDeclaration) part);
+      } else {
+         throw new IllegalStateException("Unknown PartDeclaration subclass: " + part.getClass());
       }
    }
 

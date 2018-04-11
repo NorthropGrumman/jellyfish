@@ -1,12 +1,13 @@
 package com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
-
-import com.google.common.base.Preconditions;
-import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
-import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 
 public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPrimitiveValue {
 
@@ -14,6 +15,7 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
 
    /**
     * Constructs an unset PropertyPrimitiveValue of the given type.
+    *
     * @param type the value's type
     */
    public PropertyPrimitiveValue(DataTypes type) {
@@ -21,24 +23,36 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
       this.value = null;
    }
 
+   /**
+    * Creates a new int value.
+    */
    public PropertyPrimitiveValue(BigInteger value) {
       super(DataTypes.INT, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
 
+   /**
+    * Creates a new decimal value.
+    */
    public PropertyPrimitiveValue(BigDecimal value) {
       super(DataTypes.FLOAT, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
 
+   /**
+    * Creates a new string value.
+    */
    public PropertyPrimitiveValue(String value) {
       super(DataTypes.STRING, true);
       Preconditions.checkNotNull(value, "value may not be null!");
       this.value = value;
    }
 
+   /**
+    * Creates a new boolean value.
+    */
    public PropertyPrimitiveValue(boolean value) {
       super(DataTypes.BOOLEAN, true);
       this.value = value;
@@ -71,7 +85,8 @@ public class PropertyPrimitiveValue extends PropertyValue implements IPropertyPr
    private void checkType(DataTypes expectedType) {
       super.checkIsSet();
       if (getType() != expectedType) {
-         throw new IllegalStateException("Cannot get a value of type " + expectedType + ": actual type is " + getType());
+         throw new IllegalStateException(
+               "Cannot get a value of type " + expectedType + ": actual type is " + getType());
       }
    }
 

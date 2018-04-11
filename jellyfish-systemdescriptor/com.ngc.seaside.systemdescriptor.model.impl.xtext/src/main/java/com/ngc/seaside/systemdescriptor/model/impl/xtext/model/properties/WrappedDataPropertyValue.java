@@ -33,6 +33,9 @@ public class WrappedDataPropertyValue implements IPropertyDataValue {
    private final ReferencedPropertyFieldDeclaration propertyDeclaration;
    private final NestedPropertyValueResolver propertyValueResolver;
 
+   /**
+    * Creates a new property value.
+    */
    public WrappedDataPropertyValue(IWrapperResolver resolver,
                                    ReferencedPropertyFieldDeclaration propertyDeclaration,
                                    Properties propertiesContainer) {

@@ -47,6 +47,9 @@ public class WrappedMetadata implements IMetadata {
       this.json = json;
    }
 
+   /**
+    * Creates a new metadata object.
+    */
    public WrappedMetadata() {
    }
 
@@ -168,6 +171,9 @@ public class WrappedMetadata implements IMetadata {
       return builder.build();
    }
 
+   /**
+    * Creates an XText JSON object from the given JavaX JSON object.
+    */
    public static JsonObject toXtextJsonObject(javax.json.JsonObject object) {
       JsonObject xtext = SystemDescriptorFactory.eINSTANCE.createJsonObject();
       for (Map.Entry<String, javax.json.JsonValue> entry : object.entrySet()) {

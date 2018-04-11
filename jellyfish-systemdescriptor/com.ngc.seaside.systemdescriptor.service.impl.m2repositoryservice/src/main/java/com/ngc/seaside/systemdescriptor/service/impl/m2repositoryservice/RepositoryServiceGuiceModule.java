@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.google.inject.AbstractModule;
+
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 /**

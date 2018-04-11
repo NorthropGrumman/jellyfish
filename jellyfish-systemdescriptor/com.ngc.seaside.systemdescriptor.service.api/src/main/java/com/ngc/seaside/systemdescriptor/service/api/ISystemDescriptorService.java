@@ -65,9 +65,7 @@ public interface ISystemDescriptorService {
     * returns all metadata declared directly by the type as well as metadata declared in extending types.  If duplicate
     * metadata values are declared, the value closest to the original data object in terms of the extension hierarchy is
     * used.  This makes it possible to <i>overwrite</i> metadata when extending data types.
-    *
     * <p/>
-    *
     * Any changes made to the view write-thought to the original data object.  Likewise, changes in the original object
     * will be manifested by the view.
     *
@@ -87,9 +85,7 @@ public interface ISystemDescriptorService {
     * metadata declared directly by the model as well as metadata declared in refined model.  If duplicate metadata
     * values are declared, the value closest to the original model in terms of the refinement hierarchy is used.  This
     * makes it possible to <i>overwrite</i> metadata when refining models.
-    *
     * <p/>
-    *
     * Any changes made to the view write-thought to the original model.  Likewise, changes in teh original model will be
     * manifested by the view.
     *

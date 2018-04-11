@@ -47,9 +47,10 @@ public class Metadata implements IMetadata {
 
    @Override
    public String toString() {
-      return "Metadata[" +
-             "json='" + (json == null ? "null" : json) +
-             ']';
+      return "Metadata["
+             + "json='"
+             + (json == null ? "null" : json)
+             + ']';
    }
 
    public static IMetadata immutable(IMetadata metadata) {

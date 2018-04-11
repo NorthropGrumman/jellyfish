@@ -1,10 +1,12 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
+import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,13 +14,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
-import com.ngc.seaside.systemdescriptor.model.api.IPackage;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtextTest;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class WrappedRefinedRequireModelReferenceFieldTest extends AbstractWrappedXtextTest {
@@ -78,7 +78,8 @@ public class WrappedRefinedRequireModelReferenceFieldTest extends AbstractWrappe
       when(resolver().findXTextModel(refinedModel.getName(), p.getName())).thenReturn(Optional.of(refinedModelType));
       when(refinedParent.getRefinedModel()).thenReturn(Optional.of(parent));
       when(parent.getRequiredModels()).thenReturn(mock(INamedChildCollection.class));
-      when(parent.getRequiredModels().getByName(baseRequireDeclaration.getName())).thenAnswer(args -> Optional.of(wrapped));
+      when(parent.getRequiredModels().getByName(baseRequireDeclaration.getName()))
+            .thenAnswer(args -> Optional.of(wrapped));
    }
 
    @Test
@@ -100,7 +101,9 @@ public class WrappedRefinedRequireModelReferenceFieldTest extends AbstractWrappe
    public void testDoesConvertToXtextObject() throws Throwable {
       wrapped = new WrappedBaseRequireModelReferenceField(resolver(), baseRequireDeclaration);
       refinedWrapped = new WrappedRefinedRequireModelReferenceField(resolver(), refinedRequireDeclaration);
-      RefinedRequireDeclaration xtext = WrappedRefinedRequireModelReferenceField.toXTextRequireDeclaration(resolver(), refinedWrapped);
+      RefinedRequireDeclaration
+            xtext =
+            WrappedRefinedRequireModelReferenceField.toXTextRequireDeclaration(resolver(), refinedWrapped);
       assertEquals("name not correct!",
                    refinedRequireDeclaration.getName(),
                    xtext.getName());

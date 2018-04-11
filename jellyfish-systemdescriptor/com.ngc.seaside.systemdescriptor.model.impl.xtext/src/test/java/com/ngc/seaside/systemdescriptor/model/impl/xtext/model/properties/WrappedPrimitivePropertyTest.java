@@ -1,13 +1,5 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
@@ -19,7 +11,16 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class WrappedPrimitivePropertyTest extends AbstractWrappedXtextTest {
+
    private WrappedPrimitiveProperty wrappedProperty;
 
    private PrimitivePropertyFieldDeclaration property;

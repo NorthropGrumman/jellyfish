@@ -12,7 +12,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
@@ -20,7 +19,6 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepH
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,15 +85,12 @@ public class ModelUtils {
       }
 
       /**
-       * Creates a mocked req/res {@link IScenario} with the given name.
-       *
-       * <p> The step parameters supplied should be ordered by given statements first, followed by when statement,
-       * followed by then statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link
-       * String} followed by {@link IData}. <p> The given and when steps will be treated as {@link
-       * ReceiveRequestStepHandler receive request} steps, and then steps will be treated as {@link RespondStepHandler
-       * respond} steps.
-       *
-       * <p> This method adds the scenario to this model's scenarios and data types to this model's inputs and outputs.
+       * Creates a mocked req/res {@link IScenario} with the given name. The step parameters supplied should be ordered
+       * by given statements first, followed by when statement, followed by then statements. The step parameters can
+       * either be {@link IDataReferenceField} or a pair of strings followed by {@link IData}.  The given and when
+       * steps will be treated as {@link ReceiveRequestStepHandler receive request} steps, and then steps will be
+       * treated as {@link RespondStepHandler respond} steps. This method adds the scenario to this model's scenarios
+       * and data types to this model's inputs and outputs.
        *
        * @param givens         number of given steps
        * @param whens          number of when steps
@@ -163,14 +158,12 @@ public class ModelUtils {
       }
 
       /**
-       * Creates a mocked pub sub {@link IScenario} with the given name.
-       *
-       * <p> The step parameters supplied should be ordered by given statements first, followed by when statement,
-       * followed by then statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link
-       * String} followed by {@link IData}. <p> The given and when steps will be treated as {@link ReceiveStepHandler
-       * receive} steps, and then steps will be treated as {@link PublishStepHandler publish} steps.
-       *
-       * <p> This method adds the scenario to this model's scenarios and data types to this model's inputs and outputs.
+       * Creates a mocked pub sub {@link IScenario} with the given name.  The step parameters supplied should be ordered
+       * by given statements first, followed by when statement, followed by then statements. The step parameters can
+       * either be {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}. The given and
+       * when steps will be treated as {@link ReceiveStepHandler receive} steps, and then steps will be treated as
+       * {@link PublishStepHandler publish} steps.  This method adds the scenario to this model's scenarios and data
+       * types to this model's inputs and outputs.
        *
        * @param givens         number of given steps
        * @param whens          number of when steps
@@ -188,14 +181,12 @@ public class ModelUtils {
    }
 
    /**
-    * Creates a mocked req/res {@link IScenario} with the given name and adds it to the given model.
-    *
-    * <p> The step parameters supplied should be ordered by given statements first, followed by when statement, followed
-    * by then statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String}
-    * followed by {@link IData}. <p> The given and when steps will be treated as {@link ReceiveRequestStepHandler
-    * receive request} steps, and then steps will be treated as {@link RespondStepHandler respond} steps.
-    *
-    * <p> This method adds the scenario to the model's scenarios and data types to the model's inputs and outputs.
+    * Creates a mocked req/res {@link IScenario} with the given name and adds it to the given model.  The step
+    * parameters supplied should be ordered by given statements first, followed by when statement, followed by then
+    * statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String} followed by
+    * {@link IData}. The given and when steps will be treated as {@link ReceiveRequestStepHandler receive request}
+    * steps, and then steps will be treated as {@link RespondStepHandler respond} steps.  This method adds the scenario
+    * to the model's scenarios and data types to the model's inputs and outputs.
     *
     * @param model          the model to configure
     * @param givens         number of given steps
@@ -274,14 +265,12 @@ public class ModelUtils {
    }
 
    /**
-    * Creates a mocked pub sub {@link IScenario} with the given name.
-    *
-    * <p> The step parameters supplied should be ordered by given statements first, followed by when statement, followed
-    * by then statements. The step parameters can either be {@link IDataReferenceField} or a pair of {@link String}
-    * followed by {@link IData}. <p> The given and when steps will be treated as {@link ReceiveStepHandler receive}
-    * steps, and then steps will be treated as {@link PublishStepHandler publish} steps.
-    *
-    * <p> This method adds the scenario to the model's scenarios and data types to the model's inputs and outputs.
+    * Creates a mocked pub sub {@link IScenario} with the given name. The step parameters supplied should be ordered by
+    * given statements first, followed by when statement, followed by then statements. The step parameters can either be
+    * {@link IDataReferenceField} or a pair of {@link String} followed by {@link IData}. The given and when steps
+    * will be treated as {@link ReceiveStepHandler receive} steps, and then steps will be treated as
+    * {@link PublishStepHandler publish} steps.  This method adds the scenario to the model's scenarios and data types
+    * to the model's inputs and outputs.
     *
     * @param model          the model to configure
     * @param givens         number of given steps
@@ -380,24 +369,7 @@ public class ModelUtils {
       for (T child : children) {
          map.put(child.getName(), child);
       }
-      class NamedChildCollectionInstance extends AbstractCollection<T> implements INamedChildCollection<P, T> {
-
-         @Override
-         public Optional<T> getByName(String name) {
-            return Optional.of(map.get(name));
-         }
-
-         @Override
-         public Iterator<T> iterator() {
-            return map.values().iterator();
-         }
-
-         @Override
-         public int size() {
-            return map.size();
-         }
-      }
-      return new NamedChildCollectionInstance();
+      return new MapBasedNamedChildCollection<>(map);
    }
 
    /**
@@ -542,7 +514,7 @@ public class ModelUtils {
                         .getName();
                case ENUM:
                   return ((IDataField) element).getReferencedEnumeration().getFullyQualifiedName() + ' '
-                         + element.getName();
+                        + element.getName();
                default:
                   return ((IDataField) element).getType().name().toLowerCase() + ' ' + element.getName();
             }
@@ -558,9 +530,34 @@ public class ModelUtils {
       @Override
       public String toString() {
          return "INamedCollection<" + parent.getName() + ">["
-                + this.stream().map(this::toString).collect(Collectors.joining(", ")) + ']';
+               + this.stream().map(this::toString).collect(Collectors.joining(", ")) + ']';
       }
 
    }
 
+   private static class MapBasedNamedChildCollection<P, T extends INamedChild<P>>
+         extends AbstractCollection<T>
+         implements INamedChildCollection<P, T> {
+
+      private final Map<String, T> map;
+
+      private MapBasedNamedChildCollection(Map<String, T> map) {
+         this.map = map;
+      }
+
+      @Override
+      public Optional<T> getByName(String name) {
+         return Optional.of(map.get(name));
+      }
+
+      @Override
+      public Iterator<T> iterator() {
+         return map.values().iterator();
+      }
+
+      @Override
+      public int size() {
+         return map.size();
+      }
+   }
 }

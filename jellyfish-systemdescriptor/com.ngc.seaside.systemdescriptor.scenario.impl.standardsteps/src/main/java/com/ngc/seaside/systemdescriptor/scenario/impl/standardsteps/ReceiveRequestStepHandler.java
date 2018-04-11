@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
  */
 public class ReceiveRequestStepHandler extends AbstractStepHandler {
 
-   public final static ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("haveReceivedRequest");
-   public final static ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("receivingRequest");
-   public final static ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willReceiveRequest");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("haveReceivedRequest");
+   public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("receivingRequest");
+   public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willReceiveRequest");
 
    public ReceiveRequestStepHandler() {
       register(PAST, PRESENT, FUTURE);
@@ -32,9 +32,7 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
    /**
     * Gets the {@code IDataReferenceField} of the input of the model the scenario  that is associated with that this
     * step. This can be used to determine which input field is received as the request.
-    *
     * <p/>
-    *
     * Only invoke this method with validated scenario steps.
     *
     * @param step the step that contains a receive verb
@@ -45,8 +43,8 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
       String keyword = step.getKeyword();
       Preconditions.checkArgument(
             keyword.equals(PAST.getVerb())
-            || keyword.equals(PRESENT.getVerb())
-            || keyword.equals(FUTURE.getVerb()),
+                  || keyword.equals(PRESENT.getVerb())
+                  || keyword.equals(FUTURE.getVerb()),
             "the step cannot be processed by this handler!");
 
       IModel model = step.getParent().getParent();
@@ -97,7 +95,7 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
       boolean hasWillRespondStep = scenario.getThens()
             .stream()
             .anyMatch(s -> RespondStepHandler.FUTURE.getVerb().equals(s.getKeyword()));
-      if(!hasWillRespondStep) {
+      if (!hasWillRespondStep) {
          String errMsg = "Scenarios that receive requests must respond using the 'willRespond' verb!";
          context.declare(Severity.ERROR, errMsg, scenario).getThens();
       }

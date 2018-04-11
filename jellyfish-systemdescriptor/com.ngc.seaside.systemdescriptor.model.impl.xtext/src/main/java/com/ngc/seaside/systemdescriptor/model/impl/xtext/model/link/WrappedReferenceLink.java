@@ -69,7 +69,7 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
    }
 
    @SuppressWarnings({"unchecked"})
-   protected IModelLink<T> getRefinedLink(RefinedLinkDeclaration link) {
+   protected IModelLink<T> doGetRefinedLink(RefinedLinkDeclaration link) {
       IModelLink<T> refinedLink = null;
 
       IModel model = getParent().getRefinedModel().orElse(null);
@@ -112,7 +112,7 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
    }
 
    @SuppressWarnings({"unchecked"})
-   protected IModelLink<T> getRefinedLink(RefinedLinkNameDeclaration link) {
+   protected IModelLink<T> doGetRefinedLink(RefinedLinkNameDeclaration link) {
       IModelLink<T> refinedLink = null;
 
       IModel model = getParent().getRefinedModel().orElse(null);

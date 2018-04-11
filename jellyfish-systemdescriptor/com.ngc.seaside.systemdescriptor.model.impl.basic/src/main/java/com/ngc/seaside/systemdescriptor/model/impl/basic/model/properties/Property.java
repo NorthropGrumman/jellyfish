@@ -62,8 +62,9 @@ public class Property implements IProperty {
             .allMatch(IPropertyEnumerationValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyEnumerationValue");
       }
-      if ((type != DataTypes.DATA && type != DataTypes.ENUM)
-          && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
+      if (type != DataTypes.DATA
+            && type != DataTypes.ENUM
+            && !values.stream().allMatch(IPropertyPrimitiveValue.class::isInstance)) {
          throw new IllegalArgumentException("Expected property values to be of type IPropertyPrimitiveValue");
       }
       if (referencedType == null && values.isEmpty()) {
@@ -182,33 +183,33 @@ public class Property implements IProperty {
          return false;
       }
       Property that = (Property) obj;
-      return Objects.equals(name, that.name) &&
-             Objects.equals(type, that.type) &&
-             parent == that.parent &&
-             Objects.equals(cardinality, that.cardinality) &&
-             Objects.equals(values, that.values);
+      return Objects.equals(name, that.name)
+            && Objects.equals(type, that.type)
+            && parent == that.parent
+            && Objects.equals(cardinality, that.cardinality)
+            && Objects.equals(values, that.values);
    }
 
    @Override
    public String toString() {
-      return "Property[name=" + name +
-             ", parent=" + parent +
-             ", type=" + type +
-             ", cardinality=" + cardinality +
-             ", values=" + values +
-             "]";
+      return "Property[name=" + name
+            + ", parent=" + parent
+            + ", type=" + type
+            + ", cardinality=" + cardinality
+            + ", values=" + values
+            + "]";
    }
 
    private void checkTypeAndCardinality(String valueTypes, FieldCardinality cardinality, DataTypes... types) {
       if (cardinality != null && this.cardinality != cardinality) {
          throw new IllegalStateException(
                "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected cardinality to be FieldCardinality." + cardinality);
+                     + ": expected cardinality to be FieldCardinality." + cardinality);
       }
       if (!Arrays.asList(types).contains(this.type)) {
          throw new IllegalStateException(
                "cannot get " + valueTypes + " value" + (cardinality == FieldCardinality.SINGLE ? "" : "s")
-               + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
+                     + ": expected type to be " + (types.length > 1 ? "one of " : "") + Arrays.toString(types));
       }
    }
 }

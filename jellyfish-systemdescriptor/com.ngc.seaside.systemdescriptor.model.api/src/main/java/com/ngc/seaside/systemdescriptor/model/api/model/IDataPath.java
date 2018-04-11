@@ -8,25 +8,21 @@ import java.util.List;
 /**
  * Represents a path of data fields referenced by a particular model. Note that instances of paths are directly
  * associated with specific models.
- *
  * Consider the path given by in model:
- *
  * <pre>
  * systemTrack.header.correlationEventId
  * </pre>
- *
  * This path might be part of some scenario located in a model called {@code FooService}. In this example {@code
  * systemTrack} is the name of an input data field whose type is {@code SystemTrack}. {@code header} is a field of
  * system track whose type is {@code Metadata}. Finally, metadata contains a primitive string field called {@code
  * correlationEventId}.
- *
  * This path my be created programmatically like this:
- *
  * <pre>
  *    IModel fooService = systemDescriptor.findModel("FooService").orElse(null);
  *    IDataReferenceField systemTrackField = fooService.getInputs().getByName("systemTrack");
  *    IDataField headerField = systemTrackField.getType().getFields().getByName("header");
- *    IDataField correlationEventIdField = headerField.getReferencedDataType().getFields().getByName("correlationEventId")
+ *    IDataField correlationEventIdField = headerField.getReferencedDataType()
+ *        .getFields().getByName("correlationEventId")
  *    IDataPath path = IDataPath.of(systemTrackField
  *                                  headerField,
  *                                  correlationEventIdField);

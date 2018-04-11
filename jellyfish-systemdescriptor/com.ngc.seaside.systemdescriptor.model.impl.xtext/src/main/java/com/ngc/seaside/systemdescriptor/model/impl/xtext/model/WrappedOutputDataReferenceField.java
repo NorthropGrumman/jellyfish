@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.model.impl.xtext.model;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -12,7 +13,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory
 
 /**
  * Adapts an {@link OutputDeclaration} to an {@link IDataReferenceField}.
- *
  * This class is not threadsafe.
  */
 public class WrappedOutputDataReferenceField

@@ -1,13 +1,13 @@
 package com.ngc.seaside.systemdescriptor.tests.format;
 
-import java.util.Random;
-import java.util.function.Function;
+import com.google.inject.Inject;
 
 import org.eclipse.xtext.formatting2.FormatterRequest;
 import org.eclipse.xtext.testing.formatter.FormatterTestHelper;
 import org.eclipse.xtext.testing.formatter.FormatterTestRequest;
 
-import com.google.inject.Inject;
+import java.util.Random;
+import java.util.function.Function;
 
 public class FormattingTestUtils {
 
@@ -51,15 +51,21 @@ public class FormattingTestUtils {
    private FormatterTestHelper formatterTester;
 
    /**
-    * Tests the formatter given correctly-formatted code. This method transform the correctly-formatted code into several mal-formatted code strings, apply the formatter to the mal-formatted code
-    * and check that it has been formatted the same as the original correctly-formatted code.
-    * 
+    * Tests the formatter given correctly-formatted code. This method transform the correctly-formatted code into
+    * several mal-formatted code strings, apply the formatter to the mal-formatted code and check that it has been
+    * formatted the same as the original correctly-formatted code.
+    *
     * @param correctFormat a correctly-formatted sd file as a string
     */
    public void testFormatter(String correctFormat) {
       testFormat(correctFormat, ONE_LINE_MALFORMATTER, RANDOM_SPACING_MALFORMATTER, PASSTHROUGH_MALFORMATTER);
    }
 
+   /**
+    * Tests the formatter given correctly formatted code by applying the given functions that mess up the formatting.
+    * @param correctFormat the correctly formatted code
+    * @param malformatters the functions to corrupt the formatting
+    */
    @SafeVarargs
    public final void testFormat(String correctFormat, Function<String, String>... malformatters) {
       for (Function<String, String> malformatter : malformatters) {

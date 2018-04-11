@@ -21,6 +21,9 @@ public class WrappedEnumeration extends AbstractWrappedXtext<Enumeration> implem
    private AutoWrappingCollection<EnumerationValueDeclaration, String> values;
    private IMetadata metadata;
 
+   /**
+    * Creates a wrapped enumeration.
+    */
    public WrappedEnumeration(IWrapperResolver resolver, Enumeration wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
@@ -66,6 +69,9 @@ public class WrappedEnumeration extends AbstractWrappedXtext<Enumeration> implem
       return resolver.getWrapperFor((Package) wrapped.eContainer());
    }
 
+   /**
+    * Coverts the given object to an XText enumeration.
+    */
    public static Enumeration toXTextEnumeration(IWrapperResolver wrapperResolver, IEnumeration enumeration) {
       Preconditions.checkNotNull(enumeration, "enumeration may not be null!");
       Preconditions.checkNotNull(wrapperResolver, "wrapperResolver may not be null!");
@@ -76,6 +82,9 @@ public class WrappedEnumeration extends AbstractWrappedXtext<Enumeration> implem
       return e;
    }
 
+   /**
+    * Coverts the given object to an XText enumeration value.
+    */
    private static EnumerationValueDeclaration newEnumValue(String value) {
       EnumerationValueDeclaration declaration = SystemDescriptorFactory.eINSTANCE.createEnumerationValueDeclaration();
       declaration.setValue(value);

@@ -40,6 +40,7 @@ subprojects {
         apply plugin: 'idea'
         apply plugin: 'maven'
         apply plugin: 'org.xtext.xtend'
+        apply plugin: 'com.ngc.seaside.checkstyle'
     } else if(name == 'systemdescriptor.feature') {
         // Don't apply any parent plugins.
     } else if(name == 'systemdescriptor.updatesite') {
@@ -50,6 +51,7 @@ subprojects {
         apply plugin: 'eclipse'
         apply plugin: 'idea'
         apply plugin: 'org.xtext.xtend'
+        apply plugin: 'com.ngc.seaside.checkstyle'
         apply from: "${rootDir}/gradle/source-layout.gradle"
         apply from: "${rootDir}/gradle/maven-deployment.gradle"
     }

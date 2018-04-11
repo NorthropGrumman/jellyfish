@@ -511,6 +511,9 @@ public class WrappedSystemDescriptorIT {
       return r;
    }
 
+   /**
+    * Creates a path to the given packages and files.
+    */
    public static Path pathTo(String... packagesAndFile) {
       Collection<String> parts = new ArrayList<>();
       parts.add("resources");
