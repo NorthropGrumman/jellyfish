@@ -7,7 +7,7 @@ import com.google.inject.Stage;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.guice.module.ThreadServiceModule;
-import com.ngc.seaside.service.transport.impl.defaultz.module.DefaultTransportServiceModule;
+import com.ngc.seaside.threateval.tps.testsconfig.TrackPriorityServiceTestConfigurationModule;
 
 import cucumber.api.guice.CucumberModules;
 import cucumber.runtime.java.guice.InjectorSource;
@@ -23,7 +23,7 @@ public class TrackPriorityServiceTestInjectorSource implements InjectorSource {
                                   new LogServiceModule(),
                                   new ResourceServiceModule(),
                                   new ThreadServiceModule(),
-                                  new DefaultTransportServiceModule(),
+                                  new TrackPriorityServiceTestConfigurationModule(),
                                   new TrackPriorityServiceTestModule());
    }
 }

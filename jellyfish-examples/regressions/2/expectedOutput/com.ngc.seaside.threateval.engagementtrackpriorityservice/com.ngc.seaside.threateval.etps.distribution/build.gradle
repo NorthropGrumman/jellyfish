@@ -33,6 +33,8 @@ dependencies {
    bundles "com.ngc.seaside:service.transport.impl.provider.multicast:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.spark:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.spark:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.impl.topic.httpclient:$starfishVersion"
+   bundles "com.ngc.seaside:service.transport.impl.provider.httpclient:$starfishVersion"
 
    blocs "com.ngc.blocs:api:$blocsCoreVersion"
    blocs "com.ngc.blocs:file.impl.common.fileutilities:$blocsCoreVersion"
