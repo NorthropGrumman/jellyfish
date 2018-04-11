@@ -209,7 +209,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    public void rest() throws Throwable {
       addGeneratedConfigTemplatePath(SPARK_TEMPLATE);
 
-      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,

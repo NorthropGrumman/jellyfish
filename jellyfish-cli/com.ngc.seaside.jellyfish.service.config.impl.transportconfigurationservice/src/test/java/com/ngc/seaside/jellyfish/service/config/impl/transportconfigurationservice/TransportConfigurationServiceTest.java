@@ -130,7 +130,7 @@ public class TransportConfigurationServiceTest {
       String deploymentModelName = "com.ngc.DeploymentModel";
       IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
       String address = "localhost";
-      String interfaceName1 = "*";
+      String interfaceName1 = "0.0.0.0";
       String interfaceName2 = "eth0";
       int port1 = 8080;
       int port2 = 8081;

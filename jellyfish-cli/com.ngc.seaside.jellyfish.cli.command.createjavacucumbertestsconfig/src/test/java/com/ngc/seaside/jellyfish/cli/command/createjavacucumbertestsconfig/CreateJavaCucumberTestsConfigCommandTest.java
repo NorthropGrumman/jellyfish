@@ -213,7 +213,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
    public void rest() throws Throwable {
       addGeneratedConfigTemplatePath(HTTP_CLIENT_TEMPLATE);
 
-      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "*", 52412,
+      transportConfigService.addRestConfiguration("trackPriorityRequest", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
