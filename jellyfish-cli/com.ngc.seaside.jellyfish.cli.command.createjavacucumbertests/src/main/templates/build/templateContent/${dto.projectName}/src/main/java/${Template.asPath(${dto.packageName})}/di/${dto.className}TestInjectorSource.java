@@ -7,7 +7,11 @@ import com.google.inject.Stage;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.guice.module.ThreadServiceModule;
+#if ($dto.isConfigGenerated())
+import ${dto.configModulePackage}.${dto.configModuleType};
+#else
 import com.ngc.seaside.service.transport.impl.defaultz.module.DefaultTransportServiceModule;
+#end
 
 import cucumber.api.guice.CucumberModules;
 import cucumber.runtime.java.guice.InjectorSource;
@@ -23,7 +27,11 @@ public class ${dto.className}TestInjectorSource implements InjectorSource {
                                   new LogServiceModule(),
                                   new ResourceServiceModule(),
                                   new ThreadServiceModule(),
+#if ($dto.isConfigGenerated())
+                                  new ${dto.configModuleType}(),
+#else
                                   new DefaultTransportServiceModule(),
+#end
                                   new ${dto.className}TestModule());
    }
 }

@@ -17,6 +17,8 @@ public class CucumberDto {
    private String className;
    private String transportTopicsClass;
    private Set<String> dependencies;
+   private String configModule;
+   private boolean isConfigGenerated;
 
    public CucumberDto(IBuildManagementService buildManagementService,
                       IJellyFishCommandOptions options) {
@@ -75,6 +77,32 @@ public class CucumberDto {
 
    public CucumberDto setDependencies(Set<String> dependencies) {
       this.dependencies = dependencies;
+      return this;
+   }
+
+   public String getConfigModule() {
+      return configModule;
+   }
+
+   public CucumberDto setConfigModule(String configModule) {
+      this.configModule = configModule;
+      return this;
+   }
+
+   public String getConfigModuleType() {
+      return configModule.substring(configModule.lastIndexOf('.') + 1);
+   }
+
+   public String getConfigModulePackage() {
+      return configModule.substring(0, configModule.lastIndexOf('.'));
+   }
+
+   public boolean isConfigGenerated() {
+      return isConfigGenerated;
+   }
+
+   public CucumberDto setConfigGenerated(boolean isConfigGenerated) {
+      this.isConfigGenerated = isConfigGenerated;
       return this;
    }
 
