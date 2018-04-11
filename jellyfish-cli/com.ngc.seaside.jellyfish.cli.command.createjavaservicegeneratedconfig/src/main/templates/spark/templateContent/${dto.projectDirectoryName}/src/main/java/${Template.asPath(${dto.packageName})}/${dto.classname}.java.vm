@@ -7,9 +7,9 @@ import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic;
 import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopics;
 import ${dto.topicsImport};
 
-public class ${dto.modelName}SparkConfiguration {
+public class ${dto.classname} {
 
-   private ${dto.modelName}SparkConfiguration() {
+   private ${dto.classname}() {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {

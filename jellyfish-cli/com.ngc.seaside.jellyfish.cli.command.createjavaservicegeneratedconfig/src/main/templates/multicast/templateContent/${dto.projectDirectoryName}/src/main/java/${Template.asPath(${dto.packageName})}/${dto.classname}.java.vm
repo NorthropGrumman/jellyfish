@@ -8,9 +8,9 @@ import ${dto.topicsImport};
 
 import java.net.UnknownHostException;
 
-public class ${dto.modelName}MulticastConfiguration {
+public class ${dto.classname} {
 
-   private ${dto.modelName}MulticastConfiguration() {
+   private ${dto.classname}() {
    }
 
    public static void configure(TransportConfiguration config, ITransportProvider<MulticastTopic> multicastProvider) {
