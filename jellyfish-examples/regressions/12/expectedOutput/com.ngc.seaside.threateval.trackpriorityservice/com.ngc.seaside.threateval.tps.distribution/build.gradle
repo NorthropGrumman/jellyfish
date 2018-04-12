@@ -31,6 +31,8 @@ dependencies {
    bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.spark:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.spark:$starfishVersion"
+   bundles "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge:$starfishVersion"
+   bundles "com.sparkjava:spark-core:$sparkVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.httpclient:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.httpclient:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.zeromq:$starfishVersion"
