@@ -32,7 +32,6 @@ dependencies {
    bundles "com.ngc.seaside:service.transport.impl.topic.spark:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.spark:$starfishVersion"
    bundles "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge:$starfishVersion"
-   bundles "com.sparkjava:spark-core:$sparkVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.httpclient:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.httpclient:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.zeromq:$starfishVersion"
@@ -54,6 +53,7 @@ dependencies {
    blocs "com.ngc.blocs:service.notification.impl.common.notificationservice:$blocsCoreVersion"
    blocs "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
 
+   thirdParty 'com.sparkjava:spark-core:2.6.0'
    thirdParty 'com.google.guava:guava:17.0'
    thirdParty2 "com.google.guava:guava:$guavaVersion"
    thirdParty 'commons-io:commons-io:1.4'

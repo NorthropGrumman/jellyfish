@@ -25,7 +25,6 @@ public class DefaultDependenciesConfiguration {
       configureProtoBuffers(config);
       configureOsgi(config);
       configureGoogle(config);
-      configureSpark(config);
       configureCucumber(config);
       configureUnitTesting(config);
 
@@ -162,15 +161,6 @@ public class DefaultDependenciesConfiguration {
             .version("4.1.0")
             .includes(artifact("guice")
                             .groupId("com.google.inject")
-                            .scope(DependencyScope.BUILD));
-   }
-
-   private static void configureSpark(DependenciesConfiguration config) {
-      config.addGroup()
-            .versionPropertyName("sparkVersion")
-            .version("2.6.0")
-            .includes(artifact("spark-core")
-                            .groupId("com.sparkjava")
                             .scope(DependencyScope.BUILD));
    }
 

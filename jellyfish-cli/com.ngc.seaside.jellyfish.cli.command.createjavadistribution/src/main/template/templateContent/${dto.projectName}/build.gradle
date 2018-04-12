@@ -46,6 +46,7 @@ dependencies {
    blocs "${dto.getFormattedDependency('com.ngc.blocs:service.notification.impl.common.notificationservice')}"
    blocs "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
 
+   thirdParty 'com.sparkjava:spark-core:2.6.0'
    thirdParty 'com.google.guava:guava:17.0'
    thirdParty2 "${dto.getFormattedDependency('com.google.guava:guava')}"
    thirdParty 'commons-io:commons-io:1.4'

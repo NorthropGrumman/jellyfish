@@ -109,7 +109,7 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
       if (provider) {
          dependencies.add(SPARK_PROVIDER_DEPENDENCY);
          dependencies.add(SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY);
-         dependencies.add(SPARK_CORE_DEPENDENCY);
+         //dependencies.add(SPARK_CORE_DEPENDENCY);
       }
       if (module) {
          dependencies.add(SPARK_MODULE_DEPENDENCY);
