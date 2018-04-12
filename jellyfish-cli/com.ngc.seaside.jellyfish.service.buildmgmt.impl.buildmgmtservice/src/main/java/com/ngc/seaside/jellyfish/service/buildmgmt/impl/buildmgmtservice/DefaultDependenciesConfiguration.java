@@ -25,6 +25,7 @@ public class DefaultDependenciesConfiguration {
       configureProtoBuffers(config);
       configureOsgi(config);
       configureGoogle(config);
+      configureSpark(config);
       configureCucumber(config);
       configureUnitTesting(config);
 
@@ -61,6 +62,7 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.topic.spark"),
                       artifact("service.transport.impl.provider.spark"),
                       artifact("service.transport.impl.provider.spark.module"),
+                      artifact("service.log.impl.common.sl4jlogservicebridge"),
                       artifact("service.transport.impl.topic.httpclient"),
                       artifact("service.transport.impl.provider.httpclient"),
                       artifact("service.transport.impl.provider.httpclient.module"),
@@ -160,6 +162,15 @@ public class DefaultDependenciesConfiguration {
             .version("4.1.0")
             .includes(artifact("guice")
                             .groupId("com.google.inject")
+                            .scope(DependencyScope.BUILD));
+   }
+
+   private static void configureSpark(DependenciesConfiguration config) {
+      config.addGroup()
+            .versionPropertyName("sparkVersion")
+            .version("2.6.0")
+            .includes(artifact("spark-core")
+                            .groupId("com.sparkjava")
                             .scope(DependencyScope.BUILD));
    }
 

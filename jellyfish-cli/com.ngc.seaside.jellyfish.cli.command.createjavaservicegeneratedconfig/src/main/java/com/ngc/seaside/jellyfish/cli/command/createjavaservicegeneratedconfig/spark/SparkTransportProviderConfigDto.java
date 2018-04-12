@@ -29,6 +29,8 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
    private static final String SPARK_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
    private static final String SPARK_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
    private static final String SPARK_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark.module";
+   private static final String SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY = "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
+   private static final String SPARK_CORE_DEPENDENCY = "com.sparkjava:spark-core";
 
    private ITransportConfigurationService transportConfigurationService;
    private boolean test;
@@ -106,6 +108,8 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
       }
       if (provider) {
          dependencies.add(SPARK_PROVIDER_DEPENDENCY);
+         dependencies.add(SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY);
+         dependencies.add(SPARK_CORE_DEPENDENCY);
       }
       if (module) {
          dependencies.add(SPARK_MODULE_DEPENDENCY);
