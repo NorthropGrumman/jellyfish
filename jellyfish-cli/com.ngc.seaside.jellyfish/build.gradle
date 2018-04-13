@@ -36,22 +36,27 @@ dependencies {
     commandTemplate project(path: ':jellyfish.cli.command.createdomain', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createprotocolbuffermessages')
-    commandTemplate project(path: ':jellyfish.cli.command.createprotocolbuffermessages', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createprotocolbuffermessages',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjellyfishgradleproject')
-    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishgradleproject', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjellyfishgradleproject',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavaevents')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaevents', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavaprotobufconnector')
-    commandTemplate project(path: ':jellyfish.cli.command.createjavaprotobufconnector', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaprotobufconnector',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.report.requirementsverification')
-    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsverification',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.report.requirementsallocation')
-    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsallocation', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.report.requirementsallocation',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavaservice')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaservice', configuration: 'commandTemplate')
@@ -66,10 +71,15 @@ dependencies {
     commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavaservicegeneratedconfig')
-    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicegeneratedconfig', configuration: 'commandTemplate')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicegeneratedconfig',
+                            configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavacucumbertests')
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertests', configuration: 'commandTemplate')
+
+    implementation project(':jellyfish.cli.command.createjavacucumbertestsconfig')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertestsconfig',
+                            configuration: 'commandTemplate')
 
     implementation project(':guice.modules')
     implementation project(':jellyfish.service.name.impl.namingservices')

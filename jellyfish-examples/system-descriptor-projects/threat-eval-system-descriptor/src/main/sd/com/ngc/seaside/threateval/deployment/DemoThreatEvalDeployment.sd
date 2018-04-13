@@ -1,0 +1,128 @@
+package com.ngc.seaside.threateval.deployment
+
+import com.ngc.seaside.threateval.ThreatEvaluation
+import com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration
+import com.ngc.seaside.systemdescriptor.deployment.rest.RestConfiguration
+import com.ngc.seaside.systemdescriptor.deployment.rest.HttpMethod
+
+model DemoThreatEvalDeployment refines ThreatEvaluation {
+	metadata {
+			"description" : "This deployment model allows the ThreatEvaluation system to be deployed on a single machine or VM.  All addresses reference either localhost or virtual multicast addresses.",
+			"stereotypes": ["system", "deployment"]
+	}
+
+	links {
+		refine link systemTrack -> defendedAreaTrackPriorityService.systemTrack {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61004
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link impactAssessment -> defendedAreaTrackPriorityService.impactAssessment {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61010
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61003
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61005
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link trackPriorityService.prioritizedSystemTracks -> prioritizedSystemTracks {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61006
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61001
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61001
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61001
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link droppedSystemTrack -> trackPriorityService.droppedSystemTrack {
+			properties {
+				MulticastConfiguration multicastConfiguration
+
+				multicastConfiguration.groupAddress = "224.5.6.7"
+				multicastConfiguration.port = 61002
+				multicastConfiguration.sourceInterface.name = "127.0.0.1"
+				multicastConfiguration.targetInterface.name = "127.0.0.1"
+			}
+		}
+
+		refine link trackPriorityRequest -> trackPriorityService.trackPriorityRequest {
+			properties {
+				RestConfiguration restConfiguration
+
+				restConfiguration.serverAddress.address = "localhost"
+				restConfiguration.serverInterface.name = "0.0.0.0"
+				restConfiguration.port = 52412
+				restConfiguration.httpMethod = HttpMethod.POST
+				restConfiguration.contentType = "application/x-protobuf"
+				restConfiguration.path = "/trackPriorityRequest"
+			}
+		}
+	}
+
+}

@@ -57,7 +57,17 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.testutils"),
                       artifact("service.transport.impl.topic.multicast"),
                       artifact("service.transport.impl.provider.multicast"),
-                      artifact("service.transport.impl.provider.multicast.module"));
+                      artifact("service.transport.impl.provider.multicast.module"),
+                      artifact("service.transport.impl.topic.spark"),
+                      artifact("service.transport.impl.provider.spark"),
+                      artifact("service.transport.impl.provider.spark.module"),
+                      artifact("service.log.impl.common.sl4jlogservicebridge"),
+                      artifact("service.transport.impl.topic.httpclient"),
+                      artifact("service.transport.impl.provider.httpclient"),
+                      artifact("service.transport.impl.provider.httpclient.module"),
+                      artifact("service.transport.impl.topic.zeromq"),
+                      artifact("service.transport.impl.provider.zeromq"),
+                      artifact("service.transport.impl.provider.zeromq.module"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {

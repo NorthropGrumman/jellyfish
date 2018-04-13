@@ -8,15 +8,35 @@ import java.util.Objects;
  */
 public class MulticastConfiguration {
 
-   private String address;
+   private String groupAddress;
+   private NetworkInterface targetInterface;
+   private NetworkInterface sourceInterface;
    private int port;
 
-   public String getAddress() {
-      return address;
+   public String getGroupAddress() {
+      return groupAddress;
    }
 
-   public MulticastConfiguration setAddress(String address) {
-      this.address = address;
+   public MulticastConfiguration setGroupAddress(String groupAddress) {
+      this.groupAddress = groupAddress;
+      return this;
+   }
+
+   public NetworkInterface getTargetInterface() {
+      return targetInterface;
+   }
+
+   public MulticastConfiguration setTargetInterface(NetworkInterface targetInterface) {
+      this.targetInterface = targetInterface;
+      return this;
+   }
+
+   public NetworkInterface getSourceInterface() {
+      return sourceInterface;
+   }
+
+   public MulticastConfiguration setSourceInterface(NetworkInterface sourceInterface) {
+      this.sourceInterface = sourceInterface;
       return this;
    }
 
@@ -35,16 +55,23 @@ public class MulticastConfiguration {
          return false;
       }
       MulticastConfiguration that = (MulticastConfiguration) o;
-      return Objects.equals(this.address, that.address) && this.port == that.port;
+      return Objects.equals(this.groupAddress, that.groupAddress) &&
+              Objects.equals(this.targetInterface, that.targetInterface) &&
+              Objects.equals(this.sourceInterface, that.sourceInterface) &&
+              this.port == that.port;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(address, port);
+      return Objects.hash(groupAddress,
+              targetInterface, sourceInterface, port);
    }
 
    @Override
    public String toString() {
-      return "MulticastConfiguration[address=" + address + ", port=" + port + "]";
+      return "MulticastConfiguration[groupAddress=" + groupAddress +
+              ", port=" + port +
+              ", tragetInterface=" + targetInterface.toString() +
+              ", sourceInterface=" + sourceInterface.toString() +"]";
    }
 }

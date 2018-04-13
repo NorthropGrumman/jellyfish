@@ -42,19 +42,21 @@ public interface ITransportProviderConfigDto<T> {
             Map<String, IDataReferenceField> topics);
 
    /**
-    * Returns the name of the template suffix used to generate the configuration class.
+    * Returns the name of the template used to generate the configuration class.
     * 
-    * @return the name of the template suffix used to generate the configuration class
+    * @return the name of the template used to generate the configuration class
     */
-   String getTemplateSuffix();
+   String getTemplate();
 
    /**
-    * Returns the dependencies for the transport provider's topic in the form {@code "groupId:artifactId"}.
+    * Returns the dependencies for the transport service in the form {@code "groupId:artifactId"}.
     * 
-    * @param distribution if {@code true}, also returns the dependencies for the transport provider
-    * @return the dependencies for this transport provider
+    * @param topic if {@code true}, includes the dependencies needed for the transport topic
+    * @param provider if {@code true}, includes the dependencies needed for the transport provider
+    * @param module if {@code true}, includes the dependencies needed for the transport Guice module
+    * @return the dependencies for this transport configuration
     */
-   Set<String> getDependencies(boolean distribution);
+   Set<String> getDependencies(boolean topic, boolean provider, boolean module);
 
    /**
     * Returns a map of extra parameters needed to generate the template. The parameter {@code dto} will already be
@@ -62,7 +64,7 @@ public interface ITransportProviderConfigDto<T> {
     * 
     * @return a map of extra parameters needed to generate the template
     */
-   default Map<Object, Object> getExtraTemplateParameters() {
+   default Map<String, Object> getExtraTemplateParameters() {
       return Collections.emptyMap();
    }
 

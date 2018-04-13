@@ -11,7 +11,10 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
@@ -44,14 +47,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component(service = IJellyFishCommand.class)
-public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJellyfishCommand implements IJellyFishCommand {
+public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJellyfishCommand
+      implements IJellyFishCommand {
 
    static final String CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String CONFIG_BUILD_TEMPLATE_SUFFIX = "build";
-   static final String CONFIG_MULTICAST_TEMPLATE_SUFFIX = "multicast";
 
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
@@ -84,7 +88,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       registerProject(projectInfo);
    }
-   
+
    @Override
    protected void runDeferredPhase() {
       IJellyFishCommandOptions options = getOptions();
@@ -97,22 +101,25 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-               .setModelName(model.getName())
-               .setPackageName(packagez)
-               .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-               .getArtifactId())
-               .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
+            .setModelName(model.getName())
+            .setPackageName(packagez)
+            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
+                                                            .getArtifactId())
+            .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-         new MulticastTransportProviderConfigDto(transportConfigService));
-      
+            new MulticastTransportProviderConfigDto(transportConfigService, false),
+            new SparkTransportProviderConfigDto(transportConfigService, false),
+            new HttpClientTransportProviderConfigDto(transportConfigService, false),
+            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false));
+
       clean = generateAndAddTransportProviders(
-         dto,
-         options,
-         outputDir,
-         clean,
-         model,
-         transportProviders);
+            dto,
+            options,
+            outputDir,
+            clean,
+            model,
+            transportProviders);
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -183,13 +190,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       setScenarioService(null);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({"unchecked", "rawtypes"})
    private boolean generateAndAddTransportProviders(GeneratedServiceConfigDto dto,
-            IJellyFishCommandOptions options,
-            Path outputDirectory,
-            boolean clean,
-            IModel model,
-            Collection<ITransportProviderConfigDto<?>> transportProviders) {
+                                                    IJellyFishCommandOptions options,
+                                                    Path outputDirectory,
+                                                    boolean clean,
+                                                    IModel model,
+                                                    Collection<ITransportProviderConfigDto<?>> transportProviders) {
       EnumDto transportTopicsClass = generateService.getTransportTopicsDescription(options, model);
 
       Map<String, IDataReferenceField> topics = new LinkedHashMap<>();
@@ -203,7 +210,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                addToTopicsMap(topics, flow, output);
             }
          });
-         scenarioService.getRequestResponseMessagingFlows(options, scenario).ifPresent(flow -> {
+         scenarioService.getRequestResponseMessagingFlow(options, scenario).ifPresent(flow -> {
             addToTopicsMap(topics, flow, flow.getInput());
             addToTopicsMap(topics, flow, flow.getOutput());
          });
@@ -215,10 +222,10 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
          if (object.isPresent()) {
             DefaultParameterCollection parameters = new DefaultParameterCollection();
             parameters.addParameter(new DefaultParameter<>("dto", object.get()));
-            String templateSuffix = transportProvider.getTemplateSuffix();
-            unpackSuffixedTemplate(templateSuffix, parameters, outputDirectory, clean);
+            String templateName = transportProvider.getTemplate();
+            templateService.unpack(templateName, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(false));
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(true, false, false));
             clean = false;
          }
       }
@@ -228,27 +235,27 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    /**
     * Gets the topic name for the given flow and field and adds the topic with the field to the given map.
-    * 
+    *
     * @throws IllegalStateException if the map already contains the given topic with a different field
     */
    private void addToTopicsMap(Map<String, IDataReferenceField> map, IMessagingFlow flow, IDataReferenceField field) {
       String topicName = transportConfigService.getTransportTopicName(flow, field);
       IDataReferenceField previous = map.put(topicName, field);
-      if (previous != null && previous != field) {
+      if (previous != null && !Objects.equals(previous, field)) {
          throw new IllegalStateException(
-            String.format("Two data reference fields assigned to the same topic %s: %s and %s",
-               topicName,
-               field.getName(),
-               previous.getName()));
+               String.format("Two data reference fields assigned to the same topic %s: %s and %s",
+                             topicName,
+                             field.getName(),
+                             previous.getName()));
       }
    }
 
    /**
     * Creates and returns the path to the domain project directory.
     *
-    * @param outputDir output directory
+    * @param outputDir   output directory
     * @param projDirName project directory name
-    * @param clean whether or not to delete the contents of the directory
+    * @param clean       whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
@@ -269,13 +276,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-         "Generates the generated service configuration for a Java application",
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.MODEL.required(),
-         CommonParameters.DEPLOYMENT_MODEL.required(),
-         CommonParameters.OUTPUT_DIRECTORY.required(),
-         CommonParameters.CLEAN);
+            "Generates the generated service configuration for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL.required(),
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.CLEAN);
    }
 
 }

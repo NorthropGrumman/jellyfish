@@ -1,10 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -36,6 +31,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
@@ -78,9 +78,19 @@ public class CreateJavaCucumberTestsCommandIT {
 
       buildManagementService = new MockedBuildManagementService();
 
-      templateService = new MockedTemplateService().useRealPropertyService().setTemplateDirectory(
-         CreateJavaCucumberTestsCommandIT.class.getPackage().getName(),
-         Paths.get("src", "main", "template"));
+      templateService = new MockedTemplateService()
+            .useRealPropertyService()
+            .setTemplateDirectory(
+                  CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-"
+                  + CreateJavaCucumberTestsCommand.BUILD_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates",
+                            CreateJavaCucumberTestsCommand.BUILD_TEMPLATE_SUFFIX))
+            .setTemplateDirectory(
+                  CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-"
+                  + CreateJavaCucumberTestsCommand.CONFIG_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates",
+                            CreateJavaCucumberTestsCommand.CONFIG_TEMPLATE_SUFFIX));
+
 
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);

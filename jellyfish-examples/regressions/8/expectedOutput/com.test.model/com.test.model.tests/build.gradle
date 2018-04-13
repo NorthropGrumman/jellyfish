@@ -2,27 +2,25 @@
 apply plugin: 'com.ngc.seaside.application'
 
 dependencies {
-    compile project(":model.messages")
-    compile project(":model.base")
+    implementation project(':model.messages')
+    implementation project(':model.base')
 
-    compile "com.ngc.seaside:service.api:$starfishVersion"
-    compile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
-    compile "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
+    implementation "com.ngc.seaside:service.api:$starfishVersion"
+    implementation "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+    implementation "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
 
-    compile "com.ngc.seaside:service.transport.api:$starfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.testutils:$starfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.topic.multicast:$starfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.api:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.testutils:$starfishVersion"
 
-    compile "com.ngc.seaside:guice.modules:$jellyfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$starfishVersion"
-    compile "com.ngc.seaside:service.transport.impl.provider.multicast.module:$starfishVersion"
+    implementation "com.ngc.seaside:guice.modules:$jellyfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.provider.multicast.module:$starfishVersion"
 
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.guava:guava:$guavaVersion"
-    compile "info.cukes:cucumber-java:$cucumberVersion"
-    compile "info.cukes:cucumber-guice:$cucumberVersion"
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "info.cukes:cucumber-java:$cucumberVersion"
+    implementation "info.cukes:cucumber-guice:$cucumberVersion"
 }
 
 ext {

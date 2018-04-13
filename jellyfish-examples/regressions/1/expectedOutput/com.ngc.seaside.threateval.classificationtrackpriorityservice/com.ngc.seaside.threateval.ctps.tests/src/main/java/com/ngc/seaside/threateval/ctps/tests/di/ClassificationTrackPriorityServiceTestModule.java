@@ -2,7 +2,7 @@ package com.ngc.seaside.threateval.ctps.tests.di;
 
 import com.google.inject.AbstractModule;
 
-import com.ngc.seaside.threateval.ctps.tests.config.ClassificationTrackPriorityServiceTestConfiguration;
+import com.ngc.seaside.threateval.ctps.testsconfig.ClassificationTrackPriorityServiceTestConfiguration;
 
 /**
  * This module configures Guice bindings for the ClassificationTrackPriorityService steps.

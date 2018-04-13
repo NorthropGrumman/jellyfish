@@ -1,0 +1,38 @@
+package ${dto.packageName};
+
+import com.ngc.seaside.service.transport.api.ITransportProvider;
+import com.ngc.seaside.service.transport.api.TransportConfiguration;
+import com.ngc.seaside.service.transport.impl.topic.spark.HttpVerb;
+import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic;
+import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopics;
+import ${dto.topicsImport};
+
+public class ${dto.classname} {
+
+   private ${dto.classname}() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {
+#foreach ($topic in $dto.topics)
+       SparkTopics factory = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port});
+
+       SparkTopic ${topic.variableName} = factory.when(HttpVerb.${topic.httpMethod})
+             .onPath("${topic.path}")
+             .accept("${topic.contentType}")
+             .respondWithType("${topic.contentType}")
+             .reportRootCauseExceptionsOnly()
+             .build();
+
+#end
+#foreach ($entry in $dto.topics)
+       config.whenReceiving()
+             .withTransportProvider(sparkProvider)
+#foreach ($topic in $dto.topics)
+             .onPhysicalTopic(${topic.variableName})
+#end
+             .enableResponses(true)
+             .useApplicationTopic(t -> ${entry.name});
+
+#end
+   }
+}

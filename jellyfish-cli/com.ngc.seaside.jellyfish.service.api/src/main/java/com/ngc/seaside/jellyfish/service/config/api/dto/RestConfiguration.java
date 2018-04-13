@@ -8,18 +8,28 @@ import java.util.Objects;
  */
 public class RestConfiguration {
 
-   private String address;
+   private NetworkAddress networkAddress;
+   private NetworkInterface networkInterface;
    private int port;
    private String path;
    private String contentType;
    private HttpMethod httpMethod;
 
-   public String getAddress() {
-      return address;
+   public NetworkAddress getNetworkAddress() {
+      return networkAddress;
    }
 
-   public RestConfiguration setAddress(String address) {
-      this.address = address;
+   public RestConfiguration setNetworkAddress(NetworkAddress networkAddress) {
+      this.networkAddress = networkAddress;
+      return this;
+   }
+
+   public NetworkInterface getNetworkInterface() {
+      return networkInterface;
+   }
+
+   public RestConfiguration setNetworkInterface(NetworkInterface networkInterface) {
+      this.networkInterface = networkInterface;
       return this;
    }
 
@@ -65,7 +75,7 @@ public class RestConfiguration {
          return false;
       }
       RestConfiguration that = (RestConfiguration) o;
-      return Objects.equals(this.address, that.address) &&
+      return Objects.equals(this.networkAddress, that.networkAddress) &&
              this.port == that.port &&
              Objects.equals(this.path, that.path) &&
              Objects.equals(this.contentType, that.contentType) &&
@@ -74,13 +84,17 @@ public class RestConfiguration {
 
    @Override
    public int hashCode() {
-      return Objects.hash(address, port, path, contentType, httpMethod);
+      return Objects.hash(networkAddress, port, path, contentType, httpMethod);
    }
 
    @Override
    public String toString() {
-      return "RestConfiguration[address=" + address + ", port=" + port + ", path=" + path + ", contentType="
-             + contentType + ", httpMethod=" + httpMethod + "]";
+      return "RestConfiguration[networkAddress=" + networkAddress
+             + ", networkInterface=" + networkInterface
+             + ", port=" + port
+             + ", path=" + path
+             + ", contentType=" + contentType
+             + ", httpMethod=" + httpMethod + "]";
    }
 
 }

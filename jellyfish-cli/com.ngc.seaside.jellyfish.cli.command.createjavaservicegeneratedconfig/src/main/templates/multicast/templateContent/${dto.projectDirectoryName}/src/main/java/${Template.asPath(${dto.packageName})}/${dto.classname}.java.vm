@@ -1,0 +1,49 @@
+package ${dto.packageName};
+
+import com.ngc.seaside.service.transport.api.ITransportProvider;
+import com.ngc.seaside.service.transport.api.TransportConfiguration;
+import com.ngc.seaside.service.transport.api.TransportConfigurationException;
+import com.ngc.seaside.service.transport.impl.topic.multicast.MulticastTopic;
+import ${dto.topicsImport};
+
+import java.net.UnknownHostException;
+
+public class ${dto.classname} {
+
+   private ${dto.classname}() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<MulticastTopic> multicastProvider) {
+      try {
+#foreach ($topic in $dto.topics)
+         MulticastTopic ${topic.variableName} = new MulticastTopic("${topic.groupAddress}", ${topic.port}, "${topic.bindAddress}");
+
+#end
+#foreach ($entry in $dto.sendTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+         config.whenSending()
+               .toApplicationTopic(${name})
+               .useTransportProvider(multicastProvider)
+#foreach ($topic in $topics)
+               .onPhysicalTopic(t -> ${topic.variableName})#if (! $foreach.hasNext);
+#end
+#end               
+
+#end
+#foreach ($entry in $dto.receiveTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+         config.whenReceiving()
+               .withTransportProvider(multicastProvider)
+#foreach ($topic in $topics)
+               .onPhysicalTopic(${topic.variableName})
+#end
+               .useApplicationTopic(t -> ${name});
+
+#end
+      } catch (UnknownHostException e) {
+         throw new TransportConfigurationException(e);
+      }
+   }
+}

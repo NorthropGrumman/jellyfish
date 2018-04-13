@@ -251,7 +251,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
          final Set<String> scenarioRequirements = requirementsService.getRequirements(options, scenario);
 
          Optional<IRequestResponseMessagingFlow> optionalFlow =
-               scenarioService.getRequestResponseMessagingFlows(options, scenario);
+               scenarioService.getRequestResponseMessagingFlow(options, scenario);
          if (optionalFlow.isPresent()) {
             dto.setRequiresInjectedService(true);
 

@@ -30,6 +30,7 @@ public class ProjectNamingService implements IProjectNamingService {
    private static final String DISTRIBUTION_ARTIFACT_ID_SUFFIX = "distribution";
    private static final String CUCUMBER_TESTS_ARTIFACT_ID_SUFFIX = "tests";
    private static final String CONFIG_ARTIFACT_ID_SUFFIX = "config";
+   private static final String TESTS_CONFIG_ARTIFACT_ID_SUFFIX = "testsconfig";
 
 
    /**
@@ -209,6 +210,24 @@ public class ProjectNamingService implements IProjectNamingService {
       String versionPropertyName = modelName + "BaseServiceVersion";
       versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
       String artifactId = evaluateArtifactId(options, model, SERVICE_BASE_ARTIFACT_ID_SUFFIX);
+
+      return new ProjectInformation()
+            .setGroupId(modelPackageName.toLowerCase())
+            .setArtifactId(artifactId)
+            .setVersionPropertyName(versionPropertyName)
+            .setGenerated(true)
+            .setGeneratedDirectoryName(DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME);
+   }
+
+   @Override
+   public IProjectInformation getCucumberTestsConfigProjectName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "model may not be null!");
+      String modelPackageName = model.getParent().getName();
+      String modelName = model.getName();
+      String versionPropertyName = modelName + "ConfigVersion";
+      versionPropertyName = versionPropertyName.substring(0, 1).toLowerCase() + versionPropertyName.substring(1);
+      String artifactId = evaluateArtifactId(options, model, TESTS_CONFIG_ARTIFACT_ID_SUFFIX);
 
       return new ProjectInformation()
             .setGroupId(modelPackageName.toLowerCase())

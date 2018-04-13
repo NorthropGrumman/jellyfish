@@ -35,6 +35,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";
    static final String CREATE_JAVA_EVENTS_COMMAND_NAME = "create-java-events";
    static final String CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME = "create-java-cucumber-tests";
+   static final String CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME = "create-java-cucumber-tests-config";
    static final String CREATE_JAVA_DISTRIBUTION_COMMAND_NAME = "create-java-distribution";
    static final String CREATE_JAVA_SERVICE_COMMAND_NAME = "create-java-service";
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
@@ -45,6 +46,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    private static final String[] SUBCOMMANDS = {CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
                                                 CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME,
                                                 CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME,
+                                                CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME,
                                                 CREATE_JAVA_DISTRIBUTION_COMMAND_NAME,
                                                 CREATE_JAVA_SERVICE_BASE_COMMAND_NAME,
                                                 CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
@@ -170,8 +172,15 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    }
 
    private void createCucumberTestsProject(CommandInvocationContext ctx) {
+      String command;
+      if (ctx.generatedConfigProjectUsed) {
+         command = CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME;
+         IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
+         doRunCommand(command, delegateOptions);
+      }
+      command = CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME;
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
-      doRunCommand(CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME, delegateOptions);
+      doRunCommand(command, delegateOptions);
    }
 
    private void createDistributionProject(CommandInvocationContext ctx) {

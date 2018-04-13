@@ -141,7 +141,7 @@ public class ScenarioServiceIT {
       IModel model = systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService").get();
       IScenario scenario = model.getScenarios().getByName("getPriority").get();
 
-      Optional<IRequestResponseMessagingFlow> optionalFlow = service.getRequestResponseMessagingFlows(options,
+      Optional<IRequestResponseMessagingFlow> optionalFlow = service.getRequestResponseMessagingFlow(options,
                                                                                                       scenario);
       assertTrue("contains an incorrect number of flows!", optionalFlow.isPresent());
 

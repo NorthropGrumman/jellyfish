@@ -130,7 +130,7 @@ public class JavaServiceGenerationServiceTest {
 
       IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow("getTrackPriority");
       model.getScenarios().add(reqResFlow.getScenario());
-      when(scenarioService.getRequestResponseMessagingFlows(options, reqResFlow.getScenario()))
+      when(scenarioService.getRequestResponseMessagingFlow(options, reqResFlow.getScenario()))
             .thenReturn(Optional.of(reqResFlow));
 
       when(transportConfService.getTransportTopicName(any(), any())).thenAnswer(args -> {

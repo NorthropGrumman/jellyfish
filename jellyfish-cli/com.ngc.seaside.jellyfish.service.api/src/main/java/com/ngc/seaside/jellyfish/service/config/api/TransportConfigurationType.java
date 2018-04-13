@@ -13,6 +13,11 @@ public enum TransportConfigurationType {
    /**
     * HTTP REST.
     */
-   REST
+   REST,
+   
+   /**
+    * Zero MQ.
+    */
+   ZERO_MQ
 
 }

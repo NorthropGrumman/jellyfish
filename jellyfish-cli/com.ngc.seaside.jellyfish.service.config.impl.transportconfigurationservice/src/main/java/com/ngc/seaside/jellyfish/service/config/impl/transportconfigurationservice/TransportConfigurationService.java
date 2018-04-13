@@ -6,12 +6,13 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
-import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -28,10 +29,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -43,16 +44,6 @@ import java.util.stream.Collectors;
  */
 @Component(service = ITransportConfigurationService.class)
 public class TransportConfigurationService implements ITransportConfigurationService {
-
-   static final String MULTICAST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.multicast.MulticastConfiguration";
-   static final String REST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.deployment.rest.RestConfiguration";
-   static final String MULTICAST_SOCKET_ADDRESS_FIELD_NAME = "socketAddress";
-   static final String REST_SOCKET_ADDRESS_FIELD_NAME = "socketAddress";
-   static final String REST_PATH_FIELD_NAME = "path";
-   static final String REST_CONTENT_TYPE_FIELD_NAME = "contentType";
-   static final String REST_HTTP_METHOD_FIELD_NAME = "httpMethod";
-   static final String ADDRESS_FIELD_NAME = "address";
-   static final String PORT_FIELD_NAME = "port";
 
    private static final Pattern[] PATTERNS = { Pattern.compile("([a-z\\d])([A-Z]+)"),
             Pattern.compile("([A-Z])([A-Z][a-z\\d])") };
@@ -80,13 +71,13 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       for (IModelLink<?> link : aggregatedDeploymentModel.getLinks()) {
          for (IProperty property : link.getProperties()) {
             if (property.getType() == DataTypes.DATA) {
-               switch (property.getReferencedDataType().getFullyQualifiedName()) {
-               case MULTICAST_CONFIGURATION_QUALIFIED_NAME:
+               IData type = property.getReferencedDataType();
+               if (MulticastConfigurationUtils.isMulticastConfiguration(type)) {
                   types.add(TransportConfigurationType.MULTICAST);
-                  break;
-               case REST_CONFIGURATION_QUALIFIED_NAME:
+               } else if (RestConfigurationUtils.isRestConfiguration(type)) {
                   types.add(TransportConfigurationType.REST);
-                  break;
+               } else if (ZeroMqConfigurationUtils.isZeroMqConfiguration(type)) {
+                  types.add(TransportConfigurationType.ZERO_MQ);
                }
             }
          }
@@ -99,8 +90,8 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             IDataReferenceField field) {
       return getConfigurations(options,
          field,
-         MULTICAST_CONFIGURATION_QUALIFIED_NAME,
-         TransportConfigurationService::getMulticastConfiguration);
+         MulticastConfigurationUtils.MULTICAST_CONFIGURATION_QUALIFIED_NAME,
+         MulticastConfigurationUtils::getMulticastConfiguration);
    }
 
    @Override
@@ -108,8 +99,35 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             IDataReferenceField field) {
       return getConfigurations(options,
          field,
-         REST_CONFIGURATION_QUALIFIED_NAME,
-         TransportConfigurationService::getRestConfiguration);
+         RestConfigurationUtils.REST_CONFIGURATION_QUALIFIED_NAME,
+         RestConfigurationUtils::getRestConfiguration);
+   }
+
+   @Override
+   public Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options,
+            IDataReferenceField field) {
+      List<ZeroMqConfiguration> configurations = new ArrayList<>();
+      configurations.addAll(getConfigurations(options,
+         field,
+         ZeroMqConfigurationUtils.ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
+         ZeroMqConfigurationUtils::getZeroMqTcpConfiguration));
+      configurations.addAll(getConfigurations(options,
+         field,
+         ZeroMqConfigurationUtils.ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,
+         ZeroMqConfigurationUtils::getZeroMqIpcConfiguration));
+      configurations.addAll(getConfigurations(options,
+         field,
+         ZeroMqConfigurationUtils.ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
+         ZeroMqConfigurationUtils::getZeroMqPgmConfiguration));
+      configurations.addAll(getConfigurations(options,
+         field,
+         ZeroMqConfigurationUtils.ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME,
+         ZeroMqConfigurationUtils::getZeroMqEpgmConfiguration));
+      configurations.addAll(getConfigurations(options,
+         field,
+         ZeroMqConfigurationUtils.ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME,
+         ZeroMqConfigurationUtils::getZeroMqInprocConfiguration));
+      return configurations;
    }
 
    /**
@@ -176,33 +194,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       return configurations;
    }
 
-   private static MulticastConfiguration getMulticastConfiguration(IPropertyDataValue value) {
-      MulticastConfiguration configuration = new MulticastConfiguration();
-      IPropertyDataValue socket = value.getData(getField(value, MULTICAST_SOCKET_ADDRESS_FIELD_NAME));
-      String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
-      BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
-      configuration.setAddress(address);
-      configuration.setPort(port.intValueExact());
-      return configuration;
-   }
-
-   private static RestConfiguration getRestConfiguration(IPropertyDataValue value) {
-      RestConfiguration configuration = new RestConfiguration();
-      IPropertyDataValue socket = value.getData(getField(value, REST_SOCKET_ADDRESS_FIELD_NAME));
-      String address = socket.getPrimitive(getField(socket, ADDRESS_FIELD_NAME)).getString();
-      BigInteger port = socket.getPrimitive(getField(socket, PORT_FIELD_NAME)).getInteger();
-      String path = value.getPrimitive(getField(value, REST_PATH_FIELD_NAME)).getString();
-      String contentType = value.getPrimitive(getField(value, REST_CONTENT_TYPE_FIELD_NAME)).getString();
-      String httpMethod = value.getEnumeration(getField(value, REST_HTTP_METHOD_FIELD_NAME)).getValue();
-      configuration.setAddress(address);
-      configuration.setPort(port.intValueExact());
-      configuration.setPath(path);
-      configuration.setContentType(contentType);
-      configuration.setHttpMethod(HttpMethod.valueOf(httpMethod));
-      return configuration;
-   }
-
-   private static IDataField getField(IPropertyDataValue value, String fieldName) {
+   static IDataField getField(IPropertyDataValue value, String fieldName) {
       return value.getFieldByName(fieldName)
                   .orElseThrow(() -> new IllegalStateException("Missing " + fieldName + " field"));
    }

@@ -221,9 +221,9 @@ public class CreateJavaServiceBaseCommandIT {
                                                                                           "trackPriorityResponse");
       when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority)))
             .thenReturn(Optional.of(pubSubFlow));
-      when(scenarioService.getRequestResponseMessagingFlows(any(), eq(calculateTrackPriority)))
+      when(scenarioService.getRequestResponseMessagingFlow(any(), eq(calculateTrackPriority)))
             .thenReturn(Optional.empty());
-      when(scenarioService.getRequestResponseMessagingFlows(any(), eq(getTrackPriority)))
+      when(scenarioService.getRequestResponseMessagingFlow(any(), eq(getTrackPriority)))
             .thenReturn(Optional.of(reqResFlow));
       when(scenarioService.getPubSubMessagingFlow(any(), eq(getTrackPriority)))
             .thenReturn(Optional.empty());

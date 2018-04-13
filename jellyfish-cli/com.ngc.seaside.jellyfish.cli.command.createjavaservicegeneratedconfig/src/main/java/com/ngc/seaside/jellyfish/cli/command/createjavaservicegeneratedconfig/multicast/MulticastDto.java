@@ -11,6 +11,7 @@ public class MulticastDto {
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
    private List<MulticastTopicDto> topics = new ArrayList<>();
+   private String classname;
 
    public GeneratedServiceConfigDto getBaseDto() {
       return baseDto;
@@ -61,6 +62,15 @@ public class MulticastDto {
 
    public String getModelName() {
       return this.baseDto.getModelName();
+   }
+
+   public String getClassname() {
+      return this.classname;
+   }
+
+   public MulticastDto setClassname(String classname) {
+      this.classname = classname;
+      return this;
    }
 
 }

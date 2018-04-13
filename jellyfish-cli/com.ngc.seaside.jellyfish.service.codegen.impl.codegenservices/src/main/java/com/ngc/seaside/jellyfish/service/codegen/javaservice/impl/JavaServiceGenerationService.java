@@ -147,7 +147,7 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
    private void configureReqResTransportTopics(EnumDto dto, IJellyFishCommandOptions options, IScenario scenario) {
       Optional<IRequestResponseMessagingFlow> optionalFlow =
-            scenarioService.getRequestResponseMessagingFlows(options, scenario);
+            scenarioService.getRequestResponseMessagingFlow(options, scenario);
 
       if (optionalFlow.isPresent()) {
          IRequestResponseMessagingFlow flow = optionalFlow.get();

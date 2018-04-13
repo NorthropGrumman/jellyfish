@@ -101,6 +101,15 @@ public interface IPackageNamingService {
    String getCucumberTestsPackageName(IJellyFishCommandOptions options, IModel model);
 
    /**
+    * Gets the package name for the cucumber tests config project of a Java service.
+    *
+    * @param options the options the current command is being executed with
+    * @param model   the model of a service to get the package name for
+    * @return the package name for the cucumber tests config project of a Java service
+    */
+   String getCucumberTestsConfigPackageName(IJellyFishCommandOptions options, IModel model);
+
+   /**
     * Gets the package name for the config project of a Java service.
     *
     * @param options the options the current command is being executed with

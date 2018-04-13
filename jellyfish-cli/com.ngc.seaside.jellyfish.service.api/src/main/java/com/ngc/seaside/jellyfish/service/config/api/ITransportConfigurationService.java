@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.service.config.api;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -54,4 +55,14 @@ public interface ITransportConfigurationService {
     * @return the rest configurations for the given field
     */
    Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options, IDataReferenceField field);
+   
+   /**
+    * Returns the Zero MQ configurations for the given field, or an empty collection if there are no rest configurations
+    * for the field.
+    *
+    * @param options jellyfish options
+    * @param field   field
+    * @return the Zero MQ configurations for the given field
+    */
+   Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options, IDataReferenceField field);
 }

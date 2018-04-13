@@ -3,10 +3,10 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.m
 public class MulticastTopicDto {
 
    private String variableName;
-   private String address;
+   private String groupAddress;
    private int port;
-   private String localAddress = "127.0.0.1";
    private String name;
+   private String bindAddress;
    private boolean isSend;
 
    public String getVariableName() {
@@ -18,12 +18,12 @@ public class MulticastTopicDto {
       return this;
    }
 
-   public String getAddress() {
-      return address;
+   public String getGroupAddress() {
+      return groupAddress;
    }
 
-   public MulticastTopicDto setAddress(String address) {
-      this.address = address;
+   public MulticastTopicDto setGroupAddress(String groupAddress) {
+      this.groupAddress = groupAddress;
       return this;
    }
 
@@ -33,15 +33,6 @@ public class MulticastTopicDto {
 
    public MulticastTopicDto setPort(int port) {
       this.port = port;
-      return this;
-   }
-
-   public String getLocalAddress() {
-      return localAddress;
-   }
-
-   public MulticastTopicDto setLocalAddress(String localAddress) {
-      this.localAddress = localAddress;
       return this;
    }
 
@@ -60,6 +51,15 @@ public class MulticastTopicDto {
 
    public MulticastTopicDto setSend(boolean isSend) {
       this.isSend = isSend;
+      return this;
+   }
+
+   public String getBindAddress() {
+      return bindAddress;
+   }
+
+   public MulticastTopicDto setBindAddress(String bindAddress) {
+      this.bindAddress = bindAddress;
       return this;
    }
 

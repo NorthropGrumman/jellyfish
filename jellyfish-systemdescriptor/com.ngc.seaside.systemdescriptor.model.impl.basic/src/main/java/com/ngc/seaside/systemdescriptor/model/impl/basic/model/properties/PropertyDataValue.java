@@ -16,7 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyValu
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,12 +34,12 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
     * @param fieldValues values of the type's fields, collections can be null for unset properties
     * @throws IllegalArgumentException if the fields values don't match the data's fields
     */
-   public PropertyDataValue(IData data, Map<String, Collection<IPropertyValue>> fieldValues) {
+   public PropertyDataValue(IData data, Map<String, Collection<? extends IPropertyValue>> fieldValues) {
       super(DataTypes.DATA, PropertyDataValue.allSet(data, fieldValues));
       this.data = data;
-      this.fieldValues = new HashMap<>(fieldValues.size());
-      for (Map.Entry<String, Collection<IPropertyValue>> entry : fieldValues.entrySet()) {
-         fieldValues.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+      this.fieldValues = new LinkedHashMap<>(fieldValues.size());
+      for (Map.Entry<String, Collection<? extends IPropertyValue>> entry : fieldValues.entrySet()) {
+         this.fieldValues.put(entry.getKey(), new ArrayList<>(entry.getValue()));
       }
    }
 
@@ -66,7 +66,6 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       return (IPropertyDataValue) fieldValues.get(field.getName()).get(0);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyPrimitiveValue> getPrimitives(IDataField field) {
       checkField(field, FieldCardinality.MANY, Property.PRIMITIVES);
@@ -77,7 +76,6 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       return IPropertyValues.of(values);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyEnumerationValue> getEnumerations(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.ENUM);
@@ -88,7 +86,6 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       return IPropertyValues.of(values);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IPropertyValues<IPropertyDataValue> getDatas(IDataField field) {
       checkField(field, FieldCardinality.MANY, DataTypes.DATA);
@@ -116,7 +113,7 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
       }
    }
 
-   private static boolean allSet(IData data, Map<String, Collection<IPropertyValue>> fieldValuesMap) {
+   private static boolean allSet(IData data, Map<String, Collection<? extends IPropertyValue>> fieldValuesMap) {
       Preconditions.checkNotNull(data, "data may not be null!");
       Preconditions.checkNotNull(fieldValuesMap, "field values may not be null!");
       INamedChildCollection<?, IDataField> dataFields = data.getFields();
@@ -125,13 +122,13 @@ public class PropertyDataValue extends PropertyValue implements IPropertyDataVal
          throw new IllegalArgumentException(
                "there need to be exactly 1 field value corresponding to each field in " + data.getFullyQualifiedName());
       }
-      for (Map.Entry<String, Collection<IPropertyValue>> entry : fieldValuesMap.entrySet()) {
+      for (Map.Entry<String, Collection<? extends IPropertyValue>> entry : fieldValuesMap.entrySet()) {
          String fieldName = entry.getKey();
          if (!dataFields.getByName(fieldName).isPresent()) {
             throw new IllegalArgumentException(fieldName + " is not a field in " + data.getFullyQualifiedName());
          }
          IDataField field = dataFields.getByName(fieldName).get();
-         Collection<IPropertyValue> fieldValues = entry.getValue();
+         Collection<? extends IPropertyValue> fieldValues = entry.getValue();
          if (field.getCardinality() == FieldCardinality.SINGLE && (fieldValues == null || fieldValues.size() != 1)) {
             throw new IllegalArgumentException("field " + field.getName() + " must have exactly 1 property value");
          }
