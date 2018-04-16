@@ -16,7 +16,7 @@ dependencies {
     implementation localGroovy()
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
-    implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
+    implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "com.google.inject:guice:$guiceVersion"
 
     commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
