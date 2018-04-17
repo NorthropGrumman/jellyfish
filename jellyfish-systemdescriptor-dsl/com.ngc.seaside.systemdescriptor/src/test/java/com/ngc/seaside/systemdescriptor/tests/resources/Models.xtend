@@ -185,6 +185,32 @@ class Models {
         ''',
         Datas.ZONED_TIME
     )
+    
+    public static final ParsingTestResource WIRED_SPEAKER = resource(
+        '''
+            package clocks.models.part
+            
+            import clocks.datatypes.ZonedTime
+            
+            model WiredSpeaker {
+            
+                input {
+                    ZonedTime alarmTime
+                }
+            
+                scenario buzz {
+                    when receiving alarmTime
+                    then doSomething withThis
+                }
+                
+                properties {
+                	int wireGauge
+                }
+            }
+        ''',
+        Datas.ZONED_TIME
+    )
+    
 
     public static final ParsingTestResource GENERIC_MODEL_WITH_MULTIPLE_GIVEN_STEPS = resource(
         '''
