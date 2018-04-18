@@ -70,7 +70,7 @@ pipeline {
             steps {
                 dir('jellyfish-cli') {
                     sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+                    sh './gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
