@@ -35,7 +35,6 @@ subprojects {
     if(name == 'systemdescriptor.ui') {
         // We have to apply the maven plugin here instead of in the build.gradle for
         // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
-        apply plugin: 'java'
         apply plugin: 'eclipse'
         apply plugin: 'idea'
         apply plugin: 'maven'
@@ -47,7 +46,6 @@ subprojects {
         // Don't apply any parent plugins.
     } else {
         // Apply XText plugins.
-        apply plugin: 'java'
         apply plugin: 'eclipse'
         apply plugin: 'idea'
         apply plugin: 'org.xtext.xtend'

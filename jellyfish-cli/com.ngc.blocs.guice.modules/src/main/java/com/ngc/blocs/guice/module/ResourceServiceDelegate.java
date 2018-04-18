@@ -32,33 +32,33 @@ public class ResourceServiceDelegate implements IResourceService {
    }
 
    @Override
-   public boolean readResource(IReadableResource iReadableResource) throws ResourceServiceException {
-      return delegate.readResource(iReadableResource);
+   public boolean readResource(IReadableResource ireadableresource) throws ResourceServiceException {
+      return delegate.readResource(ireadableresource);
    }
 
    @Override
-   public boolean readOptionalResource(IReadableResource iReadableResource) {
-      return delegate.readOptionalResource(iReadableResource);
+   public boolean readOptionalResource(IReadableResource ireadableresource) {
+      return delegate.readOptionalResource(ireadableresource);
    }
 
    @Override
-   public boolean readFileResource(IReadableFileResource iReadableFileResource) throws ResourceServiceException {
-      return delegate.readFileResource(iReadableFileResource);
+   public boolean readFileResource(IReadableFileResource ireadableresource) throws ResourceServiceException {
+      return delegate.readFileResource(ireadableresource);
    }
 
    @Override
-   public boolean readOptionalFileResource(IReadableFileResource iReadableFileResource) {
-      return delegate.readOptionalFileResource(iReadableFileResource);
+   public boolean readOptionalFileResource(IReadableFileResource ireadableresource) {
+      return delegate.readOptionalFileResource(ireadableresource);
    }
 
    @Override
-   public boolean writeFileResource(IWritableFileResource iWritableFileResource) throws ResourceServiceException {
-      return delegate.writeFileResource(iWritableFileResource);
+   public boolean writeFileResource(IWritableFileResource iwritablefileresource) throws ResourceServiceException {
+      return delegate.writeFileResource(iwritablefileresource);
    }
 
    @Override
-   public boolean exists(IFileResource iFileResource) {
-      return delegate.exists(iFileResource);
+   public boolean exists(IFileResource ifileresource) {
+      return delegate.exists(ifileresource);
    }
 
 }

@@ -28,7 +28,6 @@ def NON_JAVA_PROJECTS = [
 subprojects {
     if (!NON_JAVA_PROJECTS.contains(name)) {
         apply plugin: 'com.ngc.seaside.parent'
-        apply plugin: 'java-library'
 
         versionSettings {
             versionFile = versionsFile
