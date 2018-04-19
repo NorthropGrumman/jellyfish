@@ -1,10 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -36,6 +31,11 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceConfigCommandIT {
 
@@ -53,10 +53,10 @@ public class CreateJavaServiceConfigCommandIT {
 
    @Mock
    private ILogService logService;
-   
+
    @Mock
    private IProjectNamingService projectService;
-   
+
    @Mock
    private IPackageNamingService packageService;
 
@@ -87,20 +87,19 @@ public class CreateJavaServiceConfigCommandIT {
          when(info.getDirectoryName()).thenReturn(model.getFullyQualifiedName().toLowerCase() + ".config");
          return info;
       });
-      
+
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation info = mock(IProjectInformation.class);
          when(info.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".base");
          return info;
       });
-      
-      
+
       when(packageService.getConfigPackageName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          return model.getFullyQualifiedName().toLowerCase() + ".transport.config";
       });
-      
+
       command = new CreateJavaServiceConfigCommand();
       command.setLogService(logService);
       command.setProjectNamingService(projectService);
