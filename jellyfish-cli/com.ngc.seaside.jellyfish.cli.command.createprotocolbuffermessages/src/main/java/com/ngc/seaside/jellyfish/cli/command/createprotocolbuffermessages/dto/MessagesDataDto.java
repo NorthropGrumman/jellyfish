@@ -51,15 +51,23 @@ public class MessagesDataDto {
       return this;
    }
 
+   /**
+    *
+    * @return Set of Imports
+    */
    public Set<String> getImports() {
       return getFields().stream()
-                        .filter(field -> field.getType() == DataTypes.DATA || field.getType() == DataTypes.ENUM)
-                        .map(dataService::apply)
-                        .map(IGeneratedProtoField::getProtoType)
-                        .map(type -> type.replace('.', '/') + ".proto")
-                        .collect(Collectors.toCollection(TreeSet::new));
+            .filter(field -> field.getType() == DataTypes.DATA || field.getType() == DataTypes.ENUM)
+            .map(dataService::apply)
+            .map(IGeneratedProtoField::getProtoType)
+            .map(type -> type.replace('.', '/') + ".proto")
+            .collect(Collectors.toCollection(TreeSet::new));
    }
 
+   /**
+    *
+    * @return Collection of IDataField
+    */
    public Collection<IDataField> getFields() {
       List<IDataField> fields = new ArrayList<>();
 
@@ -88,6 +96,11 @@ public class MessagesDataDto {
       return data instanceof IEnumeration;
    }
 
+   /**
+    *
+    * @param field you want the type of
+    * @return the field type
+    */
    public String fieldType(IDataField field) {
       IGeneratedProtoField protoField = dataService.apply(field);
       if (protoField.isMultiple()) {
