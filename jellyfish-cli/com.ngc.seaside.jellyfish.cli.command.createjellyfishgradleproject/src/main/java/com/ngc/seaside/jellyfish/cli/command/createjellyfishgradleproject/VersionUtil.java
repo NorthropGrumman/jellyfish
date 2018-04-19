@@ -8,13 +8,17 @@ import java.util.Properties;
 
 public class VersionUtil {
 
-   private final static String CONFIG_PROPERTIES_FILE =
+   private static final String CONFIG_PROPERTIES_FILE =
          "com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.config.properties";
-   private final static String VERSION_PROPERTY = "version";
+   private static final String VERSION_PROPERTY = "version";
 
    private VersionUtil() {
    }
 
+   /**
+    *
+    * @return The JellyFish version
+    */
    public static String getCurrentJellyfishVersion() {
       String version;
       try (InputStream is = VersionUtil.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES_FILE)) {
