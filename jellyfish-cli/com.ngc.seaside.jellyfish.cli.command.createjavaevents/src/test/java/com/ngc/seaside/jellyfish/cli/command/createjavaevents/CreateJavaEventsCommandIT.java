@@ -1,19 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_JAVA_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.OUTPUT_DIRECTORY_PROPERTY;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
@@ -23,12 +13,12 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.JellyfishCommandPhase;
-import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +33,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.EVENTS_JAVA_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaevents.CreateJavaEventsCommand.OUTPUT_DIRECTORY_PROPERTY;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateJavaEventsCommandIT {
@@ -81,7 +81,7 @@ public class CreateJavaEventsCommandIT {
 
       outputDirectory = Files.createTempDirectory(null);
       parameters.addParameter(
-         new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+            new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(options.getParameters()).thenReturn(parameters);
@@ -126,9 +126,9 @@ public class CreateJavaEventsCommandIT {
       assertTrue(Files.isDirectory(sourceDirectory));
 
       List<Path> files = Files.walk(sourceDirectory)
-                              .filter(Files::isRegularFile)
-                              .sorted(Comparator.comparing(f -> f.getFileName().toString()))
-                              .collect(Collectors.toList());
+            .filter(Files::isRegularFile)
+            .sorted(Comparator.comparing(f -> f.getFileName().toString()))
+            .collect(Collectors.toList());
       assertEquals(4, files.size());
       assertTrue(files.get(0).endsWith(Paths.get("com", "ngc", "base", "event", "Base.java")));
       assertTrue(files.get(1).endsWith(Paths.get("com", "ngc", "child", "event", "Child.java")));
