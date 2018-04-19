@@ -152,7 +152,9 @@ public class CreateDomainCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -440,7 +442,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
 
    /**
-    * Adds all of the inputs and outputs, their corresponding data objects that they extend, and the nested data of their fields to the given sets.
+    * Adds all of the inputs and outputs, their corresponding data objects that they extend, and the nested data of
+    * their fields to the given sets.
     *
     * @param model          model to search
     * @param dataTypes      data types used as input, outputs or fields
@@ -514,31 +517,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
 
    /**
-    * Converts the IEnumeration to a Tobject.
-    *
-    * @param packageGenerator package generating function
-    * @param packages         set of packages that this method should add to
-    * @return domain object
-    */
-   private Tobject convertEnum(IEnumeration enumVal, Predicate<INamedChild<IPackage>> generatedObjectPredicate,
-                               Function<INamedChild<IPackage>, String> packageGenerator,
-                               Set<String> packages) {
-      final String pkg = packageGenerator.apply(enumVal);
-      final boolean generated = generatedObjectPredicate.test(enumVal);
-      if (generated) {
-         packages.add(pkg);
-      }
-
-      Tobject object = new Tobject();
-      object.setClazz(pkg + '.' + enumVal.getName());
-      object.setType("enum");
-      object.setAbstract(false);
-      object.setGenerated(generated);
-      object.setEnumValues(enumVal.getValues().stream().collect(Collectors.joining(" ")));
-      return object;
-   }
-
-   /**
     * Converts the IDataField to a Tproperty.
     *
     * @param field            IDataField
@@ -590,6 +568,31 @@ public class CreateDomainCommand implements IJellyFishCommand {
    }
 
    /**
+    * Converts the IEnumeration to a Tobject.
+    *
+    * @param packageGenerator package generating function
+    * @param packages         set of packages that this method should add to
+    * @return domain object
+    */
+   private Tobject convertEnum(IEnumeration enumVal, Predicate<INamedChild<IPackage>> generatedObjectPredicate,
+                               Function<INamedChild<IPackage>, String> packageGenerator,
+                               Set<String> packages) {
+      final String pkg = packageGenerator.apply(enumVal);
+      final boolean generated = generatedObjectPredicate.test(enumVal);
+      if (generated) {
+         packages.add(pkg);
+      }
+
+      Tobject object = new Tobject();
+      object.setClazz(pkg + '.' + enumVal.getName());
+      object.setType("enum");
+      object.setAbstract(false);
+      object.setGenerated(generated);
+      object.setEnumValues(enumVal.getValues().stream().collect(Collectors.joining(" ")));
+      return object;
+   }
+
+   /**
     * Create the usage for this command.
     *
     * @return the usage.
@@ -607,7 +610,8 @@ public class CreateDomainCommand implements IJellyFishCommand {
                                     .setRequired(false),
                               new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
                                     .setDescription(
-                                          "If true, imports from the same package will be included for generated domains")
+                                          "If true, imports from the same package will be included for "
+                                          + "generated domains")
                                     .setRequired(false),
                               new DefaultParameter<String>(EXTENSION_PROPERTY)
                                     .setDescription("The extension of the generated domain files")
