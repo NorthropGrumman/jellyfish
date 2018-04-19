@@ -106,6 +106,11 @@ public class CucumberDto {
       return this;
    }
 
+   /**
+    *
+    * @param groupAndArtifactId String of the group Id that you want the formatted string for
+    * @return a formatted String of the dependency
+    */
    public String getFormattedDependency(String groupAndArtifactId) {
       IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
       return String.format("%s:%s:$%s",

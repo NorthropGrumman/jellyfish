@@ -76,8 +76,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
       final String projectName = info.getDirectoryName();
       final boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
 
-      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null &&
-               parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue() != null;
+      boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null
+                                  && parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue()
+                                  != null;
 
       CucumberDto dto = new CucumberDto(buildManagementService, commandOptions)
             .setProjectName(projectName)
@@ -92,7 +93,7 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                   projectNamingService.getBaseServiceProjectName(commandOptions, model)
                         .getArtifactId())));
       String configModule = packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model) + "."
-         + model.getName() + "TestConfigurationModule";
+                            + model.getName() + "TestConfigurationModule";
       dto.setConfigModule(configModule);
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
@@ -100,21 +101,21 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
          String pkg = packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model);
          dto.setConfigPackageName(pkg);
          dto.getDependencies()
-            .add(projectNamingService.getCucumberTestsConfigProjectName(commandOptions, model).getArtifactId());
+               .add(projectNamingService.getCucumberTestsConfigProjectName(commandOptions, model).getArtifactId());
       } else {
          dto.setConfigPackageName(dto.getPackageName() + ".config");
       }
 
       templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + BUILD_TEMPLATE_SUFFIX,
-         parameters,
-         outputDirectory,
-         clean);
+                             parameters,
+                             outputDirectory,
+                             clean);
       if (!isConfigGenerated) {
          templateService.unpack(
-            CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + CONFIG_TEMPLATE_SUFFIX,
-            parameters,
-            outputDirectory,
-            false);
+               CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + CONFIG_TEMPLATE_SUFFIX,
+               parameters,
+               outputDirectory,
+               false);
       }
       logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
       buildManagementService.registerProject(commandOptions, info);
@@ -145,7 +146,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -162,7 +165,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -179,7 +184,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
    }
@@ -196,7 +203,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePackageNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageNamingService = ref;
    }
@@ -213,7 +222,9 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeJavaServiceGenerationService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeJavaServiceGenerationService")
    public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
       this.generationService = ref;
    }
@@ -257,7 +268,8 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN,
                               new DefaultParameter(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
-                                    "If true, only copy the feature files and resources from the system descriptor project into src/main/resources.")
+                                    "If true, only copy the feature files and resources from the system descriptor "
+                                    + "project into src/main/resources.")
                                     .setRequired(false));
    }
 
