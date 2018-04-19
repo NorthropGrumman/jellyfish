@@ -17,19 +17,26 @@ import java.util.Optional;
 import java.util.Set;
 
 public class SparkTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
-   public static final String SPARK_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-spark";
+
+   public static final String
+         SPARK_TEMPLATE =
+         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-spark";
 
    private static final String SPARK_TRANSPORT_PROVIDER_COMPONENT_NAME =
          "com.ngc.seaside.service.transport.impl.provider.spark.SparkTransportProvider";
    private static final String SPARK_CONFIGURATION_CLASS_NAME_SUFFIX = "SparkConfiguration";
    private static final String SPARK_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "SparkTestConfiguration";
-   private final static String SPARK_PROVIDER_VARIABLE_NAME = "sparkProvider";
+   private static final String SPARK_PROVIDER_VARIABLE_NAME = "sparkProvider";
    private static final String SPARK_TOPIC = "com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic";
-   private static final String SPARK_MODULE = "com.ngc.seaside.service.transport.impl.provider.spark.module.SparkTransportProviderModule";
+   private static final String
+         SPARK_MODULE =
+         "com.ngc.seaside.service.transport.impl.provider.spark.module.SparkTransportProviderModule";
    private static final String SPARK_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
    private static final String SPARK_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
    private static final String SPARK_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark.module";
-   private static final String SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY = "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
+   private static final String
+         SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY =
+         "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
    private static final String SPARK_CORE_DEPENDENCY = "com.sparkjava:spark-core";
 
    private ITransportConfigurationService transportConfigurationService;
@@ -55,8 +62,8 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
                                                  IJellyFishCommandOptions options, IModel model, String topicsClassName,
                                                  Map<String, IDataReferenceField> topics) {
       SparkDto sparkDto = new SparkDto().setBaseDto(dto)
-                                        .setTopicsImport(topicsClassName)
-                                        .setClassname(dto.getModelName() + getClassnameSuffix());
+            .setTopicsImport(topicsClassName)
+            .setClassname(dto.getModelName() + getClassnameSuffix());
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
@@ -73,15 +80,15 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
          int count = 1;
          for (RestConfiguration configuration : configurations) {
             SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
-                                                        .setNetworkInterface(configuration.getNetworkInterface())
-                                                        .setPort(configuration.getPort())
-                                                        .setHttpMethod(configuration.getHttpMethod())
-                                                        .setPath(configuration.getPath())
-                                                        .setContentType(configuration.getContentType())
-                                                        .setVariableName(
-                                                              field.getName() + (configurations.size() > 1 ? count
-                                                                                                           : ""))
-                                                        .setName(topicsPrefix + topicName);
+                  .setNetworkInterface(configuration.getNetworkInterface())
+                  .setPort(configuration.getPort())
+                  .setHttpMethod(configuration.getHttpMethod())
+                  .setPath(configuration.getPath())
+                  .setContentType(configuration.getContentType())
+                  .setVariableName(
+                        field.getName() + (configurations.size() > 1 ? count
+                                                                     : ""))
+                  .setName(topicsPrefix + topicName);
 
             sparkDto.addTopic(topicDto);
             count++;

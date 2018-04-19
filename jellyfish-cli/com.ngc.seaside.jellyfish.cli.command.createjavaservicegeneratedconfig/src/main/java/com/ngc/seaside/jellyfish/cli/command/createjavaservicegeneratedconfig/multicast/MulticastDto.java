@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MulticastDto {
+
    private GeneratedServiceConfigDto baseDto;
    private String topicsImport;
    private List<MulticastTopicDto> topics = new ArrayList<>();
@@ -35,16 +36,24 @@ public class MulticastDto {
       return topics;
    }
 
+   /**
+    *
+    * @return a map with the send topic name as the key and a value of MulticastTopicDto
+    */
    public Map<String, List<MulticastTopicDto>> getSendTopics() {
       return topics.stream()
-                   .filter(MulticastTopicDto::isSend)
-                   .collect(Collectors.groupingBy(MulticastTopicDto::getName));
+            .filter(MulticastTopicDto::isSend)
+            .collect(Collectors.groupingBy(MulticastTopicDto::getName));
    }
 
+   /**
+    *
+    * @return a map with the receive topic name as the key and a value of MulticastTopicDto
+    */
    public Map<String, List<MulticastTopicDto>> getReceiveTopics() {
       return topics.stream()
-                   .filter(topic -> !topic.isSend())
-                   .collect(Collectors.groupingBy(MulticastTopicDto::getName));
+            .filter(topic -> !topic.isSend())
+            .collect(Collectors.groupingBy(MulticastTopicDto::getName));
    }
 
    public MulticastDto addTopic(MulticastTopicDto topic) {
