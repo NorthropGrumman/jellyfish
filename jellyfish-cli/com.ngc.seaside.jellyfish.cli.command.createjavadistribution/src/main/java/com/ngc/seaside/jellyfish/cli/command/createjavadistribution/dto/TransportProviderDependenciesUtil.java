@@ -18,6 +18,12 @@ import java.util.Set;
 
 public class TransportProviderDependenciesUtil {
 
+   /**
+    *
+    * @param options JellyFish Command line options
+    * @param transportConfigService Transport Service
+    * @return Set of Strings of provider dependencies
+    */
    public static Set<String> getTransportProviderDependencies(IJellyFishCommandOptions options,
                                                               ITransportConfigurationService transportConfigService) {
 

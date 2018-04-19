@@ -81,7 +81,7 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       dto.setPackageName(pkg);
       dto.setModel(model);
       dto.setTransportProviderDependencies(
-         TransportProviderDependenciesUtil.getTransportProviderDependencies(options, transportConfigService));
+            TransportProviderDependenciesUtil.getTransportProviderDependencies(options, transportConfigService));
 
       Set<String> projectDependencies = new LinkedHashSet<String>();
       projectDependencies.add(projectNamingService.getEventsProjectName(options, model).getArtifactId());
@@ -116,29 +116,29 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeLogService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       super.setLogService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeTemplateService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       super.setTemplateService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeProjectNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       super.setProjectNamingService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removePackageNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       super.setPackageNamingService(ref);
    }
@@ -151,8 +151,8 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeTransportConfigurationService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTransportConfigurationService")
    public void setTransportConfigurationService(ITransportConfigurationService ref) {
       this.transportConfigService = ref;
    }
@@ -173,11 +173,11 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Generates the gradle distribution project for a Java application",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.MODEL.required(),
-            CommonParameters.CLEAN
+                              CommonParameters.GROUP_ID,
+                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.OUTPUT_DIRECTORY.required(),
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.CLEAN
       );
    }
 }
