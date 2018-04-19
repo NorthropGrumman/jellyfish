@@ -64,6 +64,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
             // Alias previously-used tasks from maven plugin
             task('install', dependsOn: publishToMavenLocal)
             task('uploadArchives', dependsOn: publish)
+            task('upload', dependsOn: uploadArchives)
 
             // Apply the Seaside release plugin so we can release the project.
             plugins.apply 'com.ngc.seaside.release.root'
