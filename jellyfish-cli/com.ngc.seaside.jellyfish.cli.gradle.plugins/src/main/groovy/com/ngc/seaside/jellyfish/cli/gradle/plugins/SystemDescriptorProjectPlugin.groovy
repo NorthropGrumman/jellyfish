@@ -123,6 +123,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                 publishing {
                     publications {
                         mavenSd(MavenPublication) {
+                            groupId = project.group
                             artifact sdJar
                             artifact testJar
                             pom.withXml { xml ->
@@ -161,17 +162,17 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
     }
 
     private void configureReleaseTask(Project project) {
-        def createTag = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME)
-        def bumpVersion = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME)
-        def push = project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_PUSH_TASK_NAME)
-        def upload = project.getTasks().getByName('uploadArchives')
+        def createTag = project.tasks[SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME]
+        def bumpVersion = project.tasks[SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME]
+        def push = project.tasks[SeasideReleaseRootProjectPlugin.RELEASE_PUSH_TASK_NAME]
+        def upload = project.tasks['upload']
         project.task('release',
                      group: SeasideReleaseRootProjectPlugin.RELEASE_ROOT_PROJECT_TASK_GROUP_NAME,
                      description: 'Releases this project.',
                      dependsOn: [createTag, upload, bumpVersion, push])
 
-        upload.mustRunAfter(createTag)
-        bumpVersion.mustRunAfter(upload)
-        push.mustRunAfter(bumpVersion)
+        upload.mustRunAfter createTag
+        bumpVersion.mustRunAfter upload
+        push.mustRunAfter bumpVersion
     }
 }
