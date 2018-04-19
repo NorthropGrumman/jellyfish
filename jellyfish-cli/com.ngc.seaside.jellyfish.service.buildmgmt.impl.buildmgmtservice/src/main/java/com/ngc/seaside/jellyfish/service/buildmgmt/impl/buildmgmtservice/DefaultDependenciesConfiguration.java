@@ -124,7 +124,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureProtoBuffers(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("protobufPluginVersion")
-            .version("0.8.3")
+            .version("0.8.5")
             .includes(artifact("protobuf-gradle-plugin")
                             .groupId("com.google.protobuf")
                             .scope(DependencyScope.BUILDSCRIPT));
