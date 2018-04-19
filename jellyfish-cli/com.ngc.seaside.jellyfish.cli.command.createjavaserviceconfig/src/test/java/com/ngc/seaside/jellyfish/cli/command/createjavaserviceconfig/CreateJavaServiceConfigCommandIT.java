@@ -128,9 +128,14 @@ public class CreateJavaServiceConfigCommandIT {
             Paths.get("src", "test", "resources", "expectedfiles", "service-transport-config.java.expected"),
             Paths.get(outputDirectory.getRoot().getAbsolutePath(),
                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.config",
-                      "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/config/EngagementTrackPriorityServiceTransportConfiguration.java"));
+                      "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/config"
+                      + "/EngagementTrackPriorityServiceTransportConfiguration.java"));
    }
 
+   /**
+    *
+    * @return model used for testing
+    */
    public static Model newModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
