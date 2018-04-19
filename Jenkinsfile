@@ -24,15 +24,15 @@ pipeline {
         booleanParam(name: 'offlineSupport',
                      description: 'If true, a maven2 repository will be created that can be used for offline deployments.',
                      defaultValue: false)
-		booleanParam(name: 'nexusLifecycle',
+        booleanParam(name: 'nexusLifecycle',
                      description: 'If true, Nexus Lifecycle will scan for security issues.',
-                     defaultValue: false)			 
+                     defaultValue: false)
     }
 
     stages {
         // Prepare for a release if necessary.
-		
-		
+
+
         stage("Prepare For Release") {
             when {
                 expression { env.BRANCH_NAME == 'master' && params.performRelease }
@@ -55,7 +55,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build jellyfish-systemdescriptor') {
             steps {
                 dir('jellyfish-systemdescriptor') {
@@ -75,7 +75,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Test jellyfish') {
             steps {
                 dir('jellyfish-examples') {
@@ -110,44 +110,50 @@ pipeline {
                 }
             }
         }
-        
+
         stage("Nexus Lifecycle") {
             when {
                 expression { params.nexusLifecycle }
             }
-			steps {
-				// Evaluate the items for security, license, and other issues via Nexus Lifecycle.
-				script {
-					def policyEvaluationResult = nexusPolicyEvaluation(
-						failBuildOnNetworkError: false,
-						iqApplication: 'noalert',
-						iqStage: 'build',
-						jobCredentialsId: 'NexusLifecycle'
-					)
-					currentBuild.result = 'SUCCESS'
-				}
-				 withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword', usernameVariable: 'iqUsername')]) {
-					sh 'chmod +x downloadNexusLifecycleReport.sh'
-					sh 'mkdir -p build'
-					sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
-					sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+            steps {
+                // Evaluate the items for security, license, and other issues via Nexus Lifecycle.
+                script {
+                    def policyEvaluationResult = nexusPolicyEvaluation(
+                        failBuildOnNetworkError: false,
+                        iqApplication: 'noalert',
+                        iqStage: 'build',
+                        jobCredentialsId: 'NexusLifecycle'
+                    )
+                    currentBuild.result = 'SUCCESS'
                 }
-			}
-		}
-		
+                 withCredentials([usernamePassword(credentialsId: 'NexusLifecycle',
+				                                   passwordVariable: 'iqPassword',
+												   usernameVariable: 'iqUsername')]) {
+                    sh 'chmod +x downloadNexusLifecycleReport.sh'
+                    sh 'mkdir -p build'
+                    sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
+                    sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+                }
+            }
+        }
+
         stage('Upload') {
             when {
                 expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
             }
             steps {
-                dir('jellyfish-systemdescriptor-dsl') {
-                    sh './gradlew upload'
-                }
-                dir('jellyfish-systemdescriptor') {
-                    sh './gradlew upload'
-                }
-                dir('jellyfish-cli') {
-                    sh './gradlew upload'
+                withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
+                                                  passwordVariable: 'nexusPassword',
+                                                  usernameVariable: 'nexusUsername')]) {
+                    dir('jellyfish-systemdescriptor-dsl') {
+                        sh "./gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
+                    }
+                    dir('jellyfish-systemdescriptor') {
+                        sh "./gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
+                    }
+                    dir('jellyfish-cli') {
+                        sh "./gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
+                    }
                 }
             }
         }
@@ -181,8 +187,8 @@ pipeline {
                }
             }
         }
-		
-        		
+
+
         stage('Archive') {
             steps {
                 // Create a ZIP that has everything.
@@ -196,19 +202,19 @@ pipeline {
                                  defaultExcludes: false,
                                  onlyIfSuccessful: true
             }
-        }    
+        }
     }
-	
-	post {
-	   always {
-			// We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
-			// 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
-			// since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
-			// repo will always be used by builds on the CI server.  This means that the Gradle will never download a
-			// newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
-			// problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
-			// building a development branch that is not finished yet.
-			sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
-		}
-	} 
+
+    post {
+       always {
+            // We do this to avoid keeping any snapshots in the local maven repo after the build.  When we run
+            // 'gradle populateM2repo', snapshots may be inserted into that local maven repo.  Here is the problem:
+            // since mavenLocal() is configured before nexus is all of our Gradle builds, the snapshot in the maven
+            // repo will always be used by builds on the CI server.  This means that the Gradle will never download a
+            // newer version of the snapshot from Nexus because the snapshot is always in maven local.  This is not a
+            // problem when we do releases (since we don't use snapshots during releases) but it can be a problem when
+            // building a development branch that is not finished yet.
+            sh 'find ~/.m2/repository/ -type d -name \'*-SNAPSHOT\' | xargs rm -rf'
+        }
+    }
 }
