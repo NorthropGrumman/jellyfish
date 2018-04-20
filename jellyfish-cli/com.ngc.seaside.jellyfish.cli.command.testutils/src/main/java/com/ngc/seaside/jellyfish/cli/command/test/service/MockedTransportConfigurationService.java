@@ -29,39 +29,73 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    private Map<String, Collection<RestConfiguration>> restConfigurations = new LinkedHashMap<>();
    private Map<String, Collection<ZeroMqConfiguration>> zeroMqConfigurations = new LinkedHashMap<>();
 
+   /**
+    * Creates a multicast configuration.
+    *
+    * @param fieldName    the field name
+    * @param groupAddress the group address
+    * @param port         the port number
+    * @param sourceName   the source name
+    * @param targetName   the target name
+    * @return a configured MulticastConfiguration
+    */
    public MulticastConfiguration addMulticastConfiguration(String fieldName, String groupAddress, int port,
                                                            String sourceName, String targetName) {
       NetworkInterface targetInterface = new NetworkInterface(targetName);
       NetworkInterface sourceInterface = new NetworkInterface(sourceName);
 
       MulticastConfiguration configuration = new MulticastConfiguration().setGroupAddress(groupAddress)
-                                                                         .setSourceInterface(sourceInterface)
-                                                                         .setTargetInterface(targetInterface)
-                                                                         .setPort(port);
+            .setSourceInterface(sourceInterface)
+            .setTargetInterface(targetInterface)
+            .setPort(port);
       multicastConfigurations.computeIfAbsent(fieldName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;
    }
 
+   /**
+    * Creates a rest configuration.
+    *
+    * @param fieldName     the field name
+    * @param address       the address
+    * @param interfaceName the interface name
+    * @param port          the port number
+    * @param path          the path name
+    * @param contentType   the content type
+    * @param httpMethod    the http method
+    * @return a configured RestConfiguration
+    */
    public RestConfiguration addRestConfiguration(String fieldName, String address, String interfaceName, int port,
                                                  String path, String contentType, HttpMethod httpMethod) {
       RestConfiguration configuration =
             new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
-                                   .setNetworkInterface(new NetworkInterface().setName(interfaceName))
-                                   .setPort(port)
-                                   .setPath(path)
-                                   .setContentType(contentType)
-                                   .setHttpMethod(httpMethod);
+                  .setNetworkInterface(new NetworkInterface().setName(interfaceName))
+                  .setPort(port)
+                  .setPath(path)
+                  .setContentType(contentType)
+                  .setHttpMethod(httpMethod);
       restConfigurations.computeIfAbsent(fieldName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;
    }
 
-   public ZeroMqTcpTransportConfiguration addZeroMqTcpConfiguration(String fieldName, ConnectionType connectType,
+   /**
+    * Creates a ZeroMQ transport configuration.
+    *
+    * @param fieldName      the field name
+    * @param connectionType the connection type
+    * @param bind           the bind
+    * @param connect        the connection address
+    * @param port           the port number
+    * @return a configured ZeroMqTcpTransportConfiguration
+    */
+   public ZeroMqTcpTransportConfiguration addZeroMqTcpConfiguration(String fieldName, ConnectionType connectionType,
                                                                     String bind, String connect, int port) {
-      ZeroMqTcpTransportConfiguration configuration = (ZeroMqTcpTransportConfiguration) new ZeroMqTcpTransportConfiguration()
-               .setBindConfiguration(new NetworkInterface(bind))
-               .setConnectConfiguration(new NetworkAddress().setAddress(connect))
-               .setPort(port)
-               .setConnectionType(connectType);
+      ZeroMqTcpTransportConfiguration
+            configuration =
+            (ZeroMqTcpTransportConfiguration) new ZeroMqTcpTransportConfiguration()
+                  .setBindConfiguration(new NetworkInterface(bind))
+                  .setConnectConfiguration(new NetworkAddress().setAddress(connect))
+                  .setPort(port)
+                  .setConnectionType(connectionType);
       zeroMqConfigurations.computeIfAbsent(fieldName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;
    }
@@ -85,7 +119,7 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
 
    @Override
    public Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                                 IDataReferenceField field) {
       return zeroMqConfigurations.getOrDefault(field.getName(), Collections.emptySet());
    }
 
