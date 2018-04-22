@@ -3,8 +3,6 @@ package com.ngc.seaside.systemdescriptor.scoping;
 import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -156,16 +154,16 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       // can declare other models as fields. Input and output must declare
       // data as fields. Since we can't yet reference the contents of data,
       // we don't have to worry about referencing input or output.
-      if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION)) {
-         BaseRequireDeclaration casted = (BaseRequireDeclaration) fieldDeclaration;
+      if (fieldDeclaration instanceof RequireDeclaration) {
+    	  RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
          // Include all field declarations of the referenced model in the
          // scope.
-         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-      } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfRequireDeclaration(casted)));
+      } else if (fieldDeclaration instanceof PartDeclaration) {
          // Include all field declarations of the referenced model in the
          // scope.
-         BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
-         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+    	  PartDeclaration casted = (PartDeclaration) fieldDeclaration;
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfPartDeclaration(casted)));
       } else {
          // Otherwise, do the default behavior.
          scope = delegateGetScope(context, reference);
