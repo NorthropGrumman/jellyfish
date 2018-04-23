@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.utilities.console.api;
 
-
 import com.ngc.seaside.jellyfish.utilities.TestItem;
 
 import org.junit.Before;

@@ -11,6 +11,12 @@ public class TestItem {
    private String param2;
    private String param3;
 
+   /**
+    * Constructor
+    * @param param1 used to construct object
+    * @param param2 used to construct object
+    * @param param3 used to construct object
+    */
    public TestItem(String param1, String param2, String param3) {
       this.param1 = param1;
       this.param2 = param2;
@@ -46,8 +52,8 @@ public class TestItem {
          return false;
       }
       TestItem that = (TestItem) obj;
-      return Objects.equals(param1, that.param1) &&
-            Objects.equals(param2, that.param2) &&
-            Objects.equals(param3, that.param3);
+      return Objects.equals(param1, that.param1)
+            && Objects.equals(param2, that.param2)
+            && Objects.equals(param3, that.param3);
    }
 }
