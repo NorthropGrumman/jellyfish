@@ -64,8 +64,8 @@ public class TemporaryFileResource implements ITemporaryFileResource {
          return false;
       }
       TemporaryFileResource that = (TemporaryFileResource) o;
-      return Objects.equals(url, that.url) &&
-             Objects.equals(temporaryFile, that.temporaryFile);
+      return Objects.equals(url, that.url)
+            && Objects.equals(temporaryFile, that.temporaryFile);
    }
 
    @Override

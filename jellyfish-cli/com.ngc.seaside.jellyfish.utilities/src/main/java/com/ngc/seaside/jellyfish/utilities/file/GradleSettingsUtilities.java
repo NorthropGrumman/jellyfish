@@ -27,35 +27,38 @@ public class GradleSettingsUtilities {
    }
 
    /**
-    * Attempt to add a Gradle project to the settings.gradle file if the file actually exists in the output directory, otherwise to the output directory's parent settings.gradle.
-    * If neither file exists, it does nothing.
+    * Attempt to add a Gradle project to the settings.gradle file if the file actually exists in the output directory,
+    * otherwise to the output directory's parent settings.gradle.  If neither file exists, it does nothing.
     *
     * @return whether or not the project was added to a settings.gradle
     * @see #addProject(IParameterCollection)
     */
    public static boolean tryAddProject(IParameterCollection parameters) throws FileUtilitiesException {
-      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY) ||
-          !parameters.containsParameter(GROUP_ID_PROPERTY) ||
-          !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY)
+            || !parameters.containsParameter(GROUP_ID_PROPERTY)
+            || !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          throw new FileUtilitiesException(
                String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
                              OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
       }
 
-      Path outputDirectory = Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue()).normalize().toAbsolutePath();
+      Path outputDirectory =
+            Paths.get(parameters.getParameter(OUTPUT_DIR_PROPERTY).getStringValue()).normalize().toAbsolutePath();
       Path settings = outputDirectory.resolve(SETTINGS_FILE_NAME);
       if (settings.toFile().isFile()) {
          addProject(parameters, settings);
          return true;
       } else {
          Path outputDirParent = outputDirectory.getParent();
-         
+
          if (outputDirParent != null) {
             settings = outputDirectory.getParent().resolve(SETTINGS_FILE_NAME);
             if (settings.toFile().isFile()) {
                DefaultParameterCollection newParameters = new DefaultParameterCollection();
                newParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY,
-                        outputDirectory.getFileName() + "/" + parameters.getParameter(GROUP_ID_PROPERTY).getStringValue()));
+                                                                 outputDirectory.getFileName() + "/" + parameters
+                                                                       .getParameter(GROUP_ID_PROPERTY)
+                                                                       .getStringValue()));
                newParameters.addParameter(parameters.getParameter(ARTIFACT_ID_PROPERTY));
                addProject(newParameters, settings);
                return true;
@@ -74,9 +77,9 @@ public class GradleSettingsUtilities {
     *                                parameters don't contain the necessary properties.
     */
    public static void addProject(IParameterCollection parameters) throws FileUtilitiesException {
-      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY) ||
-          !parameters.containsParameter(GROUP_ID_PROPERTY) ||
-          !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!parameters.containsParameter(OUTPUT_DIR_PROPERTY)
+            || !parameters.containsParameter(GROUP_ID_PROPERTY)
+            || !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          throw new FileUtilitiesException(
                String.format("The %s, %s and %s properties are required in order to find the settings.gradle file.",
                              OUTPUT_DIR_PROPERTY, GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
@@ -96,8 +99,8 @@ public class GradleSettingsUtilities {
     */
    public static void addProject(IParameterCollection parameters, Path settingsGradleFile)
          throws FileUtilitiesException {
-      if (!parameters.containsParameter(GROUP_ID_PROPERTY) ||
-          !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
+      if (!parameters.containsParameter(GROUP_ID_PROPERTY)
+            || !parameters.containsParameter(ARTIFACT_ID_PROPERTY)) {
          throw new FileUtilitiesException(
                String.format("The %s and %s properties are required in order to find the settings.gradle file.",
                              GROUP_ID_PROPERTY, ARTIFACT_ID_PROPERTY));
