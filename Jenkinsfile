@@ -62,6 +62,7 @@ pipeline {
                junit '**/build/test-results/test/*.xml'
             }
         }
+      }
 
         stage('Build jellyfish-cli') {
             steps {
