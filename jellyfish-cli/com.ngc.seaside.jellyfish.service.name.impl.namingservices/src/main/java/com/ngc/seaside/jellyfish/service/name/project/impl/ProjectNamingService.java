@@ -36,7 +36,7 @@ public class ProjectNamingService implements IProjectNamingService {
    /**
     * The default name of the directory that will contain generated-projects that should never be edited.
     */
-   final static String DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME = "generated-projects";
+   public static final String DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME = "generated-projects";
 
    private ILogService logService;
 
