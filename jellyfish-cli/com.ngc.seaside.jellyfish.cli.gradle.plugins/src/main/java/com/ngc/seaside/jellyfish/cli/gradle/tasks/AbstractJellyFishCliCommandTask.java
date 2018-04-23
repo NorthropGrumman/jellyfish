@@ -11,6 +11,9 @@ import java.nio.file.Paths;
  */
 public abstract class AbstractJellyFishCliCommandTask extends DefaultTask {
 
+   /**
+    * execute the Jellyfish command task
+    */
    @TaskAction
    public void executeTask() {
       String previousProperty = System.getProperty("NG_FW_HOME");
