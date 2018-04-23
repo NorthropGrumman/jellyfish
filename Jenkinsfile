@@ -39,9 +39,9 @@ pipeline {
             }
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew removeVersionSuffix'
-                    sh './gradlew createReleaseTag'
+                    sh 'chmod a+x ../gradlew'
+                    sh '../gradlew removeVersionSuffix'
+                    sh '../gradlew createReleaseTag'
                 }
             }
         }
@@ -49,8 +49,7 @@ pipeline {
         stage('Build jellyfish-systemdescriptor-dsl') {
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+                    sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
@@ -59,8 +58,7 @@ pipeline {
         stage('Build jellyfish-systemdescriptor') {
             steps {
                 dir('jellyfish-systemdescriptor') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+                    sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
@@ -69,8 +67,7 @@ pipeline {
         stage('Build jellyfish-cli') {
             steps {
                 dir('jellyfish-cli') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build install'
+                    sh '../gradlew clean build install'
                     junit '**/build/test-results/test/*.xml'
                 }
             }
@@ -79,8 +76,7 @@ pipeline {
         stage('Test jellyfish') {
             steps {
                 dir('jellyfish-examples') {
-                    sh 'chmod a+x ./gradlew'
-                    sh './gradlew clean build install --stacktrace --continue'
+                    sh '../gradlew clean build install --stacktrace --continue'
                 }
             }
         }
@@ -91,18 +87,18 @@ pipeline {
             }
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh './gradlew populateM2repo'
+                    sh '../gradlew populateM2repo'
                 }
                 dir('jellyfish-systemdescriptor') {
-                    sh './gradlew populateM2repo'
+                    sh '../gradlew populateM2repo'
                 }
                 dir('jellyfish-cli') {
-                    sh './gradlew populateM2repo'
+                    sh '../gradlew populateM2repo'
                 }
                 dir('jellyfish-examples') {
                     // Just collect the dependencies for a single generated service since the dependencies are always
                     // the same.
-                    sh './gradlew audit1'
+                    sh '../gradlew audit1'
                 }
                 dir('build') {
                     // Collect the m2 repository files inside a single ZIP.
@@ -141,13 +137,13 @@ pipeline {
             }
             steps {
                 dir('jellyfish-systemdescriptor-dsl') {
-                    sh './gradlew upload'
+                    sh '../gradlew upload'
                 }
                 dir('jellyfish-systemdescriptor') {
-                    sh './gradlew upload'
+                    sh '../gradlew upload'
                 }
                 dir('jellyfish-cli') {
-                    sh './gradlew upload'
+                    sh '../gradlew upload'
                 }
             }
         }
@@ -171,7 +167,7 @@ pipeline {
                                                              usernameVariable: 'gitUsername')]) {
                                // This allows us to use a custom credential helper that uses the values from Jenkins.
                                sh "git config credential.helper '!echo password=\$gitPassword; echo username=\$gitUsername; echo'"
-                               sh 'GIT_ASKPASS=true ./gradlew releasePush'
+                               sh 'GIT_ASKPASS=true ../gradlew releasePush'
                            }
                        }
                        finally {
