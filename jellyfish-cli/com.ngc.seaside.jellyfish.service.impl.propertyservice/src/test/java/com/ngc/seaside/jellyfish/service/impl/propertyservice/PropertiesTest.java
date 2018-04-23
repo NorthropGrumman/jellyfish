@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.service.impl.propertyservice;
 
-
 import org.junit.Test;
 
 import java.io.File;
