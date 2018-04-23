@@ -18,7 +18,7 @@ subprojects {
     apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
     
     ext {
-        threatEvalVersion = '0.1.0'
+        threatEvalVersion = '1.0.0-SNAPSHOT'
     }
 
 }

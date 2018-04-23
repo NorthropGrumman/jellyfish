@@ -19,7 +19,7 @@ task copyAndFilterFeatureFile(type: Copy) {
    expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
           'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
           'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
-          'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsCoreVersion}"),
+          'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),
           'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
    destinationDir = file("$buildDir/tmp")
 }

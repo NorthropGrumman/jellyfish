@@ -10,8 +10,8 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.utils.SdUtils;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 
@@ -125,6 +125,13 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
          Model model) {
       BaseLinkDeclaration baseLink = null;
 
+      String refinedLinkRawSource = SdUtils.getRawSource(
+            refinedLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      String refinedLinkRawTarget = SdUtils.getRawSource(
+            refinedLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+
       model = model.getRefinedModel();
       while (model != null && baseLink == null) {
          if (model.getLinks() != null) {
@@ -132,8 +139,7 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
                   .stream()
                   .filter(l -> l instanceof BaseLinkDeclaration)
                   .map(l -> (BaseLinkDeclaration) l)
-                  .filter(l -> EcoreUtil.equals(l.getSource(), refinedLink.getSource()))
-                  .filter(l -> EcoreUtil.equals(l.getTarget(), refinedLink.getTarget()))
+                  .filter(l -> areLinksEqual(l, refinedLinkRawSource, refinedLinkRawTarget))
                   .findFirst()
                   .orElse(null);
          }
@@ -142,5 +148,18 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
       }
 
       return baseLink;
+   }
+
+   private static boolean areLinksEqual(
+         BaseLinkDeclaration baseLink,
+         String refinedLinkRawSource,
+         String refinedLinkRawTarget) {
+      String baseLinkRawSource = SdUtils.getRawSource(
+            baseLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      String baseLinkRawTarget = SdUtils.getRawSource(
+            baseLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+      return refinedLinkRawSource.equals(baseLinkRawSource) && refinedLinkRawTarget.equals(baseLinkRawTarget);
    }
 }
