@@ -14,6 +14,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Links;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Output;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Parts;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Requires;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
@@ -81,9 +82,12 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
          error(msg, link, SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
       }
 
-      // Make sure the fields are not both inputs, outputs, parts, or
-      // requirements of the same model.
-      if (sourceField.eContainer().equals(targetField.eContainer())) {
+      // Make sure the fields are not both inputs, outputs, or
+      // requirements of the same model.  Note linking parts to 
+      // parts is allowed.
+      if (sourceField.eContainer().equals(targetField.eContainer())
+               && !(sourceField instanceof PartDeclaration
+                        && targetField instanceof PartDeclaration)) {
          String msg = String.format(
                "Cannot link %s '%s' to another %s of the same model.",
                sourceField.eContainer().eClass().getName().toLowerCase(),

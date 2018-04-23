@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage
+import com.ngc.seaside.systemdescriptor.tests.resources.Datas
 
 @RunWith(XtextRunner)
 @InjectWith(SystemDescriptorInjectorProvider)
@@ -38,42 +39,14 @@ class BasicLinkParsingTest {
 			resourceHelper,
 			Models.ALARM,
 			Models.CLOCK,
-			Models.SPEAKER
+			Models.SPEAKER,
+			Datas.TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
 	}
 	
 	@Test
-	def void testDoesNotParseModelWithLink_From_Field_To_Same_Field() {
-
-		var source = '''
-            package clocks.models
-
-            import clocks.datatypes.Time
-            import clocks.models.part.Alarm
-
-            model AlarmClock {
-                input {
-                    Time currentTime
-                }
-
-                links {
-                    link currentTime -> currentTime
-                }
-            }
-        '''
-
-        var invalidResult = parseHelper.parse(source, requiredResources.resourceSet)
-        assertNotNull(invalidResult)
-        validationTester.assertError(
-            invalidResult,
-            SystemDescriptorPackage.Literals.LINK_DECLARATION,
-            null
-        )
-	}
-
-	@Test
-	def void testDoesNotParseModelWithLink_From_Part_To_Part() {
+	def void testDoesParseModelWithLink_From_Part_To_Part() {
 
 		var source = '''
             package clocks.models
@@ -94,6 +67,31 @@ class BasicLinkParsingTest {
 
                 links {
                     link a1 -> a2
+                }
+            }
+        '''
+        
+        var result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+	}
+	
+	@Test
+	def void testDoesNotParseModelWithLink_From_Field_To_Same_Field() {
+
+		var source = '''
+            package clocks.models
+
+            import clocks.datatypes.Time
+            import clocks.models.part.Alarm
+
+            model AlarmClock {
+                input {
+                    Time currentTime
+                }
+
+                links {
+                    link currentTime -> currentTime
                 }
             }
         '''
