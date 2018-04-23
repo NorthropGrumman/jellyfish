@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import static junit.framework.TestCase.assertEquals;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 
@@ -14,6 +12,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static junit.framework.TestCase.assertEquals;
 
 /**
  *
@@ -42,7 +42,8 @@ public class TemplateIgnoreComponentTest {
       List<String> keys = fixture.getAllKeys();
 
       assertEquals("${groupId}.${artifactId}/src/main/template/template.ignore", keys.get(0));
-      assertEquals("[${groupId}.${artifactId}]/src/main/template/templateContent/${groupId}.${artifactId}", keys.get(1));
+      assertEquals("[${groupId}.${artifactId}]/src/main/template/templateContent/${groupId}.${artifactId}",
+                   keys.get(1));
    }
 
 }
