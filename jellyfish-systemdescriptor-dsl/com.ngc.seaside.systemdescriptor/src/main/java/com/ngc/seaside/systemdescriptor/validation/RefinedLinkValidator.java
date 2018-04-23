@@ -124,13 +124,13 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
          RefinedLinkDeclaration refinedLink,
          Model model) {
       BaseLinkDeclaration baseLink = null;
-      
+
       String refinedLinkRawSource = SdUtils.getRawSource(
-    		  refinedLink,
-    		  SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+            refinedLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
       String refinedLinkRawTarget = SdUtils.getRawSource(
-    		  refinedLink,
-    		  SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+            refinedLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
 
       model = model.getRefinedModel();
       while (model != null && baseLink == null) {
@@ -149,17 +149,17 @@ public class RefinedLinkValidator extends AbstractUnregisteredSystemDescriptorVa
 
       return baseLink;
    }
-   
+
    private static boolean areLinksEqual(
-		   BaseLinkDeclaration baseLink,
-		   String refinedLinkRawSource,
-		   String refinedLinkRawTarget) {
-	   String baseLinkRawSource = SdUtils.getRawSource(
-			   baseLink,
-			   SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
-	   String baseLinkRawTarget = SdUtils.getRawSource(
-			   baseLink,
-			   SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
-	   return refinedLinkRawSource.equals(baseLinkRawSource) && refinedLinkRawTarget.equals(baseLinkRawTarget);
+         BaseLinkDeclaration baseLink,
+         String refinedLinkRawSource,
+         String refinedLinkRawTarget) {
+      String baseLinkRawSource = SdUtils.getRawSource(
+            baseLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      String baseLinkRawTarget = SdUtils.getRawSource(
+            baseLink,
+            SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+      return refinedLinkRawSource.equals(baseLinkRawSource) && refinedLinkRawTarget.equals(baseLinkRawTarget);
    }
 }

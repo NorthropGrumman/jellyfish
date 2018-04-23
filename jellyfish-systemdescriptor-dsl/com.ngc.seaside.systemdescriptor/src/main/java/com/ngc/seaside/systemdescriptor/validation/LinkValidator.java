@@ -86,8 +86,8 @@ public class LinkValidator extends AbstractUnregisteredSystemDescriptorValidator
       // requirements of the same model.  Note linking parts to 
       // parts is allowed.
       if (sourceField.eContainer().equals(targetField.eContainer())
-               && !(sourceField instanceof PartDeclaration
-                        && targetField instanceof PartDeclaration)) {
+            && !(sourceField instanceof PartDeclaration
+                       && targetField instanceof PartDeclaration)) {
          String msg = String.format(
                "Cannot link %s '%s' to another %s of the same model.",
                sourceField.eContainer().eClass().getName().toLowerCase(),

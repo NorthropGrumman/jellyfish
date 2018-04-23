@@ -63,6 +63,7 @@ public class FormattingTestUtils {
 
    /**
     * Tests the formatter given correctly formatted code by applying the given functions that mess up the formatting.
+    *
     * @param correctFormat the correctly formatted code
     * @param malformatters the functions to corrupt the formatting
     */

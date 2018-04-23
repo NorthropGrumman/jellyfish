@@ -16,7 +16,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.utils.SdUtils;
@@ -155,14 +154,14 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       // data as fields. Since we can't yet reference the contents of data,
       // we don't have to worry about referencing input or output.
       if (fieldDeclaration instanceof RequireDeclaration) {
-    	  RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
+         RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
          // Include all field declarations of the referenced model in the
          // scope.
          scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfRequireDeclaration(casted)));
       } else if (fieldDeclaration instanceof PartDeclaration) {
          // Include all field declarations of the referenced model in the
          // scope.
-    	  PartDeclaration casted = (PartDeclaration) fieldDeclaration;
+         PartDeclaration casted = (PartDeclaration) fieldDeclaration;
          scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfPartDeclaration(casted)));
       } else {
          // Otherwise, do the default behavior.
@@ -307,7 +306,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             }
          }
       });
-      
+
       // Get properties declared on the model of the part itself.
       Model type = SdUtils.getTypeOfPartDeclaration(part);
       if (type.getProperties() != null) {
@@ -340,7 +339,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             }
          }
       });
-      
+
       // Get properties declared on the model of the requirement itself.
       Model type = SdUtils.getTypeOfRequireDeclaration(requirement);
       if (type.getProperties() != null) {

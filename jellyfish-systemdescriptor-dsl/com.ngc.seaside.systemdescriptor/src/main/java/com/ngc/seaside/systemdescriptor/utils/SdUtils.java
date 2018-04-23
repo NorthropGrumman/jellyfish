@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.utils;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
@@ -242,11 +243,11 @@ public class SdUtils {
       traverseDataExtensionHierarchy(data, d -> fields.addAll(d.getFields()));
       return fields;
    }
-   
+
    /**
     * Gets the type of the given part declaration regardless if the declaration is a
     * {@code BasePartDeclaration} or a {@code RefinedPartDeclaration}.
-    * 
+    *
     * @param declaration the part declaration to get the type of
     * @return the type of the part declaration
     */
@@ -260,26 +261,26 @@ public class SdUtils {
             traverseModelRefinementHierarchy(containingModel, m -> {
                if (m.getParts() != null) {
                   m.getParts()
-                   .getDeclarations()
-                   .stream()
-                   .filter(p -> p.getName().equals(declaration.getName()))
-                   .filter(p -> p instanceof BasePartDeclaration)
-                   .map(p -> BasePartDeclaration.class.cast(p))
-                   .findFirst()
-                      .map(p -> holder[0] = p);
+                        .getDeclarations()
+                        .stream()
+                        .filter(p -> p.getName().equals(declaration.getName()))
+                        .filter(p -> p instanceof BasePartDeclaration)
+                        .map(p -> BasePartDeclaration.class.cast(p))
+                        .findFirst()
+                        .map(p -> holder[0] = p);
                }
             });
             return holder[0].getType();
          default:
             throw new IllegalStateException("unknown part declaration subclass "
-               + declaration.getClass().getName());
+                                                  + declaration.getClass().getName());
       }
    }
-   
+
    /**
     * Gets the type of the given require declaration regardless if the declaration is a
     * {@code BaseRequireDeclaration} or a {@code RefinedRequireDeclaration}.
-    * 
+    *
     * @param declaration the part declaration to get the type of
     * @return the type of the part declaration
     */
@@ -293,19 +294,19 @@ public class SdUtils {
             traverseModelRefinementHierarchy(containingModel, m -> {
                if (m.getRequires() != null) {
                   m.getRequires()
-                   .getDeclarations()
-                   .stream()
-                   .filter(p -> p.getName().equals(declaration.getName()))
-                   .filter(p -> p instanceof BaseRequireDeclaration)
-                   .map(p -> BaseRequireDeclaration.class.cast(p))
-                   .findFirst()
-                      .map(p -> holder[0] = p);
+                        .getDeclarations()
+                        .stream()
+                        .filter(p -> p.getName().equals(declaration.getName()))
+                        .filter(p -> p instanceof BaseRequireDeclaration)
+                        .map(p -> BaseRequireDeclaration.class.cast(p))
+                        .findFirst()
+                        .map(p -> holder[0] = p);
                }
             });
             return holder[0].getType();
          default:
             throw new IllegalStateException("unknown require declaration subclass "
-               + declaration.getClass().getName());
+                                                  + declaration.getClass().getName());
       }
    }
 }
