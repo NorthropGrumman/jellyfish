@@ -47,8 +47,8 @@ public class DefaultTemplateOutput implements ITemplateOutput {
          return false;
       }
       ITemplateOutput that = (ITemplateOutput) obj;
-      return Objects.equals(properties, that.getProperties()) &&
-             Objects.equals(outputPath, that.getOutputPath());
+      return Objects.equals(properties, that.getProperties())
+            && Objects.equals(outputPath, that.getOutputPath());
    }
 
    @Override
