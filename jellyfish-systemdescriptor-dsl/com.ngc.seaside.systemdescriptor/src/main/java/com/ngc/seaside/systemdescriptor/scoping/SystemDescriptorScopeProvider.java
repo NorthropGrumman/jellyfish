@@ -109,7 +109,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
       IScope scope;
-      if (context.eContainer() instanceof RefinedLinkDeclaration) {
+      if (context.eContainer() instanceof LinkDeclaration) {
          // This indicates the source or target of a link is directly
          // referencing an input or output. In the example below "a",
          // is the current context.

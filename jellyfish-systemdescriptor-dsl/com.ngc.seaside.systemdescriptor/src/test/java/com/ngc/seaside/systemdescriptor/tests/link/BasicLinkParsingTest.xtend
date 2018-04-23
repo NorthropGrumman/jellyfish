@@ -53,6 +53,7 @@ class BasicLinkParsingTest {
 
             import clocks.datatypes.Time
             import clocks.models.part.Alarm
+            import clocks.models.part.Speaker
 
             model AlarmClock {
                 output {
@@ -61,12 +62,12 @@ class BasicLinkParsingTest {
                 }
 
                 parts {
-                    Alarm a1
-                    Alarm a2
+                    Alarm a
+                    Speaker s
                 }
 
                 links {
-                    link a1 -> a2
+                    link a -> s
                 }
             }
         '''
