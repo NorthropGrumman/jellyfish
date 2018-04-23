@@ -58,8 +58,8 @@ public class ProjectNamingServiceTest {
                    "threatevaluation.messages",
                    name.getArtifactId());
       assertEquals("directoryName not correct!",
-                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
-                   "/com.ngc.seaside.threateval.threatevaluation.messages",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME
+                         + "/com.ngc.seaside.threateval.threatevaluation.messages",
                    name.getDirectoryName());
       assertEquals("versionPropertyName not correct!",
                    "threatEvaluationMessagesVersion",
@@ -125,8 +125,8 @@ public class ProjectNamingServiceTest {
                    "threatevaluation.events",
                    name.getArtifactId());
       assertEquals("directoryName not correct!",
-                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
-                   "/com.ngc.seaside.threateval.threatevaluation.events",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME
+                         + "/com.ngc.seaside.threateval.threatevaluation.events",
                    name.getDirectoryName());
       assertEquals("versionPropertyName not correct!",
                    "threatEvaluationEventsVersion",
@@ -170,8 +170,8 @@ public class ProjectNamingServiceTest {
                    "threatevaluation.base",
                    name.getArtifactId());
       assertEquals("directoryName not correct!",
-                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
-                   "/com.ngc.seaside.threateval.threatevaluation.base",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME
+                         + "/com.ngc.seaside.threateval.threatevaluation.base",
                    name.getDirectoryName());
       assertEquals("versionPropertyName not correct!",
                    "threatEvaluationBaseServiceVersion",
@@ -206,12 +206,12 @@ public class ProjectNamingServiceTest {
    @Test
    public void testDoesUseCodeGenMetadataToConstructName() throws Throwable {
       JsonObject codegen = Json.createObjectBuilder()
-               .add(MetadataNames.CODEGEN_ALIAS, Json.createValue("te"))
-               .build();
+            .add(MetadataNames.CODEGEN_ALIAS, Json.createValue("te"))
+            .build();
       model = newModel("com.ngc.seaside.threateval", "ThreatEvaluation");
       model.setMetadata(new Metadata().setJson(Json.createObjectBuilder()
-                                                        .add(MetadataNames.CODEGEN, codegen)
-                                                        .build()));
+                                                     .add(MetadataNames.CODEGEN, codegen)
+                                                     .build()));
 
       IProjectInformation name = service.getBaseServiceProjectName(options, model);
       assertEquals("groupId not correct!",
@@ -221,8 +221,8 @@ public class ProjectNamingServiceTest {
                    "te.base",
                    name.getArtifactId());
       assertEquals("directoryName not correct!",
-                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME +
-                   "/com.ngc.seaside.threateval.te.base",
+                   ProjectNamingService.DEFAULT_GENERATED_PROJECTS_DIRECTORY_NAME
+                         + "/com.ngc.seaside.threateval.te.base",
                    name.getDirectoryName());
       assertEquals("versionPropertyName not correct!",
                    "threatEvaluationBaseServiceVersion",
