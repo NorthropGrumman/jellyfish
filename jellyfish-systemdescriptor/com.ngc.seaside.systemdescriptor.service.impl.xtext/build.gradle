@@ -8,13 +8,13 @@ dependencies {
 
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
+   implementation "com.ngc.blocs:service.api:$blocsVersion"
    implementation "commons-io:commons-io:$commonsIOVersion"
    implementation "org.apache.maven:maven-model:$mavenVersion"
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
 
 jar {

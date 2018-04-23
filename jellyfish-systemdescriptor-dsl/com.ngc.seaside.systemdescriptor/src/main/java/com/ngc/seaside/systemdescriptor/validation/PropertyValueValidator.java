@@ -62,7 +62,7 @@ public class PropertyValueValidator extends AbstractUnregisteredSystemDescriptor
                   checkEnumValueIsValidConstant((EnumPropertyValue) value);
                   break;
                default:
-                     // Do nothing.
+                  // Do nothing.
             }
          } catch (AbortValidationDueToLinkingFailureException e) {
             // Do nothing. This exception is just used to short circuit the

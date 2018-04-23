@@ -2,8 +2,8 @@ dependencies {
     api project(":jellyfish.api")
     api project(":jellyfish.service.api")
 
-    api "com.ngc.blocs:api:$blocsCoreVersion"
-    api "com.ngc.blocs:service.api:$blocsCoreVersion"
+    api "com.ngc.blocs:api:$blocsVersion"
+    api "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"

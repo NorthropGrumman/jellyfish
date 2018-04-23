@@ -256,7 +256,7 @@ public class UnsetPropertiesValidator extends AbstractUnregisteredSystemDescript
     * @param model         model
     * @param getProperties function for getting the collection of properties from the model
     * @param <U>           the type of property (such as {@link PropertyFieldDeclaration} or
-    * {@link PropertyValueAssignment})
+    *                      {@link PropertyValueAssignment})
     * @return all of the model properties
     */
    private static <U> Collection<U> getAllProperties(Model model, Function<Properties, Collection<U>> getProperties) {

@@ -43,6 +43,7 @@ class RefinedLinkParsingTest {
             Models.ALARM,
             Models.CLOCK,
             Models.LINKED_CLOCK,
+            Models.SPEAKER,
             Datas.DATE_TIME
         )
         validationTester.assertNoIssues(requiredResources)
@@ -168,6 +169,38 @@ class RefinedLinkParsingTest {
         assertNotNull(
             "refinedLink not correct!",
             refinedLink.target
+        )
+    }
+    
+    @Test
+    def void testDoesParseRefinedModelWithNewLink(){
+        var source = '''
+			package clocks.models
+
+			import clocks.models.part.LinkedClock
+			import clocks.models.part.Speaker
+
+			model AlarmClock refines LinkedClock {
+
+				parts {
+					Speaker speaker
+				}
+
+				links {
+					link clock -> speaker
+				}
+			}
+        '''
+
+        var result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+
+        var model = result.element as Model
+        var link = model.links.declarations.get(0)
+        assertNotNull(
+        	"link not created!",
+        	link
         )
     }
 
