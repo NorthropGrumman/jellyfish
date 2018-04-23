@@ -3,8 +3,6 @@ package com.ngc.seaside.jellyfish.utilities.file;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,7 +42,7 @@ public class GradleSettingsUtilitiesTest {
       Files.createFile(settingsGradle);
 
       when(collection.getParameter("outputDirectory"))
-               .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
+            .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
       when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
       when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
@@ -72,7 +70,7 @@ public class GradleSettingsUtilitiesTest {
       Files.createFile(settingsGradle);
 
       when(collection.getParameter("outputDirectory"))
-               .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
+            .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
       when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
       when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
@@ -98,16 +96,18 @@ public class GradleSettingsUtilitiesTest {
 
       File outputDirectory = testFolder.newFolder("output");
 
-      when(collection.getParameter("outputDirectory")).thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
-      when(collection.getParameter("groupId"))        .thenReturn(createParameter("groupId",         "groupIdValue"));
-      when(collection.getParameter("artifactId"))     .thenReturn(createParameter("artifactId",      "artifactIdValue"));
+      when(collection.getParameter("outputDirectory"))
+            .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
+      when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
+      when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
       GradleSettingsUtilities.tryAddProject(collection);
    }
 
    @SuppressWarnings("unchecked")
    @Test
-   public void test_givenRelativePathOutputDirAndSettingsFileDoesntExist_whenTryAddProject_thenNoExceptionThrown() throws IOException, FileUtilitiesException {
+   public void test_givenRelativePathOutputDirAndSettingsFileDoesntExist_whenTryAddProject_thenNoExceptionThrown()
+         throws IOException, FileUtilitiesException {
       IParameterCollection collection = mock(IParameterCollection.class);
       when(collection.containsParameter("outputDirectory")).thenReturn(true);
       when(collection.containsParameter("groupId")).thenReturn(true);
@@ -115,16 +115,18 @@ public class GradleSettingsUtilitiesTest {
 
       File relativePathOutputDirectory = new File("tempRelativePath/");
 
-      when(collection.getParameter("outputDirectory")).thenReturn(createParameter("outputDirectory", relativePathOutputDirectory.getPath()));
-      when(collection.getParameter("groupId"))        .thenReturn(createParameter("groupId",         "groupIdValue"));
-      when(collection.getParameter("artifactId"))     .thenReturn(createParameter("artifactId",      "artifactIdValue"));
+      when(collection.getParameter("outputDirectory"))
+            .thenReturn(createParameter("outputDirectory", relativePathOutputDirectory.getPath()));
+      when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
+      when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
       GradleSettingsUtilities.tryAddProject(collection);
    }
 
    @SuppressWarnings("unchecked")
    @Test
-   public void test_givenAnOutputDirectoryWithNoParentOrSettingsFile_whenTryAddProject_thenNoExceptionThrown() throws Throwable {
+   public void test_givenAnOutputDirectoryWithNoParentOrSettingsFile_whenTryAddProject_thenNoExceptionThrown()
+         throws Throwable {
       IParameterCollection collection = mock(IParameterCollection.class);
       when(collection.containsParameter("outputDirectory")).thenReturn(true);
       when(collection.containsParameter("groupId")).thenReturn(true);
@@ -132,13 +134,14 @@ public class GradleSettingsUtilitiesTest {
 
       File relativePathOutputDirectory = new File("/");
 
-      when(collection.getParameter("outputDirectory")).thenReturn(createParameter("outputDirectory", relativePathOutputDirectory.getPath()));
-      when(collection.getParameter("groupId"))        .thenReturn(createParameter("groupId",         "groupIdValue"));
-      when(collection.getParameter("artifactId"))     .thenReturn(createParameter("artifactId",      "artifactIdValue"));
+      when(collection.getParameter("outputDirectory"))
+            .thenReturn(createParameter("outputDirectory", relativePathOutputDirectory.getPath()));
+      when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
+      when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
       GradleSettingsUtilities.tryAddProject(collection);
    }
-   
+
    @SuppressWarnings("unchecked")
    @Test
    public void doesAddProjectToParent() throws IOException, FileUtilitiesException {
@@ -152,7 +155,7 @@ public class GradleSettingsUtilitiesTest {
       when(collection.containsParameter("groupId")).thenReturn(true);
       when(collection.containsParameter("artifactId")).thenReturn(true);
       when(collection.getParameter("outputDirectory"))
-               .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
+            .thenReturn(createParameter("outputDirectory", outputDirectory.getAbsolutePath()));
       when(collection.getParameter("groupId")).thenReturn(createParameter("groupId", "groupIdValue"));
       when(collection.getParameter("artifactId")).thenReturn(createParameter("artifactId", "artifactIdValue"));
 
@@ -163,7 +166,8 @@ public class GradleSettingsUtilitiesTest {
       assertEquals(3, lines.size());
 
       assertTrue(lines.contains(""));
-      assertTrue(lines.stream().collect(Collectors.joining("\n")), lines.contains("include 'output2/groupIdValue.artifactIdValue'"));
+      assertTrue(lines.stream().collect(Collectors.joining("\n")),
+                 lines.contains("include 'output2/groupIdValue.artifactIdValue'"));
       assertTrue(lines.contains("project(':output2/groupIdValue.artifactIdValue').name = 'artifactIdValue'"));
    }
 

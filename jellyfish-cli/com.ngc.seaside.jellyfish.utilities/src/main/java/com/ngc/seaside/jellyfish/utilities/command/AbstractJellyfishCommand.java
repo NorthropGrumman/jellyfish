@@ -36,7 +36,6 @@ import java.nio.file.Paths;
  *    <li>{@link #unpackSuffixedTemplate(String, IParameterCollection, Path, boolean)} </li>
  * </ol>
  * </pre>
- *
  * <p/>
  * Commands that deal with multiple {@link JellyfishCommandPhase phases} may extend {@link
  * AbstractMultiphaseJellyfishCommand}.
@@ -210,7 +209,6 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     * automatically place a parameter named {@link #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE} in the parameter
     * collection.  The value of this parameter is a {@link BuildManagementHelper} object which can be used by a template
     * to interact with the {@link IBuildManagementService}.
-    *
     * <p/>
     * Use this operation when the command only has a single template.  Use {@link #unpackSuffixedTemplate(String,
     * IParameterCollection, Path, boolean)} if this command has multiple templates.
@@ -237,7 +235,6 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     * operation will automatically place a parameter named {@link #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE} in the
     * parameter collection.  The value of this parameter is a {@link BuildManagementHelper} object which can be used by
     * a template to interact with the {@link IBuildManagementService}.
-    *
     * <p/>
     * This operation is used when a command has multiple templates under a {@code src/main/templates} directory.
     *
@@ -274,7 +271,8 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       }
 
       /**
-       * Gets a string that describes the given dependency in the format {@code groupId:artifactId:$versionPropertyName}.
+       * Gets a string that describes the given dependency in the format
+       * {@code groupId:artifactId:$versionPropertyName}.
        *
        * @return a string that describes the given dependency
        */
