@@ -3,19 +3,20 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
@@ -66,16 +67,19 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    private static IUsage createUsage() {
       return new DefaultUsage("Generates a requirements verification matrix for a given model stereotype.",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
-                                       "Allows the user to define the output format. The possible values are default and csv.")
-                                       .setRequired(false),
+                                    "Allows the user to define the output format. "
+                                    + "The possible values are default and csv.")
+                                    .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                       "Allows the user to define the file where the output will be stored. Default: prints to stdout."),
+                                    "Allows the user to define the file where the output will be stored. "
+                                    + "Default: prints to stdout."),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
-                                       "The values in which to search as a comma separated string. Default: service.")
-                                       .setRequired(false),
+                                    "The values in which to search as a comma separated string. Default: service.")
+                                    .setRequired(false),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
-                                       "AND, OR, NOT: determines if the items be AND'd together or OR'd together. Default: OR.")
-                                       .setRequired(false));
+                                    "AND, OR, NOT: determines if the items be AND'd together or OR'd together. "
+                                    + "Default: OR.")
+                                    .setRequired(false));
    }
 
    /**
@@ -157,21 +161,24 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
       Collection<IModel> models = searchModels(commandOptions, values, operator);
-      
-      Map<Path, IFeatureInformation> features = featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
-      ArrayList<String> fullyQualifiedFeatureNameList = new ArrayList<String>();   
+
+      Map<Path, IFeatureInformation>
+            features =
+            featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
+      ArrayList<String> fullyQualifiedFeatureNameList = new ArrayList<String>();
       for (Entry<Path, IFeatureInformation> featureInfo : features.entrySet()) {
          fullyQualifiedFeatureNameList.add(featureInfo.getValue().getFullyQualifiedName());
       }
       Collections.sort(fullyQualifiedFeatureNameList, Collections.reverseOrder());
-      
+
       Collection<Requirement> satisfiedRequirements = verifyRequirements(commandOptions, models, features);
 
       String report;
       if (outputFormat.equalsIgnoreCase("csv")) {
          report = generateCsvVerificationMatrix(satisfiedRequirements, fullyQualifiedFeatureNameList);
       } else {
-         report = String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, fullyQualifiedFeatureNameList));
+         report =
+               String.valueOf(generateDefaultVerificationMatrix(satisfiedRequirements, fullyQualifiedFeatureNameList));
       }
 
       if (outputPath == null) {
@@ -241,32 +248,36 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    /**
     * Verifies which feature files meets which requirement.
     *
-    * @param models     models to search through for requirements
+    * @param models   models to search through for requirements
     * @param features features to look for
     * @return returns a Collection of {@link Requirement}s
     */
-   private Collection<Requirement> verifyRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models, Map<Path, IFeatureInformation> features) {
+   private Collection<Requirement> verifyRequirements(IJellyFishCommandOptions commandOptions,
+                                                      Collection<IModel> models,
+                                                      Map<Path, IFeatureInformation> features) {
       TreeMultimap<String, String>
-               requirementsMap =
-               TreeMultimap.create(Ordering.natural().reverse(), Ordering.natural());
+            requirementsMap =
+            TreeMultimap.create(Ordering.natural().reverse(), Ordering.natural());
 
       features.forEach((featureFileName, featureInfo) -> {
-         IModel model = models.stream().filter(aModel -> featureInfo.getFullyQualifiedName().startsWith(aModel.getName()))
-                  .findAny().orElse(null);
+         IModel
+               model =
+               models.stream().filter(aModel -> featureInfo.getFullyQualifiedName().startsWith(aModel.getName()))
+                     .findAny().orElse(null);
 
          if (model != null) {
 
             IScenario scenario = model.getScenarios().getByName(featureInfo.getName()).orElse(null);
-            
+
             // A feature file should be considered to verify a requirement:
             if (scenario != null) {
-               
-              for (String scenarioReq : requirementsService.getRequirements(commandOptions, scenario)) {
-                 requirementsMap.put(scenarioReq, featureInfo.getFullyQualifiedName());
-              }        
-              for (String modelReq : requirementsService.getRequirements(commandOptions, model)) {
-                 requirementsMap.put(modelReq, featureInfo.getFullyQualifiedName());
-              }
+
+               for (String scenarioReq : requirementsService.getRequirements(commandOptions, scenario)) {
+                  requirementsMap.put(scenarioReq, featureInfo.getFullyQualifiedName());
+               }
+               for (String modelReq : requirementsService.getRequirements(commandOptions, model)) {
+                  requirementsMap.put(modelReq, featureInfo.getFullyQualifiedName());
+               }
             }
          }
       });
@@ -316,7 +327,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -327,13 +340,15 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-   
+
    /**
     * Sets feature service.
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFeatureService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeFeatureService")
    public void setFeatureService(IFeatureService ref) {
       this.featureService = ref;
    }
@@ -344,13 +359,15 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
    public void removeFeatureService(IFeatureService ref) {
       setFeatureService(null);
    }
-   
+
    /**
     * Sets requirements service.
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeRequirementsService")
    public void setRequirementsService(IRequirementsService ref) {
       this.requirementsService = ref;
    }
