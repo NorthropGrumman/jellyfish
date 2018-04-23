@@ -24,19 +24,19 @@ import javax.json.JsonValue;
 public class RequirementsService implements IRequirementsService {
 
    static final String REQUIREMENTS_KEY = "satisfies";
-   
+
    private ILogService logService;
-   
-   
+
+
    @Override
    public Set<String> getRequirements(IJellyFishCommandOptions options, IMetadata metadata) {
-      
+
       JsonValue value = metadata.getJson().get(REQUIREMENTS_KEY);
-      
+
       if (value instanceof JsonString) {
          return Collections.singleton(((JsonString) value).getString());
       }
-      
+
       if (value instanceof JsonArray) {
          Set<String> requirements = new TreeSet<>();
          for (JsonValue element : (JsonArray) value) {
@@ -48,14 +48,14 @@ public class RequirementsService implements IRequirementsService {
          }
          return requirements;
       }
-      
+
       if (value != null) {
          logService.warn(RequirementsService.class, "Invalid requirement value: " + value);
       }
-      
+
       return Collections.emptySet();
    }
-   
+
    @Activate
    public void activate() {
       logService.debug(getClass(), "activated");
@@ -66,7 +66,9 @@ public class RequirementsService implements IRequirementsService {
       logService.debug(getClass(), "deactivated");
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }

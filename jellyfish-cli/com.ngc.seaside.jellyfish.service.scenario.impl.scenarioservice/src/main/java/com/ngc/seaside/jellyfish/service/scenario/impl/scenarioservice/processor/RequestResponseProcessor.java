@@ -23,6 +23,12 @@ public class RequestResponseProcessor {
       return getFlow(scenario).isPresent();
    }
 
+   /**
+    * Parses a scenario to determine the messaging flow.  Please note the comment block in the method.
+    *
+    * @param scenario the scenario
+    * @return an optional request response messaging flow
+    */
    public Optional<IRequestResponseMessagingFlow> getFlow(IScenario scenario) {
       Optional<IRequestResponseMessagingFlow> flow = Optional.empty();
 
