@@ -31,9 +31,7 @@ import java.util.stream.Collectors;
  * A stateful implementation of the {@code IBuildManagementService}.  Unlike most services, a new instance of this
  * service should be used for each generation of project in Jellyfish.  Since Jellyfish only generates a single project
  * per execution, this works fine.
- *
  * <p/>
- *
  * Dependencies and versions are configured by {@link DefaultDependenciesConfiguration}.  That configuration can
  * reference any property declared in {@link #BUILD_PROPERTIES_FILE} as this file will be loaded from the classpath on
  * activation.  This file typically has properties that are set during the build of Jellyfish.
@@ -74,8 +72,8 @@ public class BuildManagementService implements IBuildManagementService {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scope, "scope may not be null!");
       return registeredArtifacts.stream()
-                                .filter(d -> d.getScope() == scope)
-                                .collect(Collectors.toList());
+            .filter(d -> d.getScope() == scope)
+            .collect(Collectors.toList());
    }
 
    @Override
@@ -103,17 +101,17 @@ public class BuildManagementService implements IBuildManagementService {
       Preconditions.checkArgument(!artifactId.trim().isEmpty(), "artifactId may not be empty!");
 
       return config.getGroups()
-                   .stream()
-                   .flatMap(g -> g.getArtifacts().stream())
-                   .filter(a -> a.getGroupId().equalsIgnoreCase(groupId) && a.getArtifactId()
-                                                                             .equalsIgnoreCase(artifactId))
-                   .findAny()
-                   .orElseThrow(() -> new IllegalArgumentException(
-                         String.format(
-                               "no information for %s:%s configured; "
-                               + "add configuration to the DefaultDependenciesConfiguration class in buildmgmtservice.",
-                               groupId,
-                               artifactId)));
+            .stream()
+            .flatMap(g -> g.getArtifacts().stream())
+            .filter(a -> a.getGroupId().equalsIgnoreCase(groupId) && a.getArtifactId()
+                  .equalsIgnoreCase(artifactId))
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException(
+                  String.format(
+                        "no information for %s:%s configured; "
+                              + "add configuration to the DefaultDependenciesConfiguration class in buildmgmtservice.",
+                        groupId,
+                        artifactId)));
 
    }
 
