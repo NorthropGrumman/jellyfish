@@ -74,8 +74,8 @@ dependencies {
    sdPlugins project(":systemdescriptor.service.api")
    sdPlugins project(":systemdescriptor.model.impl.basic")
 
-   sdPlugins "com.ngc.blocs:api:$blocsCoreVersion"
-   sdPlugins "com.ngc.blocs:service.api:$blocsCoreVersion"
+   sdPlugins "com.ngc.blocs:api:$blocsVersion"
+   sdPlugins "com.ngc.blocs:service.api:$blocsVersion"
    sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
 
    guava "com.google.guava:guava:$guavaVersion"

@@ -137,14 +137,18 @@ pipeline {
             expression { params.upload || (env.BRANCH_NAME == 'master' && params.performRelease) }
          }
          steps {
-            dir('jellyfish-systemdescriptor-dsl') {
-               sh '../gradlew upload'
-            }
-            dir('jellyfish-systemdescriptor') {
-               sh '../gradlew upload'
-            }
-            dir('jellyfish-cli') {
-               sh '../gradlew upload'
+            withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
+                                              passwordVariable: 'nexusPassword',
+                                              usernameVariable: 'nexusUsername')]) {
+               dir('jellyfish-systemdescriptor-dsl') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+               dir('jellyfish-systemdescriptor') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+               dir('jellyfish-cli') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
             }
          }
       }
@@ -156,7 +160,7 @@ pipeline {
          steps {
             // Finish up the release.
             dir('jellyfish-systemdescriptor-dsl') {
-               sh './gradlew bumpTheVersion'
+               sh '../gradlew bumpTheVersion'
                script {
                   try {
                      // This allows us to run Git commands with the credentials from Jenkins.  See
