@@ -1,5 +1,5 @@
 dependencies {
-   api "com.ngc.blocs:service.api:$blocsCoreVersion"
+   api "com.ngc.blocs:service.api:$blocsVersion"
 
    implementation "log4j:log4j:$log4jVersion"
    implementation "com.google.inject:guice:$guiceVersion"

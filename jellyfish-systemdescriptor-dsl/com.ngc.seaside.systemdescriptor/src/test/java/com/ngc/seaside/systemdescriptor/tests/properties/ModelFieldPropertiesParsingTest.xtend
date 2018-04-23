@@ -40,6 +40,7 @@ class ModelFieldPropertiesParsingTest {
 			resourceHelper,
 			Models.CLOCK,
 			Models.LINKED_CLOCK,
+			Models.WIRED_SPEAKER,
 			Datas.ZONED_TIME
 		)
 		validationTester.assertNoIssues(requiredResources)
@@ -244,6 +245,51 @@ class ModelFieldPropertiesParsingTest {
         
     }
     
+    @Test
+    def void testDoesParseModelWithPartPropertiesDirectlyFromModel() {
+    	val source = '''
+            package clocks.models
+            
+            import clocks.models.part.WiredSpeaker
+            
+            model MyModel {
+                parts {
+                    WiredSpeaker speaker {
+                    	properties {
+                    		wireGauge = 19
+                    	}
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
+    
+    @Test
+    def void testDoesParseModelWithRequirementPropertiesDirectlyFromModel() {
+    	val source = '''
+            package clocks.models
+            
+            import clocks.models.part.WiredSpeaker
+            
+            model MyModel {
+                requires {
+                    WiredSpeaker speaker {
+                    	properties {
+                    		wireGauge = 19
+                    	}
+                    }
+                }
+            }
+        '''
+
+        val result = parseHelper.parse(source, requiredResources.resourceSet)
+        assertNotNull(result)
+        validationTester.assertNoIssues(result)
+    }
 
 	@Test
 	def void testDoesNotParseModelWithInputProperties() {

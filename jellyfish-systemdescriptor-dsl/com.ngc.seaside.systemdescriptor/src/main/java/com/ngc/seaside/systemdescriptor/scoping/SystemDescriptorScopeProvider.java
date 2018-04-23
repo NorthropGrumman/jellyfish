@@ -3,8 +3,6 @@ package com.ngc.seaside.systemdescriptor.scoping;
 import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
@@ -18,7 +16,6 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpressionPathSegment;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedPropertyFieldDeclaration;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 import com.ngc.seaside.systemdescriptor.utils.SdUtils;
@@ -111,7 +108,7 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
     */
    public IScope scope_FieldReference_fieldDeclaration(FieldReference context, EReference reference) {
       IScope scope;
-      if (context.eContainer() instanceof RefinedLinkDeclaration) {
+      if (context.eContainer() instanceof LinkDeclaration) {
          // This indicates the source or target of a link is directly
          // referencing an input or output. In the example below "a",
          // is the current context.
@@ -156,16 +153,16 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       // can declare other models as fields. Input and output must declare
       // data as fields. Since we can't yet reference the contents of data,
       // we don't have to worry about referencing input or output.
-      if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_REQUIRE_DECLARATION)) {
-         BaseRequireDeclaration casted = (BaseRequireDeclaration) fieldDeclaration;
+      if (fieldDeclaration instanceof RequireDeclaration) {
+         RequireDeclaration casted = (RequireDeclaration) fieldDeclaration;
          // Include all field declarations of the referenced model in the
          // scope.
-         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
-      } else if (fieldDeclaration.eClass().equals(SystemDescriptorPackage.Literals.BASE_PART_DECLARATION)) {
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfRequireDeclaration(casted)));
+      } else if (fieldDeclaration instanceof PartDeclaration) {
          // Include all field declarations of the referenced model in the
          // scope.
-         BasePartDeclaration casted = (BasePartDeclaration) fieldDeclaration;
-         scope = Scopes.scopeFor(getLinkableFieldsFrom(casted.getType()));
+         PartDeclaration casted = (PartDeclaration) fieldDeclaration;
+         scope = Scopes.scopeFor(getLinkableFieldsFrom(SdUtils.getTypeOfPartDeclaration(casted)));
       } else {
          // Otherwise, do the default behavior.
          scope = delegateGetScope(context, reference);
@@ -310,6 +307,12 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          }
       });
 
+      // Get properties declared on the model of the part itself.
+      Model type = SdUtils.getTypeOfPartDeclaration(part);
+      if (type.getProperties() != null) {
+         propertyDeclarations.addAll(type.getProperties().getDeclarations());
+      }
+
       return Scopes.scopeFor(propertyDeclarations);
    }
 
@@ -336,6 +339,12 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
             }
          }
       });
+
+      // Get properties declared on the model of the requirement itself.
+      Model type = SdUtils.getTypeOfRequireDeclaration(requirement);
+      if (type.getProperties() != null) {
+         propertyDeclarations.addAll(type.getProperties().getDeclarations());
+      }
 
       return Scopes.scopeFor(propertyDeclarations);
    }

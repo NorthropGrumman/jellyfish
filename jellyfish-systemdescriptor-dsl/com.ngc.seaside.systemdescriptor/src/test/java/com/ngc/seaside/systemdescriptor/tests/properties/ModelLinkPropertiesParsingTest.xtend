@@ -106,6 +106,11 @@ class ModelLinkPropertiesParsingTest {
 			import clocks.models.part.LinkedClock
 			
 			model BigClock refines LinkedClock {
+				
+				parts {
+					refine clockA {
+					}
+				}
 			
 				links {
 					refine namedLink {

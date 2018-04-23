@@ -34,7 +34,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureSeasideGradlePlugins(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("seasidePluginsVersion")
-            .version("2.3.0")
+            .version("2.7.0")
             .includes(artifact("gradle.plugins")
                             .groupId("com.ngc.seaside")
                             .scope(DependencyScope.BUILDSCRIPT));
@@ -124,7 +124,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureProtoBuffers(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("protobufPluginVersion")
-            .version("0.8.3")
+            .version("0.8.5")
             .includes(artifact("protobuf-gradle-plugin")
                             .groupId("com.google.protobuf")
                             .scope(DependencyScope.BUILDSCRIPT));
