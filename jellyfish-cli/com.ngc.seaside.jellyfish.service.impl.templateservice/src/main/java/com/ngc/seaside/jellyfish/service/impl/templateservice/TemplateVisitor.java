@@ -1,8 +1,7 @@
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import com.google.common.base.Preconditions;
+
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
 
 import org.apache.velocity.VelocityContext;
@@ -26,10 +25,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 /**
  * Class for generating an instance of a template
  */
 public class TemplateVisitor extends SimpleFileVisitor<Path> {
+
    private final VelocityEngine engine = new VelocityEngine();
    private final VelocityContext context = new VelocityContext();
    private final Path outputFolder;
@@ -105,7 +107,6 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
 
    /**
     * {@inheritDoc}
-    *
     * Creates the output folder
     *
     * @param path                the output path
@@ -138,7 +139,6 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
 
    /**
     * {@inheritDoc}
-    *
     * Replaces the tokens in a given file based on a customized context using velocity engine.
     *
     * @param path                the output path
@@ -154,9 +154,9 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
          Files.copy(path, outputFile, REPLACE_EXISTING);
       } else {
          try (Writer writer = Files.newBufferedWriter(outputFile);
-              Reader reader = Files.newBufferedReader(path)) {
+               Reader reader = Files.newBufferedReader(path)) {
             engine.evaluate(context, writer, "", reader);
-         } catch(Exception e) {
+         } catch (Exception e) {
             throw new TemplateServiceException("Failed to parse velocity file " + path, e);
          }
       }
@@ -199,13 +199,13 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
       if (templateIgnoreComponent.contains(input)) {
          String path = templateIgnoreComponent.getKey(input);
          Matcher m = Pattern.compile("\\[([^)]+)]").matcher(path);
-         while(m.find()) {
-            String value = String.format("[%s]",  m.group(1));
+         while (m.find()) {
+            String value = String.format("[%s]", m.group(1));
             StringWriter stringWriter = new StringWriter();
 
             try {
                engine.evaluate(context, stringWriter, "evaluate output", m.group(1));
-            } catch(Exception e) {
+            } catch (Exception e) {
                throw new TemplateServiceException("Failed to parse file " + input + " in velocity", e);
             }
             path = path.replace(value, stringWriter.toString());
