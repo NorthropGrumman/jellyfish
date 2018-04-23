@@ -37,7 +37,8 @@ public interface IScenarioService {
    /**
     * Gets the request/response messaging flow that the given scenario declares or {@link Optional#empty()} if the
     * scenario does not detail with request or response. The flow is either a {@link
-    * IRequestResponseMessagingFlow.FlowType#CLIENT client flow} or a {@link IRequestResponseMessagingFlow.FlowType#SERVER
+    * IRequestResponseMessagingFlow.FlowType#CLIENT client flow} or a
+    * {@link IRequestResponseMessagingFlow.FlowType#SERVER
     * server flow}.
     *
     * @param options  the options the current command is being executed with
@@ -45,7 +46,7 @@ public interface IScenarioService {
     * @return the request/response messaging flow that the given scenario declares
     */
    Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(IJellyFishCommandOptions options,
-                                                                            IScenario scenario);
+                                                                           IScenario scenario);
 
    /**
     * Gets a collection of timing constraints that have been applied to the given scenario.

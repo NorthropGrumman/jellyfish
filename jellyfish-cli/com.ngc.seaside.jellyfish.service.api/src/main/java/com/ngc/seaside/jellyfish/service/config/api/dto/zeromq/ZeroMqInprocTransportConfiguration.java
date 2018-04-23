@@ -28,7 +28,7 @@ public class ZeroMqInprocTransportConfiguration extends ZeroMqConfiguration {
       }
       ZeroMqInprocTransportConfiguration that = (ZeroMqInprocTransportConfiguration) o;
       return Objects.equal(this.getConnectionType(), that.getConnectionType())
-         && Objects.equal(this.getAddressName(), that.getAddressName());
+            && Objects.equal(this.getAddressName(), that.getAddressName());
    }
 
    @Override
@@ -38,8 +38,8 @@ public class ZeroMqInprocTransportConfiguration extends ZeroMqConfiguration {
 
    @Override
    public String toString() {
-      return "ZeroMqInprocTransportConfiguration[connectionType=" + this.getConnectionType() +
-         ",groupAddress=" + this.getAddressName() +
-         "]";
+      return "ZeroMqInprocTransportConfiguration[connectionType=" + this.getConnectionType()
+            + ",groupAddress=" + this.getAddressName()
+            + "]";
    }
 }

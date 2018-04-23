@@ -24,7 +24,7 @@ import java.util.Queue;
 public class DataService implements IDataService {
 
    private IPackageNamingService packageNamingService;
-   
+
    @Override
    public Map<INamedChild<IPackage>, Boolean> aggregateNestedFields(Collection<? extends IData> data) {
       Queue<IData> queue = new ArrayDeque<>(data);
@@ -43,26 +43,26 @@ public class DataService implements IDataService {
          }
          for (IDataField field : next.getFields()) {
             switch (field.getType()) {
-            case DATA:
-               IData dataField = field.getReferencedDataType();
-               Boolean previous = map.put(dataField, true);
-               if (previous == null) {
-                  queue.add(dataField);
-               }
-               break;
-            case ENUM:
-               IEnumeration enumField = field.getReferencedEnumeration();
-               map.put(enumField, true);
-               break;
-            default:
-               break;
+               case DATA:
+                  IData dataField = field.getReferencedDataType();
+                  Boolean previous = map.put(dataField, true);
+                  if (previous == null) {
+                     queue.add(dataField);
+                  }
+                  break;
+               case ENUM:
+                  IEnumeration enumField = field.getReferencedEnumeration();
+                  map.put(enumField, true);
+                  break;
+               default:
+                  break;
             }
          }
       }
 
       return map;
    }
-   
+
 
    @Override
    public TypeDto<?> getEventClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
@@ -71,7 +71,7 @@ public class DataService implements IDataService {
       dto.setTypeName(data.getName());
       return dto;
    }
-   
+
 
    @Override
    public TypeDto<?> getMessageClass(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
@@ -80,7 +80,7 @@ public class DataService implements IDataService {
       dto.setTypeName(data.getName());
       return dto;
    }
-   
+
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageNamingService = ref;

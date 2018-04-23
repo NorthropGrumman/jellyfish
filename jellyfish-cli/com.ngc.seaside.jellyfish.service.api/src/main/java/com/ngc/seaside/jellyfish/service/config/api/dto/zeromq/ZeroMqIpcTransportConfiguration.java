@@ -29,7 +29,7 @@ public class ZeroMqIpcTransportConfiguration extends ZeroMqConfiguration {
       }
       ZeroMqIpcTransportConfiguration that = (ZeroMqIpcTransportConfiguration) o;
       return Objects.equal(this.getConnectionType(), that.getConnectionType())
-         && Objects.equal(this.getPath(), that.getPath());
+            && Objects.equal(this.getPath(), that.getPath());
    }
 
    @Override
@@ -39,8 +39,8 @@ public class ZeroMqIpcTransportConfiguration extends ZeroMqConfiguration {
 
    @Override
    public String toString() {
-      return "ZeroMqIpcTransportConfiguration[connectionType=" + this.getConnectionType() +
-         ",groupAddress=" + this.getPath() +
-         "]";
+      return "ZeroMqIpcTransportConfiguration[connectionType=" + this.getConnectionType()
+            + ",groupAddress=" + this.getPath()
+            + "]";
    }
 }
