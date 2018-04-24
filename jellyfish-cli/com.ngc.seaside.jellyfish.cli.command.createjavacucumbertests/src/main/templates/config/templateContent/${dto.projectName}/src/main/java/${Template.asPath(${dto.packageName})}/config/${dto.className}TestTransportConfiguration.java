@@ -1,13 +1,13 @@
-package com.test.model.tests.config;
+package ${dto.packageName}.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.test.model.transport.topic.ModelTransportTopics;
+import ${dto.transportTopicsClass};
 
-public class ModelTestConfiguration{
+public class ${dto.className}TestTransportConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class ModelTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public ModelTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ${dto.className}TestTransportConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

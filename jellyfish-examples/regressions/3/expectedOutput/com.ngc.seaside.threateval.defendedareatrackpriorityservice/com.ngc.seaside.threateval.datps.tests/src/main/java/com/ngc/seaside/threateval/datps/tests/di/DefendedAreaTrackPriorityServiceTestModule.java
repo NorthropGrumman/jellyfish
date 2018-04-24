@@ -2,7 +2,7 @@ package com.ngc.seaside.threateval.datps.tests.di;
 
 import com.google.inject.AbstractModule;
 
-import com.ngc.seaside.threateval.datps.testsconfig.DefendedAreaTrackPriorityServiceTestConfiguration;
+import com.ngc.seaside.threateval.datps.testsconfig.DefendedAreaTrackPriorityServiceTestTransportConfiguration;
 
 /**
  * This module configures Guice bindings for the DefendedAreaTrackPriorityService steps.
@@ -11,6 +11,6 @@ public class DefendedAreaTrackPriorityServiceTestModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(DefendedAreaTrackPriorityServiceTestConfiguration.class).asEagerSingleton();
+      bind(DefendedAreaTrackPriorityServiceTestTransportConfiguration.class).asEagerSingleton();
    }
 }
