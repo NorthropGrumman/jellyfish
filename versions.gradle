@@ -1,10 +1,10 @@
 allprojects {
     group = 'com.ngc.seaside'
-    version = '2.4.0-SNAPSHOT'
+    version = '2.5.0-SNAPSHOT'
 
     ext {
         blocsPluginVersion = '0.5'
-        seasidePluginsVersion = '2.7.0'
+        seasidePluginsVersion = '2.8.0'
         sonarqubePluginVersion = '2.5'
         xtextPluginVersion = '1.0.15'
 
