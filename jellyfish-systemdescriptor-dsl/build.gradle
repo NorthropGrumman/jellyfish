@@ -151,16 +151,13 @@ subprojects {
 }
 
 ext {
-    eclipseLinuxVersion = 'eclipse-dsl-oxygen-2-linux-gtk-x86_64'
-    eclipseWindowsVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
+    linuxEclipseVersion = "eclipse-dsl-oxygen-2-linux-gtk-x86_64"
+    windowsEclipseVersion = "eclipse-dsl-oxygen-2-win32-x86_64"
+    linuxDownloadUrl = "http://10.207.42.135:8188/${linuxEclipseVersion}.zip"
+    windowsDownloadUrl = "http://10.207.42.135:8188/${windowsEclipseVersion}.zip"
 
-    eclipseVersion = OperatingSystem.current().isLinux() ? eclipseLinuxVersion : eclipseWindowsVersion
-
-    // This is the location where the Eclipse download will be unzipped to.
-    // Note this name may change if the download URL changes to a different version of Eclipse.
-    eclipseInstallationDirectory = "${gradle.gradleUserHomeDir.absolutePath}/caches/eclipse/$eclipseVersion"
-
-    // This is the location of the Eclipse we use when compiling and building the
-    // update site.
-    eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+    // We do this because the UI project needs to reference dependencies in the Eclipse plugins directory.
+    eclipseVersion = OperatingSystem.current().isLinux() ? linuxEclipseVersion : windowsEclipseVersion
+    // This is the default cache location when the update site plugin needs to download Eclipse.
+    eclipsePluginsDirectory = "${gradle.gradleUserHomeDir.absolutePath}/caches/eclipse/$eclipseVersion/plugins"
 }
