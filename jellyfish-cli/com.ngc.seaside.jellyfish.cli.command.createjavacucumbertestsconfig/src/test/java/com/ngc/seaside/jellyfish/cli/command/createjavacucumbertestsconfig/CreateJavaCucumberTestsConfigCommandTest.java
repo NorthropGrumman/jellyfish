@@ -207,7 +207,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastTestsConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -238,7 +238,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                          "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       Path restFile = srcDir.resolve("TrackPriorityServiceHttpClientTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -285,7 +285,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
@@ -308,7 +308,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                       "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
-      configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       multicastFile = srcDir.resolve("TrackPriorityServiceZeroMqTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
