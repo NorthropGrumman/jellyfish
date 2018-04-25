@@ -41,9 +41,9 @@ subprojects {
         apply plugin: 'org.xtext.xtend'
         apply plugin: 'com.ngc.seaside.checkstyle'
     } else if(name == 'systemdescriptor.feature') {
-        // Don't apply any parent plugins.
+        apply plugin: 'com.ngc.seaside.eclipse.feature'
     } else if(name == 'systemdescriptor.updatesite') {
-        // Don't apply any parent plugins.
+        apply plugin: 'com.ngc.seaside.eclipse.updatesite'
     } else {
         // Apply XText plugins.
         apply plugin: 'eclipse'
@@ -63,14 +63,14 @@ subprojects {
         configurations.all {
             exclude group: 'asm'
         }
-		
-		clean.doFirst {
-		    delete file('src/main/xtend-gen')
-		    delete file('src/main/xtext-gen')
-		    delete file('src/test/xtend-gen')
-		    delete file('src/test/xtext-gen')
-		    delete file('plugin.xml_gen')
-		}
+
+    clean.doFirst {
+        delete file('src/main/xtend-gen')
+        delete file('src/main/xtext-gen')
+        delete file('src/test/xtend-gen')
+        delete file('src/test/xtext-gen')
+        delete file('plugin.xml_gen')
+    }
 
         repositories {
             mavenLocal()
@@ -150,19 +150,15 @@ subprojects {
     }
 }
 
-
 ext {
     eclipseLinuxVersion = 'eclipse-dsl-oxygen-2-linux-gtk-x86_64'
     eclipseWindowsVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
 
-    eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
+    eclipseVersion = OperatingSystem.current().isLinux() ? eclipseLinuxVersion : eclipseWindowsVersion
 
-    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
-    eclipseDownloadUrl = "http://10.207.42.135:8188/${eclipseVersion}.zip"
     // The cache location of downloaded files.
     eclipseCache = '../.gradle/eclipse'
-    // The local file to save the ZIP to.
-    eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
+
     // This is the location where the Eclipse download will be unzipped to.
     // Note this name may change if the download URL changes to a different version of Eclipse.
     eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
@@ -170,29 +166,4 @@ ext {
     // This is the location of the Eclipse we use when compiling and building the
     // update site.
     eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
-
-    // This is the location of the Eclispe exe we use to create the update site
-    // metadata.
-    eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
-}
-
-task downloadEclipse() {
-    doLast {
-        def destFile = file("$eclipseDownloadDestFile")
-        destFile.getParentFile().mkdirs()
-        println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
-        new URL("$eclipseDownloadUrl").withInputStream { is ->
-            destFile.withOutputStream { it << is  }
-        }
-    }
-}
-downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
-
-task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
-   from zipTree(file("$eclipseDownloadDestFile"))
-   into "$eclipseCache"
-}
-unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
-
-task build(dependsOn: unzipEclipse) {
 }
