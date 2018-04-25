@@ -203,20 +203,26 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       }
    }
 
-   private BasicServerReqResDto getBasicReqResMethod(IScenario scenario,
+   private Optional<BasicServerReqResDto> getBasicReqResMethod(IScenario scenario,
                                                      IRequestResponseMessagingFlow flow,
                                                      BaseServiceDto dto,
                                                      IJellyFishCommandOptions options) {
+
+      if (flow.getInput() == null || flow.getOutput() == null) {
+         return Optional.empty();
+      }
+
       BasicServerReqResDto reqRes = new BasicServerReqResDto();
       reqRes.setScenarioName(scenario.getName());
       reqRes.setServiceMethod(scenario.getName());
-      reqRes.setName(scenario.getName());
+      reqRes.setName("do" + StringUtils.capitalize(scenario.getName()));
 
       reqRes.setInput(getInputDto(flow.getInput(), dto, options));
       reqRes.setOutput(getPublishDto(flow.getOutput(), dto, options));
 
-      return reqRes;
+      return Optional.of(reqRes);
    }
+
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options,
                                   Collection<IDataReferenceField> inputs) {
