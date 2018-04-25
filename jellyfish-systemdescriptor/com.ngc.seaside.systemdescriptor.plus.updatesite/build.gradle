@@ -11,7 +11,7 @@ ext {
    eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
 
    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
-   eclipseDownloadUrl = "http://10.207.42.135:8188/${eclipseVersion}.zip"
+   eclipseDownloadUrl = "http://10.207.42.137/resources/jellyfish/${eclipseVersion}.zip"
    // The cache location of downloaded files.
    eclipseCache = '../../.gradle/eclipse'
    // The local file to save the ZIP to.
