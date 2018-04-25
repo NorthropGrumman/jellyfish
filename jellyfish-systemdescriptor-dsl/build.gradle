@@ -156,12 +156,9 @@ ext {
 
     eclipseVersion = OperatingSystem.current().isLinux() ? eclipseLinuxVersion : eclipseWindowsVersion
 
-    // The cache location of downloaded files.
-    eclipseCache = '../.gradle/eclipse'
-
     // This is the location where the Eclipse download will be unzipped to.
     // Note this name may change if the download URL changes to a different version of Eclipse.
-    eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
+    eclipseInstallationDirectory = file("${gradle.gradleUserHomeDir.absolutePath}/$eclipseVersion").absolutePath
 
     // This is the location of the Eclipse we use when compiling and building the
     // update site.
