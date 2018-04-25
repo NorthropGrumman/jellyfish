@@ -158,7 +158,7 @@ ext {
 
     // This is the location where the Eclipse download will be unzipped to.
     // Note this name may change if the download URL changes to a different version of Eclipse.
-    eclipseInstallationDirectory = file("${gradle.gradleUserHomeDir.absolutePath}/$eclipseVersion").absolutePath
+    eclipseInstallationDirectory = "${gradle.gradleUserHomeDir.absolutePath}/caches/eclipse/$eclipseVersion"
 
     // This is the location of the Eclipse we use when compiling and building the
     // update site.
