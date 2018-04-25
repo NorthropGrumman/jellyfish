@@ -74,16 +74,16 @@ public class ModelUtils {
 
       // Tolerate either a single value or an array of values.
       switch (value.getValueType()) {
-      case ARRAY:
-         JsonArray array = (JsonArray) value;
-         for (int i = 0; i < array.size(); i++) {
-            requirements.add(array.getString(i));
-         }
-         break;
-      case STRING:
-         requirements.add(((JsonString) value).getString());
-         break;
-      default:
+         case ARRAY:
+            JsonArray array = (JsonArray) value;
+            for (int i = 0; i < array.size(); i++) {
+               requirements.add(array.getString(i));
+            }
+            break;
+         case STRING:
+            requirements.add(((JsonString) value).getString());
+            break;
+         default:
       }
       return requirements;
    }
@@ -100,12 +100,12 @@ public class ModelUtils {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
 
       switch (operator) {
-      case "AND":
-         return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
-      case "NOT":
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
-      default: // OR
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
+         case "AND":
+            return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
+         case "NOT":
+            return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
+         default: // OR
+            return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
       }
    }
 

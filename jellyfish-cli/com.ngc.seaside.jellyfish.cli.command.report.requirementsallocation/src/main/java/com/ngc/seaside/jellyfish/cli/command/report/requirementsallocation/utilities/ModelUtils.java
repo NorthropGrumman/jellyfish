@@ -18,25 +18,30 @@ import java.util.TreeSet;
  * Utility class for model and system descriptor related operation
  */
 public class ModelUtils {
+
    private ModelUtils() {
    }
 
    /**
     * Returns a colletion of all requirements that a given model satisfies
-    * @param commandOptions the command options
+    *
+    * @param commandOptions      the command options
     * @param requirementsService the requirements service
-    * @param model the model to search for requirements
+    * @param model               the model to search for requirements
     * @return a collection of all requirements satisfied by the model
     */
-   public static Collection<String> getAllRequirementsForModel(IJellyFishCommandOptions commandOptions, IRequirementsService requirementsService, IModel model) {
+   public static Collection<String> getAllRequirementsForModel(IJellyFishCommandOptions commandOptions,
+                                                               IRequirementsService requirementsService, IModel model) {
       Collection<String> requirements = new TreeSet<>(Collections.reverseOrder());
       requirements.addAll(requirementsService.getRequirements(commandOptions, model));
-      
-      model.getInputs().forEach( item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
-      model.getOutputs().forEach( item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
-      model.getParts().forEach( item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
-      model.getScenarios().forEach( item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
-      
+
+      model.getInputs().forEach(item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
+      model.getOutputs()
+            .forEach(item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
+      model.getParts().forEach(item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
+      model.getScenarios()
+            .forEach(item -> requirements.addAll(requirementsService.getRequirements(commandOptions, item)));
+
       return requirements;
    }
 
@@ -52,12 +57,12 @@ public class ModelUtils {
       ISystemDescriptor sd = commandOptions.getSystemDescriptor();
 
       switch (operator) {
-      case "AND":
-         return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
-      case "NOT":
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
-      default: // OR
-         return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
+         case "AND":
+            return Traversals.collectModels(sd, ModelPredicates.withAllStereotypes(valuesToCollection(values)));
+         case "NOT":
+            return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)).negate());
+         default: // OR
+            return Traversals.collectModels(sd, ModelPredicates.withAnyStereotype(valuesToCollection(values)));
       }
    }
 

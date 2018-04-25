@@ -1,9 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities;
 
-import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.Requirement;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.RequirementItemFormat;
+import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.io.File;
@@ -19,6 +19,7 @@ import java.util.StringJoiner;
  * Utility class for matrix related operations
  */
 public class MatrixUtils {
+
    private MatrixUtils() {
    }
 
@@ -26,14 +27,15 @@ public class MatrixUtils {
     * Generates a requirements allocation matrix given a Collection of requirements and models
     *
     * @param requirements satisfied requirements
-    * @param models models satisfying requirements
+    * @param models       models satisfying requirements
     * @return a {@link StringTable} containing verification matrix
     */
-   public static StringTable<Requirement> generateDefaultAllocationMatrix(Collection<Requirement> requirements, Collection<IModel> models) {
+   public static StringTable<Requirement> generateDefaultAllocationMatrix(Collection<Requirement> requirements,
+                                                                          Collection<IModel> models) {
       int reqNameWidth = 0;
       for (Requirement eachRequirement : requirements) {
-         if (eachRequirement.getID().length() > reqNameWidth) {
-            reqNameWidth = eachRequirement.getID().length();
+         if (eachRequirement.getId().length() > reqNameWidth) {
+            reqNameWidth = eachRequirement.getId().length();
          }
       }
       StringTable<Requirement> stringTable = createStringTable(models, reqNameWidth);
@@ -64,7 +66,7 @@ public class MatrixUtils {
    private static ITableFormat<Requirement> createTableFormat(Collection<IModel> models, int reqNameWidth) {
       return new RequirementItemFormat(models, reqNameWidth);
    }
-   
+
    /**
     * Generates a comma delimited requirements allocation matrix given a Collection of requirements and models
     *

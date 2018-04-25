@@ -1,15 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
@@ -17,7 +11,6 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -25,6 +18,7 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +31,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateDomainCommandIT {
@@ -60,9 +60,9 @@ public class CreateDomainCommandIT {
       cmd.setLogService(mock(ILogService.class));
       cmd.setBuildManagementService(buildManagementService);
       cmd.setTemplateService(new MockedTemplateService().useRealPropertyService()
-                                                        .setTemplateDirectory(
-                                                           CreateDomainCommand.class.getPackage().getName(),
-                                                           Paths.get("src", "main", "template")));
+                                   .setTemplateDirectory(
+                                         CreateDomainCommand.class.getPackage().getName(),
+                                         Paths.get("src", "main", "template")));
 
       IPackageNamingService packageService = mock(IPackageNamingService.class);
       when(packageService.getDomainPackageName(any(), any())).thenAnswer(args -> {
@@ -86,9 +86,35 @@ public class CreateDomainCommandIT {
       IData child = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Child");
       IData data = ModelUtils.getMockNamedChild(IData.class, "com.ngc.Data");
       IEnumeration enumeration = ModelUtils.getMockNamedChild(IEnumeration.class, "com.ngc.Enumeration");
-      ModelUtils.mockData(data, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration);
-      ModelUtils.mockData(base, null, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
-      ModelUtils.mockData(child, base, "field1", DataTypes.INT, "field2", FieldCardinality.MANY, DataTypes.STRING, "field3", FieldCardinality.MANY, enumeration, "field4", data);
+      ModelUtils.mockData(data, null,
+                          "field1",
+                          DataTypes.INT,
+                          "field2",
+                          FieldCardinality.MANY,
+                          DataTypes.STRING,
+                          "field3",
+                          FieldCardinality.MANY,
+                          enumeration);
+      ModelUtils.mockData(base, null,
+                          "field1",
+                          DataTypes.INT,
+                          "field2",
+                          FieldCardinality.MANY,
+                          DataTypes.STRING,
+                          "field3",
+                          FieldCardinality.MANY,
+                          enumeration,
+                          "field4", data);
+      ModelUtils.mockData(child, base,
+                          "field1",
+                          DataTypes.INT,
+                          "field2",
+                          FieldCardinality.MANY,
+                          DataTypes.STRING,
+                          "field3",
+                          FieldCardinality.MANY,
+                          enumeration,
+                          "field4", data);
       ModelUtils.PubSubModel model = new ModelUtils.PubSubModel("com.ngc.Model");
       model.addInput("input1", data);
       model.addInput("input2", child);
@@ -105,7 +131,8 @@ public class CreateDomainCommandIT {
 
       Path projectDir = outputDirectory.resolve("com.ngc.model.domain");
       assertTrue("Cannot find project directory: " + projectDir, Files.isDirectory(projectDir));
-      checkGradleBuild(projectDir, "com.ngc.base.domain", "com.ngc.child.domain", "com.ngc.data.domain", "com.ngc.enumeration.domain");
+      checkGradleBuild(projectDir, "com.ngc.base.domain", "com.ngc.child.domain", "com.ngc.data.domain",
+                       "com.ngc.enumeration.domain");
       checkVelocity(projectDir);
 
       Path domain = projectDir.resolve(CreateDomainCommand.DOMAIN_PATH).resolve("com.ngc.Model.xml");
@@ -127,7 +154,7 @@ public class CreateDomainCommandIT {
       Path velocityFolder = projectDir.resolve(Paths.get("src", "main", "resources", "velocity"));
       assertTrue("Could not find velocity folder", Files.isDirectory(velocityFolder));
       assertTrue("Could not find velocity file: " + velocityPath.getFileName(),
-         Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
+                 Files.isRegularFile(velocityFolder.resolve(velocityPath.getFileName())));
    }
 
 }

@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.jellyfish.service.property.api.IProperties;
 import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
@@ -9,7 +10,6 @@ import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 
 import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -66,7 +66,9 @@ public class TemplateService implements ITemplateService {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -83,7 +85,9 @@ public class TemplateService implements ITemplateService {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeResourceService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeResourceService")
    public void setResourceService(IResourceService ref) {
       this.resourceService = ref;
    }
@@ -100,7 +104,9 @@ public class TemplateService implements ITemplateService {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePromptUserService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePromptUserService")
    public void setPromptUserService(IPromptUserService ref) {
       this.promptUserService = ref;
    }
@@ -117,7 +123,9 @@ public class TemplateService implements ITemplateService {
     *
     * @param ref the property service.
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePropertyService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePropertyService")
    public void setPropertyService(IPropertyService ref) {
       this.propertyService = ref;
    }
@@ -146,10 +154,10 @@ public class TemplateService implements ITemplateService {
 
    @Override
    public ITemplateOutput unpack(String templateName,
-            IParameterCollection parameters,
-            Path outputDirectory,
-            boolean clean)
-      throws TemplateServiceException {
+                                 IParameterCollection parameters,
+                                 Path outputDirectory,
+                                 boolean clean)
+         throws TemplateServiceException {
       ITemplateOutput output;
 
       try (ZipInputStream zis = new ZipInputStream(getTemplateInputStream(templateName))) {
@@ -172,23 +180,23 @@ public class TemplateService implements ITemplateService {
 
          if (!isValidateTemplate(unzippedFolderPath)) {
             String message = String.format(
-               "Invalid template. Each template must contain %s and a template folder named '%s'",
-               TEMPLATE_PROPERTIES,
-               TEMPLATE_FOLDER);
+                  "Invalid template. Each template must contain %s and a template folder named '%s'",
+                  TEMPLATE_PROPERTIES,
+                  TEMPLATE_FOLDER);
             logService.error(getClass(), message);
             throw new TemplateServiceException(message);
          }
 
          TemplateIgnoreComponent templateIgnoreComponent = new TemplateIgnoreComponent(unzippedFolderPath,
-            TEMPLATE_FOLDER,
-            logService);
+                                                                                       TEMPLATE_FOLDER,
+                                                                                       logService);
          templateIgnoreComponent.parse();
 
          output = updateTemplate(unzippedFolderPath,
-            parameters,
-            outputDirectory,
-            clean,
-            templateIgnoreComponent);
+                                 parameters,
+                                 outputDirectory,
+                                 clean,
+                                 templateIgnoreComponent);
       } catch (TemplateServiceException | IOException | NullPointerException e) {
          String message = String.format("An error occurred processing the template zip file: %s", templateName);
          logService.error(getClass(), e, message);
@@ -202,11 +210,11 @@ public class TemplateService implements ITemplateService {
     * Invoked to get the input stream to the template ZIP file.
     *
     * @return the input stream to the template zip file
-    * @throws IOException if the stream could not be opened
+    * @throws IOException              if the stream could not be opened
     * @throws TemplateServiceException if no template with the given name could be found
     */
    protected InputStream getTemplateInputStream(String templateName) throws IOException,
-      TemplateServiceException {
+                                                                            TemplateServiceException {
       Path path = getTemplatePath(templateName);
       if (path == null) {
          throw new TemplateServiceException("no template with the name " + templateName + " was found!");
@@ -218,19 +226,19 @@ public class TemplateService implements ITemplateService {
     * Update the template based on the the visitor pattern. This will replace any Velocity Template
     * parameters with the input values from the properties file.
     *
-    * @param templateFolder the template folder.
-    * @param parameters the parameters that should overwrite any parameter values in the
-    *           template.properties this means that it should
-    * @param outputFolder the output folder.
-    * @param clean true if this should clean existing directories.
+    * @param templateFolder          the template folder.
+    * @param parameters              the parameters that should overwrite any parameter values in the
+    *                                template.properties this means that it should
+    * @param outputFolder            the output folder.
+    * @param clean                   true if this should clean existing directories.
     * @param templateIgnoreComponent used to check files that should be copied instead of evaluated by velocity.
     */
    protected ITemplateOutput updateTemplate(Path templateFolder,
-            IParameterCollection parameters,
-            Path outputFolder,
-            boolean clean,
-            TemplateIgnoreComponent templateIgnoreComponent)
-      throws IOException {
+                                            IParameterCollection parameters,
+                                            Path outputFolder,
+                                            boolean clean,
+                                            TemplateIgnoreComponent templateIgnoreComponent)
+         throws IOException {
       // Parse template.properties file for each parameter and its default value
       IProperties parametersAndDefaults = propertyService.load(templateFolder.resolve(TEMPLATE_PROPERTIES));
 
@@ -260,18 +268,18 @@ public class TemplateService implements ITemplateService {
       parameters.getAllParameters().forEach(p -> parametersAndValues.putIfAbsent(p.getName(), p.getValue()));
 
       TemplateVisitor visitor = new TemplateVisitor(parametersAndValues,
-         templateFolder.resolve(TEMPLATE_FOLDER),
-         outputFolder,
-         clean,
-         templateIgnoreComponent);
+                                                    templateFolder.resolve(TEMPLATE_FOLDER),
+                                                    outputFolder,
+                                                    clean,
+                                                    templateIgnoreComponent);
 
       // Walk through the unzipped template directory in order to generate the
       // instance of the template
       Files.walkFileTree(templateFolder.resolve(TEMPLATE_FOLDER), visitor);
 
       return new DefaultTemplateOutput()
-                                        .setOutputPath(visitor.getTopLevelFolder())
-                                        .setProperties(parametersAndValues);
+            .setOutputPath(visitor.getTopLevelFolder())
+            .setProperties(parametersAndValues);
    }
 
    /**
@@ -279,9 +287,8 @@ public class TemplateService implements ITemplateService {
     * templatePrefix-{version}-template[-{name}].zip
     *
     * @param templatePrefix the prefix of the template. This is usually in the form groupId.artifactId of the command
-    *           being run, optionally with -{name} appended to the end.
+    *                       being run, optionally with -{name} appended to the end.
     * @return the Path to the template or null if the file doesn't exists or if it is a directory.
-    * @throws IOException 
     */
    protected Path getTemplatePath(String templatePrefix) throws IOException {
       Path templatesPath = Paths.get(resourceService.getResourceRootPath().toString(), TEMPLATES_DIRECTORY);
@@ -292,13 +299,13 @@ public class TemplateService implements ITemplateService {
          String templatePrefixWithoutName = index < 0 ? templatePrefix : templatePrefix.substring(0, index);
          String templateEnding = String.format(TEMPLATE_NAME_ENDING_FORMAT, templateName);
          Pattern templatePattern = Pattern.compile(
-            Pattern.quote(templatePrefixWithoutName) + "-.*?" + Pattern.quote(templateEnding));
+               Pattern.quote(templatePrefixWithoutName) + "-.*?" + Pattern.quote(templateEnding));
          return Files.list(templatesPath)
-                     .filter(Files::isRegularFile)
-                     .filter(
-                        path -> templatePattern.matcher(path.getFileName().toString()).matches())
-                     .findAny()
-                     .orElse(null);
+               .filter(Files::isRegularFile)
+               .filter(
+                     path -> templatePattern.matcher(path.getFileName().toString()).matches())
+               .findAny()
+               .orElse(null);
       } else {
          return null;
       }
@@ -311,9 +318,9 @@ public class TemplateService implements ITemplateService {
     * @throws TemplateServiceException if the template has an invalid structure/format
     */
    protected boolean isValidateTemplate(Path templateFolder) {
-      return Files.exists(templateFolder.resolve(TEMPLATE_PROPERTIES)) &&
-         Files.isRegularFile(templateFolder.resolve(TEMPLATE_PROPERTIES)) &&
-         Files.exists(templateFolder.resolve(TEMPLATE_FOLDER)) &&
-         Files.isDirectory(templateFolder.resolve(TEMPLATE_FOLDER));
+      return Files.exists(templateFolder.resolve(TEMPLATE_PROPERTIES))
+            && Files.isRegularFile(templateFolder.resolve(TEMPLATE_PROPERTIES))
+            && Files.exists(templateFolder.resolve(TEMPLATE_FOLDER))
+            && Files.isDirectory(templateFolder.resolve(TEMPLATE_FOLDER));
    }
 }

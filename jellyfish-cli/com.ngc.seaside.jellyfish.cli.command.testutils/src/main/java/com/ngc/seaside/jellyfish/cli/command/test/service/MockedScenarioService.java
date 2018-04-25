@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.test.service;
 
-import static org.mockito.Mockito.mock;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -20,10 +18,15 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepH
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
+
 public class MockedScenarioService implements IScenarioService {
 
    private final ScenarioService delegate;
 
+   /**
+    * Default constructor
+    */
    public MockedScenarioService() {
       delegate = new ScenarioService();
       delegate.setLogService(mock(ILogService.class));
@@ -42,13 +45,13 @@ public class MockedScenarioService implements IScenarioService {
 
    @Override
    public Optional<IPublishSubscribeMessagingFlow> getPubSubMessagingFlow(IJellyFishCommandOptions options,
-            IScenario scenario) {
+                                                                          IScenario scenario) {
       return delegate.getPubSubMessagingFlow(options, scenario);
    }
 
    @Override
    public Optional<IRequestResponseMessagingFlow> getRequestResponseMessagingFlow(IJellyFishCommandOptions options,
-            IScenario scenario) {
+                                                                                  IScenario scenario) {
       return delegate.getRequestResponseMessagingFlow(options, scenario);
    }
 

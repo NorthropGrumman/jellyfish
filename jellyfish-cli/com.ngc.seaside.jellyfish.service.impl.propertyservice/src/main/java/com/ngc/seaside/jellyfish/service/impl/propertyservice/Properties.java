@@ -18,6 +18,7 @@ import java.util.Map;
  * Default implementation of the IProperties interface.
  */
 public class Properties implements IProperties {
+
    private final VelocityEngine engine = new VelocityEngine();
    private final VelocityContext context = new VelocityContext();
    private Map<String, String> original = new LinkedHashMap<>();
@@ -43,7 +44,7 @@ public class Properties implements IProperties {
 
    @Override
    public void put(String key, String value) {
-     original.put(key, value);
+      original.put(key, value);
    }
 
    @Override
@@ -72,7 +73,7 @@ public class Properties implements IProperties {
        * package=$groupId.$artifactId
        * capitalized=${package.toUpperCase()}
        */
-      for(Map.Entry<String, String> entry : original.entrySet()) {
+      for (Map.Entry<String, String> entry : original.entrySet()) {
          StringWriter writer = new StringWriter();
          engine.evaluate(context,
                          writer,
@@ -91,7 +92,6 @@ public class Properties implements IProperties {
     *
     * @param propertiesFile the properties file.
     * @return the Map of raw values mapped to the property value.
-    * @throws IOException
     */
    private Map<String, String> parseFile(Path propertiesFile) throws IOException {
       //The interface states that the properties should be returned in the order in which they are

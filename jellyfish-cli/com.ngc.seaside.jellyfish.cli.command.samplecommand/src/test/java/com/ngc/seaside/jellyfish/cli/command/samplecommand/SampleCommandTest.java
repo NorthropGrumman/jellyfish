@@ -1,19 +1,19 @@
 package com.ngc.seaside.jellyfish.cli.command.samplecommand;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SampleCommandTest {
 

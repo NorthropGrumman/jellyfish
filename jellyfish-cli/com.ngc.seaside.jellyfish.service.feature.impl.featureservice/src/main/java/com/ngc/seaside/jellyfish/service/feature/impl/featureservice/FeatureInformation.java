@@ -1,33 +1,40 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
-import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
-
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 
 import java.nio.file.Path;
 
+import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
+
 public class FeatureInformation implements IFeatureInformation {
+
    private String fileName;
    private String fullyQualifiedName;
    private String name;
    private Path absolutePath;
    private Path relativePath;
 
+   /**
+    * Constructor
+    * @param absolutePath for feature information
+    * @param relativePath for feature information
+    */
    public FeatureInformation(Path absolutePath, Path relativePath) {
       fullyQualifiedName = substringBetween(absolutePath.getFileName().toString(), "", ".feature");
       fileName = fullyQualifiedName.concat(".feature");
       this.name = substringBetween(absolutePath.getFileName().toString(), ".", ".");
       this.setAbsolutePath(absolutePath);
-      this.setRelativePath(relativePath);     
+      this.setRelativePath(relativePath);
    }
 
    @Override
    public String getFileName() {
       return fileName;
    }
-   
+
    /**
     * Set the file name of feature file
+    *
     * @param fileName the file name
     * @return the feature information
     */
@@ -40,9 +47,10 @@ public class FeatureInformation implements IFeatureInformation {
    public String getFullyQualifiedName() {
       return fullyQualifiedName;
    }
-   
+
    /**
     * Set the fully qualified name
+    *
     * @param fullyQualifiedName the fully qualified name
     * @return the feature information
     */
@@ -55,9 +63,10 @@ public class FeatureInformation implements IFeatureInformation {
    public String getName() {
       return name;
    }
-   
+
    /**
     * Set the name of this feature
+    *
     * @param name the name
     * @return the feature information
     */
@@ -73,7 +82,7 @@ public class FeatureInformation implements IFeatureInformation {
 
    /**
     * Sets the absolute path
-    * 
+    *
     * @param absolutePath the absolute path
     */
    public void setAbsolutePath(Path absolutePath) {
@@ -87,8 +96,6 @@ public class FeatureInformation implements IFeatureInformation {
 
    /**
     * Sets the relative path
-    * 
-    * @param relativePath
     */
    public void setRelativePath(Path relativePath) {
       this.relativePath = relativePath;
@@ -96,7 +103,6 @@ public class FeatureInformation implements IFeatureInformation {
 
    /**
     * <p>Gets the String that is nested in between two Strings. Only the first match is returned.</p>
-    *
     * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An
     * empty ("") open and close returns an empty string.</p>
     *
@@ -123,6 +129,6 @@ public class FeatureInformation implements IFeatureInformation {
    @Override
    public String toString() {
       return "FeatureInformation [fileName=" + fileName + ", fullyQualifiedName=" + fullyQualifiedName + ", name="
-         + name + ", absolutePath=" + absolutePath.toString() + ", relativePath=" + relativePath.toString() + "]";
+            + name + ", absolutePath=" + absolutePath.toString() + ", relativePath=" + relativePath.toString() + "]";
    }
 }

@@ -32,33 +32,33 @@ public class ResourceServiceDelegate implements IResourceService {
    }
 
    @Override
-   public boolean readResource(IReadableResource iReadableResource) throws ResourceServiceException {
-      return delegate.readResource(iReadableResource);
+   public boolean readResource(IReadableResource readableResource) throws ResourceServiceException {
+      return delegate.readResource(readableResource);
    }
 
    @Override
-   public boolean readOptionalResource(IReadableResource iReadableResource) {
-      return delegate.readOptionalResource(iReadableResource);
+   public boolean readOptionalResource(IReadableResource readableResource) {
+      return delegate.readOptionalResource(readableResource);
    }
 
    @Override
-   public boolean readFileResource(IReadableFileResource iReadableFileResource) throws ResourceServiceException {
-      return delegate.readFileResource(iReadableFileResource);
+   public boolean readFileResource(IReadableFileResource readableResource) throws ResourceServiceException {
+      return delegate.readFileResource(readableResource);
    }
 
    @Override
-   public boolean readOptionalFileResource(IReadableFileResource iReadableFileResource) {
-      return delegate.readOptionalFileResource(iReadableFileResource);
+   public boolean readOptionalFileResource(IReadableFileResource readableResource) {
+      return delegate.readOptionalFileResource(readableResource);
    }
 
    @Override
-   public boolean writeFileResource(IWritableFileResource iWritableFileResource) throws ResourceServiceException {
-      return delegate.writeFileResource(iWritableFileResource);
+   public boolean writeFileResource(IWritableFileResource writableFileResource) throws ResourceServiceException {
+      return delegate.writeFileResource(writableFileResource);
    }
 
    @Override
-   public boolean exists(IFileResource iFileResource) {
-      return delegate.exists(iFileResource);
+   public boolean exists(IFileResource fileResource) {
+      return delegate.exists(fileResource);
    }
 
 }

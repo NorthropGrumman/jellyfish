@@ -7,9 +7,6 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.MultiLineRow;
-import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -17,11 +14,14 @@ import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.feature.impl.featureservice.FeatureService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice.RequirementsService;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.MultiLineRow;
+import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.scenario.impl.module.StepsSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -79,7 +79,7 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
       parameters = new DefaultParameterCollection();
       Mockito.when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
       Mockito.when(jellyFishCommandOptions.getSystemDescriptorProjectPath())
-               .thenReturn(Paths.get("src/test/resources"));
+            .thenReturn(Paths.get("src/test/resources"));
 
       // Setup class under test
       cmd = new RequirementsVerificationMatrixCommand() {
@@ -108,7 +108,8 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    @Test
    public void testStringTableWithDefaultStereotypes() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     RequirementsVerificationMatrixCommand
+                                                           .DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
@@ -172,9 +173,10 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    @Test
    public void testStringTableWithAdditionalStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     RequirementsVerificationMatrixCommand
+                                                           .DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(
-               new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "service,system"));
+            new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "service,system"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
 
@@ -252,7 +254,8 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    @Test
    public void testStringTableWithAbsentStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     RequirementsVerificationMatrixCommand
+                                                           .DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY, "model"));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_OPERATOR_PROPERTY));
@@ -267,7 +270,8 @@ public class RequirementsVerificationMatrixCommandStdOutIT {
    @Test
    public void testStringTableWithoutDefaultStereotype() {
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OUTPUT_FORMAT_PROPERTY,
-                                                     RequirementsVerificationMatrixCommand.DEFAULT_OUTPUT_FORMAT_PROPERTY));
+                                                     RequirementsVerificationMatrixCommand
+                                                           .DEFAULT_OUTPUT_FORMAT_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.VALUES_PROPERTY,
                                                      RequirementsVerificationMatrixCommand.DEFAULT_VALUES_PROPERTY));
       parameters.addParameter(new DefaultParameter<>(RequirementsVerificationMatrixCommand.OPERATOR_PROPERTY, "NOT"));

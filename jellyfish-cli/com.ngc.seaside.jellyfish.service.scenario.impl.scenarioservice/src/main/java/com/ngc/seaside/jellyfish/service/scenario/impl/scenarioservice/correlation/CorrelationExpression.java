@@ -13,7 +13,13 @@ public class CorrelationExpression implements ICorrelationExpression {
 
    private final IDataPath left;
    private final IDataPath right;
-   
+
+   /**
+    * Constructor.
+    *
+    * @param handler the correlate step handler
+    * @param step    the scenario step
+    */
    public CorrelationExpression(CorrelateStepHandler handler, IScenarioStep step) {
       IDataPath left = handler.getLeftPath(step);
       IDataPath right = handler.getRightPath(step);
@@ -25,7 +31,7 @@ public class CorrelationExpression implements ICorrelationExpression {
          this.right = right;
       }
    }
-   
+
    @Override
    public Operator getOperator() {
       return Operator.EQUALS;
@@ -49,14 +55,14 @@ public class CorrelationExpression implements ICorrelationExpression {
    @Override
    public INamedChild<IPackage> getCorrelationEventIdReferenceType() {
       IDataField end = left.getEnd();
-      switch(end.getType()) {
-      case DATA:
-         return end.getReferencedDataType();
-      case ENUM:
-         return end.getReferencedEnumeration();
-      default:
-         throw new IllegalStateException("Cannot get reference type for data type " + end.getType());
+      switch (end.getType()) {
+         case DATA:
+            return end.getReferencedDataType();
+         case ENUM:
+            return end.getReferencedEnumeration();
+         default:
+            throw new IllegalStateException("Cannot get reference type for data type " + end.getType());
       }
    }
-   
+
 }

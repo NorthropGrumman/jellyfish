@@ -3,9 +3,9 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.ModelUtils;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
@@ -29,6 +29,7 @@ import java.util.TreeSet;
 
 @Component(service = IJellyFishCommand.class)
 public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
+
    public static enum OutputFormatType {
       DEFAULT("default"), CSV("csv");
 
@@ -64,11 +65,11 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       String values = evaluateValues(commandOptions);
       String operator = evaluateOperator(commandOptions);
 
-      Collection<IModel> models = new TreeSet<>(new Comparator<IModel>(){
+      Collection<IModel> models = new TreeSet<>(new Comparator<IModel>() {
          @Override
          public int compare(IModel o1, IModel o2) {
             return o1.getName().compareTo(o2.getName());
-         }         
+         }
       });
       models.addAll(ModelUtils.searchModels(commandOptions, values, operator));
       Collection<Requirement> requirements = searchForRequirements(commandOptions, models);
@@ -81,7 +82,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       }
 
       boolean success = false;
-      
+
       if (output.equalsIgnoreCase(DEFAULT_OUTPUT_PROPERTY)) {
          logService.info(RequirementsAllocationMatrixCommand.class, "Printing report to console...");
          MatrixUtils.printAllocationConsole(report);
@@ -94,27 +95,29 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
             MatrixUtils.printAllocationMatrixToFile(report, outputPath);
             success = true;
          } catch (IOException e) {
-            logService.error(RequirementsAllocationMatrixCommand.class, "Failed to print report to location: %s", outputPath.toString(), e);
+            logService.error(RequirementsAllocationMatrixCommand.class, "Failed to print report to location: %s",
+                             outputPath.toString(), e);
          }
       }
 
-      if (success) {         
-         logService.info(RequirementsAllocationMatrixCommand.class, "%s requirements allocation matrix successfully created", values);
-      }
-      else {
-         logService.info(RequirementsAllocationMatrixCommand.class, "%s requirements allocation matrix not successfully created", values);
+      if (success) {
+         logService.info(RequirementsAllocationMatrixCommand.class,
+                         "%s requirements allocation matrix successfully created", values);
+      } else {
+         logService.info(RequirementsAllocationMatrixCommand.class,
+                         "%s requirements allocation matrix not successfully created", values);
       }
    }
 
    /**
     * Searches a collection of models for all requirements satisfied
-    * @param commandOptions 
-    * 
-    * @param models the list of models to search for requirements
+    *
+    * @param models         the list of models to search for requirements
     * @param commandOptions the command options
     * @return colletion of all requirements satisfied
     */
-   private Collection<Requirement> searchForRequirements(IJellyFishCommandOptions commandOptions, Collection<IModel> models) {
+   private Collection<Requirement> searchForRequirements(IJellyFishCommandOptions commandOptions,
+                                                         Collection<IModel> models) {
       final Map<String, Requirement> requirementsMap = new TreeMap<>();
 
       models.forEach(m -> searchForRequirements(commandOptions, m, requirementsMap));
@@ -124,16 +127,20 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
 
    /**
     * Populates a map with all requirements that a given model satisfies
-    * @param commandOptions the command options
-    * @param model the model to search for requirements
+    *
+    * @param commandOptions  the command options
+    * @param model           the model to search for requirements
     * @param requirementsMap the requirements map to populate
     */
-   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model, Map<String, Requirement> requirementsMap) {   
-      Collection<String> requirementsSet = ModelUtils.getAllRequirementsForModel(commandOptions, requirementsService, model);
+   private void searchForRequirements(IJellyFishCommandOptions commandOptions, IModel model,
+                                      Map<String, Requirement> requirementsMap) {
+      Collection<String>
+            requirementsSet =
+            ModelUtils.getAllRequirementsForModel(commandOptions, requirementsService, model);
 
       requirementsSet.forEach(eachReqName -> {
-         if (!requirementsMap.containsKey(eachReqName) || 
-             requirementsMap.get(eachReqName) == null) {
+         if (!requirementsMap.containsKey(eachReqName)
+               || requirementsMap.get(eachReqName) == null) {
             requirementsMap.put(eachReqName, new Requirement(eachReqName));
          }
 
@@ -174,7 +181,9 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -185,13 +194,15 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
-   
+
    /**
     * Sets requirements service.
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequirementsService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeRequirementsService")
    public void setRequirementsService(IRequirementsService ref) {
       this.requirementsService = ref;
    }
@@ -211,13 +222,25 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage("Description of requirements-allocation-matrix command",
-         new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription("Format of the output. The possible values are default and csv. Default: default.").setRequired(false),
-         new DefaultParameter(OUTPUT_PROPERTY).setDescription("File where the output is sent. This file path may be a relative path relative to the SD project directory. Default: stdout.")
-                  .setRequired(false),
-         new DefaultParameter(SCOPE_PROPERTY).setDescription("Keyword scope (metadata, input, output, etc..). Default: model.metadata.json.stereotypes.").setRequired(false),
-         new DefaultParameter(VALUES_PROPERTY).setDescription("The values in which to search for in the scope defined. This is a comma separated string. Default: service.").setRequired(false),
-         new DefaultParameter(OPERATOR_PROPERTY).setDescription("AND, OR, NOT (or their lowercase counterparts): should the items be AND'd together or OR'd together: default: OR.")
-                  .setRequired(false));
+                              new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
+                                    "Format of the output. The possible values are default and csv. Default: default.")
+                                    .setRequired(false),
+                              new DefaultParameter(OUTPUT_PROPERTY).setDescription(
+                                    "File where the output is sent. This file path may be a relative path relative to "
+                                    + "the SD project directory. Default: stdout.")
+                                    .setRequired(false),
+                              new DefaultParameter(SCOPE_PROPERTY).setDescription(
+                                    "Keyword scope (metadata, input, output, etc..). "
+                                    + "Default: model.metadata.json.stereotypes.")
+                                    .setRequired(false),
+                              new DefaultParameter(VALUES_PROPERTY).setDescription(
+                                    "The values in which to search for in the scope defined. This is a comma separated "
+                                    + "string. Default: service.")
+                                    .setRequired(false),
+                              new DefaultParameter(OPERATOR_PROPERTY).setDescription(
+                                    "AND, OR, NOT (or their lowercase counterparts): should the items be AND'd "
+                                    + "together or OR'd together: default: OR.")
+                                    .setRequired(false));
    }
 
    /**
@@ -229,7 +252,8 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
       String outputFormat = DEFAULT_OUTPUT_FORMAT_PROPERTY;
       if (commandOptions.getParameters().containsParameter(OUTPUT_FORMAT_PROPERTY)) {
          String helper = commandOptions.getParameters().getParameter(OUTPUT_FORMAT_PROPERTY).getStringValue();
-         outputFormat = (helper.equalsIgnoreCase("CSV")) ? helper.toUpperCase() : DEFAULT_OUTPUT_FORMAT_PROPERTY;
+         outputFormat = (helper.equalsIgnoreCase("CSV")) ? helper.toUpperCase()
+                                                         : DEFAULT_OUTPUT_FORMAT_PROPERTY;
       }
       return outputFormat;
    }

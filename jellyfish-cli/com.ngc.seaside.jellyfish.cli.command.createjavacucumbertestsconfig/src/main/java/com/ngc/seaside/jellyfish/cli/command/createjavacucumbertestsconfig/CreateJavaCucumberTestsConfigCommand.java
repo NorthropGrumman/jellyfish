@@ -138,22 +138,30 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       logService.trace(getClass(), "Deactivated");
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       super.setLogService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       super.setTemplateService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       super.setProjectNamingService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePackageNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       super.setPackageNamingService(ref);
    }

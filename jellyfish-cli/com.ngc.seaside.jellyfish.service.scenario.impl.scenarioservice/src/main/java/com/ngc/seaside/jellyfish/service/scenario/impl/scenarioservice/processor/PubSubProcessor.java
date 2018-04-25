@@ -21,6 +21,13 @@ public class PubSubProcessor {
    private final ReceiveStepHandler receiveStepHandler;
    private final CorrelateStepHandler correlateStepHandler;
 
+   /**
+    * Constructor.
+    *
+    * @param publishStepHandler   the publish step handler
+    * @param receiveStepHandler   the receive step handler
+    * @param correlateStepHandler the correlate step handler
+    */
    public PubSubProcessor(PublishStepHandler publishStepHandler,
                           ReceiveStepHandler receiveStepHandler,
                           CorrelateStepHandler correlateStepHandler) {
@@ -33,22 +40,29 @@ public class PubSubProcessor {
       return getFlow(scenario).isPresent();
    }
 
+   /**
+    * Parses a scenario to determine the messaging flow.  The flows inputs and outputs are populated given the
+    * current state of this class.
+    *
+    * @param scenario the scenario
+    * @return an optional pubsub messaging flow
+    */
    public Optional<IPublishSubscribeMessagingFlow> getFlow(IScenario scenario) {
       boolean receive = false;
       boolean publish = false;
-      
+
       for (IScenarioStep step : scenario.getWhens()) {
          if (ReceiveStepHandler.PRESENT.getVerb().equals(step.getKeyword())) {
             receive = true;
          }
       }
-      
+
       for (IScenarioStep step : scenario.getThens()) {
          if (PublishStepHandler.FUTURE.getVerb().equals(step.getKeyword())) {
             publish = true;
          }
       }
-      
+
       final PublishSubscribeMessagingFlow flow;
       if (receive && publish) {
          flow = new PublishSubscribeMessagingFlow(FlowType.PATH);
@@ -59,19 +73,19 @@ public class PubSubProcessor {
       } else {
          return Optional.empty();
       }
-      
+
       for (IScenarioStep step : scenario.getWhens()) {
          if (ReceiveStepHandler.PRESENT.getVerb().equals(step.getKeyword())) {
             flow.getInputsModifiable().add(receiveStepHandler.getInputs(step));
          }
       }
-      
+
       for (IScenarioStep step : scenario.getThens()) {
          if (PublishStepHandler.FUTURE.getVerb().equals(step.getKeyword())) {
             flow.getOutputsModifiable().add(publishStepHandler.getOutputs(step));
          }
       }
-      
+
       flow.setCorrelationDescriptor(getCorrelationDescription(scenario));
       flow.setScenario(scenario);
       return Optional.of(flow);

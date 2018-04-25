@@ -1,11 +1,5 @@
 package com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
@@ -23,6 +17,12 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RequirementsServiceTest {
 
@@ -73,7 +73,8 @@ public class RequirementsServiceTest {
       return string;
    }
 
-   private static abstract class JsonArrayImpl extends AbstractList<JsonValue> implements JsonArray {
+   private abstract static class JsonArrayImpl extends AbstractList<JsonValue> implements JsonArray {
+
    }
 
 }

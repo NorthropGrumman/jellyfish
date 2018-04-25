@@ -1,11 +1,5 @@
 package com.ngc.seaside.jellyfish.service.codegen.dataservice.impl;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
 import com.ngc.seaside.jellyfish.service.codegen.api.proto.IGeneratedProtoField;
@@ -25,6 +19,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataFieldGenerationServiceTest {
@@ -57,8 +58,10 @@ public class DataFieldGenerationServiceTest {
       assertEquals("testInt", javaField.getJavaFieldName());
       assertEquals("getTestInt", javaField.getJavaGetterName());
       assertEquals("setTestInt", javaField.getJavaSetterName());
-      assertTrue(Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64")
-                       .contains(protoField.getProtoType()));
+      assertTrue(
+            Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32",
+                          "sfixed64")
+                  .contains(protoField.getProtoType()));
       assertEquals("testInt", protoField.getProtoFieldName());
       assertTrue(Arrays.asList("int", "long").contains(protoField.getJavaField().getJavaType()));
       assertEquals("getTestInt", protoField.getJavaField().getJavaGetterName());
@@ -77,12 +80,14 @@ public class DataFieldGenerationServiceTest {
       assertEquals(field, protoField.getDataField());
       assertEquals(field, protoField.getJavaField().getDataField());
       assertTrue(
-         Arrays.asList("java.lang.Integer", "java.lang.Long").contains(javaField.getJavaType()));
+            Arrays.asList("java.lang.Integer", "java.lang.Long").contains(javaField.getJavaType()));
       assertEquals("testInt", javaField.getJavaFieldName());
       assertEquals("getTestInt", javaField.getJavaGetterName());
       assertEquals("setTestInt", javaField.getJavaSetterName());
-      assertTrue(Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64")
-                       .contains(protoField.getProtoType()));
+      assertTrue(
+            Arrays.asList("int64", "int32", "uint64", "uint32", "sint32", "sint64", "fixed32", "fixed64", "sfixed32",
+                          "sfixed64")
+                  .contains(protoField.getProtoType()));
       assertEquals("testInt", protoField.getProtoFieldName());
       assertTrue(Arrays.asList("java.lang.Integer", "java.lang.Long")
                        .contains(protoField.getJavaField().getJavaType()));
@@ -161,9 +166,9 @@ public class DataFieldGenerationServiceTest {
    public void testDataField() {
       IDataField field = getMockDataField("com.ngc.test.TestDataField", "testData", true, false);
       when(packageService.getEventPackageName(options, field.getReferencedDataType())).thenReturn(
-         "com.ngc.test.events");
+            "com.ngc.test.events");
       when(packageService.getMessagePackageName(options, field.getReferencedDataType())).thenReturn(
-         "com.ngc.test.messages");
+            "com.ngc.test.messages");
       IGeneratedJavaField javaField = service.getEventsField(options, field);
       IGeneratedProtoField protoField = service.getMessagesField(options, field);
       assertFalse(javaField.isMultiple());
@@ -187,9 +192,9 @@ public class DataFieldGenerationServiceTest {
    public void testEnumField() {
       IDataField field = getMockDataField("com.ngc.test.TestEnumField", "testEnum", true, true);
       when(packageService.getEventPackageName(options, field.getReferencedEnumeration())).thenReturn(
-         "com.ngc.test.events");
+            "com.ngc.test.events");
       when(packageService.getMessagePackageName(options, field.getReferencedEnumeration())).thenReturn(
-         "com.ngc.test.messages");
+            "com.ngc.test.messages");
       IGeneratedJavaField javaField = service.getEventsField(options, field);
       IGeneratedProtoField protoField = service.getMessagesField(options, field);
       assertFalse(javaField.isMultiple());
@@ -212,31 +217,32 @@ public class DataFieldGenerationServiceTest {
    @Test
    public void testOddFieldName() {
       IDataField field = getMockPrimitiveField(DataTypes.INT,
-         "__abc_abC__aBc_Abc__aBC_AbC__ABc_ABC__1abc_abc1__a1bc_1Abc__Abc1_A1bc__Ab1c_Ab1c__1ABc_ABc1__A1Bc_AB1c__1ABC_ABC1__A1B1C_",
-         true);
+                                               "__abc_abC__aBc_Abc__aBC_AbC__ABc_ABC__1abc_abc1__a1bc_1Abc__"
+                                                     + "Abc1_A1bc__Ab1c_Ab1c__1ABc_ABc1__A1Bc_AB1c__1ABC_ABC1__A1B1C_",
+                                               true);
       IGeneratedJavaField javaField = service.getEventsField(options, field);
       assertEquals("getAbcAbCABcAbcABCAbCABcABC1AbcAbc1A1Bc1AbcAbc1A1BcAb1CAb1C1ABcABc1A1BcAB1C1ABCABC1A1B1C",
-         javaField.getJavaGetterName());
+                   javaField.getJavaGetterName());
       assertEquals("setAbcAbCABcAbcABCAbCABcABC1AbcAbc1A1Bc1AbcAbc1A1BcAb1CAb1C1ABcABc1A1BcAB1C1ABCABC1A1B1C",
-         javaField.getJavaSetterName());
+                   javaField.getJavaSetterName());
       IGeneratedJavaField javaProtoField = service.getMessagesField(options, field).getJavaField();
       assertEquals("getAbcAbCABcAbcABCAbCABcABC1AbcAbc1A1Bc1AbcAbc1A1BcAb1CAb1C1ABcABc1A1BcAB1C1ABCABC1A1B1C",
-         javaProtoField.getJavaGetterName());
+                   javaProtoField.getJavaGetterName());
       assertEquals("setAbcAbCABcAbcABCAbCABcABC1AbcAbc1A1Bc1AbcAbc1A1BcAb1CAb1C1ABcABc1A1BcAB1C1ABCABC1A1B1C",
-         javaProtoField.getJavaSetterName());
+                   javaProtoField.getJavaSetterName());
    }
 
    @Test
    public void testJavaReservedWord() {
       IDataField field = getMockPrimitiveField(DataTypes.INT, "long", true);
-      IDataField _field = getMockPrimitiveField(DataTypes.INT, "_long", true);
-      IDataField field_ = getMockPrimitiveField(DataTypes.INT, "long_", true);
+      IDataField underbarField = getMockPrimitiveField(DataTypes.INT, "_long", true);
+      IDataField fieldUnderbar = getMockPrimitiveField(DataTypes.INT, "long_", true);
       IGeneratedJavaField javaField = service.getEventsField(options, field);
-      IGeneratedJavaField _javaField = service.getEventsField(options, _field);
-      IGeneratedJavaField javaField_ = service.getEventsField(options, field_);
+      IGeneratedJavaField underbarJavaField = service.getEventsField(options, underbarField);
+      IGeneratedJavaField javaFieldUnderbar = service.getEventsField(options, fieldUnderbar);
       assertNotEquals("long", javaField.getJavaFieldName());
-      assertNotEquals(_javaField.getJavaFieldName(), javaField.getJavaFieldName());
-      assertNotEquals(javaField_.getJavaFieldName(), javaField.getJavaFieldName());
+      assertNotEquals(underbarJavaField.getJavaFieldName(), javaField.getJavaFieldName());
+      assertNotEquals(javaFieldUnderbar.getJavaFieldName(), javaField.getJavaFieldName());
    }
 
    private static IDataField getMockDataField(String type, String name, boolean single, boolean isEnum) {

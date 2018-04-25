@@ -56,6 +56,11 @@ public class ServiceConfigDto {
       return this;
    }
 
+   /**
+    *
+    * @param groupAndArtifactId String of the group ID that you want formatted
+    * @return String of formatted dependency
+    */
    public String getFormattedDependency(String groupAndArtifactId) {
       IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
       return String.format("%s:%s:$%s",

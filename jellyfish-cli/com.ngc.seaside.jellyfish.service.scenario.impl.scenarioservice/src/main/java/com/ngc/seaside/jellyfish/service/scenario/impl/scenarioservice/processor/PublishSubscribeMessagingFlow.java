@@ -20,7 +20,7 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
    private final FlowType flowType;
 
    private IScenario scenario;
-   
+
    private ICorrelationDescription correlationDescription;
 
    public PublishSubscribeMessagingFlow(FlowType flowType) {
@@ -59,7 +59,7 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       this.scenario = scenario;
       return this;
    }
-   
+
    public PublishSubscribeMessagingFlow setCorrelationDescriptor(ICorrelationDescription description) {
       this.correlationDescription = description;
       return this;
@@ -74,10 +74,10 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
          return false;
       }
       PublishSubscribeMessagingFlow that = (PublishSubscribeMessagingFlow) o;
-      return Objects.equals(inputs, that.inputs) &&
-             Objects.equals(outputs, that.outputs) &&
-             flowType == that.flowType &&
-             Objects.equals(scenario, that.scenario);
+      return Objects.equals(inputs, that.inputs)
+            && Objects.equals(outputs, that.outputs)
+            && flowType == that.flowType
+            && Objects.equals(scenario, that.scenario);
    }
 
    @Override

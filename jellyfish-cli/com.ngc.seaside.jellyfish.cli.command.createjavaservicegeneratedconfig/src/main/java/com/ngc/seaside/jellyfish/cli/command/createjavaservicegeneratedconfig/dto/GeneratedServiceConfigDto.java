@@ -23,7 +23,7 @@ public class GeneratedServiceConfigDto {
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
 
    public GeneratedServiceConfigDto(IBuildManagementService buildManagementService,
-                           IJellyFishCommandOptions options) {
+                                    IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
    }
@@ -72,16 +72,21 @@ public class GeneratedServiceConfigDto {
       this.transportProviders.add(dto);
       return this;
    }
-   
+
    public Set<String> getTransportProviderDependencies() {
       return transportProviderDependencies;
    }
-   
+
    public GeneratedServiceConfigDto addTransportProviderDependencies(Collection<String> dependencies) {
       this.transportProviderDependencies.addAll(dependencies);
       return this;
    }
 
+   /**
+    *
+    * @param groupAndArtifactId String of the group ID that you want formatted
+    * @return String of formatted dependency
+    */
    public String getFormattedDependency(String groupAndArtifactId) {
       IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
       return String.format("%s:%s:$%s",

@@ -243,7 +243,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
             // scenario has this input
             if (flow.getCorrelationDescription().isPresent()
-                && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+                  && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
                receive.setHasCorrelations(true);
             }
 
@@ -391,6 +391,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          case STRING:
             correlation.setCorrelationType("String");
             break;
+         default:
+            logService.warn(BaseServiceDtoFactory.class,
+                            "Unable to find correlation for this type: %s",
+                            completeness.getCorrelationEventIdType().toString());
       }
 
       dto.getAbstractClass().getImports().add(Map.class.getName());
@@ -505,6 +509,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          case STRING:
             trigger.setTriggerType("String");
             break;
+         default:
+            logService.warn(BaseServiceDtoFactory.class,
+                            "Unable to find correlation for this type: %s",
+                            completeness.getCorrelationEventIdType().toString());
       }
 
       return Optional.of(trigger);
@@ -520,7 +528,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       // Ignore flows with input-input correlations
       if (flow.getCorrelationDescription().isPresent()
-          && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+            && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
          return Optional.empty();
       }
 

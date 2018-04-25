@@ -14,6 +14,10 @@ public class DefaultDependenciesConfiguration {
    private DefaultDependenciesConfiguration() {
    }
 
+   /**
+    *
+    * @return the DependenciesConfiguration
+    */
    public static DependenciesConfiguration getConfig() {
       DependenciesConfiguration config = new DependenciesConfiguration();
 

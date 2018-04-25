@@ -55,23 +55,23 @@ public class MulticastConfiguration {
          return false;
       }
       MulticastConfiguration that = (MulticastConfiguration) o;
-      return Objects.equals(this.groupAddress, that.groupAddress) &&
-              Objects.equals(this.targetInterface, that.targetInterface) &&
-              Objects.equals(this.sourceInterface, that.sourceInterface) &&
-              this.port == that.port;
+      return Objects.equals(this.groupAddress, that.groupAddress)
+            && Objects.equals(this.targetInterface, that.targetInterface)
+            && Objects.equals(this.sourceInterface, that.sourceInterface)
+            && this.port == that.port;
    }
 
    @Override
    public int hashCode() {
       return Objects.hash(groupAddress,
-              targetInterface, sourceInterface, port);
+                          targetInterface, sourceInterface, port);
    }
 
    @Override
    public String toString() {
-      return "MulticastConfiguration[groupAddress=" + groupAddress +
-              ", port=" + port +
-              ", tragetInterface=" + targetInterface.toString() +
-              ", sourceInterface=" + sourceInterface.toString() +"]";
+      return "MulticastConfiguration[groupAddress=" + groupAddress
+            + ", port=" + port
+            + ", tragetInterface=" + targetInterface.toString()
+            + ", sourceInterface=" + sourceInterface.toString() + "]";
    }
 }

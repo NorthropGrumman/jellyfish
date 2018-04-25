@@ -20,7 +20,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param metadata
+    * @param metadata used to describe requirement
     * @return set of requirements
     */
    Set<String> getRequirements(IJellyFishCommandOptions options, IMetadata metadata);
@@ -29,7 +29,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given field's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param field
+    * @param field used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IReferenceField field) {
@@ -40,7 +40,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given field's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param field
+    * @param field used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IDataField field) {
@@ -51,7 +51,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given data's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param data
+    * @param data used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IData data) {
@@ -62,7 +62,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given enumeration's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param enumeration
+    * @param enumeration used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IEnumeration enumeration) {
@@ -73,7 +73,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given model's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param model
+    * @param model used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IModel model) {
@@ -84,7 +84,7 @@ public interface IRequirementsService {
     * Gets the requirements declared in the given scenario's metadata.
     * 
     * @param options the options the current command is being executed with
-    * @param scenario
+    * @param scenario used to retrieve the requirements
     * @return set of requirements
     */
    default Set<String> getRequirements(IJellyFishCommandOptions options, IScenario scenario) {
