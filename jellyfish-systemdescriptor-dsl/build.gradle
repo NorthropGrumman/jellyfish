@@ -64,13 +64,13 @@ subprojects {
             exclude group: 'asm'
         }
 
-    clean.doFirst {
-        delete file('src/main/xtend-gen')
-        delete file('src/main/xtext-gen')
-        delete file('src/test/xtend-gen')
-        delete file('src/test/xtext-gen')
-        delete file('plugin.xml_gen')
-    }
+        clean.doFirst {
+            delete file('src/main/xtend-gen')
+            delete file('src/main/xtext-gen')
+            delete file('src/test/xtend-gen')
+            delete file('src/test/xtext-gen')
+            delete file('plugin.xml_gen')
+        }
 
         repositories {
             mavenLocal()

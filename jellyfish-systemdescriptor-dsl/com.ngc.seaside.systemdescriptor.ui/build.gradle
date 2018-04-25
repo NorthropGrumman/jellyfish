@@ -85,7 +85,7 @@ jar {
    from('.', { include('plugin.xml') }) 
 }
 
-task copyDependencies(type: Copy) {
+task copyDependencies(type: Copy, dependsOn: ':systemdescriptor.updatesite:unzipEclipse') {
    from configurations.compile
    into { "$buildDir/dependencies" }  
 }
