@@ -198,10 +198,10 @@ public abstract class ${dto.abstractClass.name}
    }
 #end
 ################################## Request Response ###################################
-#foreach($method in $dtoReqResMethods)
+/*#foreach($method in $dtoReqResMethods)
       #foreach($scenarioName in $dto.complexScenarios)
    protected abstract do${scenarioName}(${method.type} value)
-
+*/
 ################################## Activate ###################################
    protected void activate() {
 #foreach($method in $dto.triggerRegistrationMethods)

@@ -188,7 +188,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             IRequestResponseMessagingFlow flow = flowOptional.get();
             switch (flow.getFlowType()) {
                case SERVER:
-                  dto.getBasicServerReqResMethods().add(getBasicReqResMethod(scenario, flow, dto, options));
+                  Optional<BasicServerReqResDto> reqRes = getBasicReqResMethod(scenario, flow, dto, options);
+                  if (reqRes.isPresent()) {
+                     dto.getBasicServerReqResMethods().add(reqRes.get());
+                  }
                   break;
                case CLIENT:
                   // Not implemented yet.
