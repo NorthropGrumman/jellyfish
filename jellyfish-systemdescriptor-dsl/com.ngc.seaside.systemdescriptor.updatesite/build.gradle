@@ -1,9 +1,9 @@
 dependencies {
    features project(path: ':systemdescriptor.feature', configuration: 'feature')
 
-   sdPlugins project(':systemdescriptor')
-   sdPlugins project(':systemdescriptor.ide')
-   sdPlugins project(':systemdescriptor.ui')
+   customPlugins project(':systemdescriptor')
+   customPlugins project(':systemdescriptor.ide')
+   customPlugins project(':systemdescriptor.ui')
 
    eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
    eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
