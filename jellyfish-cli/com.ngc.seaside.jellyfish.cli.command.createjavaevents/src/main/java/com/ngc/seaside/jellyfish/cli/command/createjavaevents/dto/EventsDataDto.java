@@ -14,9 +14,9 @@ public class EventsDataDto {
    private String packageName;
    private String className;
    private String extendedClass;
-   private boolean _abstact;
+   private boolean abstractBool;
    private Function<IDataField, IGeneratedJavaField> dataService;
-   
+
    public INamedChild<IPackage> getData() {
       return data;
    }
@@ -43,7 +43,7 @@ public class EventsDataDto {
       this.className = className;
       return this;
    }
-   
+
    public String getExtendedClass() {
       return extendedClass;
    }
@@ -54,14 +54,14 @@ public class EventsDataDto {
    }
 
    public boolean isAbstract() {
-      return _abstact;
+      return abstractBool;
    }
 
-   public EventsDataDto setAbstract(boolean _abstact) {
-      this._abstact = _abstact;
+   public EventsDataDto setAbstract(boolean abstractBool) {
+      this.abstractBool = abstractBool;
       return this;
    }
-   
+
    public Function<IDataField, IGeneratedJavaField> getDataService() {
       return dataService;
    }
@@ -74,7 +74,12 @@ public class EventsDataDto {
    public boolean isEnum() {
       return data instanceof IEnumeration;
    }
-   
+
+   /**
+    *
+    * @param field that you want a java type for
+    * @return String of the field type
+    */
    public String fieldType(IDataField field) {
       IGeneratedJavaField javaField = dataService.apply(field);
       if (javaField.isMultiple()) {
@@ -83,20 +88,20 @@ public class EventsDataDto {
          return javaField.getJavaType();
       }
    }
-   
+
    public String fieldName(IDataField field) {
       IGeneratedJavaField javaField = dataService.apply(field);
       return javaField.getJavaFieldName();
    }
-   
+
    public String fieldGetter(IDataField field) {
       IGeneratedJavaField javaField = dataService.apply(field);
       return javaField.getJavaGetterName();
    }
-   
+
    public String fieldSetter(IDataField field) {
       IGeneratedJavaField javaField = dataService.apply(field);
       return javaField.getJavaSetterName();
    }
-   
+
 }

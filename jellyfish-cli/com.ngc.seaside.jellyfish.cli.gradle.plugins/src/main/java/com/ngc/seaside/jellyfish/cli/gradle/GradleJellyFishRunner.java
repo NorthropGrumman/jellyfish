@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class GradleJellyFishRunner {
 
-   private final static Set<Class<? extends Module>> MODULES_TO_IGNORE;
+   private static final Set<Class<? extends Module>> MODULES_TO_IGNORE;
 
    static {
       Set<Class<? extends Module>> ignoring = new HashSet<>();

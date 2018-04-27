@@ -1,10 +1,5 @@
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice.processor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
@@ -23,6 +18,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class PubSubProcessorTest {
 
@@ -39,7 +39,7 @@ public class PubSubProcessorTest {
 
    @Mock
    private ReceiveStepHandler receiveStepHandler;
-   
+
    @Mock
    private CorrelateStepHandler correlateStepHandler;
 

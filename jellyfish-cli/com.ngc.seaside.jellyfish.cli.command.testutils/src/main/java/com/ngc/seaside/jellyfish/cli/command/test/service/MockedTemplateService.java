@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.test.service;
 import com.google.common.base.Preconditions;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.impl.propertyservice.PropertyService;
 import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateIgnoreComponent;
 import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateVisitor;
@@ -12,7 +13,6 @@ import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +33,13 @@ public class MockedTemplateService implements ITemplateService {
    private boolean useDefaultUserValues = true;
    private IPropertyService propertyService;
 
+   /**
+    * Sets the template directory in a map keyed by the template name.
+    *
+    * @param templateName the template name
+    * @param directory    the directory containing the template
+    * @return the MockedTemplateService
+    */
    public MockedTemplateService setTemplateDirectory(String templateName, Path directory) {
       Preconditions.checkNotNull(templateName, "templateName may not be null!");
       Preconditions.checkNotNull(directory, "directory may not be null!");
@@ -41,6 +48,11 @@ public class MockedTemplateService implements ITemplateService {
       return this;
    }
 
+   /**
+    * Activates the property service
+    *
+    * @return the MockedTemplateService containing an active IPropertyService
+    */
    public MockedTemplateService useRealPropertyService() {
       PropertyService ps = new PropertyService();
       ps.setLogService(mock(ILogService.class));

@@ -11,6 +11,7 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
+
 package com.ngc.seaside.jellyfish.api;
 
 import java.util.Objects;
@@ -101,9 +102,9 @@ public class DefaultParameter<T> implements IParameter<T> {
          return false;
       }
       IParameter<?> that = (IParameter<?>) obj;
-      return Objects.equals(name, that.getName()) &&
-             Objects.equals(value, that.getValue()) &&
-             Objects.equals(required, that.isRequired());
+      return Objects.equals(name, that.getName())
+             && Objects.equals(value, that.getValue())
+             && Objects.equals(required, that.isRequired());
    }
 
    @Override

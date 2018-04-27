@@ -9,7 +9,7 @@ import com.ngc.seaside.service.transport.api.TransportConfiguration;
 import ${transportProvider.topicPackage}.${transportProvider.topicType};
 #end
 
-public class ${dto.modelName}TestConfiguration {
+public class ${dto.modelName}TestTransportConfiguration {
 
    private ITransportService transportService;
 
@@ -18,7 +18,7 @@ public class ${dto.modelName}TestConfiguration {
 
 #end
    @Inject
-   public ${dto.modelName}TestConfiguration(ITransportService transportService#foreach ($transportProvider in $dto.transportProviders),
+   public ${dto.modelName}TestTransportConfiguration(ITransportService transportService#foreach ($transportProvider in $dto.transportProviders),
          ITransportProvider<${transportProvider.topicType}> ${transportProvider.providerName}#end) {
       this.transportService = transportService;
 #foreach ($transportProvider in $dto.transportProviders)

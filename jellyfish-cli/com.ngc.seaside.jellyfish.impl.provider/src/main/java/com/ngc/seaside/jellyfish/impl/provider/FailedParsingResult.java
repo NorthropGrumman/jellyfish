@@ -44,15 +44,15 @@ public class FailedParsingResult implements IParsingResult {
 
    private static class ExceptionParsingIssue implements IParsingIssue {
 
-      private final Throwable t;
+      private final Throwable throwable;
 
-      private ExceptionParsingIssue(Throwable t) {
-         this.t = t;
+      private ExceptionParsingIssue(Throwable throwable) {
+         this.throwable = throwable;
       }
 
       @Override
       public String getMessage() {
-         return t.getMessage();
+         return throwable.getMessage();
       }
 
       @Override

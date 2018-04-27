@@ -15,11 +15,21 @@ import java.util.Arrays;
 
 public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration";
-   static final String ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqIcpTransportConfiguration";
-   static final String ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqPgmTransportConfiguration";
-   static final String ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqEpgmTransportConfiguration";
-   static final String ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqInprocTransportConfiguration";
+   static final String
+         ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration";
+   static final String
+         ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqIcpTransportConfiguration";
+   static final String
+         ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqPgmTransportConfiguration";
+   static final String
+         ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqEpgmTransportConfiguration";
+   static final String
+         ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqInprocTransportConfiguration";
 
    static final String CONNECTION_TYPE_FIELD_NAME = "connectionType";
    static final String BIND_CONFIGURATION_FIELD_NAME = "bindConfiguration";
@@ -32,24 +42,31 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
    static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
    static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
    static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
-   
+
    static boolean isZeroMqConfiguration(IData type) {
       return Arrays.asList(
-         ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
-         ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,
-         ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
-         ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
-         ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME,
-         ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME).contains(type.getFullyQualifiedName());
+            ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
+            ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,
+            ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
+            ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
+            ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME,
+            ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME).contains(type.getFullyQualifiedName());
    }
 
+   /**
+    *
+    * @param value of the configuration type
+    * @return ZeroMqConfiguration of the passed in value
+    */
    public static ZeroMqConfiguration getZeroMqTcpConfiguration(IPropertyDataValue value) {
       ZeroMqTcpTransportConfiguration configuration = new ZeroMqTcpTransportConfiguration();
       setConnectionType(configuration, value);
       IPropertyDataValue bind = value.getData(getField(value, BIND_CONFIGURATION_FIELD_NAME));
       IPropertyDataValue bindInterface = bind.getData(getField(bind, BIND_CONFIGURATION_INTERFACE_FIELD_NAME));
       IPropertyDataValue connect = value.getData(getField(value, CONNECT_CONFIGURATION_FIELD_NAME));
-      IPropertyDataValue connectAddress = connect.getData(getField(connect, CONNECT_CONFIGURATION_REMOTE_ADDRESS_FIELD_NAME));
+      IPropertyDataValue
+            connectAddress =
+            connect.getData(getField(connect, CONNECT_CONFIGURATION_REMOTE_ADDRESS_FIELD_NAME));
       BigInteger port = value.getPrimitive(getField(value, PORT_FIELD_NAME)).getInteger();
       configuration.setBindConfiguration(getNetworkInterface(bindInterface));
       configuration.setConnectConfiguration(getNetworkAddress(connectAddress));
@@ -57,6 +74,11 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
       return configuration;
    }
 
+   /**
+    *
+    * @param value of the configuration type
+    * @return ZeroMqConfiguration of the passed in value
+    */
    public static ZeroMqConfiguration getZeroMqIpcConfiguration(IPropertyDataValue value) {
       ZeroMqIpcTransportConfiguration configuration = new ZeroMqIpcTransportConfiguration();
       setConnectionType(configuration, value);
@@ -65,6 +87,11 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
       return configuration;
    }
 
+   /**
+    *
+    * @param value of the configuration type
+    * @return ZeroMqConfiguration of the passed in value
+    */
    public static ZeroMqConfiguration getZeroMqInprocConfiguration(IPropertyDataValue value) {
       ZeroMqInprocTransportConfiguration configuration = new ZeroMqInprocTransportConfiguration();
       setConnectionType(configuration, value);
@@ -73,6 +100,11 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
       return configuration;
    }
 
+   /**
+    *
+    * @param value of the configuration type
+    * @return ZeroMqConfiguration of the passed in value
+    */
    public static ZeroMqConfiguration getZeroMqPgmConfiguration(IPropertyDataValue value) {
       ZeroMqPgmTransportConfiguration configuration = new ZeroMqPgmTransportConfiguration();
       setConnectionType(configuration, value);
@@ -87,6 +119,11 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
       return configuration;
    }
 
+   /**
+    *
+    * @param value of the configuration type
+    * @return ZeroMqConfiguration of the passed in value
+    */
    public static ZeroMqConfiguration getZeroMqEpgmConfiguration(IPropertyDataValue value) {
       ZeroMqEpgmTransportConfiguration configuration = new ZeroMqEpgmTransportConfiguration();
       setConnectionType(configuration, value);
@@ -104,14 +141,14 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
    private static void setConnectionType(ZeroMqConfiguration configuration, IPropertyDataValue value) {
       String connectionType = value.getEnumeration(getField(value, CONNECTION_TYPE_FIELD_NAME)).getValue();
       switch (connectionType) {
-      case "SOURCE_BINDS_TARGET_CONNECTS":
-         configuration.setConnectionType(ConnectionType.SOURCE_BINDS_TARGET_CONNECTS);
-         break;
-      case "SOURCE_CONNECTS_TARGET_BINDS":
-         configuration.setConnectionType(ConnectionType.SOURCE_CONNECTS_TARGET_BINDS);
-         break;
-      default:
-         throw new IllegalArgumentException("Unknown connection type: " + connectionType);
+         case "SOURCE_BINDS_TARGET_CONNECTS":
+            configuration.setConnectionType(ConnectionType.SOURCE_BINDS_TARGET_CONNECTS);
+            break;
+         case "SOURCE_CONNECTS_TARGET_BINDS":
+            configuration.setConnectionType(ConnectionType.SOURCE_CONNECTS_TARGET_BINDS);
+            break;
+         default:
+            throw new IllegalArgumentException("Unknown connection type: " + connectionType);
       }
 
    }

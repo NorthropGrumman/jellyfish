@@ -4,7 +4,7 @@ set -e -u -x
 
 if [ $# -eq 0 ]
 then
-  params='build clean install'
+  params='clean build install'
 else
   params="$@"
 fi

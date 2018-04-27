@@ -17,18 +17,24 @@ public class CorrelationDescription implements ICorrelationDescription {
    private List<ICorrelationExpression> completenessExpressions;
    private List<ICorrelationExpression> correlationExpressions;
 
+   /**
+    * Constructor.
+    *
+    * @param scenario the scenario
+    * @param handler  the step handler
+    */
    public CorrelationDescription(IScenario scenario, CorrelateStepHandler handler) {
       completenessExpressions = new ArrayList<>(scenario.getWhens().size());
       correlationExpressions = new ArrayList<>(scenario.getThens().size());
-      
+
       for (IScenarioStep step : scenario.getSteps(CorrelateStepHandler.PRESENT.getVerb())) {
          completenessExpressions.add(new CorrelationExpression(handler, step));
       }
-      
+
       for (IScenarioStep step : scenario.getSteps(CorrelateStepHandler.FUTURE.getVerb())) {
          correlationExpressions.add(new CorrelationExpression(handler, step));
       }
-      
+
    }
 
    @Override
@@ -39,9 +45,9 @@ public class CorrelationDescription implements ICorrelationDescription {
    @Override
    public Collection<ICorrelationExpression> getCompletenessExpressionForInput(IDataReferenceField inputField) {
       return completenessExpressions.stream()
-                             .filter(expression -> expression.getLeftHandOperand().getStart().equals(inputField)
-                                || expression.getRightHandOperand().getStart().equals(inputField))
-                             .collect(Collectors.toList());
+            .filter(expression -> expression.getLeftHandOperand().getStart().equals(inputField)
+                  || expression.getRightHandOperand().getStart().equals(inputField))
+            .collect(Collectors.toList());
    }
 
    @Override
@@ -52,9 +58,9 @@ public class CorrelationDescription implements ICorrelationDescription {
    @Override
    public Collection<ICorrelationExpression> getCorrelationExpressionForOutput(IDataReferenceField outputField) {
       return correlationExpressions.stream()
-               .filter(expression -> expression.getLeftHandOperand().getStart().equals(outputField)
+            .filter(expression -> expression.getLeftHandOperand().getStart().equals(outputField)
                   || expression.getRightHandOperand().getStart().equals(outputField))
-               .collect(Collectors.toList());
+            .collect(Collectors.toList());
    }
 
 }

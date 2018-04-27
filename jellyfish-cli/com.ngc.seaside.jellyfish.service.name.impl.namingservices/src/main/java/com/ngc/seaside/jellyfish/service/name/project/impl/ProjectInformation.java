@@ -85,11 +85,11 @@ public class ProjectInformation implements IProjectInformation {
          return false;
       }
       ProjectInformation that = (ProjectInformation) o;
-      return Objects.equals(groupId, that.groupId) &&
-             Objects.equals(artifactId, that.artifactId) &&
-             Objects.equals(versionPropertyName, that.versionPropertyName) &&
-             Objects.equals(generatedDirectoryName, that.generatedDirectoryName) &&
-             generated == that.generated;
+      return Objects.equals(groupId, that.groupId)
+            && Objects.equals(artifactId, that.artifactId)
+            && Objects.equals(versionPropertyName, that.versionPropertyName)
+            && Objects.equals(generatedDirectoryName, that.generatedDirectoryName)
+            && generated == that.generated;
    }
 
    @Override

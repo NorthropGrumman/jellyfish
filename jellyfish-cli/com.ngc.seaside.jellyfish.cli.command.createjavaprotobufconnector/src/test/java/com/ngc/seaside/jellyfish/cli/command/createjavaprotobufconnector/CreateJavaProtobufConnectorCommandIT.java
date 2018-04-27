@@ -1,17 +1,9 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
@@ -20,16 +12,16 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedRequirementsService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedScenarioService;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTransportConfigurationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.JellyfishCommandPhase;
-import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +36,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CreateJavaProtobufConnectorCommandIT {
 
@@ -131,7 +131,7 @@ public class CreateJavaProtobufConnectorCommandIT {
       cmd.run(options);
 
       Path srcFolder = outputDirectory.resolve(
-         Paths.get("com.ngc.model.connector", "src", "main", "java", "com", "ngc", "model", "connector"));
+            Paths.get("com.ngc.model.connector", "src", "main", "java", "com", "ngc", "model", "connector"));
       Path connectorFile = srcFolder.resolve("ModelConnector.java");
       Path conversionFile = srcFolder.resolve("ModelDataConversion.java");
 
@@ -167,7 +167,7 @@ public class CreateJavaProtobufConnectorCommandIT {
             fail("Invalid type parameter: " + line);
          }
       });
-      
+
       assertTrue(convertStatements.toString(), convertStatements.isEmpty());
       assertTrue(setAddStatements.toString(), setAddStatements.isEmpty());
    }

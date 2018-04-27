@@ -21,6 +21,14 @@ public class FlowFactory {
    private FlowFactory() {
    }
 
+
+   /**
+    * Creates a mocked {@link IRequestResponseMessagingFlow} containing a scenario with the given
+    * scenario name
+    *
+    * @param scenarioName the scenario name
+    * @return a mocked IRequestResponseMessagingFlow
+    */
    public static IRequestResponseMessagingFlow newRequestResponseServerFlow(String scenarioName) {
       Scenario scenario = new Scenario(scenarioName);
       Package dataPackage = new Package("com.ngc.testing.data");
@@ -44,6 +52,12 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IRequestResponseMessagingFlow} containing the given scenario
+    *
+    * @param scenario the scenario
+    * @return a mocked IRequestResponseMessagingFlow
+    */
    public static IRequestResponseMessagingFlow newRequestResponseServerFlow(IScenario scenario) {
       IModel model = scenario.getParent();
 
@@ -60,6 +74,14 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IRequestResponseMessagingFlow} containing the given scenario and input/output fields.
+    *
+    * @param scenario        the scenario
+    * @param inputFieldName  the input field name
+    * @param outputFieldName the output field name
+    * @return a mocked IRequestResponseMessagingFlow
+    */
    public static IRequestResponseMessagingFlow newRequestResponseServerFlow(IScenario scenario,
                                                                             String inputFieldName,
                                                                             String outputFieldName) {
@@ -78,6 +100,13 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IPublishSubscribeMessagingFlow} containing a scenario with the given
+    * scenario name
+    *
+    * @param scenarioName the scenario name
+    * @return a mocked IPublishSubscribeMessagingFlow
+    */
    public static IPublishSubscribeMessagingFlow newPubSubFlowPath(String scenarioName) {
       Scenario scenario = new Scenario(scenarioName);
       Package dataPackage = new Package("com.ngc.testing.data");
@@ -101,6 +130,12 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IPublishSubscribeMessagingFlow} containing the given scenario
+    *
+    * @param scenario the scenario
+    * @return a mocked IPublishSubscribeMessagingFlow
+    */
    public static IPublishSubscribeMessagingFlow newPubSubFlowPath(IScenario scenario) {
       IModel model = scenario.getParent();
 
@@ -116,6 +151,13 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IPublishSubscribeMessagingFlow} containing a scenario with the given
+    * scenario name.  Flow type is sink.
+    *
+    * @param scenarioName the scenario name
+    * @return a mocked IPublishSubscribeMessagingFlow
+    */
    public static IPublishSubscribeMessagingFlow newPubSubFlowSink(String scenarioName) {
       Scenario scenario = new Scenario(scenarioName);
       Package dataPackage = new Package("com.ngc.testing.data");
@@ -134,6 +176,13 @@ public class FlowFactory {
       return flow;
    }
 
+   /**
+    * Creates a mocked {@link IPublishSubscribeMessagingFlow} containing a scenario with the given
+    * scenario name.  Flow type is source.
+    *
+    * @param scenarioName the scenario name
+    * @return a mocked IPublishSubscribeMessagingFlow
+    */
    public static IPublishSubscribeMessagingFlow newPubSubFlowSource(String scenarioName) {
       Scenario scenario = new Scenario(scenarioName);
       Package dataPackage = new Package("com.ngc.testing.data");

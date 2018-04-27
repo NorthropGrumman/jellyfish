@@ -1,13 +1,13 @@
-package com.ngc.example.inhertance.databagsservice.tests.config;
+package com.model.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.ngc.example.inhertance.databagsservice.transport.topic.DataBagsServiceTransportTopics;
+import com.model.transport.topic.ModelTransportTopics;
 
-public class DataBagsServiceTestConfiguration{
+public class ModelTestTransportConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class DataBagsServiceTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public DataBagsServiceTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ModelTestTransportConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

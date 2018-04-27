@@ -61,8 +61,8 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
          return false;
       }
       IJellyFishCommandOptions that = (IJellyFishCommandOptions) obj;
-      return Objects.equals(parameters, that.getParameters()) &&
-             Objects.equals(parsingResult, that.getParsingResult());
+      return Objects.equals(parameters, that.getParameters())
+             && Objects.equals(parsingResult, that.getParsingResult());
    }
 
    @Override
