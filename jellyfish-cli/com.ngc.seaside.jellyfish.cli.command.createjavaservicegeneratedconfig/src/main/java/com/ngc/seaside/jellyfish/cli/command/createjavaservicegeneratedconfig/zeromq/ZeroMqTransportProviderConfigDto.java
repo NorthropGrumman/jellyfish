@@ -26,16 +26,23 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfigDto<ZeroMqDto> {
-   static final String ZEROMQ_TRANSPORT_PROVIDER_COMPONENT_NAME = "com.ngc.seaside.service.transport.impl.provider.zeromq.ZeroMQTransportProvider";
+
+   static final String
+         ZEROMQ_TRANSPORT_PROVIDER_COMPONENT_NAME =
+         "com.ngc.seaside.service.transport.impl.provider.zeromq.ZeroMQTransportProvider";
    static final String ZEROMQ_CONFIGURATION_CLASS_NAME_SUFFIX = "ZeroMqConfiguration";
    static final String ZEROMQ_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "ZeroMqTestConfiguration";
    static final String ZEROMQ_PROVIDER_VARIABLE_NAME = "zeroMqProvider";
    static final String ZEROMQ_TOPIC = "com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopic";
-   static final String ZEROMQ_MODULE = "com.ngc.seaside.service.transport.impl.provider.zeromq.module.ZeroMQTransportProviderModule";
+   static final String
+         ZEROMQ_MODULE =
+         "com.ngc.seaside.service.transport.impl.provider.zeromq.module.ZeroMQTransportProviderModule";
    static final String ZEROMQ_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.zeromq";
    static final String ZEROMQ_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq";
    static final String ZEROMQ_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.zeromq.module";
-   public static final String ZEROMQ_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-zeromq";
+   public static final String
+         ZEROMQ_TEMPLATE =
+         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-zeromq";
 
    static final String CONNECTION_TYPE_BIND = "BIND";
    static final String CONNECTION_TYPE_CONNECT = "CONNECT";
@@ -48,6 +55,12 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    private final IScenarioService scenarioService;
    private final boolean test;
 
+   /**
+    *
+    * @param transportConfigService Transport service
+    * @param scenarioService scenario for DTO
+    * @param test Whether its for a test or not
+    */
    public ZeroMqTransportProviderConfigDto(ITransportConfigurationService transportConfigService,
                                            IScenarioService scenarioService,
                                            boolean test) {
@@ -59,23 +72,23 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    @Override
    public TransportProviderDto getTransportProviderDto(ZeroMqDto dto) {
       return new TransportProviderDto().setComponentName(ZEROMQ_TRANSPORT_PROVIDER_COMPONENT_NAME)
-                                       .setConfigurationType(
-                                          dto.getBaseDto().getModelName() + getClassnameSuffix())
-                                       .setProviderName(ZEROMQ_PROVIDER_VARIABLE_NAME)
-                                       .setTopic(ZEROMQ_TOPIC)
-                                       .setModule(ZEROMQ_MODULE);
+            .setConfigurationType(
+                  dto.getBaseDto().getModelName() + getClassnameSuffix())
+            .setProviderName(ZEROMQ_PROVIDER_VARIABLE_NAME)
+            .setTopic(ZEROMQ_TOPIC)
+            .setModule(ZEROMQ_MODULE);
    }
 
    @Override
    public Optional<ZeroMqDto> getConfigurationDto(GeneratedServiceConfigDto dto,
-            IJellyFishCommandOptions options,
-            IModel model, String topicsClassName,
-            Map<String, IDataReferenceField> topics) {
+                                                  IJellyFishCommandOptions options,
+                                                  IModel model, String topicsClassName,
+                                                  Map<String, IDataReferenceField> topics) {
 
       ZeroMqDto zeroMqDto = new ZeroMqDto()
-               .setBaseDto(dto)
-               .setClassname(dto.getModelName() + getClassnameSuffix());
-      
+            .setBaseDto(dto)
+            .setClassname(dto.getModelName() + getClassnameSuffix());
+
       zeroMqDto.addImport(topicsClassName);
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
@@ -85,19 +98,19 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
          boolean isOutput = model.getOutputs().contains(field);
 
          Collection<ZeroMqConfiguration> configurations = transportConfigService.getZeroMqConfiguration(options,
-            field);
+                                                                                                        field);
          int count = 1;
          for (ZeroMqConfiguration configuration : configurations) {
             final Collection<ZeroMqTopicDto> zeroMqTopicDtos;
 
             if (configuration instanceof ZeroMqTcpTransportConfiguration) {
                zeroMqTopicDtos = getTcpConfigurationDtos(options,
-                  topicsPrefix + topicName,
-                  field.getName() + (configurations.size() > 1 ? count : ""),
-                  field,
-                  (ZeroMqTcpTransportConfiguration) configuration,
-                  isOutput,
-                  zeroMqDto::addImport);
+                                                         topicsPrefix + topicName,
+                                                         field.getName() + (configurations.size() > 1 ? count : ""),
+                                                         field,
+                                                         (ZeroMqTcpTransportConfiguration) configuration,
+                                                         isOutput,
+                                                         zeroMqDto::addImport);
             } else {
                throw new IllegalStateException("Zero MQ does not yet support non TCP configurations");
             }
@@ -121,9 +134,11 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    }
 
    private Collection<ZeroMqTopicDto> getTcpConfigurationDtos(IJellyFishCommandOptions options, String topicName,
-            String variableName,
-            IDataReferenceField field, ZeroMqTcpTransportConfiguration configuration, boolean isOutput,
-            Consumer<String> imports) {
+                                                              String variableName,
+                                                              IDataReferenceField field,
+                                                              ZeroMqTcpTransportConfiguration configuration,
+                                                              boolean isOutput,
+                                                              Consumer<String> imports) {
 
       Set<String> socketTypes = new LinkedHashSet<>();
 
@@ -133,36 +148,36 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
          Collection<MessagingParadigm> paradigms = scenarioService.getMessagingParadigms(options, scenario);
          for (MessagingParadigm paradigm : paradigms) {
             switch (paradigm) {
-            case PUBLISH_SUBSCRIBE:
-               IPublishSubscribeMessagingFlow pubSubFlow = scenarioService.getPubSubMessagingFlow(options, scenario)
-                                                                          .get();
-               if ((isOutput && !pubSubFlow.getOutputs().contains(field)) ||
-                  (!isOutput && !pubSubFlow.getInputs().contains(field))) {
-                  break;
-               }
+               case PUBLISH_SUBSCRIBE:
+                  IPublishSubscribeMessagingFlow pubSubFlow = scenarioService.getPubSubMessagingFlow(options, scenario)
+                        .get();
+                  if ((isOutput && !pubSubFlow.getOutputs().contains(field))
+                        || (!isOutput && !pubSubFlow.getInputs().contains(field))) {
+                     break;
+                  }
 
-               if (shouldPublishOrRepsond) {
-                  socketTypes.add(SOCKET_TYPE_PUBLISH);
-               } else {
-                  socketTypes.add(SOCKET_TYPE_SUBSCRIBE);
-               }
-               break;
-            case REQUEST_RESPONSE:
-               IRequestResponseMessagingFlow reqRepFlow = scenarioService.getRequestResponseMessagingFlow(options,
-                  scenario).get();
-
-               if ((isOutput && !Objects.equals(reqRepFlow.getOutput(), field)) ||
-                  (!isOutput && !Objects.equals(reqRepFlow.getInput(), field))) {
+                  if (shouldPublishOrRepsond) {
+                     socketTypes.add(SOCKET_TYPE_PUBLISH);
+                  } else {
+                     socketTypes.add(SOCKET_TYPE_SUBSCRIBE);
+                  }
                   break;
-               }
-               if (shouldPublishOrRepsond) {
-                  socketTypes.add(SOCKET_TYPE_RESPONSE);
-               } else {
-                  socketTypes.add(SOCKET_TYPE_REQUEST);
-               }
-               break;
-            default:
-               throw new IllegalStateException("Unknown messaging paradigm: " + paradigm);
+               case REQUEST_RESPONSE:
+                  IRequestResponseMessagingFlow reqRepFlow =
+                        scenarioService.getRequestResponseMessagingFlow(options,scenario).get();
+
+                  if ((isOutput && !Objects.equals(reqRepFlow.getOutput(), field))
+                        || (!isOutput && !Objects.equals(reqRepFlow.getInput(), field))) {
+                     break;
+                  }
+                  if (shouldPublishOrRepsond) {
+                     socketTypes.add(SOCKET_TYPE_RESPONSE);
+                  } else {
+                     socketTypes.add(SOCKET_TYPE_REQUEST);
+                  }
+                  break;
+               default:
+                  throw new IllegalStateException("Unknown messaging paradigm: " + paradigm);
             }
          }
       }
@@ -177,15 +192,15 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
          imports.accept(socketType);
          final boolean shouldBind;
          switch (configuration.getConnectionType()) {
-         case SOURCE_BINDS_TARGET_CONNECTS:
-            shouldBind = isOutput ^ test;
-            break;
-         case SOURCE_CONNECTS_TARGET_BINDS:
-            shouldBind = !(isOutput ^ test);
-            break;
-         default:
-            throw new IllegalStateException(
-               "Unknown connection type: " + configuration.getConnectConfiguration());
+            case SOURCE_BINDS_TARGET_CONNECTS:
+               shouldBind = isOutput ^ test;
+               break;
+            case SOURCE_CONNECTS_TARGET_BINDS:
+               shouldBind = !(isOutput ^ test);
+               break;
+            default:
+               throw new IllegalStateException(
+                     "Unknown connection type: " + configuration.getConnectConfiguration());
          }
          if (shouldBind) {
             topicDto.setConnectionType(CONNECTION_TYPE_BIND);

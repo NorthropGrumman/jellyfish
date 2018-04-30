@@ -20,15 +20,15 @@ import org.apache.commons.lang3.StringUtils;
 public class MockedDataFieldGenerationService implements IDataFieldGenerationService {
 
    private final IPackageNamingService packageService;
-   
+
    public MockedDataFieldGenerationService() {
       this(new MockedPackageNamingService());
    }
-   
+
    public MockedDataFieldGenerationService(IPackageNamingService packageService) {
       this.packageService = packageService;
    }
-   
+
    @Override
    public IGeneratedJavaField getEventsField(IJellyFishCommandOptions options, IDataField field) {
       return new GeneratedField(field, false);
@@ -38,18 +38,21 @@ public class MockedDataFieldGenerationService implements IDataFieldGenerationSer
    public IGeneratedProtoField getMessagesField(IJellyFishCommandOptions options, IDataField field) {
       return new GeneratedField(field, true);
    }
-   
+
    private class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField, IGeneratedJavaProtoField {
 
       private final IDataField field;
       private final boolean proto;
       private final String pkg;
       private final String capitalizedName;
+
       public GeneratedField(IDataField field, boolean proto) {
          this.field = field;
          this.proto = proto;
          if (field.getType() == DataTypes.DATA || field.getType() == DataTypes.ENUM) {
-            INamedChild<IPackage> type = field.getType() == DataTypes.DATA ? field.getReferencedDataType() : field.getReferencedEnumeration();
+            INamedChild<IPackage>
+                  type =
+                  field.getType() == DataTypes.DATA ? field.getReferencedDataType() : field.getReferencedEnumeration();
             if (proto) {
                pkg = packageService.getMessagePackageName(null, type);
             } else {
@@ -60,7 +63,7 @@ public class MockedDataFieldGenerationService implements IDataFieldGenerationSer
          }
          capitalizedName = StringUtils.capitalize(field.getName());
       }
-      
+
       @Override
       public IDataField getDataField() {
          return field;
@@ -73,21 +76,21 @@ public class MockedDataFieldGenerationService implements IDataFieldGenerationSer
 
       @Override
       public String getJavaType() {
-         switch(field.getType()) {
-         case BOOLEAN:
-            return isMultiple() ? "Boolean" : "boolean";
-         case FLOAT:
-            return isMultiple() ? "Float" : "float";
-         case INT:
-            return isMultiple() ? "Integer" : "int";
-         case STRING:
-            return "String";
-         case DATA:
-            return pkg + "." + field.getName();
-         case ENUM:
-            return pkg + "." + field.getName();
-         default:
-            throw new RuntimeException();
+         switch (field.getType()) {
+            case BOOLEAN:
+               return isMultiple() ? "Boolean" : "boolean";
+            case FLOAT:
+               return isMultiple() ? "Float" : "float";
+            case INT:
+               return isMultiple() ? "Integer" : "int";
+            case STRING:
+               return "String";
+            case DATA:
+               return pkg + "." + field.getName();
+            case ENUM:
+               return pkg + "." + field.getName();
+            default:
+               throw new RuntimeException();
          }
       }
 
@@ -114,27 +117,29 @@ public class MockedDataFieldGenerationService implements IDataFieldGenerationSer
       @Override
       public String getProtoType() {
          final String type;
-         switch(field.getType()) {
-         case BOOLEAN:
-            type = "boolean";
-            break;
-         case FLOAT:
-            type = "float";
-            break;
-         case INT:
-            type = "sint32";
-            break;
-         case STRING:
-            type = "string";
-            break;
-         case DATA:
-            type = packageService.getMessagePackageName(null, field.getReferencedDataType()) + "." + field.getName();
-            break;
-         case ENUM:
-            type = packageService.getMessagePackageName(null, field.getReferencedEnumeration()) + "." + field.getName();
-            break;
-         default:
-            throw new RuntimeException();
+         switch (field.getType()) {
+            case BOOLEAN:
+               type = "boolean";
+               break;
+            case FLOAT:
+               type = "float";
+               break;
+            case INT:
+               type = "sint32";
+               break;
+            case STRING:
+               type = "string";
+               break;
+            case DATA:
+               type = packageService.getMessagePackageName(null, field.getReferencedDataType()) + "." + field.getName();
+               break;
+            case ENUM:
+               type =
+                     packageService.getMessagePackageName(null, field.getReferencedEnumeration()) + "." + field
+                           .getName();
+               break;
+            default:
+               throw new RuntimeException();
          }
          return isMultiple() ? ("repeated " + type) : type;
       }
@@ -158,7 +163,7 @@ public class MockedDataFieldGenerationService implements IDataFieldGenerationSer
       public String getRepeatedJavaGetterName() {
          return "get" + capitalizedName;
       }
-      
+
    }
 
 }

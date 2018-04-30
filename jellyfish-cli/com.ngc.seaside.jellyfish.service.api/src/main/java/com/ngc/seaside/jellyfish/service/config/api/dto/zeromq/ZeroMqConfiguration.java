@@ -8,10 +8,12 @@ public abstract class ZeroMqConfiguration {
 
    private ConnectionType connectionType;
 
-   ZeroMqConfiguration() {}
+   ZeroMqConfiguration() {
+   }
 
    /**
-    * Defines how the source and target connect to one another and identifies which is the client and which is the server.
+    * Defines how the source and target connect to one another and identifies which is the client and
+    * which is the server.
     */
    public ConnectionType getConnectionType() {
       return connectionType;

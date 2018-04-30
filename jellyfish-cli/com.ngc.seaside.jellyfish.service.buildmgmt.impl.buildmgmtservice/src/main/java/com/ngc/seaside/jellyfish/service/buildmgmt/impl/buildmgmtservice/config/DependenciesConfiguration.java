@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 /**
  * Provides a simple way to configure dependencies that are referenced when projects are generated as code.  Note that
  * many values can be hardcoded as strings or injected as {@link #propertyNamed(String) properties} at runtime.
- *
  * See {@link com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.DefaultDependenciesConfiguration} for an
  * example.
  */
@@ -82,6 +81,11 @@ public class DependenciesConfiguration {
       return new Artifact().artifactId(artifactId);
    }
 
+   /**
+    *
+    * @param name of the property
+    * @return the property with passed in name
+    */
    public static Property propertyNamed(String name) {
       Preconditions.checkNotNull(name, "name may not be null!");
       Preconditions.checkArgument(!name.trim().isEmpty(), "name may not be empty!");
@@ -120,12 +124,22 @@ public class DependenciesConfiguration {
          return defaultGroupId.getValue();
       }
 
+      /**
+       *
+       * @param versionPropertyName name of the version property to be created by this Property
+       * @return group created by the property
+       */
       public Group versionPropertyName(Property versionPropertyName) {
          Preconditions.checkNotNull(versionPropertyName, "versionPropertyName may not be null!");
          this.versionPropertyName = new PropertyValue(versionPropertyName);
          return this;
       }
 
+      /**
+       *
+       * @param versionPropertyName name of the version property to be created by this String
+       * @return group created b the String
+       */
       public Group versionPropertyName(String versionPropertyName) {
          Preconditions.checkNotNull(versionPropertyName, "versionPropertyName may not be null!");
          Preconditions.checkArgument(!versionPropertyName.trim().isEmpty(), "versionPropertyName may not be empty!");
@@ -133,12 +147,22 @@ public class DependenciesConfiguration {
          return this;
       }
 
+      /**
+       *
+       * @param version used to create the group via a property
+       * @return the group created by the passed in property
+       */
       public Group version(Property version) {
          Preconditions.checkNotNull(version, "version may not be null!");
          this.version = new PropertyValue(version);
          return this;
       }
 
+      /**
+       *
+       * @param version used to create the group via a String
+       * @return the group created by the passed in string
+       */
       public Group version(String version) {
          Preconditions.checkNotNull(version, "version may not be null!");
          Preconditions.checkArgument(!version.trim().isEmpty(), "version may not be empty!");
@@ -146,12 +170,22 @@ public class DependenciesConfiguration {
          return this;
       }
 
+      /**
+       *
+       * @param defaultGroupId The group id to be used as the default via a property
+       * @return the group with this default group ID
+       */
       public Group defaultGroupId(Property defaultGroupId) {
          Preconditions.checkNotNull(defaultGroupId, "defaultGroupId may not be null!");
          this.defaultGroupId = new PropertyValue(defaultGroupId);
          return this;
       }
 
+      /**
+       *
+       * @param defaultGroupId The group id to be used as the default via a String
+       * @return he group with this default group ID
+       */
       public Group defaultGroupId(String defaultGroupId) {
          Preconditions.checkNotNull(defaultGroupId, "defaultGroupId may not be null!");
          Preconditions.checkArgument(!defaultGroupId.trim().isEmpty(), "defaultGroupId may not be empty!");
@@ -168,6 +202,12 @@ public class DependenciesConfiguration {
          return this;
       }
 
+      /**
+       *
+       * @param artifact that will be added
+       * @param artifacts collection of artifacts to add
+       * @return
+       */
       public Group includes(Artifact artifact, Artifact... artifacts) {
          Preconditions.checkNotNull(artifact, "artifact may not be null!");
          Collection<Artifact> all = new ArrayList<>();
@@ -176,6 +216,11 @@ public class DependenciesConfiguration {
          return includes(all);
       }
 
+      /**
+       *
+       * @param artifacts collection of artifacts
+       * @return Group
+       */
       public Group includes(Collection<Artifact> artifacts) {
          Preconditions.checkNotNull(artifacts, "artifacts may not be null!");
          artifacts.forEach(a -> this.artifacts.add(a.setGroup(this)));
@@ -201,13 +246,13 @@ public class DependenciesConfiguration {
 
       @Override
       public String toString() {
-         return "Group{" +
-                "artifacts=" + artifacts +
-                ", versionPropertyName=" + versionPropertyName +
-                ", version=" + version +
-                ", defaultGroupId=" + defaultGroupId +
-                ", defaultScope=" + defaultScope +
-                '}';
+         return "Group{"
+               + "artifacts=" + artifacts
+               + ", versionPropertyName=" + versionPropertyName
+               + ", version=" + version
+               + ", defaultGroupId=" + defaultGroupId
+               + ", defaultScope=" + defaultScope
+               + '}';
       }
    }
 
@@ -267,18 +312,32 @@ public class DependenciesConfiguration {
          return group.getVersionPropertyName();
       }
 
+      /**
+       *
+       * @return DependencyScope
+       */
       public DependencyScope getScope() {
          return Preconditions.checkNotNull(scope != null ? scope : group.getDefaultScope(),
                                            "artifact %s has no scope and its group has no default scope!",
                                            getArtifactId());
       }
 
+      /**
+       *
+       * @param artifactId Property
+       * @return the Artifact ID
+       */
       public Artifact artifactId(Property artifactId) {
          Preconditions.checkNotNull(artifactId, "artifactId may not be null!");
          this.artifactId = new PropertyValue(artifactId);
          return this;
       }
 
+      /**
+       *
+       * @param artifactId String to get the Artifact ID
+       * @return the Artifact ID
+       */
       public Artifact artifactId(String artifactId) {
          Preconditions.checkNotNull(artifactId, "artifactId may not be null!");
          Preconditions.checkArgument(!artifactId.trim().isEmpty(), "artifactId may not be empty!");
@@ -286,12 +345,22 @@ public class DependenciesConfiguration {
          return this;
       }
 
+      /**
+       *
+       * @param groupId  Property used to get the group ID artifact
+       * @return The group ID artifact
+       */
       public Artifact groupId(Property groupId) {
          Preconditions.checkNotNull(groupId, "groupId may not be null!");
          this.groupId = new PropertyValue(groupId);
          return this;
       }
 
+      /**
+       *
+       * @param groupId String used to get the group ID artifact
+       * @return The group ID artifact
+       */
       public Artifact groupId(String groupId) {
          Preconditions.checkNotNull(groupId, "groupId may not be null!");
          Preconditions.checkArgument(!groupId.trim().isEmpty(), "groupId may not be empty!");
@@ -317,11 +386,11 @@ public class DependenciesConfiguration {
 
       @Override
       public String toString() {
-         return "Artifact{" +
-                ", artifactId=" + artifactId +
-                ", groupId=" + groupId +
-                ", scope=" + scope +
-                '}';
+         return "Artifact{"
+               + ", artifactId=" + artifactId
+               + ", groupId=" + groupId
+               + ", scope=" + scope
+               + '}';
       }
    }
 
@@ -339,9 +408,9 @@ public class DependenciesConfiguration {
 
       @Override
       public String toString() {
-         return "Property{" +
-                "name='" + name + '\'' +
-                '}';
+         return "Property{"
+               + "name='" + name + '\''
+               + '}';
       }
    }
 
@@ -390,13 +459,13 @@ public class DependenciesConfiguration {
 
       @Override
       public String toString() {
-         return "PropertyValue{" +
-                "property=" + property +
-                ", value='" + value + '\'' +
-                '}';
+         return "PropertyValue{"
+               + "property=" + property
+               + ", value='" + value + '\''
+               + '}';
       }
    }
 
-   private final static Property CONSTANT_PROPERTY = new Property(null);
-   private final static Property OPTIONAL_PROPERTY = new Property(null);
+   private static final Property CONSTANT_PROPERTY = new Property(null);
+   private static final Property OPTIONAL_PROPERTY = new Property(null);
 }

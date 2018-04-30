@@ -9,9 +9,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
  * Represents a correlation expression as described in a System Descriptor scenario.  An expression is two operands and
  * an operator.  This interface represents both expressions that are part of a {@code when} step as well as expressions
  * that part of a {@code then} step.
- *
  * <p/>
- *
  * As an example, consider the following scenario:
  * <pre>
  *    scenario calculateTrackPriority {
@@ -22,7 +20,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
  *      and willPublish trackPriority
  * }
  * </pre>
- *
  * In this case, there is one expression in a when step and and one expression in a then step.  The when step expression
  * is:
  * <pre>
@@ -30,7 +27,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
  * </pre>
  * The left hand operand is the data path {@code systemTrack.header.correlationEventId} and the right hand operand is
  * the data path {@code impactAssessment.header.correlationEventId}.  The operator is equals.
- *
  * The then step expression is:
  * <pre>
  *    willCorrelate systemTrack.header.correlationEventId to trackPriority.header.correlationEventId
@@ -56,12 +52,14 @@ public interface ICorrelationExpression {
    Operator getOperator();
 
    /**
-    * Gets the left hand operand used by this expression. If the correlation contained 1 input and 1 output, then this returns the data path for the input.
+    * Gets the left hand operand used by this expression. If the correlation contained 1 input and 1 output,
+    * then this returns the data path for the input.
     */
    IDataPath getLeftHandOperand();
 
    /**
-    * Gets the right hand operand used by this expression. If the correlation contained 1 input and 1 output, then this returns the data path for the output.
+    * Gets the right hand operand used by this expression. If the correlation contained 1 input and 1 output,
+    * then this returns the data path for the output.
     */
    IDataPath getRightHandOperand();
 

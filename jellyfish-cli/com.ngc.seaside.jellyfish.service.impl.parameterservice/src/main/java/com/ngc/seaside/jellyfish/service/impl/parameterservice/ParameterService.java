@@ -1,14 +1,15 @@
 package com.ngc.seaside.jellyfish.service.impl.parameterservice;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-import com.ngc.seaside.jellyfish.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.parameter.api.ParameterServiceException;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -69,7 +70,7 @@ public class ParameterService implements IParameterService {
       Preconditions.checkNotNull(parameters, "The input parameters must not be null.");
 
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
-      for(Map.Entry<String, ?> entry : parameters.entrySet()) {
+      for (Map.Entry<String, ?> entry : parameters.entrySet()) {
          parameterCollection.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
       }
 
@@ -81,7 +82,7 @@ public class ParameterService implements IParameterService {
          IUsage usage, IParameterCollection collection) {
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
       for (IParameter<?> param : usage.getRequiredParameters()) {
-         if(!collection.containsParameter(param.getName())) {
+         if (!collection.containsParameter(param.getName())) {
             parameterCollection.addParameter(param);
          }
       }

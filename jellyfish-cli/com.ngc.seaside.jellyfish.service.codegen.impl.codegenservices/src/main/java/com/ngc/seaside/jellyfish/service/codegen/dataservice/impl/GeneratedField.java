@@ -117,6 +117,13 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       this.protoRepeatedJavaGetterName = protoRepeatedJavaGetterName;
    }
 
+   /**
+    *
+    * @param field to generate
+    * @param options for the field
+    * @param packageNamingService for the field
+    * @return
+    */
    public static GeneratedField of(IDataField field,
                                    IJellyFishCommandOptions options,
                                    IPackageNamingService packageNamingService) {
@@ -183,7 +190,7 @@ public class GeneratedField implements IGeneratedJavaField, IGeneratedProtoField
       Matcher m = UNDERSCORE_PATTERN.matcher(originalFieldName);
       while (m.find()) {
          if (buffer.length() == 0
-             && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
+                 && (originalFieldName.startsWith("_") || Character.isDigit(originalFieldName.charAt(0)))) {
             m.appendReplacement(buffer, m.group(0));
          } else {
             m.appendReplacement(buffer, m.group(0).toUpperCase());

@@ -61,15 +61,15 @@ pipeline {
                sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
                junit '**/build/test-results/test/*.xml'
             }
-         }
+        }
       }
 
-      stage('Build jellyfish-cli') {
-         steps {
-            dir('jellyfish-cli') {
-               sh '../gradlew clean build install'
-               junit '**/build/test-results/test/*.xml'
-            }
+        stage('Build jellyfish-cli') {
+            steps {
+                dir('jellyfish-cli') {
+                    sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+                    junit '**/build/test-results/test/*.xml'
+                }
          }
       }
 

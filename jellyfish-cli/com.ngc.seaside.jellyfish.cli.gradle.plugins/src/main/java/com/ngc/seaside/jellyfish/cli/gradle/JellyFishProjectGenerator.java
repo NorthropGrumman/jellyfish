@@ -26,6 +26,9 @@ public class JellyFishProjectGenerator {
       this.logger = logger;
    }
 
+   /**
+    * generates a jellyfish project
+    */
    public void generate() {
       if (executionCondition.get()) {
 

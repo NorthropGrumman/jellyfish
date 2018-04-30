@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -18,6 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Paths;
 import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidateCommandTest {

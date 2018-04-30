@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.utilities.file;
 
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilities;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

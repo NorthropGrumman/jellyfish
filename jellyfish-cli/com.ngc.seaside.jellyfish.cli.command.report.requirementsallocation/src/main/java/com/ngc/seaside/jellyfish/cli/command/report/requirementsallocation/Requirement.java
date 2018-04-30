@@ -12,25 +12,25 @@ import java.util.TreeSet;
  * POJO for a requirement
  */
 public class Requirement implements Comparable<Object> {
-   private String ID;
+
+   private String id;
    private TreeSet<IModel> models = new TreeSet<IModel>(new Comparator<IModel>() {
-      public int compare(IModel obj1, IModel obj2)
-      {
+      public int compare(IModel obj1, IModel obj2) {
          return obj1.getName().compareTo(obj2.getName());
       }
    });
 
    public Requirement(String name) {
-      this.ID = name;
+      this.id = name;
    }
 
    /**
-    * The ID of this requirement
+    * The id of this requirement
     *
-    * @return feature ID
+    * @return feature id
     */
-   public String getID() {
-      return ID;
+   public String getId() {
+      return id;
    }
 
    /**
@@ -59,21 +59,22 @@ public class Requirement implements Comparable<Object> {
    void addModels(Collection<IModel> models) {
       models.forEach(this::addModel);
    }
-   
+
    /**
     * Creates a comma delimited requirements allocation string
+    *
     * @param models the models to check for requirement satisfaction
     * @return a comma delimited string of requirement allocation
     */
    public String createRequirementAllocationCsvString(Collection<IModel> models) {
       StringJoiner sj = new StringJoiner(",");
 
-      sj.add("\"" + ID + "\"");
+      sj.add("\"" + id + "\"");
 
-      models.forEach(model ->{
+      models.forEach(model -> {
          if (this.models.contains(model)) {
             sj.add("X");
-         }else {
+         } else {
             sj.add("");
          }
       });
@@ -83,7 +84,7 @@ public class Requirement implements Comparable<Object> {
 
    @Override
    public int hashCode() {
-      return Objects.hash(ID);
+      return Objects.hash(id);
    }
 
    @Override
@@ -96,7 +97,7 @@ public class Requirement implements Comparable<Object> {
          return false;
       }
       Requirement that = (Requirement) obj;
-      return Objects.equals(ID, that.ID);
+      return Objects.equals(id, that.id);
    }
 
    @Override

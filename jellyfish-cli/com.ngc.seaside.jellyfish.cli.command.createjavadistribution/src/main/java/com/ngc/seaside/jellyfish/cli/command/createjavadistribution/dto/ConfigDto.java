@@ -41,16 +41,16 @@ public class ConfigDto {
       this.packageName = packageName;
       return this;
    }
-   
+
    public String getProjectName() {
       return projectName;
    }
-   
+
    public ConfigDto setProjectName(String projectName) {
       this.projectName = projectName;
       return this;
    }
-   
+
    public Set<String> getProjectDependencies() {
       return projectDependencies;
    }
@@ -67,6 +67,11 @@ public class ConfigDto {
       this.transportProviderDependencies = transportProviderDependencies;
    }
 
+   /**
+    *
+    * @param groupAndArtifactId String of the group ID that you want formatted
+    * @return String of formatted dependency
+    */
    public String getFormattedDependency(String groupAndArtifactId) {
       IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
       return String.format("%s:%s:$%s",

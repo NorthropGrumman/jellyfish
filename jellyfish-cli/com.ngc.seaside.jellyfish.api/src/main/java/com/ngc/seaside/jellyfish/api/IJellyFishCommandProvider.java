@@ -10,8 +10,8 @@ import java.util.Collection;
 public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommandOptions, IJellyFishCommand> {
 
    /**
-    * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith(IJellyFishCommandOptions,
-    * Collection) mergeWith} to easily manage options.
+    * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith
+    * (IJellyFishCommandOptions, Collection) mergeWith} to easily manage options.
     *
     * @param command        the name of the command to run
     * @param commandOptions the options to run the command with

@@ -1,14 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto.SPARK_TEMPLATE;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -51,6 +42,15 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto.SPARK_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServiceGeneratedConfigCommandIT {
 
@@ -81,6 +81,10 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
    private IScenarioService scenarioService = new MockedScenarioService();
 
+   /**
+    *
+    * @return Pub Sub Model used for testing
+    */
    public static Model newPubSubModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
@@ -111,6 +115,10 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       return model;
    }
 
+   /**
+    *
+    * @return Response Model used for testing
+    */
    public static Model newRequestResponseModelForTesting() {
       Data trackPriorityRequest = new Data("TrackPriorityRequest");
       Data trackPriorityResponse = new Data("TrackPriorityResponse");
@@ -188,13 +196,21 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
                                                        61001, "127.0.0.1", "127.0.0.1");
 
       run(
-         CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY, "com.ngc.seaside.threateval.EngagementTrackPriorityService",
-         CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-         CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY, outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+            CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
 
-      Path projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
-      Path srcDir = projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "engagementtrackpriorityservice", "config"));
+      Path
+            projectDir =
+            outputDirectory.getRoot().toPath()
+                  .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
+      Path
+            srcDir =
+            projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
+                                         "engagementtrackpriorityservice", "config"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
@@ -213,16 +229,16 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
-          "com.ngc.seaside.threateval.TrackPriorityService",
-          CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-          CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-          outputDirectory.getRoot().getAbsolutePath(),
-          CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
 
       Path projectDir =
             outputDirectory.getRoot()
-                           .toPath()
-                           .resolve("com.ngc.seaside.threateval.trackpriorityservice.config");
+                  .toPath()
+                  .resolve("com.ngc.seaside.threateval.trackpriorityservice.config");
       Path srcDir =
             projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
                                          "trackpriorityservice", "config"));
@@ -241,38 +257,38 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       addGeneratedConfigTemplatePath(ZEROMQ_TEMPLATE);
 
       transportConfigService.addZeroMqTcpConfiguration("trackEngagementStatus",
-         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
-         "*",
-         "localhost",
-         1000);
+                                                       ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+                                                       "*",
+                                                       "localhost",
+                                                       1000);
 
       transportConfigService.addZeroMqTcpConfiguration("trackPriorityRequest",
-         ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
-         "*",
-         "localhost",
-         1001);
+                                                       ConnectionType.SOURCE_BINDS_TARGET_CONNECTS,
+                                                       "*",
+                                                       "localhost",
+                                                       1001);
 
       run(
-         CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.EngagementTrackPriorityService",
-         CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
-         "",
-         CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(),
-         JellyfishCommandPhase.DEFERRED);
+            CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.EngagementTrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+            "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(),
+            JellyfishCommandPhase.DEFERRED);
 
       Path projectDir = outputDirectory.getRoot().toPath().resolve(
-         "com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
       Path srcDir = projectDir.resolve(Paths.get("src",
-         "main",
-         "java",
-         "com",
-         "ngc",
-         "seaside",
-         "threateval",
-         "engagementtrackpriorityservice",
-         "config"));
+                                                 "main",
+                                                 "java",
+                                                 "com",
+                                                 "ngc",
+                                                 "seaside",
+                                                 "threateval",
+                                                 "engagementtrackpriorityservice",
+                                                 "config"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
@@ -283,18 +299,18 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       assertTrue(Files.isRegularFile(multicastFile));
 
       run(
-         CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
-         "com.ngc.seaside.threateval.TrackPriorityService",
-         CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
-         "",
-         CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.getRoot().getAbsolutePath(),
-         CommonParameters.PHASE.getName(),
-         JellyfishCommandPhase.DEFERRED);
+            CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY,
+            "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(),
+            JellyfishCommandPhase.DEFERRED);
 
       projectDir = outputDirectory.getRoot().toPath().resolve("com.ngc.seaside.threateval.trackpriorityservice.config");
       srcDir = projectDir.resolve(
-         Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "trackpriorityservice", "config"));
+            Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "trackpriorityservice", "config"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
       configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
@@ -318,9 +334,9 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    private void addGeneratedConfigTemplatePath(String template) {
       String templateSuffix = template.substring(template.lastIndexOf('-') + 1);
       templateService.setTemplateDirectory(template,
-         Paths.get("src",
-            "main",
-            "templates",
-            templateSuffix));
+                                           Paths.get("src",
+                                                     "main",
+                                                     "templates",
+                                                     templateSuffix));
    }
 }

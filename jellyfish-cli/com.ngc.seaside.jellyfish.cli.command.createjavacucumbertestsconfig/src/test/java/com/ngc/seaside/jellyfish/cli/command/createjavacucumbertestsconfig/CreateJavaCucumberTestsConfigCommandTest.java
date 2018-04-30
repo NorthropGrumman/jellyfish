@@ -1,14 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto.HTTP_CLIENT_TEMPLATE;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -52,6 +43,15 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommand.CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto.HTTP_CLIENT_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto.MULTICAST_TEMPLATE;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsConfigCommandTest {
 
@@ -82,6 +82,9 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
    private IScenarioService scenarioService = new MockedScenarioService();
 
+   /**
+    * @return the Pub Sub model used for testing
+    */
    public static Model newPubSubModelForTesting() {
       Data trackEngagementStatus = new Data("TrackEngagementStatus");
       Data trackPriority = new Data("TrackPriority");
@@ -112,6 +115,9 @@ public class CreateJavaCucumberTestsConfigCommandTest {
       return model;
    }
 
+   /**
+    * @return Rest model used for testing
+    */
    public static Model newRestModelForTesting() {
       Data trackPriorityRequest = new Data("TrackPriorityRequest");
       Data trackPriorityResponse = new Data("TrackPriorityResponse");
@@ -201,7 +207,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastTestsConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -217,22 +223,22 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaCucumberTestsConfigCommand.MODEL_PROPERTY,
-          "com.ngc.seaside.threateval.TrackPriorityService",
-          CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-          CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-          outputDirectory.getRoot().getAbsolutePath(),
-          CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaCucumberTestsConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaCucumberTestsConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
 
       Path projectDir =
             outputDirectory.getRoot()
-                           .toPath()
-                           .resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
+                  .toPath()
+                  .resolve("com.ngc.seaside.threateval.trackpriorityservice.testsconfig");
       Path srcDir =
             projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
                                          "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       Path restFile = srcDir.resolve("TrackPriorityServiceHttpClientTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -279,7 +285,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                                                  "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqTestConfiguration.java");
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
@@ -302,7 +308,7 @@ public class CreateJavaCucumberTestsConfigCommandTest {
                       "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
-      configurationFile = srcDir.resolve("TrackPriorityServiceTestConfiguration.java");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       multicastFile = srcDir.resolve("TrackPriorityServiceZeroMqTestConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -319,15 +325,16 @@ public class CreateJavaCucumberTestsConfigCommandTest {
 
       command.run(jellyFishCommandOptions);
    }
-   
+
    private void addGeneratedConfigTemplatePath(String template) {
       String templateSuffix = template.substring(template.lastIndexOf('-') + 1);
       templateService.setTemplateDirectory(template,
-         Paths.get("").toAbsolutePath().getParent().resolve(
-            Paths.get(CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName(),
-               "src",
-               "main",
-               "templates",
-               templateSuffix)));
+                                           Paths.get("").toAbsolutePath().getParent().resolve(
+                                                 Paths.get(CreateJavaServiceGeneratedConfigCommand.class.getPackage()
+                                                                 .getName(),
+                                                           "src",
+                                                           "main",
+                                                           "templates",
+                                                           templateSuffix)));
    }
 }

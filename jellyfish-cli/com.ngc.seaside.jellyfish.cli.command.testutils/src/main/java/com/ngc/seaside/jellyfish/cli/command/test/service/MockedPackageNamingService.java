@@ -12,11 +12,12 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 public class MockedPackageNamingService implements IPackageNamingService {
 
    private final String format = "%s.%s.%s";
-   
+
    private String getPackageName(INamedChild<IPackage> element, String packageType) {
-      return String.format(format, element.getParent().getName().toLowerCase(), element.getName().toLowerCase(), packageType);
+      return String
+            .format(format, element.getParent().getName().toLowerCase(), element.getName().toLowerCase(), packageType);
    }
-   
+
    @Override
    public String getDomainPackageName(IJellyFishCommandOptions options, INamedChild<IPackage> data) {
       return getPackageName(data, "domain");
