@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaCucumberTestsCommandIT {
+
    private static final PrintStreamLogService logger = new PrintStreamLogService();
 
    private CreateJavaCucumberTestsCommand command = new CreateJavaCucumberTestsCommand();
@@ -60,13 +61,13 @@ public class CreateJavaCucumberTestsCommandIT {
 
    @Mock
    private IModel model;
-   
+
    @Mock
    private IJavaServiceGenerationService generationService;
-   
+
    @Mock
    private IProjectNamingService projectService;
-   
+
    @Mock
    private IPackageNamingService packageService;
 
@@ -90,7 +91,6 @@ public class CreateJavaCucumberTestsCommandIT {
                   + CreateJavaCucumberTestsCommand.CONFIG_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates",
                             CreateJavaCucumberTestsCommand.CONFIG_TEMPLATE_SUFFIX));
-
 
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);
@@ -116,7 +116,7 @@ public class CreateJavaCucumberTestsCommandIT {
       IProjectInformation info = mock(IProjectInformation.class);
       when(projectService.getCucumberTestsProjectName(any(), eq(model))).thenReturn(info);
       when(info.getDirectoryName()).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
-      
+
       info = mock(IProjectInformation.class);
       when(projectService.getBaseServiceProjectName(any(), eq(model))).thenReturn(info);
       when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".base.impl");
@@ -125,12 +125,14 @@ public class CreateJavaCucumberTestsCommandIT {
       when(projectService.getMessageProjectName(any(), eq(model))).thenReturn(info);
       when(info.getArtifactId()).thenReturn(name.toLowerCase() + ".messages");
 
-      when(packageService.getCucumberTestsPackageName(any(), eq(model))).thenReturn(pkg + "." + name.toLowerCase() + ".tests");
-      
+      when(packageService.getCucumberTestsPackageName(any(), eq(model)))
+            .thenReturn(pkg + "." + name.toLowerCase() + ".tests");
+
       @SuppressWarnings("rawtypes")
       EnumDto mockEnum = mock(EnumDto.class);
       when(generationService.getTransportTopicsDescription(any(), eq(model))).thenReturn(mockEnum);
-      when(mockEnum.getFullyQualifiedName()).thenReturn(pkg + "." + name.toLowerCase() + ".transport.topics." + name + "TransportTopics");
+      when(mockEnum.getFullyQualifiedName())
+            .thenReturn(pkg + "." + name.toLowerCase() + ".transport.topics." + name + "TransportTopics");
    }
 
    @Test
@@ -139,20 +141,20 @@ public class CreateJavaCucumberTestsCommandIT {
       setupModel(inputDir, "com.ngc.seaside.testeval", "HamburgerService");
 
       parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.MODEL_PROPERTY,
-         model.getFullyQualifiedName()));
+                                                     model.getFullyQualifiedName()));
       parameters.addParameter(new DefaultParameter<>(CreateJavaCucumberTestsCommand.OUTPUT_DIRECTORY_PROPERTY,
-         outputDirectory.toString()));
+                                                     outputDirectory.toString()));
 
       command.run(options);
 
       Path projectDir = outputDirectory.resolve(model.getFullyQualifiedName().toLowerCase() + ".tests");
 
       Path javaDir = projectDir.resolve(
-         Paths.get("src",
-                   "main",
-                   "java",
-                   model.getFullyQualifiedName().replace('.', File.separatorChar).toLowerCase(),
-                   "tests"));
+            Paths.get("src",
+                      "main",
+                      "java",
+                      model.getFullyQualifiedName().replace('.', File.separatorChar).toLowerCase(),
+                      "tests"));
       Assert.assertTrue(Files.isDirectory(javaDir));
 
    }

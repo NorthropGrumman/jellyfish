@@ -1,20 +1,20 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig.dto.ServiceConfigDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.apache.commons.io.FileUtils;
@@ -60,17 +60,18 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IModel model = evaluateModelParameter(commandOptions);
-      boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);  
+      boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
       IProjectInformation projectInfo = projectNamingService.getConfigProjectName(commandOptions, model);
       String packagez = packageNamingService.getConfigPackageName(commandOptions, model);
       Path outputDir = Paths.get(
-         commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+            commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       ServiceConfigDto dto = new ServiceConfigDto(buildManagementService, commandOptions)
             .setModelName(model.getName())
             .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
+            .setBaseProjectArtifactName(
+                  projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
             .setProjectDirectoryName(projectDir.getFileName().toString());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -98,7 +99,9 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -128,25 +131,25 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    public void removeTemplateService(ITemplateService ref) {
       setTemplateService(null);
    }
-   
+
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeProjectNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       this.projectNamingService = ref;
-      
+
    }
 
    public void removeProjectNamingService(IProjectNamingService ref) {
       setProjectNamingService(null);
    }
-   
+
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removePackageNamingService")
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       this.packageNamingService = ref;
-      
+
    }
 
    public void removePackageNamingService(IPackageNamingService ref) {
@@ -166,16 +169,16 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
    private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
       String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
       return commandOptions.getSystemDescriptor()
-                           .findModel(modelName)
-                           .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
+            .findModel(modelName)
+            .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
    }
 
    /**
     * Creates and returns the path to the domain project directory.
     *
-    * @param outputDir  output directory
+    * @param outputDir   output directory
     * @param projDirName project directory name
-    * @param clean      whether or not to delete the contents of the directory
+    * @param clean       whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */

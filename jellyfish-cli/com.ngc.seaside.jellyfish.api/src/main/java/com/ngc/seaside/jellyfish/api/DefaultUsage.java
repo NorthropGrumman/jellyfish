@@ -11,6 +11,7 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
+
 package com.ngc.seaside.jellyfish.api;
 
 import java.util.ArrayList;
@@ -94,8 +95,8 @@ public class DefaultUsage implements IUsage {
          return false;
       }
       IUsage that = (IUsage) obj;
-      return Objects.equals(description, that.getDescription()) &&
-             Objects.equals(allParameters, that.getAllParameters());
+      return Objects.equals(description, that.getDescription())
+             && Objects.equals(allParameters, that.getAllParameters());
    }
 
    @Override

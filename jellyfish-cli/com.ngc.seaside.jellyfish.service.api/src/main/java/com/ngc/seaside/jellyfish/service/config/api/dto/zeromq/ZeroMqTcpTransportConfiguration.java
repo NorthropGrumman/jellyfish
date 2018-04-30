@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.config.api.dto.zeromq;
 
 import com.google.common.base.Objects;
+
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 
@@ -59,25 +60,25 @@ public class ZeroMqTcpTransportConfiguration extends ZeroMqConfiguration {
       }
       ZeroMqTcpTransportConfiguration that = (ZeroMqTcpTransportConfiguration) o;
       return Objects.equal(this.getConnectionType(), that.getConnectionType())
-         && Objects.equal(this.getBindConfiguration(), that.getBindConfiguration())
-         && Objects.equal(this.getConnectConfiguration(), that.getConnectConfiguration())
-         && Objects.equal(this.getPort(), that.getPort());
+            && Objects.equal(this.getBindConfiguration(), that.getBindConfiguration())
+            && Objects.equal(this.getConnectConfiguration(), that.getConnectConfiguration())
+            && Objects.equal(this.getPort(), that.getPort());
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(this.getConnectionType(),
-         this.getBindConfiguration(),
-         this.getConnectConfiguration(),
-         this.getPort());
+                              this.getBindConfiguration(),
+                              this.getConnectConfiguration(),
+                              this.getPort());
    }
 
    @Override
    public String toString() {
-      return "ZeroMqTcpTransportConfiguration[connectionType=" + this.getConnectionType() +
-         ",bindInterface=" + this.getBindConfiguration().getName() +
-         ",connectionAddress=" + this.getConnectConfiguration().getAddress() +
-         ",port=" + this.getPort() +
-         "]";
+      return "ZeroMqTcpTransportConfiguration[connectionType=" + this.getConnectionType()
+            + ",bindInterface=" + this.getBindConfiguration().getName()
+            + ",connectionAddress=" + this.getConnectConfiguration().getAddress()
+            + ",port=" + this.getPort()
+            + "]";
    }
 }

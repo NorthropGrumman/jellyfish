@@ -45,9 +45,9 @@ import java.util.stream.Collectors;
 @Component(service = ITransportConfigurationService.class)
 public class TransportConfigurationService implements ITransportConfigurationService {
 
-   private static final Pattern[] PATTERNS = { Pattern.compile("([a-z\\d])([A-Z]+)"),
-            Pattern.compile("([A-Z])([A-Z][a-z\\d])") };
-   private static final String[] REPLACEMENTS = { "$1_$2", "$1_$2" };
+   private static final Pattern[] PATTERNS = {Pattern.compile("([a-z\\d])([A-Z]+)"),
+                                              Pattern.compile("([A-Z])([A-Z][a-z\\d])")};
+   private static final String[] REPLACEMENTS = {"$1_$2", "$1_$2"};
 
    private ILogService logService;
    private ISystemDescriptorService sdService;
@@ -65,7 +65,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
 
    @Override
    public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options,
-            IModel deploymentModel) {
+                                                                IModel deploymentModel) {
       Set<TransportConfigurationType> types = new LinkedHashSet<>();
       IModel aggregatedDeploymentModel = sdService.getAggregatedView(getDeploymentModel(options));
       for (IModelLink<?> link : aggregatedDeploymentModel.getLinks()) {
@@ -87,60 +87,83 @@ public class TransportConfigurationService implements ITransportConfigurationSer
 
    @Override
    public Collection<MulticastConfiguration> getMulticastConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                                       IDataReferenceField field) {
       return getConfigurations(options,
-         field,
-         MulticastConfigurationUtils.MULTICAST_CONFIGURATION_QUALIFIED_NAME,
-         MulticastConfigurationUtils::getMulticastConfiguration);
+                               field,
+                               MulticastConfigurationUtils.MULTICAST_CONFIGURATION_QUALIFIED_NAME,
+                               MulticastConfigurationUtils::getMulticastConfiguration);
    }
 
    @Override
    public Collection<RestConfiguration> getRestConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                             IDataReferenceField field) {
       return getConfigurations(options,
-         field,
-         RestConfigurationUtils.REST_CONFIGURATION_QUALIFIED_NAME,
-         RestConfigurationUtils::getRestConfiguration);
+                               field,
+                               RestConfigurationUtils.REST_CONFIGURATION_QUALIFIED_NAME,
+                               RestConfigurationUtils::getRestConfiguration);
    }
 
    @Override
    public Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options,
-            IDataReferenceField field) {
+                                                                 IDataReferenceField field) {
       List<ZeroMqConfiguration> configurations = new ArrayList<>();
       configurations.addAll(getConfigurations(options,
-         field,
-         ZeroMqConfigurationUtils.ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
-         ZeroMqConfigurationUtils::getZeroMqTcpConfiguration));
+                                              field,
+                                              ZeroMqConfigurationUtils.ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
+                                              ZeroMqConfigurationUtils::getZeroMqTcpConfiguration));
       configurations.addAll(getConfigurations(options,
-         field,
-         ZeroMqConfigurationUtils.ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,
-         ZeroMqConfigurationUtils::getZeroMqIpcConfiguration));
+                                              field,
+                                              ZeroMqConfigurationUtils.ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,
+                                              ZeroMqConfigurationUtils::getZeroMqIpcConfiguration));
       configurations.addAll(getConfigurations(options,
-         field,
-         ZeroMqConfigurationUtils.ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
-         ZeroMqConfigurationUtils::getZeroMqPgmConfiguration));
+                                              field,
+                                              ZeroMqConfigurationUtils.ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME,
+                                              ZeroMqConfigurationUtils::getZeroMqPgmConfiguration));
       configurations.addAll(getConfigurations(options,
-         field,
-         ZeroMqConfigurationUtils.ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME,
-         ZeroMqConfigurationUtils::getZeroMqEpgmConfiguration));
+                                              field,
+                                              ZeroMqConfigurationUtils.ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME,
+                                              ZeroMqConfigurationUtils::getZeroMqEpgmConfiguration));
       configurations.addAll(getConfigurations(options,
-         field,
-         ZeroMqConfigurationUtils.ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME,
-         ZeroMqConfigurationUtils::getZeroMqInprocConfiguration));
+                                              field,
+                                              ZeroMqConfigurationUtils.ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME,
+                                              ZeroMqConfigurationUtils::getZeroMqInprocConfiguration));
       return configurations;
+   }
+
+   private static IModel getDeploymentModel(IJellyFishCommandOptions options) {
+      IParameter<?> deploymentModelParameter = options.getParameters()
+            .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      if (deploymentModelParameter == null) {
+         throw new IllegalStateException(CommonParameters.DEPLOYMENT_MODEL.getName() + " parameter is not set");
+      }
+      String deploymentModel = deploymentModelParameter.getStringValue();
+      return options.getSystemDescriptor()
+            .findModel(deploymentModel)
+            .orElseThrow(() -> new IllegalStateException("Cannot find deployment model " + deploymentModel));
+   }
+
+   /**
+    * Returns all of the given model's links that contain the given field as either a target or source.
+    */
+   private static Collection<IModelLink<?>> findLinks(IModel model, IDataReferenceField field) {
+      return model.getLinks()
+            .stream()
+            .filter(link -> Objects.equals(field, link.getSource()) || Objects.equals(field, link.getTarget()))
+            .collect(Collectors.toList());
    }
 
    /**
     * Returns the collection of configurations for the given field.
-    * 
-    * @param options jellyfish options
-    * @param field field
+    *
+    * @param options             jellyfish options
+    * @param field               field
     * @param configQualifiedName fully qualified name of configuration sd data type
-    * @param function function to convert {@link IPropertyDataValue} to the configuration type
+    * @param function            function to convert {@link IPropertyDataValue} to the configuration type
     * @return the collection of configurations for the given field
     */
    private <T> Collection<T> getConfigurations(IJellyFishCommandOptions options,
-            IDataReferenceField field, String configQualifiedName, Function<IPropertyDataValue, T> function) {
+                                               IDataReferenceField field, String configQualifiedName,
+                                               Function<IPropertyDataValue, T> function) {
       IModel deploymentModel = sdService.getAggregatedView(getDeploymentModel(options));
       Collection<IModelLink<?>> links = findLinks(deploymentModel, field);
       Collection<T> configurations = new LinkedHashSet<>();
@@ -150,44 +173,23 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       return configurations;
    }
 
-   private static IModel getDeploymentModel(IJellyFishCommandOptions options) {
-      IParameter<?> deploymentModelParameter = options.getParameters()
-                                                      .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
-      if (deploymentModelParameter == null) {
-         throw new IllegalStateException(CommonParameters.DEPLOYMENT_MODEL.getName() + " parameter is not set");
-      }
-      String deploymentModel = deploymentModelParameter.getStringValue();
-      return options.getSystemDescriptor()
-                    .findModel(deploymentModel)
-                    .orElseThrow(() -> new IllegalStateException("Cannot find deployment model " + deploymentModel));
-   }
-
-   /**
-    * Returns all of the given model's links that contain the given field as either a target or source.
-    */
-   private static Collection<IModelLink<?>> findLinks(IModel model, IDataReferenceField field) {
-      return model.getLinks()
-                  .stream()
-                  .filter(link -> Objects.equals(field, link.getSource()) || Objects.equals(field, link.getTarget()))
-                  .collect(Collectors.toList());
-   }
-
    private static <T> Collection<T> getConfigurations(IModelLink<? extends IReferenceField> link, String qualifiedName,
-            Function<IPropertyDataValue, T> function) {
+                                                      Function<IPropertyDataValue, T> function) {
       Collection<IPropertyDataValue> propertyValues = link.getProperties()
-                                                          .stream()
-                                                          .filter(property -> DataTypes.DATA == property.getType())
-                                                          .filter(property -> qualifiedName.equals(
-                                                             property.getReferencedDataType().getFullyQualifiedName()))
-                                                          .filter(
-                                                             property -> FieldCardinality.SINGLE == property.getCardinality())
-                                                          .map(IProperty::getData)
-                                                          .collect(Collectors.toList());
+            .stream()
+            .filter(property -> DataTypes.DATA == property.getType())
+            .filter(property -> qualifiedName.equals(
+                  property.getReferencedDataType().getFullyQualifiedName()))
+            .filter(
+                  property -> FieldCardinality.SINGLE == property.getCardinality())
+            .map(IProperty::getData)
+            .collect(Collectors.toList());
       Collection<T> configurations = new ArrayList<>(propertyValues.size());
       for (IPropertyDataValue value : propertyValues) {
          if (!value.isSet()) {
             throw new IllegalStateException(String.format("Configuration is not completely set for link %s%s -> %s",
-               link.getName().orElse("") + " ", link.getSource().getName(), link.getTarget().getName()));
+                                                          link.getName().orElse("") + " ", link.getSource().getName(),
+                                                          link.getTarget().getName()));
          }
          configurations.add(function.apply(value));
       }
@@ -196,7 +198,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
 
    static IDataField getField(IPropertyDataValue value, String fieldName) {
       return value.getFieldByName(fieldName)
-                  .orElseThrow(() -> new IllegalStateException("Missing " + fieldName + " field"));
+            .orElseThrow(() -> new IllegalStateException("Missing " + fieldName + " field"));
    }
 
    @Activate
@@ -209,7 +211,9 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       logService.debug(getClass(), "deactivated");
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -218,7 +222,9 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       setLogService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeSystemDescriptorService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeSystemDescriptorService")
    public void setSystemDescriptorService(ISystemDescriptorService ref) {
       this.sdService = ref;
    }

@@ -9,7 +9,9 @@ import java.util.Objects;
 
 public class MulticastConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String MULTICAST_CONFIGURATION_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration";
+   static final String
+         MULTICAST_CONFIGURATION_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration";
    static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
    static final String PORT_FIELD_NAME = "port";
    static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
@@ -19,6 +21,11 @@ public class MulticastConfigurationUtils extends CommonConfigurationUtils {
       return Objects.equals(MULTICAST_CONFIGURATION_QUALIFIED_NAME, type.getFullyQualifiedName());
    }
 
+   /**
+    *
+    * @param value The configuration used to create the multicast config
+    * @return MulticastConfiguration based on the IPropertyDataValue
+    */
    public static MulticastConfiguration getMulticastConfiguration(IPropertyDataValue value) {
       MulticastConfiguration configuration = new MulticastConfiguration();
       IPropertyDataValue sourceInterfaceValue = value.getData(getField(value, SOURCE_INTERFACE_FIELD_NAME));

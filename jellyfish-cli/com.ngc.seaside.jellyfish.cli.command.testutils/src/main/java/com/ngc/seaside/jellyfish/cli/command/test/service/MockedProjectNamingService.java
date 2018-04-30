@@ -16,6 +16,7 @@ public class MockedProjectNamingService implements IProjectNamingService {
    private final String gavFormat = "%s:%s.%s:%2$sVersion";
 
    private static class ProjectInformation implements IProjectInformation {
+
       private String project;
       private String group;
       private String artifact;
@@ -24,10 +25,10 @@ public class MockedProjectNamingService implements IProjectNamingService {
       @Override
       public int hashCode() {
          return Objects.hash(getDirectoryName(),
-            getGroupId(),
-            getArtifactId(),
-            getVersionPropertyName(),
-            getGavFormattedString());
+                             getGroupId(),
+                             getArtifactId(),
+                             getVersionPropertyName(),
+                             getGavFormattedString());
       }
 
       @Override
@@ -36,11 +37,11 @@ public class MockedProjectNamingService implements IProjectNamingService {
             return false;
          }
          IProjectInformation that = (IProjectInformation) obj;
-         return Objects.equals(this.getDirectoryName(), that.getDirectoryName()) &&
-            Objects.equals(this.getGroupId(), that.getGroupId()) &&
-            Objects.equals(this.getArtifactId(), that.getArtifactId()) &&
-            Objects.equals(this.getVersionPropertyName(), that.getVersionPropertyName()) &&
-            Objects.equals(this.getGavFormattedString(), that.getGavFormattedString());
+         return Objects.equals(this.getDirectoryName(), that.getDirectoryName())
+                && Objects.equals(this.getGroupId(), that.getGroupId())
+                && Objects.equals(this.getArtifactId(), that.getArtifactId())
+                && Objects.equals(this.getVersionPropertyName(), that.getVersionPropertyName())
+                && Objects.equals(this.getGavFormattedString(), that.getGavFormattedString());
       }
 
       public ProjectInformation(String project, String gav) {
@@ -87,7 +88,7 @@ public class MockedProjectNamingService implements IProjectNamingService {
       String pkg = model.getParent().getName().toLowerCase();
       String name = model.getName().toLowerCase();
       return new ProjectInformation(String.format(projectFormat, pkg, name, projectType),
-         String.format(gavFormat, pkg, name, projectType));
+                                    String.format(gavFormat, pkg, name, projectType));
    }
 
    @Override

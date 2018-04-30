@@ -23,6 +23,11 @@ public class MessagesDto {
       return exportedPackages;
    }
 
+   /**
+    *
+    * @param exportedPackages of the message
+    * @return A MessageDTO
+    */
    public MessagesDto setExportedPackages(Set<String> exportedPackages) {
       exportedPackages.removeIf(str -> {
          List<String> list = Arrays.asList(str.split("\\."));

@@ -6,15 +6,15 @@ import java.nio.file.Path;
 /**
  * This class provides common operations for dealing with properties.
  *
- * The properties can contain dynamic data similar to the below.
+ * <p> The properties can contain dynamic data similar to the below.
  * groupId=com.ngc.seaside
  * artifactId=mybundle
  * package=$groupId.$artifactId
- * capitalized=${package.toUpperCase()}
+ * capitalized=${package.toUpperCase()} </p>
  *
- * Any operation that a java.util.String can perform can be set in the property file and called on the property
+ *<P> Any operation that a java.util.String can perform can be set in the property file and called on the property
  * A more elaborate example below will replace all the periods in a package with a - and convert it to upper case.<br>
- * ${package.trim().toUpperCase().replace(".", "-")}
+ * ${package.trim().toUpperCase().replace(".", "-")} </P>
  */
 public interface IPropertyService {
 

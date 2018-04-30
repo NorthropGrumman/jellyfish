@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.TreeSet;
 
 public class RequirementItemFormat implements ITableFormat<Requirement> {
+
    private Collection<IModel> models = new TreeSet<>(Collections.reverseOrder());
    private final int reqColWidth;
 
@@ -62,16 +63,16 @@ public class RequirementItemFormat implements ITableFormat<Requirement> {
    private IModel getModelAt(int index) {
       return (IModel) models.toArray()[index];
    }
-   
+
    @Override
    public Object getColumnValue(Requirement object, int column) {
       if (column == 0) {
-         return " " + object.getID();
+         return " " + object.getId();
       } else if (column < getColumnCount()) {
          if (object.getModels().contains(getModelAt(column - 1))) {
             int colWidth = getColumnWidth(column);
-            int leftPad = (colWidth+1)/2;
-            
+            int leftPad = (colWidth + 1) / 2;
+
             return StringUtils.leftPad("X", leftPad);
          }
       }

@@ -78,7 +78,7 @@ public class PackageNamingServiceTest {
       assertEquals("message name not correct!",
                    "com.ngc.seaside.threateval.threatevaluation",
                    service.getMessagePackageName(options, data));
-      
+
       data = newData("StateVector", "com.ngc.seaside.threateval2");
       assertEquals("event name not correct!",
                    "com.ngc.seaside.threateval.threatevaluation.threateval2",
@@ -105,7 +105,8 @@ public class PackageNamingServiceTest {
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME,
                                                      model.getFullyQualifiedName()));
       assertEquals("name not correct!",
-                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice.distribution",
+                   "com.ngc.seaside.common.defendedareatrackpriorityservice"
+                         + ".defendedareatrackpriorityservice.distribution",
                    service.getDistributionPackageName(options, model));
 
       model = newModel("ClassificationTrackPriorityService", "external.datatype");
@@ -152,7 +153,7 @@ public class PackageNamingServiceTest {
       assertEquals("domain name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.domain",
                    service.getDomainPackageName(options, data));
-      
+
       data = newData("StateVector", "com.ngc.seaside.threateval2");
       assertEquals("event name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.domain.threateval2",
@@ -188,13 +189,13 @@ public class PackageNamingServiceTest {
       assertEquals("event name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.event",
                    service.getEventPackageName(options, data));
-      
+
       data = newData("StateVector", "com.ngc.seaside.threateval2");
       assertEquals("event name not correct!",
                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.event.threateval2",
                    service.getEventPackageName(options, data));
    }
-   
+
    @Test
    public void testDoesGetFullyQualifiedNameForConnector() throws Throwable {
       Model model = newModel("TrackPriorityService", "com.ngc.seaside.threateval");
@@ -367,7 +368,8 @@ public class PackageNamingServiceTest {
       parameters.addParameter(new DefaultParameter<>(PackageNamingService.MODEL_PARAMETER_NAME,
                                                      model.getFullyQualifiedName()));
       assertEquals("event name not correct!",
-                   "com.ngc.seaside.common.defendedareatrackpriorityservice.defendedareatrackpriorityservice.transport.topic",
+                   "com.ngc.seaside.common.defendedareatrackpriorityservice."
+                         + "defendedareatrackpriorityservice.transport.topic",
                    service.getTransportTopicsPackageName(options, model));
 
       model = newModel("ClassificationTrackPriorityService", "external.datatype");

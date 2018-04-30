@@ -10,11 +10,11 @@ import java.util.TreeSet;
  * POJO for a requirement
  */
 public class Requirement implements Comparable {
-   private String ID;
+   private String id;
    private TreeSet<String> features = new TreeSet<>(Collections.reverseOrder());
 
    public Requirement(String name) {
-      this.ID = name;
+      this.id = name;
 
    }
 
@@ -24,7 +24,7 @@ public class Requirement implements Comparable {
     * @return feature ID
     */
    public String getID() {
-      return ID;
+      return id;
    }
 
    /**
@@ -62,12 +62,12 @@ public class Requirement implements Comparable {
    public String createFeatureVerificationCsvString(Collection<String> features) {
       StringJoiner sj = new StringJoiner(",");
 
-      sj.add("\"" + ID + "\"");
+      sj.add("\"" + id + "\"");
 
-      features.forEach(feature ->{
+      features.forEach(feature -> {
          if (this.features.contains(feature)) {
             sj.add("X");
-         }else {
+         } else {
             sj.add("");
          }
       });
@@ -77,7 +77,7 @@ public class Requirement implements Comparable {
 
    @Override
    public int hashCode() {
-      return Objects.hash(ID);
+      return Objects.hash(id);
    }
 
    @Override
@@ -90,7 +90,7 @@ public class Requirement implements Comparable {
          return false;
       }
       Requirement that = (Requirement) obj;
-      return Objects.equals(ID, that.ID);
+      return Objects.equals(id, that.id);
    }
 
    @Override

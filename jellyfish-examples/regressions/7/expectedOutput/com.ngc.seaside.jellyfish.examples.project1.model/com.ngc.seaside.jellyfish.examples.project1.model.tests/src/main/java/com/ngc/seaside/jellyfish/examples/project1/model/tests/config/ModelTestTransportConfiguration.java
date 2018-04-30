@@ -1,13 +1,13 @@
-package ${dto.packageName}.config;
+package com.ngc.seaside.jellyfish.examples.project1.model.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import ${dto.transportTopicsClass};
+import com.ngc.seaside.jellyfish.examples.project1.model.transport.topic.ModelTransportTopics;
 
-public class ${dto.className}TestConfiguration{
+public class ModelTestTransportConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class ${dto.className}TestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public ${dto.className}TestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public ModelTestTransportConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

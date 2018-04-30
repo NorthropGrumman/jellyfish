@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
@@ -14,7 +15,7 @@ import java.util.NavigableMap;
 public class FeatureServiceGuiceWrapper implements IFeatureService {
 
    private final FeatureService delegate;
-   
+
    @Inject
    public FeatureServiceGuiceWrapper(ILogService logService) {
       delegate = new FeatureService();
@@ -27,12 +28,13 @@ public class FeatureServiceGuiceWrapper implements IFeatureService {
    }
 
    @Override
+   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
+      return delegate.getFeatures(sdPath, scenario);
+   }
+
+   @Override
    public NavigableMap<Path, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
       return delegate.getAllFeatures(sdPath, models);
    }
 
-   @Override
-   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
-      return delegate.getFeatures(sdPath, scenario);
-   }
 }

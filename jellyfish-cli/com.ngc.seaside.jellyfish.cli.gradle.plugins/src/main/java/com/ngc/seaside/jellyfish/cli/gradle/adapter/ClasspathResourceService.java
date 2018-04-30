@@ -32,7 +32,7 @@ public class ClasspathResourceService implements IResourceService {
    @Override
    public Path getResourceRootPath() {
       throw new UnsupportedOperationException("this implementation reads files directly from the classpath and has no"
-                                              + " single root path!");
+                                                    + " single root path!");
    }
 
    @Override
@@ -106,7 +106,7 @@ public class ClasspathResourceService implements IResourceService {
    @Override
    public boolean writeFileResource(IWritableFileResource writableResource) throws ResourceServiceException {
       throw new UnsupportedOperationException("this implementation reads files directly from the classpath and does not"
-                                              + " support writing files!");
+                                                    + " support writing files!");
    }
 
    @Override
@@ -115,7 +115,7 @@ public class ClasspathResourceService implements IResourceService {
       return ClasspathResourceService.class.getClassLoader().getResource(fileResource.getFile()) != null;
    }
 
-   public final static Module MODULE = new AbstractModule() {
+   public static final Module MODULE = new AbstractModule() {
 
       @Override
       protected void configure() {

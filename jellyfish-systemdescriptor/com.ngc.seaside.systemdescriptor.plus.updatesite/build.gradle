@@ -5,13 +5,13 @@ import org.gradle.internal.os.OperatingSystem
 ext {
    buildDir = 'build'
 
-   eclipseLinuxVersion = 'eclipse-dsl-neon-2-linux-gtk-x86_64'
-   eclipseWindowsVersion = 'eclipse-dsl-neon-2-win32-x86_64'
+   eclipseLinuxVersion = 'eclipse-dsl-oxygen-2-linux-gtk-x86_64'
+   eclipseWindowsVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
 
    eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
 
    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
-   eclipseDownloadUrl = "http://10.207.42.135:8188/${eclipseVersion}.zip"
+   eclipseDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${eclipseVersion}.zip"
    // The cache location of downloaded files.
    eclipseCache = '../../.gradle/eclipse'
    // The local file to save the ZIP to.

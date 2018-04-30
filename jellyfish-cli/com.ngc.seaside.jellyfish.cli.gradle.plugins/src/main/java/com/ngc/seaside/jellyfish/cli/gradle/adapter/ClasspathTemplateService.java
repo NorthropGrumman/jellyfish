@@ -21,8 +21,8 @@ import java.util.Properties;
  */
 public class ClasspathTemplateService extends TemplateService {
 
-   private final static String CONFIG_PROPERTIES_FILE = "com.ngc.seaside.jellyfish.cli.gradle.config.properties";
-   private final static String VERSION_PROPERTY = "version";
+   private static final String CONFIG_PROPERTIES_FILE = "com.ngc.seaside.jellyfish.cli.gradle.config.properties";
+   private static final String VERSION_PROPERTY = "version";
 
    private final String version;
 
@@ -67,7 +67,7 @@ public class ClasspathTemplateService extends TemplateService {
       return version;
    }
 
-   public final static Module MODULE = new AbstractModule() {
+   public static final Module MODULE = new AbstractModule() {
 
       @Override
       protected void configure() {

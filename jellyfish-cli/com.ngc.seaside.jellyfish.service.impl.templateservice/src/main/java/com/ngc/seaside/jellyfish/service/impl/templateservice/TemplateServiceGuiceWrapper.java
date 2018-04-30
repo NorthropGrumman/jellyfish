@@ -5,12 +5,12 @@ import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 
 import java.nio.file.Path;
 
@@ -44,7 +44,7 @@ public class TemplateServiceGuiceWrapper implements ITemplateService {
                                  IParameterCollection parameters,
                                  Path outputDirectory,
                                  boolean clean)
-            throws TemplateServiceException {
+         throws TemplateServiceException {
       return delegate.unpack(templateName, parameters, outputDirectory, clean);
    }
 }
