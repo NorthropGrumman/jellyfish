@@ -1,5 +1,9 @@
+import com.ngc.seaside.gradle.tasks.eclipse.updatesite.DownloadEclipseTask
+import com.ngc.seaside.gradle.tasks.eclipse.updatesite.UnzipEclipseTask
 import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
+
+import java.nio.file.Paths
 
 // This prevents errors due to how the org.xtext.xtend
 // autoguesses the version of Xtend to use.  It guess
@@ -24,10 +28,10 @@ sourceSets {
 }
 
 repositories {
-  flatDir {
-    // Use the directory that contains the Eclipse plugins as a repository.
-    dirs "$eclipsePluginsDirectory"
-  }
+   flatDir {
+      // Use the directory that contains the Eclipse plugins as a repository.
+      dirs eclipsePluginsDirectory
+   }
 }
 
 dependencies {
@@ -85,9 +89,22 @@ jar {
    from('.', { include('plugin.xml') }) 
 }
 
+task downloadEclipse(type: DownloadEclipseTask) {
+   eclipseArchiveName = Paths.get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   eclipseDownloadUrl = OperatingSystem.current().isLinux() ?
+                        "${project.property('linuxDownloadUrl')}" : "${project.property('windowsDownloadUrl')}"
+}
+
+task unzipEclipse(type: UnzipEclipseTask, dependsOn: downloadEclipse) {
+   eclipseArchiveName = Paths.get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   cacheDirectory = project.property('cacheDirectory')
+}
+
 task copyDependencies(type: Copy) {
    from configurations.compile
    into { "$buildDir/dependencies" }  
 }
+
+tasks.getByName('generateXtext').dependsOn(unzipEclipse)
 
 build.dependsOn(copyDependencies)

@@ -1,4 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
+
+import java.nio.file.Paths
+
 buildscript {
     ext {
         versionsFile = file('../versions.gradle')
@@ -153,11 +156,14 @@ subprojects {
 ext {
     linuxEclipseVersion = "eclipse-dsl-oxygen-2-linux-gtk-x86_64"
     windowsEclipseVersion = "eclipse-dsl-oxygen-2-win32-x86_64"
-    linuxDownloadUrl = "http://10.207.42.135:8188/${linuxEclipseVersion}.zip"
-    windowsDownloadUrl = "http://10.207.42.135:8188/${windowsEclipseVersion}.zip"
+    linuxDownloadUrl =   "http://10.207.42.137/resources/jellyfish/${linuxEclipseVersion}.zip"
+    windowsDownloadUrl = "http://10.207.42.137/resources/jellyfish/${windowsEclipseVersion}.zip"
 
     // We do this because the UI project needs to reference dependencies in the Eclipse plugins directory.
     eclipseVersion = OperatingSystem.current().isLinux() ? linuxEclipseVersion : windowsEclipseVersion
+
     // This is the default cache location when the update site plugin needs to download Eclipse.
-    eclipsePluginsDirectory = "${gradle.gradleUserHomeDir.absolutePath}/caches/eclipse/$eclipseVersion/plugins"
+    cacheDirectory = Paths.get(gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
+
+    eclipsePluginsDirectory = "$cacheDirectory/$eclipseVersion/plugins"
 }
