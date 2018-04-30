@@ -10,9 +10,7 @@ import java.util.Optional;
  * IScenario scenario}s.  A scenario may have one or more flows that can be derived from it depending on the scenario
  * steps and verbs used in its construction.  Flows are associated with messaging paradigms which defines how the inputs
  * and outputs are handled.
- *
  * <p/>
- *
  * Flows are treated in a black box manner.  Flows declare the inputs a component have receive and the outputs it may
  * produce but flows reveal no information about how a component is implemented.
  */

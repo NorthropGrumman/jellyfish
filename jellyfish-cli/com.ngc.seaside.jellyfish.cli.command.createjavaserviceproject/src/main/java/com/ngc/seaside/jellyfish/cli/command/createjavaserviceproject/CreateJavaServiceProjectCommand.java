@@ -29,7 +29,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
    static final String GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
 
-   final static String GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME = "gradleJellyfishCommand";
+   static final String GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME = "gradleJellyfishCommand";
 
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_DOMAIN_COMMAND_NAME = "create-domain";

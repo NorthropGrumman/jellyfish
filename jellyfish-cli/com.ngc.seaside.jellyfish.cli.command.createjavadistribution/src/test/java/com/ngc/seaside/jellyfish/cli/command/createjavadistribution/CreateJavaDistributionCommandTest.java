@@ -1,8 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavadistribution;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -29,6 +26,9 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class CreateJavaDistributionCommandTest {
 
    private CreateJavaDistributionCommand fixture;
@@ -40,13 +40,12 @@ public class CreateJavaDistributionCommandTest {
 
    @Before
    public void setup() throws IOException {
-      
 
       // Setup mock system descriptor
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
       when(options.getParameters()).thenReturn(mock(IParameterCollection.class));
       when(systemDescriptor.findModel("com.ngc.seaside.test.Model")).thenReturn(Optional.of(model));
-      
+
       //Setup mock project naming service
       IProjectNamingService projectNamingService = new MockedProjectNamingService();
 
@@ -93,18 +92,20 @@ public class CreateJavaDistributionCommandTest {
       when(options.getParameters()).thenReturn(collection);
 
       // Setup mock template service
-      when(templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(), collection,
-                                  Paths.get("/just/a/mock/path"), false)).thenReturn(new ITemplateOutput() {
-         @Override
-         public Map<String, ?> getProperties() {
-            return collection.getParameterMap();
-         }
+      when(templateService.unpack(CreateJavaDistributionCommand.class.getPackage().getName(),
+                                  collection,
+                                  Paths.get("/just/a/mock/path"),
+                                  false)).thenReturn(new ITemplateOutput() {
+                                     @Override
+                                     public Map<String, ?> getProperties() {
+                                        return collection.getParameterMap();
+                                     }
 
-         @Override
-         public Path getOutputPath() {
-            return Paths.get("/just/a/mock/path");
-         }
-      });
+                                     @Override
+                                     public Path getOutputPath() {
+                                        return Paths.get("/just/a/mock/path");
+                                     }
+                                  });
       fixture.run(options);
    }
 }

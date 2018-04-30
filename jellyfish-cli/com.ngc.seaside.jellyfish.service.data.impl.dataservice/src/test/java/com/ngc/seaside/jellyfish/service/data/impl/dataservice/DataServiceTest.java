@@ -1,11 +1,5 @@
 package com.ngc.seaside.jellyfish.service.data.impl.dataservice;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
@@ -24,6 +18,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DataServiceTest {
 
@@ -55,10 +55,11 @@ public class DataServiceTest {
       }
 
       @SuppressWarnings("unchecked")
-      INamedChild<IPackage>[] expectedFields = new INamedChild[] { data[0], data[3], data[4], data[5], data[6], data[7],
-               data[8], data[10], data[11], data[12], data[14], data[15], data[17], enums[0], enums[1], enums[2],
-               enums[3] };
-      IData[] expectedSuperClasses = { data[1], data[2], data[9], data[13], data[16] };
+      INamedChild<IPackage>[] expectedFields = new INamedChild[]{data[0], data[3], data[4], data[5], data[6], data[7],
+                                                                 data[8], data[10], data[11], data[12], data[14],
+                                                                 data[15], data[17], enums[0], enums[1], enums[2],
+                                                                 enums[3]};
+      IData[] expectedSuperClasses = {data[1], data[2], data[9], data[13], data[16]};
 
       Collection<IData> input = Arrays.asList(data[0]);
       Map<INamedChild<IPackage>, Boolean> map = service.aggregateNestedFields(input);
@@ -101,7 +102,7 @@ public class DataServiceTest {
    }
 
    private static class NamedChildCollection extends AbstractSet<IDataField>
-            implements INamedChildCollection<IData, IDataField> {
+         implements INamedChildCollection<IData, IDataField> {
 
       private final Map<String, IDataField> map = new LinkedHashMap<>();
       private final IData parent;

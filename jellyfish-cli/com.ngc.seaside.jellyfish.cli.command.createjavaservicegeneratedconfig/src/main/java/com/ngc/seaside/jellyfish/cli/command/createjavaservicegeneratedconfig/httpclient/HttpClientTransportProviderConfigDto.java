@@ -17,23 +17,35 @@ import java.util.Optional;
 import java.util.Set;
 
 public class HttpClientTransportProviderConfigDto implements ITransportProviderConfigDto<HttpClientDto> {
-   public static final String HTTP_CLIENT_TEMPLATE = CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-httpclient";
+
+   public static final String
+         HTTP_CLIENT_TEMPLATE =
+         CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-httpclient";
 
    private static final String HTTP_CLIENT_TRANSPORT_PROVIDER_COMPONENT_NAME =
          "com.ngc.seaside.service.transport.impl.provider.httpclient.HttpClientTransportProvider";
    private static final String HTTP_CLIENT_CONFIGURATION_CLASS_NAME_SUFFIX = "HttpClientConfiguration";
    private static final String HTTP_CLIENT_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "HttpClientTestConfiguration";
-   private final static String HTTP_CLIENT_PROVIDER_VARIABLE_NAME = "httpClientProvider";
-   private static final String HTTP_CLIENT_TOPIC = "com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic";
-   private static final String HTTP_CLIENT_MODULE = "com.ngc.seaside.service.transport.impl.provider.httpclient.module.HttpClientTransportProviderModule";
+   private static final String HTTP_CLIENT_PROVIDER_VARIABLE_NAME = "httpClientProvider";
+   private static final String
+         HTTP_CLIENT_TOPIC =
+         "com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic";
+   private static final String
+         HTTP_CLIENT_MODULE =
+         "com.ngc.seaside.service.transport.impl.provider.httpclient.module.HttpClientTransportProviderModule";
    private static final String HTTP_CLIENT_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.httpclient";
-   private static final String HTTP_CLIENT_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.httpclient";
-   private static final String HTTP_CLIENT_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.httpclient.module";
+   private static final String
+         HTTP_CLIENT_PROVIDER_DEPENDENCY =
+         "com.ngc.seaside:service.transport.impl.provider.httpclient";
+   private static final String
+         HTTP_CLIENT_MODULE_DEPENDENCY =
+         "com.ngc.seaside:service.transport.impl.provider.httpclient.module";
 
    private ITransportConfigurationService transportConfigurationService;
    private boolean test;
 
-   public HttpClientTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService, boolean test) {
+   public HttpClientTransportProviderConfigDto(ITransportConfigurationService transportConfigurationService,
+                                               boolean test) {
       this.transportConfigurationService = transportConfigurationService;
       this.test = test;
    }
@@ -50,11 +62,12 @@ public class HttpClientTransportProviderConfigDto implements ITransportProviderC
 
    @Override
    public Optional<HttpClientDto> getConfigurationDto(GeneratedServiceConfigDto dto,
-                                                 IJellyFishCommandOptions options, IModel model, String topicsClassName,
-                                                 Map<String, IDataReferenceField> topics) {
+                                                      IJellyFishCommandOptions options, IModel model,
+                                                      String topicsClassName,
+                                                      Map<String, IDataReferenceField> topics) {
       HttpClientDto httpClientDto = new HttpClientDto().setBaseDto(dto)
-                                                  .setTopicsImport(topicsClassName)
-                                                  .setClassname(dto.getModelName() + getClassnameSuffix());
+            .setTopicsImport(topicsClassName)
+            .setClassname(dto.getModelName() + getClassnameSuffix());
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
@@ -71,15 +84,15 @@ public class HttpClientTransportProviderConfigDto implements ITransportProviderC
          int count = 1;
          for (RestConfiguration configuration : configurations) {
             HttpClientTopicDto topicDto = new HttpClientTopicDto().setNetworkAddress(configuration.getNetworkAddress())
-                                                        .setNetworkInterface(configuration.getNetworkInterface())
-                                                        .setPort(configuration.getPort())
-                                                        .setHttpMethod(configuration.getHttpMethod())
-                                                        .setPath(configuration.getPath())
-                                                        .setContentType(configuration.getContentType())
-                                                        .setVariableName(
-                                                              field.getName() + (configurations.size() > 1 ? count
-                                                                                                           : ""))
-                                                        .setName(topicsPrefix + topicName);
+                  .setNetworkInterface(configuration.getNetworkInterface())
+                  .setPort(configuration.getPort())
+                  .setHttpMethod(configuration.getHttpMethod())
+                  .setPath(configuration.getPath())
+                  .setContentType(configuration.getContentType())
+                  .setVariableName(
+                        field.getName() + (configurations.size() > 1 ? count
+                                                                     : ""))
+                  .setName(topicsPrefix + topicName);
 
             httpClientDto.addTopic(topicDto);
             count++;

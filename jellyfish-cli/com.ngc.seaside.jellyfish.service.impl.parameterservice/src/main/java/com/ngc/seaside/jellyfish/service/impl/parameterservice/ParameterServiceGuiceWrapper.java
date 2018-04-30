@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-import com.ngc.seaside.jellyfish.service.parameter.api.ParameterServiceException;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.parameter.api.ParameterServiceException;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class ParameterServiceGuiceWrapper implements IParameterService {
 
    @Override
    public IParameterCollection parseParameters(List<String> parameters)
-            throws ParameterServiceException {
+         throws ParameterServiceException {
       return delegate.parseParameters(parameters);
    }
 

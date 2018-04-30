@@ -1,5 +1,37 @@
 package com.ngc.seaside.jellyfish;
 
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
+import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
@@ -16,44 +48,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.api.CommandException;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
-import com.ngc.seaside.jellyfish.impl.provider.JellyFishCommandProvider;
-import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  *
  */
 public class JellyFishCommandProviderTest {
 
-   private final static String TEMPLATE_PACKAGE_NAME = "com.ngc.seaside.jellyfish.command.impl.createjavabundle";
+   private static final String TEMPLATE_PACKAGE_NAME = "com.ngc.seaside.jellyfish.command.impl.createjavabundle";
 
    private ILogService logService;
    private ITemplateService templateService;
@@ -126,9 +126,9 @@ public class JellyFishCommandProviderTest {
       collection.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDir));
 
       when(parameterService.parseParameters(
-         Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
-                                                                                                          .thenReturn(
-                                                                                                             collection);
+            Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
+            .thenReturn(
+                  collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
       when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
@@ -149,7 +149,8 @@ public class JellyFishCommandProviderTest {
 
       provider.addCommand(command);
 
-      provider.run(new String[]{"create-java-bundle", "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
+      provider.run(new String[]{"create-java-bundle",
+                                "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -174,7 +175,8 @@ public class JellyFishCommandProviderTest {
       Path outputDir = Paths.get(".");
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDir));
-      when(parameterService.parseParameters(Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
+      when(parameterService.parseParameters(
+            Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -185,7 +187,8 @@ public class JellyFishCommandProviderTest {
       when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(result);
 
       provider.addCommand(command);
-      provider.run(new String[]{"create-java-bundle", "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
+      provider.run(new String[]{"create-java-bundle",
+                                "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -216,7 +219,8 @@ public class JellyFishCommandProviderTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDir));
 
-      when(parameterService.parseParameters(Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
+      when(parameterService.parseParameters(
+            Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -237,7 +241,8 @@ public class JellyFishCommandProviderTest {
 
       provider.addCommand(command);
       try {
-         provider.run(new String[]{"create-java-bundle", "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
+         provider.run(new String[]{"create-java-bundle",
+                                   "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
          fail("did not throw CommandException if command requires valid SystemDescriptor");
       } catch (CommandException e) {
          // Expected.
@@ -256,7 +261,8 @@ public class JellyFishCommandProviderTest {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDir));
 
-      when(parameterService.parseParameters(Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
+      when(parameterService.parseParameters(
+            Collections.singletonList("-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir)))
             .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
@@ -277,7 +283,8 @@ public class JellyFishCommandProviderTest {
       when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(result);
 
       provider.addCommand(command);
-      provider.run(new String[]{"create-java-bundle", "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
+      provider.run(new String[]{"create-java-bundle",
+                                "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir});
 
       ArgumentCaptor<IJellyFishCommandOptions> optionsCapture = ArgumentCaptor.forClass(IJellyFishCommandOptions.class);
       verify(command).run(optionsCapture.capture());
@@ -290,7 +297,7 @@ public class JellyFishCommandProviderTest {
       assertTrue(options.getParameters().containsParameter(CommonParameters.OUTPUT_DIRECTORY.getName()));
       assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
    }
-   
+
    @Test
    public void testDoesCreateJavaServiceProjectWithoutInputDir() {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
@@ -305,13 +312,15 @@ public class JellyFishCommandProviderTest {
       collection.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDir));
       collection.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ARTIFACT_VERSION.getName(), gav));
       collection.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(), model));
-      String[] cliParameters = new String[] { "create-java-service-project",
-               "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir
-                  + " -D" + CommonParameters.GROUP_ARTIFACT_VERSION.getName() + "=" + gav
-                  + " -D" + CommonParameters.MODEL.getName() + "=" + model };
-      
+      String[] cliParameters = new String[]{"create-java-service-project",
+                                            "-D" + CommonParameters.OUTPUT_DIRECTORY.getName() + "=" + outputDir
+                                                  + " -D" + CommonParameters.GROUP_ARTIFACT_VERSION.getName() + "="
+                                                  + gav
+                                                  + " -D" + CommonParameters.MODEL.getName() + "=" + model};
+
       when(parameterService.parseParameters(
-         Collections.singletonList(Stream.of(cliParameters).skip(1).collect(Collectors.joining(" "))))).thenReturn(collection);
+            Collections.singletonList(Stream.of(cliParameters).skip(1).collect(Collectors.joining(" ")))))
+            .thenReturn(collection);
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());
 
       when(templateService.templateExists(TEMPLATE_PACKAGE_NAME))
@@ -346,16 +355,17 @@ public class JellyFishCommandProviderTest {
       assertTrue(options.getParameters().containsParameter("templateFinalOutputDirectory"));
       assertTrue(options.getParameters().containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()));
       assertTrue(options.getParameters().containsParameter(CommonParameters.MODEL.getName()));
-      assertEquals(gav, options.getParameters().getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()).getStringValue());
+      assertEquals(gav, options.getParameters().getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())
+            .getStringValue());
       assertEquals(model, options.getParameters().getParameter(CommonParameters.MODEL.getName()).getStringValue());
    }
-   
+
    @Test
    public void testParseGav() {
-	   String gavParam = "group.group1.group2:artifact.artifact1:version";
-	   String gavResult = "group/group1/group2/artifact.artifact1/version/artifact.artifact1-version";
-	   String gavProp = provider.parseGav(gavParam);
-	   assertEquals(gavResult, gavProp);  
+      String gavParam = "group.group1.group2:artifact.artifact1:version";
+      String gavResult = "group/group1/group2/artifact.artifact1/version/artifact.artifact1-version";
+      String gavProp = provider.parseGav(gavParam);
+      assertEquals(gavResult, gavProp);
    }
 
    @Test
@@ -371,8 +381,10 @@ public class JellyFishCommandProviderTest {
 
       when(command.getName()).thenReturn("create-java-bundle");
       when(command.getUsage()).thenReturn(mock(IUsage.class));
-      when(command.getUsage().getRequiredParameters()).thenReturn(Collections.singletonList(new DefaultParameter<>(TEST_PARAM_NAME)));
-      when(command.getUsage().getAllParameters()).thenReturn(Collections.singletonList(new DefaultParameter<>(TEST_PARAM_NAME)));
+      when(command.getUsage().getRequiredParameters())
+            .thenReturn(Collections.singletonList(new DefaultParameter<>(TEST_PARAM_NAME)));
+      when(command.getUsage().getAllParameters())
+            .thenReturn(Collections.singletonList(new DefaultParameter<>(TEST_PARAM_NAME)));
 
       when(parameterService.parseParameters(anyList())).thenReturn(new DefaultParameterCollection());
       when(parameterService.parseParameters(anyMap())).thenReturn(new DefaultParameterCollection());

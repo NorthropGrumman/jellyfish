@@ -7,9 +7,9 @@ import com.google.common.io.LineProcessor;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
@@ -35,7 +35,8 @@ public class ValidateCommand implements IJellyFishCommand {
    private static final String NAME = "validate";
    private static final IUsage
          COMMAND_USAGE =
-         new DefaultUsage("Validates the System Descriptor. Requires a system descriptor project within src/main/sd");
+         new DefaultUsage("Validates the System Descriptor. "
+                          + "Requires a system descriptor project within src/main/sd");
 
    private ILogService logService;
 
@@ -54,7 +55,9 @@ public class ValidateCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A dto for generating that method that handles the logic when the correlation expressions for a scenario are completed. This involves calling the corresponding service interface method, catching any
+ * A dto for generating that method that handles the logic when the correlation expressions for a
+ * scenario are completed. This involves calling the corresponding service interface method, catching any
  * service fault exceptions from it, logging the inputs and outputs, and publishing the outputs.
  */
 public class CorrelationDto {
+
    private String name;
    private PublishDto output;
    private String serviceMethod;
@@ -16,6 +18,7 @@ public class CorrelationDto {
    private String inputLogFormat;
    private List<InputDto> inputs = new ArrayList<>();
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
+
    /**
     * Returns the name of the method for this dto. The method is called when its correlations are completed.
     */
@@ -99,7 +102,8 @@ public class CorrelationDto {
    public String getScenarioName() {
       return scenarioName;
    }
+
    public void setScenarioName(String scenarioName) {
-      this.scenarioName = scenarioName;  
+      this.scenarioName = scenarioName;
    }
 }

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ZeroMqDto {
+
    private GeneratedServiceConfigDto baseDto;
    private Set<String> imports = new LinkedHashSet<>();
    private List<ZeroMqTopicDto> topics = new ArrayList<>();
@@ -37,16 +38,24 @@ public class ZeroMqDto {
       return topics;
    }
 
+   /**
+    *
+    * @return a map with the send topic name as the key and a value of ZeroMqTopicDTOs
+    */
    public Map<String, List<ZeroMqTopicDto>> getSendTopics() {
       return topics.stream()
-                   .filter(ZeroMqTopicDto::isSend)
-                   .collect(Collectors.groupingBy(ZeroMqTopicDto::getName));
+            .filter(ZeroMqTopicDto::isSend)
+            .collect(Collectors.groupingBy(ZeroMqTopicDto::getName));
    }
 
+   /**
+    *
+    * @return a map with the receive topic name as the key and a value of ZeroMqTopicDTOs
+    */
    public Map<String, List<ZeroMqTopicDto>> getReceiveTopics() {
       return topics.stream()
-                   .filter(topic -> !topic.isSend())
-                   .collect(Collectors.groupingBy(ZeroMqTopicDto::getName));
+            .filter(topic -> !topic.isSend())
+            .collect(Collectors.groupingBy(ZeroMqTopicDto::getName));
    }
 
    public ZeroMqDto addTopic(ZeroMqTopicDto topic) {

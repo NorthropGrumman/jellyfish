@@ -75,11 +75,11 @@ public class RestConfiguration {
          return false;
       }
       RestConfiguration that = (RestConfiguration) o;
-      return Objects.equals(this.networkAddress, that.networkAddress) &&
-             this.port == that.port &&
-             Objects.equals(this.path, that.path) &&
-             Objects.equals(this.contentType, that.contentType) &&
-             this.httpMethod == that.httpMethod;
+      return Objects.equals(this.networkAddress, that.networkAddress)
+            && this.port == that.port
+            && Objects.equals(this.path, that.path)
+            && Objects.equals(this.contentType, that.contentType)
+            && this.httpMethod == that.httpMethod;
    }
 
    @Override
@@ -90,11 +90,11 @@ public class RestConfiguration {
    @Override
    public String toString() {
       return "RestConfiguration[networkAddress=" + networkAddress
-             + ", networkInterface=" + networkInterface
-             + ", port=" + port
-             + ", path=" + path
-             + ", contentType=" + contentType
-             + ", httpMethod=" + httpMethod + "]";
+            + ", networkInterface=" + networkInterface
+            + ", port=" + port
+            + ", path=" + path
+            + ", contentType=" + contentType
+            + ", httpMethod=" + httpMethod + "]";
    }
 
 }

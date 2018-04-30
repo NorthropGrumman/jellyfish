@@ -10,6 +10,7 @@ allprojects {
 
         aetherVersion = '1.1.0'
         blocsVersion = '2.1.1'
+        blocsCoreVersion = '2.1.1'
         blocsDomainVersion = '2.3.1'
         bootstrapCommandsVersion = '1.2'
         commonsIOVersion = '2.5'

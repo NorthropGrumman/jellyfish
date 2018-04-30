@@ -7,9 +7,9 @@ package com.ngc.seaside.jellyfish.utilities.console.api;
  */
 public interface ITableModelListener {
 
-  /**
-   * Provide a callback if the model changes.
-   */
-  void modelChanged();
+   /**
+    * Provide a callback if the model changes.
+    */
+   void modelChanged();
 
 }

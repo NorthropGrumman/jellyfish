@@ -1,13 +1,13 @@
-package com.model.tests.config;
+package com.ngc.example.correlation.cs.tests.config;
 
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.service.transport.api.ITransportService;
-import com.model.transport.topic.ModelTransportTopics;
+import com.ngc.example.correlation.cs.transport.topic.CandyServiceTransportTopics;
 
-public class ModelTestConfiguration{
+public class CandyServiceTestTransportConfiguration{
 
    @SuppressWarnings("unused")
    private final ILogService logService;
@@ -18,7 +18,7 @@ public class ModelTestConfiguration{
    @SuppressWarnings("unused")
    private final ITransportService transportService;
    @Inject
-   public ModelTestConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
+   public CandyServiceTestTransportConfiguration(ILogService logService, IResourceService resourceService, ITransportService transportService ) {
       this.logService = logService;
       this.resourceService = resourceService;
       this.transportService = transportService;

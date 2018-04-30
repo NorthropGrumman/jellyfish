@@ -1,18 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,24 +18,33 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class HelpCommandTest {
 
    private static final IUsage USAGE_1 = new DefaultUsage("Usage 1",
-      new DefaultParameter<>("param1_1").setDescription("Description 1_1").setRequired(true),
-      new DefaultParameter<>("param1_2").setDescription("Description 1_2").setRequired(false));
+                                                          new DefaultParameter<>("param1_1")
+                                                                .setDescription("Description 1_1").setRequired(true),
+                                                          new DefaultParameter<>("param1_2")
+                                                                .setDescription("Description 1_2").setRequired(false));
 
    private static final IUsage USAGE_2 = new DefaultUsage("Usage 2",
-      new DefaultParameter<>("param2_1").setDescription("Description 2_1").setRequired(true),
-      new DefaultParameter<>("param2_2").setDescription("Description 2_2").setRequired(false));
-   
+                                                          new DefaultParameter<>("param2_1")
+                                                                .setDescription("Description 2_1").setRequired(true),
+                                                          new DefaultParameter<>("param2_2")
+                                                                .setDescription("Description 2_2").setRequired(false));
+
    private HelpCommand cmd;
 
    @Mock
    private IJellyFishCommandOptions options;
-   
+
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
-   
+
    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
    @Before
@@ -48,7 +53,7 @@ public class HelpCommandTest {
       cmd.setLogService(new PrintStreamLogService(new PrintStream(stream)));
       cmd.addCommand(cmd);
       cmd.activate();
-      
+
       IJellyFishCommand mock1 = mock(IJellyFishCommand.class);
       when(mock1.getName()).thenReturn("Command1");
       when(mock1.getUsage()).thenReturn(USAGE_1);
@@ -59,7 +64,7 @@ public class HelpCommandTest {
 
       cmd.addCommand(mock1);
       cmd.addCommand(mock2);
-      
+
       when(options.getParameters()).thenReturn(parameters);
    }
 

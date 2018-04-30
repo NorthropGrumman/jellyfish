@@ -47,7 +47,9 @@ public class SampleCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -80,7 +82,8 @@ public class SampleCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Create a new Java bundle. This requires that a settings.gradle file be present in the output directory. See the init-java-gradle-repo command.",
+            "Create a new Java bundle. This requires that a settings.gradle file be present in the output "
+                    + "directory. See the init-java-gradle-repo command.",
             CommonParameters.CLASSNAME.required(),
             CommonParameters.GROUP_ID.required(),
             CommonParameters.ARTIFACT_ID.required(),

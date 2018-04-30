@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.MetadataNames;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Component(service = IPackageNamingService.class)
 public class PackageNamingService implements IPackageNamingService {
 
-   final static String MODEL_PARAMETER_NAME = "model";
+   public static final String MODEL_PARAMETER_NAME = "model";
 
    private ILogService logService;
 
@@ -190,7 +191,7 @@ public class PackageNamingService implements IPackageNamingService {
 
       String[] modelParts = modelPackageName.split("\\.");
       String[] dataParts = dataPackageName.split("\\.");
-      
+
       // Find the point in the package names where they begin to be different.
       int maxLen = Math.min(modelParts.length, dataParts.length);
       int positionOfFirstDiff = -1;
@@ -207,7 +208,9 @@ public class PackageNamingService implements IPackageNamingService {
          // package.  In this case, don't add anything.
          name = "";
       } else {
-         name = "." + Arrays.asList(dataParts).subList(positionOfFirstDiff, dataParts.length).stream().collect(Collectors.joining("."));
+         name =
+               "." + Arrays.asList(dataParts).subList(positionOfFirstDiff, dataParts.length).stream()
+                     .collect(Collectors.joining("."));
       }
       return name;
    }

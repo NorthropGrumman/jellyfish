@@ -1,17 +1,17 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
-import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
+import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
  */
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishCommandCommand implements IJellyFishCommand {
@@ -38,7 +38,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
    private static final Pattern JAVA_IDENTIFIER = Pattern.compile("[a-zA-Z$_][a-zA-Z$_0-9]*");
    private static final Pattern JAVA_QUALIFIED_IDENTIFIER = Pattern
-            .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
+         .compile("[a-zA-Z$_][a-zA-Z$_0-9]*(?:\\.[a-zA-Z$_][a-zA-Z$_0-9]*)*");
 
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
@@ -78,12 +78,12 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    public void run(IJellyFishCommandOptions commandOptions) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());
-      
+
       final String commandName = collection.getParameter(COMMAND_NAME_PROPERTY).getStringValue();
 
       if (!collection.containsParameter(OUTPUT_DIR_PROPERTY)) {
          collection.addParameter(
-            new DefaultParameter<>(OUTPUT_DIR_PROPERTY, Paths.get(".").toAbsolutePath().toString()));
+               new DefaultParameter<>(OUTPUT_DIR_PROPERTY, Paths.get(".").toAbsolutePath().toString()));
       }
       final Path outputDirectory = Paths.get(collection.getParameter(OUTPUT_DIR_PROPERTY).getStringValue());
       try {
@@ -109,7 +109,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
                .getStringValue()
                .replace("-", "").toLowerCase();
          collection.addParameter(
-            new DefaultParameter<>(ARTIFACT_ID_PROPERTY, String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
+               new DefaultParameter<>(ARTIFACT_ID_PROPERTY, String.format(DEFAULT_ARTIFACT_ID_FORMAT, artifact)));
       }
       final String artifact = collection.getParameter(ARTIFACT_ID_PROPERTY).getStringValue();
 
@@ -141,14 +141,14 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
       if (collection.containsParameter(CLEAN_PROPERTY)) {
          String value = collection.getParameter(CLEAN_PROPERTY).getStringValue();
          switch (value.toLowerCase()) {
-         case "true":
-            clean = true;
-            break;
-         case "false":
-            clean = false;
-            break;
-         default:
-            throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
+            case "true":
+               clean = true;
+               break;
+            case "false":
+               clean = false;
+               break;
+            default:
+               throw new CommandException("Invalid value for clean: " + value + ". Expected either true or false.");
          }
       } else {
          clean = false;
@@ -166,7 +166,9 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -183,7 +185,9 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
     *
     * @param ref the ref
     */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       this.templateService = ref;
    }
@@ -203,18 +207,20 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage(
-         "Creates a new JellyFish Command project. This requires that a settings.gradle file be present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
-         new DefaultParameter(CLASSNAME_PROPERTY)
+            "Creates a new JellyFish Command project. This requires that a settings.gradle file be "
+            + "present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent "
+            + "build.gradle.",
+            new DefaultParameter(CLASSNAME_PROPERTY)
                   .setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
-         new DefaultParameter(COMMAND_NAME_PROPERTY)
+            new DefaultParameter(COMMAND_NAME_PROPERTY)
                   .setDescription(
-                     "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
+                        "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
                   .setRequired(false),
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.PACKAGE,
-         CommonParameters.OUTPUT_DIRECTORY,
-         CommonParameters.CLEAN);
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.PACKAGE,
+            CommonParameters.OUTPUT_DIRECTORY,
+            CommonParameters.CLEAN);
    }
 
 }

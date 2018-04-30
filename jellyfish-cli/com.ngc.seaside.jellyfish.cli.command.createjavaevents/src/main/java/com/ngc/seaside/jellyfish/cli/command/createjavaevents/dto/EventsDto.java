@@ -23,6 +23,11 @@ public class EventsDto {
       return exportedPackages;
    }
 
+   /**
+    *
+    * @param exportedPackages list of packages
+    * @return an EventDTO
+    */
    public EventsDto setExportedPackages(Set<String> exportedPackages) {
       exportedPackages.removeIf(str -> {
          List<String> list = Arrays.asList(str.split("\\."));

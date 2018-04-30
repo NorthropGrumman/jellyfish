@@ -18,7 +18,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * An implementation of {@link IRequirementsService} for tests. The actual metadata is never searched for requirements; rather, requirements can be mocked nusing
+ * An implementation of {@link IRequirementsService} for tests. The actual metadata is never searched for requirements;
+ * rather, requirements can be mocked nusing
  * {@link #addRequirements(Object, String...)}.
  */
 public class MockedRequirementsService implements IRequirementsService {
