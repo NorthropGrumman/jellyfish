@@ -72,7 +72,7 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 #end
 #foreach ($method in $baseServiceDto.basicServerReqResMethods)
    @Override
-   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException{
+   public ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException{
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
