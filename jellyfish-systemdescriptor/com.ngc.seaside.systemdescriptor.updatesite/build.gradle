@@ -82,7 +82,7 @@ dependencies {
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
-task clean() {
+tasks.getByName('clean') {
    doLast {
       delete("$buildDir")
    }
@@ -180,17 +180,16 @@ task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMul
 task createZip(type: Zip, dependsOn: createMetadata) {
    from "$buildDir/updatesite"
    destinationDir = file("$buildDir")
-   archiveName = "com.ngc.seaside.systemdescriptor.plus.updatesite-${project.version}.zip"
+   archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.zip"
 }
 
 task createTarGz(type: Tar, dependsOn: createMetadata) {
    from "$buildDir/updatesite"
    compression = Compression.GZIP
    destinationDir = file("$buildDir")
-   archiveName = "com.ngc.seaside.systemdescriptor.plus.updatesite-${project.version}.tar.gz"
+   archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.tar.gz"
 }
 
-task build (dependsOn: [createZip, createTarGz]) {
-}
+tasks.getByName('build').dependsOn(createZip, createTarGz)
 
 defaultTasks = ['build']

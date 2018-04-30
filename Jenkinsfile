@@ -188,7 +188,7 @@ pipeline {
          steps {
             // Create a ZIP that has everything.
             sh 'mkdir -p build'
-            sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.plus.updatesite/build/com.ngc.seaside.systemdescriptor.plus.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml build/*.pdf'
+            sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml build/*.pdf'
 
             // Archive the zip that has everything.
             archiveArtifacts allowEmptyArchive: true,
