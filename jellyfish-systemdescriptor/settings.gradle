@@ -9,7 +9,7 @@ include 'com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps'
 include 'com.ngc.blocs.service.log.impl.common.log4jlogservice'
 include 'com.ngc.seaside.systemdescriptor.testutils'
 include 'com.ngc.seaside.systemdescriptor.plus.feature'
-include 'com.ngc.seaside.systemdescriptor.plus.updatesite'
+include 'com.ngc.seaside.systemdescriptor.updatesite'
 include 'com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice'
 
 
@@ -22,5 +22,5 @@ project(':com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps').name = 
 project(':com.ngc.blocs.service.log.impl.common.log4jlogservice').name = 'service.log.impl.common.log4jlogservice'
 project(':com.ngc.seaside.systemdescriptor.testutils').name = 'systemdescriptor.testutils'
 project(':com.ngc.seaside.systemdescriptor.plus.feature').name = 'systemdescriptor.plus.feature'
-project(':com.ngc.seaside.systemdescriptor.plus.updatesite').name = 'systemdescriptor.plus.updatesite'
+project(':com.ngc.seaside.systemdescriptor.updatesite').name = 'systemdescriptor.updatesite'
 project(':com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice').name = 'systemdescriptor.service.impl.m2repositoryservice'
