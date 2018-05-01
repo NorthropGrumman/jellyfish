@@ -8,7 +8,7 @@ configurations {
    feature
 }
 
-tasks.getByName('clean') {
+task clean {
    doLast {
       delete("$buildDir")
    }
@@ -30,7 +30,7 @@ task createJar(type: Zip, dependsOn: [copyAndFilterFeatureFile]) {
    archiveName = "${project.group}.${project.name}-${project.version}.jar"
 }
 
-tasks.getByName('build').dependsOn(createJar)
+task build (dependsOn: createJar)
 
 artifacts {
    feature createJar
