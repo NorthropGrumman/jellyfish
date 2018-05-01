@@ -1,28 +1,42 @@
-package com.ngc.seaside.threateval.tps.bridge.pubsub;
+/**
+***************************************** UNCLASSIFIED ******************************************
+*************************************************************************************************
+************************* Copyright 2017 Northrop Grumman Corporation ***************************
+* Author: Generated
+*/
+package $dto.packageName;
 
-import com.google.common.base.Preconditions;
+/**
+ * This file has been generated and should not be edited directly.
+ * @author Generated
+ */
 
-import com.ngc.blocs.service.event.api.IEvent;
-import com.ngc.blocs.service.event.api.IEventService;
-import com.ngc.blocs.service.event.api.IEventSubscriber;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.service.fault.api.IFaultManagementService;
-import com.ngc.seaside.service.fault.api.ServiceFaultException;
+#set ($ignore = $dto.imports.add("com.google.common.base.Preconditions"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEvent))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventService))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventSubscriber))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.log.api.ILogService))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Activate))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Reference))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferenceCardinality))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferencePolicy))
+
+### Not sure what to do with this one yet
 import com.ngc.seaside.threateval.tps.api.ITrackPriorityService;
-import com.ngc.seaside.threateval.tps.event.datatype.PrioritizedSystemTrackIdentifiers;
-import com.ngc.seaside.threateval.tps.event.datatype.TrackPriority;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+#####Be sure to add imports for pubsub datatypes#####
+#foreach ($i in $dto.imports)
+import ${i};
+#end
 
-@Component(service = IEventSubscriber.class, immediate = true)
-public class TrackPrioritySubscriber implements IEventSubscriber<TrackPriority> {
+${dto.componentAnnotation}
+public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscribeDataType}> {
 
-   private ITrackPriorityService trackPriorityService;
+   private ${dto.serviceName} ${dto.serviceVarName}
 
    private IEventService eventService;
 
@@ -31,13 +45,13 @@ public class TrackPrioritySubscriber implements IEventSubscriber<TrackPriority> 
    private IFaultManagementService faultManagementService;
 
    @Override
-   public void eventReceived(IEvent<TrackPriority> event) {
+   public void eventReceived(IEvent<${dto.subscribeDataType}> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
-      TrackPriority input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
+      ${dto.subscribeDataType} input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
       try {
-         PrioritizedSystemTrackIdentifiers output = trackPriorityService. calculateConsolidatedTrackPriority(input);
-         logService.info(getClass(), "ELK - Scenario: calculateConsolidatedTrackPriority; Input: %s; Output: %s;", input, output);
-         eventService.publish(output, PrioritizedSystemTrackIdentifiers.TOPIC);
+         ${dto.publishDataType} output = ${dto.serviceVarName}.${dto.scenarioMethod}(input);
+         logService.info(getClass(), "ELK - Scenario: ${dto.scenarioMethod}; Input: %s; Output: %s;", input, output);
+         eventService.publish(output, ${dto.publishDataType}.TOPIC);
       } catch(ServiceFaultException fault) {
          faultManagementService.handleFault(fault);
       }
@@ -45,26 +59,17 @@ public class TrackPrioritySubscriber implements IEventSubscriber<TrackPriority> 
 
    @Activate
    public void activate() {
-      eventService.addSubscriber(this, TrackPriority.TOPIC);
+      eventService.addSubscriber(this, ${dto.subscribeDataType}.TOPIC);
       logService.debug(getClass(), "Activated.");
    }
 
    @Deactivate
    public void deactivate() {
-      eventService.removeSubscriber(this, TrackPriority.TOPIC);
+      eventService.removeSubscriber(this, ${dto.subscribeDataType}.TOPIC);
       logService.debug(getClass(), "Deactivated.");
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTrackPriorityService")
-   public void setTrackPriorityService(ITrackPriorityService ref) {
-      this.trackPriorityService = ref;
-   }
-
-   public void removeTrackPriorityService(ITrackPriorityService ref) {
-      setTrackPriorityService(null);
-   }
+   ${dto.bindAndUnbindScenarioServiceSnippet}
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
