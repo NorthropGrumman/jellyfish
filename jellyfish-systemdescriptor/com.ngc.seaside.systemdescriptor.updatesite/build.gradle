@@ -15,18 +15,18 @@ ext {
    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
    eclipseDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${eclipseVersion}.zip"
    // The cache location of downloaded files.
-   eclipseCache = Paths.get(project.gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
-   // The local file to save the ZIP to.
-   eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
+   eclipseCache = Paths.get(gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
    // This is the location where the Eclipse download will be unzipped to.
    // Note this name may change if the download URL changes to a different version of Eclipse.
-   eclipseInstallationDirectory = file("${eclipseCache}/$eclipseVersion").getAbsolutePath()
+   eclipseInstallationDirectory = Paths.get(eclipseCache.toString(), eclipseVersion)
+   // The local file to save the ZIP to.
+   eclipseDownloadDestFile = "${eclipseInstallationDirectory}.zip"
 
    // This is the location of the Eclipse we use when compiling and building the
    // update site.
-   eclipsePluginsDirectory = "$eclipseInstallationDirectory/plugins"
+   eclipsePluginsDirectory = Paths.get(eclipseInstallationDirectory.toString(), "plugins")
 
-   // This is the location of the Eclispe exe we use to create the update site
+   // This is the location of the Eclipse exe we use to create the update site
    // metadata.
    eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
 }
@@ -37,6 +37,10 @@ repositories {
    maven {
       url nexusConsolidated
    }
+
+   flatDir {
+      dirs eclipsePluginsDirectory
+   }
 }
 
 configurations {
@@ -44,6 +48,10 @@ configurations {
 
    // note that plugins is reserved
    sdPlugins {
+      transitive = false
+   }
+
+   eclipsePlugins {
       transitive = false
    }
 
@@ -76,9 +84,43 @@ dependencies {
    sdPlugins project(":systemdescriptor.service.api")
    sdPlugins project(":systemdescriptor.model.impl.basic")
 
+   sdPlugins "com.ngc.seaside:systemdescriptor:$version"
+   sdPlugins "com.ngc.seaside:systemdescriptor.ide:$version"
+//   sdPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
+
    sdPlugins "com.ngc.blocs:api:$blocsVersion"
    sdPlugins "com.ngc.blocs:service.api:$blocsVersion"
    sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+
+   eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
+   eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
+   eclipsePlugins name: 'org.eclipse.emf.codegen_2.12.0.v20170609-0928'
+   eclipsePlugins name: 'org.eclipse.emf.common_2.13.0.v20170609-0707'
+   eclipsePlugins name: 'org.eclipse.emf.mwe.utils_1.3.21.201705291011'
+   eclipsePlugins name: 'org.eclipse.emf.mwe2.language.ui_2.9.1.201705291011'
+   eclipsePlugins name: 'org.eclipse.emf.mwe2.language_2.9.1.201705291011'
+   eclipsePlugins name: 'org.eclipse.emf.mwe2.launch_2.9.1.201705291011'
+   eclipsePlugins name: 'org.eclipse.emf.mwe2.lib_2.9.1.201705291011'
+   eclipsePlugins name: 'org.eclipse.emf.mwe2.runtime_2.9.1.201705291011'
+   eclipsePlugins name: 'org.eclipse.xtend.lib_2.12.0.v20170518-0757'
+   eclipsePlugins name: 'org.eclipse.xtext.builder_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.common.types.ui_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.common.types_2.12.0.v20170519-0752'
+   eclipsePlugins name: 'org.eclipse.xtext.ecore_2.12.0.v20170519-0752'
+   eclipsePlugins name: 'org.eclipse.xtext.generator_2.12.0.v20170519-0752'
+   eclipsePlugins name: 'org.eclipse.xtext.ide_2.12.0.v20170518-0959'
+   eclipsePlugins name: 'org.eclipse.xtext.ui.codetemplates.ui_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.ui.codetemplates_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.ui.ecore_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.ui_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.util_2.12.0.v20170518-0959'
+   eclipsePlugins name: 'org.eclipse.xtext.xbase.lib_2.12.0.v20170518-0757'
+   eclipsePlugins name: 'org.eclipse.xtext.xbase.ui_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext.xbase_2.12.0.v20170519-0752'
+   eclipsePlugins name: 'org.eclipse.xtext.xtext.ui_2.12.0.v20170519-0809'
+   eclipsePlugins name: 'org.eclipse.xtext_2.12.0.v20170518-0959'
+   eclipsePlugins name: 'org.objectweb.asm_5.0.1.v201404251740'
 
    guava "com.google.guava:guava:$guavaVersion"
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
