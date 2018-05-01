@@ -16,7 +16,6 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.IPubSubBridgeDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -32,9 +31,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    private static final String NAME = "create-java-service-pubsub-bridge";
    static final String PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX = "build";
+   static final String PUBSUB_BRIDGE_TEMPLATE_SUFFIX = "java";
    
-   private IPubSubBridgeDtoFactory templateDaoFactory;
-
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
    }
@@ -57,13 +55,15 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
-      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(getOptions(), model);
-      PubSubBridgeDto dto = templateDaoFactory.newDto(getOptions(), model);
-
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>("dto", dto));
-      unpackSuffixedTemplate(PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
-      registerProject(projectInfo);
+      //TODO Update projectNamingService so this will work
+//      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+//      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+//      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+//
+//      DefaultParameterCollection parameters = new DefaultParameterCollection();
+//      parameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+//      unpackSuffixedTemplate(PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+//      registerProject(projectInfo);
      
    }
 
@@ -72,21 +72,24 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       IModel model = getModel();
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
+      
+      //TODO update project naming service for this to work
+//      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+//      Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
+      
+      //TODO Retrieve a list of each type of input the service subscribes to
+       
+      //TODO Do logic here
 
-      PubSubBridgeDto dto = templateDaoFactory.newDto(getOptions(), model);
-
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>("dto", dto));
-      unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
+//      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+      
+//      unpackSuffixedTemplate(PUBSUB_BRIDGE_TEMPLATE_SUFFIX,
+//         dataParameters,
+//         projectDirectory,
+//         false);
    }
    
-   public void setTemplateDaoFactory(IPubSubBridgeDtoFactory ref) {
-      this.templateDaoFactory = ref;
-   }
-
-   public void removeTemplateDaoFactory(IPubSubBridgeDtoFactory ref) {
-      setTemplateDaoFactory(null);
-   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
