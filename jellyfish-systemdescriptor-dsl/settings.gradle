@@ -1,3 +1,5 @@
+rootProject.name = 'jellyfish-systemdescriptor-dsl'
+
 include 'com.ngc.seaside.systemdescriptor'
 include 'com.ngc.seaside.systemdescriptor.ide'
 include 'com.ngc.seaside.systemdescriptor.ui'
