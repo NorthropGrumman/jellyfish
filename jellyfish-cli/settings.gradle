@@ -116,3 +116,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig
 
 include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig').name = 'jellyfish.cli.command.createjavacucumbertestsconfig'
+
+include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge').name = 'jellyfish.cli.command.createjavaservicepubsubbridge'
