@@ -307,6 +307,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
       pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
+      pubSub.getOutput().setName("do"+ StringUtils.capitalize(scenario.getName()));
 
       pubSub.setServiceMethod(scenario.getName());
 
@@ -597,11 +598,11 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       if (hasDuplicateTypeNames(options, field.getParent())) {
          output.setType(type.getFullyQualifiedName());
          output.setTopic(type.getFullyQualifiedName() + ".TOPIC");
-         output.setName("publish" + type.getFullyQualifiedName().replace('.', '_'));
+         output.setName("doPublish" + type.getFullyQualifiedName().replace('.', '_'));
       } else {
          output.setType(type.getTypeName());
          output.setTopic(type.getTypeName() + ".TOPIC");
-         output.setName("publish" + type.getTypeName());
+         output.setName("doPublish" + type.getTypeName());
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
       }

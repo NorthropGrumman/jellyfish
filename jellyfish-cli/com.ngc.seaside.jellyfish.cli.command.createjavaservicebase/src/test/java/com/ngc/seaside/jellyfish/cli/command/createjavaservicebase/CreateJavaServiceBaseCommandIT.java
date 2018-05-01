@@ -256,13 +256,11 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(abstractPath, "\\babstract\\s+class\\s+AbstractEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\\bimplements\\s+.*?\\bIEngagementTrackPriorityService\\b");
       assertFileContains(abstractPath, "\"service:com.ngc.seaside.threateval.EngagementTrackPriorityService\"");
-      assertFileContains(abstractPath,
-                         "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\"
-                         + "s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
-      assertFileContains(abstractPath, "\\bpublishTrackPriority\\s*\\(");
-      
+      assertFileContains(abstractPath, "\\bdoGetTrackPriority\\s*\\(");     
+      assertFileContains(abstractPath, "\\bprotected\\s+abstract\\s+TrackPriority\\"
+            + "s+doCalculateTrackPriority\\s*\\(");
       assertFileContains(abstractPath, "\\bprotected\\s+abstract\\s+TrackPriorityResponse\\"
-            + "s+doGetTrackPriority\\s*\\(");
+              + "s+doGetTrackPriority\\s*\\(");
       assertFileContains(abstractPath, "\\bpublic\\s+TrackPriorityResponse\\s+getTrackPriority\\s*\\(");
       
 
