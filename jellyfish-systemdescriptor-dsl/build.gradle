@@ -35,7 +35,7 @@ subprojects {
         deploymentScriptFile = m2DeploymentScriptFile
     }
 
-    if(name == 'systemdescriptor.ui') {
+    if (name == 'systemdescriptor.ui') {
         // We have to apply the maven plugin here instead of in the build.gradle for
         // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
         apply plugin: 'eclipse'
@@ -43,10 +43,6 @@ subprojects {
         apply plugin: 'maven'
         apply plugin: 'org.xtext.xtend'
         apply plugin: 'com.ngc.seaside.checkstyle'
-    } else if(name == 'systemdescriptor.feature') {
-        apply plugin: 'com.ngc.seaside.eclipse.feature'
-    } else if(name == 'systemdescriptor.updatesite') {
-        apply plugin: 'com.ngc.seaside.eclipse.updatesite'
     } else {
         // Apply XText plugins.
         apply plugin: 'eclipse'
@@ -57,99 +53,95 @@ subprojects {
         apply from: "${rootDir}/gradle/maven-deployment.gradle"
     }
 
-    if(name != 'systemdescriptor.feature'
-        && name != 'systemdescriptor.updatesite') {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+    configurations.all {
+        exclude group: 'asm'
+    }
 
-        configurations.all {
-            exclude group: 'asm'
+    clean.doFirst {
+        delete file('src/main/xtend-gen')
+        delete file('src/main/xtext-gen')
+        delete file('src/test/xtend-gen')
+        delete file('src/test/xtext-gen')
+        delete file('plugin.xml_gen')
+    }
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            // The name of the repo must match the repository name configured by the SeasideCi plugin.
+            // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
+            name 'NexusConsolidated'
+            url nexusConsolidated
         }
+    }
 
-        clean.doFirst {
-            delete file('src/main/xtend-gen')
-            delete file('src/main/xtext-gen')
-            delete file('src/test/xtend-gen')
-            delete file('src/test/xtext-gen')
-            delete file('plugin.xml_gen')
-        }
-
+    uploadArchives {
         repositories {
-            mavenLocal()
-
-            maven {
-                // The name of the repo must match the repository name configured by the SeasideCi plugin.
-                // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
-                name 'NexusConsolidated'
-                url nexusConsolidated
-            }
-        }
-
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    // Use the main repo for full releases.
-                    repository(url: nexusReleases) {
-                        // Make sure that nexusUsername and nexusPassword are in your
-                        // ${gradle.user.home}/gradle.properties file.
-                        authentication(userName: nexusUsername, password: nexusPassword)
-                    }
-                    // If the version has SNAPSHOT in the name, use the snapshot repo.
-                    snapshotRepository(url: nexusSnapshots) {
-                        authentication(userName: nexusUsername, password: nexusPassword)
-                    }
+            mavenDeployer {
+                // Use the main repo for full releases.
+                repository(url: nexusReleases) {
+                    // Make sure that nexusUsername and nexusPassword are in your
+                    // ${gradle.user.home}/gradle.properties file.
+                    authentication(userName: nexusUsername, password: nexusPassword)
+                }
+                // If the version has SNAPSHOT in the name, use the snapshot repo.
+                snapshotRepository(url: nexusSnapshots) {
+                    authentication(userName: nexusUsername, password: nexusPassword)
                 }
             }
         }
+    }
 
-        /**
-         * Create a task for generating the source jar. This will also be uploaded to Nexus.
-         */
-        task('sourcesJar', type: Jar, dependsOn: [classes]) {
-            classifier = 'sources'
-            from sourceSets.main.allSource
-        }
+    /**
+     * Create a task for generating the source jar. This will also be uploaded to Nexus.
+     */
+    task('sourcesJar', type: Jar, dependsOn: [classes]) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-        /**
-         * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
-         */
-        task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
-            classifier = 'javadoc'
-            from javadoc.destinationDir
-        }
+    /**
+     * Create a task for generating the javadoc jar. This will also be uploaded to Nexus.
+     */
+    task('javadocJar', type: Jar, dependsOn: [classes, javadoc]) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
-        /**
-         * Augment the jar name to be $groupId.$project.name).
-         */
-        tasks.getByName('sourcesJar') { jar ->
-            archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-        }
+    /**
+     * Augment the jar name to be $groupId.$project.name).
+     */
+    tasks.getByName('sourcesJar') { jar ->
+        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+    }
 
-        tasks.getByName('javadocJar') { jar ->
-            archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
-        }
+    tasks.getByName('javadocJar') { jar ->
+        archiveName = "${project.group}.${project.name}-${project.version}-${classifier}.jar"
+    }
 
-        tasks.getByName('jar') { jar ->
-          archiveName = "${project.group}.${project.name}-${project.version}.jar"
-        }
+    tasks.getByName('jar') { jar ->
+        archiveName = "${project.group}.${project.name}-${project.version}.jar"
+    }
 
-        /**
-         * Ensure to add the doclint option to the javadoc task if using Java 8.
-         */
-        if (JavaVersion.current().isJava8Compatible()) {
-            tasks.getByName('javadoc') { doc ->
-                options.addStringOption('Xdoclint:none', '-quiet')
-            }
+    /**
+     * Ensure to add the doclint option to the javadoc task if using Java 8.
+     */
+    if (JavaVersion.current().isJava8Compatible()) {
+        tasks.getByName('javadoc') { doc ->
+            options.addStringOption('Xdoclint:none', '-quiet')
         }
+    }
 
-        /**
-         * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
-         */
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
+    /**
+     * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
+     */
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
     }
 }
 
