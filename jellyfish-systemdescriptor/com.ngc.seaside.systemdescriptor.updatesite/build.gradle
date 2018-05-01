@@ -2,6 +2,8 @@ import com.ngc.seaside.gradle.util.EclipsePlugins
 import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
 
+import java.nio.file.Paths
+
 ext {
    buildDir = 'build'
 
@@ -13,7 +15,7 @@ ext {
    // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
    eclipseDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${eclipseVersion}.zip"
    // The cache location of downloaded files.
-   eclipseCache = '../../.gradle/eclipse'
+   eclipseCache = Paths.get(project.gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
    // The local file to save the ZIP to.
    eclipseDownloadDestFile = "${eclipseCache}/${eclipseVersion}.zip"
    // This is the location where the Eclipse download will be unzipped to.
@@ -82,7 +84,7 @@ dependencies {
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
-tasks.getByName('clean') {
+task clean {
    doLast {
       delete("$buildDir")
    }
@@ -183,13 +185,6 @@ task createZip(type: Zip, dependsOn: createMetadata) {
    archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.zip"
 }
 
-task createTarGz(type: Tar, dependsOn: createMetadata) {
-   from "$buildDir/updatesite"
-   compression = Compression.GZIP
-   destinationDir = file("$buildDir")
-   archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.tar.gz"
-}
-
-tasks.getByName('build').dependsOn(createZip, createTarGz)
+task build (dependsOn: createZip)
 
 defaultTasks = ['build']
