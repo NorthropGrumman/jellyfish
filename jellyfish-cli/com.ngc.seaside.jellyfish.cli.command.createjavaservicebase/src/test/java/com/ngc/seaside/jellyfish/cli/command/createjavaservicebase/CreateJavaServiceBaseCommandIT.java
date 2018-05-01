@@ -261,7 +261,8 @@ public class CreateJavaServiceBaseCommandIT {
                          + "s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bpublishTrackPriority\\s*\\(");
       
-      assertFileContains(abstractPath, "\\bprotected\\s+abstract\\s+TrackPriorityResponse\\s+doGetTrackPriority\\s*\\(");
+      assertFileContains(abstractPath, "\\bprotected\\s+abstract\\s+TrackPriorityResponse\\"
+            + "s+doGetTrackPriority\\s*\\(");
       assertFileContains(abstractPath, "\\bpublic\\s+TrackPriorityResponse\\s+getTrackPriority\\s*\\(");
       
 
