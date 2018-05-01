@@ -1,17 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
-import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
+import java.nio.file.Path;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,22 +9,36 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.IPubSubBridgeDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+
 @Component(service = IJellyFishCommand.class)
-public class CreateJavaServicePubsubBridgeCommand extends AbstractJellyfishCommand implements IJellyFishCommand {
+public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJellyfishCommand {
 
    private static final String NAME = "create-java-service-pubsub-bridge";
-
-   public static final String EXAMPLE_PROPERTY = "example";
+   static final String PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
+   static final String PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX = "build";
+   
+   private IPubSubBridgeDtoFactory templateDaoFactory;
 
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
    }
-
-   @Override
-   protected void doRun() {
-      // TODO Auto-generated method stub
-   }
-
+   
    @Activate
    public void activate() {
       super.activate();
@@ -46,6 +49,43 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractJellyfishComma
    public void deactivate() {
       super.deactivate();
       logService.trace(getClass(), "Deactivated");
+   }
+   
+   @Override
+   protected void runDefaultPhase() {
+      IModel model = getModel();
+      Path outputDirectory = getOutputDirectory();
+      boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
+      
+      IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(getOptions(), model);
+      PubSubBridgeDto dto = templateDaoFactory.newDto(getOptions(), model);
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      unpackSuffixedTemplate(PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      registerProject(projectInfo);
+     
+   }
+
+   @Override
+   protected void runDeferredPhase() {
+      IModel model = getModel();
+      Path outputDirectory = getOutputDirectory();
+      boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
+
+      PubSubBridgeDto dto = templateDaoFactory.newDto(getOptions(), model);
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+   }
+   
+   public void setTemplateDaoFactory(IPubSubBridgeDtoFactory ref) {
+      this.templateDaoFactory = ref;
+   }
+
+   public void removeTemplateDaoFactory(IPubSubBridgeDtoFactory ref) {
+      setTemplateDaoFactory(null);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
@@ -75,12 +115,15 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractJellyfishComma
 
    @Override
    protected IUsage createUsage() {
-      // TODO Auto-generated method stub
-      return new DefaultUsage("Description of create-java-service-pubsub-bridge command",
-         new DefaultParameter<>(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false),
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
-         CommonParameters.MODEL.required());
+      return new DefaultUsage(
+              "Generates the pubsub bridge which handles the receipt and send of all message types when a"
+              + "pubsub event occurs.",
+              CommonParameters.GROUP_ID,
+              CommonParameters.ARTIFACT_ID,
+              CommonParameters.OUTPUT_DIRECTORY.required(),
+              CommonParameters.MODEL.required(),
+              CommonParameters.CLEAN,
+              allPhasesParameter());
    }
 
 }
