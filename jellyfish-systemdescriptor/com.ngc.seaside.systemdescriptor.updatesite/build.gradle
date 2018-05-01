@@ -161,7 +161,7 @@ task copyFeatures(type: Copy) {
    }
 }
 
-task copyPlugins(type: Copy) {
+task copySdPlugins(type: Copy) {
    from configurations.sdPlugins {
       rename { String name ->
          // We have to rename the feature JARs built with Gradle to make the naming
@@ -174,6 +174,11 @@ task copyPlugins(type: Copy) {
       }
    }
    into { "$buildDir/updatesite/plugins" }
+}
+
+task copyEclipsePlugins(type: Copy) {
+   from configurations.eclipsePlugins
+   into {"$buildDir/updatesite/plugins"}
 }
 
 task copyMultibings(type: Copy) {
@@ -202,7 +207,7 @@ task copyGuava(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copyPlugins, copyMultibings, copyGuava]) {
+task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copySdPlugins, copyEclipsePlugins, copyMultibings, copyGuava]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
