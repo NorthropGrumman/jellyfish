@@ -1,6 +1,4 @@
 dependencies {
-   features project(path: ':systemdescriptor.feature', configuration: 'feature')
-
    customPlugins project(':systemdescriptor')
    customPlugins project(':systemdescriptor.ide')
    customPlugins project(':systemdescriptor.ui')

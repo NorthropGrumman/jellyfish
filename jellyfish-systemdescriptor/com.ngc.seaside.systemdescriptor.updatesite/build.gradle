@@ -63,7 +63,7 @@ configurations {
 }
 
 dependencies {
-   features project(path: ':systemdescriptor.plus.feature', configuration: 'feature')
+   features project(path: ':systemdescriptor.feature', configuration: 'feature')
 
    sdPlugins project(':systemdescriptor.model.impl.xtext')
    sdPlugins project(':systemdescriptor.scenario.impl.standardsteps')
