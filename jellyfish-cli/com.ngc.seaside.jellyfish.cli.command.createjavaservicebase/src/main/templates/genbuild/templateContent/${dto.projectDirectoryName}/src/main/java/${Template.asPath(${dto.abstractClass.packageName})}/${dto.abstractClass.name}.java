@@ -39,23 +39,18 @@ public abstract class ${dto.abstractClass.name}
    public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
       Preconditions.checkNotNull(${method.input.fieldName}, "'${method.input.fieldName}' may not be null!");
 #foreach($correlation in $method.inputOutputCorrelations)
-      updateRequestWithCorrelation(input.${correlation.getterSnippet});
+      updateRequestWithCorrelation(${method.input.fieldName}.${correlation.getterSnippet});
 #end
       try {
          ${method.output.type} output = ${method.name}(${method.input.fieldName});
 #foreach($correlation in $method.inputOutputCorrelations)
-		 output.${correlation.setterSnippet}(input.${correlation.getterSnippet});
+		 output.${correlation.setterSnippet}(${method.input.fieldName}.${correlation.getterSnippet});
 #end
 		 return output;
-	  } catch(ServiceFaultException fault) {
-        logService.error(getClass(),
-           "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
-        faultManagementService.handleFault(fault);
-      }
 #if ($method.isCorrelating())
-		  finally {
-		     clearCorrelationFromRequest();
-		  }
+      } finally {
+	     clearCorrelationFromRequest();
+	  }
 #end
    }
 
