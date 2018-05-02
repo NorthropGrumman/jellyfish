@@ -1,0 +1,19 @@
+//apply plugin: "com.iadams.sonar-packaging"
+
+dependencies {
+   implementation "com.ngc.seaside:systemdescriptor.model.api:$version"
+   implementation "com.ngc.seaside:systemdescriptor.service.api:$version"
+   implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+
+   implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+   implementation "com.ngc.blocs:service.api:$blocsVersion"
+   implementation "com.google.guava:guava:22.0"
+   implementation "com.google.inject:guice:4.1.0"
+   implementation "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   // Include the SLF4J logging adapter so we can see logs during test execution.
+   testImplementation "ch.qos.logback:logback-core:1.1.7"
+   testImplementation "ch.qos.logback:logback-classic:1.1.7"
+}

@@ -1,0 +1,17 @@
+package com.test
+
+import com.test3.Model1
+
+model Model {
+  requires {
+    com.test1.Model1 require1
+    com.test2.Model1 require2
+    Model1 require3
+  }
+
+  parts {
+    com.test1.Model1 part1
+    com.test2.Model1 part2
+    Model1 part3
+  }
+}
