@@ -121,7 +121,7 @@ public interface IProjectNamingService {
     *
     * @param options options the options the current command is being executed with
     * @param model   the model to get the root project name for
-    * @return the project information for a cucumber tests project
+    * @return the project information for a Publish Subscribe Bridge project
     */
    IProjectInformation getPubSubBridgeProjectName(IJellyFishCommandOptions options, IModel model);
 }

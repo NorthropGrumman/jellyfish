@@ -123,7 +123,7 @@ public interface IPackageNamingService {
     *
     * @param options the options the current command is being executed with
     * @param model   the model of a service to get the package name for
-    * @return the package name for the cucumber tests project of a Java service
+    * @return the package name for the Publish Subscribe Bridge project of a Java service
     */
    String getPubSubBridgePackageName(IJellyFishCommandOptions options, IModel model);
 }
