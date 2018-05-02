@@ -16,6 +16,8 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
@@ -33,6 +35,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    static final String PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX = "build";
    static final String PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX = "java";
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
+   
+   private IBaseServiceDtoFactory baseServiceDtoFactory;
    
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
@@ -57,6 +61,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+      BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
 
@@ -73,21 +78,33 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
-      //TODO update project naming service for this to work
-//      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
-//      Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
+      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+      Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
       
       //TODO Retrieve a list of each type of input the service subscribes to
        
       //TODO Do logic here
 
       //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
-//      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
-      
-//      unpackSuffixedTemplate(PUBSUB_BRIDGE_TEMPLATE_SUFFIX,
-//         dataParameters,
-//         projectDirectory,
-//         false);
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+      pubSubBridgeDto.setPackageName("com.blah.blah2");
+      pubSubBridgeDto.setClassName("bsClassname");
+   
+      DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+      dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+      unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
+         dataParameters,
+         projectDirectory,
+         false);
+   }
+   
+   public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
+      this.baseServiceDtoFactory = ref;
+   }
+
+   public void removeTemplateDaoFactory(IBaseServiceDtoFactory ref) {
+      setTemplateDaoFactory(null);
    }
    
 

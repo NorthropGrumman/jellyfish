@@ -4,6 +4,7 @@ dependencies {
    implementation project(':jellyfish.api')
    implementation project(':jellyfish.service.api')
    implementation project(':jellyfish.utilities')
+   implementation project(':jellyfish.cli.command.createjavaservicebase')
 
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"

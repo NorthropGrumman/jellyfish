@@ -5,6 +5,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -18,11 +19,13 @@ public class CreateJavaServicePubsubBridgeCommandGuiceWrapper implements IJellyF
    public CreateJavaServicePubsubBridgeCommandGuiceWrapper(ILogService logService,
                                                            IBuildManagementService buildManagementService,
                                                            ITemplateService templateService,
+                                                           IBaseServiceDtoFactory templateDtoFactory,
                                                            IPackageNamingService packageNamingService,
                                                            IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setBuildManagementService(buildManagementService);
       delegate.setTemplateService(templateService);
+      delegate.setTemplateDaoFactory(templateDtoFactory);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
    }
