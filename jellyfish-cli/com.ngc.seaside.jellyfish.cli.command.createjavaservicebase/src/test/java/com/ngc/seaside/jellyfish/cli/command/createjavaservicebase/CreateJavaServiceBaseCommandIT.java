@@ -260,6 +260,11 @@ public class CreateJavaServiceBaseCommandIT {
                          "\\bvoid\\s+receiveTrackEngagementStatus\\s*?\\(\\s*?\\S*?IEvent\\"
                          + "s*<\\s*?\\S*?TrackEngagementStatus\\s*?>\\s*?event\\s*?\\)");
       assertFileContains(abstractPath, "\\bpublishTrackPriority\\s*\\(");
+      
+      assertFileContains(abstractPath, "\\bprotected\\s+abstract\\s+TrackPriorityResponse\\"
+            + "s+doGetTrackPriority\\s*\\(");
+      assertFileContains(abstractPath, "\\bpublic\\s+TrackPriorityResponse\\s+getTrackPriority\\s*\\(");
+      
 
       Path interfacePath = Paths.get(outputDirectory.getAbsolutePath(),
                                      "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",
@@ -270,6 +275,12 @@ public class CreateJavaServiceBaseCommandIT {
       assertFileContains(interfacePath,
                          "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(\\s*?\\S*?\\"
                          + "bTrackEngagementStatus\\s+trackEngagementStatus\\s*\\)");
+      
+      assertFileContains(interfacePath,
+              "\\bTrackPriorityResponse\\s+getTrackPriority\\s*\\(\\s*?\\S*?\\"
+              + "bTrackPriorityRequest\\s+trackPriorityRequest\\s*\\)");
+      
+      assertFileContains(interfacePath, "\\bTrackPriorityResponse\\s+getTrackPriority\\s*\\(");
 
       Path topicsPath = Paths.get(outputDirectory.getAbsolutePath(),
                                   "com.ngc.seaside.threateval.engagementtrackpriorityservice.base",

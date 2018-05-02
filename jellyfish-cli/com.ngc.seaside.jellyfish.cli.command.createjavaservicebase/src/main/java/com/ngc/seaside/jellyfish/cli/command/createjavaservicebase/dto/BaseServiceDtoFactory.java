@@ -188,7 +188,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             IRequestResponseMessagingFlow flow = flowOptional.get();
             switch (flow.getFlowType()) {
                case SERVER:
-                  dto.getBasicServerReqResMethods().add(getBasicReqResMethod(scenario, flow, dto, options));
+                  Optional<BasicServerReqResDto> reqRes = getBasicReqResMethod(scenario, flow, dto, options);
+                  if (reqRes.isPresent()) {
+                     dto.getBasicServerReqResMethods().add(reqRes.get());
+                  }
                   break;
                case CLIENT:
                   // Not implemented yet.
@@ -203,20 +206,26 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       }
    }
 
-   private BasicServerReqResDto getBasicReqResMethod(IScenario scenario,
+   private Optional<BasicServerReqResDto> getBasicReqResMethod(IScenario scenario,
                                                      IRequestResponseMessagingFlow flow,
                                                      BaseServiceDto dto,
                                                      IJellyFishCommandOptions options) {
+
+      if (flow.getInput() == null || flow.getOutput() == null) {
+         return Optional.empty();
+      }
+
       BasicServerReqResDto reqRes = new BasicServerReqResDto();
       reqRes.setScenarioName(scenario.getName());
       reqRes.setServiceMethod(scenario.getName());
-      reqRes.setName(scenario.getName());
+      reqRes.setName("do" + StringUtils.capitalize(scenario.getName()));
 
       reqRes.setInput(getInputDto(flow.getInput(), dto, options));
       reqRes.setOutput(getPublishDto(flow.getOutput(), dto, options));
 
-      return reqRes;
+      return Optional.of(reqRes);
    }
+
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options,
                                   Collection<IDataReferenceField> inputs) {

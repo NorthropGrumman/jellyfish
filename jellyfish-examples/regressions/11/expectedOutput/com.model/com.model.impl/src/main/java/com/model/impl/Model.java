@@ -31,13 +31,13 @@ public class Model extends AbstractModel {
    }
 
    @Override
-   public Data3 getRequest1(Data1 request1) throws ServiceFaultException{
+   public Data3 doGetRequest1(Data1 request1) throws ServiceFaultException{
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
-   public Data4 getRequest2(Data2 request2) throws ServiceFaultException{
+   public Data4 doGetRequest2(Data2 request2) throws ServiceFaultException{
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }

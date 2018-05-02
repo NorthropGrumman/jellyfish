@@ -74,6 +74,11 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
+################################## Request Response ###################################
+#foreach($method in $dto.basicServerReqResMethods)
+   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+
+#end
 ############################### Publish methods ###############################
 #foreach($method in $dto.publishMethods)
    private void ${method.name}(${method.type} value) {
@@ -196,6 +201,17 @@ public abstract class ${dto.abstractClass.name}
          }
       }));
    }
+
+#end
+################################## Request Response Delegaters ###################################
+#foreach ($method in $dto.basicServerReqResMethods)
+   @Override
+   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${method.input.fieldName}, "'${method.input.fieldName}' may not be null!");
+      ${method.output.type} response = ${method.name}(${method.input.fieldName});
+      return response;
+   }
+
 #end
 ################################## Activate ###################################
    protected void activate() {

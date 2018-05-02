@@ -36,7 +36,7 @@ public class TrackPriorityService extends AbstractTrackPriorityService {
    }
 
    @Override
-   public TrackPriorityResponse getTrackPriorities(TrackPriorityRequest trackPriorityRequest) throws ServiceFaultException{
+   public TrackPriorityResponse doGetTrackPriorities(TrackPriorityRequest trackPriorityRequest) throws ServiceFaultException{
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
