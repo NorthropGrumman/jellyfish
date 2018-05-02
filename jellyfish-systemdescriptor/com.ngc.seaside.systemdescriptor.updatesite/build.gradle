@@ -138,7 +138,7 @@ task downloadEclipse() {
       destFile.getParentFile().mkdirs()
       println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
       new URL("$eclipseDownloadUrl").withInputStream { is ->
-         destFile.withOutputStream { it << is  }
+         destFile.withOutputStream { it << is }
       }
    }
 }
@@ -178,7 +178,7 @@ task copySdPlugins(type: Copy) {
 
 task copyEclipsePlugins(type: Copy) {
    from configurations.eclipsePlugins
-   into {"$buildDir/updatesite/plugins"}
+   into { "$buildDir/updatesite/plugins" }
 }
 
 task copyMultibings(type: Copy) {
@@ -207,7 +207,8 @@ task copyGuava(type: Copy) {
    into { "$buildDir/updatesite/plugins" }
 }
 
-task createMetadata(dependsOn: [unzipEclipse, copyFeatures, copySdPlugins, copyEclipsePlugins, copyMultibings, copyGuava]) {
+task createMetadata(
+      dependsOn: [ unzipEclipse, copyFeatures, copySdPlugins, copyEclipsePlugins, copyMultibings, copyGuava ]) {
    // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
    // files.  Note that the arguments -metadataRepository and -artifactRepository want
    // "file URLs" but -source wants a plain old absolute path.
@@ -232,6 +233,6 @@ task createZip(type: Zip, dependsOn: createMetadata) {
    archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.zip"
 }
 
-task build (dependsOn: createZip)
+task build(dependsOn: createZip)
 
 defaultTasks = ['build']
