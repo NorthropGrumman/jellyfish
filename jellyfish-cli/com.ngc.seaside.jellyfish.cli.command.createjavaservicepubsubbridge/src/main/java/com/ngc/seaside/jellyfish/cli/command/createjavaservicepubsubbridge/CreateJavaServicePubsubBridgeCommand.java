@@ -31,7 +31,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    private static final String NAME = "create-java-service-pubsub-bridge";
    static final String PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX = "build";
-   static final String PUBSUB_BRIDGE_TEMPLATE_SUFFIX = "java";
+   static final String PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX = "java";
+   public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
