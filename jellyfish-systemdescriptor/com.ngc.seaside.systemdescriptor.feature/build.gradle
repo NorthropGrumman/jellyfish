@@ -1,39 +1,18 @@
+import com.ngc.seaside.gradle.plugins.eclipse.feature.SeasideEclipseFeaturePlugin
 import com.ngc.seaside.gradle.util.Versions
 
-ext {
-   buildDir = 'build'
-}
+import java.nio.file.Paths
 
-configurations {
-   feature
-}
-
-task clean {
-   doLast {
-      delete("$buildDir")
-   }
-}
+apply plugin: 'com.ngc.seaside.eclipse.feature'
 
 task copyAndFilterFeatureFile(type: Copy) {
-   from 'src/main/resources', { include('feature.xml') }
+   from Paths.get("src", "main", "resources"), { include("feature.xml") }
    expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
           'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
           'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
-          'blocsCoreVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),
+          'blocsVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),
           'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
-   destinationDir = file("$buildDir/tmp")
+   destinationDir = project.file(Paths.get(project.buildDir.absolutePath, "tmp"))
 }
 
-task createJar(type: Zip, dependsOn: [copyAndFilterFeatureFile]) {
-   from "$buildDir/tmp"
-   destinationDir = file("$buildDir")
-   archiveName = "${project.group}.${project.name}-${project.version}.jar"
-}
-
-task build (dependsOn: createJar)
-
-artifacts {
-   feature createJar
-}
-
-defaultTasks = ['build']
+tasks.getByName(SeasideEclipseFeaturePlugin.ECLIPSE_CREATE_JAR_TASK_NAME).setDependsOn([copyAndFilterFeatureFile])
