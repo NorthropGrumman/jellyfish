@@ -71,7 +71,16 @@ dependencies {
 
    testCompile "junit:junit:${junitVersion}"
    testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
+}
 
+def deployer = uploadArchives.repositories.mavenDeployer
+def installer = install.repositories.mavenInstaller
+
+// Gradle 'magic' from here: https://docs.gradle.org/current/userguide/maven_plugin.html
+[installer, deployer]*.pom*.whenConfigured { pom ->
+   // The eclipse dependencies have no groupId or version so the build fails trying to parse the generated pom for this
+   // project.
+   pom.dependencies = []
 }
 
 jar {
