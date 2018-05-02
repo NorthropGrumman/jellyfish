@@ -86,7 +86,7 @@ dependencies {
 
    sdPlugins "com.ngc.seaside:systemdescriptor:$version"
    sdPlugins "com.ngc.seaside:systemdescriptor.ide:$version"
-//   sdPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
+   sdPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
 
    sdPlugins "com.ngc.blocs:api:$blocsVersion"
    sdPlugins "com.ngc.blocs:service.api:$blocsVersion"
