@@ -60,7 +60,7 @@ dependencies {
 
    compile name: 'org.eclipse.xtext.ui_2.12.0.v20170519-0809'
    compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.12.0.v20170519-0809'
-   compile (name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809') { transitive = false }
+   compile(name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809') { transitive = false }
    compile name: 'org.eclipse.xtext.builder_2.12.0.v20170519-0809'
 
    if (OperatingSystem.current().isLinux()) {
@@ -79,32 +79,33 @@ jar {
       from('META-INF/MANIFEST.MF') {
          // Replace the version with the version from the gradle build.
          eachEntry {
-            if(getKey().equals('Bundle-Version')) {
+            if (getKey().equals('Bundle-Version')) {
                setValue(Versions.makeOsgiCompliantVersion("$version"))
             }
          }
       }
    }
    // Include 'plugin.xml'
-   from('.', { include('plugin.xml') }) 
+   from('.', { include('plugin.xml') })
 }
 
 task downloadEclipse(type: DownloadEclipseTask) {
-   eclipseArchiveName = Paths.get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   eclipseArchiveName = Paths.
+         get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
    eclipseDownloadUrl = OperatingSystem.current().isLinux() ?
                         "${project.property('linuxDownloadUrl')}" : "${project.property('windowsDownloadUrl')}"
 }
 
 task unzipEclipse(type: UnzipEclipseTask, dependsOn: downloadEclipse) {
-   eclipseArchiveName = Paths.get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   eclipseArchiveName = Paths.
+         get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
    cacheDirectory = project.property('cacheDirectory')
 }
 
 task copyDependencies(type: Copy) {
    from configurations.compile
-   into { "$buildDir/dependencies" }  
+   into { "$buildDir/dependencies" }
 }
 
 tasks.getByName('generateXtext').dependsOn(unzipEclipse)
-
-build.dependsOn(copyDependencies)
+tasks.getByName('build').dependsOn(copyDependencies)
