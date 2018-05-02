@@ -64,7 +64,6 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private void setIssueLocation(SensorContext c, IParsingIssue parsingIssue, NewIssue issue) {
-      System.out.println("FOUND ISSUE " + parsingIssue.getMessage());
       InputFile f = getInputFileFromRealFile(c, parsingIssue.getOffendingFile());
       NewIssueLocation location = issue.newLocation()
             .on(f)
