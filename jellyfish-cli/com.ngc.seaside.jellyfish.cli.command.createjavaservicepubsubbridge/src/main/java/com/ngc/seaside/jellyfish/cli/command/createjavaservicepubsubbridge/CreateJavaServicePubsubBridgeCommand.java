@@ -79,6 +79,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+      String packageInfo = packageNamingService.getPubSubBridgePackageName(getOptions(), model);
       Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
       
       //TODO Retrieve a list of each type of input the service subscribes to
@@ -88,7 +89,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-      pubSubBridgeDto.setPackageName("com.blah.blah2");
+      pubSubBridgeDto.setPackageName(packageInfo);
       pubSubBridgeDto.setClassName("bsClassname");
    
       DefaultParameterCollection dataParameters = new DefaultParameterCollection();
