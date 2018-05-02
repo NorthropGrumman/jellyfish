@@ -78,4 +78,9 @@ public class MockedPackageNamingService implements IPackageNamingService {
       return getPackageName(model, "config");
    }
 
+   @Override
+   public String getPubSubBridgePackageName(IJellyFishCommandOptions options, IModel model) {
+      return getPackageName(model, "pubsubbridge");
+   }
+
 }

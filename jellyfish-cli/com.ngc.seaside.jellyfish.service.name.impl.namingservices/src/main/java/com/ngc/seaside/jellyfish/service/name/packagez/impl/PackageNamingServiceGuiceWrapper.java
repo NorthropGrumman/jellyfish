@@ -84,4 +84,10 @@ public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
    public String getConfigPackageName(IJellyFishCommandOptions options, IModel model) {
       return packageNamingService.getConfigPackageName(options, model);
    }
+
+   @Override
+   public String getPubSubBridgePackageName(IJellyFishCommandOptions options, IModel model) {
+      return packageNamingService.getConfigPackageName(options, model);
+   }
+
 }
