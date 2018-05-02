@@ -1,9 +1,9 @@
-package com.ngc.seaside.sonar.jellyfish.rules;
+package com.ngc.seaside.jellyfish.sonarqube.rules;
 
 import com.google.inject.Guice;
 
-import com.ngc.seaside.sonar.jellyfish.languages.SystemDescriptorLanguage;
-import com.ngc.seaside.sonar.jellyfish.service.impl.JellyfishPluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;

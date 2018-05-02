@@ -1,4 +1,4 @@
-package com.ngc.seaside.sonar.jellyfish.languages;
+package com.ngc.seaside.jellyfish.sonarqube.languages;
 
 import org.sonar.api.resources.AbstractLanguage;
 

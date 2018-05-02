@@ -1,4 +1,4 @@
-package com.ngc.seaside.sonar.jellyfish.service.impl;
+package com.ngc.seaside.jellyfish.sonarqube.service.impl;
 
 import com.ngc.blocs.service.log.api.ILogService;
 

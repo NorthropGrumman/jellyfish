@@ -1,7 +1,7 @@
-package com.ngc.seaside.sonar.jellyfish;
+package com.ngc.seaside.jellyfish.sonarqube;
 
-import com.ngc.seaside.sonar.jellyfish.languages.SystemDescriptorLanguage;
-import com.ngc.seaside.sonar.jellyfish.rules.SystemDescriptorSensor;
+import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorSensor;
 
 import org.sonar.api.Plugin;
 

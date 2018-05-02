@@ -1,14 +1,11 @@
-package com.ngc.seaside.sonar.jellyfish.rules;
+package com.ngc.seaside.jellyfish.sonarqube.rules;
 
-import com.ngc.seaside.sonar.jellyfish.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
-import org.sonar.api.batch.fs.internal.DefaultInputDir;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;

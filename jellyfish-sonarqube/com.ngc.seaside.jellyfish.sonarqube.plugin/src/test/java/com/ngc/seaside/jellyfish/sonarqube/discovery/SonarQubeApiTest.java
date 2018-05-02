@@ -1,4 +1,4 @@
-package com.ngc.seaside.sonar.jellyfish.discovery;
+package com.ngc.seaside.jellyfish.sonarqube.discovery;
 
 import org.junit.Test;
 import org.sonar.api.batch.fs.FilePredicates;

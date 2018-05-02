@@ -1,8 +1,5 @@
-package com.ngc.seaside.sonar.jellyfish.languages;
+package com.ngc.seaside.jellyfish.sonarqube.languages;
 
-import org.sonar.api.resources.AbstractLanguage;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
