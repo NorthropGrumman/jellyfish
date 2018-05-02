@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class SystemDescriptorLanguageTest {
     private static final String NAME = "System Descriptor";
     private static final String KEY = "systemdescriptor";
-    private static final String[] FILE_SUFFIXES = { ".sd" };
+    private static final String[] FILE_SUFFIXES = { "sd" };
 
     private SystemDescriptorLanguage language;
 

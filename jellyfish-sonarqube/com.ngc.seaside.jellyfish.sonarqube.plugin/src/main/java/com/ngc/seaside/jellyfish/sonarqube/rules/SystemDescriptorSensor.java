@@ -37,18 +37,19 @@ public class SystemDescriptorSensor implements Sensor {
 
    @Override
    public void describe(SensorDescriptor d) {
-      d.name("System Descriptor Sensor");
+      // The naming conventions appear to use the classname as the sensor name.
+      d.name(getClass().getSimpleName());
       d.onlyOnLanguage(SystemDescriptorLanguage.KEY);
       d.onlyOnFileType(Type.MAIN);
    }
 
    @Override
    public void execute(SensorContext c) {
+      // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
       IParsingResult r = systemDescriptorService
          .parseProject(
             c.fileSystem()
-             .workDir()
-             .getParentFile()
+             .baseDir()
              .toPath()
          );
 
@@ -80,6 +81,8 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private NewIssue getNewIssue(SensorContext c, Severity errorType) {
+      c.newIssue().save();
+      // TODO TH: fix the rule key.
       return c.newIssue().forRule(createRuleKey(errorType));
    }
 

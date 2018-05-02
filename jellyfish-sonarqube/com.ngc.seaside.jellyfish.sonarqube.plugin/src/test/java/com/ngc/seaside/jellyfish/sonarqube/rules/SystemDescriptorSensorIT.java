@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 import static org.junit.Assert.*;
 
 public class SystemDescriptorSensorIT {
-   private static final String SENSOR_NAME = "System Descriptor Sensor";
+   private static final String SENSOR_NAME = SystemDescriptorSensor.class.getSimpleName();
 
    private static final Path BASE_DIR = Paths.get("build", "resources", "test");
 
@@ -31,10 +31,9 @@ public class SystemDescriptorSensorIT {
    private Path projectPath;
 
    @Before
-   public void beforeTests() {
+   public void setup() {
       sensor = new SystemDescriptorSensor();
       descriptor = new DefaultSensorDescriptor();
-      context = SensorContextTester.create(new File("."));
    }
 
    @Test
@@ -74,16 +73,11 @@ public class SystemDescriptorSensorIT {
    @Test
    public void doesParseValidProject() throws IOException {
      projectPath = BASE_DIR.resolve("valid-project");
-
-     context
-        .fileSystem()
-        .setWorkDir(projectPath.resolve(".scannerwork"));
-
+     context = SensorContextTester.create(projectPath.toFile());
      addProjectInputFiles(context.fileSystem(), projectPath);
 
      sensor.execute(context);
 
-     context.allIssues().forEach(i -> System.out.println(i));
      assertTrue(
         "a valid project should not have issues!",
         context.allIssues().isEmpty()
@@ -93,11 +87,7 @@ public class SystemDescriptorSensorIT {
    @Test
    public void doesFailWithInvalidProject() throws IOException {
       projectPath = BASE_DIR.resolve("invalid-project1");
-
-      context
-         .fileSystem()
-         .setWorkDir(projectPath.resolve(".scannerwork"));
-
+      context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
 
       sensor.execute(context);
@@ -111,11 +101,7 @@ public class SystemDescriptorSensorIT {
    @Test
    public void doesReportWarningsAsFindings() throws IOException {
       projectPath = BASE_DIR.resolve("valid-project-with-warnings");
-
-      context
-         .fileSystem()
-         .setWorkDir(projectPath.resolve(".scannerwork"));
-
+      context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
 
       sensor.execute(context);

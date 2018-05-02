@@ -18,7 +18,7 @@ public final class SystemDescriptorLanguage extends AbstractLanguage {
     */
    public static final String KEY = "systemdescriptor";
 
-   private static final String[] FILE_SUFFIXES = {".sd"};
+   private static final String[] FILE_SUFFIXES = {"sd"};
 
    public SystemDescriptorLanguage() {
       super(KEY, NAME);
