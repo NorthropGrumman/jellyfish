@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class SystemDescriptorSensorIT {
    private static final String SENSOR_NAME = "System Descriptor Sensor";
 
-   private static final Path BASE_DIR = Paths.get("target", "test-classes");
+   private static final Path BASE_DIR = Paths.get("build", "resources", "test");
 
    private SystemDescriptorSensor sensor;
 
@@ -86,6 +86,7 @@ public class SystemDescriptorSensorIT {
 
      sensor.execute(context);
 
+     context.allIssues().forEach(i -> System.out.println(i));
      assertTrue(
         "a valid project should not have issues!",
         context.allIssues().isEmpty()
