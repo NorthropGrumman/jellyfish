@@ -56,15 +56,14 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
-      //TODO Update projectNamingService so this will work
-//      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
-//      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
-//      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-//
-//      DefaultParameterCollection parameters = new DefaultParameterCollection();
-//      parameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
-//      unpackSuffixedTemplate(PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
-//      registerProject(projectInfo);
+      IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+      unpackSuffixedTemplate(PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      registerProject(projectInfo);
      
    }
 

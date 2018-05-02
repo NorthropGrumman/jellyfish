@@ -30,10 +30,14 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -43,15 +47,22 @@ import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridg
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateJavaServicePubsubBridgeCommandIT {
 
    private final CreateJavaServicePubsubBridgeCommand cmd = new CreateJavaServicePubsubBridgeCommand();
 
-   private IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class);
+   private IJellyFishCommandOptions jellyFishCommandOptions = mock(IJellyFishCommandOptions.class);
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
    
    private Path outputDirectory;
+   
+   @Mock
+   private IPackageNamingService packageService;
+   
+   @Mock
+   private IProjectNamingService projectService;
    
    @Mock
    private IScenarioService scenarioService;
@@ -84,6 +95,43 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          outputDirectory = Files.createTempDirectory(null);
          parameters.addParameter(
                new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+         parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
+                  "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+         
+
+         ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
+         when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
+               Optional.of(model));
+         
+         when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
+         when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(systemDescriptor);
+         
+         when(projectService.getPubSubBridgeProjectName(any(), any())).thenAnswer(args -> {
+            IModel model = args.getArgument(1);
+            IProjectInformation information = mock(IProjectInformation.class);
+            String dirName = model.getFullyQualifiedName().toLowerCase() + ".pubsubbridge";
+            when(information.getDirectoryName()).thenReturn(dirName);
+            String artifactId = model.getName().toLowerCase() + ".pubsubbridge";
+            when(information.getArtifactId()).thenReturn(artifactId);
+            String groupId = model.getParent().getName();
+            when(information.getGroupId()).thenReturn(groupId);
+            return information;
+         });
+         
+         when(packageService.getPubSubBridgePackageName(any(), any())).thenAnswer(args -> {
+            IModel model = args.getArgument(1);
+            return model.getFullyQualifiedName().toLowerCase() + ".bridge.pubsub";
+         });
+         
+         //TODO populate DTO
+         
+         
+         
+         
+         
+         
+         
+         
          
          
          
@@ -116,16 +164,27 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          when(scenarioService.getPubSubMessagingFlow(any(), eq(getTrackPriority)))
                .thenReturn(Optional.empty());
 
-         parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
-                                                        "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
-         parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
-                                                        outputDirectory));
+
 
    }
 
    @Test
-   public void testCommand() {
-      // TODO Auto-generated method stub
+   public void testDoesRunDeferredPhase() throws Throwable {
+      
+  
+   }
+   
+   
+   @Test
+   public void testDoesRunDefaultPhase() throws Throwable {
+      cmd.run(jellyFishCommandOptions);
+      
+      Path projectDirectory = outputDirectory
+               .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.pubsubbridge");
+      assertFileLinesEquals(
+               "build.gradle not correct!",
+               Paths.get("src", "test", "resources", "build.gradle.expected"),
+               projectDirectory.resolve("build.gradle"));
    }
 
    @After
