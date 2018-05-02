@@ -319,7 +319,7 @@
          id="com.ngc.blocs.api"
          download-size="0"
          install-size="0"
-         version="${blocsCoreVersion}"
+         version="${blocsVersion}"
          unpack="false"/>
 
 
@@ -327,7 +327,7 @@
          id="com.ngc.blocs.service.api"
          download-size="0"
          install-size="0"
-         version="${blocsCoreVersion}"
+         version="${blocsVersion}"
          unpack="false"/>
 
    <plugin
