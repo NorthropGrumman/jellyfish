@@ -9,15 +9,13 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
+ * Wraps the Jellyfish command provider.
  */
 @Singleton
 public class JellyfishCommandProviderGuiceWrapper implements IJellyFishCommandProvider {
@@ -41,15 +39,11 @@ public class JellyfishCommandProviderGuiceWrapper implements IJellyFishCommandPr
    @Inject
    public JellyfishCommandProviderGuiceWrapper(
          ILogService logService,
-         ITemplateService templateService,
-         IPromptUserService promptService,
          IParameterService parameterService,
          ISystemDescriptorService systemDescriptorService,
          Set<IJellyFishCommand> commands) {
       delegate.setLogService(logService);
       delegate.setParameterService(parameterService);
-      delegate.setTemplateService(templateService);
-      delegate.setPromptService(promptService);
       delegate.setSystemDescriptorService(systemDescriptorService);
       // Note we can't call commands.forEach(delegate::addCommand) because they may throw a Guice exception if a
       // command requires the IJellyFishCommandProvider to be injected into it.  If this is the case, Guice creates a
