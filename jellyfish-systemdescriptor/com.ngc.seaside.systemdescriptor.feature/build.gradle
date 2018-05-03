@@ -8,6 +8,8 @@ apply plugin: 'com.ngc.seaside.eclipse.feature'
 tasks.getByName(SeasideEclipseFeaturePlugin.ECLIPSE_COPY_FEATURE_FILE_TASK_NAME) {
    from Paths.get("src", "main", "resources"), { include("feature.xml") }
    expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
+          'guavaVersionForModelXtextImpl': Versions.makeOsgiCompliantVersion("${guavaVersionForModelXtextImpl}"),
+          'guavaVersionForStandardStepsImpl': Versions.makeOsgiCompliantVersion("${guavaVersionForStandardStepsImpl}"),
           'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
           'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
           'blocsVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),

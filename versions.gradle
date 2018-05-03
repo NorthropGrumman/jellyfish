@@ -18,6 +18,8 @@ allprojects {
         commonsLang3Version = '3.5'
         emfVersion = '2.12.0'
         glassfishJsonVersion = '1.1'
+        guavaVersionForModelXtextImpl = '18.0'
+        guavaVersionForStandardStepsImpl = '19.0'
         guavaVersion = '22.0'
         guiceVersion = '4.1.0'
         junitVersion = '4.12'

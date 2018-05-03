@@ -29,6 +29,22 @@ configurations {
       transitive = false
    }
 
+   // Only add Guava for the *.model.impl.xtext project to this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   guavaForModelXtextImpl {
+      transitive = false
+   }
+
+   // Only add Guava for the *.scenario.impl.standardsteps project to this configuration.
+   // We do this because we have to rename the JAR to match
+   // the format demanded by the update site:
+   // <bundleId>_<version>.jar
+   guavaForStandardStepsImpl {
+      transitive = false
+   }
+
    // Only add guice multibindings for this configuration.
    // We do this because we have to rename the JAR to match
    // the format demanded by the update site:
@@ -89,6 +105,8 @@ dependencies {
    eclipsePlugins name: 'org.objectweb.asm_5.0.1.v201404251740'
 
    guava "com.google.guava:guava:$guavaVersion"
+   guavaForModelXtextImpl "com.google.guava:guava:$guavaVersionForModelXtextImpl"
+   guavaForStandardStepsImpl "com.google.guava:guava:$guavaVersionForStandardStepsImpl"
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
@@ -118,4 +136,29 @@ task copyGuava(type: Copy) {
    into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
 }
 
-tasks.getByName(SeasideEclipseUpdateSitePlugin.ECLIPSE_CREATE_METADATA_TASK_NAME).dependsOn(copyMultibings, copyGuava)
+task copyGuavaForModelXtextImpl(type: Copy) {
+   from configurations.guavaForModelXtextImpl {
+      rename { String name ->
+         def artifacts = configurations.guavaForModelXtextImpl.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
+}
+
+task copyGuavaForStandardStepsImpl(type: Copy) {
+   from configurations.guavaForStandardStepsImpl {
+      rename { String name ->
+         def artifacts = configurations.guavaForStandardStepsImpl.resolvedConfiguration.resolvedArtifacts
+         def artifact = artifacts.find { it.file.name == name }
+         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
+         "com.google.guava_${osgiVersion}.${artifact.extension}"
+      }
+   }
+   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
+}
+
+tasks.getByName(SeasideEclipseUpdateSitePlugin.ECLIPSE_CREATE_METADATA_TASK_NAME)
+     .dependsOn(copyMultibings, copyGuava, copyGuavaForModelXtextImpl, copyGuavaForStandardStepsImpl)

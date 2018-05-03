@@ -334,6 +334,20 @@
          id="com.google.guava"
          download-size="0"
          install-size="0"
+         version="${guavaVersionForModelXtextImpl}"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="${guavaVersionForStandardStepsImpl}"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
          version="${guavaVersion}"
          unpack="false"/>
 
