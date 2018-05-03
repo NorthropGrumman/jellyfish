@@ -1,9 +1,10 @@
-package com.ngc.seaside.jellyfish.sonarqube.rules;
+package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
 import com.google.inject.Guice;
 
-import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorRulesDefinition;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -19,8 +20,6 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 import java.nio.file.Path;
 

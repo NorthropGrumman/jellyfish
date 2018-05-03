@@ -1,9 +1,9 @@
 package com.ngc.seaside.jellyfish.sonarqube;
 
-import com.ngc.seaside.jellyfish.sonarqube.languages.DefaultSystemDescriptorQualityProfile;
-import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.profile.DefaultSystemDescriptorQualityProfile;
+import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorRulesDefinition;
-import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorSensor;
+import com.ngc.seaside.jellyfish.sonarqube.sensor.SystemDescriptorSensor;
 
 import org.sonar.api.Plugin;
 import org.sonar.api.utils.log.Logger;

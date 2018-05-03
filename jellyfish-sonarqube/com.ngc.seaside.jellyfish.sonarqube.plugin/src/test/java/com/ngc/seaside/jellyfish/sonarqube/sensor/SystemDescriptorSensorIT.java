@@ -1,6 +1,7 @@
-package com.ngc.seaside.jellyfish.sonarqube.rules;
+package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
-import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.sensor.SystemDescriptorSensor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

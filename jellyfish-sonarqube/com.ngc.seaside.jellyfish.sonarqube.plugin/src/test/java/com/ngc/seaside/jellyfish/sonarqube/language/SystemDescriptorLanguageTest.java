@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.sonarqube.languages;
+package com.ngc.seaside.jellyfish.sonarqube.language;
 
 import org.junit.Before;
 import org.junit.Test;

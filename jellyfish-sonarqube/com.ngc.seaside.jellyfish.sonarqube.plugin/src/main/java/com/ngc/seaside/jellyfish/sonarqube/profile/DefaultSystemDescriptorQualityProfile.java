@@ -1,5 +1,6 @@
-package com.ngc.seaside.jellyfish.sonarqube.languages;
+package com.ngc.seaside.jellyfish.sonarqube.profile;
 
+import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorRulesDefinition;
 
 import org.sonar.api.rule.RuleKey;
