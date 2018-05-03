@@ -20,15 +20,27 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
 
    private static final Logger LOGGER = Loggers.get(SystemDescriptorRulesDefinition.class);
 
-   public static final String REPOSITORY = "system-descriptor-rules";
+
+   /**
+    * The human readable name of the repository that contains the default rules for the SD language.  Do not use this
+    * value when creating rules.  Use {@link #REPOSITORY_KEY} instead.
+    */
+   public static final String REPOSITORY_NAME = "SystemDescriptorAnalyzer";
+
+   /**
+    * The key of the repository that contains the default rules for the SD language.  Use this value as the first
+    * argument to {@link RuleKey#of(String, String)} when creating new rules.
+    */
+   public static final String REPOSITORY_KEY = "system-descriptor-rules";
+
 
    @Override
    public void define(Context context) {
-      NewRepository repository = context.createRepository(REPOSITORY, SystemDescriptorLanguage.KEY)
-            .setName("SystemDescriptorAnalyzer");
+      NewRepository repository = context.createRepository(REPOSITORY_KEY, SystemDescriptorLanguage.KEY)
+            .setName(REPOSITORY_NAME);
       addRules(repository);
       repository.done();
-      LOGGER.info("Successfully installed System Descriptor rules repository named {}.", REPOSITORY);
+      LOGGER.info("Successfully installed System Descriptor rules repository named {}.", REPOSITORY_NAME);
    }
 
    private void addRules(NewRepository repository) {
@@ -54,8 +66,8 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
       private Rules() {
       }
 
-      public static final RuleKey SYNTAX_ERRORS = RuleKey.of(REPOSITORY, "syntax-errors");
-      public static final RuleKey SYNTAX_WARNINGS = RuleKey.of(REPOSITORY, "syntax-warnings");
+      public static final RuleKey SYNTAX_ERRORS = RuleKey.of(REPOSITORY_KEY, "syntax-errors");
+      public static final RuleKey SYNTAX_WARNINGS = RuleKey.of(REPOSITORY_KEY, "syntax-warnings");
 
       public static final Collection<RuleKey> ALL;
 

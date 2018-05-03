@@ -12,12 +12,16 @@ public class DefaultSystemDescriptorQualityProfile implements BuiltInQualityProf
 
    private static final Logger LOGGER = Loggers.get(DefaultSystemDescriptorQualityProfile.class);
 
+   /**
+    * The name of the default quality profile associated with SD language.
+    */
    public static final String NAME = "Default SD Rules";
 
    @Override
    public void define(Context context) {
       NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(NAME, SystemDescriptorLanguage.KEY);
       profile.setDefault(true);
+      // TODO TH: refactor this.
       for (RuleKey rule : SystemDescriptorRulesDefinition.Rules.ALL) {
          profile.activateRule(rule.repository(), rule.rule());
       }

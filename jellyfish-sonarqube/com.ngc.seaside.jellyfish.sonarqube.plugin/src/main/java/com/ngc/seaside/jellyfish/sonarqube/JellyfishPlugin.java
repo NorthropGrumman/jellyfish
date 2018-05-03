@@ -18,6 +18,7 @@ public class JellyfishPlugin implements Plugin {
 
    @Override
    public void define(Context c) {
+      // Register all extension points here.
       c.addExtension(SystemDescriptorLanguage.class);
       c.addExtension(SystemDescriptorRulesDefinition.class);
       c.addExtension(DefaultSystemDescriptorQualityProfile.class);

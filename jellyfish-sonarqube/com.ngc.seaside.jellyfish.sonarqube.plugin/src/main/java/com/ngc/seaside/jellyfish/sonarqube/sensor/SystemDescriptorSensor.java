@@ -32,6 +32,9 @@ public class SystemDescriptorSensor implements Sensor {
 
    private final ISystemDescriptorService systemDescriptorService;
 
+   /**
+    * Creates a new sesnor.
+    */
    public SystemDescriptorSensor() {
       // Create a single instance of the system descriptor service and reuse it for all modules in the project.
       systemDescriptorService = getServiceInstance();

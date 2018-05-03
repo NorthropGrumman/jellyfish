@@ -8,8 +8,7 @@ import com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.Reposit
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 /**
- * A Guava module that registers components so the plugin can use the
- * {@link com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService}.
+ * A Guava module that register all components need to use Jellyfish and parse System Descriptor files.
  */
 public class JellyfishPluginModule extends AbstractModule {
 
