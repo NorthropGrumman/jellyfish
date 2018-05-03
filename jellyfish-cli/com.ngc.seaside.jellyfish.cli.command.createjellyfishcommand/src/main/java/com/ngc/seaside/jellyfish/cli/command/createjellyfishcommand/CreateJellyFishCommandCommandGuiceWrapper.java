@@ -6,10 +6,8 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
-@JellyFishCommandConfiguration(autoTemplateProcessing = false, requireValidSystemDescriptor = false)
 public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishCommand {
 
    private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
@@ -28,6 +26,11 @@ public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishComm
    @Override
    public IUsage getUsage() {
       return delegate.getUsage();
+   }
+
+   @Override
+   public boolean requiresValidSystemDescriptorProject() {
+      return delegate.requiresValidSystemDescriptorProject();
    }
 
    @Override

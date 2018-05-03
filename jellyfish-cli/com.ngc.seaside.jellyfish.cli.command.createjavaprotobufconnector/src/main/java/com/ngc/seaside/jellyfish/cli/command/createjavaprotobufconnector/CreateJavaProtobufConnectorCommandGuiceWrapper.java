@@ -6,7 +6,6 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
@@ -17,7 +16,6 @@ import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
-@JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFishCommand {
 
    private final CreateJavaProtobufConnectorCommand delegate = new CreateJavaProtobufConnectorCommand();

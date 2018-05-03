@@ -107,6 +107,11 @@ public final class HelpCommand implements IJellyFishCommand {
    }
 
    @Override
+   public boolean requiresValidSystemDescriptorProject() {
+      return false;
+   }
+
+   @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       Preconditions.checkNotNull(commandOptions);
       IParameter<?> verboseParameter = commandOptions.getParameters().getParameter("verbose");

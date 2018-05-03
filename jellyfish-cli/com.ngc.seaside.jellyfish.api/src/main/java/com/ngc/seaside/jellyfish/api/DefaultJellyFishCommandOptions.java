@@ -39,7 +39,7 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
 
    @Override
    public ISystemDescriptor getSystemDescriptor() {
-      return parsingResult.getSystemDescriptor();
+      return parsingResult == null ? null : parsingResult.getSystemDescriptor();
    }
 
    @Override

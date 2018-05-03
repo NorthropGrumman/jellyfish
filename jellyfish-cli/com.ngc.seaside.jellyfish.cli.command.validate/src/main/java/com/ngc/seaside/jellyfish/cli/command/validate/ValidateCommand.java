@@ -80,6 +80,11 @@ public class ValidateCommand implements IJellyFishCommand {
    }
 
    @Override
+   public boolean requiresValidSystemDescriptorProject() {
+      return false;
+   }
+
+   @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IParsingResult result = commandOptions.getParsingResult();
       if (commandOptions.getParsingResult().isSuccessful()) {
