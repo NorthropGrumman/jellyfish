@@ -41,7 +41,7 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
       syntaxErrors.setDebtRemediationFunction(syntaxErrors.debtRemediationFunctions().constantPerIssue("5 min"));
 
       NewRule syntaxWarnings = repository.createRule(Rules.SYNTAX_WARNINGS.rule())
-            .setName("System Descriptor Syntax Error")
+            .setName("System Descriptor Syntax Warning")
             .setHtmlDescription("Used when a syntax warning is raised for an SD file.")
             .setStatus(RuleStatus.BETA)
             .setType(RuleType.CODE_SMELL)
