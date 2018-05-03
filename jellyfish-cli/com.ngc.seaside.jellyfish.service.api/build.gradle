@@ -1,13 +1,14 @@
 dependencies {
-    api project(':jellyfish.api')
-    api "com.ngc.seaside:systemdescriptor.model.api:$version"
-    api "com.ngc.seaside:systemdescriptor.service.api:$version"
+   api project(':jellyfish.api')
+   api "com.ngc.seaside:systemdescriptor.model.api:$version"
+   api "com.ngc.seaside:systemdescriptor.service.api:$version"
+   api "com.google.inject:guice:$guiceVersion"
 }
 
 jar {
-    manifest {
-        // Bnd instructions to export the api package.
-        attributes('Export-Package': 'com.ngc.seaside.jellyfish.service.*')
-    }
+   manifest {
+      // Bnd instructions to export the api package.
+      attributes('Export-Package': 'com.ngc.seaside.jellyfish.service.*')
+   }
 }
 
