@@ -56,6 +56,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Default implementation of the IJellyFishCommandProvider interface.
  */
+// TODO TH: Refactor this
 @Component(service = IJellyFishCommandProvider.class)
 public class JellyFishCommandProvider implements IJellyFishCommandProvider {
 

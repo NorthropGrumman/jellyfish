@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
 
+// TODO TH: refactor this based on the service.
 public class JellyFish {
 
    private final Collection<Module> modules;

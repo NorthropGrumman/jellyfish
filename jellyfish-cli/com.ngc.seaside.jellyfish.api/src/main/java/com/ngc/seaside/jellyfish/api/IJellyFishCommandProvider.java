@@ -1,7 +1,5 @@
 package com.ngc.seaside.jellyfish.api;
 
-import java.util.Collection;
-
 /**
  * The JellyFish command provider interface will provide JellyFish commands and allow access to those
  * commands via calls to this interface. The run method will parse the input parameters but will not validate the
