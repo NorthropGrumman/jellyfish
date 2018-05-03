@@ -143,7 +143,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
    }
 
    @Override
-   public void run(String[] arguments) {
+   public IJellyFishCommandOptions run(String[] arguments) {
       Preconditions.checkNotNull(arguments, "Arguments must not be null.");
 
       String[] validatedArgs;
@@ -161,7 +161,8 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
       IJellyFishCommand command = lookupCommand(validatedArgs[0]);
       if (command == null) {
          logService.error(getClass(), "Unable to find command '%s'", commandName);
-         return;
+         // TODO TH: fix this
+         return null;
       }
 
       IParameterCollection cmdLineParameters = parameterService.parseParameters(
@@ -184,6 +185,7 @@ public class JellyFishCommandProvider implements IJellyFishCommandProvider {
                                                                               gavProject,
                                                                               command);
       command.run(jellyFishCommandOptions);
+      return jellyFishCommandOptions;
    }
 
    @Override

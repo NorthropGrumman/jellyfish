@@ -1,7 +1,0 @@
-package com.ngc.seaside.engagementplanning.datatype
-
-data TrackEngagementStatus {
-	int trackId
-	int plannedEngagementCount
-	float probabilityOfKill
-}

@@ -83,9 +83,9 @@ public class JellyFishCommandProviderGuiceWrapper implements IJellyFishCommandPr
    }
 
    @Override
-   public void run(String[] arguments) {
+   public IJellyFishCommandOptions run(String[] arguments) {
       injectCommandsIfNeeded();
-      delegate.run(arguments);
+      return delegate.run(arguments);
    }
 
    @Override
