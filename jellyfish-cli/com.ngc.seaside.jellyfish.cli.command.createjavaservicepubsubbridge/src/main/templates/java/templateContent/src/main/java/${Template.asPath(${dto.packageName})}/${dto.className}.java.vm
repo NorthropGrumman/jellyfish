@@ -5,3 +5,101 @@
 * Author: Generated
 */
 package $dto.packageName;
+
+/**
+ * This file has been generated and should not be edited directly.
+ * @author Generated
+ */
+
+#set ($ignore = $dto.imports.add("com.google.common.base.Preconditions"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEvent"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventService"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventSubscriber"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.threateval.tps.api.ITrackPriorityService"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Activate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Reference"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferenceCardinality"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferencePolicy"))
+
+
+#####Be sure to add imports for pubsub datatypes#####
+#foreach ($i in $dto.imports)
+import ${i};
+#end
+
+@Component(service = {${serviceDto.interface}.class, IServiceModule.class}, immediate = true)
+public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscribeDataType}> {
+
+   private ${dto.serviceName} ${dto.serviceVarName}
+
+   private IEventService eventService;
+
+   private ILogService logService;
+
+   private IFaultManagementService faultManagementService;
+
+   @Override
+   public void eventReceived(IEvent<${dto.subscribeDataType}> event) {
+      Preconditions.checkNotNull(event, "event may not be null!");
+      ${dto.subscribeDataType} input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
+      try {
+         ${dto.publishDataType} output = ${dto.serviceVarName}.${dto.scenarioMethod}(input);
+         logService.info(getClass(), "ELK - Scenario: ${dto.scenarioMethod}; Input: %s; Output: %s;", input, output);
+         eventService.publish(output, ${dto.publishDataType}.TOPIC);
+      } catch(ServiceFaultException fault) {
+         faultManagementService.handleFault(fault);
+      }
+   }
+
+   @Activate
+   public void activate() {
+      eventService.addSubscriber(this, ${dto.subscribeDataType}.TOPIC);
+      logService.debug(getClass(), "Activated.");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      eventService.removeSubscriber(this, ${dto.subscribeDataType}.TOPIC);
+      logService.debug(getClass(), "Deactivated.");
+   }
+
+   ${dto.bindAndUnbindScenarioServiceSnippet}
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeEventService")
+   public void setEventService(IEventService ref) {
+      this.eventService = ref;
+   }
+
+   public void removeEventService(IEventService ref) {
+      setEventService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeFaultManagementService")
+   public void setFaultManagementService(IFaultManagementService ref) {
+      this.faultManagementService = ref;
+   }
+
+   public void removeFaultManagementService(IFaultManagementService ref) {
+      setFaultManagementService(null);
+   }
+}

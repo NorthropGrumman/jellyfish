@@ -15,6 +15,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
@@ -62,7 +63,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
       BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
-      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -87,7 +88,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       //TODO Do logic here
 
       //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
-      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto();
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
       pubSubBridgeDto.setPackageName(packageInfo);
       pubSubBridgeDto.setClassName("bsClassname");
