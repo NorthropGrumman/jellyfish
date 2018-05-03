@@ -1,0 +1,267 @@
+package com.ngc.seaside.jellyfish.impl.provider;
+
+import com.google.common.base.Preconditions;
+
+import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommandException;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
+import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+@Component(service = IJellyFishCommandProvider.class)
+public class JellyfishCommandProvider implements IJellyFishCommandProvider {
+
+   private final Map<String, IJellyFishCommand> commands = new ConcurrentHashMap<>();
+
+   private ILogService logService;
+   private IParameterService parameterService;
+   private ISystemDescriptorService systemDescriptorService;
+
+   /**
+    * Ensure the dynamic references are added only after the activation of this Component.
+    */
+   private DeferredDynamicReference<IJellyFishCommand> commandsRef = new DeferredDynamicReference<IJellyFishCommand>() {
+      @Override
+      protected void addPostActivate(IJellyFishCommand command) {
+         commands.put(command.getName(), command);
+      }
+
+      @Override
+      protected void removePostActivate(IJellyFishCommand command) {
+         commands.remove(command.getName());
+      }
+   };
+
+   @Override
+   public IUsage getUsage() {
+      List<IParameter<?>> parameters = new ArrayList<>();
+      parameters.add(CommonParameters.INPUT_DIRECTORY);
+      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION);
+      return new DefaultUsage("JellyFish - Generate artifacts from System Descriptor models", parameters);
+   }
+
+   @Override
+   public IJellyFishCommand getCommand(String commandName) {
+      return commands.get(commandName);
+   }
+
+   @Override
+   public void addCommand(IJellyFishCommand command) {
+      commandsRef.add(command);
+   }
+
+   @Override
+   public void removeCommand(IJellyFishCommand command) {
+      commandsRef.remove(command);
+   }
+
+   @Override
+   public IJellyFishCommandOptions run(String[] arguments) {
+      Preconditions.checkNotNull(arguments, "arguments must not be null.");
+      Preconditions.checkArgument(arguments.length > 0,
+                                  "cannot invoke jellyfish with at least one argument!");
+
+      String commandName = arguments[0];
+      IParameterCollection parameters = parseParameters(Arrays.asList(arguments).subList(1, arguments.length));
+      return runCommand(commandName, parameters);
+   }
+
+   @Override
+   public void run(String command, IJellyFishCommandOptions commandOptions) {
+      Preconditions.checkNotNull(command, "command may not be null!");
+      Preconditions.checkArgument(!command.trim().isEmpty(), "command may not be empty!");
+      Preconditions.checkNotNull(commandOptions, "commandOptions may not be null!");
+      IJellyFishCommand c = getCommand(command);
+      Preconditions.checkArgument(c != null, "could not find command named %s!", command);
+      c.run(commandOptions);
+   }
+
+   @Activate
+   public void activate() {
+      commandsRef.markActivated();
+   }
+
+   @Deactivate
+   public void deactivate() {
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeParameterService")
+   public void setParameterService(IParameterService ref) {
+      this.parameterService = ref;
+   }
+
+   public void removeParameterService(IParameterService ref) {
+      setParameterService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeSystemDescriptorService")
+   public void setSystemDescriptorService(ISystemDescriptorService ref) {
+      this.systemDescriptorService = ref;
+   }
+
+   public void removeSystemDescriptorService(ISystemDescriptorService ref) {
+      setSystemDescriptorService(null);
+   }
+
+   private IParameterCollection parseParameters(List<String> params) {
+      DefaultParameterCollection parameters = new DefaultParameterCollection(parameterService.parseParameters(params));
+
+      // Resolve the input directory parameters if necessary.
+      if (!parameters.containsParameter(CommonParameters.INPUT_DIRECTORY.getName())) {
+         parameters.addParameter(new DefaultParameter<>(CommonParameters.INPUT_DIRECTORY.getName(),
+                                                        new File(".").getAbsolutePath()));
+      }
+
+      // Resolve the GAV parameter if necessary.
+      if (!parameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())) {
+         String gav = guessGav(new File(parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName())
+                                              .getStringValue()));
+         if (gav != null) {
+            parameters.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ARTIFACT_VERSION.getName(), gav));
+         }
+      }
+      return parameters;
+   }
+
+   private String guessGav(File inputDirectory) {
+      String gav = null;
+      Path projectInfo = Paths.get(inputDirectory.getAbsolutePath(),
+                                   "build",
+                                   "publications",
+                                   "mavenSd",
+                                   "pom-default.xml");
+      if (Files.isRegularFile(projectInfo)) {
+         MavenXpp3Reader reader = new MavenXpp3Reader();
+         try {
+            Model model = reader.read(Files.newBufferedReader(projectInfo));
+            gav = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
+         } catch (Exception e) {
+            logService.warn(getClass(), e, "Failed to read project information at expected location %s.", projectInfo);
+         }
+      } else {
+         logService.debug(
+               getClass(),
+               "Could not find project information at expected location %s.  Jellyfish will assume the input"
+               + " directory has a valid SD project layout.  If this is not what you want, run `gradle install` on the"
+               + " System Descriptor project first.",
+               projectInfo);
+      }
+      return gav;
+   }
+
+   private IJellyFishCommandOptions runCommand(String commandName, IParameterCollection parameters) {
+      IJellyFishCommand command = getCommand(commandName);
+      Preconditions.checkArgument(command != null, "no command named '%s' found!", commandName);
+      verifyRequiredParameters(command, parameters);
+
+      LenientJellyFishCommandOptions options = buildCommandOptions(parameters);
+      if (command.requiresValidSystemDescriptorProject() && options.getSystemDescriptor() == null) {
+         // Note the "%s" format string ensures there will not be logging errors if the line in the file contains
+         // a format string.
+         ParsingResultLogging.logErrors(options.getParsingResult())
+               .forEach(l -> logService.error(JellyfishCommandProvider.class, "%s", l));
+         // Abort execution.
+         String msg = String.format("command %s requires a valid System Descriptor project,"
+                                    + " but project contains errors.  See logs.",
+                                    commandName);
+         // We have an an extra exception.  If so, include it in the stack trace.
+         if (options.getParsingException() == null) {
+            throw new CommandException(msg);
+         } else {
+            throw new CommandException(msg, options.getParsingException());
+         }
+      }
+
+      // Run the command.
+      command.run(options);
+      return options;
+   }
+
+   private void verifyRequiredParameters(IJellyFishCommand command, IParameterCollection parameters) {
+      String missingParams = command.getUsage().getRequiredParameters()
+            .stream()
+            .filter(p -> !parameters.containsParameter(p.getName()))
+            .map(IParameter::getName)
+            .collect(Collectors.joining(", "));
+      if (!missingParams.isEmpty()) {
+         String msg = String.format("the command '%s' requires the following additional parameters: %s",
+                                    command.getName(),
+                                    missingParams);
+         throw new CommandException(msg);
+      }
+   }
+
+   private LenientJellyFishCommandOptions buildCommandOptions(IParameterCollection parameters) {
+      LenientJellyFishCommandOptions options = new LenientJellyFishCommandOptions();
+      options.setParameters(parameters);
+      try {
+         options.setParsingResult(parseProject(parameters));
+      } catch (ParsingException | IllegalArgumentException e) {
+         options.setParsingException(e);
+         logService.debug(getClass(), "Got an exception while parsing project.", e);
+      }
+      return options;
+   }
+
+   private IParsingResult parseProject(IParameterCollection parameters) {
+      IParsingResult result;
+      if (parameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())) {
+         String gav = parameters.getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()).getStringValue();
+         logService.debug(getClass(), "Project has a GAV of %s, parsing with dependency management support.", gav);
+         result = systemDescriptorService.parseProject(gav);
+      } else {
+         String inputDirectory = parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName()).getStringValue();
+         logService.debug(getClass(), "Project has no GAV, assuming input directory has correct SD project layout.");
+         result = systemDescriptorService.parseProject(Paths.get(inputDirectory));
+      }
+      return result;
+   }
+}

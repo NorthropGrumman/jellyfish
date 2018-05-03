@@ -7,4 +7,13 @@ package com.ngc.seaside.jellyfish.api;
  */
 public interface IJellyFishCommand extends ICommand<IJellyFishCommandOptions> {
 
+   /**
+    * If true, this command requires a valid System Descriptor project.  If false, this command may be invoked without
+    * valid project.  The default implementation returns {@code true}.
+    *
+    * @return whether or not this project requires a valid System Descriptor project to execute
+    */
+   default boolean requiresValidSystemDescriptorProject() {
+      return true;
+   }
 }

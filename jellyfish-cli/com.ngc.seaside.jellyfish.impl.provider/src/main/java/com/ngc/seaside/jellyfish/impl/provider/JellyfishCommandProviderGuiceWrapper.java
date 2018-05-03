@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 @Singleton
-public class JellyFishCommandProviderGuiceWrapper implements IJellyFishCommandProvider {
+public class JellyfishCommandProviderGuiceWrapper implements IJellyFishCommandProvider {
 
    /**
     * The delegate.
     */
-   private final JellyFishCommandProvider delegate = new JellyFishCommandProvider();
+   private final JellyfishCommandProvider delegate = new JellyfishCommandProvider();
 
    /**
     * The commands as injected by Guice.  Note some of these may not be real commands but Guice created proxies.  See
@@ -39,7 +39,7 @@ public class JellyFishCommandProviderGuiceWrapper implements IJellyFishCommandPr
    private final AtomicBoolean areCommandsInjected = new AtomicBoolean(false);
 
    @Inject
-   public JellyFishCommandProviderGuiceWrapper(
+   public JellyfishCommandProviderGuiceWrapper(
          ILogService logService,
          ITemplateService templateService,
          IPromptUserService promptService,
