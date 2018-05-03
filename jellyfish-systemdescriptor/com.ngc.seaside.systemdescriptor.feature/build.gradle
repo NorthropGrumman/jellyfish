@@ -5,14 +5,12 @@ import java.nio.file.Paths
 
 apply plugin: 'com.ngc.seaside.eclipse.feature'
 
-task copyAndFilterFeatureFile(type: Copy) {
+tasks.getByName(SeasideEclipseFeaturePlugin.ECLIPSE_COPY_FEATURE_FILE_TASK_NAME) {
    from Paths.get("src", "main", "resources"), { include("feature.xml") }
    expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
           'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
           'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
           'blocsVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),
           'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
-   destinationDir = project.file(Paths.get(project.buildDir.absolutePath, "tmp"))
+   into Paths.get(project.buildDir.absolutePath, "tmp")
 }
-
-tasks.getByName(SeasideEclipseFeaturePlugin.ECLIPSE_CREATE_JAR_TASK_NAME).setDependsOn([copyAndFilterFeatureFile])
