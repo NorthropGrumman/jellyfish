@@ -1,34 +1,15 @@
-import com.ngc.seaside.gradle.util.EclipsePlugins
+import com.ngc.seaside.gradle.plugins.eclipse.updatesite.SeasideEclipseUpdateSitePlugin
 import com.ngc.seaside.gradle.util.Versions
-import org.gradle.internal.os.OperatingSystem
 
 import java.nio.file.Paths
 
-ext {
-   buildDir = 'build'
+apply plugin: 'com.ngc.seaside.eclipse.updatesite'
 
-   eclipseLinuxVersion = 'eclipse-dsl-oxygen-2-linux-gtk-x86_64'
-   eclipseWindowsVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
-
-   eclipseVersion = OperatingSystem.current().isLinux() ? "${eclipseLinuxVersion}" : "${eclipseWindowsVersion}"
-
-   // The URL of the Eclipse Zip.  The Eclipse Zip is only downloaded if needed.
-   eclipseDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${eclipseVersion}.zip"
-   // The cache location of downloaded files.
-   eclipseCache = Paths.get(gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
-   // This is the location where the Eclipse download will be unzipped to.
-   // Note this name may change if the download URL changes to a different version of Eclipse.
-   eclipseInstallationDirectory = Paths.get(eclipseCache.toString(), eclipseVersion)
-   // The local file to save the ZIP to.
-   eclipseDownloadDestFile = "${eclipseInstallationDirectory}.zip"
-
-   // This is the location of the Eclipse we use when compiling and building the
-   // update site.
-   eclipsePluginsDirectory = Paths.get(eclipseInstallationDirectory.toString(), "plugins")
-
-   // This is the location of the Eclipse exe we use to create the update site
-   // metadata.
-   eclipseExe = "$eclipseInstallationDirectory/eclipse" + (OperatingSystem.current().isLinux() ? '' : '.exe')
+eclipseUpdateSite {
+   linuxEclipseVersion = 'eclipse-dsl-oxygen-2-linux-gtk-x86_64'
+   windowsEclipseVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
+   linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxEclipseVersion}.zip"
+   windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsEclipseVersion}.zip"
 }
 
 repositories {
@@ -37,24 +18,9 @@ repositories {
    maven {
       url nexusConsolidated
    }
-
-   flatDir {
-      dirs eclipsePluginsDirectory
-   }
 }
 
 configurations {
-   features
-
-   // note that plugins is reserved
-   sdPlugins {
-      transitive = false
-   }
-
-   eclipsePlugins {
-      transitive = false
-   }
-
    // Only add Guava to this configuration.
    // We do this because we have to rename the JAR to match
    // the format demanded by the update site:
@@ -75,22 +41,22 @@ configurations {
 dependencies {
    features project(path: ':systemdescriptor.feature', configuration: 'feature')
 
-   sdPlugins project(':systemdescriptor.model.impl.xtext')
-   sdPlugins project(':systemdescriptor.scenario.impl.standardsteps')
-   sdPlugins project(':systemdescriptor.service.impl.xtext')
-   sdPlugins project(':service.log.impl.common.log4jlogservice')
+   customPlugins project(':systemdescriptor.model.impl.xtext')
+   customPlugins project(':systemdescriptor.scenario.impl.standardsteps')
+   customPlugins project(':systemdescriptor.service.impl.xtext')
+   customPlugins project(':service.log.impl.common.log4jlogservice')
 
-   sdPlugins project(":systemdescriptor.model.api")
-   sdPlugins project(":systemdescriptor.service.api")
-   sdPlugins project(":systemdescriptor.model.impl.basic")
+   customPlugins project(":systemdescriptor.model.api")
+   customPlugins project(":systemdescriptor.service.api")
+   customPlugins project(":systemdescriptor.model.impl.basic")
 
-   sdPlugins "com.ngc.seaside:systemdescriptor:$version"
-   sdPlugins "com.ngc.seaside:systemdescriptor.ide:$version"
-   sdPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.ide:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
 
-   sdPlugins "com.ngc.blocs:api:$blocsVersion"
-   sdPlugins "com.ngc.blocs:service.api:$blocsVersion"
-   sdPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
+   customPlugins "com.ngc.blocs:api:$blocsVersion"
+   customPlugins "com.ngc.blocs:service.api:$blocsVersion"
+   customPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
 
    eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
    eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
@@ -126,61 +92,6 @@ dependencies {
    multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }
 
-task clean {
-   doLast {
-      delete("$buildDir")
-   }
-}
-
-task downloadEclipse() {
-   doLast {
-      def destFile = file("$eclipseDownloadDestFile")
-      destFile.getParentFile().mkdirs()
-      println "Downloading Eclipse SDK from $eclipseDownloadUrl..."
-      new URL("$eclipseDownloadUrl").withInputStream { is ->
-         destFile.withOutputStream { it << is }
-      }
-   }
-}
-downloadEclipse.onlyIf { !file("$eclipseDownloadDestFile").exists() }
-
-task unzipEclipse(type: Copy, dependsOn: downloadEclipse) {
-   from zipTree(file("$eclipseDownloadDestFile"))
-   into "$eclipseCache"
-}
-unzipEclipse.onlyIf { !file("$eclipseInstallationDirectory").exists() }
-
-task copyFeatures(type: Copy) {
-   from configurations.features
-   into { "$buildDir/updatesite/features" }
-
-   // We have to rename the feature JARs built with Gradle to make the naming
-   // convention expected by Eclipse or the feature won't install correctly.
-   rename { String name ->
-      EclipsePlugins.makeEclipseCompliantJarFileName(name)
-   }
-}
-
-task copySdPlugins(type: Copy) {
-   from configurations.sdPlugins {
-      rename { String name ->
-         // We have to rename the feature JARs built with Gradle to make the naming
-         // convention expected by Eclipse or the feature won't install correctly.
-         // For these dependencies, we need to prefix the group ID to the filename.
-         def artifacts = configurations.sdPlugins.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         "${artifact.moduleVersion.id.group}.${artifact.name}_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into { "$buildDir/updatesite/plugins" }
-}
-
-task copyEclipsePlugins(type: Copy) {
-   from configurations.eclipsePlugins
-   into { "$buildDir/updatesite/plugins" }
-}
-
 task copyMultibings(type: Copy) {
    from configurations.multibindings {
       rename { String name ->
@@ -191,7 +102,7 @@ task copyMultibings(type: Copy) {
          "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
       }
    }
-   into { "$buildDir/updatesite/plugins" }
+   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
 }
 
 task copyGuava(type: Copy) {
@@ -204,35 +115,7 @@ task copyGuava(type: Copy) {
          "com.google.guava_${osgiVersion}.${artifact.extension}"
       }
    }
-   into { "$buildDir/updatesite/plugins" }
+   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
 }
 
-task createMetadata(
-      dependsOn: [ unzipEclipse, copyFeatures, copySdPlugins, copyEclipsePlugins, copyMultibings, copyGuava ]) {
-   // Run eclipse.exe to build the update site metadata (the content.jar and artifacts.jar)
-   // files.  Note that the arguments -metadataRepository and -artifactRepository want
-   // "file URLs" but -source wants a plain old absolute path.
-   doLast {
-      project.exec {
-         commandLine(
-               "$eclipseExe",
-               '-nosplash',
-               '-application', 'org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher',
-               '-compress',
-               '-metadataRepository', file("$buildDir/updatesite/").toURI().toURL(),
-               '-artifactRepository', file("$buildDir/updatesite/").toURI().toURL(),
-               '-source', new File("$buildDir", "updatesite")
-         )
-      }
-   }
-}
-
-task createZip(type: Zip, dependsOn: createMetadata) {
-   from "$buildDir/updatesite"
-   destinationDir = file("$buildDir")
-   archiveName = "com.ngc.seaside.systemdescriptor.updatesite-${project.version}.zip"
-}
-
-task build(dependsOn: createZip)
-
-defaultTasks = ['build']
+tasks.getByName(SeasideEclipseUpdateSitePlugin.ECLIPSE_CREATE_METADATA_TASK_NAME).dependsOn(copyMultibings, copyGuava)
