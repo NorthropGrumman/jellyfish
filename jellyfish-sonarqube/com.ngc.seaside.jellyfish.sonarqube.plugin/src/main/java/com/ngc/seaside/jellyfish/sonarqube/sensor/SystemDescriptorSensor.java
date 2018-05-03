@@ -4,7 +4,8 @@ import com.google.inject.Guice;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
-import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorRulesDefinition;
+import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxErrorRule;
+import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -92,11 +93,11 @@ public class SystemDescriptorSensor implements Sensor {
    private RuleKey createRuleKey(Severity errorType) {
       switch (errorType) {
          case WARNING:
-            return SystemDescriptorRulesDefinition.Rules.SYNTAX_WARNINGS;
+            return SyntaxWarningRule.KEY;
          case ERROR:
             // Intentionally fall through.
          default:
-            return SystemDescriptorRulesDefinition.Rules.SYNTAX_ERRORS;
+            return SyntaxErrorRule.KEY;
       }
    }
 

@@ -3,15 +3,16 @@ apply plugin: "com.iadams.sonar-packaging"
 dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
    // Use the old compile scope because the sonar-packaging plugin
-   // we only embed dependencies that are under the compile scope.
+   // will only embed dependencies that are under the compile scope.
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
 
    compile "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
    compile "com.ngc.blocs:service.api:$blocsVersion"
-   compile "com.google.guava:guava:22.0"
-   compile "com.google.inject:guice:4.1.0"
+   compile "com.google.guava:guava:$guavaVersion"
+   compile "com.google.inject:guice:$guiceVersion"
+   // Make sure this has a scope of provided.
    provided "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
 
    testImplementation "junit:junit:$junitVersion"
