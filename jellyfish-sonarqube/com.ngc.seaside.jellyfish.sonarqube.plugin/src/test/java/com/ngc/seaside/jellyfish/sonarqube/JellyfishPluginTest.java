@@ -1,7 +1,8 @@
 package com.ngc.seaside.jellyfish.sonarqube;
 
-import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorSensor;
 import com.ngc.seaside.jellyfish.sonarqube.languages.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorRulesDefinition;
+import com.ngc.seaside.jellyfish.sonarqube.rules.SystemDescriptorSensor;
 
 import org.junit.Test;
 import org.sonar.api.Plugin;
@@ -23,10 +24,12 @@ public class JellyfishPluginTest {
       p.define(c);
       assertEquals("did not register all extensions!",
                    c.getExtensions().size(),
-                   2);
+                   3);
       assertTrue("did not register language extension for System Descriptor!",
                  c.getExtensions().contains(SystemDescriptorLanguage.class));
       assertTrue("did not register sensor extension for System Descriptor!",
                  c.getExtensions().contains(SystemDescriptorSensor.class));
+      assertTrue("did not register rule definition extension for System Descriptor!",
+                 c.getExtensions().contains(SystemDescriptorRulesDefinition.class));
    }
 }

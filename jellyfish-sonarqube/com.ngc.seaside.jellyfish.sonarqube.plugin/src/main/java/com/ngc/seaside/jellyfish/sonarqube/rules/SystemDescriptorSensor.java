@@ -28,6 +28,7 @@ import java.nio.file.Path;
  */
 @InstantiationStrategy(InstantiationStrategy.PER_PROJECT)
 public class SystemDescriptorSensor implements Sensor {
+
    private final ISystemDescriptorService systemDescriptorService;
 
    public SystemDescriptorSensor() {
@@ -47,11 +48,11 @@ public class SystemDescriptorSensor implements Sensor {
    public void execute(SensorContext c) {
       // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
       IParsingResult r = systemDescriptorService
-         .parseProject(
-            c.fileSystem()
-             .baseDir()
-             .toPath()
-         );
+            .parseProject(
+                  c.fileSystem()
+                        .baseDir()
+                        .toPath()
+            );
 
       for (IParsingIssue i : r.getIssues()) {
          saveIssue(c, i);
@@ -81,13 +82,18 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private NewIssue getNewIssue(SensorContext c, Severity errorType) {
-      c.newIssue().save();
-      // TODO TH: fix the rule key.
       return c.newIssue().forRule(createRuleKey(errorType));
    }
 
    private RuleKey createRuleKey(Severity errorType) {
-      return RuleKey.parse(SystemDescriptorLanguage.KEY + ":" + errorType.toString().toLowerCase());
+      switch (errorType) {
+         case WARNING:
+            return SystemDescriptorRulesDefinition.SYNTAX_WARNINGS;
+         case ERROR:
+            // Intentionally fall through.
+         default:
+            return SystemDescriptorRulesDefinition.SYNTAX_ERRORS;
+      }
    }
 
    private static ISystemDescriptorService getServiceInstance() {
