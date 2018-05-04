@@ -2,7 +2,10 @@ package com.ngc.seaside.jellyfish;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishService;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +34,10 @@ public class Jellyfish {
          remainingArgs.add(args[i]);
       }
       // Run the service with the default set of modules.
-      getService().run(command, remainingArgs, Collections.singleton(new DefaultJellyfishModule()));
-      System.out.println("-- SUCCESS --");
+      IJellyfishExecution result = getService().run(command,
+                                                    remainingArgs,
+                                                    Collections.singleton(new DefaultJellyfishModule()));
+      System.out.printf("-- SUCCESS (%s) --%n", DurationFormatUtils.formatDurationHMS(result.getExecutionDuration()));
    }
 
    /**

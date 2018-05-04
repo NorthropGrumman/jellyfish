@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -17,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +36,7 @@ public class JellyfishService implements IJellyfishService {
    @Override
    public IJellyfishExecution run(String command, Collection<String> arguments, Collection<Module> modules)
          throws JellyfishExecutionException {
+      Stopwatch sw = Stopwatch.createStarted();
       Preconditions.checkNotNull(command, "command may not be null!");
       Preconditions.checkArgument(!command.trim().isEmpty(), "command may not be empty!");
       Preconditions.checkNotNull(arguments, "arguments may not be null!");
@@ -53,7 +56,7 @@ public class JellyfishService implements IJellyfishService {
          Injector injector = createInjector(modules);
          // Get the command provider and run.
          IJellyFishCommandProvider provider = injector.getInstance(IJellyFishCommandProvider.class);
-         return adaptResult(provider.run(buildArgs(command, arguments)));
+         return adaptResult(provider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
       } catch (Throwable t) {
          String msg = String.format("unable to run Jellyfish with the command %s and args %s!",
                                     command,
@@ -94,11 +97,12 @@ public class JellyfishService implements IJellyfishService {
    /**
     * Adapts an {@code IJellyFishCommandOptions} that comes back from the provider to an {@code IJellyfishExecution}.
     *
-    * @param options the result to adapt
+    * @param options           the result to adapt
+    * @param executionDuration the time taken to run Jellyfish
     * @return the adapted result
     */
-   protected IJellyfishExecution adaptResult(IJellyFishCommandOptions options) {
-      return new JellyfishExecution(options);
+   protected IJellyfishExecution adaptResult(IJellyFishCommandOptions options, long executionDuration) {
+      return new JellyfishExecution(options).setExecutionDuration(executionDuration);
    }
 
    private static String[] buildArgs(String command, Collection<String> arguments) {
@@ -134,6 +138,7 @@ public class JellyfishService implements IJellyfishService {
    private static class JellyfishExecution implements IJellyfishExecution {
 
       private final IJellyFishCommandOptions options;
+      private long executionDuration;
 
       private JellyfishExecution(IJellyFishCommandOptions options) {
          this.options = options;
@@ -142,6 +147,16 @@ public class JellyfishService implements IJellyfishService {
       @Override
       public IJellyFishCommandOptions getOptions() {
          return options;
+      }
+
+      @Override
+      public long getExecutionDuration() {
+         return executionDuration;
+      }
+
+      JellyfishExecution setExecutionDuration(long executionDuration) {
+         this.executionDuration = executionDuration;
+         return this;
       }
    }
 }

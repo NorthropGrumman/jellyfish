@@ -30,6 +30,7 @@ dependencies {
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
     implementation project(':jellyfish.impl.provider')
     implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"

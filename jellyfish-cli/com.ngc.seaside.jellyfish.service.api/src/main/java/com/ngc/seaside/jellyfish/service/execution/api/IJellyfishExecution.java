@@ -19,6 +19,12 @@ public interface IJellyfishExecution {
    IJellyFishCommandOptions getOptions();
 
    /**
+    * Gets the number of milliseconds it took to execute Jellyfish.
+    * @return the number of milliseconds it took to execute Jellyfish
+    */
+   long getExecutionDuration();
+
+   /**
     * Gets the results of parsing the system descriptor project.  This will contain any errors or warnings that were
     * discovered during parsing.
     *
