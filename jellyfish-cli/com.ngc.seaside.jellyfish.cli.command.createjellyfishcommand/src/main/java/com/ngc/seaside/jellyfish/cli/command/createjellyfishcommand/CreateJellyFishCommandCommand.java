@@ -76,7 +76,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
 
    @Override
    public boolean requiresValidSystemDescriptorProject() {
-      return false;
+      throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
@@ -163,7 +163,6 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
                              collection,
                              outputDirectory,
                              clean);
-      logService.info(CreateJellyFishCommandCommand.class, "%s project successfully created", commandName);
    }
 
    /**

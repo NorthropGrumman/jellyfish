@@ -137,6 +137,7 @@ public class BuildManagementService implements IBuildManagementService {
    public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
       Preconditions.checkNotNull(project, "project may not be null!");
       registeredProjects.add(project);
+      logService.info(getClass(), "Project %s.%s generated.", project.getGroupId(), project.getArtifactId());
    }
 
    @Activate

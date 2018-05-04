@@ -98,9 +98,6 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackDefaultTemplate(parameters, outputDirectory, clean);
       registerProject(info);
-
-      logService.info(CreateJavaDistributionCommand.class, "%s distribution project successfully created",
-                      model.getName());
    }
 
    @Activate
