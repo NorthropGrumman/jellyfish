@@ -23,6 +23,7 @@ public class PubSubBridgeDto {
    private String subscriberClassName;
    private Set<String> imports = new TreeSet<>();
    private String subscriberDataType;
+   private String serviceVarName;
 
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
@@ -109,6 +110,20 @@ public class PubSubBridgeDto {
    
    public PubSubBridgeDto setSubscriberDataType(String subscriberDataType) {
       this.subscriberDataType = subscriberDataType;
+      return this;    
+   }
+   
+   public String getServiceVarName() {
+      return serviceVarName;
+   }
+   
+   public PubSubBridgeDto setServiceVarName(String serviceVarName) { 
+      String formattedServiceVarName = serviceVarName;
+      if(formattedServiceVarName.startsWith("I")) {
+         formattedServiceVarName = formattedServiceVarName.substring(1);
+         formattedServiceVarName = formattedServiceVarName.substring(0, 1).toLowerCase() + formattedServiceVarName.substring(1);   
+      }    
+      this.serviceVarName = formattedServiceVarName;
       return this;    
    }
 

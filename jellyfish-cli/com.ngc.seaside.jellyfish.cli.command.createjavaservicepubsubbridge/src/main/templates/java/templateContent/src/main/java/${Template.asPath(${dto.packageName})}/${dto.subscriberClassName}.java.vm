@@ -34,7 +34,7 @@ import ${i};
 @Component(service = IEventSubscriber.class, immediate = true)
 public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscriberDataType}> {
 
-   private ${dto.serviceName} ${dto.serviceVarName}
+   private ${dto.service.typeName} ${dto.serviceVarName};
 
    private IEventService eventService;
 

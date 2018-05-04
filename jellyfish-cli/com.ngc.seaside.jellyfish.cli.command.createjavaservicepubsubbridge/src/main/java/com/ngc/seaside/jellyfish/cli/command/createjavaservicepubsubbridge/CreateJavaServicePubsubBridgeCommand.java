@@ -24,6 +24,8 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServ
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -41,6 +43,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    
    private IBaseServiceDtoFactory baseServiceDtoFactory;
+   private IJavaServiceGenerationService generateService;
    
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
@@ -98,9 +101,13 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setPackageName(packageInfo);
          
          InputDto inputDto = pubSubMethodDto.getInput();
-         pubSubMethodDto.getServiceMethod();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+         
+         ClassDto classDto = generateService.getServiceInterfaceDescription(getOptions(), model);
+         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
+         pubSubBridgeDto.setService(classDto);
+         pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
          
          DefaultParameterCollection dataParameters = new DefaultParameterCollection();
          dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
@@ -128,6 +135,13 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       setTemplateDaoFactory(null);
    }
    
+   public void setGenerateService(IJavaServiceGenerationService ref) {
+      this.generateService = ref;
+   }
+   
+   public void removeGenerateService(IJavaServiceGenerationService ref) {
+      setGenerateService(null);
+   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
