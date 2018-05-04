@@ -6,19 +6,23 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 public class PubSubBridgeDto {
 
    private final IBuildManagementService buildManagementService;
    private final IJellyFishCommandOptions options;
+   private static final String SUBSCRIBER_SUFFIX = "Subscriber";
 
    private String projectName;
    private String packageName;
-   private String className;
    private ClassDto service;
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
+   private String subscriberClassName;
+   private Set<String> imports = new TreeSet<>();
+   private String subscriberDataType;
 
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
@@ -77,13 +81,35 @@ public class PubSubBridgeDto {
    public String getProjectName() {
       return projectName;
    }
-
-   public PubSubBridgeDto setClassName(String className) {
-      this.className = className;
+   
+   public PubSubBridgeDto setSubscriberClassName(String subscriberClassName) {
+      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX; 
       return this;
    }
-   public String getClassName() {
-      return className;
+   
+   public String getSubscriberClassName() {
+      return subscriberClassName;
+   }
+   
+   /**
+    * Gets the list of imports needed by this class.
+    */
+   public Set<String> getImports() {
+      return imports;
+   }
+
+   public PubSubBridgeDto setImports(Set<String> imports) {
+      this.imports = imports;
+      return this;
+   }
+   
+   public String getSubscriberDataType() {
+      return subscriberDataType;
+   }
+   
+   public PubSubBridgeDto setSubscriberDataType(String subscriberDataType) {
+      this.subscriberDataType = subscriberDataType;
+      return this;    
    }
 
    /**
