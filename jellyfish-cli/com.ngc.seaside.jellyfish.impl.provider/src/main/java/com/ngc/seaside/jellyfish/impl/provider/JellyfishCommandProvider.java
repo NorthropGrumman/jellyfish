@@ -246,7 +246,8 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
          options.setParsingResult(parseProject(parameters));
       } catch (ParsingException | IllegalArgumentException e) {
          options.setParsingException(e);
-         logService.debug(getClass(), "Got an exception while parsing project.", e);
+         options.setParsingResult(EmptyParsingResult.INSTANCE);
+         logService.error(getClass(), "Got an exception while parsing project.", e);
       }
       return options;
    }

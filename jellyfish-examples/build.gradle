@@ -72,7 +72,6 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
          description: "Runs 'gradle build install' on the system descriptor project ${sdProjectName}") {
         dir = folder
         tasks = ['build', 'install']
-        startParameter.logLevel = org.gradle.api.logging.LogLevel.DEBUG
         startParameter.projectProperties['jellyfishCliVersion'] = version
 
         buildSystemDescriptorProjects.dependsOn it
