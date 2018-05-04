@@ -11,20 +11,7 @@
         </layout>
     </appender>
 
-    <!-- Hibernate logging configuration. -->
-    <logger name="org.hibernate">
-        <level value="WARN"/>
-    </logger>
-
-    <logger name="java.sql">
-        <level value="WARN"/>
-    </logger>
-
     <logger name="com.ngc.blocs.service">
-        <level value="WARN"/>
-    </logger>
-
-    <logger name="com.ngc.blocs.tools.dependencyspider">
         <level value="WARN"/>
     </logger>
 
