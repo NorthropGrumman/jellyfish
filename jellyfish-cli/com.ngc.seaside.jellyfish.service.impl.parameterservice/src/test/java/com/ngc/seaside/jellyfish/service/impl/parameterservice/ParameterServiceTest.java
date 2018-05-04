@@ -45,21 +45,22 @@ public class ParameterServiceTest {
    @Test
    public void doesParseValidParameters() {
       List<String> validParameters = Arrays.asList(
-            "-Dkey1=value1", "-Dkey2=value2", "-Dkey3=value3", "-Dkey4=value4,and,5");
+            "-Dkey1=value1", "-Dkey2=value2", "-Dkey3=value3", "-Dkey4=value4,and,5", "dashD=isOptional");
 
       IParameterCollection collection = delegate.parseParameters(validParameters);
-
-      assertEquals(4, collection.getAllParameters().size());
+      assertEquals(5, collection.getAllParameters().size());
 
       assertTrue(collection.containsParameter("key1"));
       assertTrue(collection.containsParameter("key2"));
       assertTrue(collection.containsParameter("key3"));
       assertTrue(collection.containsParameter("key4"));
+      assertTrue(collection.containsParameter("dashD"));
 
       assertEquals("value1", collection.getParameter("key1").getValue());
       assertEquals("value2", collection.getParameter("key2").getValue());
       assertEquals("value3", collection.getParameter("key3").getValue());
       assertEquals("value4,and,5", collection.getParameter("key4").getValue());
+      assertEquals("isOptional", collection.getParameter("dashD").getValue());
    }
 
    @Test

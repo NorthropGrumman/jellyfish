@@ -20,6 +20,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -28,9 +29,9 @@ import java.util.regex.Pattern;
 @Component(service = IParameterService.class)
 public class ParameterService implements IParameterService {
 
-   private static final Pattern PATTERN = Pattern.compile("-D((?:\\\\.|[^=,]+)*)=(\\S+)");
-   private static final int NAME_INDEX = 0;
-   private static final int VALUE_INDEX = 1;
+   private static final Pattern PATTERN = Pattern.compile("(-D)?((?:\\\\.|[^=,]+)*)=(\\S+)");
+   private static final int NAME_GROUP = 2;
+   private static final int VALUE_GROUP = 3;
 
    private ILogService logService;
 
@@ -49,11 +50,14 @@ public class ParameterService implements IParameterService {
          throws ParameterServiceException {
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
       for (String eachParameterArg : parameters) {
-         if (isValidParameterFormat(eachParameterArg)) {
+         Matcher matcher = PATTERN.matcher(eachParameterArg);
+         if (matcher.matches()) {
             //remove the -D from the name
-            String name = eachParameterArg.split("=")[NAME_INDEX].substring(2).trim();
+            //String name = eachParameterArg.split("=")[NAME_INDEX].substring(2).trim();
             //take everything after the equals for the value
-            String value = eachParameterArg.split("=")[VALUE_INDEX].trim();
+            //String value = eachParameterArg.split("=")[VALUE_INDEX].trim();
+            String name = matcher.group(NAME_GROUP);
+            String value = matcher.group(VALUE_GROUP);
 
             parameterCollection.addParameter(new DefaultParameter<>(name, value));
          } else {
@@ -111,14 +115,5 @@ public class ParameterService implements IParameterService {
     */
    public void removeLogService(ILogService ref) {
       setLogService(null);
-   }
-
-   /**
-    * Determine if the given parameter follows the format -Dkey=value
-    *
-    * @param parameter the parameter.
-    */
-   private boolean isValidParameterFormat(String parameter) {
-      return PATTERN.matcher(parameter).matches();
    }
 }
