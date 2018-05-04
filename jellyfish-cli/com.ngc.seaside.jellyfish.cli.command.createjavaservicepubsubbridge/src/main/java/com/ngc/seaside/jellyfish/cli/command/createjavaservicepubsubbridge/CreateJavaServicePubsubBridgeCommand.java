@@ -22,6 +22,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServi
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.PublishDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
@@ -100,14 +101,24 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
          pubSubBridgeDto.setPackageName(packageInfo);
          
+         //Set up inputs
          InputDto inputDto = pubSubMethodDto.getInput();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
          
+         //Set up publishes
+         PublishDto publishDto = pubSubMethodDto.getOutput();
+         pubSubBridgeDto.setPublishDataType(publishDto.getType());
+         pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
+        
+         //Retrieve required services and bind/unbind them
          ClassDto classDto = generateService.getServiceInterfaceDescription(getOptions(), model);
          pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
          pubSubBridgeDto.setService(classDto);
          pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+         
+         pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
+         pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
          
          DefaultParameterCollection dataParameters = new DefaultParameterCollection();
          dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));

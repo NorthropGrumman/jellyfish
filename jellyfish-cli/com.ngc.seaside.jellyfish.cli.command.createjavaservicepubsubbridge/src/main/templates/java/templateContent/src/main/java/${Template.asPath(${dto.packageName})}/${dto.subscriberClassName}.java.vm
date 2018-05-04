@@ -67,7 +67,16 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
       logService.debug(getClass(), "Deactivated.");
    }
 
-   ${dto.bindAndUnbindScenarioServiceSnippet}
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "${dto.unbinderSnippet}")
+   public void ${dto.binderSnippet}(${dto.service.typeName} ref) {
+      this.${dto.serviceVarName} = ref;
+   }
+
+   public void ${dto.unbinderSnippet}(${dto.service.typeName} ref) {
+      ${dto.binderSnippet}(null);
+   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,

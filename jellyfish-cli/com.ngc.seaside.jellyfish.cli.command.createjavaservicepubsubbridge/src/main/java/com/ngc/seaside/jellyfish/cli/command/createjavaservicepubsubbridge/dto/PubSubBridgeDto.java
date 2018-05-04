@@ -8,6 +8,8 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class PubSubBridgeDto {
 
    private final IBuildManagementService buildManagementService;
@@ -24,6 +26,10 @@ public class PubSubBridgeDto {
    private Set<String> imports = new TreeSet<>();
    private String subscriberDataType;
    private String serviceVarName;
+   private String publishDataType;
+   private String scenarioMethod;
+   private String unbinderSnippet;
+   private String binderSnippet;
 
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
@@ -113,6 +119,15 @@ public class PubSubBridgeDto {
       return this;    
    }
    
+   public PubSubBridgeDto setPublishDataType(String publishDataType) {
+      this.publishDataType =  publishDataType;
+      return this;
+   }
+   
+   public String getPublishDataType() {
+      return publishDataType;
+   }
+
    public String getServiceVarName() {
       return serviceVarName;
    }
@@ -121,10 +136,37 @@ public class PubSubBridgeDto {
       String formattedServiceVarName = serviceVarName;
       if(formattedServiceVarName.startsWith("I")) {
          formattedServiceVarName = formattedServiceVarName.substring(1);
-         formattedServiceVarName = formattedServiceVarName.substring(0, 1).toLowerCase() + formattedServiceVarName.substring(1);   
+         formattedServiceVarName = StringUtils.uncapitalize(formattedServiceVarName);
       }    
       this.serviceVarName = formattedServiceVarName;
       return this;    
+   }
+
+   public String getScenarioMethod() {
+      return scenarioMethod;
+   }
+
+   public PubSubBridgeDto setScenarioMethod(String scenarioMethod) {
+      this.scenarioMethod = scenarioMethod;
+      return this;
+   }
+   
+   public String getUnbinderSnippet() {
+      return unbinderSnippet;
+   }
+
+   public PubSubBridgeDto setUnbinderSnippet(String unbinderSnippet) {
+      this.unbinderSnippet = "remove" + StringUtils.capitalize(unbinderSnippet);
+      return this;
+   }
+
+   public String getBinderSnippet() {
+      return binderSnippet;
+   }
+
+   public PubSubBridgeDto setBinderSnippet(String binderSnippet) {
+      this.binderSnippet = "set" + StringUtils.capitalize(binderSnippet);
+      return this;
    }
 
    /**
