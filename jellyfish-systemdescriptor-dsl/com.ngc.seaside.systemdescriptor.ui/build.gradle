@@ -1,5 +1,9 @@
+import com.ngc.seaside.gradle.tasks.eclipse.updatesite.DownloadEclipseTask
+import com.ngc.seaside.gradle.tasks.eclipse.updatesite.UnzipEclipseTask
 import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
+
+import java.nio.file.Paths
 
 // This prevents errors due to how the org.xtext.xtend
 // autoguesses the version of Xtend to use.  It guess
@@ -24,10 +28,10 @@ sourceSets {
 }
 
 repositories {
-  flatDir {
-    // Use the directory that contains the Eclipse plugins as a repository.
-    dirs "$eclipsePluginsDirectory"
-  }
+   flatDir {
+      // Use the directory that contains the Eclipse plugins as a repository.
+      dirs eclipsePluginsDirectory
+   }
 }
 
 dependencies {
@@ -56,7 +60,7 @@ dependencies {
 
    compile name: 'org.eclipse.xtext.ui_2.12.0.v20170519-0809'
    compile name: 'org.eclipse.xtext.ui.codetemplates.ui_2.12.0.v20170519-0809'
-   compile (name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809') { transitive = false }
+   compile(name: 'org.eclipse.xtext.ui.shared_2.12.0.v20170519-0809') { transitive = false }
    compile name: 'org.eclipse.xtext.builder_2.12.0.v20170519-0809'
 
    if (OperatingSystem.current().isLinux()) {
@@ -67,7 +71,15 @@ dependencies {
 
    testCompile "junit:junit:${junitVersion}"
    testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
+}
 
+def deployer = uploadArchives.repositories.mavenDeployer
+def installer = install.repositories.mavenInstaller
+
+[installer, deployer]*.pom*.whenConfigured { pom ->
+   // The eclipse dependencies have no groupId or version so the build fails trying to parse the generated pom for this
+   // project.
+   pom.dependencies = []
 }
 
 jar {
@@ -75,19 +87,33 @@ jar {
       from('META-INF/MANIFEST.MF') {
          // Replace the version with the version from the gradle build.
          eachEntry {
-            if(getKey().equals('Bundle-Version')) {
+            if (getKey().equals('Bundle-Version')) {
                setValue(Versions.makeOsgiCompliantVersion("$version"))
             }
          }
       }
    }
    // Include 'plugin.xml'
-   from('.', { include('plugin.xml') }) 
+   from('.', { include('plugin.xml') })
+}
+
+task downloadEclipse(type: DownloadEclipseTask) {
+   eclipseArchiveName = Paths.
+         get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   eclipseDownloadUrl = OperatingSystem.current().isLinux() ?
+                        "${project.property('linuxDownloadUrl')}" : "${project.property('windowsDownloadUrl')}"
+}
+
+task unzipEclipse(type: UnzipEclipseTask, dependsOn: downloadEclipse) {
+   eclipseArchiveName = Paths.
+         get("${project.property('cacheDirectory')}", "${project.property('eclipseVersion')}.zip")
+   cacheDirectory = project.property('cacheDirectory')
 }
 
 task copyDependencies(type: Copy) {
    from configurations.compile
-   into { "$buildDir/dependencies" }  
+   into { "$buildDir/dependencies" }
 }
 
-build.dependsOn(copyDependencies)
+tasks.getByName('generateXtext').dependsOn(unzipEclipse)
+tasks.getByName('build').dependsOn(copyDependencies)

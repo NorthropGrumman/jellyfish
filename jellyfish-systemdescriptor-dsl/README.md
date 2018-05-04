@@ -12,7 +12,7 @@ Checkout [Modeling with the System Descriptor](http://10.207.42.137/confluence/d
 | Linux    | http://10.207.42.137/resources/jellyfish/eclipse-dsl-oxygen-2-linux-gtk-x86_64 |
 
 # Installation and Setup with Eclipse
-Installation requires Eclipse and the update site.  Download Eclipse from the links below.  You can download the update site from [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).  Unzip the update site to any location you want.  **Ignore the com.ngc.seaside.systemdescriptor.plus.updatesite files.  Those have been deprecated.** 
+Installation requires Eclipse and the update site.  Download Eclipse from the links below.  You can download the update site from [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).  Unzip the update site to any location you want.
 
 See [Ch. 2 Installation and Setup](http://10.207.42.137/confluence/display/SEAS/Ch.+2+Installation+and+Setup) for detailed instructions and images.  Alternatively, you can follow the quick setup below:
 1. Select **Help**->**Install New Software**.
