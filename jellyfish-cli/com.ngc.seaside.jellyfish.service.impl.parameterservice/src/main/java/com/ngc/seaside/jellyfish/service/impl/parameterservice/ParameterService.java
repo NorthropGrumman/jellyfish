@@ -52,13 +52,8 @@ public class ParameterService implements IParameterService {
       for (String eachParameterArg : parameters) {
          Matcher matcher = PATTERN.matcher(eachParameterArg);
          if (matcher.matches()) {
-            //remove the -D from the name
-            //String name = eachParameterArg.split("=")[NAME_INDEX].substring(2).trim();
-            //take everything after the equals for the value
-            //String value = eachParameterArg.split("=")[VALUE_INDEX].trim();
             String name = matcher.group(NAME_GROUP);
             String value = matcher.group(VALUE_GROUP);
-
             parameterCollection.addParameter(new DefaultParameter<>(name, value));
          } else {
             logService.warn(getClass(), "Unable to parse parameter '%s'", eachParameterArg);
