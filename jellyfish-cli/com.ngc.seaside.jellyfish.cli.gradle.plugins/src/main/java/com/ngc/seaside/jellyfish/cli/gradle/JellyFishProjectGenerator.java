@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * A utility to run an instance of Jellyfish within Gradle.
+ */
 public class JellyFishProjectGenerator {
 
    private final Logger logger;
@@ -22,6 +25,9 @@ public class JellyFishProjectGenerator {
 
    private Supplier<Boolean> executionCondition = () -> true;
 
+   /**
+    * Creates a new generator.
+    */
    public JellyFishProjectGenerator(Logger logger) {
       this.logger = logger;
    }

@@ -8,6 +8,9 @@ import org.gradle.api.tasks.TaskAction;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A Gradle task that runs Jellyfish.
+ */
 public class JellyFishCliCommandTask extends DefaultTask {
 
    private String command;
@@ -16,6 +19,9 @@ public class JellyFishCliCommandTask extends DefaultTask {
 
    private Map<String, String> arguments = new HashMap<>();
 
+   /**
+    * Runs Jellyfish.
+    */
    @TaskAction
    public void runJellyfish() {
       new JellyFishProjectGenerator(getLogger())

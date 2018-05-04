@@ -10,118 +10,118 @@ import org.gradle.api.logging.Logging;
 public class GradleLogService implements ILogService {
 
    @Override
-   public void error(Class<?> aClass, Object o) {
-      Logging.getLogger(aClass).error(s(o));
+   public void error(Class<?> clazz, Object o) {
+      Logging.getLogger(clazz).error(nullSafe(o));
    }
 
    @Override
-   public void error(Class<?> aClass, String s, Object... objects) {
-      Logging.getLogger(aClass).error(f(s, objects));
+   public void error(Class<?> error, String s, Object... objects) {
+      Logging.getLogger(error).error(format(s, objects));
    }
 
    @Override
-   public void error(Class<?> aClass, Object o, Throwable throwable) {
-      Logging.getLogger(aClass).error(s(o), throwable);
+   public void error(Class<?> clazz, Object o, Throwable throwable) {
+      Logging.getLogger(clazz).error(nullSafe(o), throwable);
    }
 
    @Override
-   public void error(Class<?> aClass, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(aClass).error(f(s, objects), throwable);
+   public void error(Class<?> clazz, Throwable throwable, String s, Object... objects) {
+      Logging.getLogger(clazz).error(format(s, objects), throwable);
    }
 
    @Override
-   public void warn(Class<?> aClass, Object o) {
-      Logging.getLogger(aClass).warn(s(o));
+   public void warn(Class<?> clazz, Object o) {
+      Logging.getLogger(clazz).warn(nullSafe(o));
    }
 
    @Override
-   public void warn(Class<?> aClass, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(aClass).warn(f(s, objects), throwable);
+   public void warn(Class<?> clazz, Throwable throwable, String s, Object... objects) {
+      Logging.getLogger(clazz).warn(format(s, objects), throwable);
    }
 
    @Override
-   public void warn(Class<?> aClass, Object o, Throwable throwable) {
-      Logging.getLogger(aClass).warn(s(o), throwable);
+   public void warn(Class<?> clazz, Object o, Throwable throwable) {
+      Logging.getLogger(clazz).warn(nullSafe(o), throwable);
    }
 
    @Override
-   public void warn(Class<?> aClass, String s, Object... objects) {
-      Logging.getLogger(aClass).warn(f(s, objects));
+   public void warn(Class<?> clazz, String s, Object... objects) {
+      Logging.getLogger(clazz).warn(format(s, objects));
    }
 
    @Override
-   public void info(Class<?> aClass, Object o) {
-      Logging.getLogger(aClass).info(s(o));
+   public void info(Class<?> clazz, Object o) {
+      Logging.getLogger(clazz).info(nullSafe(o));
    }
 
    @Override
-   public void info(Class<?> aClass, String s, Object... objects) {
-      Logging.getLogger(aClass).info(f(s, objects));
+   public void info(Class<?> clazz, String s, Object... objects) {
+      Logging.getLogger(clazz).info(format(s, objects));
    }
 
    @Override
-   public void info(Class<?> aClass, Object o, Throwable throwable) {
-      Logging.getLogger(aClass).info(s(o), throwable);
+   public void info(Class<?> clazz, Object o, Throwable throwable) {
+      Logging.getLogger(clazz).info(nullSafe(o), throwable);
    }
 
    @Override
-   public void info(Class<?> aClass, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(aClass).info(f(s, objects), throwable);
+   public void info(Class<?> clazz, Throwable throwable, String s, Object... objects) {
+      Logging.getLogger(clazz).info(format(s, objects), throwable);
    }
 
    @Override
-   public void debug(Class<?> aClass, Object o) {
-      Logging.getLogger(aClass).debug(s(o));
+   public void debug(Class<?> clazz, Object o) {
+      Logging.getLogger(clazz).debug(nullSafe(o));
    }
 
    @Override
-   public void debug(Class<?> aClass, String s, Object... objects) {
-      Logging.getLogger(aClass).debug(f(s, objects));
+   public void debug(Class<?> clazz, String s, Object... objects) {
+      Logging.getLogger(clazz).debug(format(s, objects));
    }
 
    @Override
-   public void debug(Class<?> aClass, Object o, Throwable throwable) {
-      Logging.getLogger(aClass).debug(s(o), throwable);
+   public void debug(Class<?> clazz, Object o, Throwable throwable) {
+      Logging.getLogger(clazz).debug(nullSafe(o), throwable);
    }
 
    @Override
-   public void debug(Class<?> aClass, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(aClass).debug(f(s, objects), throwable);
+   public void debug(Class<?> clazz, Throwable throwable, String s, Object... objects) {
+      Logging.getLogger(clazz).debug(format(s, objects), throwable);
    }
 
    @Override
-   public void trace(Class<?> aClass, Object o) {
-      Logging.getLogger(aClass).trace(s(o));
+   public void trace(Class<?> clazz, Object o) {
+      Logging.getLogger(clazz).trace(nullSafe(o));
    }
 
    @Override
-   public void trace(Class<?> aClass, String s, Object... objects) {
-      Logging.getLogger(aClass).trace(f(s, objects));
+   public void trace(Class<?> clazz, String s, Object... objects) {
+      Logging.getLogger(clazz).trace(format(s, objects));
    }
 
    @Override
-   public void trace(Class<?> aClass, Object o, Throwable throwable) {
-      Logging.getLogger(aClass).trace(s(o), throwable);
+   public void trace(Class<?> clazz, Object o, Throwable throwable) {
+      Logging.getLogger(clazz).trace(nullSafe(o), throwable);
    }
 
    @Override
-   public void trace(Class<?> aClass, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(aClass).trace(f(s, objects), throwable);
+   public void trace(Class<?> clazz, Throwable throwable, String s, Object... objects) {
+      Logging.getLogger(clazz).trace(format(s, objects), throwable);
    }
 
    @Override
-   public boolean isInfoEnabled(Class<?> aClass) {
-      return Logging.getLogger(aClass).isInfoEnabled();
+   public boolean isInfoEnabled(Class<?> clazz) {
+      return Logging.getLogger(clazz).isInfoEnabled();
    }
 
    @Override
-   public boolean isDebugEnabled(Class<?> aClass) {
-      return Logging.getLogger(aClass).isDebugEnabled();
+   public boolean isDebugEnabled(Class<?> clazz) {
+      return Logging.getLogger(clazz).isDebugEnabled();
    }
 
    @Override
-   public boolean isTraceEnabled(Class<?> aClass) {
-      return Logging.getLogger(aClass).isTraceEnabled();
+   public boolean isTraceEnabled(Class<?> clazz) {
+      return Logging.getLogger(clazz).isTraceEnabled();
    }
 
    @Override
@@ -157,11 +157,11 @@ public class GradleLogService implements ILogService {
       }
    };
 
-   private static String s(Object o) {
+   private static String nullSafe(Object o) {
       return o == null ? "null" : o.toString();
    }
 
-   private static String f(String s, Object... o) {
+   private static String format(String s, Object... o) {
       return String.format(s, o);
    }
 }
