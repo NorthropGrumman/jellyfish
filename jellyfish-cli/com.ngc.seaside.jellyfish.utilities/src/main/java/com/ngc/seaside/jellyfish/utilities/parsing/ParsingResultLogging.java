@@ -33,7 +33,9 @@ public class ParsingResultLogging {
             .stream()
             .filter(i -> i.getSeverity() == Severity.ERROR)
             .collect(Collectors.toList());
-      lines.add(String.format("System Descriptor project contains %d errors.", errors.size()));
+      if (errors.size() > 0) {
+         lines.add(String.format("System Descriptor project contains %d errors.", errors.size()));
+      }
       for (IParsingIssue error : errors) {
          lines.addAll(printIssue(error));
       }
@@ -52,9 +54,11 @@ public class ParsingResultLogging {
             .stream()
             .filter(i -> i.getSeverity() == Severity.WARNING)
             .collect(Collectors.toList());
-      lines.add(String.format("System Descriptor project contains %d warnings.", warnings.size()));
-      for (IParsingIssue warning : warnings) {
-         lines.addAll(printIssue(warning));
+      if (warnings.size() > 0) {
+         lines.add(String.format("System Descriptor project contains %d warnings.", warnings.size()));
+         for (IParsingIssue warning : warnings) {
+            lines.addAll(printIssue(warning));
+         }
       }
 
       return lines;

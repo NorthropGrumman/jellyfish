@@ -88,7 +88,7 @@ public class ValidateCommand implements IJellyFishCommand {
    @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       IParsingResult result = commandOptions.getParsingResult();
-      if (commandOptions.getParsingResult().isSuccessful()) {
+      if (result.isSuccessful()) {
          ParsingResultLogging.logWarnings(result).forEach(l -> logService.warn(getClass(), "%s", l));
          logService.info(ValidateCommand.class, "System Descriptor project is valid.");
       } else {
