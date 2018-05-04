@@ -66,6 +66,9 @@ dependencies {
 
     implementation project(':jellyfish.cli.command.createjavaservicebase')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaservicebase', configuration: 'commandTemplate')
+    
+    implementation project(':jellyfish.cli.command.createjavaservicepubsubbridge')
+    commandTemplate project(path: ':jellyfish.cli.command.createjavaservicepubsubbridge', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavaserviceconfig')
     commandTemplate project(path: ':jellyfish.cli.command.createjavaserviceconfig', configuration: 'commandTemplate')

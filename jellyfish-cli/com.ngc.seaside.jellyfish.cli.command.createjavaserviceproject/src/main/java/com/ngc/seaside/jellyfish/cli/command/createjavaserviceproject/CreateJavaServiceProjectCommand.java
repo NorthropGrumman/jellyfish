@@ -41,8 +41,10 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    static final String CREATE_JAVA_SERVICE_BASE_COMMAND_NAME = "create-java-service-base";
    static final String CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME = "create-java-protobuf-connector";
    static final String CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME = "create-java-service-config";
+   static final String CREATE_JAVA_SERVICE_PUBSUB_BRIDGE_COMMAND_NAME = "create-java-service-pubsub-bridge";
    static final String CREATE_JAVA_SERVICE_GENERATED_CONFIG_COMMAND_NAME = "create-java-service-generated-config";
    static final String CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME = "create-protocolbuffer-messages";
+
    private static final String[] SUBCOMMANDS = {CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME,
                                                 CREATE_DOMAIN_COMMAND_NAME, CREATE_JAVA_EVENTS_COMMAND_NAME,
                                                 CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME,
@@ -51,6 +53,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
                                                 CREATE_JAVA_SERVICE_BASE_COMMAND_NAME,
                                                 CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME,
                                                 CREATE_JAVA_SERVICE_CONFIG_COMMAND_NAME,
+                                                CREATE_JAVA_SERVICE_PUBSUB_BRIDGE_COMMAND_NAME,
                                                 CREATE_JAVA_SERVICE_GENERATED_CONFIG_COMMAND_NAME,
                                                 CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME};
 
@@ -130,6 +133,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
 
       createJavaServiceBaseProject(ctx);
       createJavaPubsubConnectorProject(ctx);
+      createJavaPubsubPubsubBridgeProject(ctx);
       createEventsProject(ctx);
       createProtocolBufferMessagesProject(ctx);
 
@@ -219,9 +223,16 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
       doRunCommand(CREATE_PROTOCOLBUFFER_MESSAGES_COMMAND_NAME, delegateOptions);
    }
 
+   //TODO Is this needed now?
    private void createJavaPubsubConnectorProject(CommandInvocationContext ctx) {
       IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
       doRunCommand(CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME, delegateOptions);
+   }
+   
+   //TODO Is this needed now?
+   private void createJavaPubsubPubsubBridgeProject(CommandInvocationContext ctx) {
+      IJellyFishCommandOptions delegateOptions = generateDelegateOptions(ctx);
+      doRunCommand(CREATE_JAVA_SERVICE_PUBSUB_BRIDGE_COMMAND_NAME, delegateOptions);
    }
 
    private void doRunCommand(String commandName, IJellyFishCommandOptions delegateOptions) {
