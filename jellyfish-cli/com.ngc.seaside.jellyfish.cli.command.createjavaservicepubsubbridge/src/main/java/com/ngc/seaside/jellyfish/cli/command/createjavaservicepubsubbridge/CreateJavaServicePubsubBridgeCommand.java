@@ -101,10 +101,15 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
          pubSubBridgeDto.setPackageName(packageInfo);
          
+         //TODO Figure out a different way to do this.  Gives us too many imports.
+         pubSubBridgeDto.getImports().addAll(baseServiceDto.getAbstractClass().getImports());
+         
+         
          //Set up inputs
          InputDto inputDto = pubSubMethodDto.getInput();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+         
          
          //Set up publishes
          PublishDto publishDto = pubSubMethodDto.getOutput();
@@ -125,17 +130,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
             dataParameters,
             projectDirectory,
-            false);
-         
-         
-         
-         
+            false);  
       }
-       
-      //TODO Do logic here
-
-      //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
-
    }
    
    public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
