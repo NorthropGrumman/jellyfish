@@ -13,6 +13,7 @@ import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishService;
 import com.ngc.seaside.jellyfish.service.execution.api.JellyfishExecutionException;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -23,6 +24,12 @@ import java.util.stream.Collectors;
  * runs with Guice and will create a new Injector for every execution of Jellyfish.
  */
 public class JellyfishService implements IJellyfishService {
+
+   /**
+    * The name of the system property that BLoCS uses to find the resources to load at runtime.  The value is
+    * an absolute path that cannot contain relative paths (like . or ..).
+    */
+   static final String BLOCS_HOME_SYSTEM_PROPERTY = "NG_FW_HOME";
 
    @Override
    public IJellyfishExecution run(String command, Collection<String> arguments, Collection<Module> modules)
@@ -36,8 +43,13 @@ public class JellyfishService implements IJellyfishService {
       // Add a module that register this service with the rest of Guice.
       mods.add(new SelfRegisteringModule());
 
-      // TODO TH: Set NG_FW_HOME variable here.
+      boolean isBlocsHomeSet = System.getProperty(BLOCS_HOME_SYSTEM_PROPERTY) != null;
       try {
+         // Set the BLoCS home property if needed.
+         if (!isBlocsHomeSet) {
+            System.setProperty(BLOCS_HOME_SYSTEM_PROPERTY, getDefaultBlocsHome());
+         }
+
          Injector injector = createInjector(modules);
          // Get the command provider and run.
          IJellyFishCommandProvider provider = injector.getInstance(IJellyFishCommandProvider.class);
@@ -47,6 +59,11 @@ public class JellyfishService implements IJellyfishService {
                                     command,
                                     arguments);
          throw new JellyfishExecutionException(msg, t);
+      } finally {
+         // If we set the property, clear it before finishing.
+         if (!isBlocsHomeSet) {
+            System.clearProperty(BLOCS_HOME_SYSTEM_PROPERTY);
+         }
       }
    }
 
@@ -93,6 +110,10 @@ public class JellyfishService implements IJellyfishService {
          x++;
       }
       return args;
+   }
+
+   private static String getDefaultBlocsHome() {
+      return Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString();
    }
 
    /**

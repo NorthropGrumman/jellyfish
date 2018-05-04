@@ -92,9 +92,10 @@ public class ValidateCommand implements IJellyFishCommand {
          ParsingResultLogging.logWarnings(result).forEach(l -> logService.warn(getClass(), "%s", l));
          logService.info(ValidateCommand.class, "System Descriptor project is valid.");
       } else {
-         // The formatting of the logging line with "%s" avoids issues if the line in the model file contains
+         // The formatting of the logging line with "%s" avoids issues if the line in the model file contains a
          // "%s" symbol.
          ParsingResultLogging.logErrors(result).forEach(l -> logService.error(getClass(), "%s", l));
+         ParsingResultLogging.logWarnings(result).forEach(l -> logService.warn(getClass(), "%s", l));
          throw new CommandException("System Descriptor failed validation!");
       }
    }
