@@ -113,7 +113,7 @@ task copyCommandTemplate(type: Copy) {
 }
 
 seasideApplication {
-    mainClassName = 'com.ngc.seaside.jellyfish.JellyFish'
+    mainClassName = 'com.ngc.seaside.jellyfish.Jellyfish'
     includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
     appHomeVarName = 'appHome'
     appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]

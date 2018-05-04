@@ -22,7 +22,7 @@ import java.nio.file.Path;
  */
 public class ClasspathResourceService implements IResourceService {
 
-   private ILogService logService;
+   private final ILogService logService;
 
    @Inject
    public ClasspathResourceService(ILogService logService) {

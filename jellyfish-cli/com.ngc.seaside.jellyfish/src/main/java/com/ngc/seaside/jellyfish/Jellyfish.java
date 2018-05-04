@@ -12,7 +12,7 @@ import java.util.Collections;
  * The main entry point of Jellyfish.  {@link #main(String[])} is used when running Jellyfish from the command line.  If
  * embedding Jellyfish in another application use {@link #getService()}.
  */
-public class JellyFish {
+public class Jellyfish {
 
    private static final IJellyfishService SERVICE_INSTANCE = new JellyfishService();
 

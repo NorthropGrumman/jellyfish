@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
-public class JellyFishIT {
+public class JellyfishIT {
 
    @Before
    public void setup() {
@@ -19,8 +19,8 @@ public class JellyFishIT {
 
    @Test
    public void validSDProjectParsedTest() {
-      JellyFish.main(new String[]{"help"});
-      JellyFish.main(new String[]{"help", "-Dverbose=true"});
+      Jellyfish.main(new String[]{"help"});
+      Jellyfish.main(new String[]{"help", "-Dverbose=true"});
    }
 
    @After

@@ -38,7 +38,7 @@ public class ClasspathTemplateService extends TemplateService {
    }
 
    @Override
-   protected InputStream getTemplateInputStream(String templateName) throws IOException, TemplateServiceException {
+   protected InputStream getTemplateInputStream(String templateName) throws TemplateServiceException {
       int index = templateName.indexOf('-');
       String templatePrefix = index < 0 ? templateName : templateName.substring(0, index);
       String templateEnding = index < 0 ? "" : templateName.substring(index);
