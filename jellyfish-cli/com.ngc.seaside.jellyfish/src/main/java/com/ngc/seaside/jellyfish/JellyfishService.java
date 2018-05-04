@@ -36,6 +36,7 @@ public class JellyfishService implements IJellyfishService {
       // Add a module that register this service with the rest of Guice.
       mods.add(new SelfRegisteringModule());
 
+      // TODO TH: Set NG_FW_HOME variable here.
       try {
          Injector injector = createInjector(modules);
          // Get the command provider and run.

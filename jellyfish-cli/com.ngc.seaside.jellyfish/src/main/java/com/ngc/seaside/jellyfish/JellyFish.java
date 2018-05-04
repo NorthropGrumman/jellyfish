@@ -27,7 +27,7 @@ public class JellyFish {
                                   "please run Jellyfish with at least one argument, try 'jellyfish help' for help!");
       String command = args[0];
       Collection<String> remainingArgs = new ArrayList<>();
-      for (int i = 1; i < remainingArgs.size(); i++) {
+      for (int i = 1; i < args.length; i++) {
          remainingArgs.add(args[i]);
       }
       // Run the service with the default set of modules.
