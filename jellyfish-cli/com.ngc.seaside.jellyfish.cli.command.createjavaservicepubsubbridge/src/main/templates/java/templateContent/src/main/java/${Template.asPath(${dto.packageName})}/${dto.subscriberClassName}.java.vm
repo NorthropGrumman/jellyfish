@@ -27,8 +27,12 @@ package $dto.packageName;
 
 
 #####Be sure to add imports for pubsub datatypes#####
+
 #foreach ($i in $dto.imports)
 import ${i};
+#end
+#foreach ($i in $dto.importsForDataTypes)
+import ${i}
 #end
 
 @Component(service = IEventSubscriber.class, immediate = true)

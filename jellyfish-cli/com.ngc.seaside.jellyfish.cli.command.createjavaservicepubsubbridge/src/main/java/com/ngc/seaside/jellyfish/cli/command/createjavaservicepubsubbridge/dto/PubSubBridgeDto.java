@@ -5,6 +5,8 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -108,6 +110,15 @@ public class PubSubBridgeDto {
    public PubSubBridgeDto setImports(Set<String> imports) {
       this.imports = imports;
       return this;
+   }
+
+   public List<String> getImportsForDataTypes() {
+      List<String> importList = new ArrayList<>();
+
+      imports.stream()
+            .filter(importName -> importName.contains(subscriberDataType))
+            .forEach(importName -> importList.add(importName));
+      return importList;
    }
    
    public String getSubscriberDataType() {
