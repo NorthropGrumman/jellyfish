@@ -214,7 +214,7 @@ public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> 
             new DefaultParameter(COMMAND_NAME_PROPERTY)
                   .setDescription(
                         "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
-                  .setRequired(false),
+                  .setRequired(true),
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.PACKAGE,
