@@ -7,10 +7,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
-@JellyFishCommandConfiguration(autoTemplateProcessing = false)
 public class CreateJavaServiceProjectCommandGuiceWrapper implements IJellyFishCommand {
 
    private final CreateJavaServiceProjectCommand delegate = new CreateJavaServiceProjectCommand();

@@ -133,8 +133,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
       // Register blocs plugins as a required dependency.
       buildManagementService.registerDependency(commandOptions, BLOCS_PLUGINS_DEPENDENCY);
-
-      logService.info(CreateDomainCommand.class, "Domain project successfully created");
    }
 
    @Activate

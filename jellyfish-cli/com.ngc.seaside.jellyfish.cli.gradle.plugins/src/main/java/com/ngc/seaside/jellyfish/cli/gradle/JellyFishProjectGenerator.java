@@ -1,15 +1,18 @@
 package com.ngc.seaside.jellyfish.cli.gradle;
 
+import com.ngc.seaside.jellyfish.Jellyfish;
+
 import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 
-import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+/**
+ * A utility to run an instance of Jellyfish within Gradle.
+ */
 public class JellyFishProjectGenerator {
 
    private final Logger logger;
@@ -22,6 +25,9 @@ public class JellyFishProjectGenerator {
 
    private Supplier<Boolean> executionCondition = () -> true;
 
+   /**
+    * Creates a new generator.
+    */
    public JellyFishProjectGenerator(Logger logger) {
       this.logger = logger;
    }
@@ -31,20 +37,21 @@ public class JellyFishProjectGenerator {
     */
    public void generate() {
       if (executionCondition.get()) {
-
-         String previousProperty = System.getProperty("NG_FW_HOME");
-         boolean isPropertySet = previousProperty != null && previousProperty.trim().equals("");
-         if (!isPropertySet) {
-            System.setProperty("NG_FW_HOME", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString());
-         }
          try {
-            doGenerate();
-         } finally {
-            if (!isPropertySet) {
-               System.clearProperty("NG_FW_HOME");
+            logger.debug("Running JellyFish command " + command + ".");
+            // Avoid issues when calling this from Gradle.  If we don't do this we can get exceptions like
+            // GStringImpl cannot be cast to java.lang.String
+            Jellyfish.getService().run(command,
+                                       asPureJavaTypes(arguments),
+                                       Collections.singleton(new GradleJellyfishModule()));
+            logger.debug("JellyFish command " + command + " executed successfully.");
+         } catch (Throwable t) {
+            if (failBuildOnException) {
+               throw new GradleException("Jellyfish command " + command + " failed!", t);
+            } else {
+               logger.error("JellyFish command " + command + " failed!", t);
             }
          }
-
       }
    }
 
@@ -84,26 +91,11 @@ public class JellyFishProjectGenerator {
       return this;
    }
 
-   private void doGenerate() {
-      if (command == null || command.trim().equals("")) {
-         throw new GradleException("command must be set!");
+   private static Map<String, String> asPureJavaTypes(Map<?, ?> map) {
+      Map<String, String> pure = new HashMap<>();
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
+         pure.put(entry.getKey().toString(), entry.getValue().toString());
       }
-      List<String> stringArgs = arguments.entrySet()
-            .stream()
-            .map(e -> String.format("-D%s=%s", e.getKey(), e.getValue()))
-            .collect(Collectors.toList());
-      stringArgs.add(0, command);
-
-      try {
-         logger.debug("Running JellyFish command " + command + ".");
-         GradleJellyFishRunner.run(stringArgs.toArray(new String[stringArgs.size()]));
-         logger.debug("JellyFish command " + command + " executed successfully.");
-      } catch (Throwable t) {
-         if (failBuildOnException) {
-            throw new GradleException("Jellyfish command " + command + " failed!", t);
-         } else {
-            logger.error("JellyFish command " + command + " failed!", t);
-         }
-      }
+      return pure;
    }
 }

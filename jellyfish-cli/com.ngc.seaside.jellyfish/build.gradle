@@ -6,25 +6,36 @@ configurations {
 
 dependencies {
     api project(':jellyfish.api')
+    api project(':jellyfish.service.api')
+    api "com.google.guava:guava:$guavaVersion"
+    api "com.google.inject:guice:$guiceVersion"
 
+    implementation project(':guice.modules')
+    implementation project(':jellyfish.service.name.impl.namingservices')
+    implementation project(':jellyfish.service.codegen.impl.codegenservices')
+    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
+    implementation project(':jellyfish.service.data.impl.dataservice')
+    implementation project(':jellyfish.service.config.impl.transportconfigurationservice')
+    implementation project(':jellyfish.service.requirements.impl.requirementsservice')
+    implementation project(':jellyfish.service.feature.impl.featureservice')
+    implementation project(':jellyfish.service.buildmgmt.impl.buildmgmtservice')
+    implementation project(':jellyfish.service.impl.parameterservice')
+    implementation project(':jellyfish.service.impl.promptuserservice')
+    implementation project(':jellyfish.service.impl.propertyservice')
+    implementation project(':jellyfish.service.impl.templateservice')
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
-
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
-
     implementation "org.osgi:osgi.core:$osgiVersion"
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
-    implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
     implementation project(':jellyfish.impl.provider')
     implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
 
     implementation project(':jellyfish.cli.command.validate')
-
-    implementation project(':jellyfish.cli.command.samplecommand')
-    commandTemplate project(path: ':jellyfish.cli.command.samplecommand', configuration: 'commandTemplate')
 
     implementation project(':jellyfish.cli.command.createjavadistribution')
     commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
@@ -81,21 +92,6 @@ dependencies {
     commandTemplate project(path: ':jellyfish.cli.command.createjavacucumbertestsconfig',
                             configuration: 'commandTemplate')
 
-    implementation project(':guice.modules')
-    implementation project(':jellyfish.service.name.impl.namingservices')
-    implementation project(':jellyfish.service.codegen.impl.codegenservices')
-    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
-    implementation project(':jellyfish.service.data.impl.dataservice')
-    implementation project(':jellyfish.service.config.impl.transportconfigurationservice')
-    implementation project(':jellyfish.service.requirements.impl.requirementsservice')
-    implementation project(':jellyfish.service.feature.impl.featureservice')
-    implementation project(':jellyfish.service.buildmgmt.impl.buildmgmtservice')
-
-    implementation project(':jellyfish.service.impl.parameterservice')
-    implementation project(':jellyfish.service.impl.promptuserservice')
-    implementation project(':jellyfish.service.impl.propertyservice')
-    implementation project(':jellyfish.service.impl.templateservice')
-
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
@@ -115,7 +111,7 @@ task copyCommandTemplate(type: Copy) {
 }
 
 seasideApplication {
-    mainClassName = 'com.ngc.seaside.jellyfish.JellyFish'
+    mainClassName = 'com.ngc.seaside.jellyfish.Jellyfish'
     includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
     appHomeVarName = 'appHome'
     appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]

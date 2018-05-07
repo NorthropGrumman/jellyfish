@@ -3,14 +3,12 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.JellyFishCommandConfiguration;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
-@JellyFishCommandConfiguration(autoTemplateProcessing = false, requireValidSystemDescriptor = false)
-public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishCommand {
+public class CreateJellyFishCommandCommandGuiceWrapper implements ICommand<ICommandOptions> {
 
    private final CreateJellyFishCommandCommand delegate = new CreateJellyFishCommandCommand();
 
@@ -31,7 +29,7 @@ public class CreateJellyFishCommandCommandGuiceWrapper implements IJellyFishComm
    }
 
    @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   public void run(ICommandOptions commandOptions) {
       delegate.run(commandOptions);
    }
 

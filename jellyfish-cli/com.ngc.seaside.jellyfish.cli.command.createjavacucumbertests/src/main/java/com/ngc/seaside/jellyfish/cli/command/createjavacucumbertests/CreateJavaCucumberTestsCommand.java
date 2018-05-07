@@ -117,7 +117,6 @@ public class CreateJavaCucumberTestsCommand implements IJellyFishCommand {
                outputDirectory,
                false);
       }
-      logService.info(CreateJavaCucumberTestsCommand.class, "%s project successfully created", model.getName());
       buildManagementService.registerProject(commandOptions, info);
    }
 

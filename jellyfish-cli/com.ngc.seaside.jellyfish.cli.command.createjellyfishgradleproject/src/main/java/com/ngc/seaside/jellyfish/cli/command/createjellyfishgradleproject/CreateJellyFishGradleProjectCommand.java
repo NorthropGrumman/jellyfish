@@ -115,8 +115,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
       templateService.unpack(templateName, collection, projectDirectory, clean);
-
-      logService.info(getClass(), "%s project successfully created", projectName);
    }
 
    /**

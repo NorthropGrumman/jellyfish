@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 
 import org.junit.Assert;
@@ -31,8 +31,7 @@ public class CreateJellyFishCommandCommandIT {
       MockedTemplateService mockedTemplateService = new MockedTemplateService().useRealPropertyService()
             .useDefaultUserValues(true)
             .setTemplateDirectory(
-                  CreateJellyFishCommandCommand.class.getPackage()
-                        .getName(),
+                  CreateJellyFishCommandCommand.class.getPackage().getName(),
                   Paths.get("src/main/template"));
 
       outputDir = Files.createTempDirectory(null);
@@ -56,7 +55,7 @@ public class CreateJellyFishCommandCommandIT {
    }
 
    private void runCommand(String... keyValues) throws IOException {
-      IJellyFishCommandOptions mockOptions = Mockito.mock(IJellyFishCommandOptions.class);
+      ICommandOptions mockOptions = Mockito.mock(ICommandOptions.class);
       DefaultParameterCollection collection = new DefaultParameterCollection();
 
       for (int n = 0; n < keyValues.length; n += 2) {
