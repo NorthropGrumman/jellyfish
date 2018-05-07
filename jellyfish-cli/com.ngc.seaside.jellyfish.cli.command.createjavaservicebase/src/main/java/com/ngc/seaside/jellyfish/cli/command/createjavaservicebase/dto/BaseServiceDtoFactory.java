@@ -585,6 +585,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          input.setType(type.getFullyQualifiedName());
       } else {
          input.setType(type.getTypeName());
+         input.setFullyQualifiedName(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       }
@@ -603,6 +604,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          output.setType(type.getTypeName());
          output.setTopic(type.getTypeName() + ".TOPIC");
          output.setName("doPublish" + type.getTypeName());
+         output.setFullyQualifiedName(type.getFullyQualifiedName());
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
       }

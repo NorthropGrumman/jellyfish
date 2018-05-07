@@ -6,6 +6,7 @@ public class PublishDto {
    private String name;
    private String topic;
    private String fieldName;
+   private String fullyQualifiedName;
 
    public String getType() {
       return type;
@@ -41,6 +42,15 @@ public class PublishDto {
    public PublishDto setTopic(String topic) {
       this.topic = topic;
       return this;
+   }
+
+   public PublishDto setFullyQualifiedName(String fullyQualifiedName) {
+      this.fullyQualifiedName = fullyQualifiedName;
+      return this;
+   }
+
+   public String getFullyQualifiedName() {
+      return fullyQualifiedName;
    }
 
 

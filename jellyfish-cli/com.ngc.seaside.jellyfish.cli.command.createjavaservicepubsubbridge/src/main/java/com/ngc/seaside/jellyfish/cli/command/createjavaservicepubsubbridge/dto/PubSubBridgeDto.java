@@ -26,6 +26,7 @@ public class PubSubBridgeDto {
    private String baseClass;
    private String subscriberClassName;
    private Set<String> imports = new TreeSet<>();
+   private Set<String> abstractImports = new TreeSet<>();
    private String subscriberDataType;
    private String serviceVarName;
    private String publishDataType;
@@ -112,13 +113,26 @@ public class PubSubBridgeDto {
       return this;
    }
 
+   /**
+    *
+    * @return List of imports for just the data types we are concerned about.  Will return an empty list if nothing
+    *   found
+    */
    public List<String> getImportsForDataTypes() {
       List<String> importList = new ArrayList<>();
 
-      imports.stream()
+      abstractImports.stream()
             .filter(importName -> importName.contains(subscriberDataType))
             .forEach(importName -> importList.add(importName));
       return importList;
+   }
+
+   public Set<String> getAbstractImports() {
+      return abstractImports;
+   }
+
+   public void setAbstractImports(Set<String> abstractImports) {
+      this.abstractImports = abstractImports;
    }
    
    public String getSubscriberDataType() {

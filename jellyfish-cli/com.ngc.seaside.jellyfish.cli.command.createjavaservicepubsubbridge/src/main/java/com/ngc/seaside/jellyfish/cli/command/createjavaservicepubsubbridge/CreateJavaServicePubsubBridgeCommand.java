@@ -101,19 +101,22 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setPackageName(packageInfo);
          
          //TODO Figure out a different way to do this.  Gives us too many imports.
-         pubSubBridgeDto.getImports().addAll(baseServiceDto.getAbstractClass().getImports());
+         //pubSubBridgeDto.setAbstractImports(baseServiceDto.getPubSubImports());
          
          
          //Set up inputs
          InputDto inputDto = pubSubMethodDto.getInput();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+         pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
          
          
          //Set up publishes
          PublishDto publishDto = pubSubMethodDto.getOutput();
          pubSubBridgeDto.setPublishDataType(publishDto.getType());
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
+
+         pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
         
          //Retrieve required services and bind/unbind them
          ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
