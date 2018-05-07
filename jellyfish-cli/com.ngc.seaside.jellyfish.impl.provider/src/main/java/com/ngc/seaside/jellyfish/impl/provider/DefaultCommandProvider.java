@@ -20,6 +20,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * A default command provider that runs non Jellyfish commands.  These are commands that implement the {@code ICommand}
+ * interface directly and do no require a valid SD project in order to be executed.
+ */
 @Component(service = ICommandProvider.class)
 public class DefaultCommandProvider extends AbstractCommandProvider<
       ICommandOptions,

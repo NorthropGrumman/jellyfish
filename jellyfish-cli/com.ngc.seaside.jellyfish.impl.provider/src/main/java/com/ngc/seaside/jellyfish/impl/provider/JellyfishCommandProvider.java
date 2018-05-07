@@ -38,6 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A command provider that runs {@code IJellyfishCommand}s.  These commands require a valid SD project in order to be
+ * executed.  This provider will not execute any command if the SD project is not configured correctly or contains
+ * errors.
+ */
 @Component(service = IJellyFishCommandProvider.class)
 public class JellyfishCommandProvider extends AbstractCommandProvider<
       IJellyFishCommandOptions,
