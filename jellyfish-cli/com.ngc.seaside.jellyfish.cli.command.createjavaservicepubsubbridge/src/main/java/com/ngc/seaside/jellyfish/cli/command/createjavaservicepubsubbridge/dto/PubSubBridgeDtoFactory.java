@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ public class PubSubBridgeDtoFactory implements IPubSubBridgeDtoFactory {
       imports.add(baseDto.getAbstractClass().getFullyQualifiedName());
       imports.addAll(baseDto.getInterface().getImports());
 
-      Set<String> projectDependencies = new LinkedHashSet<>();
+      Set<String> projectDependencies = Collections.singleton(
+            projectService.getEventsProjectName(options, model).getArtifactId());
       projectDependencies.add(projectService.getEventsProjectName(options, model).getArtifactId());
       projectDependencies.add(projectService.getBaseServiceProjectName(options, model).getArtifactId());
 
