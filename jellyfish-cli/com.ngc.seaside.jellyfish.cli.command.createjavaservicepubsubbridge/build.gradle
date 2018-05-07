@@ -12,9 +12,9 @@ dependencies {
    implementation "com.ngc.blocs:service.api:$blocsVersion"
    implementation "org.osgi:osgi.core:$osgiVersion"
    implementation "org.osgi:osgi.enterprise:$osgiVersion"
-   implementation "commons-io:commons-io:$commonsIOVersion"
-   implementation "commons-lang:commons-lang:$commonsLangVersion"
-
+   implementation "commons-io:commons-io:$commonsIOVersion" 
+   implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+   
    testImplementation project(':jellyfish.cli.command.testutils')
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"

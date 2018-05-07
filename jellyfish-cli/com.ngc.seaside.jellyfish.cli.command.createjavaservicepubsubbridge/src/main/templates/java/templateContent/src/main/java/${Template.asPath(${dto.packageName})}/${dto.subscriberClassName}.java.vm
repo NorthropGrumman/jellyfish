@@ -18,7 +18,6 @@ package $dto.packageName;
 #set ($ignore = $dto.imports.add("com.ngc.blocs.service.log.api.ILogService"))
 #set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
 #set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
-#set ($ignore = $dto.imports.add("com.ngc.seaside.threateval.tps.api.ITrackPriorityService"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Activate"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate"))
@@ -32,10 +31,10 @@ package $dto.packageName;
 import ${i};
 #end
 
-@Component(service = {${serviceDto.interface}.class, IServiceModule.class}, immediate = true)
-public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscribeDataType}> {
+@Component(service = IEventSubscriber.class, immediate = true)
+public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscriberDataType}> {
 
-   private ${dto.serviceName} ${dto.serviceVarName}
+   private ${dto.service.typeName} ${dto.serviceVarName};
 
    private IEventService eventService;
 
@@ -44,9 +43,9 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
    private IFaultManagementService faultManagementService;
 
    @Override
-   public void eventReceived(IEvent<${dto.subscribeDataType}> event) {
+   public void eventReceived(IEvent<${dto.subscriberDataType}> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
-      ${dto.subscribeDataType} input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
+      ${dto.subscriberDataType} input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
       try {
          ${dto.publishDataType} output = ${dto.serviceVarName}.${dto.scenarioMethod}(input);
          logService.info(getClass(), "ELK - Scenario: ${dto.scenarioMethod}; Input: %s; Output: %s;", input, output);
@@ -58,17 +57,26 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
 
    @Activate
    public void activate() {
-      eventService.addSubscriber(this, ${dto.subscribeDataType}.TOPIC);
+      eventService.addSubscriber(this, ${dto.subscriberDataType}.TOPIC);
       logService.debug(getClass(), "Activated.");
    }
 
    @Deactivate
    public void deactivate() {
-      eventService.removeSubscriber(this, ${dto.subscribeDataType}.TOPIC);
+      eventService.removeSubscriber(this, ${dto.subscriberDataType}.TOPIC);
       logService.debug(getClass(), "Deactivated.");
    }
 
-   ${dto.bindAndUnbindScenarioServiceSnippet}
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "${dto.unbinderSnippet}")
+   public void ${dto.binderSnippet}(${dto.service.typeName} ref) {
+      this.${dto.serviceVarName} = ref;
+   }
+
+   public void ${dto.unbinderSnippet}(${dto.service.typeName} ref) {
+      ${dto.binderSnippet}(null);
+   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,

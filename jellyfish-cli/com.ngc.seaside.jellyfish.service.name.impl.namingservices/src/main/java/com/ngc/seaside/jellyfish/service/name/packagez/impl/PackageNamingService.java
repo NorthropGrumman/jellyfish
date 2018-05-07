@@ -155,7 +155,7 @@ public class PackageNamingService implements IPackageNamingService {
       String fqn = getModelNameAndPackage(options)[2];
       // Construct the name using the fully qualified model name then add the remaining package names of the data type.
       // We want to skip any common prefixes the model's package and data's package have in common.
-      return (fqn + ".pubsubbridge" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
+      return (fqn + ".bridge.pubsub" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
    @Activate

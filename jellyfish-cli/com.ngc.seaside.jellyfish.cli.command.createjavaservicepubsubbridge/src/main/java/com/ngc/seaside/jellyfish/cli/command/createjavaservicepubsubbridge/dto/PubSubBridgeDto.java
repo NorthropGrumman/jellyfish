@@ -6,19 +6,30 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class PubSubBridgeDto {
 
    private final IBuildManagementService buildManagementService;
    private final IJellyFishCommandOptions options;
+   private static final String SUBSCRIBER_SUFFIX = "Subscriber";
 
    private String projectName;
    private String packageName;
-   private String className;
    private ClassDto service;
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
+   private String subscriberClassName;
+   private Set<String> imports = new TreeSet<>();
+   private String subscriberDataType;
+   private String serviceVarName;
+   private String publishDataType;
+   private String scenarioMethod;
+   private String unbinderSnippet;
+   private String binderSnippet;
 
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
@@ -77,13 +88,85 @@ public class PubSubBridgeDto {
    public String getProjectName() {
       return projectName;
    }
-
-   public PubSubBridgeDto setClassName(String className) {
-      this.className = className;
+   
+   public PubSubBridgeDto setSubscriberClassName(String subscriberClassName) {
+      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX; 
       return this;
    }
-   public String getClassName() {
-      return className;
+   
+   public String getSubscriberClassName() {
+      return subscriberClassName;
+   }
+   
+   /**
+    * Gets the list of imports needed by this class.
+    */
+   public Set<String> getImports() {
+      return imports;
+   }
+
+   public PubSubBridgeDto setImports(Set<String> imports) {
+      this.imports = imports;
+      return this;
+   }
+   
+   public String getSubscriberDataType() {
+      return subscriberDataType;
+   }
+   
+   public PubSubBridgeDto setSubscriberDataType(String subscriberDataType) {
+      this.subscriberDataType = subscriberDataType;
+      return this;    
+   }
+   
+   public PubSubBridgeDto setPublishDataType(String publishDataType) {
+      this.publishDataType =  publishDataType;
+      return this;
+   }
+   
+   public String getPublishDataType() {
+      return publishDataType;
+   }
+
+   public String getServiceVarName() {
+      return serviceVarName;
+   }
+   
+   public PubSubBridgeDto setServiceVarName(String serviceVarName) { 
+      String formattedServiceVarName = serviceVarName;
+      if(formattedServiceVarName.startsWith("I")) {
+         formattedServiceVarName = formattedServiceVarName.substring(1);
+         formattedServiceVarName = StringUtils.uncapitalize(formattedServiceVarName);
+      }    
+      this.serviceVarName = formattedServiceVarName;
+      return this;    
+   }
+
+   public String getScenarioMethod() {
+      return scenarioMethod;
+   }
+
+   public PubSubBridgeDto setScenarioMethod(String scenarioMethod) {
+      this.scenarioMethod = scenarioMethod;
+      return this;
+   }
+   
+   public String getUnbinderSnippet() {
+      return unbinderSnippet;
+   }
+
+   public PubSubBridgeDto setUnbinderSnippet(String unbinderSnippet) {
+      this.unbinderSnippet = "remove" + StringUtils.capitalize(unbinderSnippet);
+      return this;
+   }
+
+   public String getBinderSnippet() {
+      return binderSnippet;
+   }
+
+   public PubSubBridgeDto setBinderSnippet(String binderSnippet) {
+      this.binderSnippet = "set" + StringUtils.capitalize(binderSnippet);
+      return this;
    }
 
    /**

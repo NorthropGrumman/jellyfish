@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -18,9 +19,14 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.PublishDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto.PubSubBridgeDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -38,6 +44,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    
    private IBaseServiceDtoFactory baseServiceDtoFactory;
+   private IJavaServiceGenerationService generateService;
    
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
@@ -62,7 +69,6 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
-      BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
 
@@ -83,22 +89,49 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       String packageInfo = packageNamingService.getPubSubBridgePackageName(getOptions(), model);
       Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
       
-      //TODO Retrieve a list of each type of input the service subscribes to
-       
-      //TODO Do logic here
+      
 
-      //TODO iterate over list and populate DTO ending with an unpack to create multiple templates
-      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
-      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-      pubSubBridgeDto.setPackageName(packageInfo);
-      pubSubBridgeDto.setClassName("bsClassname");
-   
-      DefaultParameterCollection dataParameters = new DefaultParameterCollection();
-      dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
-      unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
-         dataParameters,
-         projectDirectory,
-         false);
+      //TODO Retrieve a list of each type of input the service subscribes to
+      
+      BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
+      List<BasicPubSubDto> pubSubMethodDtos = baseServiceDto.getBasicPubSubMethods();
+      
+      for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
+         PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+         pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+         pubSubBridgeDto.setPackageName(packageInfo);
+         
+         //TODO Figure out a different way to do this.  Gives us too many imports.
+         pubSubBridgeDto.getImports().addAll(baseServiceDto.getAbstractClass().getImports());
+         
+         
+         //Set up inputs
+         InputDto inputDto = pubSubMethodDto.getInput();
+         pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
+         pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+         
+         
+         //Set up publishes
+         PublishDto publishDto = pubSubMethodDto.getOutput();
+         pubSubBridgeDto.setPublishDataType(publishDto.getType());
+         pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
+        
+         //Retrieve required services and bind/unbind them
+         ClassDto classDto = generateService.getServiceInterfaceDescription(getOptions(), model);
+         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
+         pubSubBridgeDto.setService(classDto);
+         pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+         
+         pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
+         pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
+         
+         DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+         dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+         unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
+            dataParameters,
+            projectDirectory,
+            false);  
+      }
    }
    
    public void setTemplateDaoFactory(IBaseServiceDtoFactory ref) {
@@ -109,6 +142,13 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       setTemplateDaoFactory(null);
    }
    
+   public void setGenerateService(IJavaServiceGenerationService ref) {
+      this.generateService = ref;
+   }
+   
+   public void removeGenerateService(IJavaServiceGenerationService ref) {
+      setGenerateService(null);
+   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
    public void setLogService(ILogService ref) {
