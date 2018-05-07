@@ -7,13 +7,11 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
@@ -95,8 +93,8 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
                                   "cannot invoke jellyfish with at least one argument!");
 
       String commandName = arguments[0];
-      IParameterCollection parameters = parseParameters(Arrays.asList(arguments).subList(1, arguments.length));
-      return runCommand(commandName, parameters);
+      JellyfishCommandContext ctx = parseParameters(commandName, Arrays.asList(arguments).subList(1, arguments.length));
+      return runCommand(ctx);
    }
 
    @Override
@@ -151,24 +149,26 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       setSystemDescriptorService(null);
    }
 
-   private IParameterCollection parseParameters(List<String> params) {
-      DefaultParameterCollection parameters = new DefaultParameterCollection(parameterService.parseParameters(params));
+   private JellyfishCommandContext parseParameters(String command, List<String> params) {
+      JellyfishCommandContext ctx = new JellyfishCommandContext(command, parameterService.parseParameters(params));
 
       // Resolve the input directory parameters if necessary.
-      if (!parameters.containsParameter(CommonParameters.INPUT_DIRECTORY.getName())) {
-         parameters.addParameter(new DefaultParameter<>(CommonParameters.INPUT_DIRECTORY.getName(),
-                                                        new File(".").getAbsolutePath()));
+      if (!ctx.getOriginalParameters().containsParameter(CommonParameters.INPUT_DIRECTORY.getName())) {
+         ctx.addParameter(new DefaultParameter<>(CommonParameters.INPUT_DIRECTORY.getName(),
+                                                 new File(".").getAbsolutePath()));
       }
 
       // Resolve the GAV parameter if necessary.
-      if (!parameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())) {
-         String gav = guessGav(new File(parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName())
+      if (!ctx.getOriginalParameters().containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())) {
+         String gav = guessGav(new File(ctx.getParameters()
+                                              .getParameter(CommonParameters.INPUT_DIRECTORY.getName())
                                               .getStringValue()));
          if (gav != null) {
-            parameters.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ARTIFACT_VERSION.getName(), gav));
+            ctx.addParameter(new DefaultParameter<>(CommonParameters.GROUP_ARTIFACT_VERSION.getName(), gav));
          }
       }
-      return parameters;
+
+      return ctx;
    }
 
    private String guessGav(File inputDirectory) {
@@ -197,12 +197,12 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       return gav;
    }
 
-   private IJellyFishCommandOptions runCommand(String commandName, IParameterCollection parameters) {
-      IJellyFishCommand command = getCommand(commandName);
-      Preconditions.checkArgument(command != null, "no command named '%s' found!", commandName);
-      verifyRequiredParameters(command, parameters);
+   private IJellyFishCommandOptions runCommand(JellyfishCommandContext ctx) {
+      IJellyFishCommand command = getCommand(ctx.getCommand());
+      Preconditions.checkArgument(command != null, "no command named '%s' found!", ctx.getCommand());
+      verifyRequiredParameters(command, ctx);
 
-      LenientJellyFishCommandOptions options = buildCommandOptions(parameters);
+      LenientJellyFishCommandOptions options = buildCommandOptions(ctx);
       if (command.requiresValidSystemDescriptorProject() && options.getSystemDescriptor() == null) {
          // Note the "%s" format string ensures there will not be logging errors if the line in the file contains
          // a format string.
@@ -211,7 +211,7 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
          // Abort execution.
          String msg = String.format("command %s requires a valid System Descriptor project,"
                                     + " but project contains errors.  See logs.",
-                                    commandName);
+                                    ctx.getCommand());
          // We have an an extra exception.  If so, include it in the stack trace.
          if (options.getParsingException() == null) {
             throw new CommandException(msg);
@@ -225,10 +225,10 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       return options;
    }
 
-   private void verifyRequiredParameters(IJellyFishCommand command, IParameterCollection parameters) {
+   private void verifyRequiredParameters(IJellyFishCommand command, JellyfishCommandContext ctx) {
       String missingParams = command.getUsage().getRequiredParameters()
             .stream()
-            .filter(p -> !parameters.containsParameter(p.getName()))
+            .filter(p -> !ctx.getParameters().containsParameter(p.getName()))
             .map(IParameter::getName)
             .collect(Collectors.joining(", "));
       if (!missingParams.isEmpty()) {
@@ -239,11 +239,11 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       }
    }
 
-   private LenientJellyFishCommandOptions buildCommandOptions(IParameterCollection parameters) {
+   private LenientJellyFishCommandOptions buildCommandOptions(JellyfishCommandContext ctx) {
       LenientJellyFishCommandOptions options = new LenientJellyFishCommandOptions();
-      options.setParameters(parameters);
+      options.setParameters(ctx.getParameters());
       try {
-         options.setParsingResult(parseProject(parameters));
+         options.setParsingResult(parseProject(ctx));
       } catch (ParsingException | IllegalArgumentException e) {
          options.setParsingException(e);
          options.setParsingResult(EmptyParsingResult.INSTANCE);
@@ -252,14 +252,18 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       return options;
    }
 
-   private IParsingResult parseProject(IParameterCollection parameters) {
+   private IParsingResult parseProject(JellyfishCommandContext ctx) {
       IParsingResult result;
-      if (parameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())) {
-         String gav = parameters.getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()).getStringValue();
+      if (ctx.isGavSpecified()) {
+         String gav = ctx.getParameters()
+               .getParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName())
+               .getStringValue();
          logService.debug(getClass(), "Project has a GAV of %s, parsing with dependency management support.", gav);
          result = systemDescriptorService.parseProject(gav);
       } else {
-         String inputDirectory = parameters.getParameter(CommonParameters.INPUT_DIRECTORY.getName()).getStringValue();
+         String inputDirectory = ctx.getParameters()
+               .getParameter(CommonParameters.INPUT_DIRECTORY.getName())
+               .getStringValue();
          logService.debug(getClass(), "Project has no GAV, assuming input directory has correct SD project layout.");
          result = systemDescriptorService.parseProject(Paths.get(inputDirectory));
       }
