@@ -33,6 +33,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.scenarios.FlowFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
@@ -130,6 +131,7 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          cmd.setBuildManagementService(new MockedBuildManagementService());
          cmd.setTemplateDaoFactory(templateDaoFactory);
          cmd.setTemplateService(templateService);
+         cmd.setJavaServiceGenerationService(generatorService);
          
          outputDirectory = Files.createTempDirectory(null);
          parameters.addParameter(
@@ -233,32 +235,10 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                                                             "GET_TRACK_PRIORITY")));
             return dto;
          });
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
+
          //TODO populate DTO
          
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
+
          IScenario calculateTrackPriority0 = model.getScenarios()
                   .getByName("calculateTrackPriority0")
                   .get();

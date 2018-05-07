@@ -16,7 +16,6 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
@@ -44,7 +43,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    
    private IBaseServiceDtoFactory baseServiceDtoFactory;
-   private IJavaServiceGenerationService generateService;
+   private IJavaServiceGenerationService generatorService;
    
    public CreateJavaServicePubsubBridgeCommand() {
       super(NAME);
@@ -117,7 +116,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
         
          //Retrieve required services and bind/unbind them
-         ClassDto classDto = generateService.getServiceInterfaceDescription(getOptions(), model);
+         ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
          pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
          pubSubBridgeDto.setService(classDto);
          pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
@@ -142,38 +141,50 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       setTemplateDaoFactory(null);
    }
    
-   public void setGenerateService(IJavaServiceGenerationService ref) {
-      this.generateService = ref;
-   }
-   
    public void removeGenerateService(IJavaServiceGenerationService ref) {
-      setGenerateService(null);
+      setJavaServiceGenerationService(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       super.setLogService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeBuildManagementService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeBuildManagementService")
    public void setBuildManagementService(IBuildManagementService ref) {
       super.setBuildManagementService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTemplateService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       super.setTemplateService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeProjectNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       super.setProjectNamingService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removePackageNamingService")
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       super.setPackageNamingService(ref);
    }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      this.generatorService = ref;
+   }
+
 
    @Override
    protected IUsage createUsage() {

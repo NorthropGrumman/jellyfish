@@ -28,7 +28,7 @@ public class CreateJavaServicePubsubBridgeCommandGuiceWrapper implements IJellyF
       delegate.setBuildManagementService(buildManagementService);
       delegate.setTemplateService(templateService);
       delegate.setTemplateDaoFactory(templateDtoFactory);
-      delegate.setGenerateService(generateService);
+      delegate.setJavaServiceGenerationService(generateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
    }
