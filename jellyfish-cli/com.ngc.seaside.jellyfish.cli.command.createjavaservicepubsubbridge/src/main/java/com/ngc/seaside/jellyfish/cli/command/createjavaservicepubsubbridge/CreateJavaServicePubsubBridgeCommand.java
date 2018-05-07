@@ -1,6 +1,8 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
@@ -96,9 +98,16 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       List<BasicPubSubDto> pubSubMethodDtos = baseServiceDto.getBasicPubSubMethods();
       
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+      pubSubBridgeDto.setPackageName(packageInfo);
+      
+      pubSubBridgeDto.setProjectDependencies(new LinkedHashSet<>(
+               Arrays.asList(projectNamingService.getBaseServiceProjectName(getOptions(), model).getArtifactId(),
+                             projectNamingService.getEventsProjectName(getOptions(), model).getArtifactId())));
+  
       DefaultParameterCollection dataParameters = new DefaultParameterCollection();
       dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
-      
+       
       unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX,
          dataParameters,
          outputDirectory,

@@ -5,7 +5,7 @@ dependencies {
    compile project(':${project}')
    #end
 
-	compile "${build.getFormattedDependency('com.ngc.seaside:service.api')}"
+   compile "${build.getFormattedDependency('com.ngc.seaside:service.api')}"
    compile "${build.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
    compile "${build.getFormattedDependency('com.ngc.blocs:service.api')}"
    compile "${build.getFormattedDependency('org.osgi:osgi.core')}"

@@ -1,7 +1,6 @@
 package ${serviceDto.service.packageName};
 
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.api.IServiceModule"))
-#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.event.api.IEventService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.log.api.ILogService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
@@ -25,7 +24,7 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 
 #foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Override
-   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+   public ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -97,17 +96,6 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override
