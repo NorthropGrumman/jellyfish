@@ -129,10 +129,14 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          
          DefaultParameterCollection dataParameters = new DefaultParameterCollection();
          dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
-         unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
-            dataParameters,
-            projectDirectory,
-            false);  
+//         unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
+//            dataParameters,
+//            projectDirectory,
+//            false);
+         unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX,
+                                dataParameters,
+                                outputDirectory,
+                                false);
       }
    }
    

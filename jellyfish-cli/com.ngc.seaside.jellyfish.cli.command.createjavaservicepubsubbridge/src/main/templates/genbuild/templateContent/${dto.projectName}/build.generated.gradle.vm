@@ -2,8 +2,8 @@
 
 dependencies {
    #foreach ($project in  $dto.projectDependencies)
-       compile project(':${project}')
-    #end
+   compile project(':${project}')
+   #end
 
 	compile "${build.getFormattedDependency('com.ngc.seaside:service.api')}"
    compile "${build.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
