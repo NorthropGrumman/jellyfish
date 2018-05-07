@@ -1,18 +1,14 @@
-import com.ngc.seaside.gradle.plugins.eclipse.feature.SeasideEclipseFeaturePlugin
 import com.ngc.seaside.gradle.util.Versions
-
-import java.nio.file.Paths
 
 apply plugin: 'com.ngc.seaside.eclipse.feature'
 
-tasks.getByName(SeasideEclipseFeaturePlugin.ECLIPSE_COPY_FEATURE_FILE_TASK_NAME) {
-   from Paths.get("src", "main", "resources"), { include("feature.xml") }
-   expand('osgiVersion': Versions.makeOsgiCompliantVersion("${project.version}"),
-          'guavaVersionForModelXtextImpl': Versions.makeOsgiCompliantVersion("${guavaVersionForModelXtextImpl}"),
-          'guavaVersionForStandardStepsImpl': Versions.makeOsgiCompliantVersion("${guavaVersionForStandardStepsImpl}"),
-          'guavaVersion': Versions.makeOsgiCompliantVersion("${guavaVersion}"),
-          'guiceVersion': Versions.makeOsgiCompliantVersion("${guiceVersion}"),
-          'blocsVersion': Versions.makeOsgiCompliantVersion("${blocsVersion}"),
-          'glassfishJsonVersion': Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
-   into Paths.get(project.buildDir.absolutePath, "tmp")
+eclipseFeature {
+   templateProperties.put('guavaVersionForModelXtextImpl',
+             Versions.makeOsgiCompliantVersion("${guavaVersionForModelXtextImpl}"))
+   templateProperties.put('guavaVersionForStandardStepsImpl',
+                          Versions.makeOsgiCompliantVersion("${guavaVersionForStandardStepsImpl}"))
+   templateProperties.put('guavaVersion', Versions.makeOsgiCompliantVersion("${guavaVersion}"))
+   templateProperties.put('guiceVersion', Versions.makeOsgiCompliantVersion("${guiceVersion}"))
+   templateProperties.put('blocsVersion', Versions.makeOsgiCompliantVersion("${blocsVersion}"))
+   templateProperties.put('glassfishJsonVersion', Versions.makeOsgiCompliantVersion("${glassfishJsonVersion}"))
 }

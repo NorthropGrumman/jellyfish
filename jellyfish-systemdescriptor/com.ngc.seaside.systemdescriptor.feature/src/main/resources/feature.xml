@@ -2,7 +2,7 @@
 <feature
       id="com.ngc.seaside.systemdescriptor.feature"
       label="JellyFish SystemDescriptor DSL"
-      version="${osgiVersion}"
+      version="${version}"
       provider-name="Northrop Grumman Corporation">
 
    <description url="http://www.systemdescriptor.seaside.ngc.com/description">
@@ -270,49 +270,49 @@
          id="com.ngc.seaside.systemdescriptor.model.impl.xtext"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.service.impl.xtext"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.service.log.impl.common.log4jlogservice"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.model.api"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.model.impl.basic"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin
          id="com.ngc.seaside.systemdescriptor.service.api"
          download-size="0"
          install-size="0"
-         version="${osgiVersion}"
+         version="${version}"
          unpack="false"/>
 
    <plugin

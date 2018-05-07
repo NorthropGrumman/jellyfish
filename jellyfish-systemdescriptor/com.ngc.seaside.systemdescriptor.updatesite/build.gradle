@@ -3,6 +3,7 @@ import com.ngc.seaside.gradle.util.Versions
 
 import java.nio.file.Paths
 
+apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.ngc.seaside.eclipse.updatesite'
 
 eclipseUpdateSite {
@@ -10,14 +11,6 @@ eclipseUpdateSite {
    windowsEclipseVersion = 'eclipse-dsl-oxygen-2-win32-x86_64'
    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxEclipseVersion}.zip"
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsEclipseVersion}.zip"
-}
-
-repositories {
-   mavenLocal()
-
-   maven {
-      url nexusConsolidated
-   }
 }
 
 configurations {
