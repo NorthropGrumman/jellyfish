@@ -7,15 +7,16 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
-public class HelpCommandGuiceWrapper implements IJellyFishCommand {
+public class HelpCommandGuiceWrapper implements ICommand<ICommandOptions> {
 
    private final HelpCommand delegate = new HelpCommand();
 
@@ -50,12 +51,7 @@ public class HelpCommandGuiceWrapper implements IJellyFishCommand {
    }
 
    @Override
-   public boolean requiresValidSystemDescriptorProject() {
-      return delegate.requiresValidSystemDescriptorProject();
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   public void run(ICommandOptions commandOptions) {
       injectCommandsIfNeeded();
       delegate.run(commandOptions);
    }

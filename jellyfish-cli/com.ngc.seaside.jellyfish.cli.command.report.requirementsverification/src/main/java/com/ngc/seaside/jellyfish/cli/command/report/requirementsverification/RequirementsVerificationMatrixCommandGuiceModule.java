@@ -10,9 +10,8 @@ public class RequirementsVerificationMatrixCommandGuiceModule extends AbstractMo
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(RequirementsVerificationMatrixCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(RequirementsVerificationMatrixCommandGuiceWrapper.class);
    }
 }

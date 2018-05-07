@@ -14,9 +14,6 @@ public class CreateJavaServiceBaseCommandGuiceModule extends AbstractModule {
       Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
             .addBinding()
             .to(CreateJavaServiceBaseCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class)
-            .addBinding()
-            .to(CreateJavaServiceBaseCommandGuiceWrapper.class);
       bind(IBaseServiceDtoFactory.class)
             .to(BaseServiceDtoFactory.class);
    }

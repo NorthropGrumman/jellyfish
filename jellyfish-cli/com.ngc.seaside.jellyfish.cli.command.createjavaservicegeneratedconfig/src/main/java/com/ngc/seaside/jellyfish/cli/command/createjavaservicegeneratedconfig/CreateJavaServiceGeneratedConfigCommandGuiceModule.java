@@ -10,9 +10,8 @@ public class CreateJavaServiceGeneratedConfigCommandGuiceModule extends Abstract
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(CreateJavaServiceGeneratedConfigCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(CreateJavaServiceGeneratedConfigCommandGuiceWrapper.class);
    }
 }

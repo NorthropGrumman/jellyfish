@@ -10,9 +10,8 @@ public class CreateJavaCucumberTestsConfigCommandGuiceModule extends AbstractMod
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(CreateJavaCucumberTestsConfigCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(CreateJavaCucumberTestsConfigCommandGuiceWrapper.class);
    }
 }

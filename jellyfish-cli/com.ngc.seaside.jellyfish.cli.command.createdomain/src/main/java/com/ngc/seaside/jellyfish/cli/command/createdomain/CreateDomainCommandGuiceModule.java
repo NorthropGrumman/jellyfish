@@ -9,8 +9,8 @@ public class CreateDomainCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(CreateDomainCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding().to(CreateDomainCommandGuiceWrapper.class);
    }
 }

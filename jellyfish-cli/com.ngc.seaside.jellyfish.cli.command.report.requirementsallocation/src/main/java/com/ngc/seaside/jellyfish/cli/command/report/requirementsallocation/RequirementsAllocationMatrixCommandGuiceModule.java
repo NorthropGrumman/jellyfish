@@ -10,9 +10,8 @@ public class RequirementsAllocationMatrixCommandGuiceModule extends AbstractModu
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(RequirementsAllocationMatrixCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(RequirementsAllocationMatrixCommandGuiceWrapper.class);
    }
 }

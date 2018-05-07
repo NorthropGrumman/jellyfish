@@ -9,10 +9,8 @@ public class CreateJellyFishGradleProjectCommandGuiceModule extends AbstractModu
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-               .to(CreateJellyFishGradleProjectCommandGuiceWrapper.class);
-
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
-               .to(CreateJellyFishGradleProjectCommandGuiceWrapper.class);
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
+            .to(CreateJellyFishGradleProjectCommandGuiceWrapper.class);
    }
 }

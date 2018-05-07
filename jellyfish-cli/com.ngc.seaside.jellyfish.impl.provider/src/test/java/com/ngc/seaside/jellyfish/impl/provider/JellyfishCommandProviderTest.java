@@ -11,7 +11,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
@@ -25,9 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Path;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -52,9 +49,6 @@ public class JellyfishCommandProviderTest {
    @Mock
    private IParsingResult parsingResult;
 
-   @Mock
-   private ISystemDescriptor systemDescriptor;
-
    @Before
    public void setup() {
       provider = new JellyfishCommandProvider();
@@ -78,34 +72,11 @@ public class JellyfishCommandProviderTest {
    }
 
    @Test
-   public void testDoesGetCommands() {
-      IJellyFishCommand command = mockedCommand("foo-command", true);
-      provider.addCommand(command);
-      assertEquals("command not correct!",
-                   command,
-                   provider.getCommand(command.getName()));
-      assertNull("should return null if command not found!",
-                 provider.getCommand("command-does-not-exists"));
-   }
-
-   @Test
-   public void testDoesRunCommandWhichDoesNotRequireValidProject() {
-      IJellyFishCommand command = mockedCommand("foo-command", false);
-      when(parameterService.parseParameters(anyList())).thenReturn(mockedParams());
-      when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(parsingResult);
-
-      provider.addCommand(command);
-      provider.run(new String[]{command.getName()});
-
-      verify(command).run(any(IJellyFishCommandOptions.class));
-   }
-
-   @Test
    public void testDoesRunCommandWithValidProject() {
-      IJellyFishCommand command = mockedCommand("foo-command", true);
+      IJellyFishCommand command = mockedCommand("foo-command");
       when(parameterService.parseParameters(anyList())).thenReturn(mockedParams());
       when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(parsingResult);
-      when(parsingResult.getSystemDescriptor()).thenReturn(systemDescriptor);
+      when(parsingResult.isSuccessful()).thenReturn(true);
 
       provider.addCommand(command);
       provider.run(new String[]{command.getName()});
@@ -114,11 +85,11 @@ public class JellyfishCommandProviderTest {
    }
 
    @Test(expected = CommandException.class)
-   public void testDoesRunNotCommandWithInvalidProjectIfValidProjectRequired() {
-      IJellyFishCommand command = mockedCommand("foo-command", true);
+   public void testDoesRunNotCommandWithInvalidProject() {
+      IJellyFishCommand command = mockedCommand("foo-command");
       when(parameterService.parseParameters(anyList())).thenReturn(mockedParams());
       when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(parsingResult);
-      when(parsingResult.getSystemDescriptor()).thenReturn(null);
+      when(parsingResult.isSuccessful()).thenReturn(false);
 
       provider.addCommand(command);
       provider.run(new String[]{command.getName()});
@@ -128,7 +99,7 @@ public class JellyfishCommandProviderTest {
    public void testDoesCheckRequiredParametersBeforeRunningCommand() {
       IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setRequired(true));
 
-      IJellyFishCommand command = mockedCommand("foo-command", false);
+      IJellyFishCommand command = mockedCommand("foo-command");
       when(command.getUsage()).thenReturn(usage);
       when(parameterService.parseParameters(anyList())).thenReturn(mockedParams("x"));
 
@@ -150,10 +121,9 @@ public class JellyfishCommandProviderTest {
       provider.deactivate();
    }
 
-   private static IJellyFishCommand mockedCommand(String name, boolean requireValidProject) {
+   private static IJellyFishCommand mockedCommand(String name) {
       IJellyFishCommand command = mock(IJellyFishCommand.class);
       when(command.getName()).thenReturn(name);
-      when(command.requiresValidSystemDescriptorProject()).thenReturn(requireValidProject);
       when(command.getUsage()).thenReturn(new DefaultUsage("", Collections.emptyList()));
       return command;
    }

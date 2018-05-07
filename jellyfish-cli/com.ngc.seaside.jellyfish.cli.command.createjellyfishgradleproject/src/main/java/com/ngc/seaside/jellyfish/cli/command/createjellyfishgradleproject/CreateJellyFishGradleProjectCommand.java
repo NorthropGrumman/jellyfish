@@ -79,11 +79,6 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    }
 
    @Override
-   public boolean requiresValidSystemDescriptorProject() {
-      return false;
-   }
-
-   @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());

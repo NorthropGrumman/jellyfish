@@ -10,9 +10,8 @@ public class CreateJavaServiceProjectCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-            .to(CreateJavaServiceProjectCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
             .to(CreateJavaServiceProjectCommandGuiceWrapper.class);
    }
 }

@@ -2,6 +2,10 @@ package com.ngc.seaside.jellyfish;
 
 import com.google.inject.AbstractModule;
 
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandProvider;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
@@ -38,6 +42,15 @@ public class JellyfishServiceTest {
    @Mock
    private IJellyFishCommandOptions commandOptions;
 
+   @Mock
+   private IJellyFishCommand mockedJfCommand;
+
+   @Mock
+   private ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> defaultProvider;
+
+   @Mock
+   private ICommandOptions defaultCommandOptions;
+
    @Before
    public void setup() {
       service = new JellyfishService();
@@ -48,6 +61,7 @@ public class JellyfishServiceTest {
       String command = "foo";
       String expectedHomeProperty = Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString();
       Collection<String> args = Arrays.asList("a=b", "c=d");
+      when(provider.getCommand(command)).thenReturn(mockedJfCommand);
       when(provider.run(aryEq(new String[]{command, "a=b", "c=d"})))
             .thenAnswer(new SystemPropertyAssertingAnswer<>(commandOptions,
                                                             JellyfishService.BLOCS_HOME_SYSTEM_PROPERTY,
@@ -65,6 +79,7 @@ public class JellyfishServiceTest {
       Map<String, String> args = new LinkedHashMap<>();
       args.put("a", "b");
       args.put("c", "d");
+      when(provider.getCommand(command)).thenReturn(mockedJfCommand);
       when(provider.run(aryEq(new String[]{command, "a=b", "c=d"}))).thenReturn(commandOptions);
 
       IJellyfishExecution result = service.run(command, args, Collections.singleton(new MockRegisteringModule()));
@@ -74,10 +89,28 @@ public class JellyfishServiceTest {
    }
 
    @Test
+   public void testDoesRunDefaultCommand() {
+      String command = "foo";
+      String expectedHomeProperty = Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString();
+      Collection<String> args = Arrays.asList("a=b", "c=d");
+      when(provider.getCommand(command)).thenReturn(null);
+      when(defaultProvider.run(aryEq(new String[]{command, "a=b", "c=d"})))
+            .thenAnswer(new SystemPropertyAssertingAnswer<>(defaultCommandOptions,
+                                                            JellyfishService.BLOCS_HOME_SYSTEM_PROPERTY,
+                                                            expectedHomeProperty));
+
+      IJellyfishExecution result = service.run(command, args, Collections.singleton(new MockRegisteringModule()));
+      assertEquals("result not correct!",
+                   defaultCommandOptions.getParameters(),
+                   result.getOptions().getParameters());
+   }
+
+   @Test
    public void testDoesNotOverwriteAlreadySetBlocsHomeProperty() {
       String command = "foo";
       String expectedHomeProperty = "blah/blah/blah";
       Collection<String> args = Arrays.asList("a=b", "c=d");
+      when(provider.getCommand(command)).thenReturn(mockedJfCommand);
       when(provider.run(aryEq(new String[]{command, "a=b", "c=d"})))
             .thenAnswer(new SystemPropertyAssertingAnswer<>(commandOptions,
                                                             JellyfishService.BLOCS_HOME_SYSTEM_PROPERTY,
@@ -97,6 +130,7 @@ public class JellyfishServiceTest {
    public void testDoesWrapExceptions() {
       String command = "foo";
       Collection<String> args = Arrays.asList("a=b", "c=d");
+      when(provider.getCommand(command)).thenReturn(mockedJfCommand);
       when(provider.run(aryEq(new String[]{command, "a=b", "c=d"})))
             .thenThrow(new RuntimeException("testing error handling"));
 
@@ -113,6 +147,7 @@ public class JellyfishServiceTest {
       @Override
       protected void configure() {
          bind(IJellyFishCommandProvider.class).toInstance(provider);
+         bind(ICommandProvider.class).toInstance(defaultProvider);
       }
    }
 

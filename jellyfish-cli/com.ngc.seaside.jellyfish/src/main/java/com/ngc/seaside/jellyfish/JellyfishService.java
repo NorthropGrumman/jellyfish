@@ -8,6 +8,10 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 
+import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
@@ -54,9 +58,7 @@ public class JellyfishService implements IJellyfishService {
          }
 
          Injector injector = createInjector(modules);
-         // Get the command provider and run.
-         IJellyFishCommandProvider provider = injector.getInstance(IJellyFishCommandProvider.class);
-         return adaptResult(provider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
+         return runCommand(injector, command, arguments, sw);
       } catch (Throwable t) {
          String msg = String.format("unable to run Jellyfish with the command %s and args %s!",
                                     command,
@@ -95,6 +97,17 @@ public class JellyfishService implements IJellyfishService {
    }
 
    /**
+    * Adapts an {@code ICommandOptions} that comes back from the provider to an {@code IJellyfishExecution}.
+    *
+    * @param options           the result to adapt
+    * @param executionDuration the time taken to run Jellyfish
+    * @return the adapted result
+    */
+   protected IJellyfishExecution adaptResult(ICommandOptions options, long executionDuration) {
+      return new JellyfishExecution(options).setExecutionDuration(executionDuration);
+   }
+
+   /**
     * Adapts an {@code IJellyFishCommandOptions} that comes back from the provider to an {@code IJellyfishExecution}.
     *
     * @param options           the result to adapt
@@ -103,6 +116,24 @@ public class JellyfishService implements IJellyfishService {
     */
    protected IJellyfishExecution adaptResult(IJellyFishCommandOptions options, long executionDuration) {
       return new JellyfishExecution(options).setExecutionDuration(executionDuration);
+   }
+
+   private IJellyfishExecution runCommand(Injector injector,
+                                          String command,
+                                          Collection<String> arguments,
+                                          Stopwatch sw) {
+      // Determine which type of provider handles this command.
+      IJellyFishCommandProvider jfProvider = injector.getInstance(IJellyFishCommandProvider.class);
+      @SuppressWarnings({"unchecked"})
+      ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> defaultProvider =
+            injector.getInstance(ICommandProvider.class);
+      // Is this a Jellyfish command which requires an SD project?
+      if (jfProvider.getCommand(command) != null) {
+         return adaptResult(jfProvider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
+      } else {
+         // Otherwise, this must be a default command that does not require an SD project.
+         return adaptResult(defaultProvider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
+      }
    }
 
    private static String[] buildArgs(String command, Collection<String> arguments) {
@@ -133,7 +164,8 @@ public class JellyfishService implements IJellyfishService {
    }
 
    /**
-    * Default implementation of {@code IJellyfishExecution}.
+    * Default implementation of {@code IJellyfishExecution}.  Can adapt either a {@code IJellyFishCommandOptions} or a
+    * {@code ICommandOptions}.
     */
    private static class JellyfishExecution implements IJellyfishExecution {
 
@@ -141,6 +173,12 @@ public class JellyfishService implements IJellyfishService {
       private long executionDuration;
 
       private JellyfishExecution(IJellyFishCommandOptions options) {
+         this.options = options;
+      }
+
+      private JellyfishExecution(ICommandOptions basicOptions) {
+         DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
+         options.setParameters(basicOptions.getParameters());
          this.options = options;
       }
 

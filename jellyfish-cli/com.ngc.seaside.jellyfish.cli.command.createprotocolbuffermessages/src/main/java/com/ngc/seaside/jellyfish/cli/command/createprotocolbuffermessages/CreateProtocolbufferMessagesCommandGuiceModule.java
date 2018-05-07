@@ -12,9 +12,8 @@ public class CreateProtocolbufferMessagesCommandGuiceModule extends AbstractModu
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class).addBinding()
-               .to(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class).addBinding()
-               .to(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
+      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
+            .addBinding()
+            .to(CreateProtocolbufferMessagesCommandGuiceWrapper.class);
    }
 }

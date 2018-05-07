@@ -6,6 +6,7 @@ import com.ngc.blocs.component.impl.common.DeferredDynamicReference;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -17,7 +18,6 @@ import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -37,15 +37,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Component(service = IJellyFishCommandProvider.class)
-public class JellyfishCommandProvider implements IJellyFishCommandProvider {
+public class JellyfishCommandProvider extends AbstractCommandProvider<
+      IJellyFishCommandOptions,
+      IJellyFishCommand,
+      IJellyFishCommandOptions>
+      implements IJellyFishCommandProvider {
 
    private final Map<String, IJellyFishCommand> commands = new ConcurrentHashMap<>();
 
-   private ILogService logService;
-   private IParameterService parameterService;
    private ISystemDescriptorService systemDescriptorService;
 
    /**
@@ -119,23 +120,17 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          unbind = "removeLogService")
+   @Override
    public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
+      super.setLogService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          unbind = "removeParameterService")
+   @Override
    public void setParameterService(IParameterService ref) {
-      this.parameterService = ref;
-   }
-
-   public void removeParameterService(IParameterService ref) {
-      setParameterService(null);
+      super.setParameterService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
@@ -200,24 +195,17 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
    private IJellyFishCommandOptions runCommand(JellyfishCommandContext ctx) {
       IJellyFishCommand command = getCommand(ctx.getCommand());
       Preconditions.checkArgument(command != null, "no command named '%s' found!", ctx.getCommand());
-      verifyRequiredParameters(command, ctx);
+      verifyRequiredParameters(command, ctx.getParameters());
 
-      LenientJellyFishCommandOptions options = buildCommandOptions(ctx);
-      if (command.requiresValidSystemDescriptorProject() && options.getSystemDescriptor() == null) {
+      IJellyFishCommandOptions options = buildCommandOptions(ctx);
+      // If the result is not successful, log errors and abort.
+      if (!options.getParsingResult().isSuccessful()) {
          // Note the "%s" format string ensures there will not be logging errors if the line in the file contains
          // a format string.
          ParsingResultLogging.logErrors(options.getParsingResult())
                .forEach(l -> logService.error(JellyfishCommandProvider.class, "%s", l));
          // Abort execution.
-         String msg = String.format("command %s requires a valid System Descriptor project,"
-                                    + " but project contains errors.  See logs.",
-                                    ctx.getCommand());
-         // We have an an extra exception.  If so, include it in the stack trace.
-         if (options.getParsingException() == null) {
-            throw new CommandException(msg);
-         } else {
-            throw new CommandException(msg, options.getParsingException());
-         }
+         throw new CommandException("System Descriptor project contains errors.  See logs.");
       }
 
       // Run the command.
@@ -225,30 +213,10 @@ public class JellyfishCommandProvider implements IJellyFishCommandProvider {
       return options;
    }
 
-   private void verifyRequiredParameters(IJellyFishCommand command, JellyfishCommandContext ctx) {
-      String missingParams = command.getUsage().getRequiredParameters()
-            .stream()
-            .filter(p -> !ctx.getParameters().containsParameter(p.getName()))
-            .map(IParameter::getName)
-            .collect(Collectors.joining(", "));
-      if (!missingParams.isEmpty()) {
-         String msg = String.format("the command '%s' requires the following additional parameters: %s",
-                                    command.getName(),
-                                    missingParams);
-         throw new CommandException(msg);
-      }
-   }
-
-   private LenientJellyFishCommandOptions buildCommandOptions(JellyfishCommandContext ctx) {
-      LenientJellyFishCommandOptions options = new LenientJellyFishCommandOptions();
+   private IJellyFishCommandOptions buildCommandOptions(JellyfishCommandContext ctx) {
+      DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
       options.setParameters(ctx.getParameters());
-      try {
-         options.setParsingResult(parseProject(ctx));
-      } catch (ParsingException | IllegalArgumentException e) {
-         options.setParsingException(e);
-         options.setParsingResult(EmptyParsingResult.INSTANCE);
-         logService.error(getClass(), "Got an exception while parsing project.", e);
-      }
+      options.setParsingResult(parseProject(ctx));
       return options;
    }
 

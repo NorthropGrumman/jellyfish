@@ -27,11 +27,6 @@ public class ValidateCommandGuiceWrapper implements IJellyFishCommand {
    }
 
    @Override
-   public boolean requiresValidSystemDescriptorProject() {
-      return delegate.requiresValidSystemDescriptorProject();
-   }
-
-   @Override
    public void run(IJellyFishCommandOptions commandOptions) {
       delegate.run(commandOptions);
    }

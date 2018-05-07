@@ -6,8 +6,8 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
 /**
  *
  */
-@Component(service = IJellyFishCommand.class)
-public class CreateJellyFishCommandCommand implements IJellyFishCommand {
+@Component(service = ICommand.class)
+public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> {
 
    private static final String NAME = "create-jellyfish-command";
    private static final IUsage USAGE = createUsage();
@@ -75,12 +75,7 @@ public class CreateJellyFishCommandCommand implements IJellyFishCommand {
    }
 
    @Override
-   public boolean requiresValidSystemDescriptorProject() {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   public void run(ICommandOptions commandOptions) {
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());
 

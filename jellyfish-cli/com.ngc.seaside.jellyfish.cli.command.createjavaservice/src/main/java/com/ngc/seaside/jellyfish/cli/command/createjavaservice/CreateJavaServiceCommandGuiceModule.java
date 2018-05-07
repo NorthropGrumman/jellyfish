@@ -15,9 +15,6 @@ public class CreateJavaServiceCommandGuiceModule extends AbstractModule {
       Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
             .addBinding()
             .to(CreateJavaServiceCommandGuiceWrapper.class);
-      Multibinder.newSetBinder(binder(), ICommand.class)
-            .addBinding()
-            .to(CreateJavaServiceCommandGuiceWrapper.class);
       bind(IServiceDtoFactory.class)
             .to(ServiceDtoFactory.class).asEagerSingleton();
    }

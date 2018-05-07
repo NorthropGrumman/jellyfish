@@ -37,9 +37,6 @@ dependencies {
 
     implementation project(':jellyfish.cli.command.validate')
 
-    implementation project(':jellyfish.cli.command.samplecommand')
-    commandTemplate project(path: ':jellyfish.cli.command.samplecommand', configuration: 'commandTemplate')
-
     implementation project(':jellyfish.cli.command.createjavadistribution')
     commandTemplate project(path: ':jellyfish.cli.command.createjavadistribution', configuration: 'commandTemplate')
 

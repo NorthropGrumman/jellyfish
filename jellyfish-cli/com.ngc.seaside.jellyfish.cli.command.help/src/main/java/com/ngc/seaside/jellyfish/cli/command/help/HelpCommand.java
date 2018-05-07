@@ -5,8 +5,8 @@ import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
@@ -26,23 +26,24 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@Component(service = IJellyFishCommand.class)
-public final class HelpCommand implements IJellyFishCommand {
+@Component(service = ICommand.class)
+public final class HelpCommand implements ICommand<ICommandOptions> {
 
    public static final String COMMAND_NAME = "help";
    private static final int LINE_WIDTH = 80;
    private static final String INDENT = "   ";
-   private static final IUsage COMMAND_USAGE = new DefaultUsage("Prints this help",
-                                                                new DefaultParameter<>("verbose").setDescription(
-                                                                      "Prints the help of all of the known commands")
-                                                                      .setRequired(false),
-                                                                new DefaultParameter<>("command")
-                                                                      .setDescription("Command to print help")
-                                                                      .setRequired(false));
+   private static final IUsage COMMAND_USAGE = new DefaultUsage(
+         "Prints this help",
+         new DefaultParameter<>("verbose")
+               .setDescription("Prints the help of all of the known commands")
+               .setRequired(false),
+         new DefaultParameter<>("command")
+               .setDescription("Command to print help")
+               .setRequired(false));
 
    private ILogService logService;
 
-   private final TreeMap<String, IJellyFishCommand> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+   private final TreeMap<String, ICommand<?>> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
    /**
     * Adds a command to the help
@@ -52,7 +53,7 @@ public final class HelpCommand implements IJellyFishCommand {
    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE,
          policy = ReferencePolicy.STATIC,
          unbind = "removeCommand")
-   public void addCommand(IJellyFishCommand command) {
+   public void addCommand(ICommand<?> command) {
       Preconditions.checkNotNull(command);
       commands.put(command.getName(), command);
    }
@@ -62,7 +63,7 @@ public final class HelpCommand implements IJellyFishCommand {
     *
     * @param command command to be removed
     */
-   public void removeCommand(IJellyFishCommand command) {
+   public void removeCommand(ICommand<?> command) {
       Preconditions.checkNotNull(command);
       commands.remove(command.getName());
    }
@@ -107,12 +108,7 @@ public final class HelpCommand implements IJellyFishCommand {
    }
 
    @Override
-   public boolean requiresValidSystemDescriptorProject() {
-      return false;
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   public void run(ICommandOptions commandOptions) {
       Preconditions.checkNotNull(commandOptions);
       IParameter<?> verboseParameter = commandOptions.getParameters().getParameter("verbose");
 
@@ -166,7 +162,7 @@ public final class HelpCommand implements IJellyFishCommand {
             writeCommandHelp(builder, true, cmd);
          }
       } else {
-         StringTable<IJellyFishCommand> table = getCommandTable(INDENT, commands.values());
+         StringTable<ICommand<?>> table = getCommandTable(INDENT, commands.values());
          builder.append(table);
          builder.append("\nTo see more detail about a command, run `jellyfish help -Dcommand=<command-name>`\n");
       }
@@ -182,7 +178,7 @@ public final class HelpCommand implements IJellyFishCommand {
    private void writeCommandHelp(StringBuilder builder, boolean inUsage, String commandName) {
       String baseIndent = inUsage ? INDENT : "";
       String parameterIndent = inUsage ? INDENT + INDENT : INDENT;
-      IJellyFishCommand command = commands.get(commandName);
+      ICommand<?> command = commands.get(commandName);
       if (command == null) {
          builder.append(commandName + " command not found\n");
       } else {
@@ -196,7 +192,7 @@ public final class HelpCommand implements IJellyFishCommand {
                                                                                command.getUsage()
                                                                                      .getRequiredParameters());
          if (inUsage) {
-            StringTable<IJellyFishCommand> table = getCommandTable(baseIndent, Collections.singleton(command));
+            StringTable<ICommand<?>> table = getCommandTable(baseIndent, Collections.singleton(command));
             builder.append(table).append('\n');
          } else {
             String parameterUsage = command.getUsage().getAllParameters().stream()
@@ -227,7 +223,7 @@ public final class HelpCommand implements IJellyFishCommand {
     * @param elements    commands to be added to the table
     * @return a properly-formatted StringTable for printing IJellyFishCommands
     */
-   private StringTable<IJellyFishCommand> getCommandTable(String columnSpace, Collection<IJellyFishCommand> elements) {
+   private StringTable<ICommand<?>> getCommandTable(String columnSpace, Collection<ICommand<?>> elements) {
       int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
       return getTable(columnSpace, elements,
                       new JellyFishCommandFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
