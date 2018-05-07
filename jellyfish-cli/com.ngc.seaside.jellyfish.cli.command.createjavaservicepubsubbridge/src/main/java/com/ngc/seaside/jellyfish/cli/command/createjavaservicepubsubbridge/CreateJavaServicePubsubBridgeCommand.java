@@ -95,8 +95,17 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       List<BasicPubSubDto> pubSubMethodDtos = baseServiceDto.getBasicPubSubMethods();
       
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+      DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+      dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+      
+      unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX,
+         dataParameters,
+         outputDirectory,
+         false);
+      
       for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
-         PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+         pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
          pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
          pubSubBridgeDto.setPackageName(packageInfo);
          
@@ -127,16 +136,12 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
          pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
          
-         DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+         dataParameters = new DefaultParameterCollection();
          dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
-//         unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
-//            dataParameters,
-//            projectDirectory,
-//            false);
-         unpackSuffixedTemplate(PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX,
-                                dataParameters,
-                                outputDirectory,
-                                false);
+         unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
+            dataParameters,
+            projectDirectory,
+            false);
       }
    }
    

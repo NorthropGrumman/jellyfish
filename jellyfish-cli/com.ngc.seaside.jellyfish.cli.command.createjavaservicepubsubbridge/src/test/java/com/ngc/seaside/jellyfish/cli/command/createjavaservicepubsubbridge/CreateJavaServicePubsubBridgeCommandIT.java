@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,9 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -236,9 +241,6 @@ public class CreateJavaServicePubsubBridgeCommandIT {
             return dto;
          });
 
-         //TODO populate DTO
-         
-
          IScenario calculateTrackPriority0 = model.getScenarios()
                   .getByName("calculateTrackPriority0")
                   .get();
@@ -276,9 +278,20 @@ public class CreateJavaServicePubsubBridgeCommandIT {
       cmd.run(jellyFishCommandOptions);
       
       Path projectDirectory = outputDirectory.resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.pubsubbridge");
+      assertTrue("Project directory incorrect", Files.isDirectory(projectDirectory));
       
+      Path gradleBuild = projectDirectory.resolve("build.generated.gradle");
+      assertTrue(Files.isRegularFile(gradleBuild));
       
-  
+      Path sourceDirectory = projectDirectory.resolve(Paths.get("src", "main", "java"));
+      assertTrue(Files.isDirectory(sourceDirectory));
+      
+      List<Path> files = Files.walk(sourceDirectory)
+               .filter(Files::isRegularFile)
+               .sorted(Comparator.comparing(f -> f.getFileName().toString()))
+               .collect(Collectors.toList());
+      
+      assertEquals(2, files.size());
    }
    
    
@@ -303,7 +316,7 @@ public class CreateJavaServicePubsubBridgeCommandIT {
    *
    * @return Model used for testing
    */
-  public static IModel newModelForTesting() {
+  private static IModel newModelForTesting() {
      ModelUtils.PubSubModel model =
            new ModelUtils.PubSubModel("com.ngc.seaside.threateval.EngagementTrackPriorityService");
 
