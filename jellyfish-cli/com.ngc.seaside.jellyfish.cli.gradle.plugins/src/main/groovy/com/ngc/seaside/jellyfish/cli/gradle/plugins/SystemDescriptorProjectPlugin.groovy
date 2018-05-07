@@ -152,7 +152,7 @@ class SystemDescriptorProjectPlugin implements Plugin<Project> {
                                 username nexusUsername
                                 password nexusPassword
                             }
-                            url p.version.endsWith('-SNAPSHOT') ? nexusSnapshots : nexusReleases
+                            url p.version.toString().endsWith('-SNAPSHOT') ? nexusSnapshots : nexusReleases
                         }
                     }
                 }
