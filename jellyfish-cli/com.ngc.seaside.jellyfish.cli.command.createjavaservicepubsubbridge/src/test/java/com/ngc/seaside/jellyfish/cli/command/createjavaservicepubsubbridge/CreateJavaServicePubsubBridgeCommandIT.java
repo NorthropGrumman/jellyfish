@@ -1,5 +1,10 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge;
 
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.OUTPUT_DIRECTORY_PROPERTY;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,9 +41,6 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServi
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.scenarios.FlowFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataFieldGenerationService;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedDataService;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
@@ -63,13 +65,6 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
-
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.OUTPUT_DIRECTORY_PROPERTY;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateJavaServicePubsubBridgeCommandIT {
 
@@ -244,32 +239,22 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          IScenario calculateTrackPriority0 = model.getScenarios()
                   .getByName("calculateTrackPriority0")
                   .get();
-         IScenario calculateTrackPriority1 = model.getScenarios()
-                  .getByName("calculateTrackPriority1")
-                  .get();
          IScenario getTrackPriority = model.getScenarios()
                   .getByName("getTrackPriority")
                   .get();
          IPublishSubscribeMessagingFlow pubSubFlow0 = FlowFactory.newPubSubFlowPath(calculateTrackPriority0);
-         IPublishSubscribeMessagingFlow pubSubFlow1 = FlowFactory.newPubSubFlowPath(calculateTrackPriority1);
          IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow(getTrackPriority,
                                                                                              "trackPriorityRequest",
                                                                                              "trackPriorityResponse");
          when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority0)))
                .thenReturn(Optional.of(pubSubFlow0));
-         when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority1)))
-         .thenReturn(Optional.of(pubSubFlow1));
          when(scenarioService.getRequestResponseMessagingFlow(any(), eq(calculateTrackPriority0)))
                .thenReturn(Optional.empty());
-         when(scenarioService.getRequestResponseMessagingFlow(any(), eq(calculateTrackPriority1)))
-         .thenReturn(Optional.empty());
+
          when(scenarioService.getRequestResponseMessagingFlow(any(), eq(getTrackPriority)))
                .thenReturn(Optional.of(reqResFlow));
          when(scenarioService.getPubSubMessagingFlow(any(), eq(getTrackPriority)))
                .thenReturn(Optional.empty());
-
-
-
    }
 
    @Test
@@ -291,7 +276,7 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                .sorted(Comparator.comparing(f -> f.getFileName().toString()))
                .collect(Collectors.toList());
       
-      assertEquals(2, files.size());
+      assertEquals(1, files.size());
    }
    
    
@@ -327,14 +312,6 @@ public class CreateJavaServicePubsubBridgeCommandIT {
      model.addPubSub("calculateTrackPriority0",
                      "trackEngagementStatus0", trackEngagementStatus0,
                      "trackPriority0", trackPriority0);
-     
-     IData trackEngagementStatus1 =
-              ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackEngagementStatus1");
-     IData trackPriority1 =
-              ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriority1");
-     model.addPubSub("calculateTrackPriority1",
-                        "trackEngagementStatus1", trackEngagementStatus1,
-                        "trackPriority1", trackPriority1);
 
      IData trackPriorityRequest =
            ModelUtils.getMockNamedChild(IData.class, "com.ngc.seaside.threateval.TrackPriorityRequest");

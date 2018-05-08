@@ -84,16 +84,11 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    protected void runDeferredPhase() {
       IModel model = getModel();
       Path outputDirectory = getOutputDirectory();
-      boolean clean = getBooleanParameter(CommonParameters.CLEAN.getName());
       
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
       String packageInfo = packageNamingService.getPubSubBridgePackageName(getOptions(), model);
       Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
-      
-      
-
-      //TODO Retrieve a list of each type of input the service subscribes to
-      
+        
       BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       List<BasicPubSubDto> pubSubMethodDtos = baseServiceDto.getBasicPubSubMethods();
       
@@ -116,24 +111,18 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
          pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
          pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-         pubSubBridgeDto.setPackageName(packageInfo);
-         
-         //TODO Figure out a different way to do this.  Gives us too many imports.
-         //pubSubBridgeDto.setAbstractImports(baseServiceDto.getPubSubImports());
-         
+         pubSubBridgeDto.setPackageName(packageInfo);   
          
          //Set up inputs
          InputDto inputDto = pubSubMethodDto.getInput();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
          pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
-         
-         
+             
          //Set up publishes
          PublishDto publishDto = pubSubMethodDto.getOutput();
          pubSubBridgeDto.setPublishDataType(publishDto.getType());
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
-
          pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
         
          //Retrieve required services and bind/unbind them
