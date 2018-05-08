@@ -4,6 +4,7 @@ import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridg
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_GENERATED_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.CreateJavaServicePubsubBridgeCommand.PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileContains;
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -139,7 +140,6 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
                   "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
          
-
          ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
          when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
                Optional.of(model));
@@ -163,11 +163,9 @@ public class CreateJavaServicePubsubBridgeCommandIT {
             IModel model = args.getArgument(1);
             return model.getFullyQualifiedName().toLowerCase() + ".bridge.pubsub";
          });
-         
-         
+                 
          setupMocksForBaseService();
         
-
          IScenario calculateTrackPriority0 = model.getScenarios()
                   .getByName("calculateTrackPriority0")
                   .get();
@@ -176,8 +174,7 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                   .get();
          IPublishSubscribeMessagingFlow pubSubFlow0 = FlowFactory.newPubSubFlowPath(calculateTrackPriority0);
          IRequestResponseMessagingFlow reqResFlow = FlowFactory.newRequestResponseServerFlow(getTrackPriority,
-                                                                                             "trackPriorityRequest",
-                                                                                             "trackPriorityResponse");
+                                                                                             "trackPriorityRequest",                                                                                             "trackPriorityResponse");
          when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority0)))
                .thenReturn(Optional.of(pubSubFlow0));
          when(scenarioService.getRequestResponseMessagingFlow(any(), eq(calculateTrackPriority0)))
@@ -187,6 +184,18 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                .thenReturn(Optional.of(reqResFlow));
          when(scenarioService.getPubSubMessagingFlow(any(), eq(getTrackPriority)))
                .thenReturn(Optional.empty());
+   }
+
+   @Test
+   public void testDoesRunDefaultPhase() throws Throwable {
+      cmd.run(jellyFishCommandOptions);
+      
+      Path projectDirectory = outputDirectory
+               .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.pubsubbridge");
+      assertFileLinesEquals(
+               "build.gradle not correct!",
+               Paths.get("src", "test", "resources", "build.gradle.expected"),
+               projectDirectory.resolve("build.gradle"));
    }
 
    @Test
@@ -209,21 +218,32 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                .collect(Collectors.toList());
       
       assertEquals(1, files.size());
-   }
-   
-   
-   @Test
-   public void testDoesRunDefaultPhase() throws Throwable {
-      cmd.run(jellyFishCommandOptions);
       
-      Path projectDirectory = outputDirectory
-               .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.pubsubbridge");
-      assertFileLinesEquals(
-               "build.gradle not correct!",
-               Paths.get("src", "test", "resources", "build.gradle.expected"),
-               projectDirectory.resolve("build.gradle"));
+      Path trackEngStatusSubPath = Paths.get(sourceDirectory.toAbsolutePath().toString(), 
+         "com/ngc/seaside/threateval/engagementtrackpriorityservice/bridge/pubsub",
+         "/TrackEngagementStatus0Subscriber.java");
+      
+      assertTrue(Files.isRegularFile(trackEngStatusSubPath));
+      
+      //Check imports
+      assertFileContains(trackEngStatusSubPath, "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.api.IEngagementTrackPriorityService;");
+      assertFileContains(trackEngStatusSubPath, "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus0;");
+      assertFileContains(trackEngStatusSubPath, "\\bimport\\s+com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority0;");
+      
+      //Class declaration
+      assertFileContains(trackEngStatusSubPath, "\\bpublic\\s+class\\s+TrackEngagementStatus0Subscriber\\b");
+      assertFileContains(trackEngStatusSubPath, "\\bimplements\\s+IEventSubscriber<TrackEngagementStatus0>");
+      
+      //Event handling
+      assertFileContains(trackEngStatusSubPath, "\\bprivate\\s+IEngagementTrackPriorityService\\s+engagementTrackPriorityService\\b");
+      assertFileContains(trackEngStatusSubPath, "\\bengagementTrackPriorityService.calculateTrackPriority0\\b");
+      assertFileContains(trackEngStatusSubPath, "\\bTrackPriority0.TOPIC\\b");
+      
+      //Check OSGi setters/getters
+      assertFileContains(trackEngStatusSubPath, "\\bpublic\\s+void\\s+setEngagementTrackPriorityService\\b");
+      assertFileContains(trackEngStatusSubPath, "\\bpublic\\s+void\\s+removeEngagementTrackPriorityService\\b");
    }
-
+   
    @After
    public void cleanup() {
       cmd.deactivate();
@@ -253,12 +273,11 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                           "getTrackPriority",
                           "trackPriorityRequest", trackPriorityRequest,
                           "trackPriorityResponse", trackPriorityResponse);
-
      return model;
   }
 
+   //Added for BaseServiceDto needs
    private void setupMocksForBaseService() {    
-      //Added for BaseServiceDto needs
       when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);
          IProjectInformation information = mock(IProjectInformation.class);
@@ -327,7 +346,6 @@ public class CreateJavaServicePubsubBridgeCommandIT {
                                                          "TRACK_PRIORITY",
                                                          "GET_TRACK_PRIORITY")));
          return dto;
-      });
-      
+      });     
    }
 }
