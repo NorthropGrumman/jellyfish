@@ -67,45 +67,51 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
+########## Multi-input 1-output methods with input-input correlation Delegaters##########
+#foreach($method in $dto.correlationMethods)
+   @Override
+   public ${method.output.type} ${method.serviceMethod}(ICorrelationStatus<?> status) throws ServiceFaultException {
+      updateRequestWithCorrelation(status.getEvent());
+      try {
+         @SuppressWarnings("unchecked")
+         ${method.output.type} output = ${method.name}(
+#foreach ($input in $method.inputs)
+            status.getData(${input.type}.class),
+#end                  
+            (ILocalCorrelationEvent<${method.correlationType}>) status.getEvent());
+         
+#foreach($correlation in $method.inputOutputCorrelations)
+         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
+#end
+         return output;
+      } finally {
+         clearCorrelationFromRequest();
+      }
+   }
+   
+#end   
 ################################## Pub sub methods ###################################
 #foreach ($method in $dto.basicPubSubMethods)
    protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
-################################## Request Response ###################################
+################################## Request Response ##################################
 #foreach($method in $dto.basicServerReqResMethods)
    protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
-############################### Sink methods ###############################
-#foreach($method in $dto.basicSinkMethods)
-   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+################################## Multi-input 1-output methods with input-input correlation ##################################
+#foreach($method in $dto.correlationMethods)
+   protected abstract ${method.output.type} ${method.name}(
+#foreach ($input in $method.inputs)
+      ${input.type} ${input.fieldName},
+#end
+      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException;
 
 #end
-########## Multi-input 1-output methods with input-input correlation ##########
-#foreach($method in $dto.correlationMethods)
-   @Override
-   public void ${method.name}(ICorrelationStatus<?> status) {
-      updateRequestWithCorrelation(status.getEvent());
-      try {
-         @SuppressWarnings("unchecked")
-         ${method.output.type} output = ${method.serviceMethod}(
-#foreach($input in $method.inputs)
-               status.getData(${input.type}.class),
-#end
-               (ILocalCorrelationEvent<${method.correlationType}>) status.getEvent());
-#foreach($correlation in $method.inputOutputCorrelations)
-         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
-#end
-         ${method.output.name}(output);
-      } catch (ServiceFaultException fault) {
-         logService.error(getClass(),
-                  "Invocation of '${dto.abstractClass.name}.${method.serviceMethod}' generated a fault, dispatching to fault management service.");
-         faultManagementService.handleFault(fault);
-      } finally {
-         clearCorrelationFromRequest();
-      }
-   }
+############################### Sink methods ##################################
+#foreach($method in $dto.basicSinkMethods)
+   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
 ################################## Activate ###################################

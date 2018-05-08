@@ -52,7 +52,7 @@ public class ${serviceDto.service.name}Test {
 #end
 #foreach ($method in $baseServiceDto.correlationMethods)
    @Test
-   public void ${method.serviceMethod}Test() throws Exception {
+   public void ${method.name}Test() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }

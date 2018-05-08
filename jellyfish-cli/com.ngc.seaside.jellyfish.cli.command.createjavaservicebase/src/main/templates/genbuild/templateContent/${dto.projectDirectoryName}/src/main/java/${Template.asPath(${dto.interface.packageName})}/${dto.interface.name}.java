@@ -1,6 +1,7 @@
 package ${dto.interface.packageName};
 
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
+#set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.correlation.api.ICorrelationStatus"))
 #foreach ($i in $dto.interface.imports)
 import ${i};
 #end
@@ -19,11 +20,7 @@ public interface ${dto.interface.name} {
 #end
 ################################## Correlation methods ###################################
 #foreach ($method in $dto.correlationMethods)
-   ${method.output.type} ${method.serviceMethod}(
-#foreach ($input in $method.inputs)
-      ${input.type} ${input.fieldName},
-#end
-      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException;
+   ${method.output.type} ${method.serviceMethod}(ICorrelationStatus<?> status) throws ServiceFaultException;
 
 #end
 ################################## Req/res Methods ###################################

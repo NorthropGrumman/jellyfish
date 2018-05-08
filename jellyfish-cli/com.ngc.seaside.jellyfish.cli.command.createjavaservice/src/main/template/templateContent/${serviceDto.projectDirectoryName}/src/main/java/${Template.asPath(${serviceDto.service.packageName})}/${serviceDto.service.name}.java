@@ -40,7 +40,7 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 #end
 #foreach ($method in $baseServiceDto.correlationMethods)
    @Override
-   public ${method.output.type} ${method.serviceMethod}(
+   public ${method.output.type} ${method.name}(
 #foreach ($input in $method.inputs)
       ${input.type} ${input.fieldName},
 #end
