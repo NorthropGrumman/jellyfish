@@ -47,11 +47,8 @@ public class BuildManagementService implements IBuildManagementService {
    /**
     * The registered artifacts.
     */
-   private final Set<DependenciesConfiguration.Artifact>
-         registeredArtifacts =
-         Collections.synchronizedSet(new TreeSet<>(
-               Comparator.comparing((Function<DependenciesConfiguration.Artifact, String>)
-                                          (d -> d.getGroupId() + d.getArtifactId()))));
+   private final Set<DependenciesConfiguration.Artifact> registeredArtifacts =
+         Collections.synchronizedSet(new TreeSet<>(Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
 
    /**
     * The registered projects.
