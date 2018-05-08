@@ -1,16 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto;
 
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 public class PubSubBridgeDto {
 
@@ -18,22 +16,26 @@ public class PubSubBridgeDto {
    private final IJellyFishCommandOptions options;
    private static final String SUBSCRIBER_SUFFIX = "Subscriber";
 
-   private String projectName;
-   private String packageName;
    private ClassDto service;
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
+   private String packageName;
+   private String projectName;
    private String subscriberClassName;
    private Set<String> imports = new TreeSet<>();
-   private Set<String> abstractImports = new TreeSet<>();
    private String subscriberDataType;
-   private String serviceVarName;
    private String publishDataType;
+   private String serviceVarName;
    private String scenarioMethod;
    private String unbinderSnippet;
    private String binderSnippet;
 
+   /**
+    * Default constructor
+    * @param buildManagementService the build management service
+    * @param options the jellyfish command options
+    */
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
@@ -75,25 +77,22 @@ public class PubSubBridgeDto {
       this.baseClass = baseClass;
       return this;
    }
+   
+   public String getPackageName() {
+      return packageName;
+   }
 
    public PubSubBridgeDto setPackageName(String packageName) {
       this.packageName = packageName;
       return this;
    }
-   public String getPackageName() {
-      return packageName;
-   }
-
-   public PubSubBridgeDto setProjectName(String projectName) {
-      this.projectName = projectName;
-      return this;
-   }
+   
    public String getProjectName() {
       return projectName;
    }
    
-   public PubSubBridgeDto setSubscriberClassName(String subscriberClassName) {
-      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX; 
+   public PubSubBridgeDto setProjectName(String projectName) {
+      this.projectName = projectName;
       return this;
    }
    
@@ -101,9 +100,11 @@ public class PubSubBridgeDto {
       return subscriberClassName;
    }
    
-   /**
-    * Gets the list of imports needed by this class.
-    */
+   public PubSubBridgeDto setSubscriberClassName(String subscriberClassName) {
+      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX; 
+      return this;
+   }
+    
    public Set<String> getImports() {
       return imports;
    }
@@ -113,27 +114,6 @@ public class PubSubBridgeDto {
       return this;
    }
 
-   /**
-    * @return List of imports for just the data types we are concerned about.  Will return an empty list if nothing
-    *   found
-    */
-   public List<String> getImportsForDataTypes() {
-      List<String> importList = new ArrayList<>();
-
-      abstractImports.stream()
-            .filter(importName -> importName.contains(subscriberDataType))
-            .forEach(importName -> importList.add(importName));
-      return importList;
-   }
-
-   public Set<String> getAbstractImports() {
-      return abstractImports;
-   }
-
-   public void setAbstractImports(Set<String> abstractImports) {
-      this.abstractImports = abstractImports;
-   }
-   
    public String getSubscriberDataType() {
       return subscriberDataType;
    }
@@ -143,21 +123,26 @@ public class PubSubBridgeDto {
       return this;    
    }
    
+   public String getPublishDataType() {
+      return publishDataType;
+   } 
    public PubSubBridgeDto setPublishDataType(String publishDataType) {
       this.publishDataType =  publishDataType;
       return this;
-   }
-   
-   public String getPublishDataType() {
-      return publishDataType;
    }
 
    public String getServiceVarName() {
       return serviceVarName;
    }
    
-   public PubSubBridgeDto setServiceVarName(String serviceVarName) { 
-      String formattedServiceVarName = serviceVarName;
+   /**
+    * Reformat the given service name such as "ISomeService"
+    * into a variable name such as "someService" 
+    * @param serviceVarName the service name
+    * @return the formatted service variable name
+    */
+   public PubSubBridgeDto setServiceVarName(String serviceName) { 
+      String formattedServiceVarName = serviceName;
       if(formattedServiceVarName.startsWith("I")) {
          formattedServiceVarName = formattedServiceVarName.substring(1);
          formattedServiceVarName = StringUtils.uncapitalize(formattedServiceVarName);
@@ -194,7 +179,7 @@ public class PubSubBridgeDto {
    }
 
    /**
-    *
+    * Formats dependencies for use in a build.gradle file
     * @param groupAndArtifactId String of the group ID that you want formatted
     * @return String of formatted dependency
     */

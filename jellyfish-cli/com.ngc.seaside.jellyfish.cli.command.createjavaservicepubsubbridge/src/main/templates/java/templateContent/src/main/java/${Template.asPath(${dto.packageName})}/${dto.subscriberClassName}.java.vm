@@ -10,7 +10,6 @@ package $dto.packageName;
  * This file has been generated and should not be edited directly.
  * @author Generated
  */
-
 #set ($ignore = $dto.imports.add("com.google.common.base.Preconditions"))
 #set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEvent"))
 #set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventService"))
@@ -25,14 +24,8 @@ package $dto.packageName;
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferenceCardinality"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.ReferencePolicy"))
 
-
-#####Be sure to add imports for pubsub datatypes#####
-
 #foreach ($i in $dto.imports)
 import ${i};
-#end
-#foreach ($i in $dto.importsForDataTypes)
-import ${i}
 #end
 
 @Component(service = IEventSubscriber.class, immediate = true)
