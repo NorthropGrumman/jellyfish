@@ -85,6 +85,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       IModel model = getModel();
       Path outputDirectory = getOutputDirectory();
       
+      //Setup PubSubBridgeDto to generate build.generated.gradle
       IProjectInformation projectInfo = projectNamingService.getPubSubBridgeProjectName(getOptions(), model);
       String packageInfo = packageNamingService.getPubSubBridgePackageName(getOptions(), model);
       Path projectDirectory = outputDirectory.resolve(projectInfo.getDirectoryName());
@@ -108,18 +109,19 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          outputDirectory,
          false);
       
+      //Loop through all pubsub methods and produce a new class for each subscriber
       for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
          pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
          pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
          pubSubBridgeDto.setPackageName(packageInfo);   
          
-         //Set up inputs
+         //Populate subscriber related fields
          InputDto inputDto = pubSubMethodDto.getInput();
          pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
          pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
          pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
              
-         //Set up publishes
+         //Populate publisher related fields
          PublishDto publishDto = pubSubMethodDto.getOutput();
          pubSubBridgeDto.setPublishDataType(publishDto.getType());
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
@@ -127,10 +129,11 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
         
          //Retrieve required services and bind/unbind them
          ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
-         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
          pubSubBridgeDto.setService(classDto);
          pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
          
+         //Set any useful snippets to clean up velocity templates
          pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
          pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
          
@@ -151,6 +154,11 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       setTemplateDaoFactory(null);
    }
    
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      this.generatorService = ref;
+   }
+
    public void removeGenerateService(IJavaServiceGenerationService ref) {
       setJavaServiceGenerationService(null);
    }
@@ -190,12 +198,6 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       super.setPackageNamingService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      this.generatorService = ref;
-   }
-
-
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
@@ -208,5 +210,4 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
               CommonParameters.CLEAN,
               allPhasesParameter());
    }
-
 }
