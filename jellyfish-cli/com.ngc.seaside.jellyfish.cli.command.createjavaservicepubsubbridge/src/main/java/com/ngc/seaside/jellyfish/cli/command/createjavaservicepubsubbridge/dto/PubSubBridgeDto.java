@@ -114,7 +114,6 @@ public class PubSubBridgeDto {
    }
 
    /**
-    *
     * @return List of imports for just the data types we are concerned about.  Will return an empty list if nothing
     *   found
     */

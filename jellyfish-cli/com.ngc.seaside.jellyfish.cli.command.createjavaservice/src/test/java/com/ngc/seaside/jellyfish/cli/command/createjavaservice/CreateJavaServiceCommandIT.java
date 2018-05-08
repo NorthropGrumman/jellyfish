@@ -255,7 +255,7 @@ public class CreateJavaServiceCommandIT {
       assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
       assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
 
-      assertFileContains(servicePath, "\\bTrackPriority\\s+calculateTrackPriority\\s*\\(");
+      assertFileContains(servicePath, "\\bTrackPriority\\s+doCalculateTrackPriority\\s*\\(");
 
       Path testPath = directory.toPath().resolve(Paths.get("com.ngc.seaside.threateval"
                                                            + ".engagementtrackpriorityservice",
