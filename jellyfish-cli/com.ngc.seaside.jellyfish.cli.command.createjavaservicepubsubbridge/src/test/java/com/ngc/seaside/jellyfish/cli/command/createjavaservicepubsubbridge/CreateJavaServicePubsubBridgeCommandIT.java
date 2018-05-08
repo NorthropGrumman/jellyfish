@@ -165,76 +165,8 @@ public class CreateJavaServicePubsubBridgeCommandIT {
          });
          
          
-         //Added for BaseServiceDto needs
-         when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
-            IModel model = args.getArgument(1);
-            IProjectInformation information = mock(IProjectInformation.class);
-            String dirName = model.getFullyQualifiedName().toLowerCase() + ".base";
-            when(information.getDirectoryName()).thenReturn(dirName);
-            String artifactId = model.getName().toLowerCase() + ".base";
-            when(information.getArtifactId()).thenReturn(artifactId);
-            String groupId = model.getParent().getName();
-            when(information.getGroupId()).thenReturn(groupId);
-            return information;
-         });
-         when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
-            IModel model = args.getArgument(1);
-            IProjectInformation information = mock(IProjectInformation.class);
-            when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".events");
-            return information;
-         });
-         when(packageService.getServiceBaseImplementationPackageName(any(), any())).thenAnswer(args -> {
-            IModel model = args.getArgument(1);
-            return model.getFullyQualifiedName().toLowerCase() + ".base.impl";
-         });
-         when(packageService.getServiceInterfacePackageName(any(), any())).thenAnswer(args -> {
-            IModel model = args.getArgument(1);
-            return model.getFullyQualifiedName().toLowerCase() + ".api";
-         });
-         when(generatorService.getServiceInterfaceDescription(any(), any())).thenAnswer(args -> {
-            IJellyFishCommandOptions options = args.getArgument(0);
-            IModel model = args.getArgument(1);
-            ClassDto interfaceDto = new ClassDto();
-            interfaceDto.setName("I" + model.getName())
-                  .setPackageName(packageService.getServiceInterfacePackageName(options, model))
-                  .setImports(new LinkedHashSet<>(Arrays.asList(
-                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
-                        "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
-            return interfaceDto;
-         });
-         
-
-         ClassDto abstractClassDto = new ClassDto();
-         abstractClassDto.setName("Abstract" + model.getName())
-               .setPackageName(packageService.getServiceBaseImplementationPackageName(jellyFishCommandOptions, model))
-               .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
-                                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.api"
-                                                       + ".IEngagementTrackPriorityService",
-                                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.events"
-                                                       + ".TrackEngagementStatus",
-                                                       "com.ngc.seaside.threateval.engagementtrackpriorityservice.events"
-                                                       + ".TrackPriority")));
-
-         when(generatorService.getBaseServiceDescription(any(), eq(model))).thenReturn(abstractClassDto);
-         when(dataService.getEventClass(any(), any())).thenAnswer(args -> {
-            INamedChild<IPackage> child = args.getArgument(1);
-            TypeDto<?> typeDto = new ClassDto();
-            typeDto.setPackageName(child.getParent().getName() + ".engagementtrackpriorityservice.events");
-            typeDto.setTypeName(child.getName());
-            return typeDto;
-         });
-
-         when(generatorService.getTransportTopicsDescription(any(), eq(model))).thenAnswer(args -> {
-            EnumDto dto = new EnumDto();
-            dto.setName("EngagementTrackPriorityServiceTransportTopics");
-            dto.setPackageName("com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic");
-            dto.setImports(
-                  new LinkedHashSet<>(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic")));
-            dto.setValues(new LinkedHashSet<>(Arrays.asList("TRACK_ENGAGEMENT_STATUS",
-                                                            "TRACK_PRIORITY",
-                                                            "GET_TRACK_PRIORITY")));
-            return dto;
-         });
+         setupMocksForBaseService();
+        
 
          IScenario calculateTrackPriority0 = model.getScenarios()
                   .getByName("calculateTrackPriority0")
@@ -324,4 +256,78 @@ public class CreateJavaServicePubsubBridgeCommandIT {
 
      return model;
   }
+
+   private void setupMocksForBaseService() {    
+      //Added for BaseServiceDto needs
+      when(projectService.getBaseServiceProjectName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         IProjectInformation information = mock(IProjectInformation.class);
+         String dirName = model.getFullyQualifiedName().toLowerCase() + ".base";
+         when(information.getDirectoryName()).thenReturn(dirName);
+         String artifactId = model.getName().toLowerCase() + ".base";
+         when(information.getArtifactId()).thenReturn(artifactId);
+         String groupId = model.getParent().getName();
+         when(information.getGroupId()).thenReturn(groupId);
+         return information;
+      });
+      when(projectService.getEventsProjectName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         IProjectInformation information = mock(IProjectInformation.class);
+         when(information.getArtifactId()).thenReturn(model.getName().toLowerCase() + ".events");
+         return information;
+      });
+      when(packageService.getServiceBaseImplementationPackageName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         return model.getFullyQualifiedName().toLowerCase() + ".base.impl";
+      });
+      when(packageService.getServiceInterfacePackageName(any(), any())).thenAnswer(args -> {
+         IModel model = args.getArgument(1);
+         return model.getFullyQualifiedName().toLowerCase() + ".api";
+      });
+      when(generatorService.getServiceInterfaceDescription(any(), any())).thenAnswer(args -> {
+         IJellyFishCommandOptions options = args.getArgument(0);
+         IModel model = args.getArgument(1);
+         ClassDto interfaceDto = new ClassDto();
+         interfaceDto.setName("I" + model.getName())
+               .setPackageName(packageService.getServiceInterfacePackageName(options, model))
+               .setImports(new LinkedHashSet<>(Arrays.asList(
+                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackEngagementStatus",
+                     "com.ngc.seaside.threateval.engagementtrackpriorityservice.events.TrackPriority")));
+         return interfaceDto;
+      });
+      
+   
+      ClassDto abstractClassDto = new ClassDto();
+      abstractClassDto.setName("Abstract" + model.getName())
+            .setPackageName(packageService.getServiceBaseImplementationPackageName(jellyFishCommandOptions, model))
+            .setImports(new HashSet<>(Arrays.asList("com.ngc.blocs.service.event.api.IEvent",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.api"
+                                                    + ".IEngagementTrackPriorityService",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events"
+                                                    + ".TrackEngagementStatus",
+                                                    "com.ngc.seaside.threateval.engagementtrackpriorityservice.events"
+                                                    + ".TrackPriority")));
+   
+      when(generatorService.getBaseServiceDescription(any(), eq(model))).thenReturn(abstractClassDto);
+      when(dataService.getEventClass(any(), any())).thenAnswer(args -> {
+         INamedChild<IPackage> child = args.getArgument(1);
+         TypeDto<?> typeDto = new ClassDto();
+         typeDto.setPackageName(child.getParent().getName() + ".engagementtrackpriorityservice.events");
+         typeDto.setTypeName(child.getName());
+         return typeDto;
+      });
+   
+      when(generatorService.getTransportTopicsDescription(any(), eq(model))).thenAnswer(args -> {
+         EnumDto dto = new EnumDto();
+         dto.setName("EngagementTrackPriorityServiceTransportTopics");
+         dto.setPackageName("com.ngc.seaside.threateval.engagementtrackpriorityservice.transport.topic");
+         dto.setImports(
+               new LinkedHashSet<>(Collections.singleton("com.ngc.seaside.service.transport.api.ITransportTopic")));
+         dto.setValues(new LinkedHashSet<>(Arrays.asList("TRACK_ENGAGEMENT_STATUS",
+                                                         "TRACK_PRIORITY",
+                                                         "GET_TRACK_PRIORITY")));
+         return dto;
+      });
+      
+   }
 }
