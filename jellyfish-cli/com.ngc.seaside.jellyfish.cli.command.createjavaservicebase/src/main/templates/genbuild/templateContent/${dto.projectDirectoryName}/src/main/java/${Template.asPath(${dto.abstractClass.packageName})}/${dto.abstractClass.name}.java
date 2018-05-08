@@ -41,7 +41,9 @@ public abstract class ${dto.abstractClass.name}
 #foreach($correlation in $method.inputOutputCorrelations)
       updateRequestWithCorrelation(${method.input.fieldName}.${correlation.getterSnippet});
 #end
+#if ($method.isCorrelating())
       try {
+#end
          ${method.output.type} output = ${method.name}(${method.input.fieldName});
 #foreach($correlation in $method.inputOutputCorrelations)
 		 output.${correlation.setterSnippet}(${method.input.fieldName}.${correlation.getterSnippet});
