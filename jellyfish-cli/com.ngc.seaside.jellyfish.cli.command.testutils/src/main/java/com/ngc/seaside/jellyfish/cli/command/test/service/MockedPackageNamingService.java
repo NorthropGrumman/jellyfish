@@ -80,7 +80,7 @@ public class MockedPackageNamingService implements IPackageNamingService {
 
    @Override
    public String getPubSubBridgePackageName(IJellyFishCommandOptions options, IModel model) {
-      return getPackageName(model, "pubsubbridge");
+      return getPackageName(model, "bridge.pubsub");
    }
 
 }
