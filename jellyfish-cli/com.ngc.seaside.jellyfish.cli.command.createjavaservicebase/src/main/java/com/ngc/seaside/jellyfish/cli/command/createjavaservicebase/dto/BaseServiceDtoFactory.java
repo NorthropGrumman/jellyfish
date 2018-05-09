@@ -207,9 +207,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    }
 
    private Optional<BasicServerReqResDto> getBasicReqResMethod(IScenario scenario,
-                                                     IRequestResponseMessagingFlow flow,
-                                                     BaseServiceDto dto,
-                                                     IJellyFishCommandOptions options) {
+                                                               IRequestResponseMessagingFlow flow,
+                                                               BaseServiceDto dto,
+                                                               IJellyFishCommandOptions options) {
 
       if (flow.getInput() == null || flow.getOutput() == null) {
          return Optional.empty();
@@ -307,7 +307,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
       pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
-      pubSub.getOutput().setName("do"+ StringUtils.capitalize(scenario.getName()));
+      pubSub.getOutput().setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setServiceMethod(scenario.getName());
 
@@ -656,7 +656,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                      .stream()
                                                      .anyMatch(BasicPubSubDto::isCorrelating));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
-                                        || dto.isCorrelationRequestHandlingEnabled());
+                                              || dto.isCorrelationRequestHandlingEnabled());
       if (dto.isCorrelationRequestHandlingEnabled()) {
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");

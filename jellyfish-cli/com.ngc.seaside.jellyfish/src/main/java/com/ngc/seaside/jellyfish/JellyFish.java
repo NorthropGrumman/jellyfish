@@ -19,7 +19,7 @@ public class JellyFish {
    /**
     * Main to run the JellyFish application.
     *
-    * @param args the program arguments. The first argument should always be the name of the command in which to run blah blah blah blah
+    * @param args the program arguments. The first argument should always be the name of the command in which to run
     *             followed by a list of parameters for that command.
     */
    public static void main(String[] args) {

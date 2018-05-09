@@ -133,9 +133,9 @@ public class CreateJavaServiceProjectCommandTest {
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_PUBSUB_CONNECTOR_COMMAND_NAME),
                                   capture.capture());
       verifyParametersForCreatePubsubConnectorCommand(capture.getValue(), "my-project");
-      
+
       verify(commandProvider).run(eq(CreateJavaServiceProjectCommand.CREATE_JAVA_SERVICE_PUBSUB_BRIDGE_COMMAND_NAME),
-         capture.capture());
+                                  capture.capture());
       verifyParametersForCreateJavaServicePubsubBridgeCommand(capture.getValue(), "my-project");
    }
 
@@ -222,7 +222,7 @@ public class CreateJavaServiceProjectCommandTest {
                        CreateJavaServiceProjectCommand.OUTPUT_DIRECTORY_PROPERTY,
                        Paths.get(outputDirectoryName, projectName).toAbsolutePath().toString());
    }
-   
+
    private void verifyParametersForCreateJavaServicePubsubBridgeCommand(IJellyFishCommandOptions options,
                                                                         String projectName) {
       requireParameter(options,
