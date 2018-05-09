@@ -20,6 +20,7 @@ public class PubSubBridgeDto {
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
+   private String abstractClass;
    private String packageName;
    private String projectName;
    private String subscriberClassName;
@@ -78,6 +79,16 @@ public class PubSubBridgeDto {
       this.baseClass = baseClass;
       return this;
    }
+
+   public String getAbstractClass() {
+      return abstractClass;
+   }
+
+   public PubSubBridgeDto setAbstractClass(String abstractClass) {
+      this.abstractClass = abstractClass;
+      return this;
+   }
+
 
    public String getPackageName() {
       return packageName;
