@@ -1,14 +1,14 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicepubsubbridge.dto;
 
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PubSubBridgeDto {
 
@@ -33,11 +33,12 @@ public class PubSubBridgeDto {
 
    /**
     * Default constructor
+    *
     * @param buildManagementService the build management service
-    * @param options the jellyfish command options
+    * @param options                the jellyfish command options
     */
    public PubSubBridgeDto(IBuildManagementService buildManagementService,
-                     IJellyFishCommandOptions options) {
+                          IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
    }
@@ -77,7 +78,7 @@ public class PubSubBridgeDto {
       this.baseClass = baseClass;
       return this;
    }
-   
+
    public String getPackageName() {
       return packageName;
    }
@@ -86,25 +87,25 @@ public class PubSubBridgeDto {
       this.packageName = packageName;
       return this;
    }
-   
+
    public String getProjectName() {
       return projectName;
    }
-   
+
    public PubSubBridgeDto setProjectName(String projectName) {
       this.projectName = projectName;
       return this;
    }
-   
+
    public String getSubscriberClassName() {
       return subscriberClassName;
    }
-   
+
    public PubSubBridgeDto setSubscriberClassName(String subscriberClassName) {
-      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX; 
+      this.subscriberClassName = subscriberClassName + SUBSCRIBER_SUFFIX;
       return this;
    }
-    
+
    public Set<String> getImports() {
       return imports;
    }
@@ -117,38 +118,40 @@ public class PubSubBridgeDto {
    public String getSubscriberDataType() {
       return subscriberDataType;
    }
-   
+
    public PubSubBridgeDto setSubscriberDataType(String subscriberDataType) {
       this.subscriberDataType = subscriberDataType;
-      return this;    
+      return this;
    }
-   
+
    public String getPublishDataType() {
       return publishDataType;
-   } 
+   }
+
    public PubSubBridgeDto setPublishDataType(String publishDataType) {
-      this.publishDataType =  publishDataType;
+      this.publishDataType = publishDataType;
       return this;
    }
 
    public String getServiceVarName() {
       return serviceVarName;
    }
-   
+
    /**
     * Reformat the given service name such as "ISomeService"
-    * into a variable name such as "someService" 
-    * @param serviceVarName the service name
+    * into a variable name such as "someService"
+    *
+    * @param serviceName the service name
     * @return the formatted service variable name
     */
-   public PubSubBridgeDto setServiceVarName(String serviceName) { 
+   public PubSubBridgeDto setServiceVarName(String serviceName) {
       String formattedServiceVarName = serviceName;
-      if(formattedServiceVarName.startsWith("I")) {
+      if (formattedServiceVarName.startsWith("I")) {
          formattedServiceVarName = formattedServiceVarName.substring(1);
          formattedServiceVarName = StringUtils.uncapitalize(formattedServiceVarName);
-      }    
+      }
       this.serviceVarName = formattedServiceVarName;
-      return this;    
+      return this;
    }
 
    public String getScenarioMethod() {
@@ -159,7 +162,7 @@ public class PubSubBridgeDto {
       this.scenarioMethod = scenarioMethod;
       return this;
    }
-   
+
    public String getUnbinderSnippet() {
       return unbinderSnippet;
    }
@@ -180,6 +183,7 @@ public class PubSubBridgeDto {
 
    /**
     * Formats dependencies for use in a build.gradle file
+    *
     * @param groupAndArtifactId String of the group ID that you want formatted
     * @return String of formatted dependency
     */
