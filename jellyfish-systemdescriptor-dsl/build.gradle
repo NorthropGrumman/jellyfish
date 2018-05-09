@@ -25,14 +25,9 @@ buildscript {
 apply plugin: 'com.ngc.seaside.release.root'
 
 subprojects {
-    apply plugin: 'com.ngc.seaside.ci'
+
     versionSettings {
         versionFile = versionsFile
-    }
-    seasideCi {
-        m2OutputDirectory = m2directory
-        dependencyInfoReportFile = dependenciesReportFile
-        deploymentScriptFile = m2DeploymentScriptFile
     }
 
     if (name == 'systemdescriptor.ui') {
@@ -51,6 +46,14 @@ subprojects {
         apply plugin: 'com.ngc.seaside.checkstyle'
         apply from: "${rootDir}/gradle/source-layout.gradle"
         apply from: "${rootDir}/gradle/maven-deployment.gradle"
+    }
+
+    apply plugin: 'com.ngc.seaside.ci'
+
+    seasideCi {
+        m2OutputDirectory = m2directory
+        dependencyInfoReportFile = dependenciesReportFile
+        deploymentScriptFile = m2DeploymentScriptFile
     }
 
     sourceCompatibility = '1.8'
