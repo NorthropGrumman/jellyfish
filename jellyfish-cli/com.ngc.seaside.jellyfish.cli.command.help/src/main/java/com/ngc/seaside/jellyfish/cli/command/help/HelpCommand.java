@@ -140,47 +140,44 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * @param verbose          whether or not to print each command's help along with the overall usage
     */
    private void printHelp(IParameter<?> commandParameter, boolean verbose) {
-      StringBuilder builder = new StringBuilder();
       if (commandParameter == null) {
-         writeUsage(builder, verbose);
+         writeUsage(verbose);
       } else {
-         writeCommandHelp(builder, false, commandParameter.getStringValue());
+         writeCommandHelp(false, commandParameter.getStringValue());
       }
-      logService.info(getClass(), builder.toString());
    }
 
    /**
     * Writes the usage for the JellyFish cli.
     *
-    * @param builder StringBuilder to write to
     * @param verbose whether or not to print each command's help along with the overall usage
     */
-   private void writeUsage(StringBuilder builder, boolean verbose) {
-      builder.append("Usage: jellyfish command [-Doption1=value1 ...]\n\nCommands:\n\n");
+   private void writeUsage(boolean verbose) {
+      logService.info(getClass(), "\nUsage: jellyfish command [-Doption1=value1 ...]\n\nCommands:\n\n");
       if (verbose) {
          for (String cmd : commands.keySet()) {
-            writeCommandHelp(builder, true, cmd);
+            writeCommandHelp(true, cmd);
          }
       } else {
          StringTable<ICommand<?>> table = getCommandTable(INDENT, commands.values());
-         builder.append(table);
-         builder.append("\nTo see more detail about a command, run `jellyfish help -Dcommand=<command-name>`\n");
+         logService.info(getClass(), table);
+         logService.info(getClass(), "\nTo see more detail about a command, run `jellyfish help -Dcommand=<command-name>`\n");
       }
    }
+
 
    /**
     * Writes the help for the given command.
     *
-    * @param builder     StringBuilder to write to
     * @param inUsage     if writing the help command within the usage
     * @param commandName name of command
     */
-   private void writeCommandHelp(StringBuilder builder, boolean inUsage, String commandName) {
+   private void writeCommandHelp(boolean inUsage, String commandName) {
       String baseIndent = inUsage ? INDENT : "";
       String parameterIndent = inUsage ? INDENT + INDENT : INDENT;
       ICommand<?> command = commands.get(commandName);
       if (command == null) {
-         builder.append(commandName + " command not found\n");
+         logService.info(getClass(), commandName + " command not found\n");
       } else {
          StringTable<IParameter<?>> parameterTable = getParameterTable(
                parameterIndent,
@@ -193,7 +190,8 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
                                                                                      .getRequiredParameters());
          if (inUsage) {
             StringTable<ICommand<?>> table = getCommandTable(baseIndent, Collections.singleton(command));
-            builder.append(table).append('\n');
+            logService.info(getClass(), table);
+            logService.info(getClass(), '\n');
          } else {
             String parameterUsage = command.getUsage().getAllParameters().stream()
                   .map(
@@ -202,20 +200,24 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
             }
-            builder.append(String.format("Usage: jellyfish %s%s%n%n", commandName, parameterUsage));
-            builder.append(command.getUsage().getDescription()).append("\n\n");
+            logService.info(getClass(), String.format("Usage: jellyfish %s%s%n%n", commandName, parameterUsage));
+            logService.info(getClass(), command.getUsage().getDescription());
+            logService.info(getClass(), "\n\n");
          }
          if (!requiredParameterTable.getModel().getItems().isEmpty()) {
-            builder.append(baseIndent).append("required parameters:\n\n");
-            builder.append(requiredParameterTable).append('\n');
+            logService.info(getClass(), baseIndent);
+            logService.info(getClass(), "required parameters:\n\n");
+            logService.info(getClass(), requiredParameterTable);
+            logService.info(getClass(), '\n');
          }
          if (!parameterTable.getModel().getItems().isEmpty()) {
-            builder.append(baseIndent).append("optional parameters:\n\n");
-            builder.append(parameterTable).append('\n');
+            logService.info(getClass(), baseIndent);
+            logService.info(getClass(), "optional parameters:\n\n");
+            logService.info(getClass(), parameterTable);
+            logService.info(getClass(), '\n');
          }
       }
    }
-
    /**
     * Returns the properly-formatted StringTable for printing IJellyFishCommands.
     *
