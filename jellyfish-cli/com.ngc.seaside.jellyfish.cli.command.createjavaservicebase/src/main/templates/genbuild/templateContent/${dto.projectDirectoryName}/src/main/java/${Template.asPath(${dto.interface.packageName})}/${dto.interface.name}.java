@@ -10,7 +10,7 @@ public interface ${dto.interface.name} {
 
 ################################## Pub sub methods ###################################
 #foreach ($method in $dto.basicPubSubMethods)
-   ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+   ${method.output.finalizedType} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
 ################################## Sink methods ###################################

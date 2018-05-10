@@ -32,6 +32,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -126,6 +127,12 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setPublishDataType(publishDto.getType());
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
          pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
+
+         // Handle correlation.
+         pubSubBridgeDto.setCorrelating(pubSubMethodDto.isCorrelating());
+         if(pubSubBridgeDto.isCorrelating()) {
+            pubSubBridgeDto.getImports().add(Collection.class.getName());
+         }
 
          //Retrieve required services and bind/unbind them
          ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);

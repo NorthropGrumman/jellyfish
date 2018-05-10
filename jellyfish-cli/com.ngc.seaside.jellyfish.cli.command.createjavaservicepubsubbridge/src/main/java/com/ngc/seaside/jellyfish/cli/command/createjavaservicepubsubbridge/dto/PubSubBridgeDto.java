@@ -31,6 +31,7 @@ public class PubSubBridgeDto {
    private String scenarioMethod;
    private String unbinderSnippet;
    private String binderSnippet;
+   private boolean correlating;
 
    /**
     * Default constructor
@@ -146,6 +147,15 @@ public class PubSubBridgeDto {
 
    public String getServiceVarName() {
       return serviceVarName;
+   }
+
+   public boolean isCorrelating() {
+      return correlating;
+   }
+
+   public PubSubBridgeDto setCorrelating(boolean correlating) {
+      this.correlating = correlating;
+      return this;
    }
 
    /**

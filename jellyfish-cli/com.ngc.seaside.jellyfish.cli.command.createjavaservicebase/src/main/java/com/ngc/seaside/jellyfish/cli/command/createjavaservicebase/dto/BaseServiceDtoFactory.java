@@ -306,12 +306,16 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
-      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
+      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(),
+                                     dto,
+                                     options));
       pubSub.getOutput().setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setServiceMethod(scenario.getName());
 
       if (flow.getCorrelationDescription().isPresent()) {
+         pubSub.setServiceMethod("try" + StringUtils.capitalize(scenario.getName()));
+         pubSub.getOutput().setFinalizedType("Collection<" + pubSub.getOutput().getType() + ">");
          pubSub.setInputOutputCorrelations(
                getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
       }
@@ -593,7 +597,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       return input;
    }
 
-   private PublishDto getPublishDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
+   private PublishDto getPublishDto(IDataReferenceField field,
+                                    BaseServiceDto dto,
+                                    IJellyFishCommandOptions options) {
       PublishDto output = new PublishDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
       if (hasDuplicateTypeNames(options, field.getParent())) {
@@ -608,6 +614,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
       }
+      output.setFinalizedType(output.getType());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       output.setFieldName(field.getName());
       return output;
@@ -661,6 +668,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.request.api.IServiceRequest");
+         dto.getInterface().getImports().add(Collection.class.getName());
       }
       if (dto.isCorrelationServiceRequired()) {
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");

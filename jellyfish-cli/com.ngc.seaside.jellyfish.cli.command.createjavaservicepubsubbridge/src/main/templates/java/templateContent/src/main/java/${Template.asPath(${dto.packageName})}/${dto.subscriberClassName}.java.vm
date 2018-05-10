@@ -39,6 +39,7 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
 
    private IFaultManagementService faultManagementService;
 
+#if (!$dto.isCorrelating())
    @Override
    public void eventReceived(IEvent<${dto.subscriberDataType}> event) {
       Preconditions.checkNotNull(event, "event may not be null!");
@@ -51,6 +52,20 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
          faultManagementService.handleFault(fault);
       }
    }
+#else
+   @Override
+   public void eventReceived(IEvent<${dto.subscriberDataType}> event) {
+      Preconditions.checkNotNull(event, "event may not be null!");
+      ${dto.subscriberDataType} input = Preconditions.checkNotNull(event.getSource(), "event source may not be null!");
+      try {
+         Collection<${dto.publishDataType}> output = ${dto.serviceVarName}.${dto.scenarioMethod}(input);
+         logService.info(getClass(), "ELK - Scenario: ${dto.scenarioMethod}; Input: %s; Output: %s;", input, output);
+         output.forEach(o -> eventService.publish(o, ${dto.publishDataType}.TOPIC));
+      } catch(ServiceFaultException fault) {
+         faultManagementService.handleFault(fault);
+      }
+   }
+#end
 
    @Activate
    public void activate() {

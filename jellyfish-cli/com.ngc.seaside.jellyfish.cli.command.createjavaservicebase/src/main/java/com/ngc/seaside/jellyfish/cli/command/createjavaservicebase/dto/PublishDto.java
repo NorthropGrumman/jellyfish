@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 public class PublishDto {
 
    private String type;
+   private String finalizedType;
    private String name;
    private String topic;
    private String fieldName;
@@ -53,5 +54,12 @@ public class PublishDto {
       return fullyQualifiedName;
    }
 
+   public String getFinalizedType() {
+      return finalizedType;
+   }
 
+   public PublishDto setFinalizedType(String finalizedType) {
+      this.finalizedType = finalizedType;
+      return this;
+   }
 }
