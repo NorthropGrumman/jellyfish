@@ -106,8 +106,7 @@ public class CreateJavaServiceBaseCommandIT {
    @Before
    public void setup() throws Throwable {
       tempFolder.newFile("settings.gradle");
-      //outputDirectory = tempFolder.getRoot();
-      outputDirectory = Paths.get("build", "generated-test").toFile();
+      outputDirectory = tempFolder.getRoot();
 
       buildManagementService = new MockedBuildManagementService();
 
