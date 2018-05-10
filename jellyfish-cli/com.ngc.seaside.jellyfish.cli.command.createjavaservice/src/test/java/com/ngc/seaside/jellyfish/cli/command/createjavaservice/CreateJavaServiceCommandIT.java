@@ -16,6 +16,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.TypeDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.java.IGeneratedJavaField;
 import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -101,6 +102,8 @@ public class CreateJavaServiceCommandIT {
 
    private IBuildManagementService buildManagementService;
 
+   private IModel testModel;
+
    @Before
    public void setup() throws Throwable {
       directory = outputDirectory.getRoot();
@@ -125,7 +128,7 @@ public class CreateJavaServiceCommandIT {
                                                                 logService);
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
-      IModel testModel = newModelForTesting();
+      testModel = newModelForTesting();
 
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(
             Optional.of(testModel));
@@ -209,6 +212,10 @@ public class CreateJavaServiceCommandIT {
          return typeDto;
       });
 
+      IGeneratedJavaField javaField = mock(IGeneratedJavaField.class);
+      when(javaField.getJavaGetterName()).thenReturn("getFoo");
+      when(dataFieldGenerationService.getEventsField(any(), any())).thenReturn(javaField);
+
       IScenario calculateTrackPriority = testModel.getScenarios()
             .getByName("calculateTrackPriority")
             .get();
@@ -230,7 +237,54 @@ public class CreateJavaServiceCommandIT {
    }
 
    @Test
-   public void testDoesGenerateServiceWithSuppliedCommands() throws Throwable {
+   public void testDoesGenerateService() throws Throwable {
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.MODEL_PROPERTY,
+                                                     "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+      parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY,
+                                                     directory.getAbsolutePath()));
+
+      command.run(jellyFishCommandOptions);
+
+      Path gradleBuildPath = directory.toPath().resolve(Paths.get(
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice",
+            "build.gradle"));
+
+      assertFileContains(gradleBuildPath, "\\bproject\\(['\"]:engagementtrackpriorityservice"
+                                          + ".events['\"]\\)");
+      assertFileContains(gradleBuildPath, "\\bproject\\(['\"]:engagementtrackpriorityservice."
+                                          + "base['\"]\\)");
+
+      Path servicePath = directory.toPath().resolve(Paths.get(
+            "com.ngc.seaside.threateval.engagementtrackpriorityservice",
+            "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/impl/"
+            + "EngagementTrackPriorityService.java"));
+
+      assertFileContains(servicePath, "\\bclass\\s+EngagementTrackPriorityService\\b");
+      assertFileContains(servicePath, "extends\\s+\\S*?AbstractEngagementTrackPriorityService");
+
+      assertFileContains(servicePath, "\\bTrackPriority\\s+doCalculateTrackPriority\\s*\\(");
+
+      Path testPath = directory.toPath().resolve(Paths.get("com.ngc.seaside.threateval"
+                                                           + ".engagementtrackpriorityservice",
+                                                           "src/test/java/com/ngc/seaside/threateval"
+                                                           + "/engagementtrackpriorityservice/impl"
+                                                           + "/EngagementTrackPriorityServiceTest.java"));
+
+      assertFileContains(testPath, "\\bpackage\\s+com.ngc.seaside.threateval."
+                                   + "engagementtrackpriorityservice.impl\\s*;");
+      assertFileContains(testPath, "\\bclass\\s+EngagementTrackPriorityServiceTest\\b");
+
+   }
+
+   @Test
+   public void testDoesGenerateServiceInvolvingCorrelation() throws Throwable {
+      IScenario calculateTrackPriority = testModel.getScenarios()
+            .getByName("calculateTrackPriority")
+            .get();
+      IPublishSubscribeMessagingFlow pubSubFlow = FlowFactory.newCorrelatingPubSubFlowPath(calculateTrackPriority);
+      when(scenarioService.getPubSubMessagingFlow(any(), eq(calculateTrackPriority)))
+            .thenReturn(Optional.of(pubSubFlow));
+
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.MODEL_PROPERTY,
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CreateJavaServiceCommand.OUTPUT_DIRECTORY_PROPERTY,
@@ -270,7 +324,6 @@ public class CreateJavaServiceCommandIT {
    }
 
    /**
-    *
     * @return Model used for testing
     */
    public static IModel newModelForTesting() {
