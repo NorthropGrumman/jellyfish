@@ -49,7 +49,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-dsl') {
                sh 'chmod a+x ../gradlew'
-               sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+               sh '../gradlew clean ci'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -58,7 +58,7 @@ pipeline {
       stage('Build jellyfish-systemdescriptor') {
          steps {
             dir('jellyfish-systemdescriptor') {
-               sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+               sh '../gradlew clean ci'
                junit '**/build/test-results/test/*.xml'
             }
         }
@@ -67,7 +67,7 @@ pipeline {
         stage('Build jellyfish-cli') {
             steps {
                 dir('jellyfish-cli') {
-                    sh '../gradlew clean build checkstyleMain checkstyleTest install -Pfail-on-checkstyle-error=true --refresh-dependencies'
+                    sh '../gradlew clean ci'
                     junit '**/build/test-results/test/*.xml'
                 }
          }
