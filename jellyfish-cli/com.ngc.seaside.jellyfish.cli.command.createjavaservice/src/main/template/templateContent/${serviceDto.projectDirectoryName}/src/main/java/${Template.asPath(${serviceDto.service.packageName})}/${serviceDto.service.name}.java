@@ -42,9 +42,12 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
    @Override
    public ${method.output.type} ${method.name}(
 #foreach ($input in $method.inputs)
-      ${input.type} ${input.fieldName},
+#if( $foreach.count < $method.inputs.size() )
+               ${input.type} ${input.fieldName},
+#else
+               ${input.type} ${input.fieldName}) {
 #end
-      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException {
+#end
          // TODO: implement this
          throw new UnsupportedOperationException("not implemented");
    }
