@@ -171,12 +171,6 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
          pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
 
-         // Handle correlation.
-         pubSubBridgeDto.setCorrelating(pubSubMethodDto.isCorrelating());
-         if(pubSubBridgeDto.isCorrelating()) {
-            pubSubBridgeDto.getImports().add(Collection.class.getName());
-         }
-
          //Retrieve required services and bind/unbind them
          ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
          pubSubBridgeDto.setService(classDto);

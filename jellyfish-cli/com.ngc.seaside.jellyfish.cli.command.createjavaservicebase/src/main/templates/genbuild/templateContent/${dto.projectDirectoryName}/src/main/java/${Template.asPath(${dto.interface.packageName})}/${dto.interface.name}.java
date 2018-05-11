@@ -13,7 +13,7 @@ public interface ${dto.interface.name} {
 
 ################################## Pub sub methods ###################################
 #foreach ($method in $dto.basicPubSubMethods)
-   ${method.output.finalizedType} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+   ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
 ################################## Sink methods ###################################
@@ -24,7 +24,7 @@ public interface ${dto.interface.name} {
 ################################## Correlation methods ###################################
 #foreach ($method in $dto.correlationMethods)
 #foreach ($corrInput in $method.inputs)
-   Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException;
+   ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException;
 
 #end
 #end
