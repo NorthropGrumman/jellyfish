@@ -33,6 +33,11 @@ public abstract class ${dto.abstractClass.name}
    protected ICorrelationService correlationService;
 
 #end
+#if (!$dto.correlationMethods.isEmpty())
+   protected Map<ICorrelationTrigger<?>, Function<ICorrelationStatus<?>, ?>> triggers =
+         new ConcurrentHashMap<>();
+   
+#end
 ################################## Pub sub Delegaters ###################################
 #foreach ($method in $dto.basicPubSubMethods)
    @Override
@@ -72,7 +77,7 @@ public abstract class ${dto.abstractClass.name}
 #foreach ($method in $dto.correlationMethods)
 #foreach ($corrInput in $method.inputs)
 @Override
-public Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
+public ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
    Preconditions.checkNotNull(${corrInput.fieldName}, "${corrInput.fieldName} may not be null!");
    return correlationService.correlate(${corrInput.fieldName})
          .stream()
@@ -114,7 +119,7 @@ public Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${cor
 ################################## Activate ###################################
    protected void activate() {
 #foreach($method in $dto.correlationMethods)
-   ${method.serviceRegisterSnippet};
+      ${method.serviceRegisterSnippet};
 #end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
@@ -122,9 +127,50 @@ public Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${cor
 
 ################################# Deactivate ##################################
    protected void deactivate() {
+#if (!$dto.correlationMethods.isEmpty())
+      triggers.keySet().forEach(ICorrelationTrigger::unregister);
+      triggers.clear();   
+#end
       setStatus(ServiceStatus.DEACTIVATED);
       logService.info(getClass(), "deactivated");
    }
+
+################################# Correlation Triggers ########################
+#foreach($method in $dto.correlationMethods)
+   private void ${method.serviceRegisterSnippet} {
+      ICorrelationTrigger<${method.correlationType}> trigger = correlationService.newTrigger(${method.correlationType}.class)
+#foreach ($input in $method.inputs)
+         .addEventIdProducer(${input.type}.class, a -> a.getHeader().getCorrelationEventId())
+#end
+         .addCompletenessCondition(${method.inputClassListSnippet} (a, b) ->
+               Objects.equal(a.getHeader().getCorrelationEventId(), b.getHeader().getCorrelationEventId()))
+         .register();
+      triggers.put(trigger, this::${method.serviceFromStatusSnippet});
+   }
+#end
+
+############################ Correlation Status Methods ########################
+#foreach($method in $dto.correlationMethods)
+private ${method.output.type} ${method.serviceFromStatusSnippet}(ICorrelationStatus<?> status) {
+   updateRequestWithCorrelation(status.getEvent());
+   try {
+      ${method.output.type} output = ${method.name}(
+#foreach ($input in $method.inputs)
+#if( $foreach.count < $method.inputs.size() )               
+               status.getData(${input.type}.class),
+#else
+               status.getData(${input.type}.class));
+#end
+#end
+      output.getHeader().setCorrelationEventId(status.getData(${method.inputs.get(0).type}.class)
+                                                     .getHeader()
+                                                     .getCorrelationEventId());
+      return output;
+   } finally {
+      clearCorrelationFromRequest();
+   }
+}
+#end
 
    @Override
    public String getName() {
