@@ -10,6 +10,10 @@ package ${dto.abstractClass.packageName};
 #set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
 #set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
 #set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
+#if (!$dto.correlationMethods.isEmpty())
+#set ($ignore = $dto.abstractClass.imports.add("java.util.function.Function"))
+#set ($ignore = $dto.abstractClass.imports.add("java.util.stream.Collectors"))
+#end
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -76,16 +80,16 @@ public abstract class ${dto.abstractClass.name}
 ########## Multi-input 1-output methods with input-input correlation Delegaters##########
 #foreach ($method in $dto.correlationMethods)
 #foreach ($corrInput in $method.inputs)
-@Override
-public ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
-   Preconditions.checkNotNull(${corrInput.fieldName}, "${corrInput.fieldName} may not be null!");
-   return correlationService.correlate(${corrInput.fieldName})
-         .stream()
-         .filter(ICorrelationStatus::isCorrelationComplete)
-         .map(status -> triggers.get(status.getTrigger()).apply(status))
-         .map(${method.output.type}.class::cast)
-         .collect(Collectors.toList());
-}
+   @Override
+   public ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${corrInput.fieldName}, "${corrInput.fieldName} may not be null!");
+      return correlationService.correlate(${corrInput.fieldName})
+            .stream()
+            .filter(ICorrelationStatus::isCorrelationComplete)
+            .map(status -> triggers.get(status.getTrigger()).apply(status))
+            .map(${method.output.type}.class::cast)
+            .collect(Collectors.toList());
+   }
 
 #end
 #end
@@ -151,25 +155,25 @@ public ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrIn
 
 ############################ Correlation Status Methods ########################
 #foreach($method in $dto.correlationMethods)
-private ${method.output.type} ${method.serviceFromStatusSnippet}(ICorrelationStatus<?> status) {
-   updateRequestWithCorrelation(status.getEvent());
-   try {
-      ${method.output.type} output = ${method.name}(
+   private ${method.output.type} ${method.serviceFromStatusSnippet}(ICorrelationStatus<?> status) {
+      updateRequestWithCorrelation(status.getEvent());
+      try {
+         ${method.output.type} output = ${method.name}(
 #foreach ($input in $method.inputs)
 #if( $foreach.count < $method.inputs.size() )               
-               status.getData(${input.type}.class),
+                  status.getData(${input.type}.class),
 #else
-               status.getData(${input.type}.class));
+                  status.getData(${input.type}.class));
 #end
 #end
-      output.getHeader().setCorrelationEventId(status.getData(${method.inputs.get(0).type}.class)
+         output.getHeader().setCorrelationEventId(status.getData(${method.inputs.get(0).type}.class)
                                                      .getHeader()
                                                      .getCorrelationEventId());
-      return output;
-   } finally {
-      clearCorrelationFromRequest();
+         return output;
+      } finally {
+         clearCorrelationFromRequest();
+      }
    }
-}
 #end
 
    @Override

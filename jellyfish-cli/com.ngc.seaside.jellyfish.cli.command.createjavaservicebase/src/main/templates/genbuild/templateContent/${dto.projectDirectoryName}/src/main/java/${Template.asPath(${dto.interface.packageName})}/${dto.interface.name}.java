@@ -1,7 +1,10 @@
 package ${dto.interface.packageName};
 
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
+#if (!$dto.correlationMethods.isEmpty())
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.correlation.api.ICorrelationStatus"))
+#set ($ignore = $dto.interface.imports.add("java.util.Collection;"))
+#end
 #foreach ($i in $dto.interface.imports)
 import ${i};
 #end
