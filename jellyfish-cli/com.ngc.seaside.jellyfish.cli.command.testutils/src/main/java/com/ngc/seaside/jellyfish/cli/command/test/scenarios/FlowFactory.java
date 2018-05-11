@@ -4,6 +4,7 @@ import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessaging
 import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -186,7 +187,9 @@ public class FlowFactory {
       when(right.getElements()).thenReturn(Arrays.asList(field1, field2));
       when(expression.getLeftHandOperand()).thenReturn(left);
       when(expression.getRightHandOperand()).thenReturn(right);
+      when(expression.getCorrelationEventIdType()).thenReturn(DataTypes.STRING);
       when(correlation.getCorrelationExpressions()).thenReturn(Collections.singleton(expression));
+      when(correlation.getCompletenessExpressions()).thenReturn(Collections.singleton(expression));
       when(flow.getCorrelationDescription()).thenReturn(Optional.of(correlation));
 
       return flow;

@@ -6,6 +6,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
@@ -114,30 +115,9 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
                              false);
       
       //Loop through all correlation methods and produce a new class for each subscriber
-      for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
-         pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
-         pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-         pubSubBridgeDto.setPackageName(packageInfo);
+      for (CorrelationDto correlationMethodDto : correlationMethodDtos) {    
+         pubSubBridgeDto = setupDtoForCorrelation(correlationMethodDto, projectInfo, projectDirectory, packageInfo);
          
-         pubSubBridgeDto.setCorrelating(true);
-         pubSubBridgeDto.getImports().add(Collection.class.getName());
-
-         //Populate publisher related fields
-         PublishDto publishDto = correlationMethodDto.getOutput();
-         pubSubBridgeDto.setPublishDataType(publishDto.getType());
-         pubSubBridgeDto.setScenarioMethod("try"+ StringUtils.capitalize(correlationMethodDto.getServiceMethod()));
-         pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
-
-         //Retrieve required services and bind/unbind them
-         ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
-         pubSubBridgeDto.setService(classDto);
-         pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
-         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
-
-         //Set any useful snippets to clean up velocity templates
-         pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
-         pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
-
          //Produce a class for each input
          for (InputDto inputDto : correlationMethodDto.getInputs()) {
             //Populate subscriber related fields
@@ -154,33 +134,9 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
          }  
       }
       //Loop through all pubsub methods and produce a new class for each subscriber
-      for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
-         pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
-         pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
-         pubSubBridgeDto.setPackageName(packageInfo);
-
-         //Populate subscriber related fields
-         InputDto inputDto = pubSubMethodDto.getInput();
-         pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
-         pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
-         pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
-
-         //Populate publisher related fields
-         PublishDto publishDto = pubSubMethodDto.getOutput();
-         pubSubBridgeDto.setPublishDataType(publishDto.getType());
-         pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
-         pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
-
-         //Retrieve required services and bind/unbind them
-         ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
-         pubSubBridgeDto.setService(classDto);
-         pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
-         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
-
-         //Set any useful snippets to clean up velocity templates
-         pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
-         pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
-
+      for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {   
+         pubSubBridgeDto = setupBasicPubSubDto(pubSubMethodDto, projectInfo, projectDirectory, packageInfo);
+       
          dataParameters = new DefaultParameterCollection();
          dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
          unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
@@ -253,5 +209,61 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN,
             allPhasesParameter());
+   }
+
+   private PubSubBridgeDto setupBasicPubSubDto(BasicPubSubDto pubSubMethodDto, IProjectInformation projectInfo,
+            Path projectDirectory, String packageInfo) {
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+      pubSubBridgeDto.setPackageName(packageInfo);
+   
+      //Populate subscriber related fields
+      InputDto inputDto = pubSubMethodDto.getInput();
+      pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
+      pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+      pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
+   
+      //Populate publisher related fields
+      PublishDto publishDto = pubSubMethodDto.getOutput();
+      pubSubBridgeDto.setPublishDataType(publishDto.getType());
+      pubSubBridgeDto.setScenarioMethod(pubSubMethodDto.getServiceMethod());
+      pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
+   
+      //Retrieve required services and bind/unbind them
+      ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), getModel());
+      pubSubBridgeDto.setService(classDto);
+      pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+      pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
+   
+      //Set any useful snippets to clean up velocity templates
+      pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
+      pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
+      return pubSubBridgeDto;
+   }
+
+   private PubSubBridgeDto setupDtoForCorrelation(CorrelationDto correlationMethodDto, IProjectInformation projectInfo, Path projectDirectory, String packageInfo) {
+      PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+      pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+      pubSubBridgeDto.setPackageName(packageInfo);
+      
+      pubSubBridgeDto.setCorrelating(true);
+      pubSubBridgeDto.getImports().add(Collection.class.getName());
+   
+      //Populate publisher related fields
+      PublishDto publishDto = correlationMethodDto.getOutput();
+      pubSubBridgeDto.setPublishDataType(publishDto.getType());
+      pubSubBridgeDto.setScenarioMethod("try"+ StringUtils.capitalize(correlationMethodDto.getServiceMethod()));
+      pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
+   
+      //Retrieve required services and bind/unbind them
+      ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), getModel());
+      pubSubBridgeDto.setService(classDto);
+      pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+      pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
+   
+      //Set any useful snippets to clean up velocity templates
+      pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
+      pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
+      return pubSubBridgeDto;
    }
 }
