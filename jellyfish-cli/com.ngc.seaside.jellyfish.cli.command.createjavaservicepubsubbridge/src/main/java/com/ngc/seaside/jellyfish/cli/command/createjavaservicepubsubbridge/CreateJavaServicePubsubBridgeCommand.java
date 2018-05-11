@@ -9,6 +9,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.CorrelationDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.PublishDto;
@@ -23,6 +24,7 @@ import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -93,6 +95,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
 
       BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       List<BasicPubSubDto> pubSubMethodDtos = baseServiceDto.getBasicPubSubMethods();
+      List<CorrelationDto> correlationMethodDtos = baseServiceDto.getCorrelationMethods();
 
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
@@ -109,7 +112,47 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
                              dataParameters,
                              outputDirectory,
                              false);
+      
+      //Loop through all correlation methods and produce a new class for each subscriber
+      for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
+         pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
+         pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
+         pubSubBridgeDto.setPackageName(packageInfo);
+         
+         pubSubBridgeDto.setCorrelating(true);
+         pubSubBridgeDto.getImports().add(Collection.class.getName());
 
+         //Populate publisher related fields
+         PublishDto publishDto = correlationMethodDto.getOutput();
+         pubSubBridgeDto.setPublishDataType(publishDto.getType());
+         pubSubBridgeDto.setScenarioMethod("try"+ StringUtils.capitalize(correlationMethodDto.getServiceMethod()));
+         pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
+
+         //Retrieve required services and bind/unbind them
+         ClassDto classDto = generatorService.getServiceInterfaceDescription(getOptions(), model);
+         pubSubBridgeDto.setService(classDto);
+         pubSubBridgeDto.setServiceVarName(classDto.getTypeName());
+         pubSubBridgeDto.getImports().add(classDto.getFullyQualifiedName());
+
+         //Set any useful snippets to clean up velocity templates
+         pubSubBridgeDto.setUnbinderSnippet(pubSubBridgeDto.getServiceVarName());
+         pubSubBridgeDto.setBinderSnippet(pubSubBridgeDto.getServiceVarName());
+
+         //Produce a class for each input
+         for (InputDto inputDto : correlationMethodDto.getInputs()) {
+            //Populate subscriber related fields
+            pubSubBridgeDto.setSubscriberClassName(inputDto.getType());
+            pubSubBridgeDto.setSubscriberDataType(inputDto.getType());
+            pubSubBridgeDto.getImports().add(inputDto.getFullyQualifiedName());
+            
+            dataParameters = new DefaultParameterCollection();
+            dataParameters.addParameter(new DefaultParameter<>("dto", pubSubBridgeDto));
+            unpackSuffixedTemplate(PUBSUB_BRIDGE_JAVA_TEMPLATE_SUFFIX,
+                                   dataParameters,
+                                   projectDirectory,
+                                   false);
+         }  
+      }
       //Loop through all pubsub methods and produce a new class for each subscriber
       for (BasicPubSubDto pubSubMethodDto : pubSubMethodDtos) {
          pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
