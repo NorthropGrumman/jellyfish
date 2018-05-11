@@ -20,8 +20,10 @@ public interface ${dto.interface.name} {
 #end
 ################################## Correlation methods ###################################
 #foreach ($method in $dto.correlationMethods)
-   ${method.output.type} ${method.serviceMethod}(ICorrelationStatus<?> status) throws ServiceFaultException;
+#foreach ($corrInput in $method.inputs)
+   Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException;
 
+#end
 #end
 ################################## Req/res Methods ###################################
 #foreach ($method in $dto.basicServerReqResMethods)

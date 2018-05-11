@@ -3,6 +3,8 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A dto for generating that method that handles the logic when the correlation expressions for a
  * scenario are completed. This involves calling the corresponding service interface method, catching any
@@ -13,6 +15,7 @@ public class CorrelationDto {
    private String name;
    private PublishDto output;
    private String serviceMethod;
+   private String serviceTryMethodSnippet;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
@@ -50,6 +53,15 @@ public class CorrelationDto {
 
    public void setServiceMethod(String serviceName) {
       this.serviceMethod = serviceName;
+   }
+
+   public String getServiceTryMethodSnippet() {
+      return serviceTryMethodSnippet;
+   }
+
+   public void setServiceTryMethodSnippet(String serviceTryMethodSnippet) {
+      StringUtils.capitalize(serviceTryMethodSnippet);
+      this.serviceTryMethodSnippet = "try" + StringUtils.capitalize(serviceTryMethodSnippet);
    }
 
    /**
