@@ -137,6 +137,14 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          }
          IPublishSubscribeMessagingFlow flow = flowOptional.get();
 
+         Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
+         if (correlation.isPresent()) {
+            dto.getCorrelationMethods().add(correlation.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
+            continue;
+         }
+         
          Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
          if (pubSub.isPresent()) {
             dto.getBasicPubSubMethods().add(pubSub.get());
@@ -154,13 +162,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
          if (trigger.isPresent()) {
             dto.getTriggerRegistrationMethods().add(trigger.get());
-         }
-         Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
-         if (correlation.isPresent()) {
-            dto.getCorrelationMethods().add(correlation.get());
-            inputs.addAll(flow.getInputs());
-            outputs.addAll(flow.getOutputs());
-            continue;
          }
          Optional<ComplexScenarioDto> complex = getComplexScenario(scenario, flow, dto, options);
          if (complex.isPresent()) {
