@@ -161,7 +161,8 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       } else {
          StringTable<ICommand<?>> table = getCommandTable(INDENT, commands.values());
          logService.info(getClass(), table);
-         logService.info(getClass(), "\nTo see more detail about a command, run `jellyfish help -Dcommand=<command-name>`\n");
+         logService.info(getClass(), "\nTo see more detail about a command, "
+               + "run `jellyfish help -Dcommand=<command-name>`\n");
       }
    }
 
@@ -218,6 +219,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
          }
       }
    }
+   
    /**
     * Returns the properly-formatted StringTable for printing IJellyFishCommands.
     *
