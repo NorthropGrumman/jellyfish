@@ -371,6 +371,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       correlation.setServiceMethod(scenario.getName());
       correlation.setServiceTryMethodSnippet(scenario.getName());
+      correlation.setServiceRegisterSnippet(scenario.getName());
 
       correlation.setInputLogFormat(
             IntStream.range(0, flow.getInputs().size())

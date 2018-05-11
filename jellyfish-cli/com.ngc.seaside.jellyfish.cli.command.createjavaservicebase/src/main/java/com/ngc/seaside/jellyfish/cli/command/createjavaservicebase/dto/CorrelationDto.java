@@ -16,6 +16,7 @@ public class CorrelationDto {
    private PublishDto output;
    private String serviceMethod;
    private String serviceTryMethodSnippet;
+   private String serviceRegisterSnippet;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
@@ -59,9 +60,16 @@ public class CorrelationDto {
       return serviceTryMethodSnippet;
    }
 
-   public void setServiceTryMethodSnippet(String serviceTryMethodSnippet) {
-      StringUtils.capitalize(serviceTryMethodSnippet);
-      this.serviceTryMethodSnippet = "try" + StringUtils.capitalize(serviceTryMethodSnippet);
+   public void setServiceTryMethodSnippet(String serviceName) {
+      this.serviceTryMethodSnippet = "try" + StringUtils.capitalize(serviceName);
+   }
+
+   public String getServiceRegisterSnippet() {
+      return serviceRegisterSnippet;
+   }
+
+   public void setServiceRegisterSnippet(String serviceName) {
+      this.serviceRegisterSnippet = "register" + StringUtils.capitalize(serviceName) + "Trigger()";
    }
 
    /**

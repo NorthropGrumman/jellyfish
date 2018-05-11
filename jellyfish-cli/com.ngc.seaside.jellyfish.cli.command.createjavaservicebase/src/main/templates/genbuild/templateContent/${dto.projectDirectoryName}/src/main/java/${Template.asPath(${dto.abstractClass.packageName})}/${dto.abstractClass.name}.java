@@ -67,29 +67,23 @@ public abstract class ${dto.abstractClass.name}
    }
 
 #end
+
 ########## Multi-input 1-output methods with input-input correlation Delegaters##########
-#foreach($method in $dto.correlationMethods)
-   @Override
-   public ${method.output.type} ${method.serviceMethod}(ICorrelationStatus<?> status) throws ServiceFaultException {
-      updateRequestWithCorrelation(status.getEvent());
-      try {
-         @SuppressWarnings("unchecked")
-         ${method.output.type} output = ${method.name}(
-#foreach ($input in $method.inputs)
-            status.getData(${input.type}.class),
-#end                  
-            (ILocalCorrelationEvent<${method.correlationType}>) status.getEvent());
-         
-#foreach($correlation in $method.inputOutputCorrelations)
-         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
+#foreach ($method in $dto.correlationMethods)
+#foreach ($corrInput in $method.inputs)
+@Override
+public Collection<${method.output.type}> ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
+   Preconditions.checkNotNull(${corrInput.fieldName}, "${corrInput.fieldName} may not be null!");
+   return correlationService.correlate(${corrInput.fieldName})
+         .stream()
+         .filter(ICorrelationStatus::isCorrelationComplete)
+         .map(status -> triggers.get(status.getTrigger()).apply(status))
+         .map(${method.output.type}.class::cast)
+         .collect(Collectors.toList());
+}
+
 #end
-         return output;
-      } finally {
-         clearCorrelationFromRequest();
-      }
-   }
-   
-#end   
+#end
 ################################## Pub sub methods ###################################
 #foreach ($method in $dto.basicPubSubMethods)
    protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
@@ -104,9 +98,12 @@ public abstract class ${dto.abstractClass.name}
 #foreach($method in $dto.correlationMethods)
    protected abstract ${method.output.type} ${method.name}(
 #foreach ($input in $method.inputs)
+#if( $foreach.count < $method.inputs.size() )
       ${input.type} ${input.fieldName},
+#else
+      ${input.type} ${input.fieldName});
 #end
-      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException;
+#end
 
 #end
 ############################### Sink methods ##################################
@@ -116,6 +113,9 @@ public abstract class ${dto.abstractClass.name}
 #end
 ################################## Activate ###################################
    protected void activate() {
+#foreach($method in $dto.correlationMethods)
+   ${method.serviceRegisterSnippet};
+#end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
    }
