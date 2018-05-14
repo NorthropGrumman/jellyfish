@@ -106,7 +106,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
-            .setConnectorClassname(connectorInfo.getGroupId() + "." + connectorInfo.getArtifactId());
+            .setConnectorClassname(connectorInfo.getGroupId() + "." + connectorInfo.getArtifactId() + "." + model.getName() + "Connector");
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
