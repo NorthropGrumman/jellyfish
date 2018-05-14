@@ -106,6 +106,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
             .setConnectorClassname(
+                  // TODO(Cameron): Is this really how we should be creating the connector name?
                   buildConnectorName(projectNamingService.getConnectorProjectName(options, model), model.getName()));
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
