@@ -97,7 +97,6 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
-      IProjectInformation connectorInfo = projectNamingService.getConnectorProjectName(options, model);
       String packagez = packageNamingService.getConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
@@ -106,7 +105,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
-            .setConnectorClassname(connectorInfo.getGroupId() + "." + connectorInfo.getArtifactId() + "." + model.getName() + "Connector");
+            .setConnectorClassname(
+                  buildConnectorName(projectNamingService.getConnectorProjectName(options, model), model.getName()));
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
@@ -294,4 +294,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             CommonParameters.CLEAN);
    }
 
+   private String buildConnectorName(IProjectInformation info, String modelName) {
+      return info.getGroupId() + "." + info.getArtifactId() + "." + modelName + "Connector";
+   }
 }
