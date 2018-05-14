@@ -25,7 +25,7 @@ public class ${dto.modelName}ReadinessConfiguration {
       config.require()
             .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
             .require()
-            .componentActivated("(component.name=${dto.connectorClassName})");
+            .componentActivated("(component.name=${dto.connectorClassname})");
       readinessService.register(config);
 
       logService.debug(getClass(), "Activated.");
