@@ -1,8 +1,0 @@
-dependencies {
-   api "com.google.inject:guice:$guiceVersion"
-
-   implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
-   implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
-   implementation "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsVersion"
-}
-
