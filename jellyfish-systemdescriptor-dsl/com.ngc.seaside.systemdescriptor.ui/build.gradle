@@ -1,5 +1,11 @@
-import com.ngc.seaside.gradle.tasks.eclipse.updatesite.DownloadEclipseTask
-import com.ngc.seaside.gradle.tasks.eclipse.updatesite.UnzipEclipseTask
+//buildscript {
+//   dependencies {
+//      classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+//   }
+//}
+
+import com.ngc.seaside.gradle.plugins.eclipse.updatesite.DownloadEclipseTask
+import com.ngc.seaside.gradle.plugins.eclipse.updatesite.UnzipEclipseTask
 import com.ngc.seaside.gradle.util.Versions
 import org.gradle.internal.os.OperatingSystem
 
