@@ -97,15 +97,16 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
+      IProjectInformation connectorInfo = projectNamingService.getConnectorProjectName(options, model);
       String packagez = packageNamingService.getConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
             .setModelName(model.getName())
             .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-                                              .getArtifactId())
-            .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
+            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
+            .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
+            .setConnectorClassname(connectorInfo.getGroupId() + "." + connectorInfo.getArtifactId());
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
