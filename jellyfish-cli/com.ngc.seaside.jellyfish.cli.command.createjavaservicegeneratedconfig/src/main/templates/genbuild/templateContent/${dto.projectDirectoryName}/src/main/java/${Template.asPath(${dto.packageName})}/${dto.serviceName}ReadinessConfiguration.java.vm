@@ -1,0 +1,60 @@
+package com.ngc.seaside.threateval.tps.config;
+
+import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.service.readiness.api.IReadinessConfiguration;
+import com.ngc.seaside.service.readiness.api.IReadinessService;
+import com.ngc.seaside.service.transport.api.ITransportEventSource;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+@Component(immediate = true)
+public class TrackPriorityServiceReadinessConfiguration {
+
+   private ILogService logService;
+
+   private IReadinessService readinessService;
+
+   @Activate
+   public void activate() {
+      IReadinessConfiguration config = readinessService.newConfiguration();
+      config.require()
+            .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
+            .require()
+            .componentActivated("(component.name=com.ngc.seaside.threateval.tps.connector.TrackPriorityServiceConnector)");
+      readinessService.register(config);
+
+      logService.debug(getClass(), "Activated.");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      logService.debug(getClass(), "Deactivated.");
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeReadinessService")
+   public void setReadinessService(IReadinessService ref) {
+      this.readinessService = ref;
+   }
+
+   public void removeReadinessService(IReadinessService ref) {
+      setReadinessService(null);
+   }
+}
