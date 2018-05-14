@@ -64,12 +64,30 @@ pipeline {
         }
       }
 
-        stage('Build jellyfish-cli') {
-            steps {
-                dir('jellyfish-cli') {
-                    sh '../gradlew clean ci'
-                    junit '**/build/test-results/test/*.xml'
-                }
+      stage('Build jellyfish-cli') {
+         steps {
+            dir('jellyfish-cli') {
+               sh '../gradlew clean ci'
+               junit '**/build/test-results/test/*.xml'
+            }
+         }
+      }
+
+      stage('Build jellyfish-cli-commands') {
+         steps {
+            dir('jellyfish-cli-commands') {
+               sh '../gradlew clean ci'
+               junit '**/build/test-results/test/*.xml'
+            }
+         }
+      }
+
+      stage('Build jellyfish-packaging') {
+         steps {
+            dir('jellyfish-packaging') {
+               sh '../gradlew clean ci'
+               junit '**/build/test-results/test/*.xml'
+            }
          }
       }
 
@@ -93,6 +111,12 @@ pipeline {
                sh '../gradlew populateM2repo'
             }
             dir('jellyfish-cli') {
+               sh '../gradlew populateM2repo'
+            }
+            dir('jellyfish-cli-commands') {
+               sh '../gradlew populateM2repo'
+            }
+            dir('jellyfish-packaging') {
                sh '../gradlew populateM2repo'
             }
             dir('jellyfish-examples') {
@@ -149,6 +173,12 @@ pipeline {
                dir('jellyfish-cli') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
+               dir('jellyfish-cli-commands') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+               dir('jellyfish-packaging') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
             }
          }
       }
@@ -188,7 +218,13 @@ pipeline {
          steps {
             // Create a ZIP that has everything.
             sh 'mkdir -p build'
-            sh 'zip -j -r build/jellyfish-all.zip jellyfish-systemdescriptor-dsl/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip jellyfish-cli/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml build/*.pdf'
+            sh """zip -j -r 
+			      build/jellyfish-all.zip
+				  jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
+				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
+				  build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml
+				  build/*.pdf
+			   """.replaceAll('\\s+', ' ')
 
             // Archive the zip that has everything.
             archiveArtifacts allowEmptyArchive: true,
