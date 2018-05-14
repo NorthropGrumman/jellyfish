@@ -28,10 +28,10 @@ model Model {
 		 and willCorrelate input1.field3.field4 to output1.field5.field6
 	}
 	
-	scenario basicSink {
-		when receiving input1
-		then willBeCompleted within 5 seconds
-	}
+//	scenario basicSink {
+//		when receiving input1
+//		then willBeCompleted within 5 seconds
+//	}
 	
 //	scenario multiOutputPubSub {
 //		when receiving input1
@@ -61,12 +61,12 @@ model Model {
 //		 and willPublish output2
 //	}
 	
-	scenario sinkCorrelation {
-		when receiving input1
-		 and receiving input2
-		 and correlating input1.field1 to input2.field5
-		then willBeCompleted within 5 seconds
-	}
+//	scenario sinkCorrelation {
+//		when receiving input1
+//		 and receiving input2
+//		 and correlating input1.field1 to input2.field5
+//		then willBeCompleted within 5 seconds
+//	}
 	
 	scenario singleOutputCorrelation {
 		when receiving input1

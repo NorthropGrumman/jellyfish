@@ -16,11 +16,6 @@ public interface ${dto.interface.name} {
    ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
 
 #end
-################################## Sink methods ###################################
-#foreach ($method in $dto.basicSinkMethods)
-   void ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
-
-#end
 ################################## Correlation methods ###################################
 #foreach ($method in $dto.correlationMethods)
 #foreach ($corrInput in $method.inputs)

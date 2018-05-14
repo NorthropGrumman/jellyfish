@@ -115,11 +115,6 @@ public abstract class ${dto.abstractClass.name}
 #end
 
 #end
-############################### Sink methods ##################################
-#foreach($method in $dto.basicSinkMethods)
-   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
-
-#end
 ################################## Activate ###################################
    protected void activate() {
 #foreach($method in $dto.correlationMethods)
