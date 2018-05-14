@@ -19,6 +19,7 @@ public class GeneratedServiceConfigDto {
    private String packageName;
    private String projectDirectoryName;
    private String baseProjectArtifactName;
+   private String connectorClassname;
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
 
@@ -82,8 +83,16 @@ public class GeneratedServiceConfigDto {
       return this;
    }
 
+   public String getConnectorClassname() {
+      return this.connectorClassname;
+   }
+
+   public GeneratedServiceConfigDto setConnectorClassname(String connectorClassname) {
+      this.connectorClassname = connectorClassname;
+      return this;
+   }
+
    /**
-    *
     * @param groupAndArtifactId String of the group ID that you want formatted
     * @return String of formatted dependency
     */
