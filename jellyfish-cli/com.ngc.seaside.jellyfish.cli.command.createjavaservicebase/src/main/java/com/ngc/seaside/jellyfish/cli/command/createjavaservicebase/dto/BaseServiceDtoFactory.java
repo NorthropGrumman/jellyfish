@@ -137,6 +137,11 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          }
          IPublishSubscribeMessagingFlow flow = flowOptional.get();
 
+         Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
+         if (trigger.isPresent()) {
+            dto.getTriggerRegistrationMethods().add(trigger.get());
+         }
+         
          Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
          if (correlation.isPresent()) {
             dto.getCorrelationMethods().add(correlation.get());
@@ -158,10 +163,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             inputs.addAll(flow.getInputs());
             outputs.addAll(flow.getOutputs());
             continue;
-         }
-         Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
-         if (trigger.isPresent()) {
-            dto.getTriggerRegistrationMethods().add(trigger.get());
          }
          Optional<ComplexScenarioDto> complex = getComplexScenario(scenario, flow, dto, options);
          if (complex.isPresent()) {
@@ -459,6 +460,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       TriggerDto trigger = new TriggerDto();
 
       trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
+      trigger.setServiceFromStatusSnippet(scenario.getName());
       trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
 
       trigger.setInputs(flow.getInputs()
@@ -466,6 +468,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                               .map(field -> getInputDto(field, dto, options))
                               .map(input -> input.setCorrelationMethod(trigger.getCorrelationMethod()))
                               .collect(Collectors.toList()));
+      
+      trigger.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
 
       trigger.setEventProducers(description.getCompletenessExpressions()
                                       .stream()
@@ -496,6 +500,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                CompletenessDto completenessDto = new CompletenessDto();
                                                completenessDto.setInput1GetterSnippet(
                                                      getGetterSnippet(left, options));
+                                               completenessDto.setOutputSetterSnippet(
+                                                  getSetterSnippet(left, options));
                                                completenessDto.setInput1Type(dataService.getEventClass(
                                                      options, left.getStart().getType()).getTypeName());
                                                completenessDto.setInput2GetterSnippet(

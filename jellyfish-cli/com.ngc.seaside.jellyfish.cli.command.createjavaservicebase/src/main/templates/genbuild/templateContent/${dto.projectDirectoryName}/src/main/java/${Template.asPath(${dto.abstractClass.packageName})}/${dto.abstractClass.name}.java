@@ -14,6 +14,7 @@ package ${dto.abstractClass.packageName};
 #set ($ignore = $dto.abstractClass.imports.add("java.util.function.Function"))
 #set ($ignore = $dto.abstractClass.imports.add("java.util.stream.Collectors"))
 #end
+
 #foreach ($i in $dto.abstractClass.imports)
 import ${i};
 #end
@@ -135,25 +136,28 @@ public abstract class ${dto.abstractClass.name}
    }
 
 ################################# Correlation Triggers ########################
-#foreach($method in $dto.correlationMethods)
-   private void ${method.serviceRegisterSnippet} {
-      ICorrelationTrigger<${method.correlationType}> trigger = correlationService.newTrigger(${method.correlationType}.class)
-#foreach ($input in $method.inputs)
-         .addEventIdProducer(${input.type}.class, a -> a.getHeader().getCorrelationEventId())
+
+#foreach($method in $dto.triggerRegistrationMethods)
+   private void ${method.name}() {
+      ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType}.class)
+#foreach($event in $method.eventProducers)
+         .addEventIdProducer(${event.type}.class, a -> a.${event.getterSnippet})
 #end
-         .addCompletenessCondition(${method.inputClassListSnippet} (a, b) ->
-               Objects.equal(a.getHeader().getCorrelationEventId(), b.getHeader().getCorrelationEventId()))
+#foreach($completion in $method.completionStatements)
+         .addCompletenessCondition(${completion.input1Type}.class, ${completion.input2Type}.class,  (a, b) ->
+            Objects.equal(a.${completion.input1GetterSnippet}, b.${completion.input2GetterSnippet}))
+#end
          .register();
       triggers.put(trigger, this::${method.serviceFromStatusSnippet});
    }
 #end
 
 ############################ Correlation Status Methods ########################
-#foreach($method in $dto.correlationMethods)
+#foreach($method in $dto.triggerRegistrationMethods)
    private ${method.output.type} ${method.serviceFromStatusSnippet}(ICorrelationStatus<?> status) {
       updateRequestWithCorrelation(status.getEvent());
       try {
-         ${method.output.type} output = ${method.name}(
+         ${method.output.type} output = ${method.correlationMethod}(
 #foreach ($input in $method.inputs)
 #if( $foreach.count < $method.inputs.size() )               
                   status.getData(${input.type}.class),
@@ -161,9 +165,8 @@ public abstract class ${dto.abstractClass.name}
                   status.getData(${input.type}.class));
 #end
 #end
-         output.getHeader().setCorrelationEventId(status.getData(${method.inputs.get(0).type}.class)
-                                                     .getHeader()
-                                                     .getCorrelationEventId());
+         output.${method.completionStatements.get(0).outputSetterSnippet}(status.getData(${method.completionStatements.get(0).input1Type}.class)
+                                                     .${method.completionStatements.get(0).input1GetterSnippet});
          return output;
       } finally {
          clearCorrelationFromRequest();
@@ -263,3 +266,5 @@ public abstract class ${dto.abstractClass.name}
    }
 #end
 }
+   
+   

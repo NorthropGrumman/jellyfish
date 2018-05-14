@@ -8,9 +8,11 @@ public class TriggerDto {
    private String triggerType;
    private String correlationMethod;
    private String name;
+   private String serviceFromStatusSnippet;
    private List<EventDto> eventProducers = new ArrayList<>();
    private List<CompletenessDto> completionStatements = new ArrayList<>();
    private List<InputDto> inputs = new ArrayList<>();
+   private PublishDto output;
 
    public String getTriggerType() {
       return triggerType;
@@ -47,6 +49,13 @@ public class TriggerDto {
       this.completionStatements = completionStatements;
       return this;
    }
+   
+   public PublishDto getOutput() {
+      return output;
+   }
+   public void setOutput(PublishDto output) {
+      this.output = output; 
+   }
 
    public List<InputDto> getInputs() {
       return inputs;
@@ -65,6 +74,13 @@ public class TriggerDto {
       this.name = name;
    }
 
+   public String getServiceFromStatusSnippet() {
+      return serviceFromStatusSnippet;
+   }
+
+   public void setServiceFromStatusSnippet(String serviceName) {
+      this.serviceFromStatusSnippet = serviceName + "FromStatus";  
+   }
 
    public static class CompletenessDto {
 
@@ -72,6 +88,7 @@ public class TriggerDto {
       private String input2Type;
       private String input1GetterSnippet;
       private String input2GetterSnippet;
+      private String outputSetterSnippet;
 
       public String getInput1Type() {
          return input1Type;
@@ -106,6 +123,15 @@ public class TriggerDto {
 
       public CompletenessDto setInput2GetterSnippet(String input2GetterSnippet) {
          this.input2GetterSnippet = input2GetterSnippet;
+         return this;
+      }
+
+      public String getOutputSetterSnippet() {
+         return outputSetterSnippet;
+      }
+      
+      public CompletenessDto setOutputSetterSnippet(String outputSetterSnippet) {
+         this.outputSetterSnippet = outputSetterSnippet;
          return this;
       }
    }
