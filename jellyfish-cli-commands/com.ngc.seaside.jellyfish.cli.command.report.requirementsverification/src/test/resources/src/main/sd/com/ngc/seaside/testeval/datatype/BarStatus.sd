@@ -1,0 +1,18 @@
+package com.ngc.seaside.testeval.datatype
+
+data BarStatus {
+    metadata {
+        "description": "Contains BarStatus of a system.",
+    	"stereotypes": ["system"],
+    	"satisfies": ["SW019", "SE020"]
+    }
+	string foo
+	float bar {
+	   metadata {
+		  "validation": {
+			  "min": 0.0,
+			  "max": 1.0
+		  }
+		}
+	}
+}

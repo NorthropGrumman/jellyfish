@@ -1,0 +1,265 @@
+package ${dto.packageName};
+
+#if(${dto.requiresInjectedService})import ${dto.serviceInterface.getFullyQualifiedName()};
+#end
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import com.ngc.blocs.requestmodel.api.RequestThreadLocal;
+import com.ngc.blocs.service.event.api.IEvent;
+import com.ngc.blocs.service.event.api.IEventService;
+import com.ngc.blocs.service.log.api.ILogService;
+#if(${dto.requiresInjectedService})import com.ngc.seaside.service.fault.api.IFaultManagementService;
+import com.ngc.seaside.service.fault.api.ServiceFaultException;
+#end
+import com.ngc.seaside.service.transport.api.ITransportObject;
+import com.ngc.seaside.service.transport.api.ITransportService;
+import com.ngc.seaside.service.transport.api.ITransportTopic;
+import com.ngc.seaside.service.transport.api.InvalidPayloadException;
+import com.ngc.seaside.service.transport.api.ITransportReceiver;
+import com.ngc.seaside.service.request.api.IRequestService;
+import com.ngc.seaside.service.request.api.IServiceRequest;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.Future;
+
+@Component(service = ${dto.model.name}Connector.class, immediate = true)
+public class ${dto.model.name}Connector {
+
+   private ILogService logService;
+   private IEventService eventService;
+   private IRequestService requestService;
+   private ITransportService transportService;
+#if(${dto.requiresInjectedService})   private IFaultManagementService faultManagementService;
+   private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
+#end
+
+   @SuppressWarnings("unchecked")
+   @Activate
+   public void activate() {
+#foreach($inputEntry in $dto.inputTopics.entrySet())
+#set ($topic = $inputEntry.key)
+#set ($input = $inputEntry.value)
+      transportService.addReceiver(this::receive${input.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($request = $requestEntry.value.request)
+      transportService.addReceiver(this::handle${request.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
+#foreach($outputEntry in $dto.outputTopics.entrySet())
+#set ($output = $outputEntry.value)
+      eventService.addSubscriber(this::send${output.name},
+         ${dto.eventPackage($output)}.${output.name}.TOPIC);
+
+#end
+      logService.debug(getClass(), "Activated.");
+   }
+
+   @SuppressWarnings("unchecked")
+   @Deactivate
+   public void deactivate() {
+      #foreach($inputEntry in $dto.inputTopics.entrySet())
+      #set ($topic = $inputEntry.key)
+      #set ($input = $inputEntry.value)
+      transportService.removeReceiver(this::receive${input.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($request = $requestEntry.value.request)
+      transportService.removeReceiver(this::handle${request.name},
+         ${dto.transportTopicsClass}.${topic});
+
+#end
+#foreach($outputEntry in $dto.outputTopics.entrySet())
+#set ($output = $outputEntry.value)
+      eventService.removeSubscriber(this::send${output.name},
+         ${dto.eventPackage($output)}.${output.name}.TOPIC);
+
+#end
+      logService.debug(getClass(), "Deactivated.");
+   }
+
+#if(${dto.requiresInjectedService})
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "remove${dto.model.name}")
+   public void set${dto.model.name}(${dto.serviceInterface.name} ref) {
+      ${dto.getServiceFieldName()} = ref;
+   }
+
+   public void remove${dto.model.name}(${dto.serviceInterface.name} ref) {
+      set${dto.model.name}(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeFaultManagementService")
+   public void setFaultManagementService(IFaultManagementService ref) {
+      this.faultManagementService = ref;
+   }
+
+   public void removeFaultManagementService(IFaultManagementService ref) {
+      setFaultManagementService(null);
+   }
+#end
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
+   public void setEventService(IEventService ref) {
+      this.eventService = ref;
+   }
+
+   public void removeEventService(IEventService ref) {
+      setEventService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeRequestService")
+   public void setRequestService(IRequestService ref) {
+      this.requestService = ref;
+   }
+
+   public void removeRequestService(IRequestService ref) {
+      setRequestService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeTransportService")
+   public void setTransportService(ITransportService ref) {
+      this.transportService = ref;
+   }
+
+   public void removeTransportService(ITransportService ref) {
+      setTransportService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+#foreach($inputEntry in $dto.inputTopics.entrySet())
+#set ($topic = $inputEntry.key)
+#set ($input = $inputEntry.value)
+#set ($eventPackage = $dto.eventPackage($input))
+#set ($messagePackage = $dto.messagePackage($input))
+
+   private Future<Collection<ITransportObject>> receive${input.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
+      preReceiveMessage(${dto.transportTopicsClass}.${topic});
+      try {
+         ${messagePackage}.${input.name} from;
+         try {
+            from = ${messagePackage}.${input.name}.parseFrom(transportObject.getPayload());
+         } catch (InvalidProtocolBufferException e) {
+            throw new InvalidPayloadException(e);
+         }
+         eventService.publish(${dto.model.name}DataConversion.convert(from), ${eventPackage}.${input.name}.TOPIC);
+      } finally {
+         postReceiveMessage(${dto.transportTopicsClass}.${topic});
+      }
+      return ITransportReceiver.EMPTY_RESPONSE;
+   }
+#end
+#foreach($requestEntry in $dto.requestTopics.entrySet())
+#set ($topic = $requestEntry.key)
+#set ($scenario = $requestEntry.value.scenario)
+#set ($request = $requestEntry.value.request)
+#set ($response = $requestEntry.value.response)
+#set ($eventRequestPackage = $dto.eventPackage($request))
+#set ($messageRequestPackage = $dto.messagePackage($request))
+#set ($eventResponsePackage = $dto.eventPackage($response))
+#set ($messageResponsePackage = $dto.messagePackage($response))
+
+   private Future<Collection<ITransportObject>> handle${request.name}(ITransportObject transportObject, ${dto.transportTopicsClass} transportTopic) {
+      preReceiveMessage(${dto.transportTopicsClass}.${topic});
+      try {
+         ${messageRequestPackage}.${request.name} request;
+         try {
+            request = ${messageRequestPackage}.${request.name}.parseFrom(transportObject.getPayload());
+         } catch (InvalidProtocolBufferException e) {
+            throw new InvalidPayloadException(e);
+         }
+
+         ${eventResponsePackage}.${response.name} response;
+         try {
+            response = ${dto.getServiceFieldName()}.${scenario.name}(${dto.model.name}DataConversion.convert(request));
+         } catch (ServiceFaultException fault) {
+            faultManagementService.handleFault(fault);
+            throw fault;
+         }
+         return ITransportReceiver.singleImmediateResponse(ITransportObject.withPayload(${dto.model.name}DataConversion.convert(response).toByteArray()));
+      } finally {
+         postReceiveMessage(${dto.transportTopicsClass}.${topic});
+      }
+   }
+#end
+#foreach($outputEntry in $dto.outputTopics.entrySet())
+#set ($topic = $outputEntry.key)
+#set ($output = $outputEntry.value)
+#set ($eventPackage = $dto.eventPackage($output))
+#set ($messagePackage = $dto.messagePackage($output))
+
+   private void send${output.name}(IEvent<${eventPackage}.${output.name}> event) {
+      preSendMessage(${dto.transportTopicsClass}.${topic});
+      ${eventPackage}.${output.name} from = event.getSource();
+      ${messagePackage}.${output.name} to = ${dto.model.name}DataConversion.convert(from);
+      try {
+         transportService.send(ITransportObject.withPayload(to.toByteArray()),
+            ${dto.transportTopicsClass}.${topic});
+      } finally {
+         postSendMessage(${dto.transportTopicsClass}.${topic});
+      }
+   }
+#end
+
+   private void preReceiveMessage(ITransportTopic transportTopic) {
+      @SuppressWarnings("unchecked")
+      IServiceRequest<ITransportTopic> request = (IServiceRequest<ITransportTopic>) requestService.beginRequest();
+      request.setRequirements(getRequirementsForTransportTopic(transportTopic));
+      request.setContext(transportTopic);
+      logService.debug(getClass(), "Received message on transport application topic %s.", transportTopic);
+   }
+
+   private void postReceiveMessage(${dto.transportTopicsClass} transportTopic) {
+      RequestThreadLocal.clear();
+   }
+
+   private void preSendMessage(${dto.transportTopicsClass} transportTopic) {
+      // Do nothing.
+   }
+
+   private void postSendMessage(ITransportTopic transportTopic) {
+      logService.debug(getClass(), "Sent message on transport application topic %s.", transportTopic);
+      requestService.endRequest();
+   }
+
+   private static Collection<String> getRequirementsForTransportTopic(ITransportTopic transportTopic) {
+      final Collection<String> requirements;
+
+      switch((${dto.transportTopicsClass}) transportTopic){
+#foreach($entry in $dto.topicRequirements.entrySet())
+#set ($topic = $entry.key)
+#set ($requirements = $entry.value)
+#set ($size = $requirements.size())
+         case ${topic}:
+            requirements = Arrays.asList(#foreach($req in $requirements)"${req}"#if($foreach.last)#{else}, #{end}#{end});
+            break;
+#end
+         default:
+            requirements = Collections.emptyList();
+            break;
+      }
+
+      return requirements;
+   }
+}

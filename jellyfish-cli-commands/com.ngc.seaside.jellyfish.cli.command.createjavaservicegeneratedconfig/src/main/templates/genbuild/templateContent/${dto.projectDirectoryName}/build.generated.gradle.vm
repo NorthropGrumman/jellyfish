@@ -1,0 +1,19 @@
+#set( $D = '$' )
+
+dependencies {
+   implementation project(':${dto.baseProjectArtifactName}')
+
+   implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+#foreach ($dependency in $dto.transportProviderDependencies)
+   implementation "${dto.getFormattedDependency($dependency)}"
+#end
+   implementation "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   implementation "${dto.getFormattedDependency('com.ngc.blocs:properties.resource.impl.common.propertiesresource')}"
+   implementation "${dto.getFormattedDependency('org.osgi:osgi.core')}"
+   implementation "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
+   implementation "${dto.getFormattedDependency('com.google.guava:guava')}"
+
+   testImplementation "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
+   testImplementation "${dto.getFormattedDependency('junit:junit')}"
+   testImplementation "${dto.getFormattedDependency('org.mockito:mockito-core')}"
+}

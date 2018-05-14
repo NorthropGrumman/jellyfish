@@ -1,0 +1,16 @@
+#set( $D = '$' )
+
+dependencies {
+#foreach ($project in  $serviceDto.projectDependencies)
+   compile project(':${project}')
+#end
+
+   compile "${serviceDto.getFormattedDependency('com.ngc.seaside:service.api')}"
+   compile "${serviceDto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   compile "${serviceDto.getFormattedDependency('org.osgi:osgi.core')}"
+   compile "${serviceDto.getFormattedDependency('org.osgi:osgi.enterprise')}"
+   compile "${serviceDto.getFormattedDependency('com.google.guava:guava')}"
+
+   testCompile "${serviceDto.getFormattedDependency('junit:junit')}"
+   testCompile "${serviceDto.getFormattedDependency('org.mockito:mockito-core')}"
+}

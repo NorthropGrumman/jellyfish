@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+            url nexusConsolidated
+        }
+    }
+
+   dependencies {
+      #foreach ( $dependency in $dto.buildScriptDependencies )
+      classpath "${dependency.groupId}:${dependency.artifactId}:${dependency.version}"
+      #end
+   }
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
+
+systemDescriptor {
+   project = '${dto.systemDescriptorGav}'
+   model = '${dto.modelName}'
+#if ($dto.deploymentModelName)
+   deploymentModel = '${dto.deploymentModelName}'
+#end
+}
+
+subprojects {
+
+   // Do not apply the parent plugin to the distribution project.
+   if(!name.endsWith('.distribution')
+       && !name.endsWith('.docker')) {
+      apply plugin: 'com.ngc.seaside.parent'
+    }
+
+   group = '${dto.groupId}'
+   version = '${dto.version}'
+
+   ext {
+      #foreach ( $entry in $dto.versionProperties.entrySet() )
+      ${entry.key} = '${entry.value}'
+      #end
+   }
+}

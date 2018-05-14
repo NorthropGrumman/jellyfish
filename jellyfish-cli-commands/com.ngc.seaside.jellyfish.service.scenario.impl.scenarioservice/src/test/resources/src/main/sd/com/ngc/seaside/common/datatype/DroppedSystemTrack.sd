@@ -1,0 +1,7 @@
+package com.ngc.seaside.common.datatype
+
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
+
+data DroppedSystemTrack {
+	SystemTrackIdentifier identifier
+}
