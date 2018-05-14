@@ -4,6 +4,7 @@ import com.ngc.seaside.gradle.util.Versions
 import java.nio.file.Paths
 
 apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.ngc.seaside.ci'
 apply plugin: 'com.ngc.seaside.eclipse.updatesite'
 
 eclipseUpdateSite {

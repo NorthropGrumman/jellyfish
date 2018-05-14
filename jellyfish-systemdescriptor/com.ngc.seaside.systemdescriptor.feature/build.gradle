@@ -1,5 +1,6 @@
 import com.ngc.seaside.gradle.util.Versions
 
+apply plugin: 'com.ngc.seaside.ci'
 apply plugin: 'com.ngc.seaside.eclipse.feature'
 
 eclipseFeature {
