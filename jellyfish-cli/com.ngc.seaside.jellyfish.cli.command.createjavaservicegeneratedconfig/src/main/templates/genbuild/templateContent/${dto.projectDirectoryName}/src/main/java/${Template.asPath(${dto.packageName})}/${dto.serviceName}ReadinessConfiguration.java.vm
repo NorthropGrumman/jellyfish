@@ -1,4 +1,4 @@
-package ${dto.packageName}
+package ${dto.packageName};
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.readiness.api.IReadinessConfiguration;
