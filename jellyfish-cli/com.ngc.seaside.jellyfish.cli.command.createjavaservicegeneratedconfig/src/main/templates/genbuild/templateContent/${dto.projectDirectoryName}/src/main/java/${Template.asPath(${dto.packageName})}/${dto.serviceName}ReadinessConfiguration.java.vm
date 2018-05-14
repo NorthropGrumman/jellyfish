@@ -13,7 +13,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(immediate = true)
-public class TrackPriorityServiceReadinessConfiguration {
+public class ${dto.modelName}ReadinessConfiguration {
 
    private ILogService logService;
 
