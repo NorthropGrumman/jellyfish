@@ -1,0 +1,7 @@
+rootProject.name = 'jellyfish-packaging'
+
+include 'com.ngc.seaside.jellyfish'
+project(':com.ngc.seaside.jellyfish').name = 'jellyfish'
+
+include 'com.ngc.seaside.jellyfish.cli.gradle.plugins'
+project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.gradle.plugins'

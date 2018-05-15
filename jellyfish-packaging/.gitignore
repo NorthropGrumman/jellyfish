@@ -1,0 +1,35 @@
+# Java files
+*.class
+*.jar
+*.war
+
+# generated files
+bin/
+gen/
+
+# Eclipse files
+.classpath
+.project
+.settings/
+.recommenders/
+
+# Intellij files
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+
+# Gradle
+.gradletasknamecache
+.gradle/
+build/
+!**/src/**/build/
+
+# Avoid ignoring Gradle wrapper jar file
+!gradle-wrapper.jar
+
+# logs
+
+*.log
+*.log.*
