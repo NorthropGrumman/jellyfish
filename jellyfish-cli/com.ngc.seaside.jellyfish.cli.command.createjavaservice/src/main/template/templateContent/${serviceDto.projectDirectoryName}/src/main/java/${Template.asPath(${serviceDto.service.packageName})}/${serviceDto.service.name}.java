@@ -30,14 +30,6 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
    }
 
 #end
-#foreach ($method in $baseServiceDto.basicSinkMethods)
-   @Override
-   public void ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
-      // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-#end
 #foreach ($method in $baseServiceDto.correlationMethods)
    @Override
    public ${method.output.type} ${method.name}(
@@ -50,25 +42,6 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 #end
          // TODO: implement this
          throw new UnsupportedOperationException("not implemented");
-   }
-
-#end
-#foreach ($scenario in $baseServiceDto.complexScenarios)
-   @Override
-   public void ${scenario.serviceMethod}(
-#foreach ($input in $scenario.inputs)
-#set ($lastParam = $foreach.last && $scenario.outputs.isEmpty())
-      BlockingQueue<${input.type}> ${input.fieldName}Queue#if ($lastParam)) {#{else},
-#end
-#end
-#foreach ($output in $scenario.outputs)
-#set ($lastParam = $foreach.last)
-      Consumer<${output.type}> ${output.fieldName}Consumer#if ($lastParam)) {#{else},
-#end
-#end
-
-      // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");
    }
 
 #end

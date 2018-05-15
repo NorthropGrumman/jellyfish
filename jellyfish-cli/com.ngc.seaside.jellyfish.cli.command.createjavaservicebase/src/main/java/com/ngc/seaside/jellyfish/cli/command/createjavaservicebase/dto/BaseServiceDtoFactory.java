@@ -316,8 +316,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       pubSub.setServiceMethod(scenario.getName());
 
       if (flow.getCorrelationDescription().isPresent()) {
-         pubSub.setServiceMethod("try" + StringUtils.capitalize(scenario.getName()));
-         pubSub.getOutput().setFinalizedType("Collection<" + pubSub.getOutput().getType() + ">");
          pubSub.setInputOutputCorrelations(
                getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
       }
@@ -372,9 +370,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       correlation.getOutput().setFinalizedType("Collection<" + correlation.getOutput().getType() + ">");
 
       correlation.setServiceMethod(scenario.getName());
-      correlation.setServiceTryMethodSnippet(scenario.getName());
-      correlation.setServiceRegisterSnippet(scenario.getName());
-      correlation.setServiceFromStatusSnippet(scenario.getName());
+      correlation.setServiceTryMethod("try" + StringUtils.capitalize(scenario.getName()));
+      correlation.setServiceTriggerRegister("register" + StringUtils.capitalize(scenario.getName()) + "Trigger");
+      correlation.setServiceFromStatus(scenario.getName() + "FromStatus");
       
       correlation.setInputLogFormat(
             IntStream.range(0, flow.getInputs().size())
@@ -460,7 +458,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       TriggerDto trigger = new TriggerDto();
 
       trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
-      trigger.setServiceFromStatusSnippet(scenario.getName());
+      trigger.setServiceFromStatus(scenario.getName() + "FromStatus");
       trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
       trigger.setInputOutputCorrelations(
                getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));

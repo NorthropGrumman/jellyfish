@@ -3,8 +3,6 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * A dto for generating that method that handles the logic when the correlation expressions for a
  * scenario are completed. This involves calling the corresponding service interface method, catching any
@@ -15,13 +13,13 @@ public class CorrelationDto {
    private String name;
    private PublishDto output;
    private String serviceMethod;
-   private String serviceTryMethodSnippet;
-   private String serviceRegisterSnippet;
+   private String serviceTryMethod;
+   private String serviceTriggerRegister;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
    private String inputClassListSnippet;
-   private String serviceFromStatusSnippet;
+   private String serviceFromStatus;
    private List<InputDto> inputs = new ArrayList<>();
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
 
@@ -58,20 +56,20 @@ public class CorrelationDto {
       this.serviceMethod = serviceName;
    }
 
-   public String getServiceTryMethodSnippet() {
-      return serviceTryMethodSnippet;
+   public String getServiceTryMethod() {
+      return serviceTryMethod;
    }
 
-   public void setServiceTryMethodSnippet(String serviceName) {
-      this.serviceTryMethodSnippet = "try" + StringUtils.capitalize(serviceName);
+   public void setServiceTryMethod(String serviceTryMethod) {
+      this.serviceTryMethod = serviceTryMethod;
    }
 
-   public String getServiceRegisterSnippet() {
-      return serviceRegisterSnippet;
+   public String getServiceTriggerRegister() {
+      return serviceTriggerRegister;
    }
 
-   public void setServiceRegisterSnippet(String serviceName) {
-      this.serviceRegisterSnippet = "register" + StringUtils.capitalize(serviceName) + "Trigger()";
+   public void setServiceTriggerRegister(String serviceTriggerRegister) {
+      this.serviceTriggerRegister = serviceTriggerRegister;
    }
 
    public String getInputClassListSnippet() {
@@ -86,12 +84,12 @@ public class CorrelationDto {
       this.inputClassListSnippet = inputClassListSnippet;
    }
 
-   public String getServiceFromStatusSnippet() {
-      return serviceFromStatusSnippet;
+   public String getServiceFromStatus() {
+      return serviceFromStatus;
    }
 
-   public void setServiceFromStatusSnippet(String serviceName) {
-      this.serviceFromStatusSnippet = serviceName + "FromStatus";
+   public void setServiceFromStatus(String serviceFromStatus) {
+      this.serviceFromStatus = serviceFromStatus;
    }
 
    /**

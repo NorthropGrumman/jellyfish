@@ -11,6 +11,7 @@ package ${dto.abstractClass.packageName};
 #set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
 #set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
 #if (!$dto.correlationMethods.isEmpty())
+#set ($ignore = $dto.abstractClass.imports.add("java.util.Collection"))
 #set ($ignore = $dto.abstractClass.imports.add("java.util.function.Function"))
 #set ($ignore = $dto.abstractClass.imports.add("java.util.stream.Collectors"))
 #end
@@ -39,7 +40,7 @@ public abstract class ${dto.abstractClass.name}
 
 #end
 #if (!$dto.correlationMethods.isEmpty())
-   protected Map<ICorrelationTrigger<?>, Function<ICorrelationStatus<?>, ?>> triggers =
+   protected final Map<ICorrelationTrigger<?>, Function<ICorrelationStatus<?>, ?>> triggers =
          new ConcurrentHashMap<>();
    
 #end
@@ -80,11 +81,11 @@ public abstract class ${dto.abstractClass.name}
 
 ########## Multi-input 1-output methods with input-input correlation Delegaters##########
 #foreach ($method in $dto.correlationMethods)
-#foreach ($corrInput in $method.inputs)
+#foreach ($input in $method.inputs)
    @Override
-   public ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException {
-      Preconditions.checkNotNull(${corrInput.fieldName}, "${corrInput.fieldName} may not be null!");
-      return correlationService.correlate(${corrInput.fieldName})
+   public Collection<${method.output.type}> ${method.serviceTryMethod}(${input.type} ${input.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${input.fieldName}, "${input.fieldName} may not be null!");
+      return correlationService.correlate(${input.fieldName})
             .stream()
             .filter(ICorrelationStatus::isCorrelationComplete)
             .map(status -> triggers.get(status.getTrigger()).apply(status))
@@ -108,10 +109,8 @@ public abstract class ${dto.abstractClass.name}
 #foreach($method in $dto.correlationMethods)
    protected abstract ${method.output.type} ${method.name}(
 #foreach ($input in $method.inputs)
-#if( $foreach.count < $method.inputs.size() )
-      ${input.type} ${input.fieldName},
-#else
-      ${input.type} ${input.fieldName});
+      ${input.type} ${input.fieldName}#if ($foreach.hasNext),
+#{else});
 #end
 #end
 
@@ -119,7 +118,7 @@ public abstract class ${dto.abstractClass.name}
 ################################## Activate ###################################
    protected void activate() {
 #foreach($method in $dto.correlationMethods)
-      ${method.serviceRegisterSnippet};
+      ${method.serviceTriggerRegister}();
 #end
       setStatus(ServiceStatus.ACTIVATED);
       logService.info(getClass(), "activated");
@@ -136,7 +135,6 @@ public abstract class ${dto.abstractClass.name}
    }
 
 ################################# Correlation Triggers ########################
-
 #foreach($method in $dto.triggerRegistrationMethods)
    private void ${method.name}() {
       ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType}.class)
@@ -148,33 +146,31 @@ public abstract class ${dto.abstractClass.name}
             Objects.equal(a.${completion.input1GetterSnippet}, b.${completion.input2GetterSnippet}))
 #end
          .register();
-      triggers.put(trigger, this::${method.serviceFromStatusSnippet});
+      triggers.put(trigger, this::${method.serviceFromStatus});
    }
-#end
 
+#end
 ############################ Correlation Status Methods ########################
 #foreach($method in $dto.triggerRegistrationMethods)
-   private ${method.output.type} ${method.serviceFromStatusSnippet}(ICorrelationStatus<?> status) {
+   private ${method.output.type} ${method.serviceFromStatus}(ICorrelationStatus<?> status) {
       updateRequestWithCorrelation(status.getEvent());
       try {
          ${method.output.type} output = ${method.correlationMethod}(
 #foreach ($input in $method.inputs)
-#if( $foreach.count < $method.inputs.size() )               
-                  status.getData(${input.type}.class),
-#else
-                  status.getData(${input.type}.class));
+               status.getData(${input.type}.class)#if( $foreach.hasNext ),
+#{else});
 #end
 #end
 #foreach($correlation in $method.inputOutputCorrelations)
-         output.${correlation.setterSnippet}(${method.input.fieldName}.${correlation.getterSnippet});
+         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
 #end
          return output;
       } finally {
          clearCorrelationFromRequest();
       }
    }
-#end
 
+#end
    @Override
    public String getName() {
       return NAME;
@@ -235,8 +231,8 @@ public abstract class ${dto.abstractClass.name}
    public void removeThreadService(IThreadService ref) {
       setThreadService(null);
    }
-#if (!$dto.correlationMethods.isEmpty())
 
+#if (!$dto.correlationMethods.isEmpty())
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
       IRequest request = Requests.getCurrentRequest();
@@ -244,9 +240,9 @@ public abstract class ${dto.abstractClass.name}
          ((IServiceRequest) request).setLocalCorrelationEvent(event);
       }
    }
+
 #end
 #if ($dto.correlationRequestHandlingEnabled)
-
    @SuppressWarnings("unchecked")
    private void updateRequestWithCorrelation(Object correlationEventId) {
       IRequest request = Requests.getCurrentRequest();
@@ -255,9 +251,9 @@ public abstract class ${dto.abstractClass.name}
             correlationService.newLocalCorrelationEvent(correlationEventId));
       }
    }
+
 #end
 #if (!$dto.correlationMethods.isEmpty() || $dto.correlationRequestHandlingEnabled)
-
    @SuppressWarnings("rawtypes")
    private void clearCorrelationFromRequest() {
       IRequest request = Requests.getCurrentRequest();
@@ -265,6 +261,7 @@ public abstract class ${dto.abstractClass.name}
          ((IServiceRequest) request).setLocalCorrelationEvent(null);
       }
    }
+
 #end
 }
    

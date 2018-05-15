@@ -3,7 +3,7 @@ package ${dto.interface.packageName};
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
 #if (!$dto.correlationMethods.isEmpty())
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.correlation.api.ICorrelationStatus"))
-#set ($ignore = $dto.interface.imports.add("java.util.Collection;"))
+#set ($ignore = $dto.interface.imports.add("java.util.Collection"))
 #end
 #foreach ($i in $dto.interface.imports)
 import ${i};
@@ -18,8 +18,8 @@ public interface ${dto.interface.name} {
 #end
 ################################## Correlation methods ###################################
 #foreach ($method in $dto.correlationMethods)
-#foreach ($corrInput in $method.inputs)
-   ${method.output.finalizedType} ${method.serviceTryMethodSnippet}(${corrInput.type} ${corrInput.fieldName}) throws ServiceFaultException;
+#foreach ($input in $method.inputs)
+   Collection<${method.output.type}> ${method.serviceTryMethod}(${input.type} ${input.fieldName}) throws ServiceFaultException;
 
 #end
 #end

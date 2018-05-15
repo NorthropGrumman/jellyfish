@@ -8,7 +8,7 @@ public class TriggerDto {
    private String triggerType;
    private String correlationMethod;
    private String name;
-   private String serviceFromStatusSnippet;
+   private String serviceFromStatus;
    private List<EventDto> eventProducers = new ArrayList<>();
    private List<CompletenessDto> completionStatements = new ArrayList<>();
    private List<InputDto> inputs = new ArrayList<>();
@@ -75,12 +75,12 @@ public class TriggerDto {
       this.name = name;
    }
 
-   public String getServiceFromStatusSnippet() {
-      return serviceFromStatusSnippet;
+   public String getServiceFromStatus() {
+      return serviceFromStatus;
    }
 
-   public TriggerDto setServiceFromStatusSnippet(String serviceName) {
-      this.serviceFromStatusSnippet = serviceName + "FromStatus"; 
+   public TriggerDto setServiceFromStatus(String serviceFromStatus) {
+      this.serviceFromStatus = serviceFromStatus;
       return this;
    }
 

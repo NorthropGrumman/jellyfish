@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingF
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
 import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -18,6 +19,8 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+
+import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -185,6 +188,8 @@ public class FlowFactory {
       when(right.getStart()).thenReturn(input);
       when(left.getElements()).thenReturn(Arrays.asList(field1, field2));
       when(right.getElements()).thenReturn(Arrays.asList(field1, field2));
+      when(left.getEnd()).thenReturn(field2);
+      when(right.getEnd()).thenReturn(field2);
       when(expression.getLeftHandOperand()).thenReturn(left);
       when(expression.getRightHandOperand()).thenReturn(right);
       when(expression.getCorrelationEventIdType()).thenReturn(DataTypes.STRING);
