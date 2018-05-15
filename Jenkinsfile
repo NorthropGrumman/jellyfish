@@ -218,13 +218,16 @@ pipeline {
          steps {
             // Create a ZIP that has everything.
             sh 'mkdir -p build'
-            sh """zip -j -r 
+            sh '''zip -j -r 
 			      build/jellyfish-all.zip
 				  jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
-				  build/dependencies-m2.zip build/dependencies.tsv build/deploy.sh build/settings.xml
+				  build/dependencies-m2.zip
+				  build/dependencies.tsv
+				  build/deploy.sh
+				  build/settings.xml
 				  build/*.pdf
-			   """.replaceAll('\\s+', ' ')
+			   '''.replaceAll('\\s+', ' ')
 
             // Archive the zip that has everything.
             archiveArtifacts allowEmptyArchive: true,
