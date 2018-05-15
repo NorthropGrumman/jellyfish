@@ -8,6 +8,7 @@ public class PublishDto {
    private String topic;
    private String fieldName;
    private String fullyQualifiedName;
+   private String correlationSetterSnippet;
 
    public String getType() {
       return type;
@@ -60,6 +61,15 @@ public class PublishDto {
 
    public PublishDto setFinalizedType(String finalizedType) {
       this.finalizedType = finalizedType;
+      return this;
+   }
+
+   public String getCorrelationSetterSnippet() {
+      return correlationSetterSnippet;
+   }
+
+   public PublishDto setCorrelationSetterSnippet(String correlationSetterSnippet) {
+      this.correlationSetterSnippet = correlationSetterSnippet;
       return this;
    }
 }

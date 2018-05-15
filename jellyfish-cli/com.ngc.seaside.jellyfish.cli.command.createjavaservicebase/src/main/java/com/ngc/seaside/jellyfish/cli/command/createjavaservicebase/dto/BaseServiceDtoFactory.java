@@ -462,6 +462,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
       trigger.setServiceFromStatusSnippet(scenario.getName());
       trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
+      trigger.setInputOutputCorrelations(
+               getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+
 
       trigger.setInputs(flow.getInputs()
                               .stream()
@@ -501,7 +504,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                completenessDto.setInput1GetterSnippet(
                                                      getGetterSnippet(left, options));
                                                completenessDto.setOutputSetterSnippet(
-                                                  getSetterSnippet(left, options));
+                                                  getSetterSnippet(right, options));
                                                completenessDto.setInput1Type(dataService.getEventClass(
                                                      options, left.getStart().getType()).getTypeName());
                                                completenessDto.setInput2GetterSnippet(
@@ -628,6 +631,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       output.setFinalizedType(output.getType());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       output.setFieldName(field.getName());
+      
       return output;
    }
 

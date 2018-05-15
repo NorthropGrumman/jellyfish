@@ -165,8 +165,9 @@ public abstract class ${dto.abstractClass.name}
                   status.getData(${input.type}.class));
 #end
 #end
-         output.${method.completionStatements.get(0).outputSetterSnippet}(status.getData(${method.completionStatements.get(0).input1Type}.class)
-                                                     .${method.completionStatements.get(0).input1GetterSnippet});
+#foreach($correlation in $method.inputOutputCorrelations)
+         output.${correlation.setterSnippet}(${method.input.fieldName}.${correlation.getterSnippet});
+#end
          return output;
       } finally {
          clearCorrelationFromRequest();

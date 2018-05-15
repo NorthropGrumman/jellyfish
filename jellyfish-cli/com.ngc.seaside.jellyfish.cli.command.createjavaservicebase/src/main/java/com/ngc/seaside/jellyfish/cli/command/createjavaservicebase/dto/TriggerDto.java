@@ -12,6 +12,7 @@ public class TriggerDto {
    private List<EventDto> eventProducers = new ArrayList<>();
    private List<CompletenessDto> completionStatements = new ArrayList<>();
    private List<InputDto> inputs = new ArrayList<>();
+   private List<IOCorrelationDto> inputOutputCorrelations  = new ArrayList<>();;
    private PublishDto output;
 
    public String getTriggerType() {
@@ -78,8 +79,17 @@ public class TriggerDto {
       return serviceFromStatusSnippet;
    }
 
-   public void setServiceFromStatusSnippet(String serviceName) {
-      this.serviceFromStatusSnippet = serviceName + "FromStatus";  
+   public TriggerDto setServiceFromStatusSnippet(String serviceName) {
+      this.serviceFromStatusSnippet = serviceName + "FromStatus"; 
+      return this;
+   }
+
+   public List<IOCorrelationDto> getInputOutputCorrelations() {
+      return inputOutputCorrelations;
+   }
+
+   public void setInputOutputCorrelations(List<IOCorrelationDto> inputOutputCorrelations) {
+      this.inputOutputCorrelations = inputOutputCorrelations;
    }
 
    public static class CompletenessDto {
@@ -160,4 +170,5 @@ public class TriggerDto {
       }
 
    }
+
 }
