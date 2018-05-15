@@ -13,6 +13,8 @@ dependencies {
    implementation "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
    implementation "${dto.getFormattedDependency('com.google.guava:guava')}"
 
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.readiness.impl.defaultreadinessservice')}"
+
    testImplementation "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
    testImplementation "${dto.getFormattedDependency('junit:junit')}"
    testImplementation "${dto.getFormattedDependency('org.mockito:mockito-core')}"

@@ -72,6 +72,13 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.topic.zeromq"),
                       artifact("service.transport.impl.provider.zeromq"),
                       artifact("service.transport.impl.provider.zeromq.module"));
+
+      config.addGroup()
+            .versionPropertyName("starfishVersion")
+            .version("2.6.0-SNAPSHOT")
+            .defaultGroupId("com.ngc.seaside")
+            .defaultScope(DependencyScope.BUILD)
+            .includes(artifact("service.readiness.impl.defaultreadinessservice"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {
