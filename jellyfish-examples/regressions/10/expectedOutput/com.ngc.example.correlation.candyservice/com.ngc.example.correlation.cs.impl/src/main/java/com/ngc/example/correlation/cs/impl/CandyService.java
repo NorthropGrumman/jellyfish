@@ -4,8 +4,8 @@ import com.ngc.example.correlation.cs.api.ICandyService;
 import com.ngc.example.correlation.cs.base.impl.AbstractCandyService;
 import com.ngc.example.correlation.cs.event.datatype.Candy;
 import com.ngc.example.correlation.cs.event.datatype.HardCandy;
+import java.util.Collection;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class CandyService extends AbstractCandyService {
 
    @Override
-   public HardCandy makeCandy(Candy candy) throws ServiceFaultException {
+   public HardCandy doMakeCandy(Candy candy) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -45,17 +45,6 @@ public class CandyService extends AbstractCandyService {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

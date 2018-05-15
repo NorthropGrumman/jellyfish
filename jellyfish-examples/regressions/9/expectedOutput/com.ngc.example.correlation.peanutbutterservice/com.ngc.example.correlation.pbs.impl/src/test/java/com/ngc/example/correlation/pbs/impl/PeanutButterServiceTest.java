@@ -1,6 +1,5 @@
 package com.ngc.example.correlation.pbs.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,19 +19,15 @@ public class PeanutButterServiceTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new PeanutButterService();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void combineTest() throws Exception {
+   public void doCombineTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
