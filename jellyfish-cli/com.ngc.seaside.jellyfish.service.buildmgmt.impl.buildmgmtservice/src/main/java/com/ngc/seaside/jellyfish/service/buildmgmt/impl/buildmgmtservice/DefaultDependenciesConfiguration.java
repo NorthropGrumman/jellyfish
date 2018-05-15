@@ -47,7 +47,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.5.0")
+            .version("2.6.0")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
