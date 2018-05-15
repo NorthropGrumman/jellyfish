@@ -1,0 +1,19 @@
+apply plugin: 'com.ngc.seaside.command'
+
+dependencies {
+    api "com.ngc.seaside:jellyfish.api:$version"
+
+    implementation "com.ngc.seaside:jellyfish.service.api:$version"
+    implementation "com.ngc.seaside:jellyfish.utilities:$version"
+    
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+    testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
+}

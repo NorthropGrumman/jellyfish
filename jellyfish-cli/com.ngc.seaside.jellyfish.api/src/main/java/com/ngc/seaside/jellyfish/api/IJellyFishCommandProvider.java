@@ -1,13 +1,14 @@
 package com.ngc.seaside.jellyfish.api;
 
-import java.util.Collection;
-
 /**
  * The JellyFish command provider interface will provide JellyFish commands and allow access to those
  * commands via calls to this interface. The run method will parse the input parameters but will not validate the
  * contents. The individual command must validate their own input.
  */
-public interface IJellyFishCommandProvider extends ICommandProvider<IJellyFishCommandOptions, IJellyFishCommand> {
+public interface IJellyFishCommandProvider extends ICommandProvider<
+      IJellyFishCommandOptions,
+      IJellyFishCommand,
+      IJellyFishCommandOptions> {
 
    /**
     * Runs a command with the given options.  Use {@link DefaultJellyFishCommandOptions#mergeWith

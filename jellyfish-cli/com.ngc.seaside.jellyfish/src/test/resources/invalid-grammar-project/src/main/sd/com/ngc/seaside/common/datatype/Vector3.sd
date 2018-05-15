@@ -1,7 +1,0 @@
-package com.ngc.seaside.common.datatype
-
-data Vector3 {
-	float x
-	float y
-	float z
-}

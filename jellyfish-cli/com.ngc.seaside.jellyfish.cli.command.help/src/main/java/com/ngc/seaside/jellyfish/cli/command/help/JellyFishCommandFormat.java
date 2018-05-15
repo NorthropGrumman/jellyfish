@@ -1,12 +1,12 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
 
 /**
  * Formatter for JellyFish commands with two columns: the name and the description.
  */
-class JellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
+class JellyFishCommandFormat implements ITableFormat<ICommand<?>> {
 
    private final int lineWidth;
    private final int columnWidth;
@@ -67,7 +67,7 @@ class JellyFishCommandFormat implements ITableFormat<IJellyFishCommand> {
    }
 
    @Override
-   public Object getColumnValue(IJellyFishCommand object, int column) {
+   public Object getColumnValue(ICommand<?> object, int column) {
       switch (column) {
          case 0:
             return object.getName();

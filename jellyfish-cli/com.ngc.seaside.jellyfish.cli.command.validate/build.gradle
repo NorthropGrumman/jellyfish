@@ -2,6 +2,7 @@ dependencies {
     api project(':jellyfish.api')
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
+    implementation project(':jellyfish.utilities')
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"

@@ -1,5 +1,0 @@
-package com.ngc.seaside.common.datatype
-
-data Covariance {
-	//matrix<float> cov(6,6)
-}

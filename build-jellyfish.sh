@@ -16,4 +16,8 @@ cd ./jellyfish-systemdescriptor-dsl \
 && cd ../jellyfish-systemdescriptor \
 && ../gradlew $params \
 && cd ../jellyfish-cli \
+&& ../gradlew $params \
+&& cd ../jellyfish-cli-commands \
+&& ../gradlew $params \
+&& cd ../jellyfish-packaging \
 && ../gradlew $params
