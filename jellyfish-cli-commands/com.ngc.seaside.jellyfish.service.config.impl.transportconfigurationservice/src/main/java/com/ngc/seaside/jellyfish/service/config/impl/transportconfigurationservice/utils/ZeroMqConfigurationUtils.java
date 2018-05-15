@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
+package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils;
 
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ConnectionType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
@@ -15,35 +15,35 @@ import java.util.Arrays;
 
 public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String
+   public static final String
          ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration";
-   static final String
+   public static final String
          ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqIcpTransportConfiguration";
-   static final String
+   public static final String
          ZERO_MQ_PGM_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqPgmTransportConfiguration";
-   static final String
+   public static final String
          ZERO_MQ_EPGM_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqEpgmTransportConfiguration";
-   static final String
+   public static final String
          ZERO_MQ_INPROC_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqInprocTransportConfiguration";
 
-   static final String CONNECTION_TYPE_FIELD_NAME = "connectionType";
-   static final String BIND_CONFIGURATION_FIELD_NAME = "bindConfiguration";
-   static final String BIND_CONFIGURATION_INTERFACE_FIELD_NAME = "interface";
-   static final String CONNECT_CONFIGURATION_FIELD_NAME = "connectConfiguration";
-   static final String CONNECT_CONFIGURATION_REMOTE_ADDRESS_FIELD_NAME = "remoteAddress";
-   static final String PORT_FIELD_NAME = "port";
-   static final String PATH_FIELD_NAME = "path";
-   static final String ADDRESS_NAME_FIELD_NAME = "addressName";
-   static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
-   static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
-   static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
+   public static final String CONNECTION_TYPE_FIELD_NAME = "connectionType";
+   public static final String BIND_CONFIGURATION_FIELD_NAME = "bindConfiguration";
+   public static final String BIND_CONFIGURATION_INTERFACE_FIELD_NAME = "interface";
+   public static final String CONNECT_CONFIGURATION_FIELD_NAME = "connectConfiguration";
+   public static final String CONNECT_CONFIGURATION_REMOTE_ADDRESS_FIELD_NAME = "remoteAddress";
+   public static final String PORT_FIELD_NAME = "port";
+   public static final String PATH_FIELD_NAME = "path";
+   public static final String ADDRESS_NAME_FIELD_NAME = "addressName";
+   public static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
+   public static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
+   public static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
 
-   static boolean isZeroMqConfiguration(IData type) {
+   public static boolean isZeroMqConfiguration(IData type) {
       return Arrays.asList(
             ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,
             ZERO_MQ_IPC_CONFIGURATION_QUALIFIED_NAME,

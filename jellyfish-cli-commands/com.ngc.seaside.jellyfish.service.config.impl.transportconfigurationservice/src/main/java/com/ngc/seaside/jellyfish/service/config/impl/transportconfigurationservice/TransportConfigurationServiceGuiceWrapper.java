@@ -7,6 +7,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -49,6 +50,11 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    public Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options,
             IDataReferenceField field) {
       return delegate.getZeroMqConfiguration(options, field);
+   }
+
+   @Override
+   public Collection<TelemetryConfiguration> getTelemetryConfiguration(IJellyFishCommandOptions options, IModel model) {
+      return delegate.getTelemetryConfiguration(options, model);
    }
 
    @Override

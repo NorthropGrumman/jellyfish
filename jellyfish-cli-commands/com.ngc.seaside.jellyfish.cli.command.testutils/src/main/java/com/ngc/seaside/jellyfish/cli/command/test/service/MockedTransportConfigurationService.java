@@ -8,6 +8,8 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ConnectionType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqTcpTransportConfiguration;
@@ -28,6 +30,7 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    private Map<String, Collection<MulticastConfiguration>> multicastConfigurations = new LinkedHashMap<>();
    private Map<String, Collection<RestConfiguration>> restConfigurations = new LinkedHashMap<>();
    private Map<String, Collection<ZeroMqConfiguration>> zeroMqConfigurations = new LinkedHashMap<>();
+   private Map<String, Collection<TelemetryConfiguration>> telemetryConfigurations = new LinkedHashMap<>();
 
    /**
     * Creates a multicast configuration.
@@ -100,6 +103,34 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
       return configuration;
    }
 
+   /**
+    * Creates a rest telemetry configuration.
+    *
+    * @param modelName     the model name
+    * @param address       the address
+    * @param interfaceName the interface name
+    * @param port          the port number
+    * @param path          the path name
+    * @param contentType   the content type
+    * @param httpMethod    the http method
+    * @return a configured RestConfiguration
+    */
+   public RestTelemetryConfiguration addRestTelemetryConfiguration(String modelName, String address,
+                                                                   String interfaceName, int port, String path, 
+                                                                   String contentType, HttpMethod httpMethod) {
+      RestConfiguration restConfiguration =
+            new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
+                  .setNetworkInterface(new NetworkInterface().setName(interfaceName))
+                  .setPort(port)
+                  .setPath(path)
+                  .setContentType(contentType)
+                  .setHttpMethod(httpMethod);
+      RestTelemetryConfiguration configuration = new RestTelemetryConfiguration();
+      configuration.setConfig(restConfiguration);
+      telemetryConfigurations.computeIfAbsent(modelName, __ -> new LinkedHashSet<>()).add(configuration);
+      return configuration;
+   }
+
    @Override
    public String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field) {
       return field.getType().getName().toUpperCase();
@@ -121,6 +152,12 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    public Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options,
                                                                  IDataReferenceField field) {
       return zeroMqConfigurations.getOrDefault(field.getName(), Collections.emptySet());
+   }
+
+   @Override
+   public Collection<TelemetryConfiguration> getTelemetryConfiguration(IJellyFishCommandOptions options,
+                                                                       IModel model) {
+      return telemetryConfigurations.getOrDefault(model.getName(), Collections.emptySet());
    }
 
    @Override

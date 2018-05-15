@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
+package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils;
 
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -9,13 +9,13 @@ import java.util.Objects;
 
 public class MulticastConfigurationUtils extends CommonConfigurationUtils {
 
-   static final String
+   public static final String
          MULTICAST_CONFIGURATION_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration";
-   static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
-   static final String PORT_FIELD_NAME = "port";
-   static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
-   static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
+   public static final String GROUP_ADDRESS_FIELD_NAME = "groupAddress";
+   public static final String PORT_FIELD_NAME = "port";
+   public static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
+   public static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
 
    public static boolean isMulticastConfiguration(IData type) {
       return Objects.equals(MULTICAST_CONFIGURATION_QUALIFIED_NAME, type.getFullyQualifiedName());

@@ -18,6 +18,10 @@ public enum TransportConfigurationType {
    /**
     * Zero MQ.
     */
-   ZERO_MQ
+   ZERO_MQ,
 
+   /**
+    * Telemetry.
+    */
+   TELEMETRY
 }
