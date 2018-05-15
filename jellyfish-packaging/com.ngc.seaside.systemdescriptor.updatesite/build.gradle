@@ -51,14 +51,14 @@ configurations {
 dependencies {
    features project(path: ':systemdescriptor.feature', configuration: 'feature')
 
-   customPlugins project(':systemdescriptor.model.impl.xtext')
-   customPlugins project(':systemdescriptor.scenario.impl.standardsteps')
-   customPlugins project(':systemdescriptor.service.impl.xtext')
-   customPlugins project(':service.log.impl.common.log4jlogservice')
+   customPlugins "com.ngc.seaside:systemdescriptor.model.impl.xtext:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+   customPlugins "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
 
-   customPlugins project(":systemdescriptor.model.api")
-   customPlugins project(":systemdescriptor.service.api")
-   customPlugins project(":systemdescriptor.model.impl.basic")
+   customPlugins "com.ngc.seaside:systemdescriptor.model.api:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.service.api:$version"
+   customPlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
 
    customPlugins "com.ngc.seaside:systemdescriptor:$version"
    customPlugins "com.ngc.seaside:systemdescriptor.ide:$version"

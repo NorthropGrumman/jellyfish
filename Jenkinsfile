@@ -219,7 +219,7 @@ pipeline {
             // Create a ZIP that has everything.
             sh 'mkdir -p build'
             sh '''zip -j -r build/jellyfish-all.zip
-				  jellyfish-systemdescriptor/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
+				  jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
 				  build/dependencies-m2.zip
 				  build/dependencies.tsv
