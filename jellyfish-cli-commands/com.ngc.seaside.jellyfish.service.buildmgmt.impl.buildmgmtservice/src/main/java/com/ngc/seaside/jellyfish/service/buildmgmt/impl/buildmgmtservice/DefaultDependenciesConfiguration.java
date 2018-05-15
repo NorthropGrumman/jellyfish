@@ -47,7 +47,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.5.0")
+            .version("2.6.0")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
@@ -71,7 +71,10 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.provider.httpclient.module"),
                       artifact("service.transport.impl.topic.zeromq"),
                       artifact("service.transport.impl.provider.zeromq"),
-                      artifact("service.transport.impl.provider.zeromq.module"));
+                      artifact("service.transport.impl.provider.zeromq.module"),
+                      artifact("service.telemetry.api"),
+                      artifact("service.telemetry.impl.basetelemetryservice"),
+                      artifact("service.telemetry.impl.jsontelemetryservice"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {
