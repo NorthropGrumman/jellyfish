@@ -12,7 +12,7 @@ public class TriggerDto {
    private List<EventDto> eventProducers = new ArrayList<>();
    private List<CompletenessDto> completionStatements = new ArrayList<>();
    private List<InputDto> inputs = new ArrayList<>();
-   private List<IOCorrelationDto> inputOutputCorrelations  = new ArrayList<>();;
+   private List<IOCorrelationDto> inputOutputCorrelations  = new ArrayList<>();
    private PublishDto output;
 
    public String getTriggerType() {
@@ -54,6 +54,7 @@ public class TriggerDto {
    public PublishDto getOutput() {
       return output;
    }
+
    public void setOutput(PublishDto output) {
       this.output = output; 
    }

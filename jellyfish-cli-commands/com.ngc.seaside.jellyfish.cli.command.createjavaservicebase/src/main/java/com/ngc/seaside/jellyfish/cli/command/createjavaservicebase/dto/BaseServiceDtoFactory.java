@@ -502,7 +502,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                completenessDto.setInput1GetterSnippet(
                                                      getGetterSnippet(left, options));
                                                completenessDto.setOutputSetterSnippet(
-                                                  getSetterSnippet(right, options));
+                                                     getSetterSnippet(right, options));
                                                completenessDto.setInput1Type(dataService.getEventClass(
                                                      options, left.getStart().getType()).getTypeName());
                                                completenessDto.setInput2GetterSnippet(

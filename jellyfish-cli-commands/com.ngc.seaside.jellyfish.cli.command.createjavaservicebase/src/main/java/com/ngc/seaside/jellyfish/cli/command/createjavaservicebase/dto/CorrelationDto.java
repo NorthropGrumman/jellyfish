@@ -18,7 +18,6 @@ public class CorrelationDto {
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
-   private String inputClassListSnippet;
    private String serviceFromStatus;
    private List<InputDto> inputs = new ArrayList<>();
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
@@ -70,18 +69,6 @@ public class CorrelationDto {
 
    public void setServiceTriggerRegister(String serviceTriggerRegister) {
       this.serviceTriggerRegister = serviceTriggerRegister;
-   }
-
-   public String getInputClassListSnippet() {
-      String formattedClassList = "";
-      for (InputDto inputClass : inputs) {
-         formattedClassList += inputClass.getType() + ".class, ";
-      }
-      return formattedClassList;
-   }
-
-   public void setInputClassListSnippet(String inputClassListSnippet) {
-      this.inputClassListSnippet = inputClassListSnippet;
    }
 
    public String getServiceFromStatus() {

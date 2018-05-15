@@ -6,7 +6,6 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
@@ -24,7 +23,6 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -241,7 +239,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       return pubSubBridgeDto;
    }
 
-   private PubSubBridgeDto setupDtoForCorrelation(CorrelationDto correlationMethodDto, IProjectInformation projectInfo, Path projectDirectory, String packageInfo) {
+   private PubSubBridgeDto setupDtoForCorrelation(CorrelationDto correlationMethodDto, 
+            IProjectInformation projectInfo, Path projectDirectory, String packageInfo) {
       PubSubBridgeDto pubSubBridgeDto = new PubSubBridgeDto(buildManagementService, getOptions());
       pubSubBridgeDto.setProjectName(projectInfo.getDirectoryName());
       pubSubBridgeDto.setPackageName(packageInfo);
@@ -252,7 +251,7 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       //Populate publisher related fields
       PublishDto publishDto = correlationMethodDto.getOutput();
       pubSubBridgeDto.setPublishDataType(publishDto.getType());
-      pubSubBridgeDto.setScenarioMethod("try"+ StringUtils.capitalize(correlationMethodDto.getServiceMethod()));
+      pubSubBridgeDto.setScenarioMethod("try" + StringUtils.capitalize(correlationMethodDto.getServiceMethod()));
       pubSubBridgeDto.getImports().add(publishDto.getFullyQualifiedName());
    
       //Retrieve required services and bind/unbind them

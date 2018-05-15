@@ -1,30 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -50,6 +25,28 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CreateJavaServiceBaseCommandIT {
@@ -77,7 +74,8 @@ public class CreateJavaServiceBaseCommandIT {
 
    private final MockedPackageNamingService packageService = new MockedPackageNamingService();
 
-   private final MockedJavaServiceGenerationService generatorService = new MockedJavaServiceGenerationService(packageService);
+   private final MockedJavaServiceGenerationService generatorService =
+         new MockedJavaServiceGenerationService(packageService);
 
    @Mock
    private IScenarioService scenarioService;
@@ -163,7 +161,8 @@ public class CreateJavaServiceBaseCommandIT {
       Path baseDir = outputDirectory.toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.base");
       assertTrue(Files.isDirectory(baseDir));
       assertTrue(Files.isRegularFile(baseDir.resolve("build.generated.gradle")));
-      Path srcDir = baseDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "engagementtrackpriorityservice"));
+      Path srcDir = baseDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
+            "engagementtrackpriorityservice"));
       Path ifc = srcDir.resolve("api").resolve("IEngagementTrackPriorityService.java");
       assertTrue(Files.isRegularFile(ifc));
       Path base = srcDir.resolve("base").resolve("AbstractEngagementTrackPriorityService.java");
@@ -187,7 +186,8 @@ public class CreateJavaServiceBaseCommandIT {
       Path baseDir = outputDirectory.toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.base");
       assertTrue(Files.isDirectory(baseDir));
       assertTrue(Files.isRegularFile(baseDir.resolve("build.generated.gradle")));
-      Path srcDir = baseDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", "engagementtrackpriorityservice"));
+      Path srcDir = baseDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval", 
+            "engagementtrackpriorityservice"));
       Path ifc = srcDir.resolve("api").resolve("IEngagementTrackPriorityService.java");
       assertTrue(Files.isRegularFile(ifc));
       Path base = srcDir.resolve("base").resolve("AbstractEngagementTrackPriorityService.java");
