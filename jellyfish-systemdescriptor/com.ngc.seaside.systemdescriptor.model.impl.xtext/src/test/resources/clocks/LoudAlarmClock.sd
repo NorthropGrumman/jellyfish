@@ -15,6 +15,9 @@ model LoudAlarmClock refines AlarmClock {
         "defaultVolume": "high"
       }
     }
+
+    // Test error when refining a part and a link that references that part.
+    refine timer
   }
 
   links {
