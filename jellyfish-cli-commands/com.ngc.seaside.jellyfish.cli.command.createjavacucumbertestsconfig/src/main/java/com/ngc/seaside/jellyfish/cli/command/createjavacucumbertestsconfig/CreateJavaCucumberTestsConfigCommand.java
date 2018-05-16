@@ -101,7 +101,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-            .setModelName(model.getName())
+            .setModel(model)
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
                                               .getArtifactId())
