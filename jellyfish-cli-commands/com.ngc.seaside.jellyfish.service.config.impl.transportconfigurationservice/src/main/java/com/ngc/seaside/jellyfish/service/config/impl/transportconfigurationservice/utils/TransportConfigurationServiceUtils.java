@@ -22,6 +22,15 @@ import java.util.stream.Collectors;
 
 public class TransportConfigurationServiceUtils {
 
+   /**
+    * Returns the collection of configurations from the provided properties for a given type.
+    * 
+    * @param propertiesSupplier supplier for properties
+    * @param qualifiedName qualified name of property type
+    * @param function function to convert property to the desired value configuration type
+    * @param notSetErrorMessage error message if property is not set
+    * @return collection of configurations
+    */
    public static <T> Collection<T> getConfigurations(Supplier<IProperties> propertiesSupplier, String qualifiedName, 
             Function<IPropertyDataValue, T> function, 
             Supplier<String> notSetErrorMessage) {
@@ -44,6 +53,13 @@ public class TransportConfigurationServiceUtils {
       return configurations;
    }
 
+   /**
+    * Returns the data field for the given property with the given field name.
+    * 
+    * @param value property data value
+    * @param fieldName field name
+    * @return data field
+    */
    public static IDataField getField(IPropertyDataValue value, String fieldName) {
       return value.getFieldByName(fieldName)
             .orElseThrow(() -> new IllegalStateException("Missing " + fieldName + " field"));
@@ -59,6 +75,12 @@ public class TransportConfigurationServiceUtils {
             .collect(Collectors.toList());
    }
 
+   /**
+    * Gets the deployment model from the options.
+    * 
+    * @param options jellyfish command options
+    * @return deployment model
+    */
    public static IModel getDeploymentModel(IJellyFishCommandOptions options) {
       IParameter<?> deploymentModelParameter = options.getParameters()
             .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());

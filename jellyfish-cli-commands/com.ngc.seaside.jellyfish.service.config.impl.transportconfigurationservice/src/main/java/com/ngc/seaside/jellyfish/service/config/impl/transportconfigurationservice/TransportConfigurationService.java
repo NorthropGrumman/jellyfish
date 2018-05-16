@@ -157,11 +157,10 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    @Override
    public Collection<TelemetryConfiguration> getTelemetryConfiguration(IJellyFishCommandOptions options, IModel model) {
       List<TelemetryConfiguration> configurations = new ArrayList<>();
-      
-      configurations.addAll(getModelPartConfigurations(options,
-         model,
-         TelemetryConfigurationUtils.REST_TELEMETRY_CONFIGURATION_QUALIFIED_NAME,
-         TelemetryConfigurationUtils::getRestTelemetryConfiguration));
+
+      configurations.addAll(getModelPartConfigurations(options, model, 
+            TelemetryConfigurationUtils.REST_TELEMETRY_CONFIGURATION_QUALIFIED_NAME,
+            TelemetryConfigurationUtils::getRestTelemetryConfiguration));
       return configurations;
    }
    
@@ -177,14 +176,18 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    private <T> Collection<T> getLinkConfigurations(IJellyFishCommandOptions options,
                                                IDataReferenceField field, String configQualifiedName,
                                                Function<IPropertyDataValue, T> function) {
-      IModel deploymentModel = sdService.getAggregatedView(TransportConfigurationServiceUtils.getDeploymentModel(options));
+      IModel deploymentModel = sdService.getAggregatedView(
+            TransportConfigurationServiceUtils.getDeploymentModel(options));
       Collection<IModelLink<?>> links = TransportConfigurationServiceUtils.findLinks(deploymentModel, field);
       Collection<T> configurations = new LinkedHashSet<>();
       for (IModelLink<?> link : links) {
          configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(link::getProperties, 
-            configQualifiedName, function, () -> String.format("Configuration is not completely set for link %s%s -> %s",
-               link.getName().orElse("") + " ", link.getSource().getName(),
-               link.getTarget().getName())));
+               configQualifiedName,
+               function,
+               () -> String.format("Configuration is not completely set for link %s%s -> %s",
+                     link.getName().orElse("") + " ",
+                     link.getSource().getName(),
+                     link.getTarget().getName())));
       }
       return configurations;
    }
@@ -194,17 +197,20 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       IModel aggregatedModel = sdService.getAggregatedView(model);
       Collection<T> configurations = new LinkedHashSet<>();
       configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(aggregatedModel::getProperties,
-         configQualifiedName,
-         function,
-         () -> String.format("Configuration is not completely set for model %s", aggregatedModel.getFullyQualifiedName())));
+            configQualifiedName,
+            function,
+            () -> String.format("Configuration is not completely set for model %s", 
+                  aggregatedModel.getFullyQualifiedName())));
       
-      IModel deploymentModel = sdService.getAggregatedView(TransportConfigurationServiceUtils.getDeploymentModel(options));
+      IModel deploymentModel = sdService.getAggregatedView(
+            TransportConfigurationServiceUtils.getDeploymentModel(options));
       for (IModelReferenceField part : deploymentModel.getParts()) {
          if (Objects.equals(part.getType().getFullyQualifiedName(), model.getFullyQualifiedName())) {
             configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(part::getProperties,
-               configQualifiedName,
-               function,
-               () -> String.format("Configuration is not completely set part %s in deployment model", part.getName())));
+                  configQualifiedName,
+                  function,
+                  () -> String.format("Configuration is not completely set part %s in deployment model",
+                        part.getName())));
          }
       }
       

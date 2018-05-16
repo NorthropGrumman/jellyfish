@@ -23,16 +23,24 @@ public class RestConfigurationUtils extends CommonConfigurationUtils {
       return Objects.equals(REST_CONFIGURATION_QUALIFIED_NAME, type.getFullyQualifiedName());
    }
 
+   /**
+    * Converts the given property data value to a rest configuration.
+    * 
+    * @param value property value
+    * @return the rest configuration
+    */
    public static RestConfiguration getRestConfiguration(IPropertyDataValue value) {
       RestConfiguration configuration = new RestConfiguration();
       IPropertyDataValue serverAddressValue = value.getData(getField(value, SERVER_ADDRESS_FIELD_NAME));
       IPropertyDataValue serverInterfaceValue = value.getData(getField(value, SERVER_INTERFACE_FIELD_NAME));
-      BigInteger port = value.getPrimitive(TransportConfigurationServiceUtils.getField(value, PORT_FIELD_NAME)).getInteger();
+      BigInteger port = value.getPrimitive(
+            TransportConfigurationServiceUtils.getField(value, PORT_FIELD_NAME)).getInteger();
       String path = value.getPrimitive(TransportConfigurationServiceUtils.getField(value, PATH_FIELD_NAME)).getString();
-      String contentType = value.getPrimitive(TransportConfigurationServiceUtils.getField(value, CONTENT_TYPE_FIELD_NAME))
+      String contentType = value.getPrimitive(
+            TransportConfigurationServiceUtils.getField(value, CONTENT_TYPE_FIELD_NAME))
                                 .getString();
-      String httpMethod = value.getEnumeration(TransportConfigurationServiceUtils.getField(value, HTTP_METHOD_FIELD_NAME))
-                               .getValue();
+      String httpMethod = value.getEnumeration(
+            TransportConfigurationServiceUtils.getField(value, HTTP_METHOD_FIELD_NAME)).getValue();
       configuration.setNetworkAddress(getNetworkAddress(serverAddressValue));
       configuration.setNetworkInterface(getNetworkInterface(serverInterfaceValue));
       configuration.setPort(port.intValueExact());

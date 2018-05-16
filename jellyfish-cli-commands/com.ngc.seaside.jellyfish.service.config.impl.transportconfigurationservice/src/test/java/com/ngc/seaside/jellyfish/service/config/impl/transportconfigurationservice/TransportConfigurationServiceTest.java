@@ -257,12 +257,8 @@ public class TransportConfigurationServiceTest {
       String contentType = "application/x-protobuf";
       HttpMethod method = HttpMethod.POST;
 
-      IProperty configProperty = getMockedRestTelemetryConfiguration(address,
-         interfaceName,
-         port,
-         path,
-         contentType,
-         method);
+      IProperty configProperty = getMockedRestTelemetryConfiguration(address, interfaceName, port, path, contentType,
+            method);
 
       IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
       when(options.getParameters()
@@ -364,7 +360,7 @@ public class TransportConfigurationServiceTest {
       when(property.getData().getFieldByName(TelemetryConfigurationUtils.CONFIG_FIELD_NAME)).thenReturn(
             Optional.of(configField));
       IPropertyDataValue restConfig = getMockedRestConfiguration(address, interfaceName, port, path, contentType,
-         method).getData();
+            method).getData();
       when(property.getData().getData(configField)).thenReturn(restConfig);
       return property;
    }

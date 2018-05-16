@@ -43,6 +43,12 @@ public class ZeroMqConfigurationUtils extends CommonConfigurationUtils {
    public static final String SOURCE_INTERFACE_FIELD_NAME = "sourceInterface";
    public static final String TARGET_INTERFACE_FIELD_NAME = "targetInterface";
 
+   /**
+    * Returns true if the given data is a type of zero mq configuration.
+    * 
+    * @param type data
+    * @return true if the given data is a type of zero mq configuration
+    */
    public static boolean isZeroMqConfiguration(IData type) {
       return Arrays.asList(
             ZERO_MQ_TCP_CONFIGURATION_QUALIFIED_NAME,

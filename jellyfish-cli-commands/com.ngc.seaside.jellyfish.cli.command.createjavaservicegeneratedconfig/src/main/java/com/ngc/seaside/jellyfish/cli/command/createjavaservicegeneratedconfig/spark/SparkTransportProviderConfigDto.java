@@ -44,7 +44,8 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
          SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY =
          "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
    private static final String SPARK_CORE_DEPENDENCY = "com.sparkjava:spark-core";
-   private static final String TELEMETRY_SERVICE_QUALIFIED_NAME = "com.ngc.seaside.service.telemetry.api.ITelemetryService";
+   private static final String TELEMETRY_SERVICE_QUALIFIED_NAME = 
+            "com.ngc.seaside.service.telemetry.api.ITelemetryService";
    private static final String TELEMETRY_TOPIC = "ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC";
 
    private ITransportConfigurationService transportConfigurationService;
@@ -146,7 +147,7 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
       if (topic || provider) {
          dependencies.add(SPARK_TOPIC_DEPENDENCY);
          if (transportConfigurationService == null
-            || transportConfigurationService.getConfigurationTypes(options, model)
+               || transportConfigurationService.getConfigurationTypes(options, model)
                                             .contains(TransportConfigurationType.TELEMETRY)) {
             dependencies.add(TELEMETRY_TOPIC_DEPENDENCY);
          }

@@ -325,7 +325,7 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    public void restTelemetry() throws Throwable {
       addGeneratedConfigTemplatePath(SPARK_TEMPLATE);
       addGeneratedConfigTemplatePath(CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-         + CreateJavaServiceGeneratedConfigCommand.TELEMETRY_CONFIG_TEMPLATE_SUFFIX);
+            + CreateJavaServiceGeneratedConfigCommand.TELEMETRY_CONFIG_TEMPLATE_SUFFIX);
 
       transportConfigService.addRestTelemetryConfiguration("TrackPriorityService", "localhost", "0.0.0.0", 52412,
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);

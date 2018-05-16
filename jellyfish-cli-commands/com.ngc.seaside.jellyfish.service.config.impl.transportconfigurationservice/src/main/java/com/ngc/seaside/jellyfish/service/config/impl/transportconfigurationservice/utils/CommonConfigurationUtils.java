@@ -12,7 +12,8 @@ public class CommonConfigurationUtils {
    public static final String
          NETWORK_INTERFACE_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.NetworkInterface";
-   public static final String NETWORK_ADDRESS_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.NetworkAddress";
+   public static final String NETWORK_ADDRESS_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.NetworkAddress";
    public static final String NETWORK_INTERFACE_NAME_FIELD_NAME = "name";
    public static final String NETWORK_ADDRESS_ADDRESS_FIELD_NAME = "address";
 
