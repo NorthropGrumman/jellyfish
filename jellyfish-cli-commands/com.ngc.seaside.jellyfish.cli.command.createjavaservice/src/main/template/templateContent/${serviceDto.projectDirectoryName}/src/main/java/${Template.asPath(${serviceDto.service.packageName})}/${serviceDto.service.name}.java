@@ -1,7 +1,6 @@
 package ${serviceDto.service.packageName};
 
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.api.IServiceModule"))
-#set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.event.api.IEventService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.log.api.ILogService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
 #set ($ignore = $serviceDto.service.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
@@ -25,15 +24,7 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 
 #foreach ($method in $baseServiceDto.basicPubSubMethods)
    @Override
-   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
-      // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-#end
-#foreach ($method in $baseServiceDto.basicSinkMethods)
-   @Override
-   public void ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+   public ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -41,32 +32,16 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
 #end
 #foreach ($method in $baseServiceDto.correlationMethods)
    @Override
-   public ${method.output.type} ${method.serviceMethod}(
+   public ${method.output.type} ${method.name}(
 #foreach ($input in $method.inputs)
-      ${input.type} ${input.fieldName},
+#if( $foreach.count < $method.inputs.size() )
+               ${input.type} ${input.fieldName},
+#else
+               ${input.type} ${input.fieldName}) {
 #end
-      ILocalCorrelationEvent<${method.correlationType}> correlationEvent) throws ServiceFaultException {
+#end
          // TODO: implement this
          throw new UnsupportedOperationException("not implemented");
-   }
-
-#end
-#foreach ($scenario in $baseServiceDto.complexScenarios)
-   @Override
-   public void ${scenario.serviceMethod}(
-#foreach ($input in $scenario.inputs)
-#set ($lastParam = $foreach.last && $scenario.outputs.isEmpty())
-      BlockingQueue<${input.type}> ${input.fieldName}Queue#if ($lastParam)) {#{else},
-#end
-#end
-#foreach ($output in $scenario.outputs)
-#set ($lastParam = $foreach.last)
-      Consumer<${output.type}> ${output.fieldName}Consumer#if ($lastParam)) {#{else},
-#end
-#end
-
-      // TODO: implement this
-      throw new UnsupportedOperationException("not implemented");
    }
 
 #end
@@ -97,17 +72,6 @@ public class ${serviceDto.service.name} extends ${serviceDto.baseClass} {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

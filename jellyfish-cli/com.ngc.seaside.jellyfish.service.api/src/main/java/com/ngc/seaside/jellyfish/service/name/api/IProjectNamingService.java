@@ -115,4 +115,13 @@ public interface IProjectNamingService {
     * @return the project information for a cucumber tests project
     */
    IProjectInformation getCucumberTestsConfigProjectName(IJellyFishCommandOptions options, IModel model);
+
+   /**
+    * Gets the project information for a config project given a model.
+    *
+    * @param options options the options the current command is being executed with
+    * @param model   the model to get the root project name for
+    * @return the project information for a Publish Subscribe Bridge project
+    */
+   IProjectInformation getPubSubBridgeProjectName(IJellyFishCommandOptions options, IModel model);
 }

@@ -1,6 +1,5 @@
 package com.ngc.seaside.threateval.tps.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,28 +19,30 @@ public class TrackPriorityServiceTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new TrackPriorityService();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void calculateConsolidatedTrackPriorityTest() throws Exception {
+   public void doCalculateConsolidatedTrackPriorityTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
 
    @Test
-   public void calculateConsolidatedTrackPriorityWhenTrackDroppedTest() throws Exception {
+   public void doCalculateConsolidatedTrackPriorityWhenTrackDroppedTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
+
+   @Test
+   public void doGetTrackPrioritiesTest() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+}
 
    @After
    public void cleanup() throws Throwable {

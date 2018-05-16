@@ -2,6 +2,11 @@ package com.ngc.seaside.jellyfish.cli.command.test.scenarios;
 
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationDescription;
+import com.ngc.seaside.jellyfish.service.scenario.correlation.api.ICorrelationExpression;
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -10,6 +15,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -147,6 +153,46 @@ public class FlowFactory {
       when(flow.getInputs()).thenReturn(Collections.singleton(input));
       when(flow.getOutputs()).thenReturn(Collections.singleton(output));
       when(flow.getCorrelationDescription()).thenReturn(Optional.empty());
+
+      return flow;
+   }
+
+   /**
+    * Creates a mocked {@link IPublishSubscribeMessagingFlow} that supports correlation containing the given scenario.
+    *
+    * @param scenario the scenario
+    * @return a mocked IPublishSubscribeMessagingFlow
+    */
+   public static IPublishSubscribeMessagingFlow newCorrelatingPubSubFlowPath(IScenario scenario) {
+      IModel model = scenario.getParent();
+
+      IPublishSubscribeMessagingFlow flow = mock(IPublishSubscribeMessagingFlow.class);
+      IDataReferenceField input = model.getInputs().iterator().next();
+      IDataReferenceField output = model.getOutputs().iterator().next();
+
+      when(flow.getScenario()).thenReturn(scenario);
+      when(flow.getInputs()).thenReturn(Collections.singleton(input));
+      when(flow.getOutputs()).thenReturn(Collections.singleton(output));
+
+      IDataField field1 = mock(IDataField.class);
+      IDataField field2 = mock(IDataField.class);
+      IDataPath left = mock(IDataPath.class);
+      IDataPath right = mock(IDataPath.class);
+      ICorrelationExpression expression = mock(ICorrelationExpression.class);
+      ICorrelationDescription correlation = mock(ICorrelationDescription.class);
+
+      when(left.getStart()).thenReturn(input);
+      when(right.getStart()).thenReturn(input);
+      when(left.getElements()).thenReturn(Arrays.asList(field1, field2));
+      when(right.getElements()).thenReturn(Arrays.asList(field1, field2));
+      when(left.getEnd()).thenReturn(field2);
+      when(right.getEnd()).thenReturn(field2);
+      when(expression.getLeftHandOperand()).thenReturn(left);
+      when(expression.getRightHandOperand()).thenReturn(right);
+      when(expression.getCorrelationEventIdType()).thenReturn(DataTypes.STRING);
+      when(correlation.getCorrelationExpressions()).thenReturn(Collections.singleton(expression));
+      when(correlation.getCompletenessExpressions()).thenReturn(Collections.singleton(expression));
+      when(flow.getCorrelationDescription()).thenReturn(Optional.of(correlation));
 
       return flow;
    }

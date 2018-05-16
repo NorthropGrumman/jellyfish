@@ -137,6 +137,19 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          }
          IPublishSubscribeMessagingFlow flow = flowOptional.get();
 
+         Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
+         if (trigger.isPresent()) {
+            dto.getTriggerRegistrationMethods().add(trigger.get());
+         }
+         
+         Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
+         if (correlation.isPresent()) {
+            dto.getCorrelationMethods().add(correlation.get());
+            inputs.addAll(flow.getInputs());
+            outputs.addAll(flow.getOutputs());
+            continue;
+         }
+         
          Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
          if (pubSub.isPresent()) {
             dto.getBasicPubSubMethods().add(pubSub.get());
@@ -147,17 +160,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          Optional<BasicPubSubDto> sink = getBasicSinkMethod(scenario, flow, dto, options);
          if (sink.isPresent()) {
             dto.getBasicSinkMethods().add(sink.get());
-            inputs.addAll(flow.getInputs());
-            outputs.addAll(flow.getOutputs());
-            continue;
-         }
-         Optional<TriggerDto> trigger = getTriggerRegistrationMethod(scenario, flow, dto, options);
-         if (trigger.isPresent()) {
-            dto.getTriggerRegistrationMethods().add(trigger.get());
-         }
-         Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
-         if (correlation.isPresent()) {
-            dto.getCorrelationMethods().add(correlation.get());
             inputs.addAll(flow.getInputs());
             outputs.addAll(flow.getOutputs());
             continue;
@@ -207,9 +209,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    }
 
    private Optional<BasicServerReqResDto> getBasicReqResMethod(IScenario scenario,
-                                                     IRequestResponseMessagingFlow flow,
-                                                     BaseServiceDto dto,
-                                                     IJellyFishCommandOptions options) {
+                                                               IRequestResponseMessagingFlow flow,
+                                                               BaseServiceDto dto,
+                                                               IJellyFishCommandOptions options) {
 
       if (flow.getInput() == null || flow.getOutput() == null) {
          return Optional.empty();
@@ -306,7 +308,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
-      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
+      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(),
+                                     dto,
+                                     options));
+      pubSub.getOutput().setName("do" + StringUtils.capitalize(scenario.getName()));
 
       pubSub.setServiceMethod(scenario.getName());
 
@@ -362,9 +367,13 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       correlation.setName("do" + StringUtils.capitalize(scenario.getName()));
       correlation.setScenarioName(scenario.getName());
       correlation.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
+      correlation.getOutput().setFinalizedType("Collection<" + correlation.getOutput().getType() + ">");
 
       correlation.setServiceMethod(scenario.getName());
-
+      correlation.setServiceTryMethod("try" + StringUtils.capitalize(scenario.getName()));
+      correlation.setServiceTriggerRegister("register" + StringUtils.capitalize(scenario.getName()) + "Trigger");
+      correlation.setServiceFromStatus(scenario.getName() + "FromStatus");
+      
       correlation.setInputLogFormat(
             IntStream.range(0, flow.getInputs().size())
                   .mapToObj(i -> "%s")
@@ -449,13 +458,19 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       TriggerDto trigger = new TriggerDto();
 
       trigger.setName("register" + StringUtils.capitalize(scenario.getName() + "Trigger"));
+      trigger.setServiceFromStatus(scenario.getName() + "FromStatus");
       trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
+      trigger.setInputOutputCorrelations(
+               getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+
 
       trigger.setInputs(flow.getInputs()
                               .stream()
                               .map(field -> getInputDto(field, dto, options))
                               .map(input -> input.setCorrelationMethod(trigger.getCorrelationMethod()))
                               .collect(Collectors.toList()));
+      
+      trigger.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
 
       trigger.setEventProducers(description.getCompletenessExpressions()
                                       .stream()
@@ -486,6 +501,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                CompletenessDto completenessDto = new CompletenessDto();
                                                completenessDto.setInput1GetterSnippet(
                                                      getGetterSnippet(left, options));
+                                               completenessDto.setOutputSetterSnippet(
+                                                     getSetterSnippet(right, options));
                                                completenessDto.setInput1Type(dataService.getEventClass(
                                                      options, left.getStart().getType()).getTypeName());
                                                completenessDto.setInput2GetterSnippet(
@@ -584,6 +601,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          input.setType(type.getFullyQualifiedName());
       } else {
          input.setType(type.getTypeName());
+         input.setFullyQualifiedName(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
       }
@@ -591,22 +609,27 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       return input;
    }
 
-   private PublishDto getPublishDto(IDataReferenceField field, BaseServiceDto dto, IJellyFishCommandOptions options) {
+   private PublishDto getPublishDto(IDataReferenceField field,
+                                    BaseServiceDto dto,
+                                    IJellyFishCommandOptions options) {
       PublishDto output = new PublishDto();
       TypeDto<?> type = dataService.getEventClass(options, field.getType());
       if (hasDuplicateTypeNames(options, field.getParent())) {
          output.setType(type.getFullyQualifiedName());
          output.setTopic(type.getFullyQualifiedName() + ".TOPIC");
-         output.setName("publish" + type.getFullyQualifiedName().replace('.', '_'));
+         output.setName("doPublish" + type.getFullyQualifiedName().replace('.', '_'));
       } else {
          output.setType(type.getTypeName());
          output.setTopic(type.getTypeName() + ".TOPIC");
-         output.setName("publish" + type.getTypeName());
+         output.setName("doPublish" + type.getTypeName());
+         output.setFullyQualifiedName(type.getFullyQualifiedName());
          dto.getAbstractClass().getImports().add(type.getFullyQualifiedName());
          dto.getInterface().getImports().add(type.getFullyQualifiedName());
       }
+      output.setFinalizedType(output.getType());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       output.setFieldName(field.getName());
+      
       return output;
    }
 
@@ -653,11 +676,12 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
                                                      .stream()
                                                      .anyMatch(BasicPubSubDto::isCorrelating));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
-                                        || dto.isCorrelationRequestHandlingEnabled());
+                                              || dto.isCorrelationRequestHandlingEnabled());
       if (dto.isCorrelationRequestHandlingEnabled()) {
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.request.api.IServiceRequest");
+         dto.getInterface().getImports().add(Collection.class.getName());
       }
       if (dto.isCorrelationServiceRequired()) {
          dto.getAbstractClass().getImports().add("com.ngc.seaside.service.correlation.api.ICorrelationService");

@@ -1,6 +1,5 @@
 package com.model.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,22 +19,30 @@ public class ModelTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new Model();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void computeTest() throws Exception {
+   public void doComputeTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
+
+   @Test
+   public void doGetRequest1Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+}
+
+   @Test
+   public void doGetRequest2Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+}
 
    @After
    public void cleanup() throws Throwable {

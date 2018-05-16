@@ -5,7 +5,6 @@ import com.ngc.example.inhertance.databagsservice.base.impl.AbstractDataBagsServ
 import com.ngc.example.inhertance.databagsservice.event.datatype.B;
 import com.ngc.example.inhertance.databagsservice.event.datatype.C;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -21,7 +20,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class DataBagsService extends AbstractDataBagsService {
 
    @Override
-   public C publish(B b) throws ServiceFaultException {
+   public C doPublish(B b) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -45,17 +44,6 @@ public class DataBagsService extends AbstractDataBagsService {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

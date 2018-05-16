@@ -147,6 +147,17 @@ public class PackageNamingService implements IPackageNamingService {
       return (fqn + ".config" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
    }
 
+   @Override
+   public String getPubSubBridgePackageName(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      Preconditions.checkNotNull(model, "data may not be null!");
+      // parts[0] = the package name of the model, parts[1] = the model's name and parts[3] = the fully qualified name
+      String fqn = getModelNameAndPackage(options)[2];
+      // Construct the name using the fully qualified model name then add the remaining package names of the data type.
+      // We want to skip any common prefixes the model's package and data's package have in common.
+      return (fqn + ".bridge.pubsub" + getPackageNameMinusCommonPart(fqn, model.getParent().getName())).toLowerCase();
+   }
+
    @Activate
    public void activate() {
       logService.debug(getClass(), "activated");

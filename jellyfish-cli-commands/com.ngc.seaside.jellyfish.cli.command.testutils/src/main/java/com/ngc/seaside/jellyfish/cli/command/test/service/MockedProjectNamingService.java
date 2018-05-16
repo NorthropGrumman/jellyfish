@@ -146,4 +146,9 @@ public class MockedProjectNamingService implements IProjectNamingService {
       return getProjectName(model, "testsconfig");
    }
 
+   @Override
+   public IProjectInformation getPubSubBridgeProjectName(IJellyFishCommandOptions options, IModel model) {
+      return getProjectName(model, "pubsubbridge");
+   }
+
 }

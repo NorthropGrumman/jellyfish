@@ -17,9 +17,13 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class WrappedReferenceLink<T extends IReferenceField> extends AbstractWrappedXtext<LinkDeclaration>
@@ -82,14 +86,8 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
          }
 
          // Does the refined model contain the link?
-         LinkDeclaration xtextLink = xtext.getLinks().getDeclarations()
-               .stream()
-               .filter(l -> l instanceof BaseLinkDeclaration)
-               .map(l -> (BaseLinkDeclaration) l)
-               .filter(l -> EcoreUtil.equals(l.getSource(), link.getSource()))
-               .filter(l -> EcoreUtil.equals(l.getTarget(), link.getTarget()))
-               .findFirst()
-               .orElse(null);
+         LinkDeclaration xtextLink = findXtextBaseLinkDeclarationForRefinedLink(xtext, link);
+
          if (xtextLink != null) {
             // If so, find the wrapped link in the wrapped model.
             for (IModelLink<?> wrappedLink : resolver.getWrapperFor(xtext).getLinks()) {
@@ -105,9 +103,15 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
          model = model.getRefinedModel().orElse(null);
       }
 
-      Preconditions.checkState(refinedLink != null,
-                               "unable to find refined link in refine hierarchy of %s!",
-                               getParent().getFullyQualifiedName());
+      if (refinedLink == null) {
+         String sourcePath = getPathOfSource(link);
+         String targetPath = getPathOfTarget(link);
+         String msg = String.format("unable to find the base link for %s -> %s in refinement hierarchy of %s!",
+                                    sourcePath,
+                                    targetPath,
+                                    getParent().getFullyQualifiedName());
+         throw new IllegalStateException(msg);
+      }
       return refinedLink;
    }
 
@@ -126,5 +130,52 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
                                link.getName(),
                                getParent().getFullyQualifiedName());
       return refinedLink;
+   }
+
+   private static LinkDeclaration findXtextBaseLinkDeclarationForRefinedLink(Model xtext,
+                                                                             RefinedLinkDeclaration refinedLink) {
+      String sourcePath = getPathOfSource(refinedLink);
+      String targetPath = getPathOfTarget(refinedLink);
+
+      if (xtext.getLinks() != null) {
+         for (LinkDeclaration link : xtext.getLinks().getDeclarations()) {
+            if (Objects.equals(sourcePath, getPathOfSource(link))
+                      && Objects.equals(targetPath, getPathOfTarget(link))) {
+               return link;
+            }
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Gets the text value of the source of a link.
+    */
+   private static String getPathOfSource(LinkDeclaration link) {
+      List<INode> nodes;
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+                                                    SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__SOURCE);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+                                                    SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__SOURCE);
+      }
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
+   }
+
+   /**
+    * Gets the text value of the target of a link.
+    */
+   private static String getPathOfTarget(LinkDeclaration link) {
+      List<INode> nodes;
+      if (link instanceof BaseLinkDeclaration) {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+                                                    SystemDescriptorPackage.Literals.BASE_LINK_DECLARATION__TARGET);
+      } else {
+         nodes = NodeModelUtils.findNodesForFeature(link,
+                                                    SystemDescriptorPackage.Literals.REFINED_LINK_DECLARATION__TARGET);
+      }
+      return nodes.isEmpty() ? null : NodeModelUtils.getTokenText(nodes.get(0));
    }
 }

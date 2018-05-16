@@ -27,3 +27,6 @@ project(':generated-projects/com.model.events').name = 'model.events'
 include 'generated-projects/com.model.messages'
 project(':generated-projects/com.model.messages').name = 'model.messages'
 
+include 'generated-projects/com.model.pubsubbridge'
+project(':generated-projects/com.model.pubsubbridge').name = 'model.pubsubbridge'
+

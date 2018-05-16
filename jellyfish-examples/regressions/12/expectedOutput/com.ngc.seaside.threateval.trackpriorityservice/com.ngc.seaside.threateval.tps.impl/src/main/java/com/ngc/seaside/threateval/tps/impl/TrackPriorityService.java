@@ -7,8 +7,8 @@ import com.ngc.seaside.threateval.tps.event.datatype.PrioritizedSystemTrackIdent
 import com.ngc.seaside.threateval.tps.event.datatype.TrackPriority;
 import com.ngc.seaside.threateval.tps.event.datatype.TrackPriorityRequest;
 import com.ngc.seaside.threateval.tps.event.datatype.TrackPriorityResponse;
+import java.util.Collection;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -24,13 +24,13 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class TrackPriorityService extends AbstractTrackPriorityService {
 
    @Override
-   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriority(TrackPriority trackPriority) throws ServiceFaultException {
+   public PrioritizedSystemTrackIdentifiers doCalculateConsolidatedTrackPriority(TrackPriority trackPriority) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
-   public PrioritizedSystemTrackIdentifiers calculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) throws ServiceFaultException {
+   public PrioritizedSystemTrackIdentifiers doCalculateConsolidatedTrackPriorityWhenTrackDropped(DroppedSystemTrack droppedSystemTrack) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -60,17 +60,6 @@ public class TrackPriorityService extends AbstractTrackPriorityService {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override
