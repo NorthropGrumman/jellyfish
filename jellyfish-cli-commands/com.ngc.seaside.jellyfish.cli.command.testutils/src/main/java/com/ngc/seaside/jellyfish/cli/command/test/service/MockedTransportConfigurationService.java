@@ -166,8 +166,15 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
       Set<TransportConfigurationType> types = new HashSet<>();
       if (!multicastConfigurations.isEmpty()) {
          types.add(TransportConfigurationType.MULTICAST);
-      } else if (!restConfigurations.isEmpty()) {
+      }
+      if (!restConfigurations.isEmpty()) {
          types.add(TransportConfigurationType.REST);
+      }
+      if (!zeroMqConfigurations.isEmpty()) {
+         types.add(TransportConfigurationType.ZERO_MQ);
+      }
+      if (!telemetryConfigurations.isEmpty()) {
+         types.add(TransportConfigurationType.TELEMETRY);
       }
       return types;
    }

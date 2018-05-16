@@ -8,17 +8,20 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.sparktelemetry.RestTelemetryTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -93,6 +96,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    protected void runDeferredPhase() {
       IJellyFishCommandOptions options = getOptions();
       IModel model = getModel();
+      IModel deploymentModel = getDeploymentModel();
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
       Path outputDir = getOutputDirectory();
 
@@ -101,17 +105,20 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-            .setModelName(model.getName())
+            .setModel(model)
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
                                               .getArtifactId())
-            .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
+            .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
+            .setTelemetry(transportConfigService.getConfigurationTypes(getOptions(), model, deploymentModel)
+               .contains(TransportConfigurationType.TELEMETRY));
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
             new SparkTransportProviderConfigDto(transportConfigService, false),
             new HttpClientTransportProviderConfigDto(transportConfigService, false),
-            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false));
+            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, false),
+            new RestTelemetryTransportProviderConfigDto(transportConfigService));
 
       clean = generateAndAddTransportProviders(
             dto,
@@ -293,4 +300,9 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             CommonParameters.CLEAN);
    }
 
+   private IModel getDeploymentModel() {
+      IParameter<?> parameter = getOptions().getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      return getOptions().getSystemDescriptor().findModel(parameter.getStringValue()).orElse(null);
+   }
+   
 }

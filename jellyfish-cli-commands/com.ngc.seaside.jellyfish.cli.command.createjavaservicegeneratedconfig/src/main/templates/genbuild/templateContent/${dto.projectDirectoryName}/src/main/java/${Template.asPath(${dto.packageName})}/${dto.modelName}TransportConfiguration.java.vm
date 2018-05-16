@@ -1,6 +1,9 @@
 package ${dto.packageName};
 
 import com.ngc.blocs.service.log.api.ILogService;
+#if ($dto.hasTelemetry())
+import com.ngc.seaside.service.telemetry.api.ITelemetryService;
+#end
 import com.ngc.seaside.service.transport.api.ITransportProvider;
 import com.ngc.seaside.service.transport.api.ITransportService;
 import com.ngc.seaside.service.transport.api.TransportConfiguration;
@@ -22,12 +25,20 @@ public class ${dto.modelName}TransportConfiguration {
 
    private ITransportService transportService;
 
+#if ($dto.hasTelemetry())
+   private ITelemetryService telemetryService;
+
+#end   
 #foreach ($transportProvider in $dto.transportProviders)
    private ITransportProvider<${transportProvider.topicType}> ${transportProvider.providerName};
 
 #end
    @Activate
    public void activate() {
+#if ($dto.hasTelemetry())
+      telemetryService.setServiceName("${dto.model.fullyQualifiedName}");
+
+#end
       TransportConfiguration config = new TransportConfiguration();
 #foreach ($transportProvider in $dto.transportProviders)
       ${transportProvider.configurationType}.configure(config, ${transportProvider.providerName});
@@ -58,9 +69,20 @@ public class ${dto.modelName}TransportConfiguration {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
+
+#if ($dto.hasTelemetry())
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTelemetryService(ITelemetryService ref) {
+      this.telemetryService = ref;
+   }
+
+   public void removeTelemetryService(ITelemetryService ref) {
+      setTelemetryService(null);
+   }
+
+#end
 #foreach ($transportProvider in $dto.transportProviders)
 #set ($methodName = ${StringUtils.capitalize($transportProvider.providerName)})
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          target = "(component.name=${transportProvider.componentName})")
@@ -71,5 +93,6 @@ public class ${dto.modelName}TransportConfiguration {
    public void remove${methodName}(ITransportProvider<${transportProvider.topicType}> ref) {
       set${methodName}(null);
    }
+
 #end
 }
