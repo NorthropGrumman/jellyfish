@@ -22,6 +22,7 @@ public class GeneratedServiceConfigDto {
    private String connectorClassname;
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
+   private List<String> subscribers = new ArrayList<>();
 
    public GeneratedServiceConfigDto(IBuildManagementService buildManagementService,
                                     IJellyFishCommandOptions options) {
@@ -89,6 +90,15 @@ public class GeneratedServiceConfigDto {
 
    public GeneratedServiceConfigDto setConnectorClassname(String connectorClassname) {
       this.connectorClassname = connectorClassname;
+      return this;
+   }
+
+   public List<String> getSubscribers() {
+      return subscribers;
+   }
+
+   public GeneratedServiceConfigDto addSubscriberClassname(String subscriberClassname) {
+      this.subscribers.add(subscriberClassname);
       return this;
    }
 
