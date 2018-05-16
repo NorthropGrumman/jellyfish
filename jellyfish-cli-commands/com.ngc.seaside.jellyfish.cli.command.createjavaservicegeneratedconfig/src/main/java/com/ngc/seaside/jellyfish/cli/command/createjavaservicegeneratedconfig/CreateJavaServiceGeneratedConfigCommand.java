@@ -109,6 +109,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                   // TODO(Cameron): Is this really how we should be creating the connector name?
                   buildConnectorName(projectNamingService.getConnectorProjectName(options, model), model.getName()));
 
+      dto.addSubscriberClassname("com.ngc.seaside.threateval.tps.bridge.pubsub.TrackPrioritySubscriber");
+
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
             new SparkTransportProviderConfigDto(transportConfigService, false),
