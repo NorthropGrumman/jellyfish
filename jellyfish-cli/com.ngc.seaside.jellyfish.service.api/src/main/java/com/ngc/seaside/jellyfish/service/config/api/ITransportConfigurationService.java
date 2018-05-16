@@ -29,13 +29,15 @@ public interface ITransportConfigurationService {
    String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field);
 
    /**
-    * Returns the transport configuration types used by the given deployment model.
+    * Returns the transport configuration types used by the given model with the given deployment model.
     *
     * @param options         jellyfish options
+    * @param mode            model
     * @param deploymentModel deployment model
     * @return the transport configuration types used by the given deployment model
     */
-   Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel deploymentModel);
+   Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model,
+            IModel deploymentModel);
 
    /**
     * Returns the multicast configurations for the given field, or an empty collection if there are no multicast

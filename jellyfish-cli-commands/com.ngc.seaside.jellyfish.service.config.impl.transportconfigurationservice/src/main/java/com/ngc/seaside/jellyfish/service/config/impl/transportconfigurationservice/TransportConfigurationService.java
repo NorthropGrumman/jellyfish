@@ -19,6 +19,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyDataValue;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -64,11 +66,22 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    }
 
    @Override
-   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options,
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model,
                                                                 IModel deploymentModel) {
       Set<TransportConfigurationType> types = new LinkedHashSet<>();
-      IModel aggregatedDeploymentModel = sdService.getAggregatedView(TransportConfigurationServiceUtils.getDeploymentModel(options));
-      for (IModelLink<?> link : aggregatedDeploymentModel.getLinks()) {
+      IModel aggregatedModel = sdService.getAggregatedView(model);
+      IModel aggregatedDeploymentModel = sdService.getAggregatedView(deploymentModel);
+      for (IModelLink<? extends IReferenceField> link : aggregatedDeploymentModel.getLinks()) {
+         boolean isPertinentLink = false;
+         isPertinentLink |= link.getSource() instanceof IModelReferenceField
+            && Objects.equals(model.getFullyQualifiedName(),
+               ((IModelReferenceField) link.getSource()).getType().getFullyQualifiedName());
+         isPertinentLink |= link.getTarget() instanceof IModelReferenceField
+            && Objects.equals(model.getFullyQualifiedName(),
+               ((IModelReferenceField) link.getTarget()).getType().getFullyQualifiedName());
+         if (!isPertinentLink) {
+            continue;
+         }
          for (IProperty property : link.getProperties()) {
             if (property.getType() == DataTypes.DATA) {
                IData type = property.getReferencedDataType();
@@ -82,7 +95,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             }
          }
       }
-      for (IProperty property : aggregatedDeploymentModel.getProperties()) {
+      for (IProperty property : aggregatedModel.getProperties()) {
          if (property.getType() == DataTypes.DATA) {
             IData type = property.getReferencedDataType();
             if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {

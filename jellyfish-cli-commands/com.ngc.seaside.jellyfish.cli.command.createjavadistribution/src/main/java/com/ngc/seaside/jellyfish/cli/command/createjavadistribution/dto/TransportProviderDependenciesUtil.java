@@ -27,16 +27,19 @@ public class TransportProviderDependenciesUtil {
    public static Set<String> getTransportProviderDependencies(IJellyFishCommandOptions options,
                                                               ITransportConfigurationService transportConfigService) {
 
-      IParameter<?> parameter = options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
-      if (parameter == null) {
+      IParameter<?> modelParameter = options.getParameters().getParameter(CommonParameters.MODEL.getName());
+      IParameter<?> deploymentParameter = options.getParameters()
+                                                 .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      if (modelParameter == null || deploymentParameter == null) {
          return Collections.emptySet();
       }
-      Optional<IModel> deploymentModel = options.getSystemDescriptor().findModel(parameter.getStringValue());
-      if (!deploymentModel.isPresent()) {
+      Optional<IModel> model = options.getSystemDescriptor().findModel(modelParameter.getStringValue());
+      Optional<IModel> deploymentModel = options.getSystemDescriptor().findModel(deploymentParameter.getStringValue());
+      if (!model.isPresent() || !deploymentModel.isPresent()) {
          return Collections.emptySet();
       }
       Set<TransportConfigurationType> types =
-            transportConfigService.getConfigurationTypes(options, deploymentModel.get());
+            transportConfigService.getConfigurationTypes(options, model.get(), deploymentModel.get());
 
       Set<String> dependencies = new LinkedHashSet<>();
 
