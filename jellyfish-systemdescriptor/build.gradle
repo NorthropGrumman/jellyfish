@@ -20,23 +20,16 @@ buildscript {
 
 apply plugin: 'com.ngc.seaside.release.root'
 
-def NON_JAVA_PROJECTS = [
-      'systemdescriptor.feature',
-      'systemdescriptor.updatesite'
-]
-
 subprojects {
-    if (!NON_JAVA_PROJECTS.contains(name)) {
-        apply plugin: 'com.ngc.seaside.parent'
+    apply plugin: 'com.ngc.seaside.parent'
 
-        versionSettings {
-            versionFile = versionsFile
-        }
+    versionSettings {
+        versionFile = versionsFile
+    }
 
-        seasideCi {
-            m2OutputDirectory = m2directory
-            dependencyInfoReportFile = dependenciesReportFile
-            deploymentScriptFile = m2DeploymentScriptFile
-        }
+    seasideCi {
+        m2OutputDirectory = m2directory
+        dependencyInfoReportFile = dependenciesReportFile
+        deploymentScriptFile = m2DeploymentScriptFile
     }
 }

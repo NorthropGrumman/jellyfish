@@ -1,7 +1,5 @@
 # jellyfish-cli
-Jellyfish-cli consists of tooling built on top of the System Descriptor lanaguage.  It is packaged as a command line interface and as a set of Gradle plugins.  Jellyfish allows for code generation directly from model files and enables various types of analysis.
+Jellyfish-cli consists of the base api for building tools on top of the System Descriptor lanaguage.
 
-# Installation and Setup
-You can download the CLI at [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).  The CLI does not require the update site to run.  Once downloaded, just unzip the file and run `bin/jellyfish.bat` or `bin/jellyfish`.
-
-You can find more information about running Jellyfish at [JellyFish - Using the Command Line Interface (CLI)](http://10.207.42.137/confluence/x/xYgS).  
+An implementation of the jellyfish cli is contained in the jellyfish-cli-commands project and packaged in the
+jellyfish-packaging project.
