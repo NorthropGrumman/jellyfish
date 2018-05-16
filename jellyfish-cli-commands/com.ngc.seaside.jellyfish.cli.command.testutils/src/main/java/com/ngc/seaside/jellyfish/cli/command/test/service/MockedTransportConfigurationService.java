@@ -161,8 +161,7 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    }
 
    @Override
-   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model,
-                                                                IModel deploymentModel) {
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
       Set<TransportConfigurationType> types = new HashSet<>();
       if (!multicastConfigurations.isEmpty()) {
          types.add(TransportConfigurationType.MULTICAST);

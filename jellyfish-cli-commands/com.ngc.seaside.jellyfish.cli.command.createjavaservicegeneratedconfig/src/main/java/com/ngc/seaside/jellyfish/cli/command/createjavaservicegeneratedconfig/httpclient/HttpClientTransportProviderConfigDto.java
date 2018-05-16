@@ -112,7 +112,8 @@ public class HttpClientTransportProviderConfigDto implements ITransportProviderC
    }
 
    @Override
-   public Set<String> getDependencies(boolean topic, boolean provider, boolean module) {
+   public Set<String> getDependencies(IJellyFishCommandOptions options, IModel model, boolean topic, boolean provider,
+            boolean module) {
       Set<String> dependencies = new LinkedHashSet<>();
       if (topic || provider) {
          dependencies.add(HTTP_CLIENT_TOPIC_DEPENDENCY);

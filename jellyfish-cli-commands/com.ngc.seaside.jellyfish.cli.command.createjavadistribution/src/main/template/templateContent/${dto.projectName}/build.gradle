@@ -29,9 +29,9 @@ dependencies {
 #foreach ($dependency in $dto.transportProviderDependencies)
    bundles "${dto.getFormattedDependency($dependency)}"
 #end
-bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.api')}"
-bundles "${dto.getFormattedDependency('com.ngc.seaside:service.impl.basetelemetryservice')}"
-bundles "${dto.getFormattedDependency('com.ngc.seaside:service.impl.jsontelemetryservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.api')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.impl.basetelemetryservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.impl.jsontelemetryservice')}"
 
    blocs "${dto.getFormattedDependency('com.ngc.blocs:api')}"
    blocs "${dto.getFormattedDependency('com.ngc.blocs:file.impl.common.fileutilities')}"

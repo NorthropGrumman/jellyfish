@@ -1,7 +1,9 @@
 package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
@@ -66,35 +68,12 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    }
 
    @Override
-   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model,
-                                                                IModel deploymentModel) {
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
       Set<TransportConfigurationType> types = new LinkedHashSet<>();
+      IParameter<?> deploymentParam = options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      IModel deploymentModel = options.getSystemDescriptor().findModel(deploymentParam.getStringValue()).orElse(null);
       IModel aggregatedModel = sdService.getAggregatedView(model);
-      IModel aggregatedDeploymentModel = sdService.getAggregatedView(deploymentModel);
-      for (IModelLink<? extends IReferenceField> link : aggregatedDeploymentModel.getLinks()) {
-         boolean isPertinentLink = false;
-         isPertinentLink |= link.getSource() instanceof IModelReferenceField
-            && Objects.equals(model.getFullyQualifiedName(),
-               ((IModelReferenceField) link.getSource()).getType().getFullyQualifiedName());
-         isPertinentLink |= link.getTarget() instanceof IModelReferenceField
-            && Objects.equals(model.getFullyQualifiedName(),
-               ((IModelReferenceField) link.getTarget()).getType().getFullyQualifiedName());
-         if (!isPertinentLink) {
-            continue;
-         }
-         for (IProperty property : link.getProperties()) {
-            if (property.getType() == DataTypes.DATA) {
-               IData type = property.getReferencedDataType();
-               if (MulticastConfigurationUtils.isMulticastConfiguration(type)) {
-                  types.add(TransportConfigurationType.MULTICAST);
-               } else if (RestConfigurationUtils.isRestConfiguration(type)) {
-                  types.add(TransportConfigurationType.REST);
-               } else if (ZeroMqConfigurationUtils.isZeroMqConfiguration(type)) {
-                  types.add(TransportConfigurationType.ZERO_MQ);
-               }
-            }
-         }
-      }
+      IModel aggregatedDeploymentModel = deploymentModel == null ? null : sdService.getAggregatedView(deploymentModel);
       for (IProperty property : aggregatedModel.getProperties()) {
          if (property.getType() == DataTypes.DATA) {
             IData type = property.getReferencedDataType();
@@ -103,11 +82,27 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             }
          }
       }
-      for (IModelReferenceField field : aggregatedDeploymentModel.getParts()) {
-         for (IProperty property : field.getProperties()) {
-            IData type = property.getReferencedDataType();
-            if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
-               types.add(TransportConfigurationType.TELEMETRY);
+      if (aggregatedDeploymentModel != null) {
+         for (IModelReferenceField field : aggregatedDeploymentModel.getParts()) {
+            for (IProperty property : field.getProperties()) {
+               IData type = property.getReferencedDataType();
+               if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
+                  types.add(TransportConfigurationType.TELEMETRY);
+               }
+            }
+         }
+         for (IModelLink<? extends IReferenceField> link : aggregatedDeploymentModel.getLinks()) {
+            for (IProperty property : link.getProperties()) {
+               if (property.getType() == DataTypes.DATA) {
+                  IData type = property.getReferencedDataType();
+                  if (MulticastConfigurationUtils.isMulticastConfiguration(type)) {
+                     types.add(TransportConfigurationType.MULTICAST);
+                  } else if (RestConfigurationUtils.isRestConfiguration(type)) {
+                     types.add(TransportConfigurationType.REST);
+                  } else if (ZeroMqConfigurationUtils.isZeroMqConfiguration(type)) {
+                     types.add(TransportConfigurationType.ZERO_MQ);
+                  }
+               }
             }
          }
       }
@@ -205,10 +200,12 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       
       IModel deploymentModel = sdService.getAggregatedView(TransportConfigurationServiceUtils.getDeploymentModel(options));
       for (IModelReferenceField part : deploymentModel.getParts()) {
-         configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(part::getProperties,
-            configQualifiedName,
-            function,
-            () -> String.format("Configuration is not completely set part %s in deployment model", part.getName())));
+         if (Objects.equals(part.getType().getFullyQualifiedName(), model.getFullyQualifiedName())) {
+            configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(part::getProperties,
+               configQualifiedName,
+               function,
+               () -> String.format("Configuration is not completely set part %s in deployment model", part.getName())));
+         }
       }
       
       return configurations;

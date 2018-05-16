@@ -27,7 +27,7 @@ public interface ITransportProviderConfigDto<T> {
     *
     * <p />
     * When generating the template for this transport provider,
-    * The template will be given the variable {@link dto} set to the returned value.
+    * The template will be given the returned {@code dto}.
     *
     * @param serviceConfigDto the base configuration dto for the generated service
     * @param options          jellyfish options
@@ -51,13 +51,16 @@ public interface ITransportProviderConfigDto<T> {
 
    /**
     * Returns the dependencies for the transport service in the form {@code "groupId:artifactId"}.
-    *
+    * 
+    * @param options  Jellyfish command options
+    * @param model    model
     * @param topic    if {@code true}, includes the dependencies needed for the transport topic
     * @param provider if {@code true}, includes the dependencies needed for the transport provider
     * @param module   if {@code true}, includes the dependencies needed for the transport Guice module
     * @return the dependencies for this transport configuration
     */
-   Set<String> getDependencies(boolean topic, boolean provider, boolean module);
+   Set<String> getDependencies(IJellyFishCommandOptions options, IModel model, boolean topic, boolean provider,
+            boolean module);
 
    /**
     * Returns a map of extra parameters needed to generate the template. The parameter {@code dto} will already be

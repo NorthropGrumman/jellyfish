@@ -6,15 +6,20 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dt
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.TransportProviderDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryConfiguration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SparkTransportProviderConfigDto implements ITransportProviderConfigDto<SparkDto> {
 
@@ -32,12 +37,15 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
          SPARK_MODULE =
          "com.ngc.seaside.service.transport.impl.provider.spark.module.SparkTransportProviderModule";
    private static final String SPARK_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
+   private static final String TELEMETRY_TOPIC_DEPENDENCY = "com.ngc.seaside:service.telemetry.api";
    private static final String SPARK_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
    private static final String SPARK_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark.module";
    private static final String
          SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY =
          "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
    private static final String SPARK_CORE_DEPENDENCY = "com.sparkjava:spark-core";
+   private static final String TELEMETRY_SERVICE_QUALIFIED_NAME = "com.ngc.seaside.service.telemetry.api.ITelemetryService";
+   private static final String TELEMETRY_TOPIC = "ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC";
 
    private ITransportConfigurationService transportConfigurationService;
    private boolean test;
@@ -62,10 +70,34 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
                                                  IJellyFishCommandOptions options, IModel model, String topicsClassName,
                                                  Map<String, IDataReferenceField> topics) {
       SparkDto sparkDto = new SparkDto().setBaseDto(dto)
-            .setTopicsImport(topicsClassName)
+            .addImport(topicsClassName)
             .setClassname(dto.getModelName() + getClassnameSuffix());
       String topicsPrefix = topicsClassName.substring(topicsClassName.lastIndexOf('.') + 1) + '.';
 
+      Collection<RestTelemetryConfiguration> telemetryConfigurations =
+               transportConfigurationService.getTelemetryConfiguration(options, model).stream()
+               .filter(RestTelemetryConfiguration.class::isInstance)
+               .map(RestTelemetryConfiguration.class::cast)
+               .collect(Collectors.toCollection(LinkedHashSet::new));
+      
+      int count = 1;
+      for (RestTelemetryConfiguration configuration : telemetryConfigurations) {
+         RestConfiguration restConfig = configuration.getConfig();
+         SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(restConfig.getNetworkAddress())
+               .setNetworkInterface(restConfig.getNetworkInterface())
+               .setPort(restConfig.getPort())
+               .setHttpMethod(restConfig.getHttpMethod())
+               .setPath(restConfig.getPath())
+               .setContentType(restConfig.getContentType())
+                                                     .setVariableName(StringUtils.uncapitalize(model.getName())
+                                                        + (telemetryConfigurations.size() > 1 ? count : ""))
+                                                     .setName(TELEMETRY_TOPIC);
+
+         sparkDto.addTopic(topicDto);
+         sparkDto.addImport(TELEMETRY_SERVICE_QUALIFIED_NAME);
+         count++;
+      }
+      
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
@@ -77,7 +109,7 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
          }
          Collection<RestConfiguration> configurations =
                transportConfigurationService.getRestConfiguration(options, field);
-         int count = 1;
+         count = 1;
          for (RestConfiguration configuration : configurations) {
             SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
                   .setNetworkInterface(configuration.getNetworkInterface())
@@ -108,10 +140,16 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
    }
 
    @Override
-   public Set<String> getDependencies(boolean topic, boolean provider, boolean module) {
+   public Set<String> getDependencies(IJellyFishCommandOptions options, IModel model, boolean topic, boolean provider,
+            boolean module) {
       Set<String> dependencies = new LinkedHashSet<>();
       if (topic || provider) {
          dependencies.add(SPARK_TOPIC_DEPENDENCY);
+         if (transportConfigurationService == null
+            || transportConfigurationService.getConfigurationTypes(options, model)
+                                            .contains(TransportConfigurationType.TELEMETRY)) {
+            dependencies.add(TELEMETRY_TOPIC_DEPENDENCY);
+         }
       }
       if (provider) {
          dependencies.add(SPARK_PROVIDER_DEPENDENCY);

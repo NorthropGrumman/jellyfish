@@ -58,9 +58,8 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    }
 
    @Override
-   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model,
-            IModel deploymentModel) {
-      return delegate.getConfigurationTypes(options, model, deploymentModel);
+   public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
+      return delegate.getConfigurationTypes(options, model);
    }
 
 }
