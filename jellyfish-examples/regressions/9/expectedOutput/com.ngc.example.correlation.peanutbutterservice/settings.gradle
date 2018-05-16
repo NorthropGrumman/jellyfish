@@ -27,3 +27,6 @@ project(':generated-projects/com.ngc.example.correlation.pbs.events').name = 'pb
 include 'generated-projects/com.ngc.example.correlation.pbs.messages'
 project(':generated-projects/com.ngc.example.correlation.pbs.messages').name = 'pbs.messages'
 
+include 'generated-projects/com.ngc.example.correlation.pbs.pubsubbridge'
+project(':generated-projects/com.ngc.example.correlation.pbs.pubsubbridge').name = 'pbs.pubsubbridge'
+

@@ -1,6 +1,5 @@
 package com.ngc.seaside.threateval.datps.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,19 +19,15 @@ public class DefendedAreaTrackPriorityServiceTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new DefendedAreaTrackPriorityService();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void calculateTrackPriorityTest() throws Exception {
+   public void doCalculateTrackPriorityTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }

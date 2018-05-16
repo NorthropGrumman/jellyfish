@@ -93,6 +93,7 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       projectDependencies.add(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId());
       projectDependencies.add(projectNamingService.getMessageProjectName(options, model).getArtifactId());
       projectDependencies.add(projectNamingService.getServiceProjectName(options, model).getArtifactId());
+      projectDependencies.add(projectNamingService.getPubSubBridgeProjectName(options, model).getArtifactId());
       dto.setProjectDependencies(projectDependencies);
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));

@@ -21,6 +21,7 @@ dependencies {
    bundles project(":datps.base")
    bundles project(":datps.messages")
    bundles project(":datps.impl")
+   bundles project(":datps.pubsubbridge")
 
    bundles "com.ngc.seaside:service.api:$starfishVersion"
    bundles "com.ngc.seaside:service.correlation.impl.correlationservice:$starfishVersion"

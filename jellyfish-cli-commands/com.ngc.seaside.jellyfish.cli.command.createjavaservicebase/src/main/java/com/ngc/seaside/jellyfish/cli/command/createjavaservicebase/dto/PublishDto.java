@@ -3,9 +3,12 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 public class PublishDto {
 
    private String type;
+   private String finalizedType;
    private String name;
    private String topic;
    private String fieldName;
+   private String fullyQualifiedName;
+   private String correlationSetterSnippet;
 
    public String getType() {
       return type;
@@ -43,5 +46,30 @@ public class PublishDto {
       return this;
    }
 
+   public PublishDto setFullyQualifiedName(String fullyQualifiedName) {
+      this.fullyQualifiedName = fullyQualifiedName;
+      return this;
+   }
 
+   public String getFullyQualifiedName() {
+      return fullyQualifiedName;
+   }
+
+   public String getFinalizedType() {
+      return finalizedType;
+   }
+
+   public PublishDto setFinalizedType(String finalizedType) {
+      this.finalizedType = finalizedType;
+      return this;
+   }
+
+   public String getCorrelationSetterSnippet() {
+      return correlationSetterSnippet;
+   }
+
+   public PublishDto setCorrelationSetterSnippet(String correlationSetterSnippet) {
+      this.correlationSetterSnippet = correlationSetterSnippet;
+      return this;
+   }
 }

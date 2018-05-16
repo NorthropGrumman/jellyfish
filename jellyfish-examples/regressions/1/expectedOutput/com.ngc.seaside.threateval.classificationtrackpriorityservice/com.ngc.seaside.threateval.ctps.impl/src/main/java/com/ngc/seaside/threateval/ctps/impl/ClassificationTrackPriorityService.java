@@ -4,8 +4,8 @@ import com.ngc.seaside.threateval.ctps.api.IClassificationTrackPriorityService;
 import com.ngc.seaside.threateval.ctps.base.impl.AbstractClassificationTrackPriorityService;
 import com.ngc.seaside.threateval.ctps.event.classifier.datatype.Classification;
 import com.ngc.seaside.threateval.ctps.event.datatype.TrackPriority;
+import java.util.Collection;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class ClassificationTrackPriorityService extends AbstractClassificationTrackPriorityService {
 
    @Override
-   public TrackPriority calculateTrackPriority(Classification systemTrackClassification) throws ServiceFaultException {
+   public TrackPriority doCalculateTrackPriority(Classification systemTrackClassification) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -45,17 +45,6 @@ public class ClassificationTrackPriorityService extends AbstractClassificationTr
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

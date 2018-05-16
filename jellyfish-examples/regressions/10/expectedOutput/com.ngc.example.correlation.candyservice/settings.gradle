@@ -27,3 +27,6 @@ project(':generated-projects/com.ngc.example.correlation.cs.events').name = 'cs.
 include 'generated-projects/com.ngc.example.correlation.cs.messages'
 project(':generated-projects/com.ngc.example.correlation.cs.messages').name = 'cs.messages'
 
+include 'generated-projects/com.ngc.example.correlation.cs.pubsubbridge'
+project(':generated-projects/com.ngc.example.correlation.cs.pubsubbridge').name = 'cs.pubsubbridge'
+

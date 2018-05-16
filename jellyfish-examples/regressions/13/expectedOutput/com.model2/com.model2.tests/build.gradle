@@ -1,0 +1,73 @@
+
+apply plugin: 'com.ngc.seaside.application'
+
+dependencies {
+    implementation project(':model2.messages')
+    implementation project(':model2.base')
+
+    implementation "com.ngc.seaside:service.api:$starfishVersion"
+    implementation "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
+    implementation "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsCoreVersion"
+
+    implementation "com.ngc.seaside:service.transport.api:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.testutils:$starfishVersion"
+
+    implementation "com.ngc.seaside:guice.modules:$jellyfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.defaulttransportservice.module:$starfishVersion"
+    implementation "com.ngc.seaside:service.transport.impl.provider.multicast.module:$starfishVersion"
+
+    implementation "com.google.inject:guice:$guiceVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "info.cukes:cucumber-java:$cucumberVersion"
+    implementation "info.cukes:cucumber-guice:$cucumberVersion"
+}
+
+ext {
+    systemDescriptorFeatureDirectory = file("${buildDir}/features")
+    consolidatedResourcesDirectory = file("${buildDir}/runtime/resources")
+    mainClass = 'com.model2.tests.main.Model2TestMain'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+}
+
+task('copyFeatures', type: Copy, description: "Copies the system descriptor test resources and the model's feature files") {
+    parent.configurations.gherkin.resolvedConfiguration.resolvedArtifacts.each {
+	    from zipTree(it.file)
+	}
+	exclude {
+	   it.path.toLowerCase().endsWith('.feature') && !it.path.matches("${parent.systemDescriptor.model.replace('.', '/')}\\b.*?\\.(?i)feature")
+	}
+	into systemDescriptorFeatureDirectory
+    build.dependsOn it
+	assemble.dependsOn it
+	sourceSets.main.resources.srcDir systemDescriptorFeatureDirectory
+}
+
+task('consolidateResources', type: Copy,
+     dependsOn: copyFeatures,
+     description: "Copies the project's resource directories to a common folder") {
+    from sourceSets.main.resources.srcDirs
+    into consolidatedResourcesDirectory
+    build.finalizedBy it
+}
+
+seasideApplication {
+    mainClassName = mainClass
+    includeDistributionDirs = ['src/main/resources/', systemDescriptorFeatureDirectory]
+    appHomeVarName = 'appHome'
+    appSystemProperties = [NG_FW_HOME: 'APP_HOME_VAR']
+    distributionName = "${project.name}-${project.version}"
+    installationDir = "build/distributions/${project.name}-${project.version}"
+
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
+    }
+}

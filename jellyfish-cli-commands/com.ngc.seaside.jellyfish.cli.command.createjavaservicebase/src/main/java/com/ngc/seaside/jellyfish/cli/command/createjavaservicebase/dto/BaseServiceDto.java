@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class BaseServiceDto {
@@ -28,6 +29,8 @@ public class BaseServiceDto {
    private List<CorrelationDto> correlationMethods = new ArrayList<>();
    private List<TriggerDto> triggerRegistrationMethods = new ArrayList<>();
    private List<ComplexScenarioDto> complexScenarios = new ArrayList<>();
+
+   private Set<String> pubSubImports = new TreeSet<>();
 
    private List<BasicServerReqResDto> basicServerReqResMethods = new ArrayList<>();
 
@@ -51,6 +54,15 @@ public class BaseServiceDto {
 
    public BaseServiceDto setInterface(ClassDto interfacez) {
       this.interfacez = interfacez;
+      return this;
+   }
+
+   public Set<String> getPubSubImports() {
+      return pubSubImports;
+   }
+
+   public BaseServiceDto setPubSubImports(Set<String> pubSubImports) {
+      this.pubSubImports = pubSubImports;
       return this;
    }
 

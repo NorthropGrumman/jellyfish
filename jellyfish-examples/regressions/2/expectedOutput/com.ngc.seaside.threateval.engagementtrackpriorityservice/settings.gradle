@@ -27,6 +27,9 @@ project(':generated-projects/com.ngc.seaside.threateval.etps.events').name = 'et
 include 'generated-projects/com.ngc.seaside.threateval.etps.messages'
 project(':generated-projects/com.ngc.seaside.threateval.etps.messages').name = 'etps.messages'
 
+include 'generated-projects/com.ngc.seaside.threateval.etps.pubsubbridge'
+project(':generated-projects/com.ngc.seaside.threateval.etps.pubsubbridge').name = 'etps.pubsubbridge'
+
 include 'generated-projects/com.ngc.seaside.threateval.etps.testsconfig'
 project(':generated-projects/com.ngc.seaside.threateval.etps.testsconfig').name = 'etps.testsconfig'
 

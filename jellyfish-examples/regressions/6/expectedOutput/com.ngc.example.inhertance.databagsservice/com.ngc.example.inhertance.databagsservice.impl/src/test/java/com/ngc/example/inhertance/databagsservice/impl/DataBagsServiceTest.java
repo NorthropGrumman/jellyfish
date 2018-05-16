@@ -1,6 +1,5 @@
 package com.ngc.example.inhertance.databagsservice.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,19 +19,15 @@ public class DataBagsServiceTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new DataBagsService();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void publishTest() throws Exception {
+   public void doPublishTest() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
