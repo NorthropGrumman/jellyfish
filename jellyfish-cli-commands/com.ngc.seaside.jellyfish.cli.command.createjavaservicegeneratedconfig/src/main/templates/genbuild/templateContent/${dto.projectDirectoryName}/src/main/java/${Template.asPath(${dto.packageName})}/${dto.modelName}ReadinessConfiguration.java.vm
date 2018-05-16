@@ -1,5 +1,6 @@
 package ${dto.packageName};
 
+import com.ngc.blocs.service.event.api.IEventSubscriber;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.readiness.api.IReadinessConfiguration;
 import com.ngc.seaside.service.readiness.api.IReadinessService;
@@ -25,7 +26,13 @@ public class ${dto.modelName}ReadinessConfiguration {
       config.require()
             .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
             .require()
-            .componentActivated("(component.name=${dto.connectorClassname})");
+            .componentActivated("(component.name=${dto.connectorClassname})")#if ($dto.subscribers.isEmpty());#end
+
+#foreach ($subscriber in $dto.subscribers)
+            .require()
+            .componentActivated(IEventSubscriber.class, "(component.name=$subscriber")#if (! $foreach.hasNext);#end
+#end
+
       readinessService.register(config);
 
       logService.debug(getClass(), "Activated.");
