@@ -27,3 +27,6 @@ project(':generated-projects/com.ngc.example.inhertance.databagsservice.events')
 include 'generated-projects/com.ngc.example.inhertance.databagsservice.messages'
 project(':generated-projects/com.ngc.example.inhertance.databagsservice.messages').name = 'databagsservice.messages'
 
+include 'generated-projects/com.ngc.example.inhertance.databagsservice.pubsubbridge'
+project(':generated-projects/com.ngc.example.inhertance.databagsservice.pubsubbridge').name = 'databagsservice.pubsubbridge'
+

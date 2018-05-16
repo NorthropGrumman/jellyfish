@@ -13,9 +13,12 @@ public class CorrelationDto {
    private String name;
    private PublishDto output;
    private String serviceMethod;
+   private String serviceTryMethod;
+   private String serviceTriggerRegister;
    private String scenarioName;
    private String correlationType;
    private String inputLogFormat;
+   private String serviceFromStatus;
    private List<InputDto> inputs = new ArrayList<>();
    private List<IOCorrelationDto> inputOutputCorrelations = new ArrayList<>();
 
@@ -50,6 +53,30 @@ public class CorrelationDto {
 
    public void setServiceMethod(String serviceName) {
       this.serviceMethod = serviceName;
+   }
+
+   public String getServiceTryMethod() {
+      return serviceTryMethod;
+   }
+
+   public void setServiceTryMethod(String serviceTryMethod) {
+      this.serviceTryMethod = serviceTryMethod;
+   }
+
+   public String getServiceTriggerRegister() {
+      return serviceTriggerRegister;
+   }
+
+   public void setServiceTriggerRegister(String serviceTriggerRegister) {
+      this.serviceTriggerRegister = serviceTriggerRegister;
+   }
+
+   public String getServiceFromStatus() {
+      return serviceFromStatus;
+   }
+
+   public void setServiceFromStatus(String serviceFromStatus) {
+      this.serviceFromStatus = serviceFromStatus;
    }
 
    /**

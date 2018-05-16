@@ -1,0 +1,32 @@
+rootProject.name = 'com.model2'
+
+include 'com.model2.config'
+project(':com.model2.config').name = 'model2.config'
+
+include 'com.model2.distribution'
+project(':com.model2.distribution').name = 'model2.distribution'
+
+include 'com.model2.domain'
+project(':com.model2.domain').name = 'model2.domain'
+
+include 'com.model2.impl'
+project(':com.model2.impl').name = 'model2.impl'
+
+include 'com.model2.tests'
+project(':com.model2.tests').name = 'model2.tests'
+
+include 'generated-projects/com.model2.base'
+project(':generated-projects/com.model2.base').name = 'model2.base'
+
+include 'generated-projects/com.model2.connector'
+project(':generated-projects/com.model2.connector').name = 'model2.connector'
+
+include 'generated-projects/com.model2.events'
+project(':generated-projects/com.model2.events').name = 'model2.events'
+
+include 'generated-projects/com.model2.messages'
+project(':generated-projects/com.model2.messages').name = 'model2.messages'
+
+include 'generated-projects/com.model2.pubsubbridge'
+project(':generated-projects/com.model2.pubsubbridge').name = 'model2.pubsubbridge'
+

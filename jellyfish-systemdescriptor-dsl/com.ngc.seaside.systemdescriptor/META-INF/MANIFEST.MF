@@ -25,6 +25,7 @@ Export-Package: com.ngc.seaside.systemdescriptor.parser.antlr.internal,
  com.ngc.seaside.systemdescriptor.serializer,
  com.ngc.seaside.systemdescriptor.scoping,
  com.ngc.seaside.systemdescriptor.services,
+ com.ngc.seaside.systemdescriptor.utils,
  com.ngc.seaside.systemdescriptor.validation,
  com.ngc.seaside.systemdescriptor.formatting2
 Import-Package: org.apache.log4j

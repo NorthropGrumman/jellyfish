@@ -4,6 +4,7 @@ public class InputDto {
    private String type;
    private String correlationMethod;
    private String fieldName;
+   private String fullyQualifiedName;
 
    /**
     * Returns the name of the generated java event type for this input.
@@ -38,4 +39,12 @@ public class InputDto {
       return this;
    }
 
+   public InputDto setFullyQualifiedName(String fullyQualifiedName) {
+      this.fullyQualifiedName = fullyQualifiedName;
+      return this;
+   }
+
+   public  String getFullyQualifiedName() {
+      return fullyQualifiedName;
+   }
 }

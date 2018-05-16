@@ -8,9 +8,12 @@ public class TriggerDto {
    private String triggerType;
    private String correlationMethod;
    private String name;
+   private String serviceFromStatus;
    private List<EventDto> eventProducers = new ArrayList<>();
    private List<CompletenessDto> completionStatements = new ArrayList<>();
    private List<InputDto> inputs = new ArrayList<>();
+   private List<IOCorrelationDto> inputOutputCorrelations  = new ArrayList<>();
+   private PublishDto output;
 
    public String getTriggerType() {
       return triggerType;
@@ -47,6 +50,14 @@ public class TriggerDto {
       this.completionStatements = completionStatements;
       return this;
    }
+   
+   public PublishDto getOutput() {
+      return output;
+   }
+
+   public void setOutput(PublishDto output) {
+      this.output = output; 
+   }
 
    public List<InputDto> getInputs() {
       return inputs;
@@ -65,6 +76,22 @@ public class TriggerDto {
       this.name = name;
    }
 
+   public String getServiceFromStatus() {
+      return serviceFromStatus;
+   }
+
+   public TriggerDto setServiceFromStatus(String serviceFromStatus) {
+      this.serviceFromStatus = serviceFromStatus;
+      return this;
+   }
+
+   public List<IOCorrelationDto> getInputOutputCorrelations() {
+      return inputOutputCorrelations;
+   }
+
+   public void setInputOutputCorrelations(List<IOCorrelationDto> inputOutputCorrelations) {
+      this.inputOutputCorrelations = inputOutputCorrelations;
+   }
 
    public static class CompletenessDto {
 
@@ -72,6 +99,7 @@ public class TriggerDto {
       private String input2Type;
       private String input1GetterSnippet;
       private String input2GetterSnippet;
+      private String outputSetterSnippet;
 
       public String getInput1Type() {
          return input1Type;
@@ -108,6 +136,15 @@ public class TriggerDto {
          this.input2GetterSnippet = input2GetterSnippet;
          return this;
       }
+
+      public String getOutputSetterSnippet() {
+         return outputSetterSnippet;
+      }
+      
+      public CompletenessDto setOutputSetterSnippet(String outputSetterSnippet) {
+         this.outputSetterSnippet = outputSetterSnippet;
+         return this;
+      }
    }
 
    public static class EventDto {
@@ -134,4 +171,5 @@ public class TriggerDto {
       }
 
    }
+
 }

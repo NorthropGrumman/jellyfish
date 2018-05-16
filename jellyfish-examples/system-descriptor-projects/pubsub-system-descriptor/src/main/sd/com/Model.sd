@@ -28,45 +28,45 @@ model Model {
 		 and willCorrelate input1.field3.field4 to output1.field5.field6
 	}
 	
-	scenario basicSink {
-		when receiving input1
-		then willBeCompleted within 5 seconds
-	}
+//	scenario basicSink {
+//		when receiving input1
+//		then willBeCompleted within 5 seconds
+//	}
 	
-	scenario multiOutputPubSub {
-		when receiving input1
-		then willPublish output1
-		 and willPublish output2
-		 and willCorrelate input1.field1 to output1.field2
-		 and willCorrelate input1.field3.field4 to output2.field5.field6
-	}
+//	scenario multiOutputPubSub {
+//		when receiving input1
+//		then willPublish output1
+//		 and willPublish output2
+//		 and willCorrelate input1.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output2.field5.field6
+//	}
 	
-	scenario complexPubSub {
-		when receiving input1
-		 and receiving input2
-		then willPublish output1
-		 and willPublish output2
-		 and willCorrelate input2.field1 to output1.field2
-		 and willCorrelate input1.field3.field4 to output2.field5.field6
-	}
+//	scenario complexPubSub {
+//		when receiving input1
+//		 and receiving input2
+//		then willPublish output1
+//		 and willPublish output2
+//		 and willCorrelate input2.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output2.field5.field6
+//	}
 	
-	scenario basicSource {
-		when completing within 5 seconds
-		then willPublish output1
-	}
+//	scenario basicSource {
+//		when completing within 5 seconds
+//		then willPublish output1
+//	}
 	
-	scenario multiSource {
-		when completing within 5 seconds
-		then willPublish output1
-		 and willPublish output2
-	}
+//	scenario multiSource {
+//		when completing within 5 seconds
+//		then willPublish output1
+//		 and willPublish output2
+//	}
 	
-	scenario sinkCorrelation {
-		when receiving input1
-		 and receiving input2
-		 and correlating input1.field1 to input2.field5
-		then willBeCompleted within 5 seconds
-	}
+//	scenario sinkCorrelation {
+//		when receiving input1
+//		 and receiving input2
+//		 and correlating input1.field1 to input2.field5
+//		then willBeCompleted within 5 seconds
+//	}
 	
 	scenario singleOutputCorrelation {
 		when receiving input1
@@ -77,15 +77,15 @@ model Model {
 		 and willCorrelate input1.field3.field4 to output1.field5.field6
 	}
 	
-	scenario multiOutputCorrelation {
-		when receiving input1
-		 and receiving input2
-		 and correlating input1.field1 to input2.field5
-		then willPublish output1
-		 and willPublish output2
-		 and willCorrelate input2.field1 to output1.field2
-		 and willCorrelate input1.field3.field4 to output2.field5.field6
-	}
+//	scenario multiOutputCorrelation {
+//		when receiving input1
+//		 and receiving input2
+//		 and correlating input1.field1 to input2.field5
+//		then willPublish output1
+//		 and willPublish output2
+//		 and willCorrelate input2.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output2.field5.field6
+//	}
 	
 //	scenario multiOutputCorrelationSameType {
 //		when receiving input1
@@ -97,17 +97,17 @@ model Model {
 //		 and willCorrelate input1.field3.field4 to output3.field5.field6
 //	}
 	
-	scenario complexCorrelation {
-		when receiving input1
-		 and receiving input2
-		 and receiving input3
-		 and correlating input1.field1 to input2.field5
-		 and correlating input1.field6 to input3.field7
-		then willPublish output1
-		 and willPublish output2
-		 and willCorrelate input2.field1 to output1.field2
-		 and willCorrelate input1.field3.field4 to output2.field5.field6
-	}
+//	scenario complexCorrelation {
+//		when receiving input1
+//		 and receiving input2
+//		 and receiving input3
+//		 and correlating input1.field1 to input2.field5
+//		 and correlating input1.field6 to input3.field7
+//		then willPublish output1
+//		 and willPublish output2
+//		 and willCorrelate input2.field1 to output1.field2
+//		 and willCorrelate input1.field3.field4 to output2.field5.field6
+//	}
 	
 //	scenario complexCorrelationSameType {
 //		when receiving input1

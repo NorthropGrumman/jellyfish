@@ -7,7 +7,6 @@ import com.ngc.example.correlation.pbs.event.datatype.Candy;
 import com.ngc.example.correlation.pbs.event.datatype.Peanut;
 import com.ngc.seaside.service.correlation.api.ILocalCorrelationEvent;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -24,10 +23,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class PeanutButterService extends AbstractPeanutButterService {
 
    @Override
-   public Candy combine(
-      Peanut peanut,
-      Butter butter,
-      ILocalCorrelationEvent<String> correlationEvent) throws ServiceFaultException {
+   public Candy doCombine(
+               Peanut peanut,
+               Butter butter) {
          // TODO: implement this
          throw new UnsupportedOperationException("not implemented");
    }
@@ -51,17 +49,6 @@ public class PeanutButterService extends AbstractPeanutButterService {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

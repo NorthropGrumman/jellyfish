@@ -9,7 +9,6 @@ import com.model.event.Data4;
 import com.model.event.Data5;
 import com.model.event.Data6;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -25,7 +24,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class Model extends AbstractModel {
 
    @Override
-   public Data6 compute(Data5 x) throws ServiceFaultException {
+   public Data6 doCompute(Data5 x) throws ServiceFaultException {
       // TODO: implement this
       throw new UnsupportedOperationException("not implemented");
    }
@@ -61,17 +60,6 @@ public class Model extends AbstractModel {
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override
