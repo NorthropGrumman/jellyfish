@@ -16,14 +16,8 @@ public class ${dto.classname} {
 
    public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {
 #foreach ($topic in $dto.topics)
-#if ($dto.topics.size() > 1)
-#set ($factoryName = "factory${foreach.count}")
-#else
-#set ($factoryName = "factory")
-#end
-       SparkTopics ${factoryName} = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port});
-
-       SparkTopic ${topic.variableName} = ${factoryName}.when(HttpVerb.${topic.httpMethod})
+       SparkTopic ${topic.variableName} = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port})
+             .when(HttpVerb.${topic.httpMethod})
              .onPath("${topic.path}")
              .accept("${topic.contentType}")
              .respondWithType("${topic.contentType}")
