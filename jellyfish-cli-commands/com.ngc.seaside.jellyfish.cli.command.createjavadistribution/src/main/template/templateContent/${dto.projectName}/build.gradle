@@ -59,6 +59,7 @@ dependencies {
    thirdParty 'commons-collections:commons-collections:3.2.1'
    thirdParty 'commons-logging:commons-logging-osgi:1.1.1'
    thirdParty "${dto.getFormattedDependency('com.google.protobuf:protobuf-java')}"
+   thirdParty "${dto.getFormattedDependency('com.google.code.gson:gson')}"
 
    platform "${dto.getFormattedDependency('com.ngc.blocs:service.deployment.impl.common.autodeploymentservice')}"
    platform "org.eclipse.equinox:equinox-common:3.6.200.v20130402-1505"

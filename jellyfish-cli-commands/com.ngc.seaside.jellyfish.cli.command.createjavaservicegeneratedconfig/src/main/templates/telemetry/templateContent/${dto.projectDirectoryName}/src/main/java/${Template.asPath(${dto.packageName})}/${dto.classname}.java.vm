@@ -12,9 +12,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @Component
 public class ${dto.classname} {
 
-   private ${dto.classname}() {
-   }
-
    private ILogService logService;
    private ITelemetryService telemetryService;
 

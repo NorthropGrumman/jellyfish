@@ -169,6 +169,13 @@ public class DefaultDependenciesConfiguration {
             .includes(artifact("guice")
                             .groupId("com.google.inject")
                             .scope(DependencyScope.BUILD));
+
+      config.addGroup()
+            .versionPropertyName("gsonVersion")
+            .version("2.8.2")
+            .includes(artifact("gson")
+                            .groupId("com.google.code.gson")
+                            .scope(DependencyScope.BUILD));
    }
 
    private static void configureCucumber(DependenciesConfiguration config) {
