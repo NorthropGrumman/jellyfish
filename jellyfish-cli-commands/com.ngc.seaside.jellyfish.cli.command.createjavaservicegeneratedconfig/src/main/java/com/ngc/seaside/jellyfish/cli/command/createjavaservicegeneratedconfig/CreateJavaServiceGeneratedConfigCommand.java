@@ -9,6 +9,11 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.CorrelationDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
@@ -46,6 +51,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -66,6 +72,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    private static final String CONNECTOR_SUFFIX = "Connector";
 
+   private IBaseServiceDtoFactory baseServiceDtoFactory;
    private ITransportConfigurationService transportConfigService;
    private IScenarioService scenarioService;
    private IJavaServiceGenerationService generateService;
@@ -116,7 +123,20 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                                 connectorInfo.getArtifactId(),
                                 model.getName(), CONNECTOR_SUFFIX));
 
-      dto.addSubscriberClassname("com.ngc.seaside.threateval.tps.bridge.pubsub.TrackPrioritySubscriber");
+      BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
+      List<CorrelationDto> correlationMethodDtos = baseServiceDto.getCorrelationMethods();
+      List<BasicPubSubDto> pubSubMethods = baseServiceDto.getBasicPubSubMethods();
+      String packageName = packageNamingService.getPubSubBridgePackageName(options, model);
+
+      for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
+         for (InputDto inputDto : correlationMethodDto.getInputs()) {
+            dto.getSubscribers().add(packageName + "." + inputDto.getType() + "Subscriber");
+         }
+      }
+
+      for (BasicPubSubDto pubSubMethod : pubSubMethods) {
+         dto.getSubscribers().add(packageName + "." + pubSubMethod.getInput().getType() + "Subscriber");
+      }
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
@@ -207,6 +227,14 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    public void removeScenarioService(IScenarioService ref) {
       setScenarioService(null);
+   }
+
+   public void setBaseServiceDtoFactory(IBaseServiceDtoFactory ref) {
+      this.baseServiceDtoFactory = ref;
+   }
+
+   public void removeBaseServiceDtoFactory(IBaseServiceDtoFactory ref) {
+      setBaseServiceDtoFactory(null);
    }
 
    @SuppressWarnings({"unchecked", "rawtypes"})

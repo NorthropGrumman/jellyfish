@@ -5,6 +5,7 @@ dependencies {
 
     implementation "com.ngc.seaside:jellyfish.service.api:$version"
     implementation "com.ngc.seaside:jellyfish.utilities:$version"
+    implementation project(':jellyfish.cli.command.createjavaservicebase')
 
     implementation "commons-io:commons-io:$commonsIOVersion"
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
