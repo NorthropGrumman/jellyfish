@@ -88,7 +88,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             // We only want to include telemetry support if the deployment model contains a part
             // of the type referenced in the "model" parameter given at runtime.  This field (and only this field)
             // needs to have telemetry related properties in order for telemetry support to be enabled.
-            if(SystemDescriptors.areModelsRelated(field.getType(), model)) {
+            if (SystemDescriptors.areModelsRelated(field.getType(), model)) {
                for (IProperty property : field.getProperties()) {
                   IData type = property.getReferencedDataType();
                   if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
