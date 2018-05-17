@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationserv
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.HttpMethod;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
@@ -44,10 +45,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -258,7 +261,7 @@ public class TransportConfigurationServiceTest {
       HttpMethod method = HttpMethod.POST;
 
       IProperty configProperty = getMockedRestTelemetryConfiguration(address, interfaceName, port, path, contentType,
-            method);
+                                                                     method);
 
       IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
       when(options.getParameters()
@@ -272,7 +275,7 @@ public class TransportConfigurationServiceTest {
       INamedChildCollection<IModel, IModelReferenceField> parts = ModelUtils.mockedNamedCollectionOf(part);
       when(deploymentModel.getParts()).thenReturn(parts);
       when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
-      
+
       Collection<TelemetryConfiguration> configurations = service.getTelemetryConfiguration(options, model);
       assertEquals(1, configurations.size());
       assertTrue(configurations.iterator().next() instanceof RestTelemetryConfiguration);
@@ -284,8 +287,49 @@ public class TransportConfigurationServiceTest {
       assertEquals(path, restConfig.getPath());
       assertEquals(contentType, restConfig.getContentType());
       assertEquals(method, restConfig.getHttpMethod());
+
+      Set<TransportConfigurationType> types = service.getConfigurationTypes(options, model);
+      assertTrue("telemetry should be a configuration type!",
+                 types.contains(TransportConfigurationType.TELEMETRY));
    }
-   
+
+   @Test
+   public void testTelemetryConfigurationTypeOnlyAppliedForSpecificModel() {
+      String deploymentModelName = "com.ngc.DeploymentModel";
+      IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
+      String modelName = "com.ngc.Model";
+      IModel model = mock(IModel.class, RETURNS_DEEP_STUBS);
+      IModel noTelemetryModel = mock(IModel.class, RETURNS_DEEP_STUBS);
+      String address = "localhost";
+      String interfaceName = "0.0.0.0";
+      int port = 8081;
+      String path = "/path2";
+      String contentType = "application/x-protobuf";
+      HttpMethod method = HttpMethod.POST;
+
+      IProperty configProperty = getMockedRestTelemetryConfiguration(address, interfaceName, port, path, contentType,
+                                                                     method);
+
+      IJellyFishCommandOptions options = mock(IJellyFishCommandOptions.class, RETURNS_DEEP_STUBS);
+      when(options.getParameters()
+                 .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName())
+                 .getStringValue()).thenReturn(deploymentModelName);
+      when(options.getSystemDescriptor().findModel(deploymentModelName)).thenReturn(Optional.of(deploymentModel));
+      when(options.getSystemDescriptor().findModel(modelName)).thenReturn(Optional.of(noTelemetryModel));
+      when(sdService.getAggregatedView(deploymentModel)).thenReturn(deploymentModel);
+      when(sdService.getAggregatedView(noTelemetryModel)).thenReturn(noTelemetryModel);
+      IModelReferenceField part = getMockedReference("model", model, configProperty);
+      IModelReferenceField noTelemetryPart = getMockedReference("noTelemetry", noTelemetryModel);
+      INamedChildCollection<IModel, IModelReferenceField> parts = ModelUtils.mockedNamedCollectionOf(part,
+                                                                                                     noTelemetryPart);
+      when(deploymentModel.getParts()).thenReturn(parts);
+      when(model.getProperties()).thenReturn(IProperties.EMPTY_PROPERTIES);
+
+      Set<TransportConfigurationType> types = service.getConfigurationTypes(options, noTelemetryModel);
+      assertFalse("telemetry should not be a configuration type!",
+                 types.contains(TransportConfigurationType.TELEMETRY));
+   }
+
    private static IModelReferenceField getMockedReference(String name, IModel type, IProperty... properties) {
       IModelReferenceField field = mock(IModelReferenceField.class, RETURNS_DEEP_STUBS);
       when(field.getName()).thenReturn(name);
@@ -294,7 +338,7 @@ public class TransportConfigurationServiceTest {
       when(field.getProperties().stream()).thenAnswer(args -> Stream.of(properties));
       return field;
    }
-   
+
    private static IModelLink<IDataReferenceField> getMockedLink(IDataReferenceField field, boolean fieldIsSource,
                                                                 IProperty... properties) {
       IModelLink<IDataReferenceField> link = mock(DataReferenceFieldLink.class, RETURNS_DEEP_STUBS);
@@ -347,7 +391,7 @@ public class TransportConfigurationServiceTest {
       return property;
    }
 
-   private static IProperty getMockedRestTelemetryConfiguration(String address, String interfaceName, int port, 
+   private static IProperty getMockedRestTelemetryConfiguration(String address, String interfaceName, int port,
                                                                 String path, String contentType, HttpMethod method) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);
       when(property.getName()).thenReturn(UUID.randomUUID().toString());
@@ -360,11 +404,11 @@ public class TransportConfigurationServiceTest {
       when(property.getData().getFieldByName(TelemetryConfigurationUtils.CONFIG_FIELD_NAME)).thenReturn(
             Optional.of(configField));
       IPropertyDataValue restConfig = getMockedRestConfiguration(address, interfaceName, port, path, contentType,
-            method).getData();
+                                                                 method).getData();
       when(property.getData().getData(configField)).thenReturn(restConfig);
       return property;
    }
-   
+
    private static IProperty getMockedRestConfiguration(String address, String interfaceName, int port, String path,
                                                        String contentType, HttpMethod method) {
       IProperty property = mock(IProperty.class, RETURNS_DEEP_STUBS);

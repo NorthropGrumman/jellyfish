@@ -16,6 +16,7 @@ import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservi
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TransportConfigurationServiceUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.ZeroMqConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
+import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -84,10 +85,15 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       }
       if (aggregatedDeploymentModel != null) {
          for (IModelReferenceField field : aggregatedDeploymentModel.getParts()) {
-            for (IProperty property : field.getProperties()) {
-               IData type = property.getReferencedDataType();
-               if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
-                  types.add(TransportConfigurationType.TELEMETRY);
+            // We only want to include telemetry support if the deployment model contains a part
+            // of the type referenced in the "model" parameter given at runtime.  This field (and only this field)
+            // needs to have telemetry related properties in order for telemetry support to be enabled.
+            if(SystemDescriptors.areModelsRelated(field.getType(), model)) {
+               for (IProperty property : field.getProperties()) {
+                  IData type = property.getReferencedDataType();
+                  if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
+                     types.add(TransportConfigurationType.TELEMETRY);
+                  }
                }
             }
          }
