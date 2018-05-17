@@ -48,6 +48,6 @@ subprojects {
       mockitoVersion = '2.7.14'
       osgiVersion = '6.0.0'
       protobufVersion = '3.2.0'
-      starfishVersion = '2.5.0'
+      starfishVersion = '2.6.0'
    }
 }
