@@ -71,6 +71,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    static final String NAME = "create-java-service-generated-config";
 
    private static final String CONNECTOR_SUFFIX = "Connector";
+   private static final String SUBSCRIBER_SUFFIX = "Subscriber";
 
    private IBaseServiceDtoFactory baseServiceDtoFactory;
    private ITransportConfigurationService transportConfigService;
@@ -130,12 +131,14 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
          for (InputDto inputDto : correlationMethodDto.getInputs()) {
-            dto.getSubscribers().add(packageName + "." + inputDto.getType() + "Subscriber");
+            dto.addSubscriber(
+                  String.format("%s.%s%s", packageName, inputDto.getType(), SUBSCRIBER_SUFFIX));
          }
       }
 
       for (BasicPubSubDto pubSubMethod : pubSubMethods) {
-         dto.getSubscribers().add(packageName + "." + pubSubMethod.getInput().getType() + "Subscriber");
+         dto.addSubscriber(
+               String.format("%s.%s%s", packageName, pubSubMethod.getInput().getType(), SUBSCRIBER_SUFFIX));
       }
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(

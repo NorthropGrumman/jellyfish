@@ -97,7 +97,7 @@ public class GeneratedServiceConfigDto {
       return subscribers;
    }
 
-   public GeneratedServiceConfigDto addSubscriberClassname(String subscriberClassname) {
+   public GeneratedServiceConfigDto addSubscriber(String subscriberClassname) {
       this.subscribers.add(subscriberClassname);
       return this;
    }
