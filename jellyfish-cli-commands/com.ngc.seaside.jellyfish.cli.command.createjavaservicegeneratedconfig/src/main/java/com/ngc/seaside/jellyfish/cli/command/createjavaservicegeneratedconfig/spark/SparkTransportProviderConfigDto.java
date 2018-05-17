@@ -84,14 +84,16 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
       int count = 1;
       for (RestTelemetryConfiguration configuration : telemetryConfigurations) {
          RestConfiguration restConfig = configuration.getConfig();
+         String variableName = StringUtils.uncapitalize(model.getName())
+                               + "TelemetryRequest"
+                               + (telemetryConfigurations.size() > 1 ? count : "");
          SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(restConfig.getNetworkAddress())
                .setNetworkInterface(restConfig.getNetworkInterface())
                .setPort(restConfig.getPort())
                .setHttpMethod(restConfig.getHttpMethod())
                .setPath(restConfig.getPath())
                .setContentType(restConfig.getContentType())
-                                                     .setVariableName(StringUtils.uncapitalize(model.getName())
-                                                        + (telemetryConfigurations.size() > 1 ? count : ""))
+                                                     .setVariableName(variableName)
                                                      .setName(TELEMETRY_TOPIC);
 
          sparkDto.addTopic(topicDto);

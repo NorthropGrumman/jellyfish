@@ -28,9 +28,7 @@ public class ${dto.classname} {
 #foreach ($entry in $dto.topics)
        config.whenReceiving()
              .withTransportProvider(sparkProvider)
-#foreach ($topic in $dto.topics)
-             .onPhysicalTopic(${topic.variableName})
-#end
+             .onPhysicalTopic(${entry.variableName})
              .enableResponses(true)
              .useApplicationTopic(t -> ${entry.name});
 
